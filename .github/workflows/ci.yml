@@ -1,0 +1,19 @@
+# Lint, typecheck, unit tests, build, Playwright smoke, then image build, Trivy, GHCR and the
+# staging image-tag PR, all from the reusable workflow in kriraghor-infra (ADR-003).
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  ci:
+    uses: kriraghor/kriraghor-infra/.github/workflows/nextjs-app.yml@main
+    with:
+      image: kriraghor-web
+      values-files: values/web/staging.yaml
+    secrets: inherit
