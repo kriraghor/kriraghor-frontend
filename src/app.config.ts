@@ -13,7 +13,16 @@ export type { Area };
 export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> = {
   admin: {
     audience: "admin",
-    header: { titleKey: "admin", homeHref: "/admin", signInHref: "/admin/sign-in", meHref: "/admin", nav: [] },
+    header: {
+      titleKey: "admin",
+      homeHref: "/admin",
+      signInHref: "/admin/sign-in",
+      meHref: "/admin",
+      nav: [
+        { href: "/admin/fees", key: "fees" },
+        { href: "/admin/catalog/esports", key: "esportsCatalog" },
+      ],
+    },
   },
   vendor: {
     audience: "api",
