@@ -1,0 +1,79 @@
+{
+  "app": {
+    "web": "Kriraghor",
+    "esports": "Kriraghor Esports",
+    "admin": "Kriraghor Admin",
+    "vendor": "Kriraghor for Business"
+  },
+  "nav": {
+    "home": "Home",
+    "signIn": "Sign in",
+    "me": "My account",
+    "signOut": "Sign out",
+    "grounds": "Grounds",
+    "hiring": "Hire",
+    "shop": "Shop",
+    "gym": "Gym",
+    "esports": "Esports",
+    "language": "বাংলা"
+  },
+  "signIn": {
+    "title": "Sign in to Kriraghor",
+    "subtitle": "One account for kriraghor.com, esports and the app.",
+    "phone": "Phone code",
+    "email": "Email code",
+    "password": "Password",
+    "google": "Google",
+    "phoneLabel": "Mobile number",
+    "emailLabel": "Email address",
+    "identifierLabel": "Phone, email or username",
+    "passwordLabel": "Password",
+    "codeLabel": "6-digit code",
+    "sendCode": "Send code",
+    "verify": "Verify and continue",
+    "signInButton": "Sign in",
+    "codeSent": "We sent a code. It expires in 5 minutes.",
+    "nameLabel": "Your name",
+    "finishSignup": "Create my account",
+    "newHere": "New here? Verifying your number creates your account.",
+    "googleUnavailable": "Google sign-in is not configured in this environment.",
+    "staffUseAdmin": "Staff accounts sign in at the admin portal."
+  },
+  "me": {
+    "title": "My account",
+    "signedOut": "You are not signed in.",
+    "loading": "Loading your account",
+    "ssoNote": "This session is shared by every Kriraghor site.",
+    "id": "Account ID",
+    "phone": "Phone",
+    "email": "Email",
+    "roles": "Roles",
+    "live": "Live connection",
+    "liveOn": "Connected",
+    "liveOff": "Not connected"
+  },
+  "admin": {
+    "title": "Staff sign-in",
+    "subtitle": "Kriraghor staff only. Two-factor authentication is required.",
+    "otpOrPassword": "Sign in with",
+    "totpSetup": "Set up your authenticator",
+    "totpSetupHelp": "Add this key to Google Authenticator, Microsoft Authenticator or Authy, then enter the code it shows.",
+    "totpCode": "Authenticator code",
+    "confirm": "Confirm",
+    "home": "Admin desk",
+    "welcome": "Signed in as {name}",
+    "permissions": "Permissions",
+    "master": "Master admin"
+  },
+  "vendor": {
+    "home": "Business desk",
+    "intro": "Manage your grounds, shop, gym or tournaments. Desks arrive with their modules."
+  },
+  "errors": {
+    "generic": "Something went wrong. Try again.",
+    "network": "Can't reach Kriraghor. Check your connection."
+  },
+  "placeholder": {
+    "soon": "This section is built in a later phase."
+  }
+}
