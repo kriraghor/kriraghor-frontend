@@ -18,6 +18,7 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       homeHref: "/admin",
       signInHref: "/admin/sign-in",
       meHref: "/admin",
+      bell: { centreHref: "/admin/notifications" },
       nav: [
         { href: "/admin/fees", key: "fees" },
         { href: "/admin/catalog/esports", key: "esportsCatalog" },

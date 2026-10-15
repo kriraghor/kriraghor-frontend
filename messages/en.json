@@ -95,7 +95,8 @@
     "accounts": "Accounts and sign-in",
     "security": "Rate limits",
     "simulator": "Fee simulator",
-    "operations": "Operations"
+    "operations": "Operations",
+    "notifications": "Notifications"
   },
   "fees": {
     "title": "Fees and rules",
@@ -273,5 +274,57 @@
     "codeHint": "A fresh 6-digit code.",
     "confirm": "Confirm",
     "cancel": "Cancel"
+  },
+  "notifications": {
+    "bell": "Updates",
+    "bellUnread": "Updates, {count} unread",
+    "title": "Updates",
+    "all": "All",
+    "unread": "Unread",
+    "unreadLabel": "unread",
+    "loading": "Loading updates",
+    "error": "Couldn't load updates.",
+    "retry": "Retry",
+    "empty": "No updates yet.",
+    "markAllRead": "Mark all read",
+    "seeAll": "See all",
+    "settings": "Settings",
+    "category": "Category",
+    "allCategories": "All categories",
+    "unreadOnly": "Unread only",
+    "more": "Load more",
+    "signedOut": "Sign in to see your updates.",
+    "signIn": "Sign in",
+    "categories": {
+      "security": "Account & security",
+      "money": "Money",
+      "bookings": "Bookings",
+      "hire": "Hire",
+      "orders": "Orders",
+      "offers": "Offers",
+      "tournaments": "Tournaments",
+      "moderation": "Reviews & approvals",
+      "disputes_reports": "Disputes & reports",
+      "reviews": "Reviews",
+      "staff_ops": "Staff operations"
+    },
+    "prefs": {
+      "title": "Notification settings",
+      "intro": "Choose how we reach you for each kind of update.",
+      "category": "Kind of update",
+      "channels": {
+        "in_app": "In-app",
+        "sms": "SMS",
+        "email": "Email"
+      },
+      "locked": "Required for your security and payments",
+      "notOffered": "Not used for this kind of update",
+      "quietHours": "Quiet hours ({start}–{end})",
+      "quietHoursHelp": "Non-urgent texts and emails wait until morning.",
+      "language": "Message language",
+      "languageHelp": "Change it in your account settings.",
+      "saved": "Saved.",
+      "save": "Save"
+    }
   }
 }

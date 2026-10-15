@@ -95,7 +95,8 @@
     "accounts": "অ্যাকাউন্ট ও সাইন-ইন",
     "security": "রেট লিমিট",
     "simulator": "ফি সিমুলেটর",
-    "operations": "অপারেশনস"
+    "operations": "অপারেশনস",
+    "notifications": "নোটিফিকেশন"
   },
   "fees": {
     "title": "ফি ও নিয়ম",
@@ -273,5 +274,57 @@
     "codeHint": "নতুন ৬ অঙ্কের কোড।",
     "confirm": "নিশ্চিত করুন",
     "cancel": "বাতিল"
+  },
+  "notifications": {
+    "bell": "আপডেট",
+    "bellUnread": "আপডেট, {count}টি অপঠিত",
+    "title": "আপডেট",
+    "all": "সব",
+    "unread": "অপঠিত",
+    "unreadLabel": "অপঠিত",
+    "loading": "আপডেট লোড হচ্ছে",
+    "error": "আপডেট লোড করা যায়নি।",
+    "retry": "আবার চেষ্টা",
+    "empty": "এখনো কোনো আপডেট নেই।",
+    "markAllRead": "সব পঠিত করুন",
+    "seeAll": "সব দেখুন",
+    "settings": "সেটিংস",
+    "category": "ধরন",
+    "allCategories": "সব ধরন",
+    "unreadOnly": "শুধু অপঠিত",
+    "more": "আরও দেখুন",
+    "signedOut": "আপডেট দেখতে সাইন ইন করুন।",
+    "signIn": "সাইন ইন",
+    "categories": {
+      "security": "অ্যাকাউন্ট ও নিরাপত্তা",
+      "money": "টাকা",
+      "bookings": "বুকিং",
+      "hire": "হায়ার",
+      "orders": "অর্ডার",
+      "offers": "অফার",
+      "tournaments": "টুর্নামেন্ট",
+      "moderation": "পর্যালোচনা ও অনুমোদন",
+      "disputes_reports": "বিরোধ ও রিপোর্ট",
+      "reviews": "রিভিউ",
+      "staff_ops": "স্টাফ অপারেশনস"
+    },
+    "prefs": {
+      "title": "নোটিফিকেশন সেটিংস",
+      "intro": "প্রতিটি ধরনের আপডেট আমরা কীভাবে জানাব তা বেছে নিন।",
+      "category": "আপডেটের ধরন",
+      "channels": {
+        "in_app": "অ্যাপে",
+        "sms": "এসএমএস",
+        "email": "ইমেল"
+      },
+      "locked": "আপনার নিরাপত্তা ও লেনদেনের জন্য বাধ্যতামূলক",
+      "notOffered": "এই ধরনের আপডেটে ব্যবহৃত হয় না",
+      "quietHours": "নীরব সময় ({start}–{end})",
+      "quietHoursHelp": "জরুরি নয় এমন এসএমএস ও ইমেল সকাল পর্যন্ত অপেক্ষা করে।",
+      "language": "বার্তার ভাষা",
+      "languageHelp": "অ্যাকাউন্ট সেটিংসে বদলান।",
+      "saved": "সংরক্ষিত।",
+      "save": "সংরক্ষণ"
+    }
   }
 }
