@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { notFound } from "next/navigation";
@@ -35,7 +36,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         <Script src="/env.js" strategy="beforeInteractive" />
         <NextIntlClientProvider>
           <Providers audience={APP.audience}>
-            <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} />
+            {/* The header reads the pathname; routes known only at request time (/pay/[id]) stream it in. */}
+            <Suspense fallback={<HeaderPlaceholder />}>
+              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} />
+            </Suspense>
             <main id="main" className="flex-1">
               {children}
             </main>
@@ -43,5 +47,15 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         </NextIntlClientProvider>
       </body>
     </html>
+  );
+}
+
+/** Same height as the header, so nothing moves when it streams in. */
+function HeaderPlaceholder() {
+  return (
+    <div className="sticky top-0 z-40 border-b-2 border-line bg-bg" aria-hidden>
+      <div className="h-1 bg-brand" />
+      <div className="h-16" />
+    </div>
   );
 }
