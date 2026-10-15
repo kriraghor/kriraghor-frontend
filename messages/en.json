@@ -331,7 +331,7 @@
   },
   "finance": {
     "title": "Finance",
-    "intro": "Payments, refunds, escrow, the ledger and reconciliation. Moving money needs your authenticator code; every action is in the audit log.",
+    "intro": "Payments, refunds, escrow, payouts, the ledger and reconciliation. Moving money needs your authenticator code; every action is in the audit log.",
     "simulator": "Gateway simulator",
     "noAccess": "You need the view_payouts permission to see finance.",
     "loading": "Loading",
@@ -343,6 +343,9 @@
       "payments": "Payments",
       "refunds": "Refunds",
       "escrow": "Escrow",
+      "payouts": "Payouts",
+      "batches": "Payout runs",
+      "accounts": "Payout accounts",
       "ledger": "Ledger",
       "reconciliation": "Reconciliation",
       "test": "Test charge"
@@ -501,5 +504,137 @@
       "resolved": "Resolved",
       "ignored": "Ignored"
     }
+  },
+  "payouts": {
+    "statusTabs": "Payout status",
+    "status": {
+      "scheduled": "Scheduled",
+      "needs_approval": "Needs approval",
+      "on_hold": "On hold",
+      "processing": "Sending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "accountStatus": {
+      "pending_verification": "Waiting for review",
+      "active": "Verified",
+      "rejected": "Rejected",
+      "superseded": "Replaced",
+      "disabled": "Withdrawn"
+    },
+    "holdType": {
+      "account_change": "Payout account changed",
+      "risk_freeze": "Risk freeze",
+      "dispute": "Open dispute",
+      "kyc": "Verification needed",
+      "account_suspended": "Account suspended",
+      "manual": "Held by finance"
+    },
+    "failureReason": {
+      "invalid_wallet": "Wallet does not exist",
+      "name_mismatch": "Name does not match",
+      "account_closed": "Wallet closed",
+      "provider_error": "bKash / Nagad error",
+      "other": "Other"
+    },
+    "schedules": {
+      "daily": "Daily (pros, organisers, used gear, test charges)",
+      "ground_weekly": "Weekly: grounds",
+      "shop_weekly": "Weekly: shops"
+    },
+    "actions": {
+      "release": "Release",
+      "approve": "Approve",
+      "hold": "Put on hold",
+      "reveal": "Show number to send",
+      "markPaid": "Mark paid",
+      "markFailed": "Mark failed",
+      "retry": "Retry",
+      "cancel": "Cancel payout",
+      "lift": "Lift hold"
+    },
+    "submit": {
+      "markPaid": "Mark paid",
+      "markFailed": "Mark failed",
+      "hold": "Put on hold",
+      "cancel": "Cancel payout",
+      "lift": "Lift hold"
+    },
+    "formLabel": {
+      "markPaid": "bKash / Nagad transaction ID",
+      "markFailed": "What happened (optional)",
+      "hold": "Reason",
+      "cancel": "Reason",
+      "lift": "Reason"
+    },
+    "confirm": {
+      "release": "Release {code} ({amount})",
+      "approve": "Approve {code} ({amount})",
+      "retry": "Release {code} again ({amount})",
+      "reveal": "Show the number for {code}"
+    },
+    "confirmHelp": {
+      "release": "The money leaves the payee balance and waits to be sent to {account}.",
+      "approve": "Payouts above the threshold need two different masters. The second approval releases it.",
+      "retry": "The payout goes back to sending, to {account}.",
+      "reveal": "The full number is shown for 60 seconds and the view is recorded in the audit log."
+    },
+    "approveStep": "Approve ({step} of 2)",
+    "payout": "Payout",
+    "payee": "Payee",
+    "account": "Account",
+    "gross": "Gross",
+    "deductions": "Fees",
+    "amount": "Amount",
+    "fee": "Fee",
+    "net": "Net",
+    "statusLabel": "Status",
+    "created": "Created",
+    "refundPayout": "Refund paid by hand",
+    "noAccount": "No verified account",
+    "loading": "Loading…",
+    "loadFailed": "Could not load this payout.",
+    "close": "Close",
+    "threshold": "Four-eyes threshold",
+    "reference": "Reference",
+    "failure": "Failure",
+    "reveals": "Number shown",
+    "holds": "Holds",
+    "until": "Until {when}",
+    "riskHoldHint": "Cleared on the Risk desk only.",
+    "approvals": "Approvals",
+    "approvalLine": "Step {step}: {name}, {when}",
+    "lines": "Lines",
+    "line": "Line",
+    "sendTo": "Send {amount} with {type} to",
+    "revealHides": "Hidden in {seconds} s. Do not write it down or share it.",
+    "hideNow": "Hide now",
+    "failureLabel": "Reason",
+    "holdScope": "Hold",
+    "holdScopePayout": "This payout only",
+    "holdScopePayee": "Every payout of this payee",
+    "cancelForm": "Back",
+    "nameOnAccount": "Name on account",
+    "nidName": "NID legal name",
+    "noNid": "No NID yet",
+    "checks": "Checks",
+    "namesMatch": "Names match",
+    "namesDiffer": "Names differ",
+    "sharedWallet": "Also on {n} other {n, plural, one {user} other {users}}",
+    "kycNot": "KYC: {status}",
+    "verify": "Verify",
+    "reject": "Reject",
+    "verifyTitle": "Verify {account}",
+    "rejectTitle": "Reject {account}",
+    "verifyHelp": "Only verify when the name on the wallet matches the NID legal name. A replacement account pauses payouts for 48 hours.",
+    "rejectHelp": "The payee sees your note and can add another account.",
+    "noteOptional": "Note (optional)",
+    "noteRequired": "Note for the payee",
+    "schedule": "Run",
+    "runNow": "Build this run now",
+    "windowEnd": "Up to",
+    "payoutsCount": "Payouts",
+    "needsApprovalCount": "Need approval"
   }
 }

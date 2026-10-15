@@ -3,6 +3,7 @@ import type { components } from "@/lib/api/schema";
 
 /**
  * Finance desk client (M06 §4 /admin/finance): payments, refunds, escrow, ledger and reconciliation.
+ * The M07 payout tabs (payouts, batches, accounts) use lib/admin/payouts.
  * Every action re-checks permissions on the server; money moves need a fresh authenticator code.
  */
 export type AdminPayment = components["schemas"]["AdminPayment"];
@@ -43,7 +44,7 @@ export function dhakaDate(now: number): string {
   return new Date(now + 6 * 3600 * 1000).toISOString().slice(0, 10);
 }
 
-export const TABS = ["payments", "refunds", "escrow", "ledger", "reconciliation", "test"] as const;
+export const TABS = ["payments", "refunds", "escrow", "payouts", "batches", "accounts", "ledger", "reconciliation", "test"] as const;
 export type Tab = (typeof TABS)[number];
 export const isTab = (v: string | null): v is Tab => Boolean(v) && (TABS as readonly string[]).includes(v as string);
 

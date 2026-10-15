@@ -331,7 +331,7 @@
   },
   "finance": {
     "title": "ফিনান্স",
-    "intro": "পেমেন্ট, রিফান্ড, এসক্রো, লেজার ও হিসাব মেলানো। টাকা নড়াতে অথেনটিকেটর কোড লাগে; প্রতিটি কাজ অডিট লগে থাকে।",
+    "intro": "পেমেন্ট, রিফান্ড, এসক্রো, পেআউট, লেজার ও হিসাব মেলানো। টাকা নড়াতে অথেনটিকেটর কোড লাগে; প্রতিটি কাজ অডিট লগে থাকে।",
     "simulator": "গেটওয়ে সিমুলেটর",
     "noAccess": "ফিনান্স দেখতে view_payouts অনুমতি দরকার।",
     "loading": "লোড হচ্ছে",
@@ -343,6 +343,9 @@
       "payments": "পেমেন্ট",
       "refunds": "রিফান্ড",
       "escrow": "এসক্রো",
+      "payouts": "পেআউট",
+      "batches": "পেআউট রান",
+      "accounts": "পেআউট অ্যাকাউন্ট",
       "ledger": "লেজার",
       "reconciliation": "হিসাব মেলানো",
       "test": "টেস্ট চার্জ"
@@ -501,5 +504,137 @@
       "resolved": "সমাধান হয়েছে",
       "ignored": "উপেক্ষিত"
     }
+  },
+  "payouts": {
+    "statusTabs": "পেআউটের অবস্থা",
+    "status": {
+      "scheduled": "নির্ধারিত",
+      "needs_approval": "অনুমোদন দরকার",
+      "on_hold": "আটকে আছে",
+      "processing": "পাঠানো হচ্ছে",
+      "paid": "পরিশোধিত",
+      "failed": "ব্যর্থ",
+      "cancelled": "বাতিল"
+    },
+    "accountStatus": {
+      "pending_verification": "যাচাইয়ের অপেক্ষায়",
+      "active": "যাচাইকৃত",
+      "rejected": "বাতিল",
+      "superseded": "বদলানো হয়েছে",
+      "disabled": "প্রত্যাহার"
+    },
+    "holdType": {
+      "account_change": "পেআউট অ্যাকাউন্ট বদলেছে",
+      "risk_freeze": "ঝুঁকির কারণে আটক",
+      "dispute": "বিরোধ চলছে",
+      "kyc": "যাচাই দরকার",
+      "account_suspended": "অ্যাকাউন্ট স্থগিত",
+      "manual": "ফিনান্স আটকেছে"
+    },
+    "failureReason": {
+      "invalid_wallet": "ওয়ালেট নেই",
+      "name_mismatch": "নাম মেলে না",
+      "account_closed": "ওয়ালেট বন্ধ",
+      "provider_error": "বিকাশ / নগদ ত্রুটি",
+      "other": "অন্যান্য"
+    },
+    "schedules": {
+      "daily": "দৈনিক (প্রো, আয়োজক, পুরনো পণ্য, টেস্ট চার্জ)",
+      "ground_weekly": "সাপ্তাহিক: মাঠ",
+      "shop_weekly": "সাপ্তাহিক: দোকান"
+    },
+    "actions": {
+      "release": "ছাড় দিন",
+      "approve": "অনুমোদন",
+      "hold": "আটকে রাখুন",
+      "reveal": "পাঠাতে নম্বর দেখুন",
+      "markPaid": "পরিশোধিত চিহ্নিত করুন",
+      "markFailed": "ব্যর্থ চিহ্নিত করুন",
+      "retry": "আবার চেষ্টা",
+      "cancel": "পেআউট বাতিল",
+      "lift": "আটক তুলুন"
+    },
+    "submit": {
+      "markPaid": "পরিশোধিত",
+      "markFailed": "ব্যর্থ",
+      "hold": "আটকে রাখুন",
+      "cancel": "বাতিল করুন",
+      "lift": "আটক তুলুন"
+    },
+    "formLabel": {
+      "markPaid": "বিকাশ / নগদ ট্রানজ্যাকশন আইডি",
+      "markFailed": "কী হয়েছে (ঐচ্ছিক)",
+      "hold": "কারণ",
+      "cancel": "কারণ",
+      "lift": "কারণ"
+    },
+    "confirm": {
+      "release": "{code} ছাড় দিন ({amount})",
+      "approve": "{code} অনুমোদন ({amount})",
+      "retry": "{code} আবার ছাড় দিন ({amount})",
+      "reveal": "{code}-এর নম্বর দেখুন"
+    },
+    "confirmHelp": {
+      "release": "টাকা প্রাপকের ব্যালান্স থেকে বেরিয়ে {account}-এ পাঠানোর অপেক্ষায় থাকবে।",
+      "approve": "সীমার বেশি পেআউটে দুইজন আলাদা মাস্টার লাগে। দ্বিতীয় অনুমোদনে ছাড় হয়।",
+      "retry": "পেআউট আবার {account}-এ পাঠানোর জন্য যাবে।",
+      "reveal": "পুরো নম্বর ৬০ সেকেন্ড দেখা যাবে এবং অডিট লগে লেখা থাকবে।"
+    },
+    "approveStep": "অনুমোদন ({step}/২)",
+    "payout": "পেআউট",
+    "payee": "প্রাপক",
+    "account": "অ্যাকাউন্ট",
+    "gross": "মোট",
+    "deductions": "ফি",
+    "amount": "পরিমাণ",
+    "fee": "ফি",
+    "net": "নিট",
+    "statusLabel": "অবস্থা",
+    "created": "তৈরি",
+    "refundPayout": "হাতে পাঠানো রিফান্ড",
+    "noAccount": "যাচাইকৃত অ্যাকাউন্ট নেই",
+    "loading": "লোড হচ্ছে…",
+    "loadFailed": "এই পেআউট লোড করা যায়নি।",
+    "close": "বন্ধ",
+    "threshold": "ফোর-আইজ সীমা",
+    "reference": "রেফারেন্স",
+    "failure": "ব্যর্থতা",
+    "reveals": "নম্বর দেখা হয়েছে",
+    "holds": "আটক",
+    "until": "{when} পর্যন্ত",
+    "riskHoldHint": "শুধু রিস্ক ডেস্কে তোলা যায়।",
+    "approvals": "অনুমোদন",
+    "approvalLine": "ধাপ {step}: {name}, {when}",
+    "lines": "লাইন",
+    "line": "লাইন",
+    "sendTo": "{type}-এ {amount} পাঠান",
+    "revealHides": "{seconds} সেকেন্ডে লুকিয়ে যাবে। লিখে রাখবেন না বা কাউকে দেবেন না।",
+    "hideNow": "এখনই লুকান",
+    "failureLabel": "কারণ",
+    "holdScope": "আটক",
+    "holdScopePayout": "শুধু এই পেআউট",
+    "holdScopePayee": "এই প্রাপকের সব পেআউট",
+    "cancelForm": "ফিরে যান",
+    "nameOnAccount": "অ্যাকাউন্টের নাম",
+    "nidName": "NID-এর নাম",
+    "noNid": "এখনো NID নেই",
+    "checks": "যাচাই",
+    "namesMatch": "নাম মেলে",
+    "namesDiffer": "নাম আলাদা",
+    "sharedWallet": "আরও {n} জনের কাছে আছে",
+    "kycNot": "KYC: {status}",
+    "verify": "যাচাই করুন",
+    "reject": "বাতিল",
+    "verifyTitle": "{account} যাচাই",
+    "rejectTitle": "{account} বাতিল",
+    "verifyHelp": "ওয়ালেটের নাম NID-এর নামের সাথে মিললেই যাচাই করুন। বদলি অ্যাকাউন্টে ৪৮ ঘণ্টা পেআউট বন্ধ থাকে।",
+    "rejectHelp": "প্রাপক আপনার নোট দেখবেন এবং অন্য অ্যাকাউন্ট দিতে পারবেন।",
+    "noteOptional": "নোট (ঐচ্ছিক)",
+    "noteRequired": "প্রাপকের জন্য নোট",
+    "schedule": "রান",
+    "runNow": "এখনই এই রান তৈরি করুন",
+    "windowEnd": "পর্যন্ত",
+    "payoutsCount": "পেআউট",
+    "needsApprovalCount": "অনুমোদন দরকার"
   }
 }

@@ -14,11 +14,15 @@ import { EscrowTab } from "./EscrowTab";
 import { LedgerTab } from "./LedgerTab";
 import { ReconTab } from "./ReconTab";
 import { TestChargeTab } from "./TestChargeTab";
+import { PayoutsTab } from "./PayoutsTab";
+import { PayoutBatchesTab } from "./PayoutBatchesTab";
+import { PayoutAccountsTab } from "./PayoutAccountsTab";
 
 /**
- * /admin/finance (M06 §4): payments, refunds (with the escalation queue), escrow holds, the ledger and
- * reconciliation, plus master test charges where the environment allows them. The tab lives in the
- * URL (?tab=refunds) so notification links land on the right one.
+ * /admin/finance (M06 §4, M07 §4.3): payments, refunds (with the escalation queue), escrow holds,
+ * payouts, payout runs and payout-account review, the ledger and reconciliation, plus master test
+ * charges where the environment allows them. The tab lives in the URL (?tab=payouts&id=…) so
+ * notification links land on the right one.
  */
 export function FinanceDesk() {
   const t = useTranslations("finance");
@@ -30,7 +34,7 @@ export function FinanceDesk() {
   const tab: Tab = isTab(raw) ? raw : "payments";
   const cfg = useQuery({ queryKey: ["finance-config"], enabled: ready, queryFn: finance.config, retry: false });
 
-  const canView = Boolean(me && (me.isMaster || me.permissions.includes("view_payouts")));
+  const canView = Boolean(me && (me.isMaster || me.permissions.includes("view_payouts") || me.permissions.includes("release_payouts")));
   const tabs = TABS.filter((x) => x !== "test" || (cfg.data?.testCharges && me?.isMaster));
   const select = (next: Tab) => router.replace(`${pathname}?tab=${next}`);
 
@@ -72,6 +76,12 @@ export function FinanceDesk() {
                 <RefundsTab me={me} />
               ) : tab === "escrow" ? (
                 <EscrowTab me={me} />
+              ) : tab === "payouts" ? (
+                <PayoutsTab me={me} openId={params.get("id")} />
+              ) : tab === "batches" ? (
+                <PayoutBatchesTab me={me} />
+              ) : tab === "accounts" ? (
+                <PayoutAccountsTab me={me} />
               ) : tab === "ledger" ? (
                 <LedgerTab />
               ) : tab === "reconciliation" ? (
