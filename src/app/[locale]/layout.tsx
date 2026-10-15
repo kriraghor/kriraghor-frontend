@@ -35,7 +35,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         <Script src="/env.js" strategy="beforeInteractive" />
         <NextIntlClientProvider>
           <Providers audience={APP.audience}>
-            <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} />
+            <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} />
             <main id="main" className="flex-1">
               {children}
             </main>
