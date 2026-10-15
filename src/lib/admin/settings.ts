@@ -9,7 +9,7 @@ export type Setting = components["schemas"]["Setting"];
 export type ChangeRequest = components["schemas"]["SettingsChangeRequest"];
 export type SettingValue = Setting["value"];
 
-export const CATEGORY_ORDER = ["fees", "booking", "market", "hire", "tournament", "esports", "gym", "moderation", "money_limits", "risk", "accounts", "security", "simulator", "operations", "notifications"] as const;
+export const CATEGORY_ORDER = ["fees", "booking", "market", "hire", "tournament", "esports", "gym", "moderation", "money_limits", "payments", "risk", "accounts", "security", "simulator", "operations", "notifications"] as const;
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const KEY_RE = /^[a-z][a-z0-9_]{0,39}$/;
