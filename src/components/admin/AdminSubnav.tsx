@@ -7,6 +7,8 @@ export const ADMIN_NAV = [
   { href: "/admin", key: "desk" },
   { href: "/admin/fees", key: "fees" },
   { href: "/admin/catalog/esports", key: "esportsCatalog" },
+  { href: "/admin/audit", key: "audit" },
+  { href: "/admin/events", key: "events" },
 ] as const;
 
 /** Desk navigation for small screens (the header shows the same links from md up). */

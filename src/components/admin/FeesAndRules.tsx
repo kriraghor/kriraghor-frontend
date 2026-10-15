@@ -19,6 +19,7 @@ import {
 } from "@/lib/admin/settings";
 import { Button, Notice } from "../ui";
 import { AdminSubnav } from "./AdminSubnav";
+import { EntityHistory } from "./EntityHistory";
 import { formatDhaka, useAdminMe } from "./useAdminMe";
 
 type Raw = string | boolean | Record<string, string>;
@@ -687,6 +688,7 @@ function HistoryDrawer({ setting, label, onClose }: { setting: Setting; label: (
             ))}
           </ol>
         )}
+        <EntityHistory entityType="platform_setting" entityId={setting.key} />
       </aside>
     </div>
   );

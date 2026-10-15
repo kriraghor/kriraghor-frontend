@@ -18,7 +18,9 @@
     "language": "বাংলা",
     "desk": "Desk",
     "fees": "Fees and rules",
-    "esportsCatalog": "Esports catalogue"
+    "esportsCatalog": "Esports catalogue",
+    "audit": "Audit log",
+    "events": "Events"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -92,7 +94,8 @@
     "risk": "Risk",
     "accounts": "Accounts and sign-in",
     "security": "Rate limits",
-    "simulator": "Fee simulator"
+    "simulator": "Fee simulator",
+    "operations": "Operations"
   },
   "fees": {
     "title": "Fees and rules",
@@ -186,5 +189,89 @@
     "newVersionNote": "Saving creates version {version}. Tournaments keep the version they started with.",
     "empty": "Nothing here yet.",
     "saved": "Saved."
+  },
+  "audit": {
+    "title": "Audit log",
+    "intro": "Every approval, fee, staff and payout decision, newest first. Rows cannot be edited or deleted.",
+    "from": "From",
+    "to": "To",
+    "action": "Action",
+    "actionHint": "One action, or several separated by commas",
+    "module": "Module",
+    "severity": "Severity",
+    "entityType": "Entity type",
+    "entityId": "Entity ID",
+    "actorId": "Actor ID",
+    "stepUpOnly": "Step-up only",
+    "any": "Any",
+    "apply": "Apply",
+    "reset": "Reset",
+    "when": "When",
+    "actor": "Actor",
+    "summary": "What happened",
+    "entity": "Entity",
+    "ip": "IP",
+    "loading": "Loading the audit log",
+    "empty": "No entries match.",
+    "more": "Load more",
+    "detailTitle": "Audit entry",
+    "field": "Field",
+    "before": "Before",
+    "after": "After",
+    "reason": "Reason",
+    "requestId": "Request ID",
+    "sessionId": "Session",
+    "userAgent": "Device",
+    "chain": "Tamper check",
+    "chainPending": "Not sealed yet (sealed within a minute)",
+    "chainIntact": "Sealed #{seq}, intact",
+    "chainBroken": "Sealed #{seq}, CHANGED since sealing",
+    "stepUpBadge": "Step-up",
+    "system": "System",
+    "close": "Close",
+    "export": "Export CSV",
+    "exportTitle": "Export the audit log",
+    "exportHelp": "Exports the entries that match the current filters. Your authenticator code is needed, and the export itself is audited.",
+    "exportPreparing": "Preparing the export…",
+    "exportReady": "Export ready: {count} rows.",
+    "exportFailed": "The export failed. Try again.",
+    "download": "Download CSV",
+    "history": "Audit trail",
+    "historyEmpty": "No audit entries for this item yet.",
+    "severities": {
+      "info": "Info",
+      "notice": "Notice",
+      "critical": "Critical"
+    }
+  },
+  "eventsOps": {
+    "title": "Events",
+    "intro": "Domain events wait in the outbox until the relay delivers them to every consumer. Failed deliveries retry, then become dead letters you can replay.",
+    "pending": "Waiting to be delivered",
+    "oldest": "Oldest waiting",
+    "seconds": "{n} s",
+    "none": "none",
+    "lagAlert": "Events have been waiting more than 60 seconds. Check that the worker is running.",
+    "tabs": {
+      "dead": "Dead letters",
+      "failed": "Failed to relay",
+      "pending": "Waiting"
+    },
+    "name": "Event",
+    "consumer": "Consumer",
+    "attempts": "Attempts",
+    "error": "Last error",
+    "occurred": "Occurred",
+    "replay": "Replay",
+    "replayHelp": "Deliver this event to {consumer} again. Your authenticator code is needed.",
+    "replayed": "Queued for delivery.",
+    "empty": "Nothing here.",
+    "loading": "Loading events"
+  },
+  "common": {
+    "code": "Authenticator code",
+    "codeHint": "A fresh 6-digit code.",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }
