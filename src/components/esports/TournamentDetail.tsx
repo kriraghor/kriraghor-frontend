@@ -8,6 +8,8 @@ import { ctaFor, dhakaTime, esports, takaOf, useRoom } from "@/lib/esports";
 import { Chip, Countdown, LinkButton, Prize, SlotsBar, StatusChip } from "./bits";
 
 /** /t/[slug]: everything about one tournament, live (slots, status, standings over the socket). */
+const UPCOMING = ["scheduled", "registration_open", "registration_closed", "check_in"];
+
 export function TournamentDetail({ slug }: { slug: string }) {
   const t = useTranslations("esports");
   const locale = useLocale();
@@ -159,9 +161,10 @@ export function TournamentDetail({ slug }: { slug: string }) {
                 <dd className="text-lg font-extrabold">{d.entryFee.amount === 0 ? t("free") : takaOf(d.entryFee, locale)}</dd>
               </div>
               <div>
-                <dt className="text-muted">{t("startsIn")}</dt>
+                {/* Once play has started the countdown means nothing: show when it started instead. */}
+                <dt className="text-muted">{UPCOMING.includes(d.status) ? t("startsIn") : t("startedAt")}</dt>
                 <dd className="text-lg font-extrabold">
-                  <Countdown to={d.startsAt} done={t("status.live")} />
+                  {UPCOMING.includes(d.status) ? <Countdown to={d.startsAt} done={t("status.live")} /> : dhakaTime(d.startsAt, locale, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}
                 </dd>
               </div>
             </dl>

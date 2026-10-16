@@ -10,13 +10,16 @@ import { Card, CardSkeleton, Countdown, Empty, LinkButton, Prize, SlotsBar } fro
  * esports.kriraghor.com home: the next big tournament as the hero (a real card, not a picture of one),
  * open registrations, top players and how it works. Esports leads (v3 priority 1).
  */
+const DONE = ["results_pending", "finalised", "paid_out", "cancelled"];
+
 export function Home() {
   const t = useTranslations("esports");
   const locale = useLocale();
   const open = useQuery({ queryKey: ["es-list", "open"], queryFn: () => esports.list({ status: "registration_open", limit: 8 }) });
-  const featured = useQuery({ queryKey: ["es-list", "featured"], queryFn: () => esports.list({ featured: "true", limit: 1 }) });
+  const featured = useQuery({ queryKey: ["es-list", "featured"], queryFn: () => esports.list({ featured: "true", limit: 10 }) });
   const top = useQuery({ queryKey: ["es-top"], queryFn: () => esports.topPlayers() });
-  const hero = featured.data?.items[0] ?? open.data?.items[0] ?? null;
+  // Only a tournament still ahead or running leads the page; finished ones live in the lists and results.
+  const hero = featured.data?.items.find((x) => !DONE.includes(x.status)) ?? open.data?.items[0] ?? null;
 
   return (
     <>

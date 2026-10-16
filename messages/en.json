@@ -416,6 +416,7 @@
       "kills": "Kills",
       "rank": "Rank #{n}",
       "unranked": "Not ranked yet"
-    }
+    },
+    "startedAt": "Started"
   }
 }
