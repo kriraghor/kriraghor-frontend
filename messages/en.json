@@ -190,7 +190,8 @@
       "failed": "Retrying",
       "manual_required": "Our team will contact you",
       "rejected": "Not approved"
-    }
+    },
+    "backToEsports": "Back to my matches"
   },
   "payouts": {
     "title": "My payouts",
@@ -324,5 +325,18 @@
     "consent": "I agree that Kriraghor uses these documents to check my identity. Only trained staff see them, every view is recorded, and the photos are deleted 90 days after the decision.",
     "submit": "Send for review",
     "cancel": "Cancel"
+  },
+  "esportsStrip": {
+    "kicker": "Esports · PUBG Mobile · Free Fire",
+    "title": "Play for real prize money",
+    "all": "All tournaments",
+    "prizes": "Prizes",
+    "entry": "Entry {fee}",
+    "free": "Free entry",
+    "slots": "{left, plural, =0 {Full} one {# slot left} other {# slots left}}",
+    "none": "No tournaments are open right now. New ones are added every week.",
+    "topPlayers": "Top players",
+    "points": "{n} pts",
+    "noPlayers": "Rankings appear after the first tournament."
   }
 }

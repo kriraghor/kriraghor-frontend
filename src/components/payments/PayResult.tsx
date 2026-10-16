@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { publicEnv } from "@/lib/env";
 import { formatTaka, getPayment, outcomeOf, POLL_LIMIT_MS, POLL_MS, verifyPayment } from "@/lib/payments";
 import { Notice } from "../ui";
 
@@ -102,7 +103,13 @@ export function PayResult({ paymentId }: { paymentId: string }) {
           </>
         )}
       </div>
-      <Link href="/me/payments" className="mt-8 inline-block font-semibold underline">
+      {p.purpose === "esports_entry" ? (
+        // Entry fees are paid here, then the player goes back to their matches on esports.kriraghor.com (M21).
+        <a href={`${publicEnv().ESPORTS_URL}/me/matches`} className="mt-8 inline-flex min-h-12 items-center bg-amber-300 px-5 font-bold text-band" data-testid="back-to-esports">
+          {t("backToEsports")}
+        </a>
+      ) : null}
+      <Link href="/me/payments" className="mt-8 block font-semibold underline">
         {t("myPayments")}
       </Link>
     </Shell>
