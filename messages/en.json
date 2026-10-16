@@ -54,7 +54,9 @@
     "payments": "My payments",
     "money": "Money",
     "payouts": "My payouts",
-    "payoutAccount": "Payout account"
+    "payoutAccount": "Payout account",
+    "verify": "Verify your identity",
+    "verified": "Identity verified"
   },
   "admin": {
     "title": "Staff sign-in",
@@ -262,5 +264,64 @@
     "net": "Net",
     "statement": "Download statement (CSV)",
     "statementFailed": "We could not download the statement."
+  },
+  "kyc": {
+    "title": "Verify your identity",
+    "intro": "We check your National ID once. It keeps Kriraghor safe for everyone and unlocks booking, buying, hiring, selling and prize withdrawals.",
+    "signedOut": "Sign in to verify your identity.",
+    "signIn": "Sign in",
+    "loading": "Loading…",
+    "loadFailed": "We could not load this. Try again in a moment.",
+    "failed": "Something went wrong",
+    "badge": {
+      "fully_verified": "Fully verified",
+      "documents_in_review": "Documents in review",
+      "verification_needed": "Verification needed"
+    },
+    "progress": "{approved} of {total} done",
+    "status": {
+      "approved": "Verified",
+      "in_review": "In review",
+      "changes_requested": "Needs changes",
+      "rejected": "Not approved",
+      "missing": "Not started",
+      "withdrawn": "Replaced",
+      "superseded": "Replaced"
+    },
+    "reason": {
+      "blurry": "The photos are not clear enough",
+      "name_mismatch": "The name does not match the NID",
+      "not_nid": "This is not a National ID",
+      "under_age": "You are below the minimum age",
+      "duplicate_nid": "This NID is already on another account",
+      "other": "See the note from our team"
+    },
+    "start": "Verify my NID",
+    "again": "Upload my NID again",
+    "unlocks": "What it unlocks",
+    "limits": "Good to know",
+    "legalName": "Full name on the NID",
+    "legalNameHelp": "Exactly as printed, in English.",
+    "number": "NID number",
+    "numberHelp": "10, 13 or 17 digits.",
+    "dob": "Date of birth",
+    "files": "Photos",
+    "filesHelp": "JPEG, PNG or PDF, up to 5 MB each. All four corners visible, no glare.",
+    "slot": {
+      "front": "NID front",
+      "back": "NID back",
+      "selfie": "Selfie holding the NID"
+    },
+    "choose": "Choose a file",
+    "uploading": "Uploading…",
+    "uploaded": "Uploaded",
+    "uploadFailed": "Upload failed. Try again.",
+    "fileError": {
+      "type": "Use a JPEG, PNG or PDF.",
+      "size": "This file is larger than 5 MB."
+    },
+    "consent": "I agree that Kriraghor uses these documents to check my identity. Only trained staff see them, every view is recorded, and the photos are deleted 90 days after the decision.",
+    "submit": "Send for review",
+    "cancel": "Cancel"
   }
 }
