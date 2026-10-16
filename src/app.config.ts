@@ -7,5 +7,9 @@ export const APP = {
   title: "Kriraghor Esports",
   description: "PUBG Mobile and Free Fire tournaments with real prizes.",
   audience: "api" as Audience,
-  nav: [{ href: "/tournaments", key: "esports" }],
+  nav: [
+    { href: "/tournaments", key: "esports" },
+    { href: "/leaderboards", key: "leaderboards" },
+    { href: "/me/matches", key: "myMatches" },
+  ],
 };

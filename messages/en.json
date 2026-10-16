@@ -15,7 +15,9 @@
     "shop": "Shop",
     "gym": "Gym",
     "esports": "Esports",
-    "language": "বাংলা"
+    "language": "বাংলা",
+    "leaderboards": "Leaderboards",
+    "myMatches": "My matches"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -126,6 +128,294 @@
       "languageHelp": "Change it in your account settings.",
       "saved": "Saved.",
       "save": "Save"
+    }
+  },
+  "esports": {
+    "slots": "{taken}/{max} slots",
+    "days": "{n}d",
+    "prizePool": "Prize pool",
+    "entryFee": "Entry fee",
+    "free": "Free",
+    "startsIn": "Starts in",
+    "points": "{n} pts",
+    "more": "Show more",
+    "loadFailed": "Could not load. Try again.",
+    "failed": "Something went wrong",
+    "notFound": "Not found.",
+    "signIn": "Sign in",
+    "signInFirst": "Sign in to continue",
+    "myMatches": "My matches",
+    "status": {
+      "scheduled": "Coming soon",
+      "registration_open": "Open",
+      "registration_closed": "Closed",
+      "check_in": "Check-in",
+      "live": "Live",
+      "results_pending": "Results",
+      "finalised": "Finished",
+      "paid_out": "Finished",
+      "cancelled": "Cancelled",
+      "room_ready": "Room set",
+      "room_revealed": "Room open",
+      "disputed": "Disputed",
+      "final": "Final"
+    },
+    "regStatus": {
+      "pending_payment": "Payment due",
+      "confirmed": "Confirmed",
+      "waitlisted": "Waitlist",
+      "offered": "Slot offered",
+      "checked_in": "Checked in",
+      "no_show": "No-show",
+      "withdrawn": "Withdrawn",
+      "refunded": "Refunded",
+      "disqualified": "Disqualified",
+      "cancelled": "Cancelled"
+    },
+    "matchStatus": {
+      "scheduled": "Scheduled",
+      "room_ready": "Room set",
+      "room_revealed": "Room open",
+      "live": "Live",
+      "results_pending": "Results posted",
+      "disputed": "Disputed",
+      "final": "Final",
+      "cancelled": "Cancelled"
+    },
+    "uidStatus": {
+      "pending": "In review",
+      "verified": "Verified",
+      "rejected": "Not accepted",
+      "banned": "Banned",
+      "unlinked": "Removed"
+    },
+    "tier": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "major": "Major"
+    },
+    "format": {
+      "single_match": "Single match",
+      "series": "Series"
+    },
+    "cta": {
+      "results": "See the results below",
+      "closed": "Registration is closed"
+    },
+    "home": {
+      "kicker": "PUBG Mobile · Free Fire",
+      "title": "Play for real prizes, every day",
+      "lead": "Verified UIDs, fixed prize tables published before you pay, prizes paid to your bKash or Nagad.",
+      "browse": "Find a tournament",
+      "addUid": "Add your game UID",
+      "featured": "Big event",
+      "next": "Next up",
+      "openNow": "Open for registration",
+      "seeAll": "See all",
+      "noneOpen": "No tournaments open right now",
+      "noneOpenBody": "Add your UID now so you are ready when the next one opens.",
+      "topPlayers": "Top players",
+      "noRankingsYet": "Rankings start after the first finished tournaments.",
+      "leaderboards": "Leaderboards",
+      "how": "How it works",
+      "step": {
+        "uid": {
+          "title": "Add your UID",
+          "body": "A screenshot of your in-game profile; our team verifies it."
+        },
+        "register": {
+          "title": "Register and pay",
+          "body": "bKash, Nagad or card. Your fee is held safely until the tournament ends."
+        },
+        "checkin": {
+          "title": "Check in",
+          "body": "Check in before the first match. The room ID and password appear shortly before the start."
+        },
+        "play": {
+          "title": "Play and get paid",
+          "body": "Results are posted with a dispute window; prizes land in your winnings."
+        }
+      }
+    },
+    "list": {
+      "title": "Tournaments",
+      "game": "Game",
+      "allGames": "All games",
+      "stage": "Stage",
+      "show": {
+        "open": "Open",
+        "upcoming": "Upcoming",
+        "live": "Live",
+        "finished": "Finished"
+      },
+      "empty": "Nothing here yet",
+      "emptyBody": "Try another game or stage."
+    },
+    "startsAt": "Starts {when}",
+    "perSquad": "Fee per squad",
+    "perPlayer": "Fee per player",
+    "prizes": "Prizes",
+    "place": "#{n}",
+    "perKill": "Per kill",
+    "guaranteed": "Prizes are guaranteed once the tournament runs, however many enter.",
+    "schedule": "Schedule",
+    "match": "Match {n}",
+    "checkinWindow": "Check-in {from}–{to}",
+    "streams": "Watch",
+    "live": "Live",
+    "standings": "Standings",
+    "entry": "Entry",
+    "pts": "Pts",
+    "wins": "Wins",
+    "kills": "Kills",
+    "tieBreak": "Ties: most wins, then kills, then the latest match, then who registered first.",
+    "standingsSoon": "Standings appear after the first results.",
+    "rules": "Rules",
+    "waitlistCount": "{n} on the waitlist",
+    "register": "Register",
+    "joinWaitlist": "Join the waitlist",
+    "finishPayment": "Finish payment",
+    "viewEntry": "View my entry",
+    "opensAt": "Registration opens {when}",
+    "closesAt": "Registration closes {when}",
+    "minNote": "Cancelled with a full refund if fewer than {n} entries.",
+    "slotsLeft": "Slots left",
+    "reg": {
+      "title": "Register",
+      "waitlisted": "You are on the waitlist. If a slot opens we will offer it to you; pay only then.",
+      "needUid": "You need a verified UID for this game",
+      "needUidBody": "Add your UID with a screenshot; it is usually verified within a few hours.",
+      "playingAs": "Playing as",
+      "needSquad": "You need a squad",
+      "needSquadBody": "Create a squad or join one; {n} players with verified UIDs play.",
+      "squad": "Squad",
+      "chooseSquad": "Choose your squad",
+      "pick": "Pick {n} players and up to {subs} substitutes",
+      "noUid": "No verified UID",
+      "player": "Plays",
+      "sub": "Sub",
+      "picked": "{n} of {of} players picked",
+      "confirmFree": "Confirm my entry",
+      "confirmPay": "Pay {amount} and register",
+      "refundNote": "Full refund if you withdraw before registration closes or the tournament is cancelled."
+    },
+    "me": {
+      "title": "UIDs and squads",
+      "lead": "One UID per game. A UID can belong to one Kriraghor account only.",
+      "uids": "My game UIDs",
+      "noUids": "No UIDs yet.",
+      "rejected": "Not accepted: {reason}",
+      "addUid": "Add a UID",
+      "game": "Game",
+      "chooseGame": "Choose a game",
+      "ign": "In-game name",
+      "screenshot": "Screenshot of your in-game profile",
+      "screenshotHint": "JPEG or PNG showing your UID and name.",
+      "needAll": "Choose a game and add a screenshot.",
+      "sent": "Sent for review. We will tell you when it is verified.",
+      "send": "Send for review"
+    },
+    "squads": {
+      "title": "Squads",
+      "invitedTo": "You are invited to {name}",
+      "accept": "Join",
+      "decline": "Decline",
+      "captain": "Captain",
+      "invited": "Invited",
+      "code": "Invite code",
+      "username": "Username to invite",
+      "invite": "Invite",
+      "leave": "Leave squad",
+      "needUid": "Verify a UID to create a squad.",
+      "create": "Create a squad",
+      "name": "Squad name",
+      "tag": "Tag (2–8 letters)",
+      "join": "Join with a code"
+    },
+    "mine": {
+      "empty": "You have not entered a tournament yet",
+      "offerTaken": "Slot taken.",
+      "takeSlot": "Take the slot",
+      "checkedIn": "Checked in.",
+      "checkIn": "Check in",
+      "room": "Room (match {n})",
+      "result": "Result (match {n})",
+      "withdrawConfirm": "Withdraw? Your entry fee is refunded in full.",
+      "withdrawForfeit": "Withdraw? Registration has closed, so the entry fee is not refunded.",
+      "withdraw": "Withdraw",
+      "withdrawn": "Withdrawn.",
+      "roomSoon": "The room ID and password appear here shortly before the match."
+    },
+    "slotNo": "Slot {n}",
+    "payNow": "Pay {amount}",
+    "room": {
+      "title": "Room",
+      "notYet": "The room opens shortly before the match. Keep this page open; it appears here.",
+      "updated": "The room details changed. Use these.",
+      "id": "Room ID",
+      "password": "Password",
+      "map": "Map",
+      "starts": "Starts",
+      "rules": "Version {version}. Do not share these; every view is recorded.",
+      "copy": "Copy",
+      "copied": "Copied"
+    },
+    "result": {
+      "windowLeft": "Dispute window closes in",
+      "finalAt": "Final since {when}",
+      "notYet": "Results are not posted yet.",
+      "disputeTitle": "Something wrong?",
+      "reason": "What is wrong (be specific)",
+      "screenshot": "Screenshot of the scoreboard (optional)",
+      "dispute": "Send dispute",
+      "disputeSent": "Dispute sent. Our team will review it."
+    },
+    "placementShort": "#",
+    "dnp": "DNP",
+    "win": {
+      "title": "Winnings",
+      "available": "Available to withdraw",
+      "total": "Won so far {amount}",
+      "min": "Minimum {amount}",
+      "dailyLeft": "Left today {amount}",
+      "withdraw": "Withdraw to bKash or Nagad",
+      "verify": "Verify your NID",
+      "addAccount": "Add a payout account",
+      "requested": "Withdrawal requested. You will be told when it is sent.",
+      "history": "Prizes",
+      "kills": "Kill reward",
+      "none": "No prizes yet.",
+      "withdrawals": "Withdrawals",
+      "share": {
+        "reversed": "Taken back",
+        "pending": "Pending"
+      },
+      "status": {
+        "scheduled": "Requested",
+        "needs_approval": "In review",
+        "on_hold": "On hold",
+        "processing": "Sending",
+        "paid": "Paid",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      }
+    },
+    "lb": {
+      "title": "Leaderboards",
+      "rolling": "Last 12 months",
+      "season": "Season",
+      "played": "{n} tournaments",
+      "empty": "No ranked players yet",
+      "how": "How points work",
+      "formula": "Each finished tournament scores your placement percentile (100 for the winner) plus 2 per kill, times the tier weight. Older results fade with a {half}-day half-life. You need at least {min} tournaments to appear."
+    },
+    "player": {
+      "tournaments": "Tournaments",
+      "wins": "Wins",
+      "kills": "Kills",
+      "rank": "Rank #{n}",
+      "unranked": "Not ranked yet"
     }
   }
 }
