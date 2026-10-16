@@ -21,7 +21,8 @@
     "esportsCatalog": "Esports catalogue",
     "audit": "Audit log",
     "events": "Events",
-    "finance": "Finance"
+    "finance": "Finance",
+    "kyc": "KYC"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -636,5 +637,83 @@
     "windowEnd": "Up to",
     "payoutsCount": "Payouts",
     "needsApprovalCount": "Need approval"
+  },
+  "kyc": {
+    "title": "KYC",
+    "intro": "National IDs waiting for review. Check the name, the photos and the checks, then decide. Every image you open and every number you reveal is in the audit log.",
+    "noAccess": "You need the approve_documents permission to review identity documents.",
+    "queue": "Queue",
+    "loadFailed": "Could not load this document.",
+    "failed": "Something went wrong",
+    "pick": "Pick a document from the queue.",
+    "member": "Member",
+    "number": "NID number",
+    "checks": "Checks",
+    "submitted": "Submitted",
+    "allChecksOk": "All checks passed",
+    "status": {
+      "in_review": "Waiting",
+      "changes_requested": "Changes asked",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "withdrawn": "Replaced",
+      "superseded": "Replaced"
+    },
+    "check": {
+      "nid_format": "NID format",
+      "age_ok": "Minimum age",
+      "nid_unique": "NID not on another account",
+      "file_type": "File types",
+      "file_reused": "Photos not used by another account"
+    },
+    "ok": "OK",
+    "blocks": "Blocks approval",
+    "warning": "Warning",
+    "legalName": "Legal name",
+    "dob": "Date of birth",
+    "phone": "Phone",
+    "phoneOk": "Verified",
+    "phoneMissing": "Not verified",
+    "reveal": "Reveal",
+    "revealReason": "Why do you need the full number?",
+    "revealConfirm": "Show for 60 s",
+    "hidesIn": "hidden in {seconds} s",
+    "files": "Files",
+    "filesAudited": "Opening a file is recorded in the audit log.",
+    "slot": {
+      "front": "NID front",
+      "back": "NID back",
+      "selfie": "Selfie with NID"
+    },
+    "show": "Show",
+    "openPdf": "Open PDF",
+    "purged": "Deleted after the retention period",
+    "fileFailed": "Could not open the file.",
+    "rubric": "Review checks",
+    "rubricItem": {
+      "nameMatches": "The name matches the NID",
+      "readable": "Readable, all corners visible",
+      "notExpired": "Genuine and not expired"
+    },
+    "reasonLabel": "Reason (for changes or reject)",
+    "chooseReason": "Choose a reason",
+    "reason": {
+      "blurry": "Photos not clear enough",
+      "name_mismatch": "Name does not match the NID",
+      "not_nid": "Not a National ID",
+      "under_age": "Below the minimum age",
+      "duplicate_nid": "NID already on another account",
+      "other": "Other (write a note)"
+    },
+    "note": "Note to the member (optional)",
+    "approve": "Approve",
+    "askChanges": "Ask for changes",
+    "reject": "Reject",
+    "problem": {
+      "rubric": "Tick every review check before approving.",
+      "checks": "A blocking check failed: reject or ask for changes.",
+      "reason": "Choose a reason first."
+    },
+    "history": "Versions"
   }
 }
