@@ -22,7 +22,7 @@
     "audit": "Audit log",
     "events": "Events",
     "finance": "Finance",
-    "kyc": "KYC"
+    "moderation": "Moderation"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -639,36 +639,17 @@
     "needsApprovalCount": "Need approval"
   },
   "kyc": {
-    "title": "KYC",
-    "intro": "National IDs waiting for review. Check the name, the photos and the checks, then decide. Every image you open and every number you reveal is in the audit log.",
-    "noAccess": "You need the approve_documents permission to review identity documents.",
-    "queue": "Queue",
     "loadFailed": "Could not load this document.",
     "failed": "Something went wrong",
-    "pick": "Pick a document from the queue.",
-    "member": "Member",
     "number": "NID number",
-    "checks": "Checks",
-    "submitted": "Submitted",
-    "allChecksOk": "All checks passed",
-    "status": {
-      "in_review": "Waiting",
-      "changes_requested": "Changes asked",
-      "approved": "Approved",
-      "rejected": "Rejected",
-      "withdrawn": "Replaced",
-      "superseded": "Replaced"
-    },
     "check": {
       "nid_format": "NID format",
       "age_ok": "Minimum age",
       "nid_unique": "NID not on another account",
       "file_type": "File types",
-      "file_reused": "Photos not used by another account"
+      "file_reused": "Photos not used by another account",
+      "nid_pending_elsewhere": "NID not waiting on another account"
     },
-    "ok": "OK",
-    "blocks": "Blocks approval",
-    "warning": "Warning",
     "legalName": "Legal name",
     "dob": "Date of birth",
     "phone": "Phone",
@@ -688,32 +669,97 @@
     "show": "Show",
     "openPdf": "Open PDF",
     "purged": "Deleted after the retention period",
-    "fileFailed": "Could not open the file.",
-    "rubric": "Review checks",
-    "rubricItem": {
-      "nameMatches": "The name matches the NID",
-      "readable": "Readable, all corners visible",
-      "notExpired": "Genuine and not expired"
+    "fileFailed": "Could not open the file."
+  },
+  "moderation": {
+    "title": "Moderation",
+    "intro": "Everything waiting for review, oldest deadline first. Claim an item to review it: the lock holds while the pane is open. Tick every check before approving; give a reason for anything else.",
+    "noAccess": "You need a review permission (approve_documents or approve_listings) to use the Moderation desk.",
+    "queue": "Queue",
+    "kpi": {
+      "inQueue": "In the queue",
+      "overdue": "Overdue",
+      "claimedByYou": "Claimed by you",
+      "decidedToday": "Decided today"
     },
+    "status": {
+      "pending_review": "Waiting",
+      "changes_requested": "Changes asked",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn",
+      "superseded": "Replaced"
+    },
+    "kindLabel": "Kind",
+    "allKinds": "All kinds",
+    "kind": {
+      "document": "Identity document"
+    },
+    "lockLabel": "Lock",
+    "lockAny": "Any",
+    "lockNone": "Not claimed",
+    "lockMe": "Claimed by me",
+    "lockOthers": "Claimed by others",
+    "overdueOnly": "Overdue only",
+    "search": "Search titles",
+    "item": "Item",
+    "submittedBy": "Submitted by",
+    "deadline": "Deadline",
+    "decided": "Decided",
+    "lock": "Lock",
+    "sla": {
+      "ok": "On time",
+      "warn": "Due soon",
+      "overdue": "Overdue"
+    },
+    "lockedByYou": "Yours",
+    "someone": "Someone",
+    "pick": "Pick an item from the queue.",
+    "loadFailed": "Could not load this item.",
+    "failed": "Something went wrong",
+    "lockLost": "Your lock ended. Claim the item again.",
+    "lockUntil": "Held until {time}",
+    "lockedBy": "Being reviewed by {name}",
+    "claim": "Claim and review",
+    "release": "Release",
+    "forceRelease": "Force release",
+    "checks": "Automatic checks",
+    "result": {
+      "pass": "Pass",
+      "warn": "Warning",
+      "fail": "Fail",
+      "pending": "Pending",
+      "not_computed": "Not run"
+    },
+    "blocksApproval": "Blocks approval",
+    "rubric": "Review checks",
     "reasonLabel": "Reason (for changes or reject)",
     "chooseReason": "Choose a reason",
-    "reason": {
-      "blurry": "Photos not clear enough",
-      "name_mismatch": "Name does not match the NID",
-      "not_nid": "Not a National ID",
-      "under_age": "Below the minimum age",
-      "duplicate_nid": "NID already on another account",
-      "other": "Other (write a note)"
-    },
-    "note": "Note to the member (optional)",
+    "note": "Note to the submitter (optional)",
+    "noteRequired": "Note to the submitter (required)",
+    "overrideLabel": "Override reason (master only)",
+    "overrideHelp": "Approving over a failing check needs your authenticator code. The check stays recorded as failed and the override is in the audit log.",
     "approve": "Approve",
+    "approveOverride": "Approve over the check",
     "askChanges": "Ask for changes",
     "reject": "Reject",
     "problem": {
       "rubric": "Tick every review check before approving.",
-      "checks": "A blocking check failed: reject or ask for changes.",
-      "reason": "Choose a reason first."
+      "checks": "A blocking check failed: ask for changes, reject, or (master) give an override reason.",
+      "reason": "Choose a reason first.",
+      "reasonText": "This reason needs a note to the submitter."
     },
+    "decidedBy": "Decided by {name}, {time}",
+    "overridden": "Approved over a failing check by {name}: {reason}",
+    "applied": "Applied to the account.",
+    "notApplied": "Waiting to be applied.",
+    "reopen": "Reopen",
+    "reopenTitle": "Reopen this decision",
+    "reopenHelp": "The item goes back to the queue with a new deadline. This is a critical audit entry.",
+    "reopenReason": "Why reopen it?",
+    "reasonNeeded": "Give a reason (3 characters or more).",
+    "overrideTitle": "Approve over a failing check",
+    "overrideDialogHelp": "Failing: {checks}. Enter your authenticator code to approve anyway.",
     "history": "Versions"
   }
 }

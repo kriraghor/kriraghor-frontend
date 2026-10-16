@@ -1142,7 +1142,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @enum {string} */
-                        scope: "settings.write" | "staff.write" | "payout.approve" | "refund.large" | "user.ban" | "audit.export" | "twofa.reset" | "esports.money" | "events.replay" | "escrow.manage";
+                        scope: "settings.write" | "staff.write" | "payout.approve" | "refund.large" | "user.ban" | "audit.export" | "twofa.reset" | "esports.money" | "events.replay" | "escrow.manage" | "moderation.override";
                         code: string;
                     };
                 };
@@ -9814,73 +9814,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/kyc/documents": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** KYC desk queue (approve_documents): masked, with failed checks and counts per status */
-        get: {
-            parameters: {
-                query?: {
-                    status?: "in_review" | "changes_requested" | "approved" | "rejected" | "superseded" | "withdrawn";
-                    cursor?: string;
-                    limit?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["KycQueue"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/admin/kyc/documents/{id}": {
         parameters: {
             query?: never;
@@ -9888,7 +9821,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** One document for review: legal name, DOB, masked number, checks, files and history */
+        /** The document panel on the Moderation desk: legal name, DOB, masked number, checks, files and history */
         get: {
             parameters: {
                 query?: never;
@@ -10121,7 +10054,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/kyc/documents/{id}/decide": {
+    "/me/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My submissions and their decisions, with the reason and note (FR-14) */
+        get: {
+            parameters: {
+                query?: {
+                    kind?: string;
+                    status?: "pending_review" | "changes_requested" | "approved" | "rejected" | "withdrawn" | "superseded";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MySubmissionList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/submissions/{id}/withdraw": {
         parameters: {
             query?: never;
             header?: never;
@@ -10130,7 +10120,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Approve (all rubric checks), request changes or reject (reason). Approval makes the member role active (FR-09, FR-10) */
+        /** Withdraw my open submission (kinds that allow it; documents are replaced by resubmitting) */
         post: {
             parameters: {
                 query?: never;
@@ -10140,22 +10130,7 @@ export interface paths {
                 };
                 cookie?: never;
             };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        /** @enum {string} */
-                        decision: "approve" | "changes_requested" | "reject";
-                        rubric?: {
-                            nameMatches?: boolean;
-                            readable?: boolean;
-                            notExpired?: boolean;
-                        };
-                        /** @enum {string} */
-                        reasonCode?: "blurry" | "name_mismatch" | "not_nid" | "under_age" | "duplicate_nid" | "other";
-                        note?: string;
-                    };
-                };
-            };
+            requestBody?: never;
             responses: {
                 /** @description OK */
                 200: {
@@ -10163,7 +10138,278 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["KycDecided"];
+                        "application/json": components["schemas"]["MySubmission"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: INVALID_STATE, WITHDRAW_NOT_ALLOWED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The Moderation queue: kinds I may review, oldest deadline first, with SLA and lock (FR-07, FR-17) */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "pending_review" | "changes_requested" | "approved" | "rejected" | "withdrawn" | "superseded";
+                    kind?: string;
+                    claimed?: "me" | "others" | "none";
+                    overdue?: "true" | "false";
+                    q?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationQueue"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Desk KPIs: in the queue, overdue, claimed by me, decided today (Asia/Dhaka) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationStats"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One submission: payload summary, latest checks, rubric, my ticks, reasons for the kind and version history. A kind I may not review is 404 */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationDetail"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions/{id}/claim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Claim the review lock (moderation.claim_ttl_min, capped at moderation.claim_max_min); checks re-run (FR-05, FR-08) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationDetail"];
                     };
                 };
                 /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
@@ -10193,7 +10439,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: DOC_NOT_IN_REVIEW, CHECKS_FAILED */
+                /** @description Error. Codes: ALREADY_CLAIMED, INVALID_STATE */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -10202,7 +10448,461 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: VALIDATION_FAILED, RUBRIC_INCOMPLETE, REASON_REQUIRED */
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions/{id}/heartbeat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Keep my lock while the review pane is open (every moderation.heartbeat_sec) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationHeartbeat"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, CLAIM_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: CLAIM_EXPIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions/{id}/ticks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save my rubric ticks on the server (FR-09) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        ticks: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationTicks"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, CLAIM_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: CLAIM_EXPIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions/{id}/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Release my lock; a master may force-release another reviewer’s lock (audited) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description Master only: release another reviewer’s lock (audited) */
+                        force?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationReleased"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, CLAIM_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions/{id}/decide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve (every rubric tick, no failing hard check), request changes or reject (a reason for the kind). A master may approve over a failing check with step-up moderation.override and a reason (Q46) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                    /** @description Required with override */
+                    "x-step-up"?: string;
+                };
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        decision: "approve" | "request_changes" | "reject";
+                        reasonCode?: string;
+                        /** @description Sent to the submitter; required when the reason is "other" */
+                        reasonText?: string;
+                        /** @description Master only, with step-up moderation.override: approve despite a failing hard check (audited) */
+                        override?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationDetail"];
+                    };
+                };
+                /** @description Error. Codes: IDEMPOTENCY_KEY_REQUIRED, IDEMPOTENCY_KEY_INVALID */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, SELF_REVIEW_FORBIDDEN, CLAIM_REQUIRED, STEP_UP_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: INVALID_STATE, CLAIM_EXPIRED, IDEMPOTENCY_IN_PROGRESS */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, IDEMPOTENCY_KEY_REUSED, RUBRIC_INCOMPLETE, CHECK_FAILED, CHECK_LOCKED, REASON_REQUIRED, REASON_NOT_ALLOWED_FOR_KIND */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/submissions/{id}/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Master: reopen a decided submission for review, with a reason (step-up moderation.override, critical audit) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Single-use step-up token from POST /auth/step-up */
+                    "x-step-up": string;
+                };
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ModerationDetail"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, STEP_UP_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: INVALID_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
                 422: {
                     headers: {
                         [name: string]: unknown;
@@ -11742,42 +12442,6 @@ export interface components {
             mime: string;
             sizeBytes: number;
         };
-        KycQueue: {
-            items: {
-                /** Format: uuid */
-                id: string;
-                docType: string;
-                version: number;
-                /** @enum {string} */
-                status: "in_review" | "changes_requested" | "approved" | "rejected" | "superseded" | "withdrawn";
-                numberMasked: string;
-                birthYear: number;
-                reasonCode: string | null;
-                reasonText: string | null;
-                /** Format: date-time */
-                decidedAt: string | null;
-                /** Format: date-time */
-                submittedAt: string;
-                files: {
-                    /** Format: uuid */
-                    id: string;
-                    slot: string;
-                    mime: string;
-                    sizeBytes: number;
-                    purged: boolean;
-                }[];
-                user: {
-                    /** Format: uuid */
-                    id: string;
-                    displayName: string | null;
-                };
-                failedChecks: string[];
-            }[];
-            nextCursor: string | null;
-            counts: {
-                [key: string]: number;
-            };
-        };
         KycReview: {
             /** Format: uuid */
             id: string;
@@ -11842,35 +12506,184 @@ export interface components {
             normalised: string;
             showForSeconds: number;
         };
-        KycDecided: {
+        MySubmissionList: {
+            items: components["schemas"]["MySubmission"][];
+        };
+        MySubmission: {
             /** Format: uuid */
             id: string;
-            docType: string;
+            kind: string;
+            /** Format: uuid */
+            subjectId: string;
             version: number;
+            title: string;
             /** @enum {string} */
-            status: "in_review" | "changes_requested" | "approved" | "rejected" | "superseded" | "withdrawn";
-            numberMasked: string;
-            birthYear: number;
+            status: "pending_review" | "changes_requested" | "approved" | "rejected" | "withdrawn" | "superseded";
             reasonCode: string | null;
             reasonText: string | null;
             /** Format: date-time */
+            submittedAt: string;
+            /** Format: date-time */
             decidedAt: string | null;
             /** Format: date-time */
-            submittedAt: string;
-            files: {
+            appliedAt: string | null;
+        };
+        ModerationQueue: {
+            items: {
                 /** Format: uuid */
                 id: string;
-                slot: string;
-                mime: string;
-                sizeBytes: number;
-                purged: boolean;
+                kind: string;
+                /** Format: uuid */
+                subjectId: string;
+                version: number;
+                isEdit: boolean;
+                title: string;
+                /** @enum {string} */
+                status: "pending_review" | "changes_requested" | "approved" | "rejected" | "withdrawn" | "superseded";
+                submittedBy: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string | null;
+                };
+                /** Format: date-time */
+                submittedAt: string;
+                /** Format: date-time */
+                slaDueAt: string;
+                /** @enum {string|null} */
+                sla: "ok" | "warn" | "overdue" | null;
+                claim: {
+                    /** Format: uuid */
+                    staffId: string;
+                    name: string | null;
+                    mine: boolean;
+                    /** Format: date-time */
+                    expiresAt: string;
+                    /** Format: date-time */
+                    hardExpiresAt: string;
+                } | null;
+                reasonCode: string | null;
+                /** Format: date-time */
+                decidedAt: string | null;
+                decidedBy: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string | null;
+                } | null;
             }[];
+        };
+        ModerationStats: {
+            inQueue: number;
+            overdue: number;
+            claimedByYou: number;
+            decidedToday: number;
+        };
+        ModerationDetail: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            /** Format: uuid */
+            subjectId: string;
+            version: number;
+            isEdit: boolean;
+            title: string;
+            /** @enum {string} */
+            status: "pending_review" | "changes_requested" | "approved" | "rejected" | "withdrawn" | "superseded";
+            submittedBy: {
+                /** Format: uuid */
+                id: string;
+                name: string | null;
+            };
+            /** Format: date-time */
+            submittedAt: string;
+            /** Format: date-time */
+            slaDueAt: string;
+            /** @enum {string|null} */
+            sla: "ok" | "warn" | "overdue" | null;
+            claim: {
+                /** Format: uuid */
+                staffId: string;
+                name: string | null;
+                mine: boolean;
+                /** Format: date-time */
+                expiresAt: string;
+                /** Format: date-time */
+                hardExpiresAt: string;
+            } | null;
+            reasonCode: string | null;
+            /** Format: date-time */
+            decidedAt: string | null;
+            decidedBy: {
+                /** Format: uuid */
+                id: string;
+                name: string | null;
+            } | null;
+            payload: {
+                [key: string]: unknown;
+            };
+            reasonText: string | null;
             checks: {
                 key: string;
-                ok: boolean;
-                blocks: boolean;
-                detail?: string | null;
+                /** @enum {string} */
+                severity: "hard" | "soft";
+                /** @enum {string} */
+                result: "pass" | "warn" | "fail" | "pending" | "not_computed";
+                detail: string | null;
             }[];
+            rubric: {
+                /** Format: uuid */
+                id: string;
+                version: number;
+                items: ({
+                    key: string;
+                    labelEn: string;
+                    labelBn: string;
+                } & {
+                    [key: string]: unknown;
+                })[];
+            } | null;
+            ticks: string[];
+            rubricResult: {
+                itemKey: string;
+                ticked: boolean;
+            }[] | null;
+            override: {
+                by: string | null;
+                reason: string | null;
+            } | null;
+            /** Format: date-time */
+            appliedAt: string | null;
+            reasons: {
+                code: string;
+                labelEn: string;
+                labelBn: string;
+                requiresText: boolean;
+            }[];
+            history: {
+                /** Format: uuid */
+                id: string;
+                version: number;
+                /** @enum {string} */
+                status: "pending_review" | "changes_requested" | "approved" | "rejected" | "withdrawn" | "superseded";
+                reasonCode: string | null;
+                decidedBy: string | null;
+                /** Format: date-time */
+                decidedAt: string | null;
+                /** Format: date-time */
+                submittedAt: string;
+            }[];
+        };
+        ModerationHeartbeat: {
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            hardExpiresAt: string;
+        };
+        ModerationTicks: {
+            ticks: string[];
+            missing: string[];
+        };
+        ModerationReleased: {
+            released: boolean;
         };
     };
     responses: never;
