@@ -110,7 +110,7 @@ function ItemRow({ item }: { item: VerificationItem }) {
       {d && (d.status === "changes_requested" || d.status === "rejected") ? (
         <div className="mt-2">
           <Notice tone="error">
-            {t(`reason.${d.reasonCode ?? "other"}`)}
+            {t.has(`reason.${d.reasonCode}`) ? t(`reason.${d.reasonCode}`) : t("reason.other")}
             {d.reasonText ? `: ${d.reasonText}` : ""}
           </Notice>
         </div>

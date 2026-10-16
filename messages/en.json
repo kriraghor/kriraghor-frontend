@@ -289,11 +289,12 @@
       "superseded": "Replaced"
     },
     "reason": {
-      "blurry": "The photos are not clear enough",
-      "name_mismatch": "The name does not match the NID",
-      "not_nid": "This is not a National ID",
-      "under_age": "You are below the minimum age",
-      "duplicate_nid": "This NID is already on another account",
+      "docs_mismatch_nid": "The details do not match the NID",
+      "unreadable": "The photos are unclear or cut off",
+      "expired": "The NID looks expired",
+      "duplicate": "This NID is already on another account",
+      "info_incomplete": "Some required information is missing",
+      "breaks_rules": "It breaks our rules",
       "other": "See the note from our team"
     },
     "start": "Verify my NID",
