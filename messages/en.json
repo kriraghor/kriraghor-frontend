@@ -23,7 +23,9 @@
     "events": "Events",
     "finance": "Finance",
     "moderation": "Moderation",
-    "esportsDesk": "Tournaments"
+    "esportsDesk": "Tournaments",
+    "groundsAdmin": "Grounds",
+    "places": "Places and sports"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -654,7 +656,13 @@
       "uid_not_banned": "UID is not on the ban list",
       "uid_unique": "UID isn't linked to another account",
       "schedule_and_prizes": "Schedule and prize table are valid",
-      "subsidy_at_minimum": "Fees at the minimum fill cover the prizes"
+      "subsidy_at_minimum": "Fees at the minimum fill cover the prizes",
+      "owner_kyc_approved": "Owner documents approved",
+      "photos_min": "Enough photos",
+      "hours_and_rules_valid": "Courts, hours and prices are valid",
+      "price_in_range": "Base price within the allowed range",
+      "name_unique_in_area": "No ground with a similar name nearby",
+      "not_expired": "Document still valid"
     },
     "legalName": "Legal name",
     "dob": "Date of birth",
@@ -670,12 +678,25 @@
     "slot": {
       "front": "NID front",
       "back": "NID back",
-      "selfie": "Selfie with NID"
+      "selfie": "Selfie with NID",
+      "document": "Document"
     },
     "show": "Show",
     "openPdf": "Open PDF",
     "purged": "Deleted after the retention period",
-    "fileFailed": "Could not open the file."
+    "fileFailed": "Could not open the file.",
+    "docType": "Document",
+    "docTypes": {
+      "nid": "National ID",
+      "trade_license": "Trade licence",
+      "deed_or_lease": "Land deed or lease",
+      "tin": "TIN certificate"
+    },
+    "businessField": {
+      "holderName": "Name on the licence",
+      "expiresOn": "Valid until",
+      "kind": "Deed or lease"
+    }
   },
   "moderation": {
     "title": "Moderation",
@@ -701,7 +722,8 @@
     "kind": {
       "document": "Identity document",
       "game_profile": "Game UID",
-      "esports_tournament": "Esports tournament"
+      "esports_tournament": "Esports tournament",
+      "ground": "Ground listing"
     },
     "lockLabel": "Lock",
     "lockAny": "Any",
@@ -983,5 +1005,356 @@
       "prizes": "Prize table · total {pool}",
       "subsidy": "At full slots the fees fall {gap} short of the prizes; Kriraghor covers the difference."
     }
+  },
+  "vendorGrounds": {
+    "home": {
+      "title": "Ground owner desk",
+      "lead": "List your turf or pitch, set your prices and take bookings with an advance. Kriraghor pays you at check-in.",
+      "active": "Your ground owner account is active.",
+      "groundsCount": "{n, plural, =0 {No grounds yet.} one {# ground} other {# grounds}}",
+      "open": "Open my grounds",
+      "step": {
+        "nid": "Verify your NID",
+        "docs": "Send your trade licence and land documents",
+        "list": "List your first ground"
+      },
+      "stepHelp": {
+        "nid": "On kriraghor.com, with the same account.",
+        "docs": "Staff check them within a working day. Status: {status}.",
+        "list": "Photos, courts, opening hours and a price."
+      },
+      "go": {
+        "nid": "Verify NID",
+        "docs": "Send documents",
+        "list": "Add a ground"
+      }
+    },
+    "roleStatus": {
+      "none": "not started",
+      "applied": "started",
+      "documents_pending": "documents needed",
+      "in_review": "in review",
+      "changes_requested": "changes needed",
+      "active": "active",
+      "rejected": "not approved",
+      "suspended": "suspended",
+      "withdrawn": "withdrawn"
+    },
+    "gate": "Your ground owner account is not active yet. Finish the steps on the business desk first.",
+    "gateLink": "Go to the business desk",
+    "title": "My grounds",
+    "lead": "Staff review a ground before it shows on kriraghor.com. A live ground stays public while staff review your changes.",
+    "add": "Add a ground",
+    "tab": {
+      "all": "All",
+      "live": "Live",
+      "pending_review": "In review",
+      "changes_requested": "Changes needed",
+      "draft": "Drafts",
+      "paused": "Paused",
+      "rejected": "Not approved"
+    },
+    "empty": "No grounds here yet.",
+    "noPhoto": "No photo",
+    "status": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes needed",
+      "live": "Live",
+      "paused": "Paused",
+      "rejected": "Not approved",
+      "withdrawn": "Withdrawn",
+      "suspended": "Suspended",
+      "removed": "Removed"
+    },
+    "edit": {
+      "draft": "Unsent changes",
+      "pending_review": "Changes in review",
+      "changes_requested": "Fix your changes",
+      "rejected": "Changes not approved"
+    },
+    "courts": "{n, plural, one {# court} other {# courts}}",
+    "perHour": "{price}/hour",
+    "reason": {
+      "photos_unclear": "The photos are unclear or not of this ground",
+      "price_wrong": "The price looks wrong",
+      "duplicate": "This ground is already listed",
+      "info_incomplete": "Some information is missing",
+      "breaks_rules": "It breaks our rules",
+      "location_wrong": "The address or map pin is wrong",
+      "not_a_venue": "It is not a bookable sports venue",
+      "other": "See the note from our team",
+      "owner_role": "Paused: your ground owner account is suspended",
+      "owner_sanction": "Paused: your account is suspended"
+    },
+    "form": {
+      "name": "Ground name",
+      "area": "Area",
+      "chooseArea": "Choose an area",
+      "address": "Address",
+      "lat": "Map pin latitude",
+      "lng": "Map pin longitude",
+      "basePrice": "Base price per hour (৳)",
+      "indoor": "Indoor",
+      "pinHelp": "Leave the pin empty to use the centre of the area; you can change it later. Staff check the photos, price and your documents. The ground shows once approved, usually within 24 hours.",
+      "create": "Create draft",
+      "badPrice": "Enter the price in taka, like 2400",
+      "description": "Description",
+      "rules": "House rules",
+      "cutoff": "Stop online bookings before start",
+      "cutoffMin": "{n, plural, =0 {No cut-off} other {# minutes}}",
+      "facilities": "Facilities"
+    },
+    "cancel": "Cancel",
+    "failed": "That didn't work. Try again.",
+    "loadFailed": "Couldn't load this ground.",
+    "reviewNote": "Staff asked for changes: {reason}.",
+    "editNote": "You have changes that staff must review. The public sees the approved version until then.",
+    "submit": "Send for review",
+    "submitEdit": "Send changes for review",
+    "sent": "Sent. Staff usually review within 24 hours.",
+    "withdraw": "Withdraw from review",
+    "withdrawn": "Taken out of review.",
+    "pause": "Pause",
+    "paused": "Paused. It is hidden; bookings already made stay.",
+    "resume": "Show again",
+    "resumed": "Showing again.",
+    "pricing": "Prices",
+    "viewPublic": "View on kriraghor.com",
+    "basics": "Basics",
+    "saved": "Saved.",
+    "reviewFields": "Name, area, address, pin, indoor, photos and courts need review on a live ground. Description, rules, cut-off and facilities change at once.",
+    "save": "Save",
+    "photos": "Photos",
+    "photosHelp": "{n, plural, one {# photo} other {# photos}}. Add at least 3; the first is the cover. JPEG, PNG or WebP.",
+    "cover": "Cover",
+    "photoN": "Photo {n}",
+    "moveLeft": "Move earlier",
+    "moveRight": "Move later",
+    "remove": "Remove",
+    "addPhotos": "Add photos",
+    "courtsTitle": "Courts and opening hours",
+    "addCourt": "Add a court",
+    "courtAdded": "Court added. It is bookable once staff approve it.",
+    "court": {
+      "name": "Court name",
+      "surface": "Surface",
+      "size": "Size",
+      "sports": "Sports",
+      "capacity": "Players",
+      "capacityHint": "5 and 7-a-side",
+      "group": "Combine with (group key)"
+    },
+    "choose": "Choose",
+    "courtStatus": {
+      "pending": "Waiting for approval",
+      "active": "Bookable",
+      "retired": "Retired"
+    },
+    "retire": "Retire court",
+    "courtRetired": "Court retired.",
+    "saveCourt": "Save court",
+    "hours": "Opening hours",
+    "hoursHelp": "Half-hour steps between 06:00 and 23:00. Hours change at once, without review.",
+    "dow": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    },
+    "closed": "Closed",
+    "open": "Open",
+    "opens": "Opens",
+    "closes": "Closes",
+    "saveHours": "Save hours",
+    "hoursSaved": "Hours saved.",
+    "copyMonday": "Copy Monday's hours to every day",
+    "pricingTitle": "Prices and booking rules",
+    "pricingLead": "Your rules apply to every new booking. Bookings already made keep the price the team saw.",
+    "rules": {
+      "base": "Base price",
+      "basePrice": "Per hour (৳)",
+      "baseHelp": "{min} to {max}. Locked while the ground is in review.",
+      "time": "Time of day and week",
+      "peakFrom": "Peak starts",
+      "peak": "Peak surcharge (%)",
+      "capped": "Up to {n}%",
+      "weekend": "Weekend surcharge, Fri and Sat (%)",
+      "earlyTo": "Early bird before",
+      "early": "Early-bird discount (%)",
+      "booking": "Booking rules",
+      "minBooking": "Shortest booking",
+      "advance": "Advance at booking (%)",
+      "advanceHelp": "{min}% to {max}%, and at least the {fee}% Kriraghor fee.",
+      "grace": "Check-in grace (minutes)",
+      "series": "Regular booking discount (%)",
+      "fullRefund": "Full refund until (hours before)",
+      "halfRefund": "Half refund until (hours before)",
+      "noRefund": "The advance is not refunded when a member cancels or does not come. Refund windows are kept for later and do not apply now."
+    },
+    "minutes": "{n} min",
+    "footer": {
+      "unsaved": "Unsaved changes. {n, plural, =0 {No upcoming bookings} one {# upcoming booking keeps its price} other {# upcoming bookings keep their price}}.",
+      "draft": "A saved draft is waiting. Publish it to use it for new bookings.",
+      "saved": "Saved. These rules match what teams see now."
+    },
+    "saveDraft": "Save draft",
+    "draftSaved": "Draft saved.",
+    "publish": "Publish",
+    "published": "Published. New bookings use these prices.",
+    "discard": "Discard draft",
+    "discarded": "Draft discarded.",
+    "applyToAll": "Use these rules on all my grounds (each keeps its own base price)",
+    "undo": "Undo changes",
+    "history": "Change history",
+    "noHistory": "Nothing published yet.",
+    "quote": {
+      "title": "Quote a slot",
+      "court": "Court",
+      "day": "Day",
+      "start": "Start",
+      "length": "Length",
+      "usingDraft": "Using your unsaved changes.",
+      "rate": "Hourly rate at start",
+      "advance": "Advance online",
+      "balance": "Balance at the ground",
+      "fee": "Kriraghor fee",
+      "total": "Total",
+      "youGet": {
+        "advance": "You get (advance paid)",
+        "full": "You get (paid in full)"
+      },
+      "cash": "cash",
+      "noFull": "Members pay the advance online; paying in full online is off."
+    },
+    "heat": {
+      "title": "Price per hour, next 7 days",
+      "draft": "Show the draft",
+      "legend": "In ৳ thousands. Green is below the base price, amber above it."
+    }
+  },
+  "groundsAdmin": {
+    "title": "Grounds",
+    "intro": "Every ground and its owner. Reviews happen on the Moderation desk; here ops suspend a listing and masters restore or remove one.",
+    "noAccess": "You need approve_listings or manage_users for this desk.",
+    "loadFailed": "Couldn't load this ground.",
+    "failed": "That didn't work. Try again.",
+    "statusFilter": "Status",
+    "allStatuses": "All statuses",
+    "search": "Search by name",
+    "none": "No grounds match.",
+    "col": {
+      "ground": "Ground",
+      "owner": "Owner",
+      "status": "Status",
+      "updated": "Updated"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes needed",
+      "live": "Live",
+      "paused": "Paused",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn",
+      "suspended": "Suspended",
+      "removed": "Removed"
+    },
+    "edit": {
+      "draft": "unsent edit",
+      "pending_review": "edit in review",
+      "changes_requested": "edit needs changes",
+      "rejected": "edit rejected"
+    },
+    "suspend": "Suspend",
+    "restore": "Restore",
+    "remove": "Remove",
+    "ask": {
+      "suspend": "Why suspend {name}? (at least 5 characters)",
+      "restore": "Why restore {name}?",
+      "remove": "Why remove {name}? It cannot be undone."
+    },
+    "done": {
+      "suspend": "{name} is suspended.",
+      "restore": "{name} is live again.",
+      "remove": "{name} is removed."
+    },
+    "whatChanged": "What changed",
+    "firstReview": "First review",
+    "diff": {
+      "first": "A new ground with {photos} photos.",
+      "field": "{field}: {from} → {to}",
+      "court_added": "Court added: {name}",
+      "court_changed": "Court {name} changed: {fields}",
+      "court_retired": "Court retired: {name}",
+      "photosAdded": "{n} photo(s) added",
+      "photosRemoved": "{n} photo(s) removed"
+    },
+    "owner": "Owner",
+    "address": "Address",
+    "pin": "Map pin",
+    "indoor": "Indoor",
+    "yes": "Yes",
+    "no": "No",
+    "price": "Price",
+    "priceLine": "{base}/h · peak +{peak}% · weekend +{weekend}% · advance {advance}%",
+    "photoN": "Photo {n}",
+    "courtStatus": {
+      "pending": "new",
+      "active": "live",
+      "retired": "retired"
+    },
+    "closed": "closed",
+    "days": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
+  },
+  "places": {
+    "title": "Places and sports",
+    "intro": "Areas, sports, facilities and surfaces that grounds and other listings use. Keys never change; deactivate instead of deleting. Grounds can be listed only in areas with grounds on.",
+    "tab": {
+      "areas": "Areas",
+      "sports": "Sports",
+      "facilities": "Facilities",
+      "surfaces": "Surfaces"
+    },
+    "failed": "That didn't work. Try again.",
+    "groundsOn": "Grounds",
+    "inactive": "Inactive",
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "deactivated": "Deactivated.",
+    "reactivated": "Reactivated.",
+    "saved": "Saved.",
+    "added": "Added.",
+    "save": "Save",
+    "nameEn": "Name (English)",
+    "nameBn": "Name (Bangla)",
+    "aliases": "Other names (comma separated)",
+    "groundsFlag": "Grounds can be listed here (Dhaka only)",
+    "add": {
+      "areas": "Add an area",
+      "facilities": "Add a facility"
+    },
+    "key": "Key (lowercase, permanent)",
+    "district": "District",
+    "choose": "Choose",
+    "lat": "Latitude",
+    "lng": "Longitude",
+    "metro": "Dhaka metro",
+    "zone": "Zone",
+    "north": "North",
+    "south": "South",
+    "addButton": "Add"
   }
 }

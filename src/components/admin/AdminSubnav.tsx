@@ -8,6 +8,8 @@ export const ADMIN_NAV = [
   { href: "/admin/fees", key: "fees" },
   { href: "/admin/catalog/esports", key: "esportsCatalog" },
   { href: "/admin/esports", key: "esportsDesk" },
+  { href: "/admin/grounds", key: "groundsAdmin" },
+  { href: "/admin/catalog/places", key: "places" },
   { href: "/admin/finance", key: "finance" },
   { href: "/admin/moderation", key: "moderation" },
   { href: "/admin/audit", key: "audit" },

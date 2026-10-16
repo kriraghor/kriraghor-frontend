@@ -19,17 +19,42 @@ export function DocumentPanel({ documentId }: { documentId: string }) {
   if (d.isPending) return <div className="mt-4 h-40 animate-pulse bg-surface-2" />;
   if (d.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const doc = d.data;
+  const fields = doc.fields as Record<string, unknown> & { legalName?: string; dob?: string; numberMasked: string | null };
+  // Business documents (ground owners, M09): the typed fields; the number stays masked, no reveal.
+  const business = doc.docType !== "nid";
+  const extra = business ? Object.entries(fields).filter(([k, v]) => !["numberMasked", "role"].includes(k) && v !== null && v !== undefined) : [];
   return (
     <div data-testid="kyc-review">
       <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-        <dt className="text-muted">{t("legalName")}</dt>
-        <dd className="font-semibold">{doc.fields.legalName}</dd>
-        <dt className="text-muted">{t("dob")}</dt>
-        <dd>{doc.fields.dob}</dd>
-        <dt className="text-muted">{t("number")}</dt>
-        <dd>
-          <RevealNid id={documentId} masked={doc.fields.numberMasked} />
-        </dd>
+        {business ? (
+          <>
+            <dt className="text-muted">{t("docType")}</dt>
+            <dd className="font-semibold">{t(`docTypes.${doc.docType}`)}</dd>
+            {extra.map(([k, v]) => (
+              <span key={k} className="contents">
+                <dt className="text-muted">{t.has(`businessField.${k}`) ? t(`businessField.${k}`) : k}</dt>
+                <dd className="font-semibold">{String(v)}</dd>
+              </span>
+            ))}
+            {fields.numberMasked ? (
+              <>
+                <dt className="text-muted">{t("number")}</dt>
+                <dd className="font-mono">{fields.numberMasked}</dd>
+              </>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <dt className="text-muted">{t("legalName")}</dt>
+            <dd className="font-semibold">{fields.legalName}</dd>
+            <dt className="text-muted">{t("dob")}</dt>
+            <dd>{fields.dob}</dd>
+            <dt className="text-muted">{t("number")}</dt>
+            <dd>
+              <RevealNid id={documentId} masked={fields.numberMasked ?? ""} />
+            </dd>
+          </>
+        )}
         <dt className="text-muted">{t("phone")}</dt>
         <dd>{doc.user.phoneVerified ? t("phoneOk") : t("phoneMissing")}</dd>
       </dl>

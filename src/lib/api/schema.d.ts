@@ -3953,6 +3953,245 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/sports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Active sports (M03 §6.1; rows only, rule schemas come with M14) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SportList"];
+                    };
+                };
+                /** @description Not modified */
+                304: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Divisions with their districts (BBS geocodes) */
+        get: {
+            parameters: {
+                query?: {
+                    divisionId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LocationList"];
+                    };
+                };
+                /** @description Not modified */
+                304: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/areas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Active areas; filter by district, by service (grounds: Dhaka metro, Q15) or by name and aliases (q) */
+        get: {
+            parameters: {
+                query?: {
+                    districtId?: string;
+                    service?: "grounds" | "delivery";
+                    q?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AreaList"];
+                    };
+                };
+                /** @description Not modified */
+                304: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/facilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ground facilities (floodlights, parking …) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FacilityList"];
+                    };
+                };
+                /** @description Not modified */
+                304: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/surfaces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Playing surfaces */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SurfaceList"];
+                    };
+                };
+                /** @description Not modified */
+                304: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/catalog/{table}": {
         parameters: {
             query?: never;
@@ -3965,10 +4204,12 @@ export interface paths {
             parameters: {
                 query?: {
                     gameId?: string;
+                    divisionId?: string;
+                    districtId?: string;
                 };
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
                 };
                 cookie?: never;
             };
@@ -3981,7 +4222,19 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
-                            items: (components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"])[];
+                            items: (components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"] | ({
+                                /** Format: uuid */
+                                id: string;
+                                key: string;
+                                nameEn: string;
+                                nameBn: string;
+                                sort: number;
+                                isActive: boolean;
+                                /** Format: date-time */
+                                updatedAt: string | null;
+                            } & {
+                                [key: string]: unknown;
+                            }))[];
                         };
                     };
                 };
@@ -4030,7 +4283,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
                 };
                 cookie?: never;
             };
@@ -4077,6 +4330,65 @@ export interface paths {
                         /** @description Index 0 is 1st place */
                         placementPoints: number[];
                         killPoints: number;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        /** @enum {string} */
+                        engine: "ball_by_ball" | "clock" | "rally" | "none";
+                        officialLabelEn?: string | null;
+                        officialLabelBn?: string | null;
+                        defaultTiebreakers?: string[];
+                        /** @description Bits: 1 grounds, 2 hire, 4 market, 8 tournaments, 16 gyms */
+                        verticalFlags: number;
+                        icon?: string | null;
+                        tint?: string | null;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        bbsCode: string;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        /** Format: uuid */
+                        divisionId: string;
+                        bbsCode: string;
+                        lat?: number | null;
+                        lng?: number | null;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        /** Format: uuid */
+                        districtId: string;
+                        /** Format: uuid */
+                        parentAreaId?: string | null;
+                        lat: number;
+                        lng: number;
+                        isDhakaMetro: boolean;
+                        /** @enum {string|null} */
+                        dhakaZone?: "north" | "south" | null;
+                        aliases?: string[];
+                        /** @description Bits: 1 grounds listing, 2 delivery */
+                        serviceFlags: number;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        icon?: string | null;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        indoorTypical: boolean;
                     };
                 };
             };
@@ -4087,7 +4399,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"];
+                        "application/json": components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"] | ({
+                            /** Format: uuid */
+                            id: string;
+                            key: string;
+                            nameEn: string;
+                            nameBn: string;
+                            sort: number;
+                            isActive: boolean;
+                            /** Format: date-time */
+                            updatedAt: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        });
                     };
                 };
                 /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
@@ -4162,7 +4486,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
                     id: string;
                 };
                 cookie?: never;
@@ -4210,6 +4534,65 @@ export interface paths {
                         /** @description Index 0 is 1st place */
                         placementPoints?: number[];
                         killPoints?: number;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        /** @enum {string} */
+                        engine?: "ball_by_ball" | "clock" | "rally" | "none";
+                        officialLabelEn?: string | null;
+                        officialLabelBn?: string | null;
+                        defaultTiebreakers?: string[];
+                        /** @description Bits: 1 grounds, 2 hire, 4 market, 8 tournaments, 16 gyms */
+                        verticalFlags?: number;
+                        icon?: string | null;
+                        tint?: string | null;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        bbsCode?: string;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        /** Format: uuid */
+                        divisionId?: string;
+                        bbsCode?: string;
+                        lat?: number | null;
+                        lng?: number | null;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        /** Format: uuid */
+                        districtId?: string;
+                        /** Format: uuid */
+                        parentAreaId?: string | null;
+                        lat?: number;
+                        lng?: number;
+                        isDhakaMetro?: boolean;
+                        /** @enum {string|null} */
+                        dhakaZone?: "north" | "south" | null;
+                        aliases?: string[];
+                        /** @description Bits: 1 grounds listing, 2 delivery */
+                        serviceFlags?: number;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        icon?: string | null;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        indoorTypical?: boolean;
                     };
                 };
             };
@@ -4220,7 +4603,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"];
+                        "application/json": components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"] | ({
+                            /** Format: uuid */
+                            id: string;
+                            key: string;
+                            nameEn: string;
+                            nameBn: string;
+                            sort: number;
+                            isActive: boolean;
+                            /** Format: date-time */
+                            updatedAt: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        });
                     };
                 };
                 /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
@@ -4278,7 +4673,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
                     id: string;
                 };
                 cookie?: never;
@@ -4291,7 +4686,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"];
+                        "application/json": components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"] | ({
+                            /** Format: uuid */
+                            id: string;
+                            key: string;
+                            nameEn: string;
+                            nameBn: string;
+                            sort: number;
+                            isActive: boolean;
+                            /** Format: date-time */
+                            updatedAt: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        });
                     };
                 };
                 /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
@@ -4353,7 +4760,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
                     id: string;
                 };
                 cookie?: never;
@@ -4366,7 +4773,19 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"];
+                        "application/json": components["schemas"]["EsportsGame"] | components["schemas"]["EsportsMode"] | components["schemas"]["EsportsMap"] | components["schemas"]["EsportsPointsPreset"] | ({
+                            /** Format: uuid */
+                            id: string;
+                            key: string;
+                            nameEn: string;
+                            nameBn: string;
+                            sort: number;
+                            isActive: boolean;
+                            /** Format: date-time */
+                            updatedAt: string | null;
+                        } & {
+                            [key: string]: unknown;
+                        });
                     };
                 };
                 /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
@@ -9508,6 +9927,7 @@ export interface paths {
             parameters: {
                 query?: {
                     locale?: "en" | "bn";
+                    role?: "member" | "ground_owner";
                 };
                 header?: never;
                 path?: never;
@@ -9565,7 +9985,8 @@ export interface paths {
         post: {
             parameters: {
                 query: {
-                    slot: "front" | "back" | "selfie";
+                    slot: "front" | "back" | "selfie" | "document";
+                    docType?: "nid" | "trade_license" | "deed_or_lease" | "tin";
                 };
                 header?: never;
                 path?: never;
@@ -9651,7 +10072,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Submit my NID for review: number, date of birth, legal name and the three files (FR-05 to FR-07, FR-11) */
+        /** Submit my NID (number, date of birth, legal name, three files) or a business document of a role I applied for (fields from the requirement, one file) */
         post: {
             parameters: {
                 query?: never;
@@ -9689,6 +10110,48 @@ export interface paths {
                          * @enum {boolean}
                          */
                         consent: true;
+                    } | {
+                        /** @enum {string} */
+                        docType: "trade_license";
+                        /** @description By field key, e.g. number, holderName, expiresOn (YYYY-MM-DD), kind */
+                        fields: {
+                            [key: string]: string | null;
+                        };
+                        /** @description The file id from POST /me/documents/files?slot=document */
+                        files: {
+                            /** Format: uuid */
+                            document: string;
+                        };
+                        /** @enum {boolean} */
+                        consent: true;
+                    } | {
+                        /** @enum {string} */
+                        docType: "deed_or_lease";
+                        /** @description By field key, e.g. number, holderName, expiresOn (YYYY-MM-DD), kind */
+                        fields: {
+                            [key: string]: string | null;
+                        };
+                        /** @description The file id from POST /me/documents/files?slot=document */
+                        files: {
+                            /** Format: uuid */
+                            document: string;
+                        };
+                        /** @enum {boolean} */
+                        consent: true;
+                    } | {
+                        /** @enum {string} */
+                        docType: "tin";
+                        /** @description By field key, e.g. number, holderName, expiresOn (YYYY-MM-DD), kind */
+                        fields: {
+                            [key: string]: string | null;
+                        };
+                        /** @description The file id from POST /me/documents/files?slot=document */
+                        files: {
+                            /** Format: uuid */
+                            document: string;
+                        };
+                        /** @enum {boolean} */
+                        consent: true;
                     };
                 };
             };
@@ -9711,7 +10174,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: PHONE_REQUIRED, DOC_ALREADY_APPROVED */
+                /** @description Error. Codes: PHONE_REQUIRED, DOC_ALREADY_APPROVED, MEMBER_NOT_ACTIVE, ROLE_NOT_APPLIED */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -9720,7 +10183,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: VALIDATION_FAILED, NID_FORMAT_INVALID, DOB_INVALID, DOB_IN_FUTURE, UNDER_MIN_AGE, FILES_INCOMPLETE */
+                /** @description Error. Codes: VALIDATION_FAILED, NID_FORMAT_INVALID, DOB_INVALID, DOB_IN_FUTURE, UNDER_MIN_AGE, FILES_INCOMPLETE, DOC_TYPE_NOT_REQUIRED */
                 422: {
                     headers: {
                         [name: string]: unknown;
@@ -15522,6 +15985,2484 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/grounds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Live grounds: filters, facet counts, sorts cheapest / nearest / newest (FR-25) */
+        get: {
+            parameters: {
+                query?: {
+                    sport?: string;
+                    areaId?: string;
+                    lat?: number;
+                    lng?: number;
+                    radiusKm?: number;
+                    priceMin?: number | null;
+                    priceMax?: number | null;
+                    surface?: string[];
+                    facilities?: string[];
+                    indoor?: boolean;
+                    sort?: "cheapest" | "nearest" | "newest";
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GroundList"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/grounds/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A live ground: facts, courts and hours, facilities, rules, price table, v3 payment line (FR-27; ETag) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GroundDetail"];
+                    };
+                };
+                /** @description Not modified */
+                304: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/grounds/{id}/quote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Price a slot on public courts: both payment options and the platform fee (FR-13) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description One court, or the courts of one combinable group (priced as the sum) */
+                        courtIds: string[];
+                        /** Format: date-time */
+                        start: string;
+                        minutes: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GroundQuote"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRICING_MISSING */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, COURT_UNKNOWN, NOT_COMBINABLE, LENGTH_INVALID, OUTSIDE_HOURS */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My grounds (ground owner) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGroundList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Start a ground: a draft with a first pricing draft (FR-01; gate list_ground) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name: string;
+                        /** Format: uuid */
+                        areaId: string;
+                        addressLine: string;
+                        lat: number;
+                        lng: number;
+                        isIndoor?: boolean;
+                        description?: string | null;
+                        rulesText?: string | null;
+                        facilityIds?: string[];
+                        bookingCutoffMin?: 0 | 15 | 30 | 60;
+                        requiresOfficial?: {
+                            /** Format: uuid */
+                            sportId: string;
+                            note?: string;
+                        }[];
+                        /** @description Base price per hour (seeds the first pricing version) */
+                        basePricePoisha: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, AREA_NOT_SERVED, CATALOG_ITEM_UNKNOWN */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My ground: the working copy with photos, courts and hours */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit my ground; on a live ground, review fields start an edit and the rest apply at once (FR-04) */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        /** Format: uuid */
+                        areaId?: string;
+                        addressLine?: string;
+                        lat?: number;
+                        lng?: number;
+                        isIndoor?: boolean;
+                        description?: string | null;
+                        rulesText?: string | null;
+                        facilityIds?: string[];
+                        bookingCutoffMin?: 0 | 15 | 30 | 60;
+                        requiresOfficial?: {
+                            /** Format: uuid */
+                            sportId: string;
+                            note?: string;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW, GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, AREA_NOT_SERVED, CATALOG_ITEM_UNKNOWN */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/me/grounds/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send the ground, or an edit of a live ground, for review (FR-02, FR-03) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW, GROUND_STATE, NOTHING_TO_REVIEW */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_INCOMPLETE */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Take the ground (or its edit) out of review */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Hide a live ground; bookings stay (FR-05) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Show a paused ground again */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/courts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a court (pending until approved); hours default to the whole bookable day */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name: string;
+                        sportIds: string[];
+                        /** Format: uuid */
+                        surfaceId: string;
+                        sizeText?: string | null;
+                        capacityText?: string | null;
+                        combinableGroup?: string | null;
+                        sort?: number;
+                        hours?: {
+                            dow: number;
+                            isClosed: boolean;
+                            openTime?: string | null;
+                            closeTime?: string | null;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW, GROUND_STATE, COURT_NAME_TAKEN */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, CATALOG_ITEM_UNKNOWN */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/courts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit a court; sports, surface, size and name of an active court need review (FR-04) */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        name?: string;
+                        sportIds?: string[];
+                        /** Format: uuid */
+                        surfaceId?: string;
+                        sizeText?: string | null;
+                        capacityText?: string | null;
+                        combinableGroup?: string | null;
+                        sort?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW, GROUND_STATE, COURT_NAME_TAKEN */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, CATALOG_ITEM_UNKNOWN */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/me/courts/{id}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retire a court (no upcoming bookings; a live ground keeps one court) (FR-06) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW, COURT_HAS_BOOKINGS, LAST_COURT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/courts/{id}/hours": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set a court's weekly hours: 7 rows, half-hour aligned, inside the bookable day (FR-07, FR-08) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        hours: {
+                            dow: number;
+                            isClosed: boolean;
+                            openTime?: string | null;
+                            closeTime?: string | null;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_STATE, HOURS_CONFLICT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload a photo (raw JPEG, PNG or WebP, checked by its first bytes) to the public bucket */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            /** @description The photo itself, up to ground.photo_max_bytes */
+            requestBody?: {
+                content: {
+                    "image/jpeg": string;
+                    "image/png": string;
+                    "image/webp": string;
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GroundPhoto"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW, GROUND_STATE, PHOTO_LIMIT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_TOO_LARGE, PAYLOAD_TOO_LARGE */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_TYPE_NOT_ALLOWED, FILE_TYPE_MISMATCH */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_EMPTY */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: UPLOAD_RATE_LIMITED */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/photos/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Reorder the photos (first = cover) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        ids: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["GroundPhoto"][];
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW, GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, PHOTOS_MISMATCH */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/photos/{photoId}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove a photo (status; nothing is deleted) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    photoId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            removed: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW, GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/pricing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Published and draft pricing, limits, the v3 payment policy, upcoming bookings (FR-11) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GroundPricing"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/pricing/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save the pricing draft (validated on the server; base locked in review) (FR-09) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        basePricePoisha?: number;
+                        courtBaseOverrides?: {
+                            [key: string]: number;
+                        };
+                        peakFromHour?: number;
+                        peakPct?: number;
+                        weekendPct?: number;
+                        earlyToHour?: number;
+                        earlyPct?: number;
+                        advancePct?: number;
+                        seriesDiscountPct?: number;
+                        minBookingMin?: number;
+                        fullRefundHours?: number;
+                        halfRefundHours?: number;
+                        checkinGraceMin?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PricingRules"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_IN_REVIEW */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, COURT_UNKNOWN */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/pricing/draft/discard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Discard the pricing draft (FR-10) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            discarded: number;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRICING_DRAFT_MISSING */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/pricing/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish the draft; optionally the same rules on all my grounds (FR-09, FR-12, FR-14) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @default false */
+                        applyToAll?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PricingPublished"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRICING_DRAFT_MISSING, GROUND_IN_REVIEW */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/pricing/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Every published version with its summary (FR-14) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PricingHistory"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/pricing/heatmap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Hourly rates for the next days (06–22), draft or published */
+        get: {
+            parameters: {
+                query?: {
+                    days?: number;
+                    draft?: boolean;
+                    courtId?: string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PricingHeatmap"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRICING_MISSING */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/grounds/{id}/pricing/quote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Quote a slot with unsaved changes (FR-13) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description One court, or the courts of one combinable group (priced as the sum) */
+                        courtIds: string[];
+                        /** Format: date-time */
+                        start: string;
+                        minutes: number;
+                        /** @description Unsaved changes to price with */
+                        draft?: {
+                            basePricePoisha?: number;
+                            courtBaseOverrides?: {
+                                [key: string]: number;
+                            };
+                            peakFromHour?: number;
+                            peakPct?: number;
+                            weekendPct?: number;
+                            earlyToHour?: number;
+                            earlyPct?: number;
+                            advancePct?: number;
+                            seriesDiscountPct?: number;
+                            minBookingMin?: number;
+                            fullRefundHours?: number;
+                            halfRefundHours?: number;
+                            checkinGraceMin?: number;
+                        };
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GroundQuote"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRICING_MISSING */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, COURT_UNKNOWN, NOT_COMBINABLE, LENGTH_INVALID, OUTSIDE_HOURS */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/grounds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Grounds for staff (approve_listings or manage_users): status filter, name or slug search */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                    q?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StaffGroundList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/grounds/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A ground for reviewers: the working copy, the public version and pricing */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StaffGround"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/grounds/{id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suspend a live or paused ground (manage_users) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** @enum {string} */
+                            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/grounds/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore a suspended ground (master) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** @enum {string} */
+                            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/grounds/{id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove a ground (master; status, never deleted) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** @enum {string} */
+                            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GROUND_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -15895,6 +18836,96 @@ export interface components {
             killPoints: number;
             version: number;
             isLatest: boolean;
+        };
+        SportList: {
+            items: components["schemas"]["Sport"][];
+        };
+        Sport: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            nameEn: string;
+            nameBn: string;
+            sort: number;
+            engine: string;
+            officialLabelEn: string | null;
+            officialLabelBn: string | null;
+            defaultTiebreakers: string[];
+            verticalFlags: number;
+            icon: string | null;
+            tint: string | null;
+        };
+        LocationList: {
+            items: components["schemas"]["DivisionWithDistricts"][];
+        };
+        DivisionWithDistricts: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            nameEn: string;
+            nameBn: string;
+            sort: number;
+            bbsCode: string;
+            districts: components["schemas"]["District"][];
+        };
+        District: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            nameEn: string;
+            nameBn: string;
+            sort: number;
+            /** Format: uuid */
+            divisionId: string;
+            bbsCode: string;
+            lat: number | null;
+            lng: number | null;
+        };
+        AreaList: {
+            items: components["schemas"]["Area"][];
+        };
+        Area: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            nameEn: string;
+            nameBn: string;
+            sort: number;
+            /** Format: uuid */
+            districtId: string;
+            /** Format: uuid */
+            parentAreaId: string | null;
+            lat: number;
+            lng: number;
+            isDhakaMetro: boolean;
+            /** @enum {string|null} */
+            dhakaZone: "north" | "south" | null;
+            aliases: string[];
+            serviceFlags: number;
+        };
+        FacilityList: {
+            items: components["schemas"]["Facility"][];
+        };
+        Facility: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            nameEn: string;
+            nameBn: string;
+            sort: number;
+            icon: string | null;
+        };
+        SurfaceList: {
+            items: components["schemas"]["Surface"][];
+        };
+        Surface: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            nameEn: string;
+            nameBn: string;
+            sort: number;
+            indoorTypical: boolean;
         };
         EsportsGame: {
             /** Format: uuid */
@@ -16997,6 +20028,7 @@ export interface components {
         Verification: {
             role: string;
             memberStatus: string | null;
+            roleStatus: string | null;
             /** @enum {string} */
             badge: "fully_verified" | "documents_in_review" | "verification_needed";
             progress: {
@@ -17008,6 +20040,15 @@ export interface components {
                 label: string;
                 why: string | null;
                 fileSlots: string[];
+                /** @enum {string} */
+                required: "always" | "conditional" | "optional";
+                fields: {
+                    key: string;
+                    type: string;
+                    required: boolean;
+                    options: string[] | null;
+                    label: string;
+                }[];
                 status: string;
                 document: components["schemas"]["VerificationDocument"];
             }[];
@@ -17021,8 +20062,9 @@ export interface components {
             version: number;
             /** @enum {string} */
             status: "in_review" | "changes_requested" | "approved" | "rejected" | "superseded" | "withdrawn";
-            numberMasked: string;
-            birthYear: number;
+            numberMasked: string | null;
+            birthYear: number | null;
+            expiresOn: string | null;
             reasonCode: string | null;
             reasonText: string | null;
             /** Format: date-time */
@@ -17052,8 +20094,9 @@ export interface components {
             version: number;
             /** @enum {string} */
             status: "in_review" | "changes_requested" | "approved" | "rejected" | "superseded" | "withdrawn";
-            numberMasked: string;
-            birthYear: number;
+            numberMasked: string | null;
+            birthYear: number | null;
+            expiresOn: string | null;
             reasonCode: string | null;
             reasonText: string | null;
             /** Format: date-time */
@@ -17068,10 +20111,13 @@ export interface components {
                 sizeBytes: number;
                 purged: boolean;
             }[];
+            /** @description NID: legalName, dob. Business: the typed fields (holderName, expiresOn, kind) and the role */
             fields: {
-                legalName: string;
-                dob: string;
-                numberMasked: string;
+                legalName?: string;
+                dob?: string;
+                numberMasked: string | null;
+            } & {
+                [key: string]: unknown;
             };
             checks: {
                 key: string;
@@ -17791,6 +20837,480 @@ export interface components {
             reasonCode: string;
         } & {
             [key: string]: unknown;
+        };
+        GroundList: {
+            items: components["schemas"]["GroundCard"][];
+            total: number;
+            nextCursor: string | null;
+            facets: {
+                sports: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                    count: number;
+                }[];
+                surfaces: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                    count: number;
+                }[];
+                facilities: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                    count: number;
+                }[];
+                indoor: {
+                    indoor: number;
+                    outdoor: number;
+                };
+            };
+            sort: string;
+        };
+        GroundCard: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            name: string;
+            area: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                district: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                } | null;
+                lat: number;
+                lng: number;
+            } | null;
+            coverUrl: string | null;
+            sports: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+            }[];
+            surfaces: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+            }[];
+            isIndoor: boolean;
+            courtsCount: number;
+            priceFromPoisha: number;
+            distanceM: number | null;
+            ratingAvg: number | null;
+            ratingCount: number;
+        };
+        GroundDetail: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            name: string;
+            area: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                district: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                } | null;
+                lat: number;
+                lng: number;
+            } | null;
+            addressLine: string;
+            lat: number;
+            lng: number;
+            isIndoor: boolean;
+            description: string | null;
+            rulesText: string | null;
+            bookingCutoffMin: number;
+            requiresOfficial: {
+                /** Format: uuid */
+                sportId: string;
+                note?: string;
+            }[];
+            facilities: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+            }[];
+            photos: {
+                /** Format: uuid */
+                id: string;
+                url: string;
+            }[];
+            courts: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                sports: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                }[];
+                surface: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                } | null;
+                sizeText: string | null;
+                capacityText: string | null;
+                combinableGroup: string | null;
+                hours: {
+                    dow: number;
+                    isClosed: boolean;
+                    openTime: string | null;
+                    closeTime: string | null;
+                }[];
+            }[];
+            pricing: {
+                version: number;
+                basePricePoisha: number;
+                fromPoisha: number;
+                toPoisha: number;
+                minBookingMin: number;
+                advancePct: number;
+                peakFromHour: number;
+                peakPct: number;
+                weekendPct: number;
+                earlyToHour: number;
+                earlyPct: number;
+                week: {
+                    date: string;
+                    dow: number;
+                    cells: {
+                        hour: number;
+                        rate: number;
+                        /** @enum {string} */
+                        tone: "low" | "base" | "high" | "peak";
+                    }[];
+                }[];
+            };
+            payment: {
+                allowFullPayment: boolean;
+                advanceRefundable: boolean;
+                refundAboveAdvanceOnCancel: boolean;
+                fullRefundHours: number | null;
+                halfRefundHours: number | null;
+            };
+            owner: {
+                displayName: string | null;
+            };
+            ratingAvg: number | null;
+            ratingCount: number;
+            bookingOpen: boolean;
+            version: number;
+        };
+        GroundQuote: {
+            price: number;
+            advance: number;
+            balance: number;
+            rateAtStart: number;
+            /** @description Kriraghor fee on the full value (fees.ground_booking_pct), taken at check-in */
+            fee: number;
+            options: {
+                /** @enum {string} */
+                kind: "advance" | "full";
+                payNow: number;
+                atVenue: number;
+                ownerGetsOnline: number;
+            }[];
+            applied: {
+                peak: boolean;
+                early: boolean;
+                weekend: boolean;
+            };
+            rulesVersion: number | null;
+            minBookingMin?: number;
+        };
+        OwnerGroundList: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                slug: string;
+                name: string;
+                /** Format: uuid */
+                areaId: string;
+                /** @enum {string} */
+                status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                editStatus: string | null;
+                coverUrl: string | null;
+                courtsCount: number;
+                basePricePoisha: number | null;
+                reviewReason: {
+                    code: string;
+                    text: string | null;
+                } | null;
+                /** Format: date-time */
+                updatedAt: string;
+            }[];
+        };
+        OwnerGround: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            name: string;
+            /** Format: uuid */
+            areaId: string;
+            addressLine: string;
+            lat: number;
+            lng: number;
+            isIndoor: boolean;
+            description: string | null;
+            rulesText: string | null;
+            facilityIds: string[];
+            bookingCutoffMin: number;
+            requiresOfficial: {
+                /** Format: uuid */
+                sportId: string;
+                note?: string;
+            }[];
+            /** @enum {string} */
+            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+            /** @enum {string|null} */
+            editStatus: "draft" | "pending_review" | "changes_requested" | "rejected" | null;
+            liveVersion: number;
+            reviewReason: {
+                code: string;
+                text: string | null;
+            } | null;
+            /** Format: date-time */
+            firstLiveAt: string | null;
+            photos: components["schemas"]["GroundPhoto"][];
+            courts: components["schemas"]["GroundCourt"][];
+            pricing: {
+                publishedVersion: number | null;
+                basePricePoisha: number | null;
+                hasDraft: boolean;
+            };
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        GroundPhoto: {
+            /** Format: uuid */
+            id: string;
+            url: string;
+            sort: number;
+        };
+        GroundCourt: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            sportIds: string[];
+            /** Format: uuid */
+            surfaceId: string;
+            sizeText: string | null;
+            capacityText: string | null;
+            combinableGroup: string | null;
+            sort: number;
+            /** @enum {string} */
+            status: "pending" | "active" | "retired";
+            hours: {
+                dow: number;
+                isClosed: boolean;
+                openTime: string | null;
+                closeTime: string | null;
+            }[];
+        };
+        GroundPricing: {
+            /** Format: uuid */
+            groundId: string;
+            published: components["schemas"]["PricingRules"];
+            draft: components["schemas"]["PricingRules"];
+            upcomingBookings: number;
+            baseLocked: boolean;
+            limits: {
+                baseMin: number;
+                baseMax: number;
+                peakMax: number;
+                weekendMax: number;
+                earlyMax: number;
+                advanceMin: number;
+                advanceMax: number;
+                feePct: number;
+                seriesMax: number;
+                minLengthOptions: number[];
+            };
+            policy: {
+                allowFullPayment: boolean;
+                advanceRefundable: boolean;
+                refundAboveAdvanceOnCancel: boolean;
+                feePct: number;
+            };
+        };
+        PricingRules: {
+            /** Format: uuid */
+            id: string;
+            version: number;
+            /** @enum {string} */
+            status: "draft" | "published" | "superseded" | "discarded";
+            basePricePoisha: number;
+            courtBaseOverrides: {
+                [key: string]: number;
+            };
+            peakFromHour: number;
+            peakPct: number;
+            weekendPct: number;
+            earlyToHour: number;
+            earlyPct: number;
+            advancePct: number;
+            seriesDiscountPct: number;
+            minBookingMin: number;
+            fullRefundHours: number;
+            halfRefundHours: number;
+            checkinGraceMin: number;
+            /** Format: date-time */
+            effectiveFrom: string | null;
+            /** Format: date-time */
+            effectiveTo: string | null;
+            summary: string | null;
+            changedKeys: string[];
+            /** Format: date-time */
+            updatedAt: string;
+        } | null;
+        PricingPublished: {
+            published: components["schemas"]["PricingRules"];
+            alsoPublished: {
+                /** Format: uuid */
+                groundId: string;
+                version: number;
+            }[];
+        };
+        PricingHistory: {
+            items: {
+                version: number;
+                status: string;
+                summary: string | null;
+                changedKeys: string[];
+                /** Format: date-time */
+                effectiveFrom: string | null;
+                /** Format: date-time */
+                effectiveTo: string | null;
+                publishedBy: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string | null;
+                } | null;
+            }[];
+        };
+        PricingHeatmap: {
+            basePricePoisha: number;
+            rows: {
+                date: string;
+                dow: number;
+                cells: {
+                    hour: number;
+                    rate: number;
+                    /** @enum {string} */
+                    tone: "low" | "base" | "high" | "peak";
+                }[];
+            }[];
+        };
+        StaffGroundList: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                slug: string;
+                name: string;
+                /** Format: uuid */
+                areaId: string;
+                /** @enum {string} */
+                status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                editStatus: string | null;
+                liveVersion: number;
+                owner: {
+                    /** Format: uuid */
+                    id: string;
+                    displayName: string | null;
+                };
+                coverUrl: string | null;
+                /** Format: date-time */
+                updatedAt: string;
+            }[];
+        };
+        StaffGround: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            name: string;
+            /** Format: uuid */
+            areaId: string;
+            addressLine: string;
+            lat: number;
+            lng: number;
+            isIndoor: boolean;
+            description: string | null;
+            rulesText: string | null;
+            facilityIds: string[];
+            bookingCutoffMin: number;
+            requiresOfficial: {
+                /** Format: uuid */
+                sportId: string;
+                note?: string;
+            }[];
+            /** @enum {string} */
+            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+            /** @enum {string|null} */
+            editStatus: "draft" | "pending_review" | "changes_requested" | "rejected" | null;
+            liveVersion: number;
+            reviewReason: {
+                code: string;
+                text: string | null;
+            } | null;
+            /** Format: date-time */
+            firstLiveAt: string | null;
+            photos: components["schemas"]["GroundPhoto"][];
+            courts: components["schemas"]["GroundCourt"][];
+            pricing: {
+                publishedVersion: number | null;
+                basePricePoisha: number | null;
+                hasDraft: boolean;
+            };
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            owner: {
+                /** Format: uuid */
+                id: string;
+                displayName: string | null;
+            };
+            publicVersion: {
+                version: number;
+                name: string;
+                courts: number;
+                photos: number;
+            } | null;
+            rules: components["schemas"]["PricingRules"];
         };
     };
     responses: never;

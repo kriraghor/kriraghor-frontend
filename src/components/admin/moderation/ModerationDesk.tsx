@@ -12,6 +12,7 @@ import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { DocumentPanel } from "../kyc/DocumentPanel";
 import { GameProfilePanel, TournamentPanel } from "../esports/EsportsPanels";
+import { GroundPanel } from "../grounds/GroundPanel";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 import { Chip, DataTable, Field, inputCls } from "../finance/shared";
 
@@ -81,6 +82,7 @@ export function ModerationDesk() {
                       <option value="document">{t("kind.document")}</option>
                       <option value="game_profile">{t("kind.game_profile")}</option>
                       <option value="esports_tournament">{t("kind.esports_tournament")}</option>
+                      <option value="ground">{t("kind.ground")}</option>
                     </select>
                   </Field>
                   {status === "pending_review" ? (
@@ -268,6 +270,7 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
       {s.kind === "document" && typeof s.payload.documentId === "string" ? <DocumentPanel documentId={s.payload.documentId} /> : null}
       {s.kind === "game_profile" ? <GameProfilePanel payload={s.payload} /> : null}
       {s.kind === "esports_tournament" ? <TournamentPanel payload={s.payload} /> : null}
+      {s.kind === "ground" ? <GroundPanel payload={s.payload} /> : null}
 
       {open && mine ? (
         <div className="mt-6 border-t-2 border-line pt-4">
