@@ -48,3 +48,35 @@ export function fileProblem(file: File, maxBytes: number): "type" | "size" | nul
 }
 
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+
+// ---------------- business roles (ground owners, with M09)
+
+export type BusinessDocType = "trade_license" | "deed_or_lease" | "tin";
+export type BusinessRole = "ground_owner";
+
+/** The checklist of a business role: its documents, their fields and status. */
+export const getRoleVerification = async (locale: string, role: BusinessRole) =>
+  ok(await api().GET("/me/verification", { params: { query: { locale: locale === "bn" ? "bn" : "en", role } } }));
+
+/** Apply for a business role (then send its documents). */
+export const applyForRole = async (role: BusinessRole) => ok(await api().POST("/me/roles", { body: { role } }));
+
+/** One business document file (slot "document"). */
+export async function uploadBusinessFile(docType: BusinessDocType, file: File) {
+  return ok(
+    await api().POST("/me/documents/files", {
+      params: { query: { slot: "document", docType } },
+      body: file as unknown as string,
+      bodySerializer: (b: unknown) => b as BodyInit,
+      headers: { "Content-Type": file.type },
+    }),
+  );
+}
+
+export const submitBusiness = async (docType: BusinessDocType, fields: Record<string, string | null>, fileId: string) =>
+  ok(await api().POST("/me/documents", { body: { docType, fields, files: { document: fileId }, consent: true } as never }));
+
+/** Fields the server needs that are still empty (the server checks the rest). */
+export function missingFields(fields: { key: string; required: boolean }[], values: Record<string, string>): string[] {
+  return fields.filter((f) => f.required && !values[f.key]?.trim()).map((f) => f.key);
+}
