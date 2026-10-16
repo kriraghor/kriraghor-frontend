@@ -22,6 +22,7 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       nav: [
         { href: "/admin/fees", key: "fees" },
         { href: "/admin/catalog/esports", key: "esportsCatalog" },
+        { href: "/admin/esports", key: "esportsDesk" },
         { href: "/admin/finance", key: "finance" },
         { href: "/admin/moderation", key: "moderation" },
         { href: "/admin/audit", key: "audit" },

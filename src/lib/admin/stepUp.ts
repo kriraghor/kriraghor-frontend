@@ -1,6 +1,6 @@
 import { api, problemOf, type Problem } from "@/lib/api/client";
 
-type Scope = "settings.write" | "staff.write" | "audit.export" | "events.replay" | "refund.large" | "escrow.manage" | "payout.approve" | "moderation.override";
+type Scope = "settings.write" | "staff.write" | "audit.export" | "events.replay" | "refund.large" | "escrow.manage" | "payout.approve" | "moderation.override" | "esports.money";
 
 /**
  * Exchange a fresh authenticator code for a single-use step-up token (M01-FR-11).

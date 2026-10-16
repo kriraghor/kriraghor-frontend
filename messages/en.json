@@ -22,7 +22,8 @@
     "audit": "Audit log",
     "events": "Events",
     "finance": "Finance",
-    "moderation": "Moderation"
+    "moderation": "Moderation",
+    "esportsDesk": "Tournaments"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -648,7 +649,12 @@
       "nid_unique": "NID not on another account",
       "file_type": "File types",
       "file_reused": "Photos not used by another account",
-      "nid_pending_elsewhere": "NID not waiting on another account"
+      "nid_pending_elsewhere": "NID not waiting on another account",
+      "uid_format": "UID format matches the game",
+      "uid_not_banned": "UID is not on the ban list",
+      "uid_unique": "UID isn't linked to another account",
+      "schedule_and_prizes": "Schedule and prize table are valid",
+      "subsidy_at_minimum": "Fees at the minimum fill cover the prizes"
     },
     "legalName": "Legal name",
     "dob": "Date of birth",
@@ -693,7 +699,9 @@
     "kindLabel": "Kind",
     "allKinds": "All kinds",
     "kind": {
-      "document": "Identity document"
+      "document": "Identity document",
+      "game_profile": "Game UID",
+      "esports_tournament": "Esports tournament"
     },
     "lockLabel": "Lock",
     "lockAny": "Any",
@@ -761,5 +769,219 @@
     "overrideTitle": "Approve over a failing check",
     "overrideDialogHelp": "Failing: {checks}. Enter your authenticator code to approve anyway.",
     "history": "Versions"
+  },
+  "esportsDesk": {
+    "title": "Tournaments",
+    "intro": "Run Kriraghor's PUBG Mobile and Free Fire tournaments: drafts go to the Moderation desk for a second person to approve. Then check players in, set the room, enter results, settle disputes and finalise the prizes.",
+    "noAccess": "You need the manage_esports or enter_results permission for this desk.",
+    "tab": {
+      "tournaments": "Tournaments",
+      "disputes": "Disputes",
+      "bans": "UID bans"
+    },
+    "new": "New tournament",
+    "none": "No tournaments yet.",
+    "pick": "Pick a tournament on the left, or create one.",
+    "slotsShort": "{taken}/{max} slots",
+    "feeShort": "entry {fee}",
+    "prizeShort": "prizes {pool}",
+    "status": {
+      "draft": "Draft",
+      "review": "In review",
+      "scheduled": "Scheduled",
+      "registration_open": "Registration open",
+      "registration_closed": "Registration closed",
+      "check_in": "Check-in",
+      "live": "Live",
+      "results_pending": "Results pending",
+      "finalised": "Finalised",
+      "paid_out": "Paid out",
+      "cancelled": "Cancelled"
+    },
+    "tier": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "major": "Major"
+    },
+    "form": {
+      "game": "Game",
+      "mode": "Mode",
+      "preset": "Points table",
+      "titleEn": "Title (English)",
+      "titleBn": "Title (Bangla)",
+      "tier": "Tier",
+      "fee": "Entry fee (৳)",
+      "slots": "Slots",
+      "min": "Minimum entries",
+      "killReward": "Per-kill reward (৳)",
+      "prizes": "Prize table (৳)",
+      "place": "Prize for place {n}",
+      "prizesHelp": "Places 1, 2, 3 … in order. The table is locked once the tournament is approved and is guaranteed if it runs.",
+      "opens": "Registration opens (Dhaka time)",
+      "matches": "Matches",
+      "map": "Map",
+      "startsAt": "Starts at (Dhaka time)",
+      "addMatch": "Add a match",
+      "rules": "Rules (Markdown)",
+      "featured": "Feature on the esports home page",
+      "save": "Save draft",
+      "badMoney": "Enter amounts in taka, with at most 2 decimals."
+    },
+    "failed": "That didn't work. Try again.",
+    "loadFailed": "Couldn't load this. Refresh to try again.",
+    "submit": "Submit for review",
+    "inReview": "Waiting for a second staff member on the Moderation desk.",
+    "cancel": "Cancel tournament",
+    "cancelTitle": "Cancel this tournament?",
+    "cancelHelp": "Every paid entry is refunded 100%. Enter your authenticator code to confirm.",
+    "reason": "Reason",
+    "reasonNeeded": "Give a reason of at least 5 characters.",
+    "finaliseTitle": "Finalise and pay the prizes?",
+    "finaliseHelp": "Prizes are credited to the winners' balances and the pool is settled in the ledger. Enter your authenticator code to confirm.",
+    "settled": "Settled: collected {collected}, paid {paid}, subsidy {subsidy}, revenue {revenue}.",
+    "sub": {
+      "board": "Check-in",
+      "matches": "Matches and results",
+      "finalise": "Finalise",
+      "streams": "Streams"
+    },
+    "board": {
+      "slot": "Slot",
+      "players": "Players",
+      "status": "Status",
+      "sub": "sub",
+      "in": "Checked in",
+      "checkIn": "Check in",
+      "dqNote": "Why disqualify this entry? (at least 5 characters; the prize is forfeited)",
+      "dq": "Disqualify"
+    },
+    "reg": {
+      "pending_payment": "Awaiting payment",
+      "confirmed": "Confirmed",
+      "waitlisted": "Waitlisted",
+      "offered": "Offered a slot",
+      "checked_in": "Checked in",
+      "no_show": "No-show",
+      "withdrawn": "Withdrawn",
+      "refunded": "Refunded",
+      "disqualified": "Disqualified",
+      "cancelled": "Cancelled"
+    },
+    "match": "Match {n}",
+    "mstatus": {
+      "scheduled": "Scheduled",
+      "room_ready": "Room set",
+      "room_revealed": "Room revealed",
+      "live": "Live",
+      "results_pending": "Dispute window",
+      "disputed": "Disputed",
+      "final": "Final",
+      "cancelled": "Cancelled"
+    },
+    "mstatusHelp": {
+      "scheduled": "",
+      "room_ready": "",
+      "room_revealed": "",
+      "live": "",
+      "results_pending": "Results are posted. Players can dispute until the window closes.",
+      "disputed": "A dispute is open. Settle it on the Disputes tab.",
+      "final": "These results are final.",
+      "cancelled": "This match was cancelled."
+    },
+    "room": {
+      "title": "Room ID and password",
+      "current": "Version {version}, {status}, reveal {at}",
+      "none": "Not set yet",
+      "views": "{n, plural, =0 {no views} one {# view} other {# views}}",
+      "id": "Room ID",
+      "password": "Password",
+      "save": "Save room",
+      "saved": "Room saved. Checked-in players see it at the reveal time.",
+      "rotate": "Rotate and re-push",
+      "rotated": "New room pushed to checked-in players.",
+      "revealNow": "Reveal now",
+      "revealed": "Revealed to checked-in players.",
+      "scheduled": "waiting",
+      "superseded": "replaced"
+    },
+    "cancelMatch": "Cancel match",
+    "cancelMatchReason": "Why cancel this match? (at least 5 characters)",
+    "matchCancelled": "Match cancelled.",
+    "results": {
+      "title": "Results",
+      "entry": "Entry",
+      "placement": "Place",
+      "kills": "Kills",
+      "placementFor": "Placement for {name}",
+      "dnp": "DNP",
+      "save": "Save draft",
+      "saved": "Draft saved.",
+      "post": "Post results",
+      "postConfirm": "Post these results? Players are told and the dispute window opens.",
+      "posted": "Results posted. The dispute window is open.",
+      "problem": {
+        "placement": "Placements must be 1 to the number of entries.",
+        "duplicate": "Two entries share a placement.",
+        "kills": "Kills must be whole numbers, 0 or more."
+      }
+    },
+    "placeN": "Place {n}",
+    "killReward": "Kill reward",
+    "totals": {
+      "collected": "Entry fees collected",
+      "paid": "Prizes paid",
+      "subsidy": "Platform subsidy",
+      "revenue": "Platform revenue"
+    },
+    "finalise": "Finalise and pay",
+    "notFinalisable": "Not ready: every match must be final",
+    "paidOut": "Prizes are paid out.",
+    "streams": {
+      "platform": "Platform",
+      "url": "Stream URL",
+      "title": "Title",
+      "live": "Live now",
+      "save": "Save streams",
+      "saved": "Streams saved."
+    },
+    "disputes": {
+      "none": "No open disputes.",
+      "reject": "Reject",
+      "rejectNote": "Why is this dispute rejected? Players see this note.",
+      "correctHelp": "To correct results, edit them on the match and post again."
+    },
+    "bans": {
+      "new": "Ban a UID",
+      "note": "Evidence and notes",
+      "ban": "Ban UID",
+      "done": "UID banned. Any linked profile is banned and active entries are forfeited.",
+      "none": "No active bans.",
+      "lift": "Lift",
+      "liftReason": "Why lift this ban?"
+    },
+    "panel": {
+      "game": "Game",
+      "uid": "UID",
+      "ign": "In-game name",
+      "compare": "The UID and name in the screenshot must match exactly.",
+      "screenshot": "In-game profile screenshot",
+      "showScreenshot": "Show screenshot",
+      "failed": "Couldn't load the screenshot.",
+      "unit": "Entry",
+      "unitKind": {
+        "player": "Solo",
+        "squad": "Squad"
+      },
+      "fee": "Entry fee",
+      "free": "Free",
+      "slots": "Min–max entries",
+      "opens": "Registration opens",
+      "starts": "First match",
+      "matches": "Matches",
+      "killReward": "Per kill",
+      "prizes": "Prize table · total {pool}",
+      "subsidy": "At full slots the fees fall {gap} short of the prizes; Kriraghor covers the difference."
+    }
   }
 }
