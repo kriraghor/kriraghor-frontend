@@ -9,12 +9,13 @@ import { axisChoices, market, pickedVariant } from "@/lib/market";
 import { formatTaka } from "@/lib/payments";
 import { ReportButton } from "../trust/ReportButton";
 import { SaveButton } from "./SaveButton";
+import { AddToCart } from "../orders/AddToCart";
 
 /**
  * /shop/p/[slug] (M12 §4): gallery, variant-aware price, stock note ("Low stock", "Ships in N days",
  * "Out of stock"), the variant picker with sold-out options disabled, quantity up to the per-order
- * limit, specs, supplement details and the seller. Checkout arrives with M13: until then the button
- * says so. A removed product answers 410.
+ * limit, specs, supplement details and the seller. Add to cart (M13) while the product and its shop
+ * are live. A removed product answers 410.
  */
 export function ProductView({ slug }: { slug: string }) {
   const t = useTranslations("market");
@@ -145,13 +146,9 @@ export function ProductView({ slug }: { slug: string }) {
                 ))}
               </select>
             </label>
-            <button type="button" disabled className="min-h-12 flex-1 bg-brand px-5 font-bold text-white disabled:opacity-60" aria-describedby="checkout-soon">
-              {t("addToCart")}
-            </button>
+            <AddToCart variantId={variant?.purchasable ? variant.id : null} qty={qty} open={p.checkoutOpen} />
           </div>
-          <p id="checkout-soon" className="text-sm text-muted">
-            {p.checkoutOpen ? "" : t("checkoutSoon")}
-          </p>
+          {p.checkoutOpen ? null : <p className="text-sm text-muted">{t("checkoutSoon")}</p>}
           <SaveButton productId={p.id} />
 
           <div className="border-2 border-line p-4" data-testid="seller">

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -13,9 +14,11 @@ export type HeaderConfig = {
   nav: { href: string; key: string }[];
   /** M08 bell: where "See all" and "Settings" go. */
   bell?: { centreHref: string; settingsHref?: string };
+  /** Extra signed-in actions before the bell (kriraghor.com: the cart, M13). */
+  actions?: ReactNode;
 };
 
-export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell }: HeaderConfig) {
+export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, actions }: HeaderConfig) {
   const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();
@@ -50,6 +53,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell }
           </button>
           {status === "signed_in" ? (
             <>
+              {actions}
               {bell ? <NotificationBell centreHref={bell.centreHref} settingsHref={bell.settingsHref} /> : null}
               <Link href={meHref} className="inline-flex min-h-11 items-center border-2 border-line-strong px-4 text-sm font-bold">
                 {t("nav.me")}

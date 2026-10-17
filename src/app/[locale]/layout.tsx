@@ -8,6 +8,7 @@ import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { Providers } from "@/components/Providers";
 import { SiteHeader } from "@/components/SiteHeader";
+import { CartLink } from "@/components/orders/CartLink";
 import { APP } from "@/app.config";
 import "../globals.css";
 
@@ -38,7 +39,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           <Providers audience={APP.audience}>
             {/* The header reads the pathname; routes known only at request time (/pay/[id]) stream it in. */}
             <Suspense fallback={<HeaderPlaceholder />}>
-              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} />
+              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} actions={<CartLink />} />
             </Suspense>
             <main id="main" className="flex-1">
               {children}
