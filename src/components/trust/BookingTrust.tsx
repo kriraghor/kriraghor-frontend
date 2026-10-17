@@ -31,6 +31,9 @@ export function BookingTrust({ bookingId }: { bookingId: string }) {
   });
   const problem = open.error ? problemOf(open.error) : null;
   const canRate = reviewable.data?.items.some((x) => x.bookingId === bookingId) ?? false;
+  // Kept after posting: the refreshed list no longer has this booking, so the thanks would vanish with the form.
+  const [rated, setRated] = useState<"published" | "held" | null>(null);
+  const tr = useTranslations("trust.rate");
 
   return (
     <div className="mt-8 space-y-6">
@@ -90,22 +93,24 @@ export function BookingTrust({ bookingId }: { bookingId: string }) {
           )}
         </div>
       ) : null}
-      {canRate ? <RateGround bookingId={bookingId} onDone={() => qc.invalidateQueries({ queryKey: ["reviewable"] })} /> : null}
+      {rated ? <Notice>{rated === "held" ? tr("held") : tr("thanks")}</Notice> : canRate ? (
+        <RateGround
+          bookingId={bookingId}
+          onDone={(status) => {
+            setRated(status === "held" ? "held" : "published");
+            void qc.invalidateQueries({ queryKey: ["reviewable"] });
+          }}
+        />
+      ) : null}
     </div>
   );
 }
 
-function RateGround({ bookingId, onDone }: { bookingId: string; onDone: () => void }) {
+function RateGround({ bookingId, onDone }: { bookingId: string; onDone: (status: string) => void }) {
   const t = useTranslations("trust.rate");
   const [stars, setStars] = useState(0);
   const [text, setText] = useState("");
-  const post = useMutation({ mutationFn: () => reviews.post({ bookingId, stars, text: text.trim() || undefined }), onSuccess: onDone });
-  if (post.isSuccess)
-    return (
-      <Notice>
-        {post.data.review.status === "held" ? t("held") : t("thanks")}
-      </Notice>
-    );
+  const post = useMutation({ mutationFn: () => reviews.post({ bookingId, stars, text: text.trim() || undefined }), onSuccess: (r) => onDone(r.review.status) });
   return (
     <form
       className="border-2 border-line p-4"
