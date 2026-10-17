@@ -73,6 +73,12 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
         <Link href="/me/payout-account" className="inline-flex min-h-11 items-center font-semibold underline">
           {t("me.payoutAccount")}
         </Link>
+        <Link href="/shop/saved" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-saved">
+          {t("me.saved")}
+        </Link>
+        <Link href="/account/business?as=shop" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-open-shop">
+          {t("me.openShop")}
+        </Link>
         <Link href="/account/verification" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-verification">
           {u.kycStatus === "verified" ? t("me.verified") : t("me.verify")}
         </Link>

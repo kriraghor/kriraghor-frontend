@@ -58,7 +58,9 @@
     "verify": "Verify your identity",
     "verified": "Identity verified",
     "bookings": "My bookings",
-    "disputes": "My disputes"
+    "disputes": "My disputes",
+    "saved": "Saved items",
+    "openShop": "Open a shop"
   },
   "admin": {
     "title": "Staff sign-in",
@@ -487,7 +489,26 @@
     "fillAll": "Fill in every required field.",
     "addFile": "Add the file.",
     "submit": "Send for checking",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "pickRole": "Which business?",
+    "role": {
+      "ground_owner": {
+        "tab": "Ground owner",
+        "title": "Become a ground owner",
+        "intro": "List your turf or pitch on Kriraghor. We check your trade licence and your right to the land once; then you manage your grounds on the business desk.",
+        "applyTitle": "As a ground owner you can:",
+        "apply": "Start my ground owner application",
+        "active": "You are an approved ground owner"
+      },
+      "shop_owner": {
+        "tab": "Shop owner",
+        "title": "Open a shop",
+        "intro": "Sell sports gear, gym equipment or supplements on Kriraghor. We check your trade licence and TIN once; then you list products and manage stock on the business desk.",
+        "applyTitle": "As a shop owner you can:",
+        "apply": "Start my shop owner application",
+        "active": "You are an approved shop owner"
+      }
+    }
   },
   "bookings": {
     "loading": "Loading",
@@ -737,7 +758,9 @@
         "booking": "Report this booking",
         "user": "Report this member",
         "review": "Report this review",
-        "esports_tournament": "Report this tournament"
+        "esports_tournament": "Report this tournament",
+        "shop": "Report this shop",
+        "product": "Report this item"
       },
       "reason": "What is wrong?",
       "note": "Anything else? (optional)",
@@ -765,7 +788,9 @@
         "booking": "A booking",
         "user": "A member",
         "review": "A review",
-        "esports_tournament": "A tournament"
+        "esports_tournament": "A tournament",
+        "shop": "A shop",
+        "product": "A shop item"
       },
       "status": {
         "open": "Our team is looking",
@@ -802,5 +827,88 @@
       "hidden": "Venues see it from {min} bookings (you have {n}).",
       "how": "No-shows ({noShows}) and late cancels ({late}) lower it. A no-show you win in a dispute does not count."
     }
+  },
+  "market": {
+    "title": "Shop",
+    "lead": "New sports gear, gym equipment and supplements from verified shops. Used gear from players is coming soon.",
+    "savedLink": "Saved items",
+    "categories": "Categories",
+    "everything": "Everything",
+    "filters": "Filters",
+    "search": "Search",
+    "searchHint": "Boots, rackets, whey…",
+    "go": "Go",
+    "itemType": "Item type",
+    "price": "Price",
+    "anyPrice": "Any",
+    "band": {
+      "lt2000": "Under ৳2,000",
+      "2000to8000": "৳2,000–8,000",
+      "gt8000": "Over ৳8,000"
+    },
+    "area": "Shop area",
+    "anyArea": "Any area",
+    "clear": "Clear filters",
+    "count": "{n, plural, =0 {No items} one {# item} other {# items}}",
+    "sortBy": "Sort",
+    "sort": {
+      "newest": "Newest",
+      "price": "Price: low to high",
+      "-price": "Price: high to low"
+    },
+    "error": "Couldn't load. Try again.",
+    "retry": "Try again",
+    "empty": "Nothing matches",
+    "more": "Show more",
+    "from": "from {price}",
+    "newGear": "New",
+    "madeToOrder": "Made to order",
+    "badge": {
+      "price_dropped": "Price dropped",
+      "out_of_stock": "Out of stock",
+      "unavailable": "No longer listed"
+    },
+    "notFound": "This item is not available.",
+    "gone": "This item is no longer listed.",
+    "back": "Back to the shop",
+    "photoOf": "{name}, photo {n}",
+    "specs": "Details",
+    "supplementTitle": "Supplement details",
+    "importer": "Imported by {name}",
+    "bsti": "BSTI registration {no}",
+    "expires": "Best before {date}",
+    "stock": {
+      "in_stock": "In stock",
+      "low": "Low stock: {n} left",
+      "out": "Out of stock",
+      "out_hidden": "Out of stock",
+      "mto": "Made to order: ships in {days} days",
+      "blocked": "Not for sale (near expiry)"
+    },
+    "pickOptions": "Choose an option to see the stock",
+    "qty": "Quantity",
+    "addToCart": "Add to cart",
+    "checkoutSoon": "Checkout opens soon. Save the item to come back to it.",
+    "save": "Save",
+    "saved": "Saved",
+    "signInToSave": "Sign in to save items",
+    "ownItem": "This is your own item.",
+    "savedLimit": "You have saved the most items allowed. Remove some first.",
+    "soldBy": "Sold by",
+    "verifiedShop": "Verified shop: trade licence and TIN checked by Kriraghor.",
+    "shopType": {
+      "sports_gear": "Sports gear",
+      "supplements": "Supplement house",
+      "gym_gear": "Gym gear"
+    },
+    "report": "Report this item",
+    "reportShop": "Report this shop",
+    "shopNotFound": "This shop is not available.",
+    "shopProducts": "{n, plural, =0 {No products} one {# product} other {# products}}",
+    "shopEmpty": "No products listed yet.",
+    "savedTitle": "Saved items",
+    "savedEmpty": "You have not saved anything yet.",
+    "savedCount": "{n} of {max} saved",
+    "browse": "Browse the shop"
   }
 }

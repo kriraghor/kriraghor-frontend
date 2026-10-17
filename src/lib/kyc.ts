@@ -49,10 +49,11 @@ export function fileProblem(file: File, maxBytes: number): "type" | "size" | nul
 
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 
-// ---------------- business roles (ground owners, with M09)
+// ---------------- business roles (ground owners M09, shop owners M12; documents are kept per role)
 
-export type BusinessDocType = "trade_license" | "deed_or_lease" | "tin";
-export type BusinessRole = "ground_owner";
+export type BusinessDocType = "trade_license" | "deed_or_lease" | "tin" | "bin";
+export type BusinessRole = "ground_owner" | "shop_owner";
+export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner"];
 
 /** The checklist of a business role: its documents, their fields and status. */
 export const getRoleVerification = async (locale: string, role: BusinessRole) =>
@@ -73,8 +74,8 @@ export async function uploadBusinessFile(docType: BusinessDocType, file: File) {
   );
 }
 
-export const submitBusiness = async (docType: BusinessDocType, fields: Record<string, string | null>, fileId: string) =>
-  ok(await api().POST("/me/documents", { body: { docType, fields, files: { document: fileId }, consent: true } as never }));
+export const submitBusiness = async (docType: BusinessDocType, fields: Record<string, string | null>, fileId: string, role: BusinessRole) =>
+  ok(await api().POST("/me/documents", { body: { docType, fields, files: { document: fileId }, consent: true, role } as never }));
 
 /** Fields the server needs that are still empty (the server checks the rest). */
 export function missingFields(fields: { key: string; required: boolean }[], values: Record<string, string>): string[] {

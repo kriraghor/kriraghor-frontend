@@ -3,50 +3,68 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { problemOf, type Problem } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { publicEnv } from "@/lib/env";
-import { applyForRole, fileProblem, getRoleVerification, MAX_UPLOAD_BYTES, missingFields, submitBusiness, uploadBusinessFile, type BusinessDocType, type VerificationItem } from "@/lib/kyc";
+import { applyForRole, BUSINESS_ROLES, fileProblem, getRoleVerification, MAX_UPLOAD_BYTES, missingFields, submitBusiness, uploadBusinessFile, type BusinessDocType, type BusinessRole, type VerificationItem } from "@/lib/kyc";
 import { Button, Notice } from "../ui";
 
 const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: "text-ink", changes_requested: "text-danger", rejected: "text-danger", missing: "text-muted" };
 const CAN_SEND = ["missing", "changes_requested", "rejected", "withdrawn"];
 
 /**
- * /account/business (M02 business documents lite, for M09): become a ground owner. The NID comes
- * first (member role); then apply, and send the trade licence and the land deed or lease (a TIN is
- * optional). Staff check them; once approved, the ground owner desk opens on vendor.kriraghor.com.
+ * /account/business (M02 business documents): become a ground owner (M09) or a shop owner (M12;
+ * ?as=shop). The NID comes first (member role); then apply, and send the role's documents: a ground
+ * owner the trade licence and the land deed or lease (a TIN is optional); a shop owner the trade
+ * licence and TIN (a BIN when VAT registered). Documents are kept per role. Staff check them; once
+ * approved, the business desk opens on vendor.kriraghor.com.
  */
 export function BusinessPage() {
   const t = useTranslations("business");
   const locale = useLocale();
   const { status } = useAuth();
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ["business", locale], enabled: status === "signed_in", queryFn: () => getRoleVerification(locale, "ground_owner") });
+  const router = useRouter();
+  const pathname = usePathname();
+  const role: BusinessRole = useSearchParams().get("as") === "shop" ? "shop_owner" : "ground_owner";
+  const q = useQuery({ queryKey: ["business", locale, role], enabled: status === "signed_in", queryFn: () => getRoleVerification(locale, role) });
   const [problem, setProblem] = useState<Problem | null>(null);
   const [busy, setBusy] = useState(false);
   const refresh = () => qc.invalidateQueries({ queryKey: ["business"] });
 
+  const pick = (r: BusinessRole) => router.replace(r === "shop_owner" ? `${pathname}?as=shop` : pathname, { scroll: false });
+  const tabs = (
+    <div className="mt-5 flex gap-2" role="group" aria-label={t("pickRole")}>
+      {BUSINESS_ROLES.map((r) => (
+        <button key={r} type="button" aria-pressed={role === r} onClick={() => pick(r)} className={`min-h-11 border-2 px-4 font-bold ${role === r ? "border-brand bg-brand/10" : "border-line"}`} data-testid={`role-${r}`}>
+          {t(`role.${r}.tab`)}
+        </button>
+      ))}
+    </div>
+  );
+
   if (status === "signed_out") {
     return (
-      <Shell>
+      <Shell role={role}>
         <Notice>
           {t("signedOut")}{" "}
-          <Link href="/sign-in?next=/account/business" className="underline">
+          <Link href={`/sign-in?next=/account/business${role === "shop_owner" ? "?as=shop" : ""}`} className="underline">
             {t("signIn")}
           </Link>
         </Notice>
       </Shell>
     );
   }
-  if (q.isPending) return <Shell>{<div className="h-40 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />}</Shell>;
-  if (q.isError || !q.data) return <Shell>{<Notice tone="error">{t("loadFailed")}</Notice>}</Shell>;
+  if (q.isPending) return <Shell role={role}>{tabs}{<div className="mt-6 h-40 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />}</Shell>;
+  if (q.isError || !q.data) return <Shell role={role}>{tabs}{<Notice tone="error">{t("loadFailed")}</Notice>}</Shell>;
   const v = q.data;
   const vendorUrl = `${publicEnv().VENDOR_URL}/vendor`;
 
   return (
-    <Shell>
+    <Shell role={role}>
+      {tabs}
       {v.memberStatus !== "active" ? (
         <div className="mt-6" data-testid="business-needs-nid">
           <Notice>
@@ -58,7 +76,7 @@ export function BusinessPage() {
         </div>
       ) : !v.roleStatus || v.roleStatus === "withdrawn" ? (
         <div className="mt-6 border-2 border-line bg-surface p-5" data-testid="business-apply">
-          <p className="font-bold">{t("applyTitle")}</p>
+          <p className="font-bold">{t(`role.${role}.applyTitle`)}</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">
             {v.unlocks.map((u) => (
               <li key={u}>{u}</li>
@@ -77,7 +95,7 @@ export function BusinessPage() {
                 setBusy(true);
                 setProblem(null);
                 try {
-                  await applyForRole("ground_owner");
+                  await applyForRole(role);
                   await refresh();
                 } catch (err) {
                   setProblem(problemOf(err) ?? { code: "UNKNOWN", title: t("failed"), status: 0 });
@@ -86,14 +104,14 @@ export function BusinessPage() {
                 }
               }}
             >
-              {t("apply")}
+              {t(`role.${role}.apply`)}
             </Button>
           </div>
         </div>
       ) : (
         <>
           <div className={`mt-6 border-2 p-4 ${v.roleStatus === "active" ? "border-brand" : "border-line"}`} data-testid="business-status">
-            <p className="font-bold">{t(`roleStatus.${v.roleStatus}`)}</p>
+            <p className="font-bold">{v.roleStatus === "active" ? t(`role.${role}.active`) : t(`roleStatus.${v.roleStatus}`)}</p>
             <p className="text-sm text-muted">{t("progress", { done: v.progress.approved, total: v.progress.total })}</p>
             {v.roleStatus === "active" ? (
               <a href={vendorUrl} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-vendor">
@@ -103,7 +121,7 @@ export function BusinessPage() {
           </div>
           <ul className="mt-6 space-y-4" data-testid="business-items">
             {v.items.map((item) => (
-              <DocItem key={item.key} item={item} onSent={refresh} />
+              <DocItem key={item.key} item={item} role={role} onSent={refresh} />
             ))}
           </ul>
         </>
@@ -112,18 +130,18 @@ export function BusinessPage() {
   );
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
+function Shell({ role, children }: { role: BusinessRole; children: React.ReactNode }) {
   const t = useTranslations("business");
   return (
     <section className="mx-auto max-w-2xl px-5 pb-16 pt-8">
-      <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-      <p className="mt-2 text-muted">{t("intro")}</p>
+      <h1 className="text-3xl font-extrabold">{t(`role.${role}.title`)}</h1>
+      <p className="mt-2 text-muted">{t(`role.${role}.intro`)}</p>
       {children}
     </section>
   );
 }
 
-function DocItem({ item, onSent }: { item: VerificationItem; onSent: () => Promise<unknown> }) {
+function DocItem({ item, role, onSent }: { item: VerificationItem; role: BusinessRole; onSent: () => Promise<unknown> }) {
   const t = useTranslations("business");
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState<Record<string, string>>({});
@@ -143,7 +161,7 @@ function DocItem({ item, onSent }: { item: VerificationItem; onSent: () => Promi
     setBusy(true);
     try {
       const up = await uploadBusinessFile(item.key as BusinessDocType, file);
-      await submitBusiness(item.key as BusinessDocType, Object.fromEntries(item.fields.map((f) => [f.key, values[f.key]?.trim() || null])), up.fileId);
+      await submitBusiness(item.key as BusinessDocType, Object.fromEntries(item.fields.map((f) => [f.key, values[f.key]?.trim() || null])), up.fileId, role);
       setOpen(false);
       await onSent();
     } catch (err) {

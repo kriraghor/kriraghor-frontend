@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-/** Placeholders for the public verticals until their modules are built (M11, M12/M13, M20; grounds is M09). Unknown sections 404. */
-const SECTIONS = ["hiring", "shop", "gym"] as const;
+/** Placeholders for the public verticals until their modules are built (M11, M20; grounds is M09, shop M12). Unknown sections 404. */
+const SECTIONS = ["hiring", "gym"] as const;
 type Section = (typeof SECTIONS)[number];
 
 export function generateStaticParams() {

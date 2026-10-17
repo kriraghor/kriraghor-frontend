@@ -4206,10 +4206,12 @@ export interface paths {
                     gameId?: string;
                     divisionId?: string;
                     districtId?: string;
+                    categoryId?: string;
+                    itemTypeId?: string;
                 };
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
                 };
                 cookie?: never;
             };
@@ -4283,7 +4285,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
                 };
                 cookie?: never;
             };
@@ -4389,6 +4391,48 @@ export interface paths {
                         nameBn: string;
                         sort?: number;
                         indoorTypical: boolean;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        sportKey?: string | null;
+                        /** @description Shop types that may sell in this category (market.shop_types) */
+                        shopTypes: string[];
+                        /** @description Products need importer or BSTI details and per-variant expiry (v3) */
+                        isSupplement?: boolean;
+                        icon?: string | null;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        /** Format: uuid */
+                        categoryId: string;
+                        priceFloorPoisha: number;
+                        priceCeilingPoisha: number;
+                        placeholderEn?: string | null;
+                        placeholderBn?: string | null;
+                    } | {
+                        /** Format: uuid */
+                        itemTypeId: string;
+                        key: string;
+                        labelEn: string;
+                        labelBn: string;
+                        /** @enum {string} */
+                        kind: "select" | "number" | "text" | "date";
+                        options?: {
+                            value: string;
+                            labelEn: string;
+                            labelBn: string;
+                        }[];
+                        unit?: string | null;
+                        minValue?: number | null;
+                        maxValue?: number | null;
+                        required?: boolean;
+                        /** @description Each variant of a product picks one option (size, flavour) */
+                        isVariantAxis?: boolean;
+                        sort?: number;
                     };
                 };
             };
@@ -4486,7 +4530,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
                     id: string;
                 };
                 cookie?: never;
@@ -4593,6 +4637,48 @@ export interface paths {
                         nameBn?: string;
                         sort?: number;
                         indoorTypical?: boolean;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        sportKey?: string | null;
+                        /** @description Shop types that may sell in this category (market.shop_types) */
+                        shopTypes?: string[];
+                        /** @description Products need importer or BSTI details and per-variant expiry (v3) */
+                        isSupplement?: boolean;
+                        icon?: string | null;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        /** Format: uuid */
+                        categoryId?: string;
+                        priceFloorPoisha?: number;
+                        priceCeilingPoisha?: number;
+                        placeholderEn?: string | null;
+                        placeholderBn?: string | null;
+                    } | {
+                        /** Format: uuid */
+                        itemTypeId?: string;
+                        key?: string;
+                        labelEn?: string;
+                        labelBn?: string;
+                        /** @enum {string} */
+                        kind?: "select" | "number" | "text" | "date";
+                        options?: {
+                            value: string;
+                            labelEn: string;
+                            labelBn: string;
+                        }[];
+                        unit?: string | null;
+                        minValue?: number | null;
+                        maxValue?: number | null;
+                        required?: boolean;
+                        /** @description Each variant of a product picks one option (size, flavour) */
+                        isVariantAxis?: boolean;
+                        sort?: number;
                     };
                 };
             };
@@ -4673,7 +4759,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
                     id: string;
                 };
                 cookie?: never;
@@ -4760,7 +4846,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
                     id: string;
                 };
                 cookie?: never;
@@ -9927,7 +10013,7 @@ export interface paths {
             parameters: {
                 query?: {
                     locale?: "en" | "bn";
-                    role?: "member" | "ground_owner";
+                    role?: "member" | "ground_owner" | "shop_owner";
                 };
                 header?: never;
                 path?: never;
@@ -9986,7 +10072,7 @@ export interface paths {
             parameters: {
                 query: {
                     slot: "front" | "back" | "selfie" | "document";
-                    docType?: "nid" | "trade_license" | "deed_or_lease" | "tin";
+                    docType?: "nid" | "trade_license" | "deed_or_lease" | "tin" | "bin";
                 };
                 header?: never;
                 path?: never;
@@ -10122,6 +10208,11 @@ export interface paths {
                             /** Format: uuid */
                             document: string;
                         };
+                        /**
+                         * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
+                         * @enum {string}
+                         */
+                        role?: "ground_owner" | "shop_owner";
                         /** @enum {boolean} */
                         consent: true;
                     } | {
@@ -10136,6 +10227,11 @@ export interface paths {
                             /** Format: uuid */
                             document: string;
                         };
+                        /**
+                         * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
+                         * @enum {string}
+                         */
+                        role?: "ground_owner" | "shop_owner";
                         /** @enum {boolean} */
                         consent: true;
                     } | {
@@ -10150,6 +10246,30 @@ export interface paths {
                             /** Format: uuid */
                             document: string;
                         };
+                        /**
+                         * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
+                         * @enum {string}
+                         */
+                        role?: "ground_owner" | "shop_owner";
+                        /** @enum {boolean} */
+                        consent: true;
+                    } | {
+                        /** @enum {string} */
+                        docType: "bin";
+                        /** @description By field key, e.g. number, holderName, expiresOn (YYYY-MM-DD), kind */
+                        fields: {
+                            [key: string]: string | null;
+                        };
+                        /** @description The file id from POST /me/documents/files?slot=document */
+                        files: {
+                            /** Format: uuid */
+                            document: string;
+                        };
+                        /**
+                         * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
+                         * @enum {string}
+                         */
+                        role?: "ground_owner" | "shop_owner";
                         /** @enum {boolean} */
                         consent: true;
                     };
@@ -21101,7 +21221,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    role?: "member" | "ground_owner";
+                    role?: "member" | "ground_owner" | "shop_owner";
                 };
                 header?: never;
                 path?: never;
@@ -23183,7 +23303,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @enum {string} */
-                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament";
+                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
                         /** Format: uuid */
                         subjectId: string;
                         /** @enum {string} */
@@ -23312,7 +23432,7 @@ export interface paths {
             parameters: {
                 query?: {
                     status?: "open" | "escalated";
-                    subjectType?: "ground" | "booking" | "user" | "review" | "esports_tournament";
+                    subjectType?: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
                     limit?: number;
                 };
                 header?: never;
@@ -23380,7 +23500,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    type: "ground" | "booking" | "user" | "review" | "esports_tournament";
+                    type: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
                     id: string;
                 };
                 cookie?: never;
@@ -23454,7 +23574,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @enum {string} */
-                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament";
+                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
                         /** Format: uuid */
                         subjectId: string;
                         /** @enum {string} */
@@ -23547,7 +23667,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @enum {string} */
-                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament";
+                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
                         /** Format: uuid */
                         subjectId: string;
                         note: string;
@@ -25083,6 +25203,3316 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/market/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Live shop products: category, item types, price band, area, search; facet counts; sorts newest / price (FR-30 to FR-32) */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Used listings join in step 2 */
+                    kind?: "shop";
+                    category?: string;
+                    types?: string[];
+                    priceMin?: number | null;
+                    priceMax?: number | null;
+                    areaId?: string;
+                    mto?: boolean;
+                    q?: string;
+                    sort?: "newest" | "price" | "-price";
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketItemList"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/market/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The M03 item catalogue: categories, item types with price ranges and spec fields (ETag) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketCategories"];
+                    };
+                };
+                /** @description Not modified */
+                304: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/market/products/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A product page: public version, variant picker with live stock, specs, supplement details, the shop (410 once removed) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketProductPage"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_GONE */
+                410: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/market/shops/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A live shop and its products */
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketShopPage"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/saved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My saved items with badges (price dropped, out of stock, unavailable) (FR-33) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SavedList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/saved/{itemType}/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save an item (idempotent; at most market.saved_max; not your own, FR-34) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    itemType: "product";
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SavedResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: OWN_ITEM, SAVED_LIMIT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        /** Unsave an item (the row is kept with removed_at) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    itemType: "product";
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SavedResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My shop (shop owner; gate list_product) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ShopOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Open my shop: a draft of a type from market.shop_types (FR-01; one per owner) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /**
+                         * @description market.shop_types; fixed once the shop is approved
+                         * @enum {string}
+                         */
+                        shopType: "sports_gear" | "supplements" | "gym_gear";
+                        name: string;
+                        /** Format: uuid */
+                        areaId: string;
+                        addressLine: string;
+                        lat?: number | null;
+                        lng?: number | null;
+                        about?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ShopOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_EXISTS */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, SHOP_TYPE_UNKNOWN, AREA_UNKNOWN */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit my shop; on a live shop the name, area and address start an edit, the rest apply at once */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /**
+                         * @description market.shop_types; fixed once the shop is approved
+                         * @enum {string}
+                         */
+                        shopType?: "sports_gear" | "supplements" | "gym_gear";
+                        name?: string;
+                        /** Format: uuid */
+                        areaId?: string;
+                        addressLine?: string;
+                        lat?: number | null;
+                        lng?: number | null;
+                        about?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ShopOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_IN_REVIEW, SHOP_STATE, SHOP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, SHOP_TYPE_UNKNOWN, AREA_UNKNOWN */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/shop/profile/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send the shop (or an edit of it) for review (M05 kind shop) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ShopOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, SHOP_IN_REVIEW, NOTHING_TO_REVIEW, SHOP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/profile/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Take the shop or its edit out of review */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ShopOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, SHOP_IN_REVIEW, NOTHING_TO_REVIEW, SHOP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/profile/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Hide the shop and its products */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ShopOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, SHOP_IN_REVIEW, NOTHING_TO_REVIEW, SHOP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/profile/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Show a paused shop again */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ShopOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, SHOP_IN_REVIEW, NOTHING_TO_REVIEW, SHOP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/stock-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Low-stock alert, hide when out of stock, made-to-order days (FR-06, FR-14, FR-15; explicit save, audited) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        lowStockThreshold?: number;
+                        autoHideOutOfStock?: boolean;
+                        mtoDaysDefault?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ShopOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, MTO_DAYS_INVALID */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My products with status, cover and stock totals */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Draft a product of an item type with its variants and opening stock (FR-02 to FR-06) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        itemTypeId: string;
+                        title: string;
+                        brand?: string | null;
+                        description?: string | null;
+                        /** @description By item field key (non-axis fields), e.g. { "stud_type": "tf" } */
+                        specs?: {
+                            [key: string]: string | number;
+                        };
+                        basePricePoisha: number;
+                        isMto?: boolean;
+                        mtoDays?: number | null;
+                        maxQtyPerOrder?: number;
+                        /** @description Supplements: the importer, or the BSTI number */
+                        importer?: string | null;
+                        bstiRegNo?: string | null;
+                        variants?: {
+                            /** @description By axis field key, e.g. { "eu_size": "43" }; {} for a Standard variant */
+                            attributes?: {
+                                [key: string]: string;
+                            };
+                            sku?: string | null;
+                            /** @description This variant’s price; null follows the base price */
+                            priceOverridePoisha?: number | null;
+                            /**
+                             * Format: date
+                             * @description Supplements: required
+                             */
+                            expiryDate?: string | null;
+                            /** @description Supplements: required */
+                            batchNo?: string | null;
+                            sort?: number;
+                            openingStock?: number;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_REQUIRED, SHOP_STATE, VARIANT_DUPLICATE, SKU_TAKEN, MTO_NO_STOCK */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, ITEM_TYPE_UNKNOWN, CATEGORY_NOT_FOR_SHOP, SPECS_INVALID, ATTRIBUTES_INVALID, AXES_MISMATCH, PRICE_OUT_OF_RANGE, EXPIRY_REQUIRED, MTO_DAYS_INVALID, QTY_LIMIT_INVALID */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My product: the working copy with photos and variants */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit my product; title, type, brand, specs, supplement details and price moves above market.product_reprice_moderation_pct need review (FR-02) */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        itemTypeId?: string;
+                        title?: string;
+                        brand?: string | null;
+                        description?: string | null;
+                        /** @description By item field key (non-axis fields), e.g. { "stud_type": "tf" } */
+                        specs?: {
+                            [key: string]: string | number;
+                        };
+                        basePricePoisha?: number;
+                        isMto?: boolean;
+                        mtoDays?: number | null;
+                        maxQtyPerOrder?: number;
+                        /** @description Supplements: the importer, or the BSTI number */
+                        importer?: string | null;
+                        bstiRegNo?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_IN_REVIEW, PRODUCT_STATE, SHOP_REQUIRED, VARIANT_HAS_HELD */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, ITEM_TYPE_UNKNOWN, CATEGORY_NOT_FOR_SHOP, SPECS_INVALID, ATTRIBUTES_INVALID, PRICE_OUT_OF_RANGE, MTO_DAYS_INVALID, QTY_LIMIT_INVALID */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/shop/products/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send the product (or an edit of a live one) for review (M05 kind product; the shop must be live) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_NOT_LIVE, PRODUCT_STATE, PRODUCT_IN_REVIEW, NOTHING_TO_REVIEW */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_INCOMPLETE, ITEM_TYPE_UNKNOWN, CATEGORY_NOT_FOR_SHOP */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Take the product or its edit out of review */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Hide a live product */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Show a paused product again */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove a product (no units held for orders; nothing is deleted) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketStatusResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_STATE, VARIANT_HAS_HELD */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}/variants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a variant (a size or option) with its opening stock; public at once on a live product (FR-04) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description By axis field key, e.g. { "eu_size": "43" }; {} for a Standard variant */
+                        attributes?: {
+                            [key: string]: string;
+                        };
+                        sku?: string | null;
+                        /** @description This variant’s price; null follows the base price */
+                        priceOverridePoisha?: number | null;
+                        /**
+                         * Format: date
+                         * @description Supplements: required
+                         */
+                        expiryDate?: string | null;
+                        /** @description Supplements: required */
+                        batchNo?: string | null;
+                        sort?: number;
+                        openingStock?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_IN_REVIEW, PRODUCT_STATE, SHOP_REQUIRED, VARIANT_DUPLICATE, SKU_TAKEN, MTO_NO_STOCK */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, ATTRIBUTES_INVALID, AXES_MISMATCH, PRICE_OUT_OF_RANGE, EXPIRY_REQUIRED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/variants/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit a variant: SKU, price, expiry date and batch (supplements) */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        sku?: string | null;
+                        /** @description This variant’s price; null follows the base price */
+                        priceOverridePoisha?: number | null;
+                        /**
+                         * Format: date
+                         * @description Supplements: required
+                         */
+                        expiryDate?: string | null;
+                        /** @description Supplements: required */
+                        batchNo?: string | null;
+                        sort?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_IN_REVIEW, PRODUCT_STATE, SHOP_REQUIRED, VARIANT_STATE, SKU_TAKEN */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, PRICE_OUT_OF_RANGE, EXPIRY_REQUIRED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/shop/variants/{id}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retire a variant (none held for orders; a product keeps one) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductOwnerView"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_IN_REVIEW, PRODUCT_STATE, SHOP_REQUIRED, VARIANT_STATE, VARIANT_HAS_HELD, LAST_VARIANT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload a photo (raw JPEG, PNG or WebP, checked by its first bytes) to the public bucket */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            /** @description The photo itself, up to market.photo_max_bytes */
+            requestBody?: {
+                content: {
+                    "image/jpeg": string;
+                    "image/png": string;
+                    "image/webp": string;
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProductPhoto"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_IN_REVIEW, PRODUCT_STATE, PHOTO_LIMIT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_TOO_LARGE, PAYLOAD_TOO_LARGE */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_TYPE_NOT_ALLOWED, FILE_TYPE_MISMATCH */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_EMPTY */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: UPLOAD_RATE_LIMITED */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}/photos/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Reorder the photos (first = cover) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        ids: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["ProductPhoto"][];
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_IN_REVIEW, PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, PHOTOS_MISMATCH */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/products/{id}/photos/{photoId}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove a photo (status; nothing is deleted) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    photoId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            removed: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PRODUCT_IN_REVIEW, PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/variants/{id}/adjust": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change the count on the shelf with a reason (received, count correction, damaged, lost, other) (FR-13) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        delta?: number;
+                        setTo?: number;
+                        /** @enum {string} */
+                        reasonCode: "received" | "count_correction" | "damaged" | "lost" | "other";
+                        reasonText?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: BELOW_HELD, MTO_NO_STOCK, VARIANT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/variants/{id}/movements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The stock ledger of a variant, newest first (FR-11) */
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InventoryMovementList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop/inventory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Inventory desk: stock value, out, low, held, blocked; every active variant (§4) */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "low" | "out" | "mto" | "blocked";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InventoryOverview"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/shops": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Shops (approve_listings or manage_users) */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                    q?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StaffShopList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/shops/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A shop: the working copy and the public version */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            [key: string]: unknown;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Shop products (approve_listings or manage_users) */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                    q?: string;
+                    limit?: number;
+                    shopId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StaffProductList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/products/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A product: the working copy and the public version */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            [key: string]: unknown;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/shops/{id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suspend (manage_users): hidden from Market */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketStatusResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/shops/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore a suspended one (masters) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketStatusResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/shops/{id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove for good (masters; nothing is deleted) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketStatusResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, PRODUCT_STATE, VARIANT_HAS_HELD */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/products/{id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suspend (manage_users): hidden from Market */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketStatusResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/products/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore a suspended one (masters) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketStatusResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, PRODUCT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/market/products/{id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove for good (masters; nothing is deleted) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MarketStatusResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHOP_STATE, PRODUCT_STATE, VARIANT_HAS_HELD */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -28773,6 +32203,493 @@ export interface components {
             } & {
                 [key: string]: unknown;
             })[];
+        };
+        MarketItemList: {
+            items: components["schemas"]["MarketCard"][];
+            total: number;
+            nextCursor: string | null;
+            facets: {
+                categories: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                    count: number;
+                }[];
+                itemTypes: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                    count: number;
+                }[];
+            };
+            sort: string;
+        };
+        MarketCard: {
+            /** @enum {string} */
+            kind: "shop";
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            title: string;
+            brand: string | null;
+            coverUrl: string | null;
+            priceFromPoisha: number;
+            priceToPoisha: number;
+            pricesVary: boolean;
+            isMto: boolean;
+            itemType: {
+                [key: string]: unknown;
+            } | null;
+            shop: {
+                name: string;
+                slug: string;
+                shopType: string;
+                area: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                } | null;
+            };
+        };
+        MarketCategories: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                sportKey: string | null;
+                shopTypes: string[];
+                isSupplement: boolean;
+                icon: string | null;
+                types: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                    priceFloorPoisha: number;
+                    priceCeilingPoisha: number;
+                    placeholderEn: string | null;
+                    placeholderBn: string | null;
+                    fields: components["schemas"]["ItemField"][];
+                }[];
+            }[];
+        };
+        ItemField: {
+            key: string;
+            labelEn: string;
+            labelBn: string;
+            /** @enum {string} */
+            kind: "select" | "number" | "text" | "date";
+            options: {
+                value: string;
+                labelEn: string;
+                labelBn: string;
+            }[];
+            unit: string | null;
+            min: number | null;
+            max: number | null;
+            required: boolean;
+            isVariantAxis: boolean;
+        };
+        MarketProductPage: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            title: string;
+            brand: string | null;
+            description: string | null;
+            photos: {
+                /** Format: uuid */
+                id: string;
+                url: string;
+            }[];
+            priceFromPoisha: number;
+            priceToPoisha: number;
+            isMto: boolean;
+            mtoDays: number | null;
+            maxQtyPerOrder: number;
+            itemType: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+            } | null;
+            category: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                isSupplement: boolean;
+            } | null;
+            axes: components["schemas"]["ItemField"][];
+            variants: {
+                /** Format: uuid */
+                id: string;
+                attributes: {
+                    [key: string]: string;
+                };
+                labelEn: string;
+                labelBn: string;
+                pricePoisha: number;
+                stock: {
+                    code: string;
+                    available: number | null;
+                    days: number | null;
+                };
+                purchasable: boolean;
+                expiryDate: string | null;
+            }[];
+            specs: {
+                key: string;
+                labelEn: string;
+                labelBn: string;
+                valueEn: string;
+                valueBn: string;
+            }[];
+            supplement: {
+                importer: string | null;
+                bstiRegNo: string | null;
+            } | null;
+            shop: {
+                name: string;
+                slug: string;
+                shopType: string;
+                area: {
+                    /** Format: uuid */
+                    id: string;
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                } | null;
+                /** Format: date-time */
+                verifiedSince: string | null;
+                ratingAvg: number | null;
+                ratingCount: number;
+            };
+            available: boolean;
+            checkoutOpen: boolean;
+            version: number;
+        };
+        MarketShopPage: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            slug: string;
+            shopType: string;
+            about: string | null;
+            area: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+            } | null;
+            addressLine: string;
+            /** Format: date-time */
+            verifiedSince: string | null;
+            ratingAvg: number | null;
+            ratingCount: number;
+            items: components["schemas"]["MarketCard"][];
+            total: number;
+            nextCursor: string | null;
+        };
+        SavedList: {
+            items: {
+                itemType: string;
+                /** Format: uuid */
+                itemId: string;
+                /** Format: date-time */
+                savedAt: string | null;
+                priceAtSavePoisha: number;
+                item: components["schemas"]["MarketCard"] & (Record<string, never> | null);
+                badges: ("unavailable" | "out_of_stock" | "price_dropped")[];
+            }[];
+            max: number;
+        };
+        SavedResult: {
+            saved: boolean;
+            itemType: string;
+            /** Format: uuid */
+            itemId: string;
+            /** Format: date-time */
+            savedAt?: string | null;
+            removed?: boolean;
+        };
+        ShopOwnerView: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            /** @enum {string} */
+            shopType: "sports_gear" | "supplements" | "gym_gear";
+            name: string;
+            /** Format: uuid */
+            areaId: string;
+            addressLine: string;
+            lat: number | null;
+            lng: number | null;
+            about: string | null;
+            /** @enum {string} */
+            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+            /** @enum {string|null} */
+            editStatus: "draft" | "pending_review" | "changes_requested" | "rejected" | null;
+            liveVersion: number;
+            reviewReason: {
+                code: string;
+                text: string | null;
+            } | null;
+            /** Format: date-time */
+            firstLiveAt: string | null;
+            stockRules: {
+                lowStockThreshold: number;
+                autoHideOutOfStock: boolean;
+                mtoDaysDefault: number;
+            };
+            /** Format: date-time */
+            createdAt: string | null;
+            /** Format: date-time */
+            updatedAt: string | null;
+        };
+        ProductOwnerList: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                slug: string;
+                title: string;
+                itemType: {
+                    [key: string]: unknown;
+                } | null;
+                /** @enum {string} */
+                status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                /** @enum {string|null} */
+                editStatus: "draft" | "pending_review" | "changes_requested" | "rejected" | null;
+                /** @enum {string} */
+                visibility: "visible" | "hidden_oos";
+                coverUrl: string | null;
+                basePricePoisha: number;
+                isMto: boolean;
+                variants: number;
+                onHand: number;
+                available: number;
+                reviewReason: {
+                    code: string;
+                    text: string | null;
+                } | null;
+                /** Format: date-time */
+                updatedAt: string | null;
+            }[];
+        };
+        ProductOwnerView: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            /** Format: uuid */
+            shopId: string;
+            /** Format: uuid */
+            itemTypeId: string;
+            title: string;
+            brand: string | null;
+            description: string | null;
+            specs: {
+                [key: string]: unknown;
+            };
+            basePricePoisha: number;
+            isMto: boolean;
+            mtoDays: number | null;
+            maxQtyPerOrder: number;
+            importer: string | null;
+            bstiRegNo: string | null;
+            /** @enum {string} */
+            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+            /** @enum {string|null} */
+            editStatus: "draft" | "pending_review" | "changes_requested" | "rejected" | null;
+            /** @enum {string} */
+            visibility: "visible" | "hidden_oos";
+            liveVersion: number;
+            reviewReason: {
+                code: string;
+                text: string | null;
+            } | null;
+            publicPricePoisha: number | null;
+            /** Format: date-time */
+            firstLiveAt: string | null;
+            photos: components["schemas"]["ProductPhoto"][];
+            variants: components["schemas"]["ProductVariantOwnerView"][];
+            /** Format: date-time */
+            createdAt: string | null;
+            /** Format: date-time */
+            updatedAt: string | null;
+        };
+        ProductPhoto: {
+            /** Format: uuid */
+            id: string;
+            url: string;
+            sort: number;
+        };
+        ProductVariantOwnerView: {
+            /** Format: uuid */
+            id: string;
+            attributes: {
+                [key: string]: string;
+            };
+            sku: string | null;
+            priceOverridePoisha: number | null;
+            pricePoisha: number;
+            onHand: number;
+            held: number;
+            available: number;
+            expiryDate: string | null;
+            batchNo: string | null;
+            saleBlocked: boolean;
+            /** @enum {string} */
+            status: "active" | "retired";
+            stock: {
+                /** @enum {string} */
+                code: "in_stock" | "low" | "out" | "out_hidden" | "mto" | "blocked";
+                available?: number;
+                days?: number | null;
+            };
+            sort: number;
+        };
+        MarketStatusResult: {
+            /** Format: uuid */
+            id: string;
+            status: string;
+        };
+        StockResult: {
+            /** Format: uuid */
+            variantId: string;
+            onHand: number;
+            held: number;
+            available: number;
+            /** Format: uuid */
+            movementId: string | null;
+            replay: boolean;
+            unchanged?: boolean;
+        };
+        InventoryMovementList: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                type: string;
+                deltaOnHand: number;
+                deltaHeld: number;
+                onHandAfter: number;
+                heldAfter: number;
+                reasonCode: string | null;
+                reasonText: string | null;
+                refType: string;
+                /** Format: uuid */
+                refId: string | null;
+                /** Format: uuid */
+                actorId: string | null;
+                /** Format: date-time */
+                createdAt: string;
+            }[];
+            nextCursor: string | null;
+        };
+        InventoryOverview: {
+            kpis: {
+                stockValuePoisha: number;
+                outOfStock: number;
+                runningLow: number;
+                heldForOrders: number;
+                blocked: number;
+            };
+            items: {
+                /** Format: uuid */
+                id: string;
+                attributes: {
+                    [key: string]: string;
+                };
+                sku: string | null;
+                priceOverridePoisha: number | null;
+                pricePoisha: number;
+                onHand: number;
+                held: number;
+                available: number;
+                expiryDate: string | null;
+                batchNo: string | null;
+                saleBlocked: boolean;
+                /** @enum {string} */
+                status: "active" | "retired";
+                stock: {
+                    /** @enum {string} */
+                    code: "in_stock" | "low" | "out" | "out_hidden" | "mto" | "blocked";
+                    available?: number;
+                    days?: number | null;
+                };
+                sort: number;
+                product: {
+                    /** Format: uuid */
+                    id: string;
+                    title: string;
+                    status: string;
+                    visibility: string;
+                    isMto: boolean;
+                };
+                label: string;
+            }[];
+            stockRules: {
+                lowStockThreshold: number;
+                autoHideOutOfStock: boolean;
+                mtoDaysDefault: number;
+            };
+        };
+        StaffShopList: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                slug: string;
+                /** @enum {string} */
+                shopType: "sports_gear" | "supplements" | "gym_gear";
+                name: string;
+                /** Format: uuid */
+                areaId: string;
+                addressLine: string;
+                lat: number | null;
+                lng: number | null;
+                about: string | null;
+                /** @enum {string} */
+                status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                /** @enum {string|null} */
+                editStatus: "draft" | "pending_review" | "changes_requested" | "rejected" | null;
+                liveVersion: number;
+                reviewReason: {
+                    code: string;
+                    text: string | null;
+                } | null;
+                /** Format: date-time */
+                firstLiveAt: string | null;
+                stockRules: {
+                    lowStockThreshold: number;
+                    autoHideOutOfStock: boolean;
+                    mtoDaysDefault: number;
+                };
+                /** Format: date-time */
+                createdAt: string | null;
+                /** Format: date-time */
+                updatedAt: string | null;
+                owner: {
+                    /** Format: uuid */
+                    id: string;
+                    displayName: string | null;
+                };
+            }[];
+        };
+        StaffProductList: {
+            items: {
+                [key: string]: unknown;
+            }[];
         };
     };
     responses: never;

@@ -13,7 +13,7 @@ export type DisputeOption = components["schemas"]["DisputeOptions"]["items"][num
 export type Category = "no_show_contest" | "venue_problem" | "cash_problem";
 export type Review = components["schemas"]["Review"];
 export type PublicReviews = components["schemas"]["PublicReviews"];
-export type SubjectType = "ground" | "booking" | "user" | "review" | "esports_tournament";
+export type SubjectType = "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
 export type ReportReason = "fake_listing" | "wrong_info" | "unsafe" | "harassment" | "fraud" | "spam" | "offensive" | "cheating" | "other";
 
 async function ok<T>(res: { data?: T; error?: unknown }): Promise<T> {
@@ -80,6 +80,8 @@ export const REPORT_REASONS: Record<SubjectType, ReportReason[]> = {
   user: ["harassment", "fraud", "spam", "other"],
   review: ["offensive", "spam", "fake_listing", "other"],
   esports_tournament: ["cheating", "wrong_info", "fraud", "other"],
+  shop: ["fake_listing", "fraud", "wrong_info", "other"],
+  product: ["fake_listing", "wrong_info", "fraud", "offensive", "other"],
 };
 
 /** Statuses where the case is still open. */
