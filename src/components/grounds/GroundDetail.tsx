@@ -175,6 +175,11 @@ export function GroundDetail({ slug }: { slug: string }) {
               )}
             </div>
             {g.owner.displayName ? <p className="mt-4 text-sm text-muted">{t("owner", { name: g.owner.displayName })}</p> : null}
+            {g.owner.reliability !== null && g.owner.reliability !== undefined ? (
+              <p className="mt-1 text-sm font-semibold" data-testid="owner-reliability" title={t("reliabilityHelp")}>
+                {t("reliability", { score: g.owner.reliability })}
+              </p>
+            ) : null}
           </div>
         </aside>
       </div>

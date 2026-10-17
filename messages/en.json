@@ -327,7 +327,18 @@
     },
     "consent": "I agree that Kriraghor uses these documents to check my identity. Only trained staff see them, every view is recorded, and the photos are deleted 90 days after the decision.",
     "submit": "Send for review",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "requested": {
+      "title": "Our team asked you for a document",
+      "item": "{doc} by {when}",
+      "overdue": "overdue",
+      "doc": {
+        "nid": "A new NID upload",
+        "trade_license": "Your trade licence",
+        "deed_or_lease": "Your land deed or lease",
+        "tin": "Your TIN certificate"
+      }
+    }
   },
   "esportsStrip": {
     "kicker": "Esports · PUBG Mobile · Free Fire",
@@ -411,7 +422,9 @@
     "homeTitle": "Book a turf in Dhaka",
     "homeAll": "All grounds",
     "homeNone": "The first grounds are being reviewed. Check back soon.",
-    "openToday": "{n} h free today"
+    "openToday": "{n} h free today",
+    "reliability": "Owner reliability {score}%",
+    "reliabilityHelp": "How often the owner keeps confirmed bookings and settles disputes fairly, over the last six months."
   },
   "business": {
     "title": "Become a ground owner",
@@ -782,6 +795,12 @@
       "FILE_TYPE": "Upload a JPEG, PNG, WebP or PDF.",
       "FILE_TOO_LARGE": "That file is too large.",
       "UPLOAD_RATE_LIMITED": "Too many uploads. Try again later."
+    },
+    "reliability": {
+      "title": "My reliability",
+      "shown": "Venues can see this ({n} bookings).",
+      "hidden": "Venues see it from {min} bookings (you have {n}).",
+      "how": "No-shows ({noShows}) and late cancels ({late}) lower it. A no-show you win in a dispute does not count."
     }
   }
 }

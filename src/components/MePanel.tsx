@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { MemberOverview } from "./MemberOverview";
+import { MyReliability } from "./trust/MyReliability";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { api } from "@/lib/api/client";
@@ -77,6 +78,7 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
         </Link>
       </nav>
       <MemberOverview />
+      <MyReliability />
       {children}
     </section>
   );

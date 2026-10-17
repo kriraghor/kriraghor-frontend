@@ -60,6 +60,12 @@ export const reports = {
   mine: async () => ok(await api().GET("/me/reports")),
 };
 
+/** M18: my reliability, and M02 documents our team asked me for. */
+export const risk = {
+  myTrust: async () => ok(await api().GET("/me/trust")),
+  documentRequests: async () => ok(await api().GET("/me/document-requests")),
+};
+
 /**
  * Client-side type check before uploading. The server re-checks the file's bytes and its size
  * (disputes.evidence_max_bytes, a platform setting), answering FILE_TYPE or FILE_TOO_LARGE.
