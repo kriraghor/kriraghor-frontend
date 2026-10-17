@@ -28,7 +28,12 @@
     "places": "Places and sports",
     "bookings": "Bookings",
     "bookingsAdmin": "Bookings",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "disputes": "Disputes",
+    "reports": "Reports",
+    "reviews": "Reviews",
+    "vendorDisputes": "Disputes",
+    "vendorReviews": "Reviews"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -974,7 +979,9 @@
       "none": "No open disputes.",
       "reject": "Reject",
       "rejectNote": "Why is this dispute rejected? Players see this note.",
-      "correctHelp": "To correct results, edit them on the match and post again."
+      "correctHelp": "To correct results, edit them on the match and post again.",
+      "unifiedDesk": "Every result dispute is also a case on the disputes desk, with the booking disputes.",
+      "openDesk": "Open the disputes desk"
     },
     "bans": {
       "new": "Ban a UID",
@@ -1636,5 +1643,225 @@
       "tournaments": "Tournaments",
       "other": "Other"
     }
+  },
+  "disputesDesk": {
+    "title": "Disputes",
+    "intro": "Booking disputes and esports result disputes in one queue, escalated and most urgent first. Claim a case, read both sides, then decide. Refunds come from the money still in escrow and move the moment you decide.",
+    "noAccess": "You need the resolve reports or manage esports permission.",
+    "view": {
+      "active": "Open",
+      "escalated": "Escalated",
+      "resolved": "Decided",
+      "withdrawn": "Withdrawn"
+    },
+    "col": {
+      "code": "Case",
+      "about": "About",
+      "status": "Status",
+      "due": "Due",
+      "held": "Held"
+    },
+    "mine": "yours",
+    "claimed": "claimed",
+    "findings": "Findings only",
+    "empty": "Nothing here.",
+    "pick": "Choose a case.",
+    "loadFailed": "Couldn't load the case.",
+    "category": {
+      "no_show_contest": "No-show contested",
+      "venue_problem": "Problem at the venue",
+      "cash_problem": "Money paid at the venue",
+      "result_wrong": "Wrong match result"
+    },
+    "status": {
+      "awaiting_response": "Waiting for the respondent",
+      "under_review": "Under review",
+      "escalated": "Escalated",
+      "resolved": "Decided",
+      "withdrawn": "Withdrawn"
+    },
+    "outcome": {
+      "all": "Full refund",
+      "half": "Half refund",
+      "none": "No refund",
+      "custom": "Custom refund",
+      "upheld": "Upheld",
+      "rejected": "Rejected",
+      "corrected": "Results corrected"
+    },
+    "claimant": "Claimant",
+    "respondent": "Respondent",
+    "paid": "Paid online",
+    "held": "Held now",
+    "policy": {
+      "booking_no_show": "No-show: the {advance} advance is retained unless the member shows they came. Kriraghor’s {fee}% fee is on what the owner keeps.",
+      "booking_venue_problem": "The booking started but was never checked in; its online money is still held. Nothing back completes it normally (fee on the full value).",
+      "booking_played": "Played and paid out: findings only, no money moves.",
+      "booking_venue_cash": "Money paid at the venue: findings only (Q96).",
+      "esports_result_dispute": "A result dispute: the match stays open and the tournament cannot pay out until it is decided."
+    },
+    "esportsDesk": "Correct the results on the esports desk",
+    "recommended": "Staff recommend: {outcome} ({refund}).",
+    "timeline": "Both sides",
+    "party": {
+      "claimant": "Claimant",
+      "respondent": "Respondent",
+      "staff": "Staff note",
+      "system": "System"
+    },
+    "system": {
+      "snapshot": "Opened; the booking and its rules were saved.",
+      "no_response": "The respondent did not answer in time.",
+      "decision": "Decided."
+    },
+    "openFile": "Open the file ({mime})",
+    "hidden": "Hidden from the parties: {reason}",
+    "claim": "Claim this case",
+    "claimedBy": "Claimed by {name}",
+    "yourClaim": "You have this case until {until}.",
+    "note": "Staff note",
+    "notePlaceholder": "A note only staff can see",
+    "addNote": "Add",
+    "outcomeTitle": "Decision",
+    "moves": "{refund} back · owner {net} · fee {fee}",
+    "planLine": "This sends {refund} back to the member, {net} to the owner and {fee} to Kriraghor.",
+    "customRefund": "Refund in taka",
+    "customPlaceholder": "Up to {max}",
+    "noRefundPermission": "You can decide \"no refund\" or escalate; refunds need the small refunds permission.",
+    "staffLimit": "Staff can refund up to {limit}; above that, escalate.",
+    "reason": "Reason (the parties see it)",
+    "decide": "Decide",
+    "escalate": "Escalate to a master",
+    "masterDecide": "Decide as master",
+    "masterTitle": "Confirm the decision",
+    "masterHelp": "Enter your authenticator code. The money moves at once.",
+    "errors": {
+      "CLAIM_REQUIRED": "Claim the case first.",
+      "CLAIMED_BY_OTHER": "Another staff member has this case.",
+      "ESCALATION_REQUIRED": "This refund is above your limit. Escalate it.",
+      "REFUND_PERMISSION_REQUIRED": "You need the small refunds permission for a refund.",
+      "CONFLICT_OF_INTEREST": "You are part of this case.",
+      "DISPUTE_VERSION": "Someone changed this case. Reload it.",
+      "REFUND_INVALID": "Enter a refund between nothing and what is held.",
+      "OUTCOME_NOT_ALLOWED": "That decision does not apply to this case."
+    }
+  },
+  "reportsDesk": {
+    "title": "Reports",
+    "intro": "One row per reported thing. Flagged means {n} NID-verified members reported it within a week: a review is already hidden; anything else waits for you.",
+    "noAccess": "You need the resolve reports permission.",
+    "view": {
+      "open": "Open",
+      "escalated": "Escalated"
+    },
+    "subject": {
+      "ground": "Ground",
+      "booking": "Booking",
+      "user": "Member",
+      "review": "Review",
+      "esports_tournament": "Tournament"
+    },
+    "reason": {
+      "fake_listing": "Fake listing",
+      "wrong_info": "Wrong information",
+      "unsafe": "Unsafe",
+      "harassment": "Harassment",
+      "fraud": "Fraud",
+      "spam": "Spam",
+      "offensive": "Offensive",
+      "cheating": "Cheating",
+      "other": "Other"
+    },
+    "flagged": "Flagged",
+    "counts": "{reports} reports · {eligible} verified",
+    "empty": "No reports.",
+    "pick": "Choose a reported item.",
+    "loadFailed": "Couldn't load the reports.",
+    "subjectStatus": "Now: {status}",
+    "reports": "Reports",
+    "eligible": "verified",
+    "note": "Note (kept with the reports)",
+    "action": {
+      "no_violation": "No violation",
+      "content_removed": "Remove it",
+      "owner_warned": "Warn the owner",
+      "user_suspended": "Suspend the account",
+      "converted_to_dispute": "Ask for a dispute"
+    },
+    "escalate": "Escalate"
+  },
+  "reviewsDesk": {
+    "title": "Reviews",
+    "intro": "Reviews with a link or a phone number wait here until you publish them; hidden ones can be restored.",
+    "noAccess": "You need the resolve reports permission.",
+    "view": {
+      "held": "Waiting",
+      "hidden": "Hidden",
+      "published": "Published"
+    },
+    "held": {
+      "dispute": "during a dispute",
+      "content": "link or phone number"
+    },
+    "hiddenFor": "Hidden: {reason}",
+    "publish": "Publish",
+    "restore": "Restore",
+    "hide": "Hide",
+    "reason": "Reason",
+    "empty": "Nothing here."
+  },
+  "vendorTrust": {
+    "disputesTitle": "Disputes",
+    "disputesIntro": "Members can dispute a no-show or a problem at your ground. Give your side before the deadline; our team then decides. The money stays with Kriraghor until then.",
+    "noDisputes": "No disputes about your bookings.",
+    "pick": "Choose a case.",
+    "loadFailed": "Couldn't load the case.",
+    "category": {
+      "no_show_contest": "No-show contested",
+      "venue_problem": "Problem at the venue",
+      "cash_problem": "Money paid at the venue",
+      "result_wrong": "Wrong match result"
+    },
+    "status": {
+      "awaiting_response": "Waiting for the respondent",
+      "under_review": "Under review",
+      "escalated": "Escalated",
+      "resolved": "Decided",
+      "withdrawn": "Withdrawn"
+    },
+    "outcome": {
+      "all": "Full refund",
+      "half": "Half refund",
+      "none": "No refund",
+      "custom": "Custom refund",
+      "upheld": "Upheld",
+      "rejected": "Rejected",
+      "corrected": "Results corrected"
+    },
+    "party": {
+      "claimant": "The member",
+      "respondent": "You",
+      "staff": "Kriraghor",
+      "system": "Kriraghor"
+    },
+    "heldLine": "{amount} is held until the decision.",
+    "findingsLine": "No money is held; our team records what happened.",
+    "answerBy": "Give your side by {when}.",
+    "decided": "Decided: {outcome}. Refunded to the member: {refund}.",
+    "openFile": "Open the file",
+    "yourSide": "Your side",
+    "addMore": "Add more",
+    "sendSide": "Send my side",
+    "send": "Send",
+    "addFile": "Add a photo or PDF ({left} left)",
+    "uploading": "Uploading…",
+    "fileType": "Upload a JPEG, PNG, WebP or PDF.",
+    "reviewsTitle": "Reviews",
+    "reviewsIntro": "Members rate your grounds after they play. A short, polite reply helps the next team decide.",
+    "noReviews": "No reviews yet.",
+    "writeReply": "Write a reply",
+    "editReply": "Change your reply",
+    "reply": "Reply",
+    "toGrounds": "Your grounds"
   }
 }

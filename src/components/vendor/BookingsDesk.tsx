@@ -273,7 +273,7 @@ function BookingPanel({ b, groundId, day, onClose }: { b: OwnerBooking; groundId
           </button>
         ) : null}
         {actions.includes("no_show") ? (
-          <button type="button" className="min-h-11 border-2 border-danger px-4 font-semibold text-danger" onClick={() => act.mutate(() => desk.noShow(b.id))}>
+          <button type="button" className="min-h-11 border-2 border-danger px-4 font-semibold text-danger" onClick={() => act.mutate(() => desk.noShow(b.id))} data-testid="no-show">
             {t("noShow")}
           </button>
         ) : null}
