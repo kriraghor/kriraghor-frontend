@@ -8,7 +8,7 @@ import { problemOf } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, vendor } from "@/lib/vendor/grounds";
-import { blockColumns, desk, hhmm, ownerActions, type OwnerBooking, type OwnerCancelReason } from "@/lib/vendor/bookings";
+import { blockColumns, desk, hhmm, ownerActions, timelineWindow, type OwnerBooking, type OwnerCancelReason } from "@/lib/vendor/bookings";
 import { ownerTrust } from "@/lib/vendor/trust";
 import { Notice } from "../ui";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
@@ -20,8 +20,8 @@ const TONE: Record<string, string> = {
   completed: "bg-surface-2 border-line text-muted",
   no_show: "bg-red-100 border-danger text-danger dark:bg-red-950/40",
 };
-const SLOTS = halfHours("06:00", "22:30");
 const REASONS: OwnerCancelReason[] = ["weather", "waterlogged", "maintenance", "closure", "double_booked_offline", "other"];
+const clock = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 
 /**
  * /vendor/bookings (M10 FR-13 to FR-20, FR-35): one ground's day as a timeline (courts × half-hours,
@@ -82,6 +82,9 @@ export function BookingsDesk() {
     );
 
   const data = tl.data;
+  // 06:00–23:00, widened to any booking or closure outside it (grounds open late or round the clock).
+  const win = timelineWindow([...(data?.bookings ?? []), ...(data?.closures ?? [])], day);
+  const SLOTS = halfHours(clock(win.open), clock(win.close - 30));
   const selected = data?.bookings.find((b) => b.id === open) ?? null;
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-8">
@@ -147,7 +150,7 @@ export function BookingsDesk() {
                   {data.closures
                     .filter((x) => x.courtId === k.id)
                     .map((x) => {
-                      const c = blockColumns(x.start, x.end, day);
+                      const c = blockColumns(x.start, x.end, day, win.open, win.close);
                       return c ? (
                         <span key={x.closureId + x.start} className="m-0.5 flex items-center bg-[repeating-linear-gradient(45deg,var(--color-surface-2),var(--color-surface-2)_6px,transparent_6px,transparent_12px)] px-1 text-[11px] font-semibold text-muted" style={{ gridColumn: `${c.from + 1} / span ${c.span}`, gridRow: 1 }}>
                           {t("closed")}
@@ -157,7 +160,7 @@ export function BookingsDesk() {
                   {data.bookings
                     .filter((b) => b.courtIds.includes(k.id) && !b.status.startsWith("cancelled") && b.status !== "skipped")
                     .map((b) => {
-                      const c = blockColumns(b.start, b.end, day);
+                      const c = blockColumns(b.start, b.end, day, win.open, win.close);
                       return c ? (
                         <button
                           key={b.id}
