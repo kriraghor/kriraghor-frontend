@@ -43,6 +43,7 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       nav: [
         { href: "/vendor/grounds", key: "grounds" },
         { href: "/vendor/bookings", key: "bookings" },
+        { href: "/vendor/analytics", key: "analytics" },
       ],
     },
   },

@@ -7,12 +7,14 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { publicEnv } from "@/lib/env";
 import { vendor } from "@/lib/vendor/grounds";
 import { MePanel } from "../MePanel";
+import { OwnerOverview } from "./OwnerDashboard";
 
 const STEP_TONE: Record<string, string> = { done: "border-brand text-brand", now: "border-ink text-ink", later: "border-line text-muted" };
 
 /**
  * vendor.kriraghor.com home (M09): where a ground owner stands. Verify the NID and send the business
- * documents on kriraghor.com (one account); once the ground_owner role is active, list grounds here.
+ * documents on kriraghor.com (one account); once the ground_owner role is active, list grounds here,
+ * and the home shows the owner's numbers (M19 Overview) and what needs doing.
  */
 export function VendorHome() {
   const t = useTranslations("vendorGrounds");
@@ -33,7 +35,7 @@ export function VendorHome() {
   const current = steps.findIndex((s) => !s.done);
 
   return (
-    <section className="mx-auto max-w-3xl px-5 py-10">
+    <section className={`mx-auto px-5 py-10 ${owner === "active" ? "max-w-[1200px]" : "max-w-3xl"}`}>
       <h1 className="text-3xl font-extrabold">{t("home.title")}</h1>
       <p className="mt-2 text-muted">{t("home.lead")}</p>
       {owner === "active" ? (
@@ -44,6 +46,9 @@ export function VendorHome() {
             {t("home.open")}
           </Link>
         </div>
+      ) : null}
+      {owner === "active" ? (
+        <OwnerOverview />
       ) : (
         <ol className="mt-6 space-y-3" data-testid="owner-steps">
           {steps.map((s, i) => {

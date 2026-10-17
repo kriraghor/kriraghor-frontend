@@ -27,7 +27,8 @@
     "groundsAdmin": "Grounds",
     "places": "Places and sports",
     "bookings": "Bookings",
-    "bookingsAdmin": "Bookings"
+    "bookingsAdmin": "Bookings",
+    "analytics": "Analytics"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -1551,5 +1552,89 @@
     "cancelHelp": "Everything paid online is refunded to the player. Enter your authenticator code.",
     "reasonNeeded": "Give a reason of at least 5 characters.",
     "reason": "Reason"
+  },
+  "dashboard": {
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "analyticsLead": "Your grounds week by week: what you earned, how full the courts were, and when teams play.",
+    "platform": "Platform",
+    "period": "Period",
+    "periods": {
+      "7w": "7 weeks",
+      "qtr": "Quarter",
+      "yr": "Year"
+    },
+    "vs": {
+      "7w": "vs last week so far",
+      "qtr": "vs last week so far",
+      "yr": "vs last month so far"
+    },
+    "tiles": {
+      "revenue": "Revenue",
+      "occupancy": "Occupancy",
+      "bookings": "Bookings",
+      "repeatTeams": "Repeat teams",
+      "gtv": "GTV",
+      "feeRevenue": "Fee revenue",
+      "takeRate": "Take rate",
+      "platformBookings": "Ground bookings",
+      "esportsEntries": "Esports entries",
+      "prizesPaid": "Prizes paid",
+      "verifiedMembers": "Verified members",
+      "waiting": "Waiting for review"
+    },
+    "notes": {
+      "bookedAhead": "{amount} booked ahead",
+      "sources": "{app} app, {walkIn} walk-in, {series} regular",
+      "last90": "Last 90 days",
+      "online": "{amount} online",
+      "businesses": "{n} businesses",
+      "overdue": "{n} overdue"
+    },
+    "actions": {
+      "title": "Needs your action",
+      "none": "Nothing needs you right now.",
+      "check_in_due": "{n, plural, one {# team is} other {# teams are}} due to check in",
+      "balance_unrecorded": "{n, plural, one {# venue balance} other {# venue balances}} not recorded after a week",
+      "balance_due": "{n, plural, one {# balance} other {# balances}} to collect at the venue",
+      "ground_changes_requested": "Staff asked for changes to a ground",
+      "ground_draft": "{n, plural, one {# ground draft} other {# ground drafts}} not sent for review",
+      "hold_to_pay": "A slot is on hold: pay to keep it",
+      "verify_nid": "Verify your NID",
+      "nid_in_review": "Your NID is in review",
+      "review_queue": "{n} waiting for review"
+    },
+    "loadFailed": "Couldn't load the numbers. Try again.",
+    "openAnalytics": "Open analytics",
+    "asOf": "Updated {time}",
+    "charts": {
+      "revenue": "Revenue",
+      "revenueVsLastYear": "Revenue, with last year dashed",
+      "bookingsByDay": "Bookings by day (this period)",
+      "busiestHours": "Busiest hours",
+      "revenueByGround": "Revenue by ground (this period)",
+      "volume": "Volume (GTV)",
+      "byVertical": "Volume by vertical (this period)",
+      "topAreas": "Top areas (bookings this period)"
+    },
+    "hours": "{n} h",
+    "empty": "Nothing yet.",
+    "csv": {
+      "bookings": "Download bookings (CSV)",
+      "revenue": "Download revenue (CSV)",
+      "platform": "Download the day table (CSV)",
+      "failed": "Couldn't export. You may have reached this hour's limit."
+    },
+    "revenueNote": "Revenue is before the Kriraghor fee. Your payouts show what you receive.",
+    "verticals": {
+      "grounds": "Grounds",
+      "esports": "Esports",
+      "market": "Shop",
+      "used": "Used gear",
+      "hire": "Hire",
+      "gym": "Gym",
+      "tournaments": "Tournaments",
+      "other": "Other"
+    }
   }
 }

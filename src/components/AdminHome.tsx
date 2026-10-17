@@ -7,10 +7,12 @@ import { useRouter } from "@/i18n/navigation";
 import { api } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { LiveStatus } from "./LiveStatus";
+import { PlatformOverview } from "./admin/PlatformOverview";
 
 /**
  * Admin desk home. Only an admin session (staff, TOTP passed) gets here; anyone else is sent to the
- * staff sign-in. Desks (users, staff, fees, esports) arrive with their modules.
+ * staff sign-in. Masters and view_analytics staff see the platform overview (M19); everyone sees
+ * "Needs your action".
  */
 export function AdminHome() {
   const t = useTranslations();
@@ -41,7 +43,7 @@ export function AdminHome() {
 
   const u = me.data;
   return (
-    <section className="mx-auto max-w-3xl px-5 py-12">
+    <section className="mx-auto max-w-[1200px] px-5 py-12">
       <h1 className="text-3xl font-extrabold">{t("admin.home")}</h1>
       <p className="mt-2" data-testid="admin-welcome">
         {t("admin.welcome", { name: u.displayName })}
@@ -56,6 +58,7 @@ export function AdminHome() {
         ))}
       </ul>
       <LiveStatus />
+      <PlatformOverview canSee={u.isMaster || u.permissions.includes("view_analytics" as never)} />
     </section>
   );
 }
