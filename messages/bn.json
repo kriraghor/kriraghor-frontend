@@ -678,7 +678,8 @@
       "no_show_contest": "নো-শো চিহ্নিত",
       "venue_problem": "ভেন্যুতে সমস্যা",
       "cash_problem": "ভেন্যুতে দেওয়া টাকা নিয়ে সমস্যা",
-      "result_wrong": "ম্যাচের ভুল ফলাফল"
+      "result_wrong": "ম্যাচের ভুল ফলাফল",
+      "not_received": "অর্ডার পাইনি"
     },
     "status": {
       "awaiting_response": "অন্য পক্ষের জবাবের অপেক্ষায়",

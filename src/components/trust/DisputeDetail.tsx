@@ -55,7 +55,7 @@ export function DisputeDetail({ code }: { code: string }) {
       </Shell>
     );
   const { dispute: d, source, evidence, can, role } = q.data;
-  const src = source as { code?: string; groundName?: string; start?: string; id?: string } | null;
+  const src = source as { code?: string; groundName?: string; shopName?: string; start?: string; id?: string } | null;
 
   return (
     <Shell>

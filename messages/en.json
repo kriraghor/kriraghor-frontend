@@ -678,7 +678,8 @@
       "no_show_contest": "Marked as a no-show",
       "venue_problem": "A problem at the venue",
       "cash_problem": "Money paid at the venue",
-      "result_wrong": "A wrong match result"
+      "result_wrong": "A wrong match result",
+      "not_received": "Order not received"
     },
     "status": {
       "awaiting_response": "Waiting for the other side",
