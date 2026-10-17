@@ -9,10 +9,12 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { bookings, timeLabel, whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { Notice } from "../ui";
+import { BookingTrust } from "../trust/BookingTrust";
 
 /**
  * /me/bookings/[id] (M10 FR-10 to FR-12): the booking, what was paid and what is due at the venue,
  * and cancel with a preview of the refund (v3: the advance is kept; anything above it comes back).
+ * M17: disputes inside the window and rating the ground after play (BookingTrust).
  */
 export function BookingDetail({ id }: { id: string }) {
   const t = useTranslations("bookings");
@@ -128,6 +130,7 @@ export function BookingDetail({ id }: { id: string }) {
         </div>
       ) : null}
       {b.status === "confirmed" ? <p className="mt-6 text-sm text-muted">{t("checkInHint")}</p> : null}
+      {b.status !== "pending_payment" && b.status !== "expired" ? <BookingTrust bookingId={b.id} /> : null}
     </Shell>
   );
 }

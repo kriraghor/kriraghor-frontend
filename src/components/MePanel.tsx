@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { MemberOverview } from "./MemberOverview";
+import { MyReliability } from "./trust/MyReliability";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { api } from "@/lib/api/client";
@@ -60,6 +61,18 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
         <Link href="/me/bookings" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-bookings">
           {t("me.bookings")}
         </Link>
+        <Link href="/me/disputes" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-disputes">
+          {t("me.disputes")}
+        </Link>
+        <Link href="/me/orders" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-orders">
+          {t("me.orders")}
+        </Link>
+        <Link href="/me/hire" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-hire">
+          {t("me.hire")}
+        </Link>
+        <Link href="/pro" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-pro">
+          {t("me.proDesk")}
+        </Link>
         <Link href="/me/payments" className="inline-flex min-h-11 items-center font-semibold underline">
           {t("me.payments")}
         </Link>
@@ -69,11 +82,18 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
         <Link href="/me/payout-account" className="inline-flex min-h-11 items-center font-semibold underline">
           {t("me.payoutAccount")}
         </Link>
+        <Link href="/shop/saved" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-saved">
+          {t("me.saved")}
+        </Link>
+        <Link href="/account/business?as=shop" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-open-shop">
+          {t("me.openShop")}
+        </Link>
         <Link href="/account/verification" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-verification">
           {u.kycStatus === "verified" ? t("me.verified") : t("me.verify")}
         </Link>
       </nav>
       <MemberOverview />
+      <MyReliability />
       {children}
     </section>
   );

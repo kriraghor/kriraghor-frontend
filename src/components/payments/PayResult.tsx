@@ -115,6 +115,12 @@ export function PayResult({ paymentId }: { paymentId: string }) {
           {t("backToBooking")}
         </Link>
       ) : null}
+      {p.purpose === "market_order" ? (
+        // A shop order (M13): to my orders, where each shop's part shows its progress.
+        <Link href="/me/orders" className="mt-8 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white" data-testid="back-to-order">
+          {t("backToOrders")}
+        </Link>
+      ) : null}
       <Link href="/me/payments" className="mt-8 block font-semibold underline">
         {t("myPayments")}
       </Link>

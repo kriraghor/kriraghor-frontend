@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { problemOf, type Problem } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ACCEPT, fileProblem, getVerification, MAX_UPLOAD_BYTES, nidLooksValid, SLOTS, submitNid, uploadFile, type Slot, type VerificationItem } from "@/lib/kyc";
+import { risk } from "@/lib/trust";
 import { Button, Notice } from "../ui";
 
 const BADGE_CLS = { fully_verified: "border-brand text-brand", documents_in_review: "border-amber-500 text-ink", verification_needed: "border-danger text-danger" } as const;
@@ -25,13 +26,29 @@ export function VerificationPage() {
   const q = useQuery({ queryKey: ["verification", locale], enabled: status === "signed_in", queryFn: () => getVerification(locale) });
   const [editing, setEditing] = useState(false);
 
+  const asked = useQuery({ queryKey: ["document-requests"], enabled: status === "signed_in", queryFn: () => risk.documentRequests() });
+  const open = (asked.data?.items ?? []).filter((r) => r.status === "open" || r.status === "overdue");
   const nid = q.data?.items.find((i) => i.key === "nid");
-  const canSubmit = nid && ["missing", "changes_requested", "rejected", "withdrawn"].includes(nid.status);
+  // M18-FR-07: an open request for a new NID lets a verified member send it again.
+  const canSubmit = nid && (["missing", "changes_requested", "rejected", "withdrawn"].includes(nid.status) || open.some((r) => r.docType === "nid"));
 
   return (
     <section className="mx-auto max-w-2xl px-5 pb-16 pt-8">
       <h1 className="text-3xl font-extrabold">{t("title")}</h1>
       <p className="mt-2 text-muted">{t("intro")}</p>
+      {open.length ? (
+        <div className="mt-4 border-l-4 border-danger bg-surface-2 p-3" role="status" data-testid="document-requests">
+          <p className="font-bold">{t("requested.title")}</p>
+          <ul className="mt-1 text-sm">
+            {open.map((r) => (
+              <li key={r.id}>
+                {t("requested.item", { doc: t(`requested.doc.${r.docType}`), when: new Date(r.dueAt).toLocaleDateString(locale === "bn" ? "bn-BD" : "en-GB", { day: "numeric", month: "short", timeZone: "Asia/Dhaka" }) })}
+                {r.status === "overdue" ? ` · ${t("requested.overdue")}` : ""}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       {status === "signed_out" ? (
         <div className="mt-6">
           <Notice>

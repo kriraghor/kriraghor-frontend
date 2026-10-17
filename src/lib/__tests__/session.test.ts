@@ -93,7 +93,27 @@ describe("authFetch", () => {
     expect((fetchMock.mock.calls[2][0] as Request).headers.get("Authorization")).toBe("Bearer fresh");
   });
 
+  it("refreshes before the first request when a fresh page has a session but no token", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(json(200, { accessToken: "fresh" }))
+      .mockResolvedValueOnce(json(200, { id: "u1" }));
+    const res = await createAuthFetch("api", fetchMock)(new Request("http://api.test/api/v1/shop/profile"));
+    expect(res.status).toBe(200);
+    expect(fetchMock.mock.calls[0][0]).toBe("http://api.test/api/v1/auth/refresh");
+    expect((fetchMock.mock.calls[1][0] as Request).headers.get("Authorization")).toBe("Bearer fresh");
+  });
+
+  it("sends without a token when there is no session hint", async () => {
+    document.cookie = "kg_si=; path=/; max-age=0";
+    const fetchMock = vi.fn().mockResolvedValue(json(200, {}));
+    await createAuthFetch("api", fetchMock)(new Request("http://api.test/api/v1/market/items"));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect((fetchMock.mock.calls[0][0] as Request).headers.get("Authorization")).toBeNull();
+  });
+
   it("does not refresh on other 401 codes", async () => {
+    setAccessToken("abc", "api");
     const fetchMock = vi.fn().mockResolvedValue(json(401, { code: "TOKEN_AUDIENCE_INVALID" }));
     const res = await createAuthFetch("api", fetchMock)(new Request("http://api.test/api/v1/me"));
     expect(res.status).toBe(401);
