@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blockColumns, dhakaMinute, hhmm, ownerActions } from "../vendor/bookings";
+import { blockColumns, dhakaMinute, hhmm, ownerActions, timelineWindow } from "../vendor/bookings";
 
 const money = (dueAtVenue = 150000, balanceStatus: "due" | "collected" | "not_due" = "due") => ({ dueAtVenue, balanceStatus }) as never;
 
@@ -24,5 +24,19 @@ describe("vendor bookings helpers (M10)", () => {
     expect(ownerActions({ ...b, status: "checked_in" }, start + 20 * 60000)).toEqual(["extend", "collect"]);
     expect(ownerActions({ ...b, status: "checked_in", money: money(0, "not_due") }, start + 70 * 60000)).toEqual([]);
     expect(ownerActions({ ...b, status: "completed", money: money(150000, "collected") }, start + 70 * 60000)).toEqual([]);
+  });
+});
+
+describe("timelineWindow", () => {
+  it("keeps 06:00–23:00 and widens on the half-hour for blocks outside it that day", () => {
+    expect(timelineWindow([], "2026-10-18")).toEqual({ open: 360, close: 1380 });
+    // 00:00–01:00 and 23:00–00:30 Dhaka on 18 Oct (the second ends past midnight: clipped to the day).
+    const late = [
+      { start: "2026-10-17T18:00:00Z", end: "2026-10-17T19:00:00Z" },
+      { start: "2026-10-18T17:00:00Z", end: "2026-10-18T18:30:00Z" },
+    ];
+    expect(timelineWindow(late, "2026-10-18")).toEqual({ open: 0, close: 1440 });
+    expect(timelineWindow([{ start: "2026-10-19T01:00:00Z", end: "2026-10-19T02:00:00Z" }], "2026-10-18")).toEqual({ open: 360, close: 1380 });
+    expect(blockColumns(late[0].start, late[0].end, "2026-10-18", 0, 1440)).toEqual({ from: 1, span: 2 });
   });
 });
