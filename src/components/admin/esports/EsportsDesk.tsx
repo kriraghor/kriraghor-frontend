@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { esportsAdmin, resultsProblem, toPoisha, type ResultRow, type TournamentInput } from "@/lib/admin/esports";
 import { formatTaka } from "@/lib/admin/finance";
 import { stepUp } from "@/lib/admin/stepUp";
+import { Link } from "@/i18n/navigation";
 import { problemOf } from "@/lib/api/client";
 import { Notice } from "../../ui";
 import { AdminSubnav } from "../AdminSubnav";
@@ -730,6 +731,12 @@ function Disputes() {
   return (
     <div className="mt-6 max-w-4xl">
       {msg ? <Notice tone="error">{msg}</Notice> : null}
+      <p className="mb-3 text-sm">
+        {t("disputes.unifiedDesk")}{" "}
+        <Link href="/admin/disputes" className="font-semibold text-brand underline">
+          {t("disputes.openDesk")}
+        </Link>
+      </p>
       <ul className="divide-y-2 divide-line border-y-2 border-line" data-testid="disputes">
         {items.map((d) => (
           <li key={d.id} className="py-3">

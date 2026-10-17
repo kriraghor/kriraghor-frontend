@@ -14,7 +14,8 @@ const STEP_TONE: Record<string, string> = { done: "border-brand text-brand", now
 /**
  * vendor.kriraghor.com home (M09): where a ground owner stands. Verify the NID and send the business
  * documents on kriraghor.com (one account); once the ground_owner role is active, list grounds here,
- * and the home shows the owner's numbers (M19 Overview) and what needs doing.
+ * and the home shows the owner's numbers (M19 Overview) and what needs doing. M12: a shop owner sees
+ * their shop card (shop, products, inventory), or how far their shop owner application is.
  */
 export function VendorHome() {
   const t = useTranslations("vendorGrounds");
@@ -26,6 +27,7 @@ export function VendorHome() {
   const roles = me.data?.roles ?? [];
   const member = roles.find((r) => r.role === "member")?.status ?? null;
   const owner = roles.find((r) => r.role === "ground_owner")?.status ?? null;
+  const shopOwner = roles.find((r) => r.role === "shop_owner")?.status ?? null;
   const web = publicEnv().WEB_URL;
   const steps = [
     { key: "nid", done: member === "active", href: `${web}/account/verification` },
@@ -77,6 +79,35 @@ export function VendorHome() {
           })}
         </ol>
       )}
+      <ShopCard status={shopOwner} />
     </section>
+  );
+}
+
+/** M12: the shop owner's way in (or the application on kriraghor.com). */
+function ShopCard({ status }: { status: string | null }) {
+  const t = useTranslations("vendorMarket");
+  const tg = useTranslations("vendorGrounds");
+  const web = publicEnv().WEB_URL;
+  if (status === "active")
+    return (
+      <div className="mt-8 border-2 border-brand bg-surface p-5" data-testid="shop-owner-active">
+        <p className="font-bold">{t("home.active")}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {(["shop", "products", "inventory"] as const).map((k) => (
+            <Link key={k} href={`/vendor/${k}`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand">
+              {t(`nav.${k}`)}
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  return (
+    <div className="mt-8 border-2 border-line bg-surface p-5" data-testid="shop-owner-card">
+      <p className="font-bold">{status ? t("home.applied", { status: tg(`roleStatus.${status}`) }) : t("home.sell")}</p>
+      <a href={`${web}/account/business?as=shop`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
+        {status ? t("home.continue") : t("home.start")}
+      </a>
+    </div>
   );
 }
