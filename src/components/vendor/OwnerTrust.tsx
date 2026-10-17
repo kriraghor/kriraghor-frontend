@@ -69,7 +69,12 @@ function OwnerCase({ code }: { code: string }) {
 
   return (
     <div className="border-2 border-line-strong p-4" data-testid="owner-case">
-      <p className="font-mono text-xs text-muted">{d.code}</p>
+      <p className="flex flex-wrap items-center gap-2 text-xs text-muted">
+        <span className="font-mono">{d.code}</span>
+        <span className="border border-line px-2 py-0.5 font-semibold text-ink" data-testid="owner-case-status">
+          {t(`status.${d.status}`)}
+        </span>
+      </p>
       <p className="text-lg font-extrabold">{t(`category.${d.category}`)}</p>
       <p className="text-sm text-muted">
         {String(src.groundName ?? "")} {src.start ? `· ${formatDhaka(String(src.start), locale)}` : ""} · {d.sourceRef}
