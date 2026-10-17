@@ -57,7 +57,8 @@
     "payoutAccount": "Payout account",
     "verify": "Verify your identity",
     "verified": "Identity verified",
-    "bookings": "My bookings"
+    "bookings": "My bookings",
+    "disputes": "My disputes"
   },
   "admin": {
     "title": "Staff sign-in",
@@ -595,5 +596,192 @@
     },
     "csv": "Download my payments (CSV)",
     "csvFailed": "Couldn't export. You may have reached this hour's limit."
+  },
+  "trust": {
+    "loading": "Loading the case",
+    "notFound": "We could not find this case.",
+    "signedOut": "Sign in to see your disputes.",
+    "signIn": "Sign in",
+    "cancel": "Cancel",
+    "myDisputes": "My disputes",
+    "myReports": "My reports",
+    "myReviews": "My reviews",
+    "noReports": "You have not reported anything.",
+    "noReviews": "You have not rated a ground yet.",
+    "listHelp": "Cases you opened about your bookings. Our team decides each one.",
+    "loadFailed": "Couldn't load your disputes.",
+    "emptyTitle": "No disputes",
+    "emptyHelp": "If something goes wrong with a booking, open a dispute from the booking itself.",
+    "toBookings": "Go to my bookings",
+    "heldShort": "{amount} held",
+    "refundedShort": "{amount} refunded",
+    "held": "Held while we decide",
+    "findingsOnly": "No money is held for this case; our team records what happened and acts on the venue.",
+    "answerBy": "The venue answers by",
+    "decision": "Decision",
+    "refund": "Refunded to you",
+    "timeline": "What each side said",
+    "photo": "photo",
+    "openFile": "Open the {kind}",
+    "hiddenItem": "Our team hid this item.",
+    "yourSide": "Your side of the story",
+    "addStatement": "Add to what you said",
+    "sendAnswer": "Send my answer",
+    "send": "Send",
+    "addFile": "Add a photo or PDF",
+    "fileHint": "JPEG, PNG, WebP or PDF. You can add {left} more.",
+    "chooseFile": "Choose a file",
+    "uploading": "Uploading…",
+    "withdraw": "Withdraw the dispute",
+    "withdrawTitle": "Withdraw this dispute?",
+    "withdrawMoney": "The booking then settles as usual and the advance goes to the venue.",
+    "withdrawFindings": "Our team will stop looking at it.",
+    "confirmWithdraw": "Withdraw",
+    "keepOpen": "Keep it open",
+    "category": {
+      "no_show_contest": "Marked as a no-show",
+      "venue_problem": "A problem at the venue",
+      "cash_problem": "Money paid at the venue",
+      "result_wrong": "A wrong match result"
+    },
+    "status": {
+      "awaiting_response": "Waiting for the other side",
+      "under_review": "Our team is deciding",
+      "escalated": "With a senior reviewer",
+      "resolved": "Decided",
+      "withdrawn": "Withdrawn"
+    },
+    "outcome": {
+      "all": "Full refund",
+      "half": "Half refunded",
+      "none": "No refund",
+      "custom": "Part refunded",
+      "upheld": "Upheld",
+      "rejected": "Not upheld",
+      "corrected": "Results corrected"
+    },
+    "party": {
+      "you": "You",
+      "claimant": "The member",
+      "respondent": "The venue",
+      "staff": "Kriraghor",
+      "system": "Kriraghor"
+    },
+    "system": {
+      "snapshot": "The case opened. What was paid and the booking rules were saved with it.",
+      "no_response": "The other side did not answer in time; our team decides now.",
+      "decision": "Our team decided the case."
+    },
+    "reviewStatus": {
+      "published": "Shown",
+      "held": "Waiting for a check",
+      "hidden": "Hidden"
+    },
+    "dispute": {
+      "title": "Something went wrong?",
+      "help": "Tell us what happened. While we decide, the money stays with Kriraghor.",
+      "exists": "There is a dispute about this booking:",
+      "open": {
+        "no_show_contest": "I was there: contest the no-show",
+        "venue_problem": "Report a problem at the venue",
+        "cash_problem": "A problem with money paid at the venue"
+      },
+      "held": "{amount} stays with Kriraghor until we decide.",
+      "findings": "The money has already gone to the venue, so we record what happened and act on the venue.",
+      "closes": "You can open this until {when}.",
+      "statement": "What happened?",
+      "statementHint": "Times, names of staff, anything that helps. You can add photos after this.",
+      "submit": "Open the dispute"
+    },
+    "rate": {
+      "title": "Rate this ground",
+      "stars": "Stars",
+      "starN": "{n} stars",
+      "text": "What was it like? (optional)",
+      "hint": "Your name is shown with your review. Links and phone numbers are checked by our team first.",
+      "submit": "Post my rating",
+      "thanks": "Thank you. Your rating is on the ground’s page.",
+      "held": "Thank you. Your rating will show once our team has checked it.",
+      "failed": "Couldn't post your rating. Try again."
+    },
+    "reviews": {
+      "title": "Reviews",
+      "tooFew": "Not enough reviews for an average yet.",
+      "count": "{count, plural, =0 {No reviews} one {# review} other {# reviews}}",
+      "spread": "How members rated it",
+      "starsShort": "{stars} ★",
+      "starsOf": "{stars} out of 5 stars",
+      "member": "A member",
+      "ownerReply": "Reply from the venue",
+      "none": "No reviews yet. Members can rate a ground after playing there.",
+      "reportGround": "Report this ground",
+      "reportReview": "Report"
+    },
+    "report": {
+      "open": "Report",
+      "title": {
+        "ground": "Report this ground",
+        "booking": "Report this booking",
+        "user": "Report this member",
+        "review": "Report this review",
+        "esports_tournament": "Report this tournament"
+      },
+      "reason": "What is wrong?",
+      "note": "Anything else? (optional)",
+      "send": "Send the report",
+      "cancel": "Cancel",
+      "thanks": "Thank you. Our team will look at it.",
+      "signIn": "Sign in to report.",
+      "signInLink": "Sign in",
+      "self": "You cannot report yourself or your own listing.",
+      "limit": "You have sent many reports today. Try again tomorrow.",
+      "failed": "Couldn't send the report. Try again.",
+      "reasons": {
+        "fake_listing": "Fake or misleading listing",
+        "wrong_info": "Wrong information",
+        "unsafe": "Unsafe place",
+        "harassment": "Harassment or threats",
+        "fraud": "Fraud or asking to pay outside Kriraghor",
+        "spam": "Spam",
+        "offensive": "Offensive words",
+        "cheating": "Cheating",
+        "other": "Something else"
+      },
+      "subject": {
+        "ground": "A ground",
+        "booking": "A booking",
+        "user": "A member",
+        "review": "A review",
+        "esports_tournament": "A tournament"
+      },
+      "status": {
+        "open": "Our team is looking",
+        "escalated": "With a senior reviewer",
+        "resolved": "Done",
+        "dismissed": "Closed"
+      },
+      "outcome": {
+        "no_violation": "Nothing against our rules",
+        "content_removed": "Removed",
+        "owner_warned": "The owner was warned",
+        "user_suspended": "The account was suspended",
+        "converted_to_dispute": "Open a dispute from the booking",
+        "dismissed": "Closed"
+      }
+    },
+    "errors": {
+      "generic": "Something went wrong. Try again.",
+      "DISPUTE_WINDOW_CLOSED": "The time to open a dispute has passed.",
+      "DISPUTE_ALREADY_OPEN": "A dispute is already open for this booking.",
+      "DISPUTE_LIMIT": "You already have the most open disputes. Wait for one to finish.",
+      "DISPUTE_NOT_ELIGIBLE": "This booking cannot be disputed now.",
+      "DISPUTE_STATE": "The case has moved on. Reload the page.",
+      "NOT_YOUR_BOOKING": "Only the member who paid can dispute this booking.",
+      "PHONE_REQUIRED": "Verify your phone number first.",
+      "EVIDENCE_LIMIT": "You have added the most items allowed.",
+      "FILE_TYPE": "Upload a JPEG, PNG, WebP or PDF.",
+      "FILE_TOO_LARGE": "That file is too large.",
+      "UPLOAD_RATE_LIMITED": "Too many uploads. Try again later."
+    }
   }
 }

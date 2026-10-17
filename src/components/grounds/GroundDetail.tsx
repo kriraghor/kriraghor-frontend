@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { grounds, hourLabel, hoursLines } from "@/lib/grounds";
 import { formatTaka } from "@/lib/payments";
 import { BookingWidget } from "./BookingWidget";
+import { GroundReviews } from "../trust/GroundReviews";
 
 const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2", high: "bg-amber-100 dark:bg-amber-900/40", peak: "bg-amber-300 dark:bg-amber-700/70" };
 
@@ -145,6 +146,7 @@ export function GroundDetail({ slug }: { slug: string }) {
               </tbody>
             </table>
           </div>
+          <GroundReviews groundId={g.id} />
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start" data-testid="booking-aside">

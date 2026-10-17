@@ -60,6 +60,9 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
         <Link href="/me/bookings" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-bookings">
           {t("me.bookings")}
         </Link>
+        <Link href="/me/disputes" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-disputes">
+          {t("me.disputes")}
+        </Link>
         <Link href="/me/payments" className="inline-flex min-h-11 items-center font-semibold underline">
           {t("me.payments")}
         </Link>
