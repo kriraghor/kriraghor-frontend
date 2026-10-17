@@ -6,12 +6,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { grounds, hourLabel, hoursLines } from "@/lib/grounds";
 import { formatTaka } from "@/lib/payments";
+import { BookingWidget } from "./BookingWidget";
 
 const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2", high: "bg-amber-100 dark:bg-amber-900/40", peak: "bg-amber-300 dark:bg-amber-700/70" };
 
 /**
  * /grounds/[slug] (M09 §4.8, FR-27): gallery, facts, courts and hours, facilities, rules, the price
- * table for the week and the v3 payment line. The booking aside opens with M10.
+ * table for the week and the v3 payment line. The aside books a slot (M10 BookingWidget).
  */
 export function GroundDetail({ slug }: { slug: string }) {
   const t = useTranslations("grounds");
@@ -158,8 +159,19 @@ export function GroundDetail({ slug }: { slug: string }) {
               {g.payment.allowFullPayment ? <li>{t("payFull")}</li> : null}
               <li className="text-muted">{g.payment.advanceRefundable ? t("refundWindows", { full: g.payment.fullRefundHours ?? 0, half: g.payment.halfRefundHours ?? 0 }) : t("noRefund")}</li>
             </ul>
-            <p className="mt-4 border-t-2 border-line pt-4 font-bold">{g.bookingOpen ? t("bookNow") : t("bookingSoon")}</p>
-            <p className="text-sm text-muted">{t("bookingSoonHelp")}</p>
+            <div className="mt-4 border-t-2 border-line pt-4">
+              {g.bookingOpen ? (
+                <>
+                  <p className="mb-3 font-bold">{t("bookNow")}</p>
+                  <BookingWidget groundId={g.id} slug={slug} />
+                </>
+              ) : (
+                <>
+                  <p className="font-bold">{t("bookingSoon")}</p>
+                  <p className="text-sm text-muted">{t("bookingSoonHelp")}</p>
+                </>
+              )}
+            </div>
             {g.owner.displayName ? <p className="mt-4 text-sm text-muted">{t("owner", { name: g.owner.displayName })}</p> : null}
           </div>
         </aside>

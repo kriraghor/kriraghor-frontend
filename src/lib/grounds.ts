@@ -3,12 +3,12 @@ import type { components } from "@/lib/api/schema";
 
 /**
  * Public grounds (M09 read side): browse with filters and facet counts, and a ground's detail page.
- * Booking itself arrives with M10; the detail page shows prices and hours, and both v3 payment options.
+ * The detail page shows prices and hours and books a slot (M10); cards show the free hours left today.
  */
 export type GroundCard = components["schemas"]["GroundCard"];
 export type GroundList = components["schemas"]["GroundList"];
 export type GroundDetail = components["schemas"]["GroundDetail"];
-export type Filters = { sport?: string; areaId?: string; surface?: string[]; facilities?: string[]; indoor?: boolean; sort?: "cheapest" | "nearest" | "newest"; cursor?: string };
+export type Filters = { sport?: string; areaId?: string; surface?: string[]; facilities?: string[]; indoor?: boolean; sort?: "cheapest" | "nearest" | "newest" | "most_open"; cursor?: string };
 
 async function ok<T>(res: { data?: T; error?: unknown }): Promise<T> {
   if (res.error || res.data === undefined) throw res.error;
@@ -47,7 +47,7 @@ export function filtersFromParams(p: URLSearchParams): Filters {
     surface: list("surface"),
     facilities: list("facilities"),
     indoor: p.get("indoor") === "true" ? true : p.get("indoor") === "false" ? false : undefined,
-    sort: sort === "cheapest" || sort === "nearest" || sort === "newest" ? sort : undefined,
+    sort: sort === "cheapest" || sort === "nearest" || sort === "newest" || sort === "most_open" ? sort : undefined,
   };
 }
 

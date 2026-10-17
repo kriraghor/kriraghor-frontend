@@ -109,6 +109,12 @@ export function PayResult({ paymentId }: { paymentId: string }) {
           {t("backToEsports")}
         </a>
       ) : null}
+      {p.purpose === "ground_booking" ? (
+        // A ground booking (M10): back to the booking, with what is due at the venue.
+        <Link href={`/me/bookings/${p.purposeId}`} className="mt-8 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white" data-testid="back-to-booking">
+          {t("backToBooking")}
+        </Link>
+      ) : null}
       <Link href="/me/payments" className="mt-8 block font-semibold underline">
         {t("myPayments")}
       </Link>

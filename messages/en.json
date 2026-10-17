@@ -56,7 +56,8 @@
     "payouts": "My payouts",
     "payoutAccount": "Payout account",
     "verify": "Verify your identity",
-    "verified": "Identity verified"
+    "verified": "Identity verified",
+    "bookings": "My bookings"
   },
   "admin": {
     "title": "Staff sign-in",
@@ -191,7 +192,8 @@
       "manual_required": "Our team will contact you",
       "rejected": "Not approved"
     },
-    "backToEsports": "Back to my matches"
+    "backToEsports": "Back to my matches",
+    "backToBooking": "See your booking"
   },
   "payouts": {
     "title": "My payouts",
@@ -357,7 +359,8 @@
     "sortBy": "Sort",
     "sort": {
       "cheapest": "Cheapest first",
-      "newest": "Newest first"
+      "newest": "Newest first",
+      "most_open": "Most open hours today"
     },
     "error": "Couldn't load grounds.",
     "retry": "Try again",
@@ -406,7 +409,8 @@
     "homeKicker": "Grounds",
     "homeTitle": "Book a turf in Dhaka",
     "homeAll": "All grounds",
-    "homeNone": "The first grounds are being reviewed. Check back soon."
+    "homeNone": "The first grounds are being reviewed. Check back soon.",
+    "openToday": "{n} h free today"
   },
   "business": {
     "title": "Become a ground owner",
@@ -470,5 +474,79 @@
     "addFile": "Add the file.",
     "submit": "Send for checking",
     "cancel": "Cancel"
+  },
+  "bookings": {
+    "loading": "Loading",
+    "gridFailed": "Couldn't load the free times. Try again.",
+    "notTaking": "This ground is not taking bookings right now.",
+    "pickDay": "Day",
+    "court": "Court",
+    "length": "Length",
+    "minutes": "{n} min",
+    "pickStart": "Start time",
+    "pickHint": "Choose a free start time.",
+    "state": {
+      "open": "free",
+      "booked": "taken",
+      "yours": "your booking",
+      "closed": "closed",
+      "past": "too late to book"
+    },
+    "howToPay": "How to pay",
+    "payAdvanceNow": "Pay {amount} advance now",
+    "payFullNow": "Pay the full {amount} now",
+    "atVenue": "and {amount} at the ground",
+    "nothingAtVenue": "nothing to pay at the ground",
+    "total": "Total {amount}",
+    "advanceKept": "The advance is not refunded if you cancel or do not come.",
+    "quoteFailed": "Couldn't price this slot.",
+    "taken": "Someone just took this slot. Choose another time.",
+    "holdAndPay": "Hold and pay",
+    "holding": "Holding…",
+    "signInToBook": "Sign in to book",
+    "holdNote": "We hold the slot for 10 minutes while you pay.",
+    "myBookings": "My bookings",
+    "scope": {
+      "upcoming": "Upcoming",
+      "past": "Past"
+    },
+    "signedOut": "Sign in to see your bookings.",
+    "signIn": "Sign in",
+    "loadFailed": "Couldn't load your bookings.",
+    "empty": {
+      "upcoming": "No upcoming bookings.",
+      "past": "No past bookings."
+    },
+    "findGround": "Find a ground",
+    "more": "Show more",
+    "paidLine": "{paid} paid online · {due} at the venue",
+    "status": {
+      "pending_payment": "Waiting for payment",
+      "confirmed": "Confirmed",
+      "checked_in": "Checked in",
+      "completed": "Played",
+      "no_show": "No-show",
+      "cancelled": "Cancelled",
+      "cancelled_by_owner": "Cancelled by the venue",
+      "cancelled_by_platform": "Cancelled by Kriraghor",
+      "expired": "Hold expired",
+      "skipped": "Skipped"
+    },
+    "notFound": "This booking is not available.",
+    "price": "Price",
+    "paidOnline": "Paid online",
+    "dueAtVenue": "Due at the ground",
+    "refunded": "Refunded",
+    "payNow": "Pay now",
+    "releaseHold": "Let the slot go",
+    "cancel": "Cancel booking",
+    "cancelTitle": "Cancel this booking?",
+    "cancelRefund": "You get {refund} back. The advance of {kept} is kept.",
+    "cancelNoRefund": "The advance of {kept} is not refunded.",
+    "cancelFree": "The booking was moved to another ground, so you can cancel for free.",
+    "refundChanged": "The refund changed. Check the new amount and try again.",
+    "confirmCancel": "Yes, cancel",
+    "keep": "Keep the booking",
+    "checkInHint": "Show your booking code at the front desk. The venue checks you in."
   }
 }

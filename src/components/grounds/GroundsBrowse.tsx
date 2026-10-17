@@ -80,6 +80,7 @@ export function GroundsBrowse() {
               <select value={f.sort ?? "cheapest"} onChange={(e) => go({ ...f, sort: e.target.value as Filters["sort"] })} className="min-h-11 border-2 border-line bg-surface px-2 text-ink">
                 <option value="cheapest">{t("sort.cheapest")}</option>
                 <option value="newest">{t("sort.newest")}</option>
+                <option value="most_open">{t("sort.most_open")}</option>
               </select>
             </label>
           </div>
@@ -141,6 +142,11 @@ export function GroundsBrowse() {
               {t("courts", { n: g.courtsCount })} · {g.isIndoor ? t("indoorShort") : t("outdoorShort")}
               {g.surfaces[0] ? ` · ${name(g.surfaces[0])}` : ""}
             </span>
+            {g.openHoursToday ? (
+              <span className="mt-2 inline-block self-start bg-brand/10 px-2 py-0.5 text-xs font-bold text-brand" data-testid="open-today">
+                {t("openToday", { n: g.openHoursToday })}
+              </span>
+            ) : null}
             <span className="mt-auto pt-3 text-xl font-extrabold tabular-nums">{t("from", { price: formatTaka(g.priceFromPoisha, locale) })}</span>
           </span>
         </Link>

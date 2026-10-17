@@ -56,6 +56,9 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
         <dd>{u.roles.map((r) => `${r.role} (${r.status})`).join(", ")}</dd>
       </dl>
       <nav aria-label={t("me.money")} className="mt-6 flex flex-wrap gap-x-6">
+        <Link href="/me/bookings" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-bookings">
+          {t("me.bookings")}
+        </Link>
         <Link href="/me/payments" className="inline-flex min-h-11 items-center font-semibold underline">
           {t("me.payments")}
         </Link>
