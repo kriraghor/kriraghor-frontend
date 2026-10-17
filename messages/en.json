@@ -33,7 +33,8 @@
     "reports": "Reports",
     "reviews": "Reviews",
     "vendorDisputes": "Disputes",
-    "vendorReviews": "Reviews"
+    "vendorReviews": "Reviews",
+    "risk": "Risk"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -1862,6 +1863,160 @@
     "writeReply": "Write a reply",
     "editReply": "Change your reply",
     "reply": "Reply",
-    "toGrounds": "Your grounds"
+    "toGrounds": "Your grounds",
+    "reliability": "Your reliability",
+    "reliabilityShown": "Members see this on your grounds ({n} bookings).",
+    "reliabilityHidden": "Members see it from {min} bookings (you have {n}).",
+    "reliabilityHow": "Lowered by cancelling confirmed bookings ({cancels}) and disputes you lost ({disputes}). Weather cancels do not count.",
+    "bookerReliability": "Reliability {score}%"
+  },
+  "riskDesk": {
+    "title": "Risk",
+    "intro": "Flags raised by the risk rules, critical first. Nothing happens to an account until a person acts, with a reason; every action can be undone.",
+    "noAccess": "You need the manage users permission.",
+    "loadFailed": "Couldn't load the account.",
+    "severity": {
+      "info": "Info",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "level": {
+      "none": "No open flags",
+      "info": "Info",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "status": {
+      "open": "Open",
+      "actioned": "Acted on",
+      "cleared": "Cleared",
+      "lapsed": "Lapsed"
+    },
+    "col": {
+      "account": "Account",
+      "rule": "Rule",
+      "severity": "Severity",
+      "status": "Status",
+      "seen": "Last seen"
+    },
+    "empty": "No flags.",
+    "rules": "Rules",
+    "threshold": "flags at {value}",
+    "presence": "flags on any occurrence",
+    "openCount": "{n} open",
+    "change": "Change",
+    "changeTitle": "Change {key}",
+    "changeHelp": "This creates a settings change request. When it applies, every account is checked again.",
+    "changeInvalid": "Enter a number and a reason (5+ characters).",
+    "newValue": "New value",
+    "reason": "Reason",
+    "proposed": "Change request sent. It shows on Fees and rules.",
+    "rule": {
+      "accounts_per_nid": "Same NID on several accounts",
+      "shared_payout_account": "Shared payout wallet",
+      "esports_uid_banned": "Banned game UID",
+      "refund_rate": "High refund rate",
+      "dispute_loss_rate": "Loses many disputes",
+      "reports_upheld": "Upheld reports",
+      "esports_disqualified": "Esports disqualifications",
+      "velocity_breaches": "Hits rate limits often",
+      "payout_account_change": "New payout account"
+    },
+    "metric": {
+      "nid_attempts": "Accounts on the NID",
+      "shared_wallets": "Other accounts on the wallet",
+      "esports_bans": "Banned UIDs",
+      "esports_dqs": "Disqualifications",
+      "payee_refund_pct": "Refund rate (%)",
+      "dispute_loss_pct": "Disputes lost (%)",
+      "reports_upheld": "Upheld reports",
+      "velocity_breaches": "Rate-limit hits (24 h)",
+      "payout_account_added": "New payout accounts"
+    },
+    "action": {
+      "freeze_payouts": "Freeze payouts",
+      "unfreeze_payouts": "Unfreeze payouts",
+      "request_documents": "Ask for documents",
+      "cancel_document_request": "Cancel the document request",
+      "clear": "Clear the flag",
+      "reopen": "Reopen the flag",
+      "suspend": "Suspend the account",
+      "ban": "Ban the account",
+      "restore": "Restore the account"
+    },
+    "do": {
+      "freeze_payouts": "Freeze payouts…",
+      "request_documents": "Ask for the document",
+      "clear": "Clear the flag",
+      "suspend": "Suspend",
+      "ban": "Ban…"
+    },
+    "role": {
+      "staff": "Staff",
+      "master": "Master",
+      "system": "System"
+    },
+    "accountStatus": "Account {status}",
+    "kyc": "KYC {status}",
+    "flags": "Flags",
+    "noFlags": "No flags on this account.",
+    "escalated": "raised: documents overdue",
+    "seen": "First seen {first} · last {last}",
+    "timeline": "What was done",
+    "noActions": "Nothing yet.",
+    "undone": "Undone",
+    "undo": "Undo",
+    "undoReason": "Why undo? (10+ characters)",
+    "takeAction": "Act on this account",
+    "actionLabel": "Action",
+    "masterOnly": "master",
+    "days": "Days",
+    "docType": "Document",
+    "doc": {
+      "nid": "NID",
+      "trade_license": "Trade licence",
+      "deed_or_lease": "Land deed or lease",
+      "tin": "TIN certificate"
+    },
+    "docStatus": {
+      "open": "Waiting",
+      "overdue": "Overdue",
+      "fulfilled": "Sent",
+      "cancelled": "Cancelled"
+    },
+    "reasonLong": "Reason (10+ characters, kept in the audit log)",
+    "pickFlag": "Choose the flag to clear.",
+    "codeHelp": "Enter your authenticator code to confirm.",
+    "reliability": "Reliability",
+    "trustKind": {
+      "owner": "As a ground owner",
+      "booker": "As a booker"
+    },
+    "sample": "{n} bookings",
+    "noScores": "No bookings yet.",
+    "holds": "Payout holds",
+    "hold": {
+      "account_change": "New payout account",
+      "risk_freeze": "Frozen by risk",
+      "dispute": "Dispute",
+      "kyc": "KYC",
+      "account_suspended": "Account suspended",
+      "manual": "Manual"
+    },
+    "noHolds": "None.",
+    "documents": "Document requests",
+    "noDocuments": "None.",
+    "metrics": "Latest values",
+    "errors": {
+      "MASTER_REQUIRED": "Only a master can do this.",
+      "SUSPENSION_TOO_LONG": "Staff can suspend for up to 30 days.",
+      "ALREADY_FROZEN": "Payouts are already frozen.",
+      "FLAG_STATE": "The flag cannot do that now.",
+      "ACTION_ALREADY_REVERSED": "This was already undone.",
+      "DOCUMENT_ALREADY_REQUESTED": "That document is already requested.",
+      "USER_NOT_ACTIVE": "The account is not active."
+    }
   }
 }

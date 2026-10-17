@@ -33,7 +33,8 @@
     "reports": "রিপোর্ট",
     "reviews": "রিভিউ",
     "vendorDisputes": "বিরোধ",
-    "vendorReviews": "রিভিউ"
+    "vendorReviews": "রিভিউ",
+    "risk": "ঝুঁকি"
   },
   "signIn": {
     "title": "ক্রীড়াঘরে সাইন ইন করুন",
@@ -1862,6 +1863,160 @@
     "writeReply": "উত্তর লিখুন",
     "editReply": "উত্তর বদলান",
     "reply": "উত্তর দিন",
-    "toGrounds": "আপনার মাঠ"
+    "toGrounds": "আপনার মাঠ",
+    "reliability": "আপনার নির্ভরযোগ্যতা",
+    "reliabilityShown": "সদস্যরা আপনার মাঠে এটি দেখেন ({n}টি বুকিং)।",
+    "reliabilityHidden": "{min}টি বুকিং হলে সদস্যরা এটি দেখবেন (আপনার {n}টি)।",
+    "reliabilityHow": "নিশ্চিত বুকিং বাতিল ({cancels}) এবং হারানো বিরোধে ({disputes}) কমে। আবহাওয়ার কারণে বাতিল গোনা হয় না।",
+    "bookerReliability": "নির্ভরযোগ্যতা {score}%"
+  },
+  "riskDesk": {
+    "title": "ঝুঁকি",
+    "intro": "ঝুঁকির নিয়মে তোলা চিহ্ন, গুরুতরগুলো আগে। কেউ কারণসহ পদক্ষেপ না নেওয়া পর্যন্ত অ্যাকাউন্টে কিছু হয় না; প্রতিটি পদক্ষেপ ফেরানো যায়।",
+    "noAccess": "ব্যবহারকারী ব্যবস্থাপনার অনুমতি লাগবে।",
+    "loadFailed": "অ্যাকাউন্ট লোড করা যায়নি।",
+    "severity": {
+      "info": "তথ্য",
+      "medium": "মাঝারি",
+      "high": "উচ্চ",
+      "critical": "গুরুতর"
+    },
+    "level": {
+      "none": "কোনো খোলা চিহ্ন নেই",
+      "info": "তথ্য",
+      "medium": "মাঝারি",
+      "high": "উচ্চ",
+      "critical": "গুরুতর"
+    },
+    "status": {
+      "open": "খোলা",
+      "actioned": "পদক্ষেপ নেওয়া",
+      "cleared": "সাফ",
+      "lapsed": "মেয়াদোত্তীর্ণ"
+    },
+    "col": {
+      "account": "অ্যাকাউন্ট",
+      "rule": "নিয়ম",
+      "severity": "মাত্রা",
+      "status": "অবস্থা",
+      "seen": "সর্বশেষ"
+    },
+    "empty": "কোনো চিহ্ন নেই।",
+    "rules": "নিয়ম",
+    "threshold": "{value}-এ চিহ্নিত",
+    "presence": "একবার ঘটলেই চিহ্নিত",
+    "openCount": "{n}টি খোলা",
+    "change": "বদলান",
+    "changeTitle": "{key} বদলান",
+    "changeHelp": "এতে সেটিংস পরিবর্তনের অনুরোধ তৈরি হবে। কার্যকর হলে প্রতিটি অ্যাকাউন্ট আবার যাচাই হবে।",
+    "changeInvalid": "একটি সংখ্যা ও কারণ (৫+ অক্ষর) দিন।",
+    "newValue": "নতুন মান",
+    "reason": "কারণ",
+    "proposed": "পরিবর্তনের অনুরোধ পাঠানো হয়েছে। ফি ও নিয়ম পাতায় দেখা যাবে।",
+    "rule": {
+      "accounts_per_nid": "একাধিক অ্যাকাউন্টে একই NID",
+      "shared_payout_account": "যৌথ পেআউট ওয়ালেট",
+      "esports_uid_banned": "নিষিদ্ধ গেম UID",
+      "refund_rate": "রিফান্ডের হার বেশি",
+      "dispute_loss_rate": "অনেক বিরোধে হার",
+      "reports_upheld": "সঠিক প্রমাণিত রিপোর্ট",
+      "esports_disqualified": "এস্পোর্টস থেকে বাদ",
+      "velocity_breaches": "বারবার সীমা ছোঁয়া",
+      "payout_account_change": "নতুন পেআউট অ্যাকাউন্ট"
+    },
+    "metric": {
+      "nid_attempts": "NID-তে অ্যাকাউন্ট",
+      "shared_wallets": "ওয়ালেটে অন্য অ্যাকাউন্ট",
+      "esports_bans": "নিষিদ্ধ UID",
+      "esports_dqs": "বাদ পড়া",
+      "payee_refund_pct": "রিফান্ডের হার (%)",
+      "dispute_loss_pct": "হারানো বিরোধ (%)",
+      "reports_upheld": "সঠিক রিপোর্ট",
+      "velocity_breaches": "সীমা ছোঁয়া (২৪ ঘণ্টা)",
+      "payout_account_added": "নতুন পেআউট অ্যাকাউন্ট"
+    },
+    "action": {
+      "freeze_payouts": "পেআউট বন্ধ",
+      "unfreeze_payouts": "পেআউট চালু",
+      "request_documents": "ডকুমেন্ট চাওয়া",
+      "cancel_document_request": "ডকুমেন্টের অনুরোধ বাতিল",
+      "clear": "চিহ্ন সাফ",
+      "reopen": "চিহ্ন আবার খোলা",
+      "suspend": "অ্যাকাউন্ট স্থগিত",
+      "ban": "অ্যাকাউন্ট নিষিদ্ধ",
+      "restore": "অ্যাকাউন্ট পুনরুদ্ধার"
+    },
+    "do": {
+      "freeze_payouts": "পেআউট বন্ধ…",
+      "request_documents": "ডকুমেন্ট চান",
+      "clear": "চিহ্ন সাফ",
+      "suspend": "স্থগিত",
+      "ban": "নিষিদ্ধ…"
+    },
+    "role": {
+      "staff": "স্টাফ",
+      "master": "মাস্টার",
+      "system": "সিস্টেম"
+    },
+    "accountStatus": "অ্যাকাউন্ট {status}",
+    "kyc": "KYC {status}",
+    "flags": "চিহ্ন",
+    "noFlags": "এই অ্যাকাউন্টে কোনো চিহ্ন নেই।",
+    "escalated": "বাড়ানো: ডকুমেন্ট সময়মতো আসেনি",
+    "seen": "প্রথম {first} · সর্বশেষ {last}",
+    "timeline": "যা করা হয়েছে",
+    "noActions": "এখনো কিছু নয়।",
+    "undone": "ফেরানো",
+    "undo": "ফেরান",
+    "undoReason": "কেন ফেরাবেন? (১০+ অক্ষর)",
+    "takeAction": "এই অ্যাকাউন্টে পদক্ষেপ",
+    "actionLabel": "পদক্ষেপ",
+    "masterOnly": "মাস্টার",
+    "days": "দিন",
+    "docType": "ডকুমেন্ট",
+    "doc": {
+      "nid": "NID",
+      "trade_license": "ট্রেড লাইসেন্স",
+      "deed_or_lease": "জমির দলিল বা লিজ",
+      "tin": "টিআইএন সনদ"
+    },
+    "docStatus": {
+      "open": "অপেক্ষায়",
+      "overdue": "সময় পেরিয়েছে",
+      "fulfilled": "পাঠানো হয়েছে",
+      "cancelled": "বাতিল"
+    },
+    "reasonLong": "কারণ (১০+ অক্ষর, অডিট লগে থাকবে)",
+    "pickFlag": "যে চিহ্ন সাফ করবেন তা বাছুন।",
+    "codeHelp": "নিশ্চিত করতে অথেনটিকেটর কোড দিন।",
+    "reliability": "নির্ভরযোগ্যতা",
+    "trustKind": {
+      "owner": "মাঠ মালিক হিসেবে",
+      "booker": "বুকার হিসেবে"
+    },
+    "sample": "{n}টি বুকিং",
+    "noScores": "এখনো কোনো বুকিং নেই।",
+    "holds": "পেআউট আটকানো",
+    "hold": {
+      "account_change": "নতুন পেআউট অ্যাকাউন্ট",
+      "risk_freeze": "ঝুঁকির কারণে বন্ধ",
+      "dispute": "বিরোধ",
+      "kyc": "KYC",
+      "account_suspended": "অ্যাকাউন্ট স্থগিত",
+      "manual": "হাতে"
+    },
+    "noHolds": "নেই।",
+    "documents": "ডকুমেন্টের অনুরোধ",
+    "noDocuments": "নেই।",
+    "metrics": "সর্বশেষ মান",
+    "errors": {
+      "MASTER_REQUIRED": "শুধু মাস্টার এটি করতে পারেন।",
+      "SUSPENSION_TOO_LONG": "স্টাফ সর্বোচ্চ ৩০ দিন স্থগিত করতে পারেন।",
+      "ALREADY_FROZEN": "পেআউট আগেই বন্ধ।",
+      "FLAG_STATE": "চিহ্নটি এখন এটি করতে পারে না।",
+      "ACTION_ALREADY_REVERSED": "এটি আগেই ফেরানো হয়েছে।",
+      "DOCUMENT_ALREADY_REQUESTED": "এই ডকুমেন্ট আগেই চাওয়া হয়েছে।",
+      "USER_NOT_ACTIVE": "অ্যাকাউন্টটি সক্রিয় নয়।"
+    }
   }
 }

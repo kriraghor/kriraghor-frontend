@@ -29,6 +29,9 @@ export const ownerTrust = {
     window.open(URL.createObjectURL(res.data as Blob), "_blank", "noopener");
   },
   reviews: async () => unwrap(await api().GET("/me/ground-reviews", { params: { query: {} } })),
+  /** M18: my reliability (shown or not yet) and a booker's (only once shown). */
+  myTrust: async () => unwrap(await api().GET("/me/trust")),
+  trustOf: async (userId: string) => unwrap(await api().GET("/trust/{userId}", { params: { path: { userId } } })),
   reply: async (id: string, text: string) => unwrap(await api().POST("/me/ground-reviews/{id}/reply", { params: { path: { id } }, body: { text } })),
 };
 

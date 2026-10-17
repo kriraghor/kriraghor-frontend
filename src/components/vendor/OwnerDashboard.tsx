@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { bucketLabel, compactTaka, dashboards, downloadCsv, hourLabel, pct, type OwnerDashboard as Data, type Period } from "@/lib/dashboard";
+import { ownerTrust } from "@/lib/vendor/trust";
 import { ChartBars, ChartLine, ChartRank, ChartSplit, DeltaBadge, KpiTile } from "../charts/Charts";
 import { Notice } from "../ui";
 
@@ -76,6 +77,22 @@ export function ActionList({ items }: { items: { key: string; count: number; hre
 }
 
 /** vendor home for an active owner: tiles, actions and the period switch. */
+/** M18: the owner's reliability, with what lowers it (shown to members once there are enough bookings). */
+function OwnerReliability() {
+  const t = useTranslations("vendorTrust");
+  const q = useQuery({ queryKey: ["my-trust"], queryFn: () => ownerTrust.myTrust() });
+  const s = q.data?.items.find((x) => x.kind === "owner") as { score: number | null; shown: boolean; sample: number; minSample?: number; detail?: { owner_cancel?: number; owner_dispute_lost?: number } } | undefined;
+  if (!s) return null;
+  return (
+    <div className="border-2 border-line p-4" data-testid="owner-reliability">
+      <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("reliability")}</p>
+      <p className="text-3xl font-extrabold tabular-nums">{s.score === null ? "–" : `${s.score}%`}</p>
+      <p className="text-sm text-muted">{s.shown ? t("reliabilityShown", { n: s.sample }) : t("reliabilityHidden", { n: s.sample, min: s.minSample ?? 0 })}</p>
+      <p className="mt-1 text-xs text-muted">{t("reliabilityHow", { cancels: s.detail?.owner_cancel ?? 0, disputes: s.detail?.owner_dispute_lost ?? 0 })}</p>
+    </div>
+  );
+}
+
 export function OwnerOverview() {
   const t = useTranslations("dashboard");
   const { status } = useAuth();
@@ -89,6 +106,7 @@ export function OwnerOverview() {
         <PeriodSwitch period={period} onChange={setPeriod} />
       </div>
       {d.isPending ? <div className="h-36 animate-pulse bg-surface-2" /> : d.isError || !d.data ? <Notice tone="error">{t("loadFailed")}</Notice> : <OwnerTiles d={d.data} />}
+      <OwnerReliability />
       <div>
         <h2 className="text-lg font-extrabold">{t("actions.title")}</h2>
         <div className="mt-2">{actions.data ? <ActionList items={actions.data.items} /> : <div className="h-16 animate-pulse bg-surface-2" />}</div>

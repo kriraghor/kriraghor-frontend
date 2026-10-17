@@ -16,6 +16,7 @@ export const ADMIN_NAV = [
   { href: "/admin/disputes", key: "disputes" },
   { href: "/admin/reports", key: "reports" },
   { href: "/admin/reviews", key: "reviews" },
+  { href: "/admin/risk", key: "risk" },
   { href: "/admin/audit", key: "audit" },
   { href: "/admin/events", key: "events" },
 ] as const;

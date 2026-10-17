@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, vendor } from "@/lib/vendor/grounds";
 import { blockColumns, desk, hhmm, ownerActions, type OwnerBooking, type OwnerCancelReason } from "@/lib/vendor/bookings";
+import { ownerTrust } from "@/lib/vendor/trust";
 import { Notice } from "../ui";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 
@@ -206,6 +207,19 @@ export function BookingsDesk() {
   );
 }
 
+/** M18: the booker's reliability, once it is shown (enough bookings). */
+function BookerReliability({ userId }: { userId: string }) {
+  const t = useTranslations("vendorTrust");
+  const q = useQuery({ queryKey: ["trust-of", userId], queryFn: () => ownerTrust.trustOf(userId) });
+  const s = q.data?.items.find((x) => x.kind === "booker");
+  if (!s || s.score === null) return null;
+  return (
+    <p className="text-sm font-semibold" data-testid="booker-reliability">
+      {t("bookerReliability", { score: s.score })}
+    </p>
+  );
+}
+
 function BookingPanel({ b, groundId, day, onClose }: { b: OwnerBooking; groundId: string; day: string; onClose: () => void }) {
   const t = useTranslations("vendorBookings");
   const locale = useLocale();
@@ -235,6 +249,7 @@ function BookingPanel({ b, groundId, day, onClose }: { b: OwnerBooking; groundId
             {hhmm(b.start)}–{hhmm(b.end)} · {t(`source.${b.source}`)}
             {b.phoneLast4 ? ` · ••••${b.phoneLast4}` : ""}
           </p>
+          {b.bookerUserId ? <BookerReliability userId={b.bookerUserId} /> : null}
         </div>
         <button type="button" onClick={onClose} className="min-h-11 px-2 text-sm font-semibold underline">
           {t("close")}
