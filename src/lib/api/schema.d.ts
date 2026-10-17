@@ -4211,7 +4211,7 @@ export interface paths {
                 };
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields" | "hire-categories" | "hire-roles";
                 };
                 cookie?: never;
             };
@@ -4285,7 +4285,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields" | "hire-categories" | "hire-roles";
                 };
                 cookie?: never;
             };
@@ -4433,6 +4433,46 @@ export interface paths {
                         /** @description Each variant of a product picks one option (size, flavour) */
                         isVariantAxis?: boolean;
                         sort?: number;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        code: string;
+                        /**
+                         * @description Who lists in it: players (category 01) or pros
+                         * @enum {string}
+                         */
+                        forRole: "player" | "pro";
+                        tint?: string | null;
+                    } | {
+                        key: string;
+                        nameEn: string;
+                        nameBn: string;
+                        sort?: number;
+                        /** Format: uuid */
+                        categoryId: string;
+                        sportKeys?: string[];
+                        allowedUnits: ("hourly" | "match")[];
+                        formatPriced?: boolean;
+                        formats?: ("T10" | "T20" | "OD" | "TAPE")[];
+                        /** @description The base the rate limits come from (hire.rate_band, Q74) */
+                        baseHourlyPoisha: number;
+                        specialisations?: {
+                            key: string;
+                            labelEn: string;
+                            labelBn: string;
+                        }[];
+                        credentialTiers?: {
+                            /** @enum {string} */
+                            level: "amateur" | "semi_pro" | "pro" | "national";
+                            labelEn: string;
+                            labelBn: string;
+                        }[];
+                        requiresCredential?: boolean;
+                        policeCheckForU16?: boolean;
+                        /** @description A match official (umpire, referee, scorer) */
+                        isOfficial?: boolean;
                     };
                 };
             };
@@ -4530,7 +4570,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields" | "hire-categories" | "hire-roles";
                     id: string;
                 };
                 cookie?: never;
@@ -4679,6 +4719,46 @@ export interface paths {
                         /** @description Each variant of a product picks one option (size, flavour) */
                         isVariantAxis?: boolean;
                         sort?: number;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        code?: string;
+                        /**
+                         * @description Who lists in it: players (category 01) or pros
+                         * @enum {string}
+                         */
+                        forRole?: "player" | "pro";
+                        tint?: string | null;
+                    } | {
+                        key?: string;
+                        nameEn?: string;
+                        nameBn?: string;
+                        sort?: number;
+                        /** Format: uuid */
+                        categoryId?: string;
+                        sportKeys?: string[];
+                        allowedUnits?: ("hourly" | "match")[];
+                        formatPriced?: boolean;
+                        formats?: ("T10" | "T20" | "OD" | "TAPE")[];
+                        /** @description The base the rate limits come from (hire.rate_band, Q74) */
+                        baseHourlyPoisha?: number;
+                        specialisations?: {
+                            key: string;
+                            labelEn: string;
+                            labelBn: string;
+                        }[];
+                        credentialTiers?: {
+                            /** @enum {string} */
+                            level: "amateur" | "semi_pro" | "pro" | "national";
+                            labelEn: string;
+                            labelBn: string;
+                        }[];
+                        requiresCredential?: boolean;
+                        policeCheckForU16?: boolean;
+                        /** @description A match official (umpire, referee, scorer) */
+                        isOfficial?: boolean;
                     };
                 };
             };
@@ -4759,7 +4839,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields" | "hire-categories" | "hire-roles";
                     id: string;
                 };
                 cookie?: never;
@@ -4846,7 +4926,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields";
+                    table: "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets" | "sports" | "divisions" | "districts" | "areas" | "facilities" | "surfaces" | "item-categories" | "item-types" | "item-type-fields" | "hire-categories" | "hire-roles";
                     id: string;
                 };
                 cookie?: never;
@@ -10013,7 +10093,7 @@ export interface paths {
             parameters: {
                 query?: {
                     locale?: "en" | "bn";
-                    role?: "member" | "ground_owner" | "shop_owner";
+                    role?: "member" | "ground_owner" | "shop_owner" | "player" | "pro";
                 };
                 header?: never;
                 path?: never;
@@ -10072,7 +10152,7 @@ export interface paths {
             parameters: {
                 query: {
                     slot: "front" | "back" | "selfie" | "document";
-                    docType?: "nid" | "trade_license" | "deed_or_lease" | "tin" | "bin";
+                    docType?: "nid" | "trade_license" | "deed_or_lease" | "tin" | "bin" | "credential" | "police_clearance";
                 };
                 header?: never;
                 path?: never;
@@ -10212,7 +10292,7 @@ export interface paths {
                          * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
                          * @enum {string}
                          */
-                        role?: "ground_owner" | "shop_owner";
+                        role?: "ground_owner" | "shop_owner" | "player" | "pro";
                         /** @enum {boolean} */
                         consent: true;
                     } | {
@@ -10231,7 +10311,7 @@ export interface paths {
                          * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
                          * @enum {string}
                          */
-                        role?: "ground_owner" | "shop_owner";
+                        role?: "ground_owner" | "shop_owner" | "player" | "pro";
                         /** @enum {boolean} */
                         consent: true;
                     } | {
@@ -10250,7 +10330,7 @@ export interface paths {
                          * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
                          * @enum {string}
                          */
-                        role?: "ground_owner" | "shop_owner";
+                        role?: "ground_owner" | "shop_owner" | "player" | "pro";
                         /** @enum {boolean} */
                         consent: true;
                     } | {
@@ -10269,7 +10349,45 @@ export interface paths {
                          * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
                          * @enum {string}
                          */
-                        role?: "ground_owner" | "shop_owner";
+                        role?: "ground_owner" | "shop_owner" | "player" | "pro";
+                        /** @enum {boolean} */
+                        consent: true;
+                    } | {
+                        /** @enum {string} */
+                        docType: "credential";
+                        /** @description By field key, e.g. number, holderName, expiresOn (YYYY-MM-DD), kind */
+                        fields: {
+                            [key: string]: string | null;
+                        };
+                        /** @description The file id from POST /me/documents/files?slot=document */
+                        files: {
+                            /** Format: uuid */
+                            document: string;
+                        };
+                        /**
+                         * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
+                         * @enum {string}
+                         */
+                        role?: "ground_owner" | "shop_owner" | "player" | "pro";
+                        /** @enum {boolean} */
+                        consent: true;
+                    } | {
+                        /** @enum {string} */
+                        docType: "police_clearance";
+                        /** @description By field key, e.g. number, holderName, expiresOn (YYYY-MM-DD), kind */
+                        fields: {
+                            [key: string]: string | null;
+                        };
+                        /** @description The file id from POST /me/documents/files?slot=document */
+                        files: {
+                            /** Format: uuid */
+                            document: string;
+                        };
+                        /**
+                         * @description The business role the document is for (documents are kept per role). Needed only when more than one applied role asks for this type
+                         * @enum {string}
+                         */
+                        role?: "ground_owner" | "shop_owner" | "player" | "pro";
                         /** @enum {boolean} */
                         consent: true;
                     };
@@ -21645,14 +21763,14 @@ export interface paths {
                 content: {
                     "application/json": {
                         /**
-                         * @description A booking or a shop sub-order (M13). Esports result disputes open from the match page (POST /me/esports/matches/{id}/disputes)
+                         * @description A booking, a shop sub-order (M13) or a hire job (M11). Esports result disputes open from the match page (POST /me/esports/matches/{id}/disputes)
                          * @enum {string}
                          */
-                        sourceType: "booking" | "sub_order";
+                        sourceType: "booking" | "sub_order" | "hire_job";
                         /** Format: uuid */
                         sourceId: string;
                         /** @enum {string} */
-                        category: "no_show_contest" | "venue_problem" | "cash_problem" | "not_received";
+                        category: "no_show_contest" | "venue_problem" | "cash_problem" | "not_received" | "no_show" | "job_problem";
                         statement: string;
                     };
                 };
@@ -21791,7 +21909,7 @@ export interface paths {
         get: {
             parameters: {
                 query: {
-                    sourceType?: "booking" | "esports_result" | "sub_order";
+                    sourceType?: "booking" | "esports_result" | "sub_order" | "hire_job";
                     sourceId: string;
                 };
                 header?: never;
@@ -22298,7 +22416,7 @@ export interface paths {
             parameters: {
                 query?: {
                     status?: "active" | "awaiting_response" | "under_review" | "escalated" | "resolved" | "withdrawn" | "all";
-                    sourceType?: "booking" | "esports_result" | "sub_order";
+                    sourceType?: "booking" | "esports_result" | "sub_order" | "hire_job";
                     mine?: "true" | "false";
                     code?: string;
                     cursor?: string;
@@ -30085,6 +30203,3097 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/hire/taxonomy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** M03 hire taxonomy: 6 categories and their roles (units, match formats, credential tiers) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireTaxonomy"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/hire/profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The directory: live profiles by category, role, experience, unit, sport, area and search; sorted by rating, rate (normalised hourly, FR-03), jobs or experience */
+        get: {
+            parameters: {
+                query?: {
+                    category?: string;
+                    role?: string;
+                    exp?: string;
+                    unit?: "hourly" | "match";
+                    sport?: string;
+                    areaId?: string;
+                    q?: string;
+                    sort?: "rating" | "rate" | "jobs" | "experience";
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireProfileList"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/hire/profiles/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A profile page: rates, the verified credential level, a 14-day busy strip (times only) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireProfilePage"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/hire/profiles/{id}/quote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** A non-binding quote per engagement (§6.3: base, night, short notice, travel zone, rounded to ৳50) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        unit: "hourly" | "match";
+                        engagements: {
+                            /** Format: date-time */
+                            start: string;
+                            /** @enum {string} */
+                            format?: "T10" | "T20" | "OD" | "TAPE";
+                            /** @description For hourly sessions */
+                            hours?: number;
+                            /** @description Floodlit work; a start at or after 18:00 Dhaka counts as night anyway */
+                            night?: boolean;
+                            u16?: boolean;
+                            /** Format: uuid */
+                            venueGroundId?: string;
+                            venueText: string;
+                            /** Format: uuid */
+                            venueAreaId: string;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireQuote"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_NOT_AVAILABLE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: UNIT_NOT_OFFERED, AREA_UNKNOWN, VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/hire/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a hire request (gate hire: a verified phone); the server quotes and snapshots each engagement (FR-20, FR-21) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        profileId: string;
+                        /** @enum {string} */
+                        unit: "hourly" | "match";
+                        engagements: {
+                            /** Format: date-time */
+                            start: string;
+                            /** @enum {string} */
+                            format?: "T10" | "T20" | "OD" | "TAPE";
+                            /** @description For hourly sessions */
+                            hours?: number;
+                            /** @description Floodlit work; a start at or after 18:00 Dhaka counts as night anyway */
+                            night?: boolean;
+                            u16?: boolean;
+                            /** Format: uuid */
+                            venueGroundId?: string;
+                            venueText: string;
+                            /** Format: uuid */
+                            venueAreaId: string;
+                        }[];
+                        note?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_NOT_AVAILABLE, DUPLICATE_REQUEST */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: OWN_PROFILE, UNIT_NOT_OFFERED, AREA_UNKNOWN, VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/shortlist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My shortlist */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireProfileList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/shortlist/{profileId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Shortlist a profile (at most hire.shortlist_max) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    profileId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            shortlisted: boolean;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: SHORTLIST_LIMIT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        /** Remove from my shortlist */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    profileId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            shortlisted: boolean;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My hire requests as the manager */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "pending" | "accepted_unpaid" | "confirmed" | "completed" | "declined" | "expired" | "withdrawn" | "lapsed" | "cancelled";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A request (by id or code) as either party; the other party’s phone shows once paid */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-requests/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Withdraw while pending or unpaid (free) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-requests/{id}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** The payment link of an accepted, unpaid request */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-requests/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The request’s thread (both parties) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireMessages"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Post a message; contact details are refused until paid (v3) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        body: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireMessage"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: CONTACT_NOT_ALLOWED, VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: MESSAGES_RATE_LIMITED */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-jobs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A job with what the viewer can do now */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJob"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-jobs/{id}/cancel-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The cancellation fee now (§6.6: free over 72 h, 25% to 24 h, 50% under) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireCancelPlan"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-jobs/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a scheduled job: the fee goes to the pro (minus the platform’s share), the rest is refunded */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireCancelResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-jobs/{id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm the work: the job’s hold is released to the pro minus fees.hire_pct */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJob"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-jobs/{id}/no-show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Report a no-show (from hire.no_show_after_min after the start, no check-in): an M17 dispute; the hold freezes (gate file_dispute) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        statement: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            [key: string]: unknown;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, NOT_YOUR_JOB */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: DISPUTE_NOT_ELIGIBLE, DISPUTE_WINDOW_CLOSED, DISPUTE_ALREADY_OPEN */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/hire-jobs/{id}/problem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Report a problem with the work (once marked complete): an M17 dispute; the hold freezes (gate file_dispute) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        statement: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            [key: string]: unknown;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, NOT_YOUR_JOB */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: DISPUTE_NOT_ELIGIBLE, DISPUTE_WINDOW_CLOSED, DISPUTE_ALREADY_OPEN */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My hire profiles with rate cards and their limits */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["HireOwnerProfile"][];
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** A draft profile for one hire role (player or pro role applied; NID verified) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        roleKey: string;
+                        headline: string;
+                        specialisation?: string;
+                        /** @default [] */
+                        sportKeys?: string[];
+                        /** @enum {string} */
+                        experienceLevel: "amateur" | "semi_pro" | "pro" | "national";
+                        /** @default 0 */
+                        years?: number;
+                        /** Format: uuid */
+                        baseAreaId: string;
+                        bio?: string;
+                        /** @default false */
+                        worksWithU16?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireOwnerProfile"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_EXISTS */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AREA_UNKNOWN, VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/profiles/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My profile */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireOwnerProfile"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit the working copy (an edit of a live profile waits for review) */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        headline?: string;
+                        specialisation?: string;
+                        /** @default [] */
+                        sportKeys?: string[];
+                        /** @enum {string} */
+                        experienceLevel?: "amateur" | "semi_pro" | "pro" | "national";
+                        /** @default 0 */
+                        years?: number;
+                        /** Format: uuid */
+                        baseAreaId?: string;
+                        bio?: string;
+                        /** @default false */
+                        worksWithU16?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireOwnerProfile"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_IN_REVIEW, PROFILE_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/pro/profiles/{id}/rate-card": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save a new rate card version, within the role’s limits (Q74) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        items: {
+                            /** @enum {string} */
+                            unit: "hourly" | "match";
+                            /** @enum {string} */
+                            format?: "T10" | "T20" | "OD" | "TAPE";
+                            rate: number;
+                        }[];
+                        /** @default 0 */
+                        nightPct?: number;
+                        /** @default 0 */
+                        shortNoticePct?: number;
+                        shortNoticeHours?: number;
+                        travel: {
+                            north: number;
+                            south: number;
+                            outside: number;
+                        };
+                        maxJobsPerDay: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireOwnerProfile"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/profiles/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send for review (M05 kind hire_profile) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireOwnerProfile"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_IN_REVIEW, PROFILE_STATE, RATE_CARD_REQUIRED, NOTHING_TO_REVIEW */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/profiles/{id}/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Stop taking requests */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireOwnerProfile"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/profiles/{id}/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start taking requests */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireOwnerProfile"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Requests to my profiles; pending ones carry the automatic checks (§6.5) */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "pending" | "accepted_unpaid" | "confirmed" | "completed" | "declined" | "expired" | "withdrawn" | "lapsed" | "cancelled";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A request to me */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/requests/{id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept: checks re-run, the jobs reserved, the manager asked to pay (FR-22, FR-25) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REQUEST_STATE, REPLY_WINDOW_CLOSED, SCHEDULE_CLASH */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: CHECKS_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/requests/{id}/decline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decline with a reason (FR-24) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        reason: "not_available" | "outside_area" | "fee_too_low" | "credential_not_covering" | "other";
+                        text?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireRequestResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My jobs */
+        get: {
+            parameters: {
+                query?: {
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJobList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/jobs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A job of mine */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJob"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/jobs/{id}/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check in (from hire.checkin_open_before_min before the start; late after hire.late_before_start_min) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJob"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: JOB_STATE, TOO_EARLY, JOB_ENDED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/jobs/{id}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start (toss) from hire.toss_open_before_min before */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJob"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: JOB_STATE, TOO_EARLY */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/jobs/{id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark the work complete; released when the manager confirms or after hire.auto_release_hours */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        note?: string;
+                        result?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJob"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/jobs/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Withdraw from a scheduled job: the manager gets 100% back */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        reason: "not_available" | "injury" | "emergency" | "other";
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJob"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_YOUR_PROFILE, ROLE_REQUIRED, MEMBER_NOT_ACTIVE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, NOT_A_PARTY */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE, REQUEST_STATE, JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hire/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Hire requests by code or status (manage_users, approve_listings, refund_small or view_payouts) */
+        get: {
+            parameters: {
+                query?: {
+                    code?: string;
+                    status?: "pending" | "accepted_unpaid" | "confirmed" | "completed" | "declined" | "expired" | "withdrawn" | "lapsed" | "cancelled";
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireStaffRequestList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hire/requests/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A request with each job’s escrow hold (no phone numbers) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    code: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireStaffRequest"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hire/profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Hire profiles */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "pending_review" | "live" | "paused" | "suspended" | "rejected" | "changes_requested";
+                    q?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireStaffProfileList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hire/profiles/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A profile with its working copy, rate card, owner, credential and base area (the Moderation desk panel) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireStaffProfile"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hire/profiles/{id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suspend a profile (manage_users) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** @enum {string} */
+                            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hire/profiles/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore a suspended profile (masters) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** @enum {string} */
+                            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PROFILE_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hire/jobs/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a job for the platform with a full refund (master, step-up escrow.manage) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Single-use step-up token from POST /auth/step-up */
+                    "x-step-up": string;
+                };
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireJob"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: JOB_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -34669,6 +37878,595 @@ export interface components {
                     [key: string]: unknown;
                 } | null;
             }[];
+        };
+        HireTaxonomy: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                code: string;
+                /** @enum {string} */
+                forRole: "player" | "pro";
+                nameEn: string;
+                nameBn: string;
+                tint: string | null;
+                roles: {
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                    categoryKey: string;
+                    /** Format: uuid */
+                    id: string;
+                    /** @enum {string} */
+                    forRole: "player" | "pro";
+                    sportKeys: string[];
+                    allowedUnits: ("hourly" | "match")[];
+                    formatPriced: boolean;
+                    formats: ("T10" | "T20" | "OD" | "TAPE")[];
+                    baseHourlyPoisha: number;
+                    specialisations: string[];
+                    credentialTiers: ({
+                        /** @enum {string} */
+                        level: "amateur" | "semi_pro" | "pro" | "national";
+                        labelEn: string;
+                        labelBn: string;
+                    } & {
+                        [key: string]: unknown;
+                    })[];
+                    levels: ("amateur" | "semi_pro" | "pro" | "national")[];
+                    requiresCredential: boolean;
+                    policeCheckForU16: boolean;
+                    isOfficial: boolean;
+                }[];
+            }[];
+        };
+        HireProfileList: {
+            items: components["schemas"]["HireCard"][];
+            total?: number;
+            counts?: {
+                [key: string]: number;
+            };
+            nextCursor?: string | null;
+        };
+        HireCard: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            name: string;
+            headline: string;
+            specialisation: string | null;
+            /** @enum {string} */
+            experienceLevel: "amateur" | "semi_pro" | "pro" | "national";
+            years: number;
+            role: {
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                categoryKey: string;
+            };
+            area: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                isDhakaMetro: boolean;
+                dhakaZone: string | null;
+            } | null;
+            rateFrom: number | null;
+            /** @enum {string|null} */
+            rateUnit: "hourly" | "match" | null;
+            units: ("hourly" | "match")[];
+            ratingAvg: number | null;
+            ratingCount: number;
+            jobsDone: number;
+            shortlisted: boolean;
+        };
+        HireProfilePage: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            name: string;
+            headline: string;
+            specialisation: string | null;
+            /** @enum {string} */
+            experienceLevel: "amateur" | "semi_pro" | "pro" | "national";
+            years: number;
+            role: {
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                categoryKey: string;
+                allowedUnits: ("hourly" | "match")[];
+                formatPriced: boolean;
+                formats: ("T10" | "T20" | "OD" | "TAPE")[];
+            };
+            area: {
+                /** Format: uuid */
+                id: string;
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                isDhakaMetro: boolean;
+                dhakaZone: string | null;
+            } | null;
+            rateFrom: number | null;
+            /** @enum {string|null} */
+            rateUnit: "hourly" | "match" | null;
+            units: ("hourly" | "match")[];
+            ratingAvg: number | null;
+            ratingCount: number;
+            jobsDone: number;
+            shortlisted: boolean;
+            bio: string | null;
+            sportKeys: string[];
+            worksWithU16: boolean;
+            taking: boolean;
+            credential: {
+                /** @enum {string} */
+                level: "amateur" | "semi_pro" | "pro" | "national";
+                labelEn: string | null;
+                labelBn: string | null;
+                verified: boolean;
+            } | null;
+            rateCard: components["schemas"]["HireRateCard"];
+            busy: {
+                /** Format: date-time */
+                start: string;
+                /** Format: date-time */
+                end: string;
+            }[];
+        };
+        HireRateCard: {
+            version: number;
+            nightPct: number;
+            shortNoticePct: number;
+            shortNoticeHours: number;
+            travel: {
+                north: number;
+                south: number;
+                outside: number;
+            };
+            maxJobsPerDay: number;
+            items: {
+                /** @enum {string} */
+                unit: "hourly" | "match";
+                /** @enum {string|null} */
+                format: "T10" | "T20" | "OD" | "TAPE" | null;
+                rate: number;
+            }[];
+        } | null;
+        HireQuote: {
+            lines: {
+                /** Format: date-time */
+                start: string;
+                /** Format: date-time */
+                end: string;
+                hours: number;
+                /** @enum {string|null} */
+                format: "T10" | "T20" | "OD" | "TAPE" | null;
+                night: boolean;
+                u16: boolean;
+                /** @enum {string} */
+                zone: "home" | "north" | "south" | "outside";
+                /** Format: uuid */
+                venueAreaId: string;
+                venueText: string;
+                /** Format: uuid */
+                venueGroundId: string | null;
+                lines: {
+                    /** @description base, night, short_notice, travel_north, travel_south or travel_outside */
+                    key: string;
+                    amount: number;
+                }[];
+                total: number;
+            }[];
+            total: number;
+        };
+        HireRequestResult: {
+            request: components["schemas"]["HireRequest"];
+            payment: {
+                /** Format: uuid */
+                id: string;
+                payUrl: string;
+            } | null;
+            checks?: {
+                /** @enum {string} */
+                key: "credential" | "police_clearance" | "free" | "daily_limit" | "in_future";
+                ok: boolean;
+            }[] | null;
+        };
+        HireRequest: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** @enum {string} */
+            status: "pending" | "accepted_unpaid" | "confirmed" | "completed" | "declined" | "expired" | "withdrawn" | "lapsed" | "cancelled";
+            /**
+             * @description The viewer’s side
+             * @enum {string}
+             */
+            role: "hirer" | "pro";
+            /** @enum {string} */
+            unit: "hourly" | "match";
+            note: string | null;
+            profile: {
+                /** Format: uuid */
+                id: string;
+                slug: string;
+                headline: string;
+                role: {
+                    key: string;
+                    nameEn: string;
+                    nameBn: string;
+                };
+            };
+            other: {
+                name: string | null;
+                /** @description Shows once the request is paid (v3) */
+                phone: string | null;
+            };
+            money: {
+                total: number;
+                fee: number | null;
+                net: number | null;
+            };
+            quote: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            replyBy: string | null;
+            /** Format: date-time */
+            payBy: string | null;
+            /** Format: uuid */
+            paymentId: string | null;
+            declineReason: string | null;
+            /** Format: date-time */
+            createdAt: string | null;
+            /** Format: date-time */
+            confirmedAt: string | null;
+            jobs: components["schemas"]["HireJob"][];
+        };
+        HireJob: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** @enum {string} */
+            status: "reserved" | "scheduled" | "checked_in" | "live" | "completed_marked" | "released" | "cancelled" | "withdrawn" | "void" | "disputed" | "refunded";
+            /** Format: date-time */
+            start: string;
+            /** Format: date-time */
+            end: string;
+            hours: number;
+            /** @enum {string|null} */
+            format: "T10" | "T20" | "OD" | "TAPE" | null;
+            night: boolean;
+            u16: boolean;
+            venue: {
+                /** Format: uuid */
+                groundId: string | null;
+                text: string;
+                /** Format: uuid */
+                areaId: string;
+                /** @enum {string} */
+                zone: "home" | "north" | "south" | "outside";
+            };
+            money: {
+                quote: number;
+                fee: number;
+                net: number;
+                refunded: number;
+                released: number;
+                cancelFee: number | null;
+            };
+            /** Format: date-time */
+            checkedInAt: string | null;
+            late: boolean | null;
+            /** Format: date-time */
+            startedAt: string | null;
+            /** Format: date-time */
+            completedAt: string | null;
+            workNote: string | null;
+            result: string | null;
+            /** Format: date-time */
+            releaseAt: string | null;
+            /** Format: date-time */
+            releasedAt: string | null;
+            releasedBy: string | null;
+            /** Format: date-time */
+            cancelledAt: string | null;
+            cancelledBy: string | null;
+            cancelReason: string | null;
+            /** Format: uuid */
+            disputeId: string | null;
+            requestCode?: string;
+            can?: components["schemas"]["HireJobCan"];
+        };
+        /** @description The hirer sees confirm, cancel, noShow and problem; the pro checkIn, start, complete and withdraw */
+        HireJobCan: {
+            confirm?: boolean;
+            cancel?: boolean;
+            noShow?: boolean;
+            problem?: boolean;
+            checkIn?: boolean;
+            start?: boolean;
+            complete?: boolean;
+            withdraw?: boolean;
+        };
+        HireRequestList: {
+            items: components["schemas"]["HireRequestResult"][];
+        };
+        HireMessages: {
+            items: components["schemas"]["HireMessage"][];
+            contactAllowed: boolean;
+        };
+        HireMessage: {
+            /** Format: uuid */
+            id: string;
+            mine: boolean;
+            author?: string;
+            body: string;
+            /** Format: date-time */
+            at: string;
+        };
+        HireCancelPlan: {
+            /** @enum {string} */
+            tier: "free" | "mid" | "high";
+            pct: number;
+            cancelFee: number;
+            refund: number;
+            proGets: number;
+            platformFee: number;
+        } & {
+            [key: string]: unknown;
+        };
+        HireCancelResult: {
+            job: components["schemas"]["HireJob"];
+            plan: components["schemas"]["HireCancelPlan"];
+        };
+        HireOwnerProfile: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            /** @enum {string} */
+            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+            editStatus: string | null;
+            liveVersion: number | null;
+            role: {
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                categoryKey: string;
+                allowedUnits: ("hourly" | "match")[];
+                formatPriced: boolean;
+                formats: ("T10" | "T20" | "OD" | "TAPE")[];
+                credentialTiers: ({
+                    /** @enum {string} */
+                    level: "amateur" | "semi_pro" | "pro" | "national";
+                    labelEn: string;
+                    labelBn: string;
+                } & {
+                    [key: string]: unknown;
+                })[];
+                requiresCredential: boolean;
+                policeCheckForU16: boolean;
+            } | null;
+            headline: string | null;
+            specialisation: string | null;
+            sportKeys: string[] | null;
+            /** @enum {string|null} */
+            experienceLevel: "amateur" | "semi_pro" | "pro" | "national" | null;
+            years: number | null;
+            /** Format: uuid */
+            baseAreaId: string | null;
+            bio: string | null;
+            worksWithU16: boolean | null;
+            live: ({
+                version: number;
+            } & {
+                [key: string]: unknown;
+            }) | null;
+            reviewReason: {
+                code: string;
+                text: string | null;
+            } | null;
+            rateCard: components["schemas"]["HireRateCard"];
+            /** @description unit:format → the allowed rate range (Q74) */
+            limits: {
+                [key: string]: {
+                    min: number;
+                    max: number;
+                } & {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        HireJobList: {
+            items: components["schemas"]["HireJob"][];
+        };
+        HireStaffRequestList: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                code: string;
+                /** @enum {string} */
+                status: "pending" | "accepted_unpaid" | "confirmed" | "completed" | "declined" | "expired" | "withdrawn" | "lapsed" | "cancelled";
+                total: number;
+                jobs: number;
+                /** Format: date-time */
+                createdAt: string | null;
+            }[];
+            nextCursor: string | null;
+        };
+        HireStaffRequest: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** @enum {string} */
+            status: "pending" | "accepted_unpaid" | "confirmed" | "completed" | "declined" | "expired" | "withdrawn" | "lapsed" | "cancelled";
+            /** Format: uuid */
+            hirerId: string;
+            /** Format: uuid */
+            proUserId: string;
+            profile: {
+                /** Format: uuid */
+                id: string;
+                slug: string;
+                headline: string;
+            };
+            /** @enum {string} */
+            unit: "hourly" | "match";
+            money: {
+                total: number;
+                fee: number;
+                net: number;
+                feeBps: number;
+            };
+            /** Format: date-time */
+            replyBy: string | null;
+            /** Format: date-time */
+            payBy: string | null;
+            /** Format: uuid */
+            paymentId: string | null;
+            /** Format: date-time */
+            createdAt: string | null;
+            /** Format: date-time */
+            confirmedAt: string | null;
+            jobs: {
+                /** Format: uuid */
+                id: string;
+                code: string;
+                /** @enum {string} */
+                status: "reserved" | "scheduled" | "checked_in" | "live" | "completed_marked" | "released" | "cancelled" | "withdrawn" | "void" | "disputed" | "refunded";
+                /** Format: date-time */
+                start: string;
+                /** Format: date-time */
+                end: string;
+                hours: number;
+                /** @enum {string|null} */
+                format: "T10" | "T20" | "OD" | "TAPE" | null;
+                night: boolean;
+                u16: boolean;
+                venue: {
+                    /** Format: uuid */
+                    groundId: string | null;
+                    text: string;
+                    /** Format: uuid */
+                    areaId: string;
+                    /** @enum {string} */
+                    zone: "home" | "north" | "south" | "outside";
+                };
+                money: {
+                    quote: number;
+                    fee: number;
+                    net: number;
+                    refunded: number;
+                    released: number;
+                    cancelFee: number | null;
+                };
+                /** Format: date-time */
+                checkedInAt: string | null;
+                late: boolean | null;
+                /** Format: date-time */
+                startedAt: string | null;
+                /** Format: date-time */
+                completedAt: string | null;
+                workNote: string | null;
+                result: string | null;
+                /** Format: date-time */
+                releaseAt: string | null;
+                /** Format: date-time */
+                releasedAt: string | null;
+                releasedBy: string | null;
+                /** Format: date-time */
+                cancelledAt: string | null;
+                cancelledBy: string | null;
+                cancelReason: string | null;
+                /** Format: uuid */
+                disputeId: string | null;
+                escrow: {
+                    [key: string]: unknown;
+                } | null;
+            }[];
+        };
+        HireStaffProfileList: {
+            items: components["schemas"]["HireStaffProfile"][];
+        };
+        HireStaffProfile: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            /** @enum {string} */
+            status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+            editStatus: string | null;
+            liveVersion: number | null;
+            role: {
+                key: string;
+                nameEn: string;
+                nameBn: string;
+                categoryKey: string;
+                allowedUnits: ("hourly" | "match")[];
+                formatPriced: boolean;
+                formats: ("T10" | "T20" | "OD" | "TAPE")[];
+                credentialTiers: ({
+                    /** @enum {string} */
+                    level: "amateur" | "semi_pro" | "pro" | "national";
+                    labelEn: string;
+                    labelBn: string;
+                } & {
+                    [key: string]: unknown;
+                })[];
+                requiresCredential: boolean;
+                policeCheckForU16: boolean;
+            } | null;
+            headline: string | null;
+            specialisation: string | null;
+            sportKeys: string[] | null;
+            /** @enum {string|null} */
+            experienceLevel: "amateur" | "semi_pro" | "pro" | "national" | null;
+            years: number | null;
+            /** Format: uuid */
+            baseAreaId: string | null;
+            bio: string | null;
+            worksWithU16: boolean | null;
+            live: ({
+                version: number;
+            } & {
+                [key: string]: unknown;
+            }) | null;
+            reviewReason: {
+                code: string;
+                text: string | null;
+            } | null;
+            rateCard: components["schemas"]["HireRateCard"];
+            /** @description unit:format → the allowed rate range (Q74) */
+            limits: {
+                [key: string]: {
+                    min: number;
+                    max: number;
+                } & {
+                    [key: string]: unknown;
+                };
+            };
+            owner: {
+                /** Format: uuid */
+                id: string;
+                displayName: string | null;
+            };
+            credential: {
+                /** @enum {string} */
+                level: "amateur" | "semi_pro" | "pro" | "national";
+                issuer: string | null;
+                expiresOn: string | null;
+            } | null;
+            baseArea: {
+                /** Format: uuid */
+                id: string;
+                nameEn: string;
+                nameBn: string;
+            } | null;
+            /** Format: date-time */
+            updatedAt: string | null;
         };
     };
     responses: never;

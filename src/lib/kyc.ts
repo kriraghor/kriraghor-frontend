@@ -49,11 +49,18 @@ export function fileProblem(file: File, maxBytes: number): "type" | "size" | nul
 
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 
-// ---------------- business roles (ground owners M09, shop owners M12; documents are kept per role)
+// ---------------- business roles (ground owners M09, shop owners M12, players and pros M11; documents are kept per role)
 
-export type BusinessDocType = "trade_license" | "deed_or_lease" | "tin" | "bin";
-export type BusinessRole = "ground_owner" | "shop_owner";
-export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner"];
+export type BusinessDocType = "trade_license" | "deed_or_lease" | "tin" | "bin" | "credential" | "police_clearance";
+export type BusinessRole = "ground_owner" | "shop_owner" | "pro" | "player";
+export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "pro", "player"];
+
+/** ?as= on /account/business ↔ the role (ground owner is the default). */
+const AS: Record<string, BusinessRole> = { shop: "shop_owner", pro: "pro", player: "player" };
+export const roleFromAs = (as: string | null): BusinessRole => AS[as ?? ""] ?? "ground_owner";
+export const asOfRole = (role: BusinessRole) => Object.entries(AS).find(([, r]) => r === role)?.[0] ?? null;
+/** Players and pros work from the pro desk on kriraghor.com; owners from vendor.kriraghor.com. */
+export const isPerson = (role: BusinessRole) => role === "pro" || role === "player";
 
 /** The checklist of a business role: its documents, their fields and status. */
 export const getRoleVerification = async (locale: string, role: BusinessRole) =>

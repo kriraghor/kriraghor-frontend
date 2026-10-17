@@ -8,18 +8,23 @@ import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { problemOf, type Problem } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { publicEnv } from "@/lib/env";
-import { applyForRole, BUSINESS_ROLES, fileProblem, getRoleVerification, MAX_UPLOAD_BYTES, missingFields, submitBusiness, uploadBusinessFile, type BusinessDocType, type BusinessRole, type VerificationItem } from "@/lib/kyc";
+import { hire } from "@/lib/hire";
+import { applyForRole, asOfRole, BUSINESS_ROLES, fileProblem, getRoleVerification, isPerson, MAX_UPLOAD_BYTES, missingFields, roleFromAs, submitBusiness, uploadBusinessFile, type BusinessDocType, type BusinessRole, type VerificationItem } from "@/lib/kyc";
 import { Button, Notice } from "../ui";
 
 const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: "text-ink", changes_requested: "text-danger", rejected: "text-danger", missing: "text-muted" };
 const CAN_SEND = ["missing", "changes_requested", "rejected", "withdrawn"];
 
 /**
- * /account/business (M02 business documents): become a ground owner (M09) or a shop owner (M12;
- * ?as=shop). The NID comes first (member role); then apply, and send the role's documents: a ground
- * owner the trade licence and the land deed or lease (a TIN is optional); a shop owner the trade
- * licence and TIN (a BIN when VAT registered). Documents are kept per role. Staff check them; once
- * approved, the business desk opens on vendor.kriraghor.com.
+ * /account/business (M02 business documents): become a ground owner (M09), a shop owner (M12;
+ * ?as=shop), a pro or a player for hire (M11; ?as=pro, ?as=player). The NID comes first (member
+ * role); then apply, and send the role's documents:
+ * - a ground owner: the trade licence and the land deed or lease (a TIN is optional);
+ * - a shop owner: the trade licence and TIN (a BIN when VAT registered);
+ * - a pro or player: a credential per hire role (its level sets the work they can take) and a police
+ *   clearance for under-16 work.
+ * Documents are kept per role. Staff check them. Once approved, the desk opens: vendor.kriraghor.com
+ * for owners, kriraghor.com/pro for players and pros.
  */
 export function BusinessPage() {
   const t = useTranslations("business");
@@ -28,15 +33,15 @@ export function BusinessPage() {
   const qc = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
-  const role: BusinessRole = useSearchParams().get("as") === "shop" ? "shop_owner" : "ground_owner";
+  const role: BusinessRole = roleFromAs(useSearchParams().get("as"));
   const q = useQuery({ queryKey: ["business", locale, role], enabled: status === "signed_in", queryFn: () => getRoleVerification(locale, role) });
   const [problem, setProblem] = useState<Problem | null>(null);
   const [busy, setBusy] = useState(false);
   const refresh = () => qc.invalidateQueries({ queryKey: ["business"] });
 
-  const pick = (r: BusinessRole) => router.replace(r === "shop_owner" ? `${pathname}?as=shop` : pathname, { scroll: false });
+  const pick = (r: BusinessRole) => router.replace(asOfRole(r) ? `${pathname}?as=${asOfRole(r)}` : pathname, { scroll: false });
   const tabs = (
-    <div className="mt-5 flex gap-2" role="group" aria-label={t("pickRole")}>
+    <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label={t("pickRole")}>
       {BUSINESS_ROLES.map((r) => (
         <button key={r} type="button" aria-pressed={role === r} onClick={() => pick(r)} className={`min-h-11 border-2 px-4 font-bold ${role === r ? "border-brand bg-brand/10" : "border-line"}`} data-testid={`role-${r}`}>
           {t(`role.${r}.tab`)}
@@ -50,7 +55,7 @@ export function BusinessPage() {
       <Shell role={role}>
         <Notice>
           {t("signedOut")}{" "}
-          <Link href={`/sign-in?next=/account/business${role === "shop_owner" ? "?as=shop" : ""}`} className="underline">
+          <Link href={`/sign-in?next=/account/business${asOfRole(role) ? `?as=${asOfRole(role)}` : ""}`} className="underline">
             {t("signIn")}
           </Link>
         </Notice>
@@ -113,7 +118,11 @@ export function BusinessPage() {
           <div className={`mt-6 border-2 p-4 ${v.roleStatus === "active" ? "border-brand" : "border-line"}`} data-testid="business-status">
             <p className="font-bold">{v.roleStatus === "active" ? t(`role.${role}.active`) : t(`roleStatus.${v.roleStatus}`)}</p>
             <p className="text-sm text-muted">{t("progress", { done: v.progress.approved, total: v.progress.total })}</p>
-            {v.roleStatus === "active" ? (
+            {v.roleStatus === "active" && isPerson(role) ? (
+              <Link href="/pro" className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-pro-desk">
+                {t("openProDesk")}
+              </Link>
+            ) : v.roleStatus === "active" ? (
               <a href={vendorUrl} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-vendor">
                 {t("openDesk")}
               </a>
@@ -121,7 +130,7 @@ export function BusinessPage() {
           </div>
           <ul className="mt-6 space-y-4" data-testid="business-items">
             {v.items.map((item) => (
-              <DocItem key={item.key} item={item} role={role} onSent={refresh} />
+              <DocItem key={item.key} item={item} role={role} onSent={refresh} credentials={"credentials" in v ? (v.credentials as Credential[]) : []} />
             ))}
           </ul>
         </>
@@ -141,14 +150,22 @@ function Shell({ role, children }: { role: BusinessRole; children: React.ReactNo
   );
 }
 
-function DocItem({ item, role, onSent }: { item: VerificationItem; role: BusinessRole; onSent: () => Promise<unknown> }) {
+type Credential = { hireRole: string | null; level: string | null; issuer: string | null; status: string; expiresOn: string | null; documentId: string };
+
+function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; role: BusinessRole; onSent: () => Promise<unknown>; credentials: Credential[] }) {
   const t = useTranslations("business");
+  const locale = useLocale();
+  const isCredential = item.key === "credential";
+  // A credential is kept per hire role: pick the role and one of its tiers; another role can always be added.
+  const tax = useQuery({ queryKey: ["hire-taxonomy"], queryFn: () => hire.taxonomy(), staleTime: 300_000, enabled: isCredential });
+  const hireRoles = (tax.data?.items ?? []).filter((c) => c.forRole === role).flatMap((c) => c.roles).filter((r) => r.credentialTiers.length);
+  const label = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState<Record<string, string>>({});
   const [file, setFile] = useState<File | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const canSend = CAN_SEND.includes(item.status);
+  const canSend = isCredential || CAN_SEND.includes(item.status);
   const doc = item.document;
 
   async function send(e: React.FormEvent) {
@@ -181,11 +198,27 @@ function DocItem({ item, role, onSent }: { item: VerificationItem; role: Busines
       </div>
       {item.why ? <p className="mt-1 text-sm text-muted">{item.why}</p> : null}
       {doc?.reasonCode && ["changes_requested", "rejected"].includes(item.status) ? <p className="mt-1 text-sm text-danger">{t(`reason.${doc.reasonCode}`)}</p> : null}
-      {doc?.numberMasked ? <p className="mt-1 text-sm">{t("number", { masked: doc.numberMasked })}</p> : null}
+      {doc?.numberMasked && !isCredential ? <p className="mt-1 text-sm">{t("number", { masked: doc.numberMasked })}</p> : null}
+      {isCredential && credentials.length ? (
+        <ul className="mt-2 divide-y-2 divide-line text-sm" data-testid="business-credentials">
+          {credentials.map((c) => {
+            const r = hireRoles.find((x) => x.key === c.hireRole);
+            const tier = r?.credentialTiers.find((x) => x.level === c.level);
+            return (
+              <li key={c.documentId} className="flex flex-wrap justify-between gap-2 py-1">
+                <span>
+                  {r ? label(r) : c.hireRole} · {tier ? (locale === "bn" ? tier.labelBn : tier.labelEn) : c.level}
+                </span>
+                <span className={`font-semibold ${STATUS_CLS[c.status] ?? "text-muted"}`}>{t(`status.${c.status}`)}</span>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
       {doc?.expiresOn ? <p className="text-sm text-muted">{t("validUntil", { date: doc.expiresOn })}</p> : null}
       {canSend && !open ? (
         <button type="button" className="mt-3 min-h-11 border-2 border-brand px-4 text-sm font-bold" onClick={() => setOpen(true)}>
-          {item.status === "missing" ? t("send") : t("sendAgain")}
+          {isCredential ? t("addCredential") : item.status === "missing" ? t("send") : t("sendAgain")}
         </button>
       ) : null}
       {open ? (
@@ -194,7 +227,25 @@ function DocItem({ item, role, onSent }: { item: VerificationItem; role: Busines
             <label key={f.key} className="flex flex-col gap-1 text-sm font-semibold text-muted">
               {f.label}
               {f.required ? null : <span className="text-xs font-normal">{t("optional")}</span>}
-              {f.type === "enum" ? (
+              {isCredential && f.key === "hireRole" ? (
+                <select value={values.hireRole ?? ""} onChange={(e) => setValues({ ...values, hireRole: e.target.value, level: "" })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" required data-testid="credential-role">
+                  <option value="">{t("choose")}</option>
+                  {hireRoles.map((r) => (
+                    <option key={r.key} value={r.key}>
+                      {label(r)}
+                    </option>
+                  ))}
+                </select>
+              ) : isCredential && f.key === "level" ? (
+                <select value={values.level ?? ""} onChange={(e) => setValues({ ...values, level: e.target.value })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" required data-testid="credential-level">
+                  <option value="">{t("choose")}</option>
+                  {(hireRoles.find((r) => r.key === values.hireRole)?.credentialTiers ?? []).map((x) => (
+                    <option key={x.level} value={x.level}>
+                      {locale === "bn" ? x.labelBn : x.labelEn}
+                    </option>
+                  ))}
+                </select>
+              ) : f.type === "enum" ? (
                 <select value={values[f.key] ?? ""} onChange={(e) => setValues({ ...values, [f.key]: e.target.value })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" required={f.required}>
                   <option value="">{t("choose")}</option>
                   {(f.options ?? []).map((o) => (
