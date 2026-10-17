@@ -13,6 +13,7 @@ export const ADMIN_NAV = [
   { href: "/admin/catalog/places", key: "places" },
   { href: "/admin/catalog/items", key: "items" },
   { href: "/admin/market", key: "market" },
+  { href: "/admin/orders", key: "ordersAdmin" },
   { href: "/admin/finance", key: "finance" },
   { href: "/admin/moderation", key: "moderation" },
   { href: "/admin/disputes", key: "disputes" },
