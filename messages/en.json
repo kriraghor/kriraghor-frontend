@@ -1680,7 +1680,8 @@
       "no_show_contest": "No-show contested",
       "venue_problem": "Problem at the venue",
       "cash_problem": "Money paid at the venue",
-      "result_wrong": "Wrong match result"
+      "result_wrong": "Wrong match result",
+      "not_received": "Order not received"
     },
     "status": {
       "awaiting_response": "Waiting for the respondent",
@@ -1829,7 +1830,8 @@
       "no_show_contest": "No-show contested",
       "venue_problem": "Problem at the venue",
       "cash_problem": "Money paid at the venue",
-      "result_wrong": "Wrong match result"
+      "result_wrong": "Wrong match result",
+      "not_received": "Order not received"
     },
     "status": {
       "awaiting_response": "Waiting for the respondent",

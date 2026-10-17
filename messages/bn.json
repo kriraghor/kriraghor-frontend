@@ -1680,7 +1680,8 @@
       "no_show_contest": "নো-শো চ্যালেঞ্জ",
       "venue_problem": "ভেন্যুতে সমস্যা",
       "cash_problem": "ভেন্যুতে দেওয়া টাকা",
-      "result_wrong": "ম্যাচের ভুল ফলাফল"
+      "result_wrong": "ম্যাচের ভুল ফলাফল",
+      "not_received": "অর্ডার পাইনি"
     },
     "status": {
       "awaiting_response": "জবাবদাতার অপেক্ষায়",
@@ -1829,7 +1830,8 @@
       "no_show_contest": "নো-শো চ্যালেঞ্জ",
       "venue_problem": "ভেন্যুতে সমস্যা",
       "cash_problem": "ভেন্যুতে দেওয়া টাকা",
-      "result_wrong": "ম্যাচের ভুল ফলাফল"
+      "result_wrong": "ম্যাচের ভুল ফলাফল",
+      "not_received": "অর্ডার পাইনি"
     },
     "status": {
       "awaiting_response": "জবাবদাতার অপেক্ষায়",

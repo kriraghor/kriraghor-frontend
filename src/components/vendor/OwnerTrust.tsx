@@ -77,7 +77,7 @@ function OwnerCase({ code }: { code: string }) {
       </p>
       <p className="text-lg font-extrabold">{t(`category.${d.category}`)}</p>
       <p className="text-sm text-muted">
-        {String(src.groundName ?? "")} {src.start ? `· ${formatDhaka(String(src.start), locale)}` : ""} · {d.sourceRef}
+        {String(src.groundName ?? src.shopName ?? "")} {src.start ? `· ${formatDhaka(String(src.start), locale)}` : ""} · {d.sourceRef}
       </p>
       <p className="mt-2 text-sm">{d.money ? t("heldLine", { amount: formatTaka(d.held, locale) }) : t("findingsLine")}</p>
       {d.status === "awaiting_response" && d.respondentDueAt ? <Notice tone="error">{t("answerBy", { when: formatDhaka(String(d.respondentDueAt), locale) })}</Notice> : null}

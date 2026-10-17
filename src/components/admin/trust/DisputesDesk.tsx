@@ -148,7 +148,7 @@ function CasePane({ code, isMaster, onChanged }: { code: string; isMaster: boole
           <p className="font-mono text-xs text-muted">{d.code}</p>
           <p className="text-lg font-extrabold">{t(`category.${d.category}`)}</p>
           <p className="text-sm text-muted">
-            {String(src.groundName ?? src.tournamentTitle ?? d.sourceRef)}
+            {String(src.groundName ?? src.shopName ?? src.tournamentTitle ?? d.sourceRef)}
             {src.start ? ` · ${formatDhaka(String(src.start), locale)}` : ""}
           </p>
         </div>
