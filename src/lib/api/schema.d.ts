@@ -2839,7 +2839,7 @@ export interface paths {
                         employeeId: string;
                         team?: string;
                         /** @default [] */
-                        permissions?: ("approve_listings" | "approve_documents" | "resolve_reports" | "refund_small" | "view_payouts" | "release_payouts" | "manage_users" | "manage_catalog" | "manage_esports" | "enter_results" | "edit_fees" | "manage_staff")[];
+                        permissions?: ("approve_listings" | "approve_documents" | "resolve_reports" | "refund_small" | "view_payouts" | "release_payouts" | "manage_users" | "manage_catalog" | "manage_esports" | "enter_results" | "view_analytics" | "edit_fees" | "manage_staff")[];
                     };
                 };
             };
@@ -2938,9 +2938,9 @@ export interface paths {
                             /** Format: uuid */
                             userId: string;
                             /** @default [] */
-                            grant?: ("approve_listings" | "approve_documents" | "resolve_reports" | "refund_small" | "view_payouts" | "release_payouts" | "manage_users" | "manage_catalog" | "manage_esports" | "enter_results" | "edit_fees" | "manage_staff")[];
+                            grant?: ("approve_listings" | "approve_documents" | "resolve_reports" | "refund_small" | "view_payouts" | "release_payouts" | "manage_users" | "manage_catalog" | "manage_esports" | "enter_results" | "view_analytics" | "edit_fees" | "manage_staff")[];
                             /** @default [] */
-                            revoke?: ("approve_listings" | "approve_documents" | "resolve_reports" | "refund_small" | "view_payouts" | "release_payouts" | "manage_users" | "manage_catalog" | "manage_esports" | "enter_results" | "edit_fees" | "manage_staff")[];
+                            revoke?: ("approve_listings" | "approve_documents" | "resolve_reports" | "refund_small" | "view_payouts" | "release_payouts" | "manage_users" | "manage_catalog" | "manage_esports" | "enter_results" | "view_analytics" | "edit_fees" | "manage_staff")[];
                         }[];
                         reason: string;
                     };
@@ -21022,6 +21022,485 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My dashboard: member (spent, bookings, where it went) or ground owner (revenue, occupancy, bookings, repeat teams, charts) (FR-01 to FR-07) */
+        get: {
+            parameters: {
+                query?: {
+                    role?: "member" | "ground_owner";
+                    period?: "7w" | "qtr" | "yr";
+                    groundId?: string;
+                    locale?: "en" | "bn";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MemberDashboard"] | components["schemas"]["OwnerDashboard"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, PERIOD_INVALID */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/dashboard/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Needs your action, from the owning modules (FR-11) */
+        get: {
+            parameters: {
+                query?: {
+                    role?: "member" | "ground_owner";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PendingActions"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/dashboard/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CSV of my bookings, revenue by week or payments (FR-22, FR-23; audited; per-hour limit) */
+        get: {
+            parameters: {
+                query: {
+                    dataset: "owner_bookings" | "owner_revenue" | "member_payments";
+                    period?: "7w" | "qtr" | "yr";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description CSV (UTF-8 with a byte-order mark; taka with two decimals; +06:00 times) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/csv": string;
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: DATASET_UNKNOWN */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, EXPORT_TOO_LARGE */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: EXPORT_LIMIT */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/kpis/{key}/definition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What a dashboard tile counts, in English or Bangla */
+        get: {
+            parameters: {
+                query?: {
+                    locale?: "en" | "bn";
+                };
+                header?: never;
+                path: {
+                    key: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KpiDefinition"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/analytics/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Platform overview: GTV with venue money, fee revenue, take rate, bookings, esports, members, review queue (master or view_analytics) */
+        get: {
+            parameters: {
+                query?: {
+                    period?: "7w" | "qtr" | "yr";
+                    locale?: "en" | "bn";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PlatformOverview"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/analytics/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CSV of the platform day table (master or view_analytics) */
+        get: {
+            parameters: {
+                query: {
+                    dataset: "platform_daily";
+                    period?: "7w" | "qtr" | "yr";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description CSV (UTF-8 with a byte-order mark; taka with two decimals; +06:00 times) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/csv": string;
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: DATASET_UNKNOWN */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, EXPORT_TOO_LARGE */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: EXPORT_LIMIT */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/analytics/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Needs your action for staff (the review queue) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PendingActions"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -21077,7 +21556,7 @@ export interface components {
             hasPassword: boolean;
             lastPanelRole: string | null;
             roles: components["schemas"]["UserRole"][];
-            permissions: ("approve_listings" | "approve_documents" | "resolve_reports" | "refund_small" | "view_payouts" | "release_payouts" | "manage_users" | "manage_catalog" | "manage_esports" | "enter_results" | "edit_fees" | "manage_staff")[];
+            permissions: ("approve_listings" | "approve_documents" | "resolve_reports" | "refund_small" | "view_payouts" | "release_payouts" | "manage_users" | "manage_catalog" | "manage_esports" | "enter_results" | "view_analytics" | "edit_fees" | "manage_staff")[];
             signInMethods: {
                 phoneOtp: boolean;
                 emailOtp: boolean;
@@ -24188,6 +24667,144 @@ export interface components {
             } & {
                 [key: string]: unknown;
             })[];
+        };
+        MemberDashboard: {
+            /** @enum {string} */
+            role: "member";
+            tiles: {
+                spent: components["schemas"]["KpiTile"];
+                bookings: components["schemas"]["KpiTile"];
+                upcoming: components["schemas"]["KpiTile"];
+            };
+            charts: {
+                whereItWent: {
+                    vertical: string;
+                    value: number;
+                }[];
+            };
+            /** @enum {string} */
+            period: "7w" | "qtr" | "yr";
+            buckets: {
+                key: string;
+                from: string;
+                to: string;
+            }[];
+            asOf: string | null;
+            definitions: {
+                [key: string]: string;
+            };
+        };
+        KpiTile: {
+            value: number | null;
+            delta: number | null;
+            spark: (number | null)[] | null;
+            note?: {
+                [key: string]: number;
+            } | null;
+        };
+        OwnerDashboard: {
+            /** @enum {string} */
+            role: "ground_owner";
+            tiles: {
+                revenue: components["schemas"]["KpiTile"];
+                occupancy: components["schemas"]["KpiTile"];
+                bookings: components["schemas"]["KpiTile"];
+                repeatTeams: components["schemas"]["KpiTile"];
+            };
+            charts: {
+                weeklyRevenue: {
+                    points: {
+                        key: string;
+                        from: string;
+                        value: number;
+                        lastYear: number;
+                    }[];
+                    lastYearShown: boolean;
+                };
+                bookingsByDay: {
+                    day: string;
+                    value: number;
+                }[];
+                busiestHours: {
+                    hour: number;
+                    hours: number;
+                }[];
+                revenueByGround: {
+                    /** Format: uuid */
+                    groundId: string;
+                    name: string;
+                    value: number;
+                }[];
+            };
+            /** @enum {string} */
+            period: "7w" | "qtr" | "yr";
+            buckets: {
+                key: string;
+                from: string;
+                to: string;
+            }[];
+            asOf: string | null;
+            definitions: {
+                [key: string]: string;
+            };
+        };
+        PendingActions: {
+            items: {
+                key: string;
+                count: number;
+                /** @enum {string} */
+                severity: "high" | "normal" | "low";
+                dueAt: string | null;
+                href: string;
+            }[];
+            total: number;
+        };
+        KpiDefinition: {
+            key: string;
+            text: string;
+        };
+        PlatformOverview: {
+            /** @enum {string} */
+            role: "platform";
+            tiles: {
+                gtv: components["schemas"]["KpiTile"];
+                feeRevenue: components["schemas"]["KpiTile"];
+                takeRate: components["schemas"]["KpiTile"];
+                bookings: components["schemas"]["KpiTile"];
+                esportsEntries: components["schemas"]["KpiTile"];
+                prizesPaid: components["schemas"]["KpiTile"];
+                verifiedMembers: components["schemas"]["KpiTile"];
+                waitingForReview: components["schemas"]["KpiTile"];
+            };
+            charts: {
+                volume: {
+                    key: string;
+                    from: string;
+                    value: number;
+                    online: number;
+                }[];
+                volumeByVertical: {
+                    vertical: string;
+                    value: number;
+                }[];
+                topAreas: {
+                    /** Format: uuid */
+                    areaId: string | null;
+                    name: string;
+                    bookings: number;
+                }[];
+            };
+            /** @enum {string} */
+            period: "7w" | "qtr" | "yr";
+            buckets: {
+                key: string;
+                from: string;
+                to: string;
+            }[];
+            asOf: string | null;
+            definitions: {
+                [key: string]: string;
+            };
         };
     };
     responses: never;

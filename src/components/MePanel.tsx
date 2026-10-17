@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { MemberOverview } from "./MemberOverview";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { api } from "@/lib/api/client";
@@ -40,7 +41,7 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
 
   const u = me.data;
   return (
-    <section className="mx-auto max-w-xl px-5 py-12">
+    <section className="mx-auto max-w-3xl px-5 py-12">
       <h1 className="text-3xl font-extrabold" data-testid="me-name">
         {u.displayName}
       </h1>
@@ -72,6 +73,7 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
           {u.kycStatus === "verified" ? t("me.verified") : t("me.verify")}
         </Link>
       </nav>
+      <MemberOverview />
       {children}
     </section>
   );

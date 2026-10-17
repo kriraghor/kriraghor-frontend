@@ -548,5 +548,52 @@
     "confirmCancel": "Yes, cancel",
     "keep": "Keep the booking",
     "checkInHint": "Show your booking code at the front desk. The venue checks you in."
+  },
+  "dashboard": {
+    "title": "Your activity",
+    "period": "Period",
+    "periods": {
+      "7w": "7 weeks",
+      "qtr": "Quarter",
+      "yr": "Year"
+    },
+    "vs": {
+      "7w": "vs last week so far",
+      "qtr": "vs last week so far",
+      "yr": "vs last month so far"
+    },
+    "tiles": {
+      "spent": "Spent online",
+      "bookings": "Bookings",
+      "upcoming": "Upcoming"
+    },
+    "whereItWent": "Where it went (this period)",
+    "empty": "Nothing yet.",
+    "loadFailed": "Couldn't load the numbers. Try again.",
+    "actions": {
+      "title": "Needs your action",
+      "none": "Nothing needs you right now.",
+      "check_in_due": "{n, plural, one {# team is} other {# teams are}} due to check in",
+      "balance_unrecorded": "{n, plural, one {# venue balance} other {# venue balances}} not recorded after a week",
+      "balance_due": "{n, plural, one {# balance} other {# balances}} to collect at the venue",
+      "ground_changes_requested": "Staff asked for changes to a ground",
+      "ground_draft": "{n, plural, one {# ground draft} other {# ground drafts}} not sent for review",
+      "hold_to_pay": "A slot is on hold: pay to keep it",
+      "verify_nid": "Verify your NID",
+      "nid_in_review": "Your NID is in review",
+      "review_queue": "{n} waiting for review"
+    },
+    "verticals": {
+      "grounds": "Grounds",
+      "esports": "Esports",
+      "market": "Shop",
+      "used": "Used gear",
+      "hire": "Hire",
+      "gym": "Gym",
+      "tournaments": "Tournaments",
+      "other": "Other"
+    },
+    "csv": "Download my payments (CSV)",
+    "csvFailed": "Couldn't export. You may have reached this hour's limit."
   }
 }
