@@ -68,7 +68,9 @@ const REFRESHABLE = new Set(["TOKEN_EXPIRED", "AUTHZ_STALE"]);
 
 /**
  * fetch with the bearer token. On 401 TOKEN_EXPIRED or AUTHZ_STALE it refreshes once and retries.
- * Used as the openapi-fetch `fetch` option.
+ * A page loaded fresh has no token in memory yet: when the session hint says there is a session, it
+ * refreshes before the first request (sharing the session provider's refresh), so a query that runs
+ * on mount is never sent without a token. Used as the openapi-fetch `fetch` option.
  */
 export function createAuthFetch(audience: Audience = "api", fetchImpl: typeof fetch = fetch) {
   return async function authFetch(input: Request): Promise<Response> {
@@ -77,6 +79,7 @@ export function createAuthFetch(audience: Audience = "api", fetchImpl: typeof fe
       if (token) req.headers.set("Authorization", `Bearer ${token}`);
       return fetchImpl(req);
     };
+    if (!getAccessToken(audience) && hasSessionHint(audience)) await refresh(audience, fetchImpl);
     const first = await send(getAccessToken(audience));
     if (first.status !== 401) return first;
     const code = await first
