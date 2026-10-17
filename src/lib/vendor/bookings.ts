@@ -58,6 +58,25 @@ export const dhakaMinute = (iso: string) => {
 };
 
 /**
+ * The timeline's hours for a day (minutes after midnight): 06:00–23:00, widened on the half-hour to
+ * take in any booking or closure that starts earlier or ends later that day (a ground open late or
+ * round the clock), so nothing on the day is hidden.
+ */
+export function timelineWindow(blocks: { start: string; end: string }[], day: string, open = 360, close = 1380): { open: number; close: number } {
+  const dayStart = new Date(`${day}T00:00:00+06:00`).getTime();
+  let o = open;
+  let c = close;
+  for (const b of blocks) {
+    const s = (new Date(b.start).getTime() - dayStart) / 60000;
+    const e = (new Date(b.end).getTime() - dayStart) / 60000;
+    if (e <= 0 || s >= 1440) continue;
+    o = Math.min(o, Math.max(0, Math.floor(s / 30) * 30));
+    c = Math.max(c, Math.min(1440, Math.ceil(e / 30) * 30));
+  }
+  return { open: o, close: c };
+}
+
+/**
  * Where a block sits on the timeline: 1-based grid columns over half-hour slots from `open` to
  * `close` (minutes after midnight), clipped to the visible day. null when it is outside.
  */
