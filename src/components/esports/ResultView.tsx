@@ -41,8 +41,9 @@ export function ResultView({ matchId }: { matchId: string }) {
         const up = await esports.upload(file);
         evidenceIds.push((await esports.evidence(matchId, { kind: "screenshot", key: up.key })).id);
       }
-      await esports.dispute(matchId, { reason: reason.trim(), evidenceIds });
-      setMsg({ text: t("result.disputeSent"), tone: "info" });
+      const d = (await esports.dispute(matchId, { reason: reason.trim(), evidenceIds })) as { caseCode?: string };
+      // M17: every result dispute is also a case on the unified desk; players follow it on kriraghor.com.
+      setMsg({ text: d.caseCode ? t("result.disputeSentCase", { code: d.caseCode }) : t("result.disputeSent"), tone: "info" });
       setReason("");
       setFile(null);
       await qc.invalidateQueries({ queryKey: ["es-match", matchId] });

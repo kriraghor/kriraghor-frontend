@@ -369,7 +369,8 @@
       "reason": "What is wrong (be specific)",
       "screenshot": "Screenshot of the scoreboard (optional)",
       "dispute": "Send dispute",
-      "disputeSent": "Dispute sent. Our team will review it."
+      "disputeSent": "Dispute sent. Our team will review it.",
+      "disputeSentCase": "Dispute sent. Your case number is {code}; follow it under My disputes on kriraghor.com."
     },
     "placementShort": "#",
     "dnp": "DNP",
