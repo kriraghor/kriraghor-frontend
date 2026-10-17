@@ -24,6 +24,7 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
         { href: "/admin/catalog/esports", key: "esportsCatalog" },
         { href: "/admin/esports", key: "esportsDesk" },
         { href: "/admin/grounds", key: "groundsAdmin" },
+        { href: "/admin/bookings", key: "bookingsAdmin" },
         { href: "/admin/catalog/places", key: "places" },
         { href: "/admin/finance", key: "finance" },
         { href: "/admin/moderation", key: "moderation" },
@@ -34,7 +35,16 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
   },
   vendor: {
     audience: "api",
-    header: { titleKey: "vendor", homeHref: "/vendor", signInHref: "/vendor/sign-in", meHref: "/vendor", nav: [{ href: "/vendor/grounds", key: "grounds" }] },
+    header: {
+      titleKey: "vendor",
+      homeHref: "/vendor",
+      signInHref: "/vendor/sign-in",
+      meHref: "/vendor",
+      nav: [
+        { href: "/vendor/grounds", key: "grounds" },
+        { href: "/vendor/bookings", key: "bookings" },
+      ],
+    },
   },
 };
 
