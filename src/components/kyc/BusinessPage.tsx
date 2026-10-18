@@ -11,6 +11,7 @@ import { publicEnv } from "@/lib/env";
 import { hire } from "@/lib/hire";
 import { applyForRole, asOfRole, BUSINESS_ROLES, fileProblem, getRoleVerification, isPerson, MAX_UPLOAD_BYTES, missingFields, roleFromAs, submitBusiness, uploadBusinessFile, type BusinessDocType, type BusinessRole, type VerificationItem } from "@/lib/kyc";
 import { Button, Notice } from "../ui";
+import { OrganisationApply } from "./OrganisationApply";
 
 const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: "text-ink", changes_requested: "text-danger", rejected: "text-danger", missing: "text-muted" };
 const CAN_SEND = ["missing", "changes_requested", "rejected", "withdrawn"];
@@ -122,12 +123,13 @@ export function BusinessPage() {
               <Link href="/pro" className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-pro-desk">
                 {t("openProDesk")}
               </Link>
-            ) : v.roleStatus === "active" ? (
+            ) : v.roleStatus === "active" && role !== "organiser" ? (
               <a href={vendorUrl} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-vendor">
                 {t("openDesk")}
               </a>
             ) : null}
           </div>
+          {role === "organiser" ? <OrganisationApply roleActive={v.roleStatus === "active"} /> : null}
           <ul className="mt-6 space-y-4" data-testid="business-items">
             {v.items.map((item) => (
               <DocItem key={item.key} item={item} role={role} onSent={refresh} credentials={"credentials" in v ? (v.credentials as Credential[]) : []} />

@@ -7,6 +7,7 @@ import { problemOf } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { busyByDay, hire, nextDays, type ProfilePage } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
+import { TrainerPlans } from "../gym/TrainerPlans";
 import { RequestForm } from "./RequestForm";
 
 /**
@@ -63,7 +64,13 @@ export function HireProfileView({ slug }: { slug: string }) {
             <ShortlistButton profileId={p.id} on={p.shortlisted} slug={slug} />
           </div>
         </div>
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
+          {/* M20: a fitness trainer also sells monthly plans. */}
+          {p.role.key === "fitness_trainer" ? (
+            <div className="border-2 border-line bg-surface p-5">
+              <TrainerPlans profileId={p.id} slug={slug} />
+            </div>
+          ) : null}
           <div className="border-2 border-line bg-surface p-5">
             {p.taking ? <RequestForm profile={p} /> : <p className="font-bold">{t("notTaking")}</p>}
           </div>

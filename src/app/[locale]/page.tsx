@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { APP } from "@/app.config";
 import { EsportsStrip } from "@/components/EsportsStrip";
 import { GroundsStrip } from "@/components/grounds/GroundsStrip";
+import { TournamentsStrip } from "@/components/tournaments/TournamentsStrip";
 
 /** Home placeholder. The real home (kriraghor-docs/design/home-v3) is built with its modules; esports leads (M21). */
 export default async function Home({ params }: PageProps<"/[locale]">) {
@@ -28,6 +29,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       </section>
       <EsportsStrip />
       <GroundsStrip />
+      <TournamentsStrip />
     </>
   );
 }
