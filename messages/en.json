@@ -522,6 +522,14 @@
         "apply": "Start my gym owner application",
         "active": "You are an approved gym owner"
       },
+      "organiser": {
+        "tab": "Esports organiser",
+        "title": "Run esports tournaments",
+        "intro": "Leagues, college clubs and cafés run PUBG Mobile and Free Fire tournaments on Kriraghor under a contract. We check your NID and your organisation's registration once; then you register the organisation and Kriraghor reviews it.",
+        "applyTitle": "As an esports organiser you can:",
+        "apply": "Start my organiser application",
+        "active": "Your organiser documents are approved"
+      },
       "pro": {
         "tab": "Pro",
         "title": "Get hired as a pro",
@@ -540,7 +548,26 @@
       }
     },
     "openProDesk": "Open the pro desk",
-    "addCredential": "Add a credential"
+    "addCredential": "Add a credential",
+    "org": {
+      "title": "Your organisation",
+      "lead": "Register the organisation you run tournaments for. Kriraghor reviews it, then sets up your contract.",
+      "name": "Organisation name",
+      "about": "About (what you run, for whom)",
+      "email": "Contact email (optional)",
+      "create": "Save the organisation",
+      "submit": "Send for review",
+      "waitDocs": "You can send it once your organiser documents are approved.",
+      "openConsole": "Open the organiser console",
+      "status": {
+        "draft": "Draft",
+        "pending_review": "In review",
+        "changes_requested": "Changes needed",
+        "verified": "Verified",
+        "rejected": "Not approved",
+        "suspended": "Suspended"
+      }
+    }
   },
   "bookings": {
     "loading": "Loading",
