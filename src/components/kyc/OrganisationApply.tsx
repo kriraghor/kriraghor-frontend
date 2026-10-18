@@ -13,15 +13,16 @@ const ok = async <T,>(res: { data?: T; error?: unknown }): Promise<T> => {
 };
 const orgs = {
   mine: async () => ok(await api().GET("/me/organisations")),
-  create: async (body: { name: string; about?: string | null; contactEmail?: string | null }) => ok(await api().POST("/me/organisations", { body })),
+  create: async (body: { name: string; kind: "esports" | "sports"; about?: string | null; contactEmail?: string | null }) => ok(await api().POST("/me/organisations", { body })),
   submit: async (id: string) => ok(await api().POST("/me/organisations/{id}/submit", { params: { path: { id } } })),
 };
 const TONE: Record<string, string> = { verified: "border-brand text-brand", pending_review: "border-amber-500", changes_requested: "border-danger text-danger", rejected: "border-danger text-danger", suspended: "border-danger text-danger", draft: "border-line text-muted" };
 
 /**
  * M14 lite on /account/business?as=organiser: once the organiser role is applied for, the owner
- * registers the organisation and sends it for review (M05 kind organisation). Verified organisations
- * open the organiser console on vendor.kriraghor.com.
+ * registers the organisation and sends it for review (M05 kind organisation). An organisation is for
+ * esports (M22) or physical sports tournaments (M14): one of each kind at most. Verified organisations
+ * open their console on vendor.kriraghor.com.
  */
 export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
   const t = useTranslations("business.org");
@@ -30,13 +31,15 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
   const [email, setEmail] = useState("");
+  const [kind, setKind] = useState<"esports" | "sports">("sports");
   const done = () => qc.invalidateQueries({ queryKey: ["my-organisations"] });
-  const create = useMutation({ mutationFn: () => orgs.create({ name: name.trim(), about: about.trim() || null, contactEmail: email.trim() || null }), onSuccess: done });
+  const create = useMutation({ mutationFn: () => orgs.create({ name: name.trim(), kind: kinds.length === 1 ? kinds[0] : kind, about: about.trim() || null, contactEmail: email.trim() || null }), onSuccess: done });
   const submit = useMutation({ mutationFn: (id: string) => orgs.submit(id), onSuccess: done });
   const problem = problemOf(create.error ?? submit.error);
-  const vendor = `${publicEnv().VENDOR_URL}/vendor/esports`;
+  const consoleOf = (k: string) => `${publicEnv().VENDOR_URL}/vendor/${k === "sports" ? "tournaments" : "esports"}`;
   if (q.isPending) return <div className="mt-6 h-24 animate-pulse bg-surface-2" />;
   const mine = (q.data?.items ?? []).filter((o) => o.role === "owner");
+  const kinds = (["sports", "esports"] as const).filter((k) => !mine.some((o) => o.kind === k));
 
   return (
     <div className="mt-8 border-t-2 border-line pt-6" data-testid="org-apply">
@@ -47,7 +50,9 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
           {mine.map((o) => (
             <li key={o.id} className="border-2 border-line p-4" data-testid="my-organisation">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="min-w-0 flex-1 text-lg font-extrabold">{o.name}</span>
+                <span className="min-w-0 flex-1 text-lg font-extrabold">
+                  {o.name} <span className="text-sm font-semibold text-muted">· {t(`kind.${o.kind}`)}</span>
+                </span>
                 <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[o.status] ?? TONE.draft}`} data-testid="org-status">
                   {t(`status.${o.status}`)}
                 </span>
@@ -60,7 +65,7 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
                   </Button>
                 ) : null}
                 {o.status === "verified" ? (
-                  <a href={vendor} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-console">
+                  <a href={consoleOf(o.kind)} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-console">
                     {t("openConsole")}
                   </a>
                 ) : null}
@@ -69,7 +74,8 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
             </li>
           ))}
         </ul>
-      ) : (
+      ) : null}
+      {kinds.length ? (
         <form
           className="mt-4 flex flex-col gap-4"
           onSubmit={(e) => {
@@ -78,6 +84,15 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
           }}
           data-testid="org-form"
         >
+          <fieldset className="flex flex-wrap gap-x-6">
+            <legend className="text-sm font-semibold text-muted">{t("kindLabel")}</legend>
+            {kinds.map((k) => (
+              <label key={k} className="flex min-h-11 items-center gap-2">
+                <input type="radio" name="org-kind" className="size-5" checked={kind === k || kinds.length === 1} onChange={() => setKind(k)} data-testid={`org-kind-${k}`} />
+                {t(`kind.${k}`)}
+              </label>
+            ))}
+          </fieldset>
           <Field id="org-name" label={t("name")} value={name} onChange={(e) => setName(e.target.value)} required minLength={3} maxLength={120} />
           <div className="flex flex-col gap-1">
             <label htmlFor="org-about" className="text-sm font-semibold text-muted">
@@ -90,7 +105,7 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
             {t("create")}
           </Button>
         </form>
-      )}
+      ) : null}
       {problem ? (
         <div className="mt-3">
           <Notice tone="error">{problem.title}</Notice>

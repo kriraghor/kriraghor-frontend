@@ -15,7 +15,8 @@
     "shop": "Shop",
     "gym": "Gym",
     "esports": "Esports",
-    "language": "বাংলা"
+    "language": "বাংলা",
+    "tournaments": "Tournaments"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -69,7 +70,8 @@
     "teams": "My teams",
     "player": "Player profile",
     "eligibility": "Ready to play",
-    "addPhone": "Add a mobile number"
+    "addPhone": "Add a mobile number",
+    "tournaments": "My tournaments"
   },
   "admin": {
     "title": "Staff sign-in",
@@ -573,6 +575,11 @@
         "verified": "Verified",
         "rejected": "Not approved",
         "suspended": "Suspended"
+      },
+      "kindLabel": "What will you run?",
+      "kind": {
+        "sports": "Sports tournaments",
+        "esports": "Esports tournaments"
       }
     }
   },
@@ -1703,6 +1710,201 @@
       "FILE_TOO_LARGE": "The logo must be 2 MB or smaller.",
       "FILE_TYPE_MISMATCH": "That file is not the image type it claims to be.",
       "RATE_LIMITED": "Too many invites today. Try again tomorrow."
+    }
+  },
+  "tournaments": {
+    "kicker": "Physical sports",
+    "title": "Tournaments",
+    "lead": "Cricket, football, futsal, badminton and more, run by verified organisers. Enter your team, pay the entry fee safely and follow every result.",
+    "tab": {
+      "open": "Open for teams",
+      "live": "Live",
+      "completed": "Finished",
+      "overview": "Overview",
+      "fixtures": "Fixtures",
+      "standings": "Standings",
+      "bracket": "Bracket",
+      "teams": "Teams"
+    },
+    "allSports": "All sports",
+    "search": "Search tournaments",
+    "failed": "Something went wrong. Please try again.",
+    "none": {
+      "open": "No tournament is taking teams right now.",
+      "live": "Nothing is live right now.",
+      "completed": "No finished tournaments yet."
+    },
+    "format": {
+      "league": "League",
+      "double_league": "Double league",
+      "groups_knockout": "Groups and knockout",
+      "knockout": "Knockout"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes asked",
+      "rejected": "Rejected",
+      "registration_open": "Taking teams",
+      "registration_closed": "Registration closed",
+      "live": "Live",
+      "completed": "Finished",
+      "cancelled": "Cancelled"
+    },
+    "by": "by {org}",
+    "starts": "Starts",
+    "fee": "Entry fee",
+    "free": "Free",
+    "teams": "Teams",
+    "squad": "Squad",
+    "prize": "Prize",
+    "venue": "Venue",
+    "dates": "Dates",
+    "notFound": "Tournament not found",
+    "registerTeam": "Register a team",
+    "opensOn": "Registration opens {date}",
+    "placesTaken": "{n} of {max} places taken",
+    "rules": "Rules",
+    "tiebreakers": "Ties are broken by",
+    "tb": {
+      "points": "points",
+      "net_run_rate": "net run rate",
+      "nrr": "net run rate",
+      "wins": "wins",
+      "head_to_head": "head-to-head",
+      "fewer_no_results": "fewer no-results",
+      "goal_difference": "goal difference",
+      "goals_scored": "goals scored",
+      "fair_play": "fair play",
+      "point_difference": "point difference",
+      "points_scored": "points scored",
+      "score_difference": "score difference",
+      "game_difference": "game difference",
+      "set_difference": "set difference",
+      "set_ratio": "set ratio",
+      "point_ratio": "point ratio",
+      "lots": "drawing lots"
+    },
+    "eligibility": "Who can play",
+    "elig": {
+      "nid": "Every player needs a verified NID",
+      "age": "Age {min} to {max} on the first match day",
+      "gender": {
+        "men": "Men's event",
+        "women": "Women's event",
+        "mixed": "Mixed teams"
+      }
+    },
+    "prizes": "Prizes",
+    "prizeNote": "Prizes are paid by the organiser. Entry fees are held by Kriraghor and paid out as the tournament is played.",
+    "noFixtures": "Fixtures are not out yet.",
+    "dateTbc": "Date to be set",
+    "timeTbc": "Time to be set",
+    "group": "Group {name}",
+    "table": "Table",
+    "team": "Team",
+    "col": {
+      "p": "P",
+      "w": "W",
+      "d": "D",
+      "l": "L",
+      "nrr": "NRR",
+      "diff": "+/−",
+      "pts": "Pts"
+    },
+    "lots": "lots to draw",
+    "round": {
+      "final": "Final",
+      "third_place": "Third place",
+      "semi_final": "Semi-finals",
+      "quarter_final": "Quarter-finals",
+      "round_of_16": "Round of 16",
+      "round_of_32": "Round of 32",
+      "round_of_64": "Round of 64",
+      "round_of_128": "Round of 128"
+    },
+    "ref": {
+      "winner": "Winner of M{no}",
+      "loser": "Loser of M{no}",
+      "group": "{pos, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}, Group {group}",
+      "league": "{pos, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} in the table",
+      "ranked": "Best {pos, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}-placed team no. {rank}",
+      "tbd": "To be decided"
+    },
+    "matchStatus": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "postponed": "Postponed",
+      "completed": "Played",
+      "no_result": "No result",
+      "walkover": "Walkover",
+      "abandoned": "Abandoned",
+      "cancelled": "Cancelled"
+    },
+    "verifiedOf": "{players} players, {verified} NID verified",
+    "noTeams": "No team is approved yet.",
+    "signInToRegister": "Sign in to register your team.",
+    "signIn": "Sign in",
+    "notOpenYet": "Registration has not opened yet.",
+    "closed": "Registration is closed.",
+    "registerLead": "Pick your team and a squad of {min} to {max} players. Every player needs a verified NID.",
+    "step": {
+      "team": "1. Your team",
+      "squad": "2. Squad ({n} picked)"
+    },
+    "role": {
+      "captain": "Captain",
+      "vice_captain": "Vice-captain",
+      "player": "Player"
+    },
+    "noTeamOfSport": "You do not captain a {sport} team yet.",
+    "createTeam": "Create a team",
+    "nid": "NID ✓",
+    "noNid": "No NID",
+    "squadHint": "Players without a verified NID can be picked, but the organiser approves a squad only when enough players are eligible.",
+    "acceptRules": "I accept the tournament rules and the refund rules: a full refund if the team is not accepted or withdraws before registration closes, half after it closes, nothing after the first match.",
+    "fullReserve": "All places are taken: your team joins the reserve list and is offered a place if one opens.",
+    "joinReserve": "Join the reserve list",
+    "payEntry": "Pay {fee}",
+    "enterFree": "Enter the team",
+    "myTournaments": "My tournaments",
+    "findTournament": "Find a tournament",
+    "noRegistrations": "Your teams have not entered a tournament yet.",
+    "reservePos": "reserve no. {n}",
+    "refunded": "{amount} refunded",
+    "regStatus": {
+      "pending_payment": "Waiting for payment",
+      "reserve": "Reserve list",
+      "offered": "Place offered",
+      "pending_approval": "Waiting for the organiser",
+      "approved": "In",
+      "rejected": "Not accepted",
+      "lapsed": "Lapsed",
+      "withdrawn": "Withdrawn",
+      "removed": "Removed",
+      "cancelled": "Tournament cancelled"
+    },
+    "takePlace": "Take the place",
+    "withdraw": "Withdraw",
+    "withdrawConfirm": "Withdraw the team",
+    "cancel": "Cancel",
+    "refundRules": "Refunds: 100% before registration closes or if the team is not accepted, 50% after registration closes, none after the first match. A cancelled tournament refunds what is still held.",
+    "homeKicker": "Tournaments",
+    "homeTitle": "Enter your team",
+    "homeAll": "All tournaments",
+    "errors": {
+      "REGISTRATION_NOT_YET_OPEN": "Registration has not opened yet.",
+      "REGISTRATION_CLOSED": "Registration is closed.",
+      "TEAM_ALREADY_REGISTERED": "This team is already in the tournament.",
+      "TEAM_SPORT_MISMATCH": "This team plays a different sport.",
+      "NOT_TEAM_CAPTAIN": "Only the captain or vice-captain can register the team.",
+      "SQUAD_TOO_SMALL": "Pick more players.",
+      "SQUAD_TOO_LARGE": "Pick fewer players.",
+      "PLAYER_NOT_IN_TEAM": "Pick players from the team.",
+      "PLAYER_IN_OTHER_TEAM": "One of the players is already in another team in this tournament.",
+      "KYC_REQUIRED": "Verify your NID first to enter tournaments.",
+      "ROLE_REQUIRED": "Verify your NID first to enter tournaments.",
+      "REGISTRATION_STATE": "This registration cannot be changed now."
     }
   }
 }
