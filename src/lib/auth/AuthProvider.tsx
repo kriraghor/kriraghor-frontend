@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
 import { getAccessToken, hasSessionHint, refresh, setAccessToken, type Audience } from "./session";
@@ -58,8 +58,26 @@ export function AuthProvider({ audience = "api", children }: { audience?: Audien
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
+const noopSubscribe = () => () => {};
+
+/** False while React hydrates server HTML (the server snapshot), true afterwards and on client-only renders. */
+function useHydrated() {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false
+  );
+}
+
+/**
+ * The session status is known only in the browser, so the server always renders "loading". A Suspense
+ * boundary (the header, streamed pages) can hydrate after the session check has finished, so every
+ * consumer reports "loading" until it has hydrated, then re-renders with the real status. Without this
+ * the first client render differs from the server HTML (React error #418).
+ */
 export function useAuth() {
   const ctx = useContext(Ctx);
   if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
-  return ctx;
+  const hydrated = useHydrated();
+  return hydrated ? ctx : { ...ctx, status: "loading" as const };
 }
