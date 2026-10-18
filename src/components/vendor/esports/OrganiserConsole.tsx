@@ -48,7 +48,7 @@ export function OrganiserHome() {
     queryFn: () => organiser.mine(),
     enabled: status === "signed_in",
   });
-  const usable = (q.data?.items ?? []).filter((o) => ["verified", "suspended"].includes(o.status));
+  const usable = (q.data?.items ?? []).filter((o) => o.kind !== "sports" && ["verified", "suspended"].includes(o.status));
   useEffect(() => {
     if (usable.length === 1) router.replace(`/vendor/esports/${usable[0].id}`);
   }, [usable, router]);

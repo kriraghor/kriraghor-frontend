@@ -20,6 +20,7 @@ export const ADMIN_NAV = [
   { href: "/admin/hire", key: "hireAdmin" },
   { href: "/admin/gym", key: "gymAdmin" },
   { href: "/admin/teams", key: "teamsAdmin" },
+  { href: "/admin/tournaments", key: "tournamentsAdmin" },
   { href: "/admin/finance", key: "finance" },
   { href: "/admin/moderation", key: "moderation" },
   { href: "/admin/disputes", key: "disputes" },

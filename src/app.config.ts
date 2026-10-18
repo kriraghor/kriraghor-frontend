@@ -55,6 +55,7 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
         { href: "/vendor/bookings", key: "bookings" },
         { href: "/vendor/gyms", key: "gyms" },
         { href: "/vendor/esports", key: "esportsConsole" },
+        { href: "/vendor/tournaments", key: "sportsConsole" },
         { href: "/vendor/shop", key: "shop" },
         { href: "/vendor/products", key: "products" },
         { href: "/vendor/inventory", key: "inventory" },

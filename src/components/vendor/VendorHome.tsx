@@ -148,9 +148,14 @@ function OrganiserCard({ status }: { status: string | null }) {
     <div className={`mt-8 border-2 bg-surface p-5 ${status === "active" ? "border-brand" : "border-line"}`} data-testid="organiser-card">
       <p className="font-bold">{status === "active" ? t("home.active") : t("home.sell")}</p>
       {status === "active" ? (
-        <Link href="/vendor/esports" className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-          {t("home.open")}
-        </Link>
+        <span className="mt-3 flex flex-wrap gap-2">
+          <Link href="/vendor/esports" className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
+            {t("home.open")}
+          </Link>
+          <Link href="/vendor/tournaments" className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand" data-testid="open-sports-console">
+            {t("home.openSports")}
+          </Link>
+        </span>
       ) : (
         <a href={`${web}/account/business?as=organiser`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
           {status ? t("home.continue") : t("home.start")}
