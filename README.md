@@ -14,7 +14,7 @@ Next.js 16 (App Router, Cache Components, `output: 'standalone'`), TypeScript st
 ## Run locally
 
 ```bash
-cp .env.example .env.local      # defaults point at the backend on localhost:4000
+cp .env.example .env.local      #  defaults point at the backend on localhost:4000
 npm install
 npm run dev                     # http://localhost:3000
 ```
