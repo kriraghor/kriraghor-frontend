@@ -62,7 +62,7 @@ export function GameProfilePanel({ payload }: { payload: Record<string, unknown>
   );
 }
 
-type TournamentPayload = { gameKey?: string; modeKey?: string; entryUnit?: string; entryFee?: number; maxSlots?: number; minParticipants?: number; prizes?: { place: number; amount: number }[]; prizePool?: number; killReward?: number; matches?: number; registrationOpensAt?: string; startsAt?: string };
+type TournamentPayload = { gameKey?: string; modeKey?: string; entryUnit?: string; entryFee?: number; maxSlots?: number; minParticipants?: number; prizes?: { place: number; amount: number }[]; prizePool?: number; killReward?: number; maxPaidKills?: number | null; organisationId?: string | null; organiserName?: string | null; matches?: number; registrationOpensAt?: string; startsAt?: string };
 
 export function TournamentPanel({ payload }: { payload: Record<string, unknown> }) {
   const t = useTranslations("esportsDesk.panel");
@@ -71,6 +71,9 @@ export function TournamentPanel({ payload }: { payload: Record<string, unknown> 
   const money = (v: number | undefined) => formatTaka(v ?? 0, locale);
   // What the fees could collect at full slots against what the table promises (the platform covers a shortfall).
   const fullCollect = (p.entryFee ?? 0) * (p.maxSlots ?? 0);
+  // M22: an organiser's pool (places + kill reward × the kill cap) is paid in before review; no subsidy.
+  const organised = Boolean(p.organisationId);
+  const fund = (p.prizePool ?? 0) + (p.killReward ?? 0) * (p.maxPaidKills ?? 0);
   return (
     <div className="mt-6 border-t-2 border-line pt-4" data-testid="tournament-panel">
       <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
@@ -82,6 +85,8 @@ export function TournamentPanel({ payload }: { payload: Record<string, unknown> 
         <Item label={t("starts")} value={p.startsAt ? formatDhaka(p.startsAt, locale) : "–"} />
         <Item label={t("matches")} value={String(p.matches ?? "–")} />
         <Item label={t("killReward")} value={p.killReward ? money(p.killReward) : "–"} />
+        {organised ? <Item label={t("organiser")} value={p.organiserName ?? "–"} /> : null}
+        {organised && p.maxPaidKills ? <Item label={t("maxPaidKills")} value={String(p.maxPaidKills)} /> : null}
       </dl>
       <h4 className="mt-4 font-bold">{t("prizes", { pool: money(p.prizePool) })}</h4>
       <ol className="mt-1 divide-y divide-line border-y border-line text-sm">
@@ -92,7 +97,13 @@ export function TournamentPanel({ payload }: { payload: Record<string, unknown> 
           </li>
         ))}
       </ol>
-      {(p.prizePool ?? 0) > fullCollect ? <p className="mt-2 text-sm font-semibold text-danger">{t("subsidy", { gap: money((p.prizePool ?? 0) - fullCollect) })}</p> : null}
+      {organised ? (
+        <p className="mt-2 text-sm font-semibold" data-testid="organiser-fund">
+          {t("fund", { fund: money(fund) })}
+        </p>
+      ) : (p.prizePool ?? 0) > fullCollect ? (
+        <p className="mt-2 text-sm font-semibold text-danger">{t("subsidy", { gap: money((p.prizePool ?? 0) - fullCollect) })}</p>
+      ) : null}
     </div>
   );
 }

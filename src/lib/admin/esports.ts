@@ -26,12 +26,16 @@ export type TournamentInput = {
   minParticipants: number;
   prizes: { place: number; amount: number }[];
   killReward: number;
+  /** M22: organisers with a per-kill reward cap the paid kills (the prize fund covers it). */
+  maxPaidKills?: number;
   pointsPresetId?: string;
   registrationOpensAt: string;
   registrationClosesAt?: string;
   matches: { mapId: string; startsAt: string }[];
   rulesMd: string;
   featured: boolean;
+  /** M23: `invite` = only qualified or invited entries (a big event's final); locked after publish. */
+  entryPolicy?: "open" | "invite";
 };
 
 export type ResultRow = { registrationId: string; placement: number | null; kills: { userId: string; kills: number }[] };
