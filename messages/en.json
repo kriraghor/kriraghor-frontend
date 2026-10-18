@@ -17,7 +17,8 @@
     "esports": "Esports",
     "language": "বাংলা",
     "leaderboards": "Leaderboards",
-    "myMatches": "My matches"
+    "myMatches": "My matches",
+    "events": "Events"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -236,7 +237,8 @@
           "title": "Play and get paid",
           "body": "Results are posted with a dispute window; prizes land in your winnings."
         }
-      }
+      },
+      "bigEvent": "Big event"
     },
     "list": {
       "title": "Tournaments",
@@ -427,6 +429,73 @@
       "none": "No tournaments open right now. Check back soon.",
       "notFound": "This organiser is not on Kriraghor.",
       "note": "Tournaments by {name} run on Kriraghor: entry fees and prizes are held in Kriraghor escrow, rooms are revealed to checked-in players, and winnings are withdrawn from your Kriraghor account."
+    },
+    "inviteOnly": "Invite only",
+    "partOf": "Part of",
+    "events": {
+      "title": "Big events",
+      "lead": "Championships with online qualifiers and a grand final, streamed live.",
+      "none": "No big events right now",
+      "noneBody": "Follow an event to hear when it starts and when its streams go live.",
+      "notFound": "This event was not found.",
+      "phase": {
+        "draft": "Draft",
+        "upcoming": "Coming up",
+        "live": "Live",
+        "ended": "Ended",
+        "cancelled": "Cancelled"
+      },
+      "presentedBy": "Presented by {name}",
+      "cancelled": "Cancelled: {reason}",
+      "prizeTotal": "Total prizes",
+      "startsIn": "Starts in",
+      "follow": "Follow",
+      "following": "Following",
+      "watch": "Watch",
+      "live": "Live",
+      "player": {
+        "play": "Play {title}",
+        "facebookNote": "Facebook's player loads Facebook's own cookies. It starts only when you tap.",
+        "choose": "Choose a stream",
+        "opensElsewhere": "opens on {platform}"
+      },
+      "standings": "Live standings",
+      "cutLine": "The top {n} go through to the final.",
+      "road": "The road to the final",
+      "topN": "Top {n} go through",
+      "qualified": "Places in the final ({n})",
+      "qualStatus": {
+        "qualified": "Qualified",
+        "invited": "Invited",
+        "entered": "Entered",
+        "missed": "Missed",
+        "revoked": "Withdrawn"
+      },
+      "noneYet": "Places are filled when the qualifiers finish.",
+      "about": "About",
+      "sponsors": "Sponsors",
+      "tier": {
+        "title": "Title sponsor",
+        "gold": "Gold",
+        "partner": "Partner"
+      },
+      "allTournaments": "All tournaments",
+      "feedTitle": "Live feed",
+      "feedEmpty": "Updates appear here as the event runs.",
+      "feed": {
+        "tournament_finalised": "{title}: results are final",
+        "tournament_cancelled": "{title} was cancelled",
+        "qualified": "{n} qualified from {title}",
+        "qualified_late": "{n} finished in the top places of {title}, too late for the final",
+        "final_live": "The final is live: {title}",
+        "stream_live": "A stream is live",
+        "stream_live_t": "A stream is live: {title}",
+        "event_cancelled": "The event was cancelled: {reason}"
+      },
+      "pollClosed": "Closed",
+      "yourVote": "your vote",
+      "votes": "{n, plural, one {# vote} other {# votes}}",
+      "failed": "Something went wrong. Try again."
     }
   }
 }

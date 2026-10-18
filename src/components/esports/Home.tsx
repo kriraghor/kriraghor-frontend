@@ -4,11 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { dhakaTime, esports, takaOf } from "@/lib/esports";
+import { events } from "@/lib/events";
 import { Card, CardSkeleton, Countdown, Empty, LinkButton, Prize, SlotsBar } from "./bits";
+import { EventCard } from "./EventList";
 
 /**
- * esports.kriraghor.com home: the next big tournament as the hero (a real card, not a picture of one),
- * open registrations, top players and how it works. Esports leads (v3 priority 1).
+ * esports.kriraghor.com home: a live or upcoming featured big event (M23) leads; otherwise the next big
+ * tournament is the hero (a real card, not a picture of one). Open registrations, top players and how
+ * it works follow. Esports leads (v3 priority 1).
  */
 const DONE = ["results_pending", "finalised", "paid_out", "cancelled"];
 
@@ -18,6 +21,8 @@ export function Home() {
   const open = useQuery({ queryKey: ["es-list", "open"], queryFn: () => esports.list({ status: "registration_open", limit: 8 }) });
   const featured = useQuery({ queryKey: ["es-list", "featured"], queryFn: () => esports.list({ featured: "true", limit: 10 }) });
   const top = useQuery({ queryKey: ["es-top"], queryFn: () => esports.topPlayers() });
+  const bigEvents = useQuery({ queryKey: ["es-events", "featured"], queryFn: () => events.list({ featured: "true", limit: 3 }) });
+  const heroEvent = bigEvents.data?.items.find((e) => e.phase === "live" || e.phase === "upcoming") ?? null;
   // Only a tournament still ahead or running leads the page; finished ones live in the lists and results.
   const hero = featured.data?.items.find((x) => !DONE.includes(x.status)) ?? open.data?.items[0] ?? null;
 
@@ -41,7 +46,14 @@ export function Home() {
             </div>
           </div>
           <div>
-            {hero ? (
+            {heroEvent ? (
+              <div data-testid="hero-event">
+                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-amber-400">{t("home.bigEvent")}</p>
+                <div className="text-ink">
+                  <EventCard e={heroEvent} big />
+                </div>
+              </div>
+            ) : hero ? (
               <Link href={`/t/${hero.slug}`} className="block border-2 border-band-text/20 bg-band p-6 hover:border-amber-400" data-testid="hero-card">
                 <p className="text-xs font-bold uppercase tracking-wide text-amber-400">{hero.featured ? t("home.featured") : t("home.next")}</p>
                 <h2 className="mt-2 text-2xl font-extrabold">{locale === "bn" ? hero.titleBn : hero.titleEn}</h2>
