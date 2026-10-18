@@ -325,7 +325,7 @@ function Feed({ items }: { items: FeedItem[] }) {
           {items.map((i) => (
             <li key={i.id} className={`border-l-4 pl-3 ${i.kind === "announcement" ? "border-[var(--event-accent)]" : "border-line"}`}>
               <p className="text-sm font-semibold">{feedText(i, t, locale)}</p>
-              <p className="text-xs text-muted">{dhakaTime(i.createdAt, locale, { timeStyle: "short", day: "numeric", month: "short" } as Intl.DateTimeFormatOptions)}</p>
+              <p className="text-xs text-muted">{dhakaTime(i.createdAt, locale, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}</p>
             </li>
           ))}
         </ol>

@@ -9,9 +9,9 @@ type Stream = Pick<EventStream, "id" | "platform" | "url" | "title" | "isLive" |
 
 /**
  * The stream player (M21-FR-29, M23). It embeds only from the server's embedUrl (built from a parsed
- * video id, never from a stored URL), in a sandboxed iframe that sends no referrer. Facebook waits for
- * a click (its player loads Facebook tracking). Links that cannot embed (TikTok live, unknown link
- * forms) are buttons that open the platform.
+ * video id, never from a stored URL), in a sandboxed iframe that sends only our origin as the
+ * referrer (YouTube needs one). Facebook waits for a click (its player loads Facebook tracking).
+ * Links that cannot embed (TikTok live, unknown link forms) are buttons that open the platform.
  */
 export function StreamPlayer({ streams, testId = "stream-player" }: { streams: Stream[]; testId?: string }) {
   const t = useTranslations("esports.events");
@@ -42,7 +42,8 @@ export function StreamPlayer({ streams, testId = "stream-player" }: { streams: S
               className="absolute inset-0 h-full w-full"
               allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
               allowFullScreen
-              referrerPolicy="no-referrer"
+              // YouTube refuses embeds without a Referer (error 153); send only our origin.
+              referrerPolicy="strict-origin-when-cross-origin"
               sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
               loading="lazy"
               data-testid="stream-iframe"
