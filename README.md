@@ -37,7 +37,7 @@ The backend must be running (`npm run dev` in `../kriraghor-backend`) with `CORS
 - **Locales:** `en` and `bn`, no URL prefix (cookie `NEXT_LOCALE`); pages are prerendered per locale. Switch `localePrefix` to `"as-needed"` in `src/i18n/routing.ts` when Bangla pages need their own URLs.
 - **Shared code** (`src/lib`, `src/components`) is copied in web, esports and portal for now (ADR-002 defers a shared package).
 
-## Container
+##  Container
 
 ```bash
 docker build -t kriraghor-web:dev .
