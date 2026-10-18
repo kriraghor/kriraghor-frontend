@@ -18,6 +18,7 @@ export type Match = components["schemas"]["EsportsMatch"];
 export type Standings = components["schemas"]["EsportsStandings"];
 export type Leaderboard = components["schemas"]["EsportsLeaderboard"];
 export type Winnings = components["schemas"]["EsportsWinnings"];
+export type Organiser = components["schemas"]["PublicOrganiser"];
 export type Money = { amount: number; currency: "BDT" };
 
 /** Throw the API problem (RFC 7807) or return the data. */
@@ -76,6 +77,8 @@ export const esports = {
   leaderboard: async (query: { game: string; scope?: "rolling" | "season"; season?: string }) => unwrap(await api().GET("/esports/leaderboards", { params: { query } })),
   topPlayers: async () => unwrap(await api().GET("/esports/top-players")),
   player: async (handle: string) => unwrap(await api().GET("/esports/players/{handle}", { params: { path: { handle } } })),
+  // M22: an organiser's branded page (its branding and public tournaments).
+  organiser: async (subdomain: string) => unwrap(await api().GET("/esports/organisers/{subdomain}", { params: { path: { subdomain } } })),
 
   register: async (id: string, body: { squadId?: string; players: string[]; substitutes?: string[] }) =>
     unwrap(await api().POST("/esports/tournaments/{id}/registrations", { params: { path: { id }, header: { "idempotency-key": newKey() } }, body: { substitutes: [], ...body } })),

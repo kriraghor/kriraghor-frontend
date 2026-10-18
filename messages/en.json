@@ -418,6 +418,15 @@
       "rank": "Rank #{n}",
       "unranked": "Not ranked yet"
     },
-    "startedAt": "Started"
+    "startedAt": "Started",
+    "organiser": {
+      "by": "by {name}",
+      "kicker": "Esports organiser",
+      "upcoming": "Tournaments",
+      "past": "Finished",
+      "none": "No tournaments open right now. Check back soon.",
+      "notFound": "This organiser is not on Kriraghor.",
+      "note": "Tournaments by {name} run on Kriraghor: entry fees and prizes are held in Kriraghor escrow, rooms are revealed to checked-in players, and winnings are withdrawn from your Kriraghor account."
+    }
   }
 }

@@ -89,6 +89,7 @@ export function Card({ t: item }: { t: TournamentCard }) {
         </span>
       </div>
       <h3 className="mt-3 text-lg font-extrabold leading-snug group-hover:underline">{title}</h3>
+      {item.organiser ? <p className="mt-1 text-xs font-semibold text-muted" data-testid="card-organiser">{t("organiser.by", { name: item.organiser.name })}</p> : null}
       <p className="mt-1 text-sm text-muted">{dhakaTime(item.startsAt, locale)}</p>
       <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
         <div>
