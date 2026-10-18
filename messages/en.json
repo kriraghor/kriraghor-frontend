@@ -47,7 +47,8 @@
     "gymAdmin": "Gyms",
     "organisersAdmin": "Organisers",
     "esportsConsole": "Esports",
-    "bigEvents": "Big events"
+    "bigEvents": "Big events",
+    "teamsAdmin": "Teams"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -3281,5 +3282,57 @@
         "event_cancelled": "Event cancelled"
       }
     }
+  },
+  "teamsAdmin": {
+    "title": "Teams",
+    "intro": "Find a team, check its members (NID ✓ only) and pending invites (masked numbers), and archive a team with a reason. Correct a member's self-declared gender on the second tab.",
+    "needPermission": "This desk needs the manage_users permission.",
+    "tab": {
+      "teams": "Teams",
+      "gender": "Gender corrections"
+    },
+    "name": "Team name",
+    "status": "Status",
+    "all": "All",
+    "find": "Find",
+    "failed": "Something went wrong.",
+    "none": "No teams match.",
+    "pick": "Pick a team to see its members.",
+    "teamStatus": {
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "archivedFor": "Archived: {reason}",
+    "members": "Members ({n})",
+    "role": {
+      "captain": "Captain",
+      "vice_captain": "Vice-captain",
+      "player": "Player"
+    },
+    "nidVerified": "NID ✓",
+    "nidNot": "No NID",
+    "invites": "Pending invites",
+    "until": "until {date}",
+    "reason": "Reason (members and the audit log see it)",
+    "reasonNeeded": "Give a reason of at least 5 characters.",
+    "archive": "Archive team",
+    "cancel": "Cancel",
+    "genderIntro": "Members declare their gender once. It is used only for men's and women's events and is never shown to captains, organisers or on public pages. Correct it here when a member writes in; every correction is audited.",
+    "findMember": "Phone, email or name",
+    "noMember": "No member matches.",
+    "current": "Now: {gender} ({source})",
+    "notRecorded": "not recorded",
+    "source": {
+      "self_declared": "self-declared",
+      "staff_corrected": "corrected by staff"
+    },
+    "correctTo": "Correct to",
+    "genders": {
+      "male": "Male",
+      "female": "Female",
+      "third": "Third gender"
+    },
+    "save": "Save correction",
+    "corrected": "Corrected and recorded in the audit log."
   }
 }
