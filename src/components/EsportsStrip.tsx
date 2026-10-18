@@ -7,14 +7,15 @@ import { publicEnv } from "@/lib/env";
 import { formatTaka } from "@/lib/payments";
 
 type Card = { id: string; slug: string; titleEn: string; titleBn: string; game: { nameEn: string; nameBn: string } | null; entryFee: { amount: number }; prizePool: { amount: number }; maxSlots: number; slotsTaken: number; startsAt: string };
+type BigEvent = { id: string; slug: string; titleEn: string; titleBn: string; phase: string; startsAt: string; prizeTotal: { amount: number }; accentHex: string };
 type Top = { rank: number; username: string | null; displayName: string | null; game: { nameEn: string | null }; points: number };
 
 const dhaka = (iso: string, locale: string) =>
   new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { timeZone: "Asia/Dhaka", weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
 
 /**
- * Home esports strip (M21, v3 priority 1): the next open tournaments and the top players, linking to
- * esports.kriraghor.com. Public reads; hidden when there is nothing to show.
+ * Home esports strip (M21, v3 priority 1): a live or upcoming featured big event (M23), the next open
+ * tournaments and the top players, linking to esports.kriraghor.com. Public reads.
  */
 export function EsportsStrip() {
   const t = useTranslations("esportsStrip");
@@ -36,6 +37,15 @@ export function EsportsStrip() {
       return (r.data as unknown as { items: Top[] }).items;
     },
   });
+  const events = useQuery({
+    queryKey: ["home-esports-events"],
+    queryFn: async () => {
+      const r = await api().GET("/esports/events", { params: { query: { featured: "true", limit: 3 } } });
+      if (!r.data) throw new Error("events unavailable");
+      return r.data.items as unknown as BigEvent[];
+    },
+  });
+  const bigEvent = (events.data ?? []).find((e) => e.phase === "live" || e.phase === "upcoming") ?? null;
   const cards = open.data ?? [];
   const players = (top.data ?? []).filter((p) => p.username).slice(0, 5);
 
@@ -53,6 +63,15 @@ export function EsportsStrip() {
             {t("all")}
           </a>
         </div>
+        {bigEvent ? (
+          <a href={`${base}/e/${bigEvent.slug}`} className="mt-8 flex flex-wrap items-center gap-4 border-2 border-band-text/20 p-5 hover:border-amber-300" style={{ borderLeftColor: bigEvent.accentHex, borderLeftWidth: 8 }} data-testid="strip-big-event">
+            <span className={`px-2 py-1 text-xs font-bold uppercase ${bigEvent.phase === "live" ? "bg-red-600 text-white" : "bg-band-text/15"}`}>{t(bigEvent.phase === "live" ? "eventLive" : "eventUpcoming")}</span>
+            <span className="text-xl font-extrabold">{locale === "bn" ? bigEvent.titleBn : bigEvent.titleEn}</span>
+            <span className="ml-auto text-sm">
+              {t("eventPrizes")} <span className="font-extrabold text-amber-300">{formatTaka(bigEvent.prizeTotal.amount, locale)}</span>
+            </span>
+          </a>
+        ) : null}
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <ul className="grid gap-4 md:grid-cols-3">
             {open.isPending

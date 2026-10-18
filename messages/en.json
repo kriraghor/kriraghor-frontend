@@ -359,7 +359,10 @@
     "none": "No tournaments are open right now. New ones are added every week.",
     "topPlayers": "Top players",
     "points": "{n} pts",
-    "noPlayers": "Rankings appear after the first tournament."
+    "noPlayers": "Rankings appear after the first tournament.",
+    "eventLive": "Live now",
+    "eventUpcoming": "Big event",
+    "eventPrizes": "Total prizes"
   },
   "grounds": {
     "title": "Grounds",
