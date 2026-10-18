@@ -26,6 +26,8 @@ export type TournamentInput = {
   minParticipants: number;
   prizes: { place: number; amount: number }[];
   killReward: number;
+  /** M22: organisers with a per-kill reward cap the paid kills (the prize fund covers it). */
+  maxPaidKills?: number;
   pointsPresetId?: string;
   registrationOpensAt: string;
   registrationClosesAt?: string;

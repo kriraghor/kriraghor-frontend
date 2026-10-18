@@ -18,6 +18,10 @@ import { Chip, Field, inputCls } from "../finance/shared";
 type Tab = "tournaments" | "disputes" | "bans";
 const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { draft: "muted", review: "warn", scheduled: "muted", registration_open: "ok", registration_closed: "warn", check_in: "warn", live: "bad", results_pending: "warn", finalised: "ok", paid_out: "ok", cancelled: "bad" };
 const btn = "min-h-11 border-2 px-4 text-sm font-semibold disabled:opacity-50";
+
+/** What the shared desk parts call; the M22 organiser client leaves the staff-only actions out. */
+export type DeskClient = Pick<typeof esportsAdmin, "catalog" | "create" | "board" | "match" | "room" | "setRoom" | "rotate" | "enter" | "post" | "preview"> &
+  Partial<Pick<typeof esportsAdmin, "staffCheckIn" | "disqualify" | "revealNow" | "cancelMatch">>;
 /** A Dhaka wall-clock value from <input type="datetime-local"> as an ISO instant. */
 const dhakaIso = (v: string) => new Date(`${v}:00+06:00`).toISOString();
 
@@ -102,14 +106,18 @@ function Tournaments({ canManage, initial }: { canManage: boolean; initial: stri
 
 type Game = { id: string; key: string; nameEn: string; modes: { id: string; key: string; nameEn: string; teamSize: number; maxTeams: number }[]; maps: { id: string; nameEn: string }[]; presets: { id: string; key: string; nameEn: string }[] };
 
-function CreateForm({ onCreated }: { onCreated: (id: string) => void }) {
+/**
+ * A tournament draft. Staff create Kriraghor's own; the M22 organiser console passes its client and
+ * `organiser` (a per-kill reward then needs the most paid kills, and nothing is featured).
+ */
+export function CreateForm({ onCreated, client = esportsAdmin, organiser = false }: { onCreated: (id: string) => void; client?: DeskClient; organiser?: boolean }) {
   const t = useTranslations("esportsDesk");
   const qc = useQueryClient();
-  const cat = useQuery({ queryKey: ["esd-catalog"], queryFn: () => esportsAdmin.catalog() });
+  const cat = useQuery({ queryKey: ["esd-catalog"], queryFn: () => client.catalog() });
   const games = (cat.data?.items ?? []) as unknown as Game[];
   const [gameId, setGameId] = useState("");
   const g = games.find((x) => x.id === gameId);
-  const [f, setF] = useState({ modeId: "", titleEn: "", titleBn: "", tier: "daily", format: "single_match", fee: "50", slots: "48", min: "12", killReward: "0", presetId: "", opens: "", rulesMd: "", featured: false });
+  const [f, setF] = useState({ modeId: "", titleEn: "", titleBn: "", tier: "daily", format: "single_match", fee: "50", slots: "48", min: "12", killReward: "0", maxPaidKills: "", presetId: "", opens: "", rulesMd: "", featured: false });
   const [prizes, setPrizes] = useState(["1000", "600", "300"]);
   const [matches, setMatches] = useState([{ mapId: "", at: "" }]);
   const [error, setError] = useState<string | null>(null);
@@ -133,14 +141,15 @@ function CreateForm({ onCreated }: { onCreated: (id: string) => void }) {
       minParticipants: Number(f.min),
       prizes: prizeAmounts.map((amount, i) => ({ place: i + 1, amount: amount! })),
       killReward: toPoisha(f.killReward)!,
+      ...(organiser && f.maxPaidKills ? { maxPaidKills: Number(f.maxPaidKills) } : {}),
       ...(f.presetId ? { pointsPresetId: f.presetId } : {}),
       registrationOpensAt: dhakaIso(f.opens),
       matches: matches.map((m) => ({ mapId: m.mapId, startsAt: dhakaIso(m.at) })),
       rulesMd: f.rulesMd,
-      featured: f.featured,
+      featured: organiser ? false : f.featured,
     };
     try {
-      const created = await esportsAdmin.create(body);
+      const created = await client.create(body);
       await qc.invalidateQueries({ queryKey: ["esd-list"] });
       onCreated(created.id);
     } catch (err) {
@@ -214,6 +223,11 @@ function CreateForm({ onCreated }: { onCreated: (id: string) => void }) {
           <input value={f.killReward} onChange={(e) => set("killReward", e.target.value)} className={inputCls} inputMode="decimal" />
         </Field>
       </div>
+      {organiser ? (
+        <Field label={t("form.maxPaidKills")}>
+          <input value={f.maxPaidKills} onChange={(e) => set("maxPaidKills", e.target.value.replace(/[^0-9]/g, ""))} className={inputCls} inputMode="numeric" data-testid="max-paid-kills" />
+        </Field>
+      ) : null}
       <fieldset className="border-2 border-line p-3">
         <legend className="px-1 font-bold">{t("form.prizes")}</legend>
         <div className="flex flex-wrap gap-2">
@@ -264,10 +278,12 @@ function CreateForm({ onCreated }: { onCreated: (id: string) => void }) {
       <Field label={t("form.rules")}>
         <textarea value={f.rulesMd} onChange={(e) => set("rulesMd", e.target.value)} className={`${inputCls} min-h-24 py-2`} maxLength={10000} />
       </Field>
-      <label className="flex min-h-11 items-center gap-2">
-        <input type="checkbox" className="h-5 w-5" checked={f.featured} onChange={(e) => set("featured", e.target.checked)} />
-        {t("form.featured")}
-      </label>
+      {organiser ? null : (
+        <label className="flex min-h-11 items-center gap-2">
+          <input type="checkbox" className="h-5 w-5" checked={f.featured} onChange={(e) => set("featured", e.target.checked)} />
+          {t("form.featured")}
+        </label>
+      )}
       {error ? <Notice tone="error">{error}</Notice> : null}
       <div>
         <button type="submit" className={`${btn} border-brand`}>
@@ -393,10 +409,10 @@ function TournamentPane({ id, canManage }: { id: string; canManage: boolean }) {
 
 type BoardItem = { id: string; slotNo: number | null; status: string; waitlistPosition: number | null; players: { userId: string; ign: string | null; username: string | null; isSubstitute: boolean; checkedIn: boolean }[] };
 
-function CheckinBoard({ id }: { id: string }) {
+export function CheckinBoard({ id, client = esportsAdmin }: { id: string; client?: DeskClient }) {
   const t = useTranslations("esportsDesk");
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ["esd-board", id], queryFn: () => esportsAdmin.board(id), refetchInterval: 15_000 });
+  const q = useQuery({ queryKey: ["esd-board", id], queryFn: () => client.board(id), refetchInterval: 15_000 });
   const [msg, setMsg] = useState<string | null>(null);
   const run = async (fn: () => Promise<unknown>) => {
     setMsg(null);
@@ -432,8 +448,8 @@ function CheckinBoard({ id }: { id: string }) {
                       {p.isSubstitute ? <span className="text-xs text-muted">({t("board.sub")})</span> : null}
                       {p.checkedIn ? (
                         <span aria-label={t("board.in")}>✓</span>
-                      ) : ["confirmed", "no_show"].includes(r.status) ? (
-                        <button type="button" className="text-xs font-semibold text-brand underline" onClick={() => void run(() => esportsAdmin.staffCheckIn(r.id, p.userId))}>
+                      ) : client.staffCheckIn && ["confirmed", "no_show"].includes(r.status) ? (
+                        <button type="button" className="text-xs font-semibold text-brand underline" onClick={() => void run(() => client.staffCheckIn!(r.id, p.userId))}>
                           {t("board.checkIn")}
                         </button>
                       ) : null}
@@ -442,13 +458,13 @@ function CheckinBoard({ id }: { id: string }) {
                 </td>
                 <td className="px-3 py-2">{t(`reg.${r.status}`)}</td>
                 <td className="px-3 py-2 text-right">
-                  {["confirmed", "checked_in", "no_show"].includes(r.status) ? (
+                  {client.disqualify && ["confirmed", "checked_in", "no_show"].includes(r.status) ? (
                     <button
                       type="button"
                       className="text-xs font-semibold text-danger underline"
                       onClick={() => {
                         const note = window.prompt(t("board.dqNote"));
-                        if (note && note.trim().length >= 5) void run(() => esportsAdmin.disqualify(r.id, { reasonCode: "cheating", note: note.trim() }));
+                        if (note && note.trim().length >= 5) void run(() => client.disqualify!(r.id, { reasonCode: "cheating", note: note.trim() }));
                       }}
                     >
                       {t("board.dq")}
@@ -464,7 +480,7 @@ function CheckinBoard({ id }: { id: string }) {
   );
 }
 
-function Matches({ matches, canManage, onChange }: { matches: { id: string; seq: number; status: string; startsAt: string }[]; canManage: boolean; onChange: () => Promise<void> }) {
+export function Matches({ matches, canManage, onChange, client = esportsAdmin }: { matches: { id: string; seq: number; status: string; startsAt: string }[]; canManage: boolean; onChange: () => Promise<void>; client?: DeskClient }) {
   const t = useTranslations("esportsDesk");
   const locale = useLocale();
   const [open, setOpen] = useState<string | null>(matches[0]?.id ?? null);
@@ -477,19 +493,19 @@ function Matches({ matches, canManage, onChange }: { matches: { id: string; seq:
           </button>
         ))}
       </div>
-      {open ? <MatchPanel key={open} id={open} canManage={canManage} onChange={onChange} /> : null}
+      {open ? <MatchPanel key={open} id={open} canManage={canManage} onChange={onChange} client={client} /> : null}
     </div>
   );
 }
 
 type Entry = { registrationId: string; name: string; players: { userId: string; ign: string | null }[] };
 
-function MatchPanel({ id, canManage, onChange }: { id: string; canManage: boolean; onChange: () => Promise<void> }) {
+export function MatchPanel({ id, canManage, onChange, client = esportsAdmin }: { id: string; canManage: boolean; onChange: () => Promise<void>; client?: DeskClient }) {
   const t = useTranslations("esportsDesk");
   const locale = useLocale();
   const qc = useQueryClient();
-  const m = useQuery({ queryKey: ["esd-match", id], queryFn: () => esportsAdmin.match(id) });
-  const room = useQuery({ queryKey: ["esd-room", id], enabled: canManage, queryFn: () => esportsAdmin.room(id) });
+  const m = useQuery({ queryKey: ["esd-match", id], queryFn: () => client.match(id) });
+  const room = useQuery({ queryKey: ["esd-room", id], enabled: canManage, queryFn: () => client.room(id) });
   const [roomId, setRoomId] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
@@ -537,26 +553,26 @@ function MatchPanel({ id, canManage, onChange }: { id: string; canManage: boolea
             <input value={roomId} onChange={(e) => setRoomId(e.target.value)} placeholder={t("room.id")} aria-label={t("room.id")} className={inputCls} autoComplete="off" />
             <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("room.password")} aria-label={t("room.password")} className={inputCls} autoComplete="off" />
             {!roomData?.current || roomData.current.status === "scheduled" ? (
-              <button type="button" className={`${btn} border-brand`} disabled={!roomId || !password} onClick={() => void run(() => esportsAdmin.setRoom(id, { roomId, password }), t("room.saved")).then(() => (setRoomId(""), setPassword("")))}>
+              <button type="button" className={`${btn} border-brand`} disabled={!roomId || !password} onClick={() => void run(() => client.setRoom(id, { roomId, password }), t("room.saved")).then(() => (setRoomId(""), setPassword("")))}>
                 {t("room.save")}
               </button>
             ) : (
-              <button type="button" className={`${btn} border-danger text-danger`} disabled={!roomId || !password} onClick={() => void run(() => esportsAdmin.rotate(id, { roomId, password }), t("room.rotated")).then(() => (setRoomId(""), setPassword("")))}>
+              <button type="button" className={`${btn} border-danger text-danger`} disabled={!roomId || !password} onClick={() => void run(() => client.rotate(id, { roomId, password }), t("room.rotated")).then(() => (setRoomId(""), setPassword("")))}>
                 {t("room.rotate")}
               </button>
             )}
-            {roomData?.current?.status === "scheduled" ? (
-              <button type="button" className={`${btn} border-line`} onClick={() => void run(() => esportsAdmin.revealNow(id), t("room.revealed"))}>
+            {client.revealNow && roomData?.current?.status === "scheduled" ? (
+              <button type="button" className={`${btn} border-line`} onClick={() => void run(() => client.revealNow!(id), t("room.revealed"))}>
                 {t("room.revealNow")}
               </button>
             ) : null}
-            {editable ? (
+            {client.cancelMatch && editable ? (
               <button
                 type="button"
                 className={`${btn} border-line`}
                 onClick={() => {
                   const why = window.prompt(t("cancelMatchReason"));
-                  if (why && why.trim().length >= 5) void run(() => esportsAdmin.cancelMatch(id, why.trim()), t("matchCancelled"));
+                  if (why && why.trim().length >= 5) void run(() => client.cancelMatch!(id, why.trim()), t("matchCancelled"));
                 }}
               >
                 {t("cancelMatch")}
@@ -604,7 +620,7 @@ function MatchPanel({ id, canManage, onChange }: { id: string; canManage: boolea
         </div>
         {editable ? (
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <button type="button" className={`${btn} border-line`} disabled={Boolean(local)} onClick={() => void run(() => esportsAdmin.enter(id, rows()), t("results.saved"))}>
+            <button type="button" className={`${btn} border-line`} disabled={Boolean(local)} onClick={() => void run(() => client.enter(id, rows()), t("results.saved"))}>
               {t("results.save")}
             </button>
             <button
@@ -612,7 +628,7 @@ function MatchPanel({ id, canManage, onChange }: { id: string; canManage: boolea
               className={`${btn} border-brand`}
               disabled={Boolean(local)}
               onClick={() => {
-                if (window.confirm(t("results.postConfirm"))) void run(async () => (await esportsAdmin.enter(id, rows()), await esportsAdmin.post(id)), t("results.posted"));
+                if (window.confirm(t("results.postConfirm"))) void run(async () => (await client.enter(id, rows()), await client.post(id)), t("results.posted"));
               }}
               data-testid="post-results"
             >
@@ -633,10 +649,10 @@ function MatchPanel({ id, canManage, onChange }: { id: string; canManage: boolea
   );
 }
 
-function Finalise({ id, status, onFinalise }: { id: string; status: string; onFinalise: () => void }) {
+export function Finalise({ id, status, onFinalise, client = esportsAdmin, totals = ["collected", "paid", "subsidy", "revenue"] }: { id: string; status: string; onFinalise: () => void; client?: DeskClient; totals?: string[] }) {
   const t = useTranslations("esportsDesk");
   const locale = useLocale();
-  const q = useQuery({ queryKey: ["esd-preview", id], queryFn: () => esportsAdmin.preview(id) });
+  const q = useQuery({ queryKey: ["esd-preview", id], queryFn: () => client.preview(id) });
   if (q.isPending) return <div className="h-32 animate-pulse bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const p = q.data as unknown as { finalisable: boolean; awards: { registrationId: string; entry: { name: string } | null; kind: string; place: number | null; amount: { amount: number }; shares: { userId: string; amount: { amount: number } }[] }[]; totals: Record<string, { amount: number }> };
@@ -652,7 +668,7 @@ function Finalise({ id, status, onFinalise }: { id: string; status: string; onFi
         ))}
       </ul>
       <dl className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-        {(["collected", "paid", "subsidy", "revenue"] as const).map((k) => (
+        {totals.map((k) => (
           <div key={k}>
             <dt className="text-muted">{t(`totals.${k}`)}</dt>
             <dd className="font-bold tabular-nums">{formatTaka(p.totals[k]?.amount ?? 0, locale)}</dd>

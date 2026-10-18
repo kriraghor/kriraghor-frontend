@@ -29,6 +29,7 @@ export function VendorHome() {
   const owner = roles.find((r) => r.role === "ground_owner")?.status ?? null;
   const shopOwner = roles.find((r) => r.role === "shop_owner")?.status ?? null;
   const gymOwner = roles.find((r) => r.role === "gym_owner")?.status ?? null;
+  const organiserRole = roles.find((r) => r.role === "organiser")?.status ?? null;
   const web = publicEnv().WEB_URL;
   const steps = [
     { key: "nid", done: member === "active", href: `${web}/account/verification` },
@@ -82,6 +83,7 @@ export function VendorHome() {
       )}
       <ShopCard status={shopOwner} />
       <GymCard status={gymOwner} />
+      <OrganiserCard status={organiserRole} />
     </section>
   );
 }
@@ -134,6 +136,26 @@ function GymCard({ status }: { status: string | null }) {
       <a href={`${web}/account/business?as=gym`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
         {status ? t("home.continue") : t("home.start")}
       </a>
+    </div>
+  );
+}
+
+/** M22: the esports organiser's console (or the application on kriraghor.com). */
+function OrganiserCard({ status }: { status: string | null }) {
+  const t = useTranslations("organiser");
+  const web = publicEnv().WEB_URL;
+  return (
+    <div className={`mt-8 border-2 bg-surface p-5 ${status === "active" ? "border-brand" : "border-line"}`} data-testid="organiser-card">
+      <p className="font-bold">{status === "active" ? t("home.active") : t("home.sell")}</p>
+      {status === "active" ? (
+        <Link href="/vendor/esports" className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
+          {t("home.open")}
+        </Link>
+      ) : (
+        <a href={`${web}/account/business?as=organiser`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
+          {status ? t("home.continue") : t("home.start")}
+        </a>
+      )}
     </div>
   );
 }

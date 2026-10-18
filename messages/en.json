@@ -44,7 +44,9 @@
     "hireCatalog": "Hire taxonomy",
     "hireAdmin": "Hire",
     "gyms": "Gyms",
-    "gymAdmin": "Gyms"
+    "gymAdmin": "Gyms",
+    "organisersAdmin": "Organisers",
+    "esportsConsole": "Esports"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -751,7 +753,8 @@
       "shop": "Shop",
       "product": "Shop product",
       "hire_profile": "Hire profile",
-      "gym": "Gym"
+      "gym": "Gym",
+      "organisation": "Organisation"
     },
     "lockLabel": "Lock",
     "lockAny": "Any",
@@ -876,7 +879,8 @@
       "rules": "Rules (Markdown)",
       "featured": "Feature on the esports home page",
       "save": "Save draft",
-      "badMoney": "Enter amounts in taka, with at most 2 decimals."
+      "badMoney": "Enter amounts in taka, with at most 2 decimals.",
+      "maxPaidKills": "Most kills paid (needed with a per-kill reward)"
     },
     "failed": "That didn't work. Try again.",
     "loadFailed": "Couldn't load this. Refresh to try again.",
@@ -1033,7 +1037,10 @@
       "matches": "Matches",
       "killReward": "Per kill",
       "prizes": "Prize table · total {pool}",
-      "subsidy": "At full slots the fees fall {gap} short of the prizes; Kriraghor covers the difference."
+      "subsidy": "At full slots the fees fall {gap} short of the prizes; Kriraghor covers the difference.",
+      "organiser": "Organiser",
+      "maxPaidKills": "Kills paid (most)",
+      "fund": "Prize fund {fund} paid by the organiser before review. Kriraghor never covers organiser prizes."
     }
   },
   "vendorGrounds": {
@@ -2919,5 +2926,213 @@
     "closed": "Closed",
     "packages": "Passes",
     "outOfLimits": "outside {min} – {max}"
+  },
+  "organiser": {
+    "title": "Organiser console",
+    "kicker": "Esports organiser",
+    "applyFirst": "No verified organisation yet",
+    "applyHelp": "Apply as an esports organiser on kriraghor.com and register your organisation; Kriraghor reviews it and sets up your contract.",
+    "notFound": "This organisation was not found, or you are not a member.",
+    "failed": "Couldn't do that. Try again.",
+    "role": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "staff": "Staff"
+    },
+    "tab": {
+      "dashboard": "Overview",
+      "tournaments": "Tournaments",
+      "billing": "Billing",
+      "branding": "Branding",
+      "members": "Members"
+    },
+    "status": {
+      "draft": "Draft",
+      "review": "In review",
+      "scheduled": "Scheduled",
+      "registration_open": "Registration open",
+      "registration_closed": "Registration closed",
+      "check_in": "Check-in",
+      "live": "Live",
+      "results_pending": "Results pending",
+      "finalised": "Finalised",
+      "paid_out": "Paid out",
+      "cancelled": "Cancelled"
+    },
+    "contractStatus": {
+      "draft": "Draft",
+      "active": "Active",
+      "suspended": "Suspended",
+      "ended": "Ended"
+    },
+    "invoiceStatus": {
+      "draft": "Draft",
+      "issued": "Issued",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "voided": "Voided"
+    },
+    "cycle": {
+      "monthly": "a month",
+      "quarterly": "a quarter",
+      "per_tournament": "per tournament"
+    },
+    "dash": {
+      "contract": "Contract",
+      "pct": "{pct}% of entry fees",
+      "flat": "{fee} {cycle}",
+      "noContract": "No contract yet: Kriraghor sets it up after review",
+      "invoices": "Invoices",
+      "unpaid": "{n} unpaid ({total})",
+      "allPaid": "All paid",
+      "submits": "New tournaments",
+      "canSubmit": "You can send tournaments for review",
+      "cannotSubmit": "Blocked: check the contract and invoices",
+      "upcoming": "Upcoming tournaments",
+      "none": "Nothing scheduled yet."
+    },
+    "tour": {
+      "new": "New tournament",
+      "empty": "No tournaments yet.",
+      "entry": "Entry fee",
+      "pool": "Prize pool",
+      "starts": "Starts",
+      "fee": "Kriraghor fee",
+      "submit": "Send for review",
+      "submitted": "Sent. Kriraghor reviews it before it goes live.",
+      "cancel": "Cancel",
+      "cancelReason": "Why cancel? (at least 5 characters)",
+      "cancelled": "Cancelled. The prize fund goes back to your balance.",
+      "checkins": "Check-in",
+      "matches": "Matches, rooms and results",
+      "finalise": "Finalise and pay prizes",
+      "codeSent": "A code was sent to your phone. Enter it to pay the prizes.",
+      "code": "Code from your phone",
+      "confirmFinalise": "Pay the prizes",
+      "finalised": "Finalised: prizes paid from your fund, your share is in your balance."
+    },
+    "fund": {
+      "title": "Prize fund",
+      "line": "Pool {required} · deposited {deposited}",
+      "funded": "Funded. You can send the tournament for review.",
+      "needs": "Fund the prize pool before sending it for review. Prizes are paid from it; Kriraghor never adds money.",
+      "over": "The deposit is more than the pool: raise the prizes, or cancel the draft to get the fund back.",
+      "now": "Fund now ({amount})"
+    },
+    "bill": {
+      "contracts": "Contracts",
+      "invoices": "Invoices",
+      "none": "No invoices.",
+      "due": "due {at}",
+      "pay": "Pay"
+    },
+    "brand": {
+      "colours": "Colours and taglines",
+      "primaryHex": "Primary colour (white text on it)",
+      "accentHex": "Accent colour (on the dark page)",
+      "ok": "Contrast OK",
+      "low": "Too little contrast",
+      "taglineEn": "Tagline (English)",
+      "taglineBn": "Tagline (Bangla)",
+      "save": "Save",
+      "saved": "Saved and live.",
+      "logo": "Logo (JPEG, PNG or WebP, up to 2 MB)",
+      "logoSaved": "Logo updated.",
+      "subdomain": "Your subdomain",
+      "claim": "Claim",
+      "subSaved": "Subdomain saved.",
+      "preview": "Preview",
+      "kicker": "Esports organiser"
+    },
+    "members": {
+      "phone": "Phone of a Kriraghor member",
+      "role": "Role",
+      "add": "Add",
+      "remove": "Remove",
+      "help": "Admins manage tournaments, money and branding; staff run rooms and results."
+    },
+    "home": {
+      "active": "You can run esports tournaments as an organiser.",
+      "open": "Open the organiser console",
+      "sell": "Run esports tournaments? Organisers use Kriraghor under a contract.",
+      "continue": "Continue the application",
+      "start": "Apply as an organiser"
+    }
+  },
+  "organisersDesk": {
+    "title": "Esports organisers",
+    "intro": "Organisations are reviewed on the Moderation desk. Here staff enter contracts (signed offline), attach the signed PDF and activate them with step-up; void invoices; suspend an organisation (manage_organisers) or restore it (masters).",
+    "all": "All",
+    "none": "No organisations.",
+    "pick": "Pick an organisation.",
+    "failed": "Couldn't do that.",
+    "status": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes requested",
+      "verified": "Verified",
+      "rejected": "Rejected",
+      "suspended": "Suspended"
+    },
+    "contractStatus": {
+      "draft": "Draft",
+      "active": "Active",
+      "suspended": "Suspended",
+      "ended": "Ended"
+    },
+    "invoiceStatus": {
+      "draft": "Draft",
+      "issued": "Issued",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "voided": "Voided"
+    },
+    "cycle": {
+      "monthly": "monthly",
+      "quarterly": "quarterly",
+      "per_tournament": "per tournament"
+    },
+    "members": "Members: {list}",
+    "suspend": "Suspend",
+    "restore": "Restore",
+    "suspended": "Suspended.",
+    "restored": "Restored.",
+    "reason": "Reason (kept in the audit log)",
+    "reasonNeeded": "Give a reason of at least 5 characters.",
+    "contracts": "Contracts",
+    "pct": "{pct}% of entry fees",
+    "flat": "{fee} {cycle}",
+    "attachPdf": "Signed PDF:",
+    "replacePdf": "Replace the PDF:",
+    "pdfSaved": "Signed contract attached.",
+    "activate": "Activate",
+    "reinstate": "Reinstate",
+    "activateTitle": "Activate the contract",
+    "suspendContract": "Suspend the contract",
+    "endContract": "End the contract",
+    "model": "Model",
+    "model_percentage": "Percentage of entry fees",
+    "model_flat": "Flat fee",
+    "pctLabel": "Percent",
+    "pctDefault": "The setting (10%)",
+    "feeLabel": "Fee (৳)",
+    "cycleLabel": "Billed",
+    "startsOn": "Starts on",
+    "endsOn": "Ends on (optional)",
+    "createContract": "Create the draft",
+    "contractCreated": "Draft created. Attach the signed PDF, then activate.",
+    "invoices": "Invoices",
+    "noInvoices": "No invoices.",
+    "due": "due {at}",
+    "void": "Void",
+    "voidTitle": "Void invoice {number}",
+    "stepUpHelp": "Enter your authenticator code.",
+    "panel": {
+      "name": "Name",
+      "about": "About",
+      "contact": "Contact",
+      "members": "Members",
+      "docs": "The owner's NID and the organisation's registration were checked on the documents desk."
+    }
   }
 }
