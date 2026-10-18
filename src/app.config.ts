@@ -9,6 +9,7 @@ export const APP = {
   audience: "api" as Audience,
   nav: [
     { href: "/tournaments", key: "esports" },
+    { href: "/events", key: "events" },
     { href: "/leaderboards", key: "leaderboards" },
     { href: "/me/matches", key: "myMatches" },
   ],

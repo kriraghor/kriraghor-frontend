@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self)" },
+          // M23: only the stream players may be framed (built from parsed video ids), and nobody frames us.
+          { key: "Content-Security-Policy", value: "frame-src https://www.youtube-nocookie.com https://www.facebook.com; frame-ancestors 'none'" },
         ],
       },
     ];

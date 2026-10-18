@@ -5,7 +5,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ctaFor, dhakaTime, esports, takaOf, useRoom } from "@/lib/esports";
+import { events } from "@/lib/events";
 import { Chip, Countdown, LinkButton, Prize, SlotsBar, StatusChip } from "./bits";
+import { StreamPlayer } from "./StreamPlayer";
 
 /** /t/[slug]: everything about one tournament, live (slots, status, standings over the socket). */
 const UPCOMING = ["scheduled", "registration_open", "registration_closed", "check_in"];
@@ -20,6 +22,8 @@ export function TournamentDetail({ slug }: { slug: string }) {
   const id = q.data?.id ?? null;
   const standings = useQuery({ queryKey: ["es-standings", id], enabled: Boolean(id), queryFn: () => esports.standings(id!) });
   const mine = useQuery({ queryKey: ["es-mine"], enabled: signedIn, queryFn: () => esports.mine() });
+  const partOf = useQuery({ queryKey: ["es-events", "of", id], enabled: Boolean(id), queryFn: () => events.list({ tournamentId: id! }) });
+  const event = partOf.data?.items[0] ?? null;
   useRoom(id ? `esports_tournament:${id}` : null, {
     "esports.slots_updated": () => void qc.invalidateQueries({ queryKey: ["es-t", slug] }),
     "esports.status_changed": () => void qc.invalidateQueries({ queryKey: ["es-t", slug] }),
@@ -42,7 +46,16 @@ export function TournamentDetail({ slug }: { slug: string }) {
             <Chip>{locale === "bn" ? d.game?.nameBn : d.game?.nameEn}</Chip>
             <Chip>{locale === "bn" ? d.mode?.nameBn : d.mode?.nameEn}</Chip>
             <Chip>{t(`tier.${d.tier}`)}</Chip>
+            {d.entryPolicy === "invite" ? <Chip tone="warn">{t("inviteOnly")}</Chip> : null}
           </div>
+          {event ? (
+            <p className="mt-3 text-sm font-semibold" data-testid="part-of-event">
+              {t("partOf")}{" "}
+              <Link href={`/e/${event.slug}`} className="underline">
+                {locale === "bn" ? event.titleBn : event.titleEn}
+              </Link>
+            </p>
+          ) : null}
           <h1 className="mt-4 text-3xl font-extrabold leading-tight md:text-5xl" data-testid="tournament-title">
             {title}
           </h1>
@@ -93,16 +106,9 @@ export function TournamentDetail({ slug }: { slug: string }) {
               <h2 id="streams-h" className="text-xl font-extrabold">
                 {t("streams")}
               </h2>
-              <ul className="mt-3 flex flex-wrap gap-3">
-                {d.streams.map((s) => (
-                  <li key={s.id}>
-                    <a href={s.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 border-2 border-line px-4 font-semibold hover:border-line-strong">
-                      {s.isLive ? <Chip tone="live">{t("live")}</Chip> : null}
-                      {s.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-3">
+                <StreamPlayer streams={d.streams} />
+              </div>
             </section>
           ) : null}
 
