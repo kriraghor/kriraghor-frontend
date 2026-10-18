@@ -394,12 +394,12 @@ function OverviewTab({ orgId, x }: { orgId: string; x: Tournament }) {
       <aside className="flex flex-col gap-3">
         {act.error ? <Notice tone="error">{err(act.error)}</Notice> : null}
         {["draft", "changes_requested"].includes(x.status) ? (
-          <button type="button" className={primary} onClick={() => act.mutate(() => api.submit(orgId, x.id))} data-testid="console-submit">
+          <button type="button" className={primary} disabled={act.isPending} onClick={() => act.mutate(() => api.submit(orgId, x.id))} data-testid="console-submit">
             {t("submit")}
           </button>
         ) : null}
         {x.status === "registration_open" ? (
-          <button type="button" className={btn} onClick={() => act.mutate(() => api.close(orgId, x.id))} data-testid="console-close">
+          <button type="button" className={btn} disabled={act.isPending} onClick={() => act.mutate(() => api.close(orgId, x.id))} data-testid="console-close">
             {t("closeRegistration")}
           </button>
         ) : null}
@@ -557,22 +557,22 @@ function TeamsTab({ orgId, x }: { orgId: string; x: Tournament }) {
               </span>
               <Chip tone={TONE[r.status] ?? "muted"}>{t(`reg.${r.status}`)}</Chip>
               {r.status === "pending_approval" ? (
-                <button type="button" className={primary} onClick={() => act.mutate(() => api.approve(orgId, r.id))} data-testid="reg-approve">
+                <button type="button" className={primary} disabled={act.isPending} onClick={() => act.mutate(() => api.approve(orgId, r.id))} data-testid="reg-approve">
                   {t("approve")}
                 </button>
               ) : null}
               {["pending_approval", "pending_payment", "reserve", "offered"].includes(r.status) ? (
-                <button type="button" className={`${btn} border-line`} disabled={reason.trim().length < 5} onClick={() => act.mutate(() => api.reject(orgId, r.id, reason))}>
+                <button type="button" className={`${btn} border-line`} disabled={act.isPending || reason.trim().length < 5} onClick={() => act.mutate(() => api.reject(orgId, r.id, reason))}>
                   {t("reject")}
                 </button>
               ) : null}
               {["pending_payment", "offered"].includes(r.status) ? (
-                <button type="button" className={`${btn} border-line`} disabled={reason.trim().length < 5} onClick={() => act.mutate(() => api.waive(orgId, r.id, reason))}>
+                <button type="button" className={`${btn} border-line`} disabled={act.isPending || reason.trim().length < 5} onClick={() => act.mutate(() => api.waive(orgId, r.id, reason))}>
                   {t("waive")}
                 </button>
               ) : null}
               {r.status === "approved" ? (
-                <button type="button" className={`${btn} border-danger text-danger`} disabled={reason.trim().length < 5} onClick={() => act.mutate(() => api.remove(orgId, r.id, reason))}>
+                <button type="button" className={`${btn} border-danger text-danger`} disabled={act.isPending || reason.trim().length < 5} onClick={() => act.mutate(() => api.remove(orgId, r.id, reason))}>
                   {t("remove")}
                 </button>
               ) : null}
@@ -698,7 +698,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
                 </option>
               ))}
             </select>
-            <button type="button" className={btn} onClick={() => act.mutate(() => api.drawConfirm(orgId, x.id, seeding))} data-testid="draw-confirm">
+            <button type="button" className={btn} disabled={act.isPending} onClick={() => act.mutate(() => api.drawConfirm(orgId, x.id, seeding))} data-testid="draw-confirm">
               {t("confirmDraw")}
             </button>
             {q.data?.draw?.seed ? <p className="break-all font-mono text-xs text-muted">{t("seed", { seed: q.data.draw.seed })}</p> : null}
@@ -718,7 +718,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
               <button type="button" className={btn} disabled={!q.data?.draw} onClick={() => dry.mutate()} data-testid="fixtures-dry">
                 {t("dryRun")}
               </button>
-              <button type="button" className={primary} disabled={!q.data?.draw} onClick={() => act.mutate(() => api.generate(orgId, x.id, { dryRun: false, schedule }).then(() => setPlan(null)))} data-testid="fixtures-generate">
+              <button type="button" className={primary} disabled={act.isPending || !q.data?.draw} onClick={() => act.mutate(() => api.generate(orgId, x.id, { dryRun: false, schedule }).then(() => setPlan(null)))} data-testid="fixtures-generate">
                 {t("generate")}
               </button>
             </div>
@@ -729,7 +729,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
       {drafts ? (
         <div className="flex items-center gap-3 border-2 border-amber-500 p-3">
           <span className="flex-1">{t("draftsWaiting", { n: drafts })}</span>
-          <button type="button" className={primary} onClick={() => act.mutate(() => api.publish(orgId, x.id))} data-testid="fixtures-publish">
+          <button type="button" className={primary} disabled={act.isPending} onClick={() => act.mutate(() => api.publish(orgId, x.id))} data-testid="fixtures-publish">
             {t("publish")}
           </button>
         </div>
