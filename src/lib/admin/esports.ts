@@ -34,6 +34,8 @@ export type TournamentInput = {
   matches: { mapId: string; startsAt: string }[];
   rulesMd: string;
   featured: boolean;
+  /** M23: `invite` = only qualified or invited entries (a big event's final); locked after publish. */
+  entryPolicy?: "open" | "invite";
 };
 
 export type ResultRow = { registrationId: string; placement: number | null; kills: { userId: string; kills: number }[] };

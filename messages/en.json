@@ -46,7 +46,8 @@
     "gyms": "Gyms",
     "gymAdmin": "Gyms",
     "organisersAdmin": "Organisers",
-    "esportsConsole": "Esports"
+    "esportsConsole": "Esports",
+    "bigEvents": "Big events"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -880,7 +881,8 @@
       "featured": "Feature on the esports home page",
       "save": "Save draft",
       "badMoney": "Enter amounts in taka, with at most 2 decimals.",
-      "maxPaidKills": "Most kills paid (needed with a per-kill reward)"
+      "maxPaidKills": "Most kills paid (needed with a per-kill reward)",
+      "inviteOnly": "Invite only (a big event's final: only qualified or invited entries)"
     },
     "failed": "That didn't work. Try again.",
     "loadFailed": "Couldn't load this. Refresh to try again.",
@@ -3133,6 +3135,151 @@
       "contact": "Contact",
       "members": "Members",
       "docs": "The owner's NID and the organisation's registration were checked on the documents desk."
+    }
+  },
+  "bigEvents": {
+    "title": "Big events",
+    "intro": "Championships over Kriraghor's tournaments: qualifiers feed an invite-only final. Link them, publish, then run the day: streams, sponsors, polls and announcements.",
+    "noAccess": "You need the manage_esports permission.",
+    "new": "New event",
+    "none": "No events yet.",
+    "pick": "Pick an event, or create one.",
+    "failed": "That did not work. Try again.",
+    "viewPage": "View the page",
+    "phase": {
+      "draft": "Draft",
+      "upcoming": "Upcoming",
+      "live": "Live",
+      "ended": "Ended",
+      "cancelled": "Cancelled"
+    },
+    "tab": {
+      "basics": "Basics",
+      "stages": "Tournaments",
+      "places": "Final places",
+      "streams": "Streams",
+      "sponsors": "Sponsors",
+      "polls": "Polls",
+      "feed": "Feed"
+    },
+    "f": {
+      "titleEn": "Title (English)",
+      "titleBn": "Title (Bangla)",
+      "taglineEn": "Tagline (English)",
+      "taglineBn": "Tagline (Bangla)",
+      "startsAt": "Starts (Dhaka time)",
+      "endsAt": "Ends (Dhaka time)",
+      "accent": "Accent colour",
+      "featured": "Feature on the esports home page",
+      "aboutEn": "About (English, plain text)",
+      "aboutBn": "About (Bangla, plain text)"
+    },
+    "save": "Save",
+    "create": "Create draft",
+    "saved": "Saved.",
+    "banner": "Upload banner",
+    "bannerSaved": "Banner uploaded.",
+    "publish": "Publish",
+    "published": "Published.",
+    "cancel": "Cancel event",
+    "cancelReason": "Why cancel? (at least 5 characters)",
+    "cancelledMsg": "The event is cancelled.",
+    "cancelNote": "Cancelling the event never cancels its tournaments; cancel those on the esports desk. It is refused while one is running.",
+    "stagesHelp": "Add the final first and make it invite only; then each qualifier, how many go through, and the final it feeds. The link check runs when you save.",
+    "inviteOnly": "invite only",
+    "s": {
+      "role": "Role",
+      "final": "Final",
+      "qualifier": "Qualifier",
+      "tournament": "Tournament",
+      "labelEn": "Label (English)",
+      "labelBn": "Label (Bangla)",
+      "qualifyCount": "How many go through",
+      "feeds": "Feeds the final",
+      "remove": "Remove",
+      "add": "Add a qualifier",
+      "incomplete": "Fill in every row: a tournament, both labels, and for qualifiers the count and the final."
+    },
+    "check": {
+      "ok": "Links OK",
+      "bad": "Fix links",
+      "qualifying": "{n} qualifying"
+    },
+    "p": {
+      "entry": "Entry",
+      "status": "Status",
+      "reason": "Reason",
+      "revoke": "Revoke",
+      "revoked": "Place revoked.",
+      "revokeReason": "Reason for revoking (at least 5 characters)",
+      "none": "No places yet: they fill when the qualifiers are finalised.",
+      "inviteTitle": "Invite a wildcard",
+      "final": "Final",
+      "kind": "Entry",
+      "squad": "Squad",
+      "player": "Player",
+      "squadId": "Squad ID",
+      "userId": "Player (user) ID",
+      "invite": "Invite",
+      "invited": "Invited.",
+      "s": {
+        "qualified": "Qualified",
+        "invited": "Invited",
+        "entered": "Entered",
+        "missed": "Missed",
+        "revoked": "Revoked"
+      }
+    },
+    "streamsHelp": "YouTube and Facebook links embed on the event page; TikTok live opens as a link. Ticking \"live\" on a stream that was not live alerts followers (once per cooldown).",
+    "st": {
+      "platform": "Platform",
+      "url": "Link",
+      "title": "Title",
+      "live": "Live"
+    },
+    "tournamentStreams": "Plus {n} stream(s) from the tournaments themselves.",
+    "tier": {
+      "title": "Title sponsor",
+      "gold": "Gold",
+      "partner": "Partner"
+    },
+    "logo": "Logo",
+    "remove": "Remove",
+    "sp": {
+      "name": "Sponsor name",
+      "tier": "Tier",
+      "url": "Link (https)",
+      "add": "Add sponsor"
+    },
+    "sponsorRules": "Placements only: contracts and payment are handled outside the app. No betting or gambling sponsors (Q149).",
+    "poll": {
+      "draft": "Draft",
+      "open": "Open",
+      "closed": "Closed",
+      "close": "Close",
+      "votes": "{n} votes",
+      "new": "New poll",
+      "questionEn": "Question (English)",
+      "questionBn": "Question (Bangla)",
+      "optionEn": "Option {n} (English)",
+      "optionBn": "Option {n} (Bangla)",
+      "create": "Create poll",
+      "note": "Free polls only: one vote per member, final, no prizes or stakes."
+    },
+    "posted": "Posted.",
+    "feed": {
+      "en": "Announcement (English)",
+      "bn": "Announcement (Bangla)",
+      "post": "Post announcement",
+      "kind": {
+        "announcement": "Announcement",
+        "tournament_finalised": "Results final",
+        "tournament_cancelled": "Tournament cancelled",
+        "qualified": "Entries qualified",
+        "final_live": "Final live",
+        "stream_live": "Stream live",
+        "event_cancelled": "Event cancelled"
+      }
     }
   }
 }

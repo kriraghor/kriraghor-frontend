@@ -117,7 +117,7 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
   const games = (cat.data?.items ?? []) as unknown as Game[];
   const [gameId, setGameId] = useState("");
   const g = games.find((x) => x.id === gameId);
-  const [f, setF] = useState({ modeId: "", titleEn: "", titleBn: "", tier: "daily", format: "single_match", fee: "50", slots: "48", min: "12", killReward: "0", maxPaidKills: "", presetId: "", opens: "", rulesMd: "", featured: false });
+  const [f, setF] = useState({ modeId: "", titleEn: "", titleBn: "", tier: "daily", format: "single_match", fee: "50", slots: "48", min: "12", killReward: "0", maxPaidKills: "", presetId: "", opens: "", rulesMd: "", featured: false, inviteOnly: false });
   const [prizes, setPrizes] = useState(["1000", "600", "300"]);
   const [matches, setMatches] = useState([{ mapId: "", at: "" }]);
   const [error, setError] = useState<string | null>(null);
@@ -147,6 +147,8 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
       matches: matches.map((m) => ({ mapId: m.mapId, startsAt: dhakaIso(m.at) })),
       rulesMd: f.rulesMd,
       featured: organiser ? false : f.featured,
+      // M23: a big event's final admits only qualified or invited entries (Kriraghor's own tournaments only).
+      ...(organiser ? {} : { entryPolicy: f.inviteOnly ? ("invite" as const) : ("open" as const) }),
     };
     try {
       const created = await client.create(body);
@@ -282,6 +284,12 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
         <label className="flex min-h-11 items-center gap-2">
           <input type="checkbox" className="h-5 w-5" checked={f.featured} onChange={(e) => set("featured", e.target.checked)} />
           {t("form.featured")}
+        </label>
+      )}
+      {organiser ? null : (
+        <label className="flex min-h-11 items-center gap-2" data-testid="invite-only">
+          <input type="checkbox" className="h-5 w-5" checked={f.inviteOnly} onChange={(e) => set("inviteOnly", e.target.checked)} />
+          {t("form.inviteOnly")}
         </label>
       )}
       {error ? <Notice tone="error">{error}</Notice> : null}
