@@ -19,7 +19,7 @@
 
 Staff accounts are separate from customer accounts (Q33): a staff member who tries the customer sign-in gets `STAFF_USE_ADMIN_PORTAL`.
 
-## Run locally
+##  Run locally
 
 ```bash
 cp .env.example .env.local
