@@ -16,6 +16,7 @@ const TABS = [
   { href: "/pro", key: "profiles" },
   { href: "/pro/requests", key: "requests" },
   { href: "/pro/jobs", key: "jobs" },
+  { href: "/pro/plans", key: "plans" },
 ] as const;
 const OPEN_ROLE = ["applied", "documents_pending", "in_review", "active"];
 
