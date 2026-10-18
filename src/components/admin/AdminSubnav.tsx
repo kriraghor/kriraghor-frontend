@@ -16,6 +16,7 @@ export const ADMIN_NAV = [
   { href: "/admin/orders", key: "ordersAdmin" },
   { href: "/admin/catalog/hire", key: "hireCatalog" },
   { href: "/admin/hire", key: "hireAdmin" },
+  { href: "/admin/gym", key: "gymAdmin" },
   { href: "/admin/finance", key: "finance" },
   { href: "/admin/moderation", key: "moderation" },
   { href: "/admin/disputes", key: "disputes" },

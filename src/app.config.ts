@@ -29,6 +29,7 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
         { href: "/admin/catalog/items", key: "items" },
         { href: "/admin/market", key: "market" },
         { href: "/admin/orders", key: "ordersAdmin" },
+        { href: "/admin/gym", key: "gymAdmin" },
         { href: "/admin/finance", key: "finance" },
         { href: "/admin/moderation", key: "moderation" },
         { href: "/admin/disputes", key: "disputes" },
@@ -50,6 +51,7 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       nav: [
         { href: "/vendor/grounds", key: "grounds" },
         { href: "/vendor/bookings", key: "bookings" },
+        { href: "/vendor/gyms", key: "gyms" },
         { href: "/vendor/shop", key: "shop" },
         { href: "/vendor/products", key: "products" },
         { href: "/vendor/inventory", key: "inventory" },

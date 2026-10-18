@@ -28,6 +28,7 @@ export function VendorHome() {
   const member = roles.find((r) => r.role === "member")?.status ?? null;
   const owner = roles.find((r) => r.role === "ground_owner")?.status ?? null;
   const shopOwner = roles.find((r) => r.role === "shop_owner")?.status ?? null;
+  const gymOwner = roles.find((r) => r.role === "gym_owner")?.status ?? null;
   const web = publicEnv().WEB_URL;
   const steps = [
     { key: "nid", done: member === "active", href: `${web}/account/verification` },
@@ -80,6 +81,7 @@ export function VendorHome() {
         </ol>
       )}
       <ShopCard status={shopOwner} />
+      <GymCard status={gymOwner} />
     </section>
   );
 }
@@ -106,6 +108,30 @@ function ShopCard({ status }: { status: string | null }) {
     <div className="mt-8 border-2 border-line bg-surface p-5" data-testid="shop-owner-card">
       <p className="font-bold">{status ? t("home.applied", { status: tg(`roleStatus.${status}`) }) : t("home.sell")}</p>
       <a href={`${web}/account/business?as=shop`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
+        {status ? t("home.continue") : t("home.start")}
+      </a>
+    </div>
+  );
+}
+
+/** M20: the gym owner's way in (or the application on kriraghor.com). */
+function GymCard({ status }: { status: string | null }) {
+  const t = useTranslations("vendorGym");
+  const tg = useTranslations("vendorGrounds");
+  const web = publicEnv().WEB_URL;
+  if (status === "active")
+    return (
+      <div className="mt-8 border-2 border-brand bg-surface p-5" data-testid="gym-owner-active">
+        <p className="font-bold">{t("home.active")}</p>
+        <Link href="/vendor/gyms" className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
+          {t("home.open")}
+        </Link>
+      </div>
+    );
+  return (
+    <div className="mt-8 border-2 border-line bg-surface p-5" data-testid="gym-owner-card">
+      <p className="font-bold">{status ? t("home.applied", { status: tg(`roleStatus.${status}`) }) : t("home.sell")}</p>
+      <a href={`${web}/account/business?as=gym`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
         {status ? t("home.continue") : t("home.start")}
       </a>
     </div>

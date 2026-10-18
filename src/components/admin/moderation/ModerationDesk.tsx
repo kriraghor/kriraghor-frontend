@@ -15,6 +15,7 @@ import { GameProfilePanel, TournamentPanel } from "../esports/EsportsPanels";
 import { GroundPanel } from "../grounds/GroundPanel";
 import { ProductPanel, ShopPanel } from "../market/MarketPanels";
 import { HireProfilePanel } from "../hire/HireProfilePanel";
+import { GymPanel } from "../gym/GymPanel";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 import { Chip, DataTable, Field, inputCls } from "../finance/shared";
 
@@ -88,6 +89,7 @@ export function ModerationDesk() {
                       <option value="shop">{t("kind.shop")}</option>
                       <option value="product">{t("kind.product")}</option>
                       <option value="hire_profile">{t("kind.hire_profile")}</option>
+                      <option value="gym">{t("kind.gym")}</option>
                     </select>
                   </Field>
                   {status === "pending_review" ? (
@@ -279,6 +281,7 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
       {s.kind === "shop" ? <ShopPanel payload={s.payload} /> : null}
       {s.kind === "product" ? <ProductPanel payload={s.payload} /> : null}
       {s.kind === "hire_profile" ? <HireProfilePanel payload={s.payload} /> : null}
+      {s.kind === "gym" ? <GymPanel payload={s.payload} /> : null}
 
       {open && mine ? (
         <div className="mt-6 border-t-2 border-line pt-4">
