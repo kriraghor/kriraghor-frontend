@@ -60,9 +60,9 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
         <a href="#main" className="sr-only focus:not-sr-only">
           {t("nav.skip")}
         </a>
-        <Link href={homeHref} className="flex items-center gap-2 no-underline" aria-label={t("nav.homeLabel")}>
-          <Image src="/logo.png" alt="" width={38} height={38} priority />
-          <span className="font-bangla text-xl font-bold">{t(`app.${titleKey}`)}</span>
+        <Link href={homeHref} className="flex min-w-0 items-center gap-2 no-underline" aria-label={t("nav.homeLabel")}>
+          <Image src="/logo.png" alt="" width={38} height={38} priority className="shrink-0" />
+          <span className="truncate whitespace-nowrap font-bangla text-lg font-bold sm:text-xl">{t(`app.${titleKey}`)}</span>
         </Link>
         <nav aria-label={t("nav.main")} className="hidden gap-5 text-sm font-semibold md:flex">
           {nav.map((item) => (
@@ -87,7 +87,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
               </button>
             </>
           ) : status === "signed_out" ? (
-            <Link href={signInHref} className="inline-flex min-h-11 items-center bg-brand px-4 text-sm font-bold text-white hover:bg-brand-hover">
+            <Link href={signInHref} className="inline-flex min-h-11 items-center whitespace-nowrap bg-brand px-4 text-sm font-bold text-white hover:bg-brand-hover">
               {t("nav.signIn")}
             </Link>
           ) : null}

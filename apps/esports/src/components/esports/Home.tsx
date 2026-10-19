@@ -95,7 +95,7 @@ export function Home() {
       <section className="mx-auto max-w-[1320px] px-5 py-12">
         <div className="flex items-end justify-between gap-4">
           <h2 className="text-2xl font-extrabold md:text-3xl">{t("home.openNow")}</h2>
-          <Link href="/events" className="font-semibold text-brand underline">
+          <Link href="/events" className="whitespace-nowrap font-semibold text-brand underline">
             {t("home.seeAll")}
           </Link>
         </div>

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { EventList } from "@/components/esports/EventList";
 
-export const metadata = { title: "Events" };
+export const metadata = { title: "Showcases" };
 
 export default async function Page({ params }: PageProps<"/[locale]/showcases">) {
   const { locale } = await params;

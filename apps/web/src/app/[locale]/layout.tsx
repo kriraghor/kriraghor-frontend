@@ -23,7 +23,7 @@ const shoulders = Big_Shoulders({ subsets: ["latin"], variable: "--font-shoulder
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: `${APP.title}: esports, grounds, gear and talent`, template: `%s · ${APP.title}` },
+  title: { default: `${APP.title}: esports, venues, gear and talent`, template: `%s · ${APP.title}` },
   description: APP.description,
   applicationName: APP.title,
   openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/logo.png", width: 512, height: 512, alt: APP.title }] },

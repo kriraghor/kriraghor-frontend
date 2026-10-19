@@ -11,7 +11,7 @@ export function MobileTabBar() {
   const pathname = usePathname();
   const on = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
   const item = (href: string, label: string, icon: ReactNode) => (
-    <Link key={href} href={href} aria-current={on(href) ? "page" : undefined} className={`my-1 flex flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl text-xs font-semibold transition-colors ${on(href) ? "bg-brand-soft text-brand-text" : "text-muted hover:text-ink"}`}>
+    <Link key={href} href={href} aria-current={on(href) ? "page" : undefined} className={`my-1 flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 truncate rounded-2xl text-[11px] font-semibold transition-colors ${on(href) ? "bg-brand-soft text-brand-text" : "text-muted hover:text-ink"}`}>
       {icon}
       {label}
     </Link>
@@ -21,8 +21,8 @@ export function MobileTabBar() {
       {item("/", t("home"), <House size={22} aria-hidden />)}
       {item("/events", t("esports"), <Trophy size={22} aria-hidden />)}
       {item("/showcases", t("events"), <Star size={22} aria-hidden />)}
-      {item("/leaderboards", t("leaderboards"), <ChartBar size={22} aria-hidden />)}
-      {item("/me/matches", t("myMatches"), <GameController size={22} aria-hidden />)}
+      {item("/leaderboards", t("tabRanks"), <ChartBar size={22} aria-hidden />)}
+      {item("/me/matches", t("tabMatches"), <GameController size={22} aria-hidden />)}
     </nav>
   );
 }

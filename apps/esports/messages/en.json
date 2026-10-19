@@ -24,7 +24,9 @@
     "main": "Main",
     "menu": "Menu",
     "closeMenu": "Close menu",
-    "quick": "Quick links"
+    "quick": "Quick links",
+    "tabRanks": "Ranks",
+    "tabMatches": "Matches"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
