@@ -16,7 +16,7 @@ Same as `kriraghor-web`: Next.js 16, TypeScript strict, Tailwind v4 tokens, next
 ```bash
 cp .env.example .env.local
 npm install
-npm run dev                     #  http://localhost:3001
+npm run dev                     # http://localhost:3001
 ```
 
 Run the backend API (`npm run dev`) and realtime (`npm run dev:realtime`) in `../kriraghor-backend`.
