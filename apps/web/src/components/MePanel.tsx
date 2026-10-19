@@ -1,0 +1,118 @@
+"use client";
+
+import type { ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { MemberOverview } from "./MemberOverview";
+import { MyReliability } from "./trust/MyReliability";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { api } from "@/lib/api/client";
+import { useAuth } from "@/lib/auth/AuthProvider";
+
+/**
+ * The signed-in user from GET /me. Opening this page on kriraghor.com after signing in on
+ * esports.kriraghor.com (or the reverse) shows the same account: the SSO proof for 0B.
+ */
+export function MePanel({ children, signInHref = "/sign-in" }: { children?: ReactNode; signInHref?: string }) {
+  const t = useTranslations();
+  const { status } = useAuth();
+  const me = useQuery({
+    queryKey: ["me"],
+    enabled: status === "signed_in",
+    queryFn: async () => {
+      const { data, error } = await api().GET("/me");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (status === "loading" || (me.isPending && status === "signed_in")) {
+    return <p className="px-5 py-12 text-muted" role="status">{t("me.loading")}</p>;
+  }
+  if (status === "signed_out" || !me.data) {
+    return (
+      <section className="mx-auto max-w-xl px-5 py-12">
+        <p data-testid="signed-out">{t("me.signedOut")}</p>
+        <Link href={signInHref} className="mt-4 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
+          {t("nav.signIn")}
+        </Link>
+      </section>
+    );
+  }
+
+  const u = me.data;
+  return (
+    <section className="mx-auto max-w-3xl px-5 py-12">
+      <h1 className="text-3xl font-extrabold" data-testid="me-name">
+        {u.displayName}
+      </h1>
+      <p className="mt-2 text-muted">{t("me.ssoNote")}</p>
+      <dl className="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 border-t-2 border-line-strong pt-4">
+        <dt className="text-muted">{t("me.id")}</dt>
+        <dd data-testid="me-id" className="font-mono text-sm">{u.id}</dd>
+        <dt className="text-muted">{t("me.phone")}</dt>
+        <dd>{u.phone ?? "–"}</dd>
+        <dt className="text-muted">{t("me.email")}</dt>
+        <dd>{u.email ?? "–"}</dd>
+        <dt className="text-muted">{t("me.roles")}</dt>
+        <dd>{u.roles.map((r) => `${r.role} (${r.status})`).join(", ")}</dd>
+      </dl>
+      <nav aria-label={t("me.money")} className="mt-6 flex flex-wrap gap-x-6">
+        <Link href="/me/bookings" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-bookings">
+          {t("me.bookings")}
+        </Link>
+        <Link href="/me/disputes" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-disputes">
+          {t("me.disputes")}
+        </Link>
+        <Link href="/me/orders" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-orders">
+          {t("me.orders")}
+        </Link>
+        <Link href="/me/hire" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-hire">
+          {t("me.hire")}
+        </Link>
+        <Link href="/me/teams" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-teams">
+          {t("me.teams")}
+        </Link>
+        <Link href="/me/tournaments" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-tournaments">
+          {t("me.tournaments")}
+        </Link>
+        <Link href="/me/player" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-player">
+          {t("me.player")}
+        </Link>
+        <Link href="/me/eligibility" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-eligibility">
+          {u.phoneVerified ? t("me.eligibility") : t("me.addPhone")}
+        </Link>
+        <Link href="/me/passes" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-passes">
+          {t("me.passes")}
+        </Link>
+        <Link href="/me/subscriptions" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-subscriptions">
+          {t("me.subscriptions")}
+        </Link>
+        <Link href="/pro" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-pro">
+          {t("me.proDesk")}
+        </Link>
+        <Link href="/me/payments" className="inline-flex min-h-11 items-center font-semibold underline">
+          {t("me.payments")}
+        </Link>
+        <Link href="/me/payouts" className="inline-flex min-h-11 items-center font-semibold underline">
+          {t("me.payouts")}
+        </Link>
+        <Link href="/me/payout-account" className="inline-flex min-h-11 items-center font-semibold underline">
+          {t("me.payoutAccount")}
+        </Link>
+        <Link href="/shop/saved" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-saved">
+          {t("me.saved")}
+        </Link>
+        <Link href="/account/business?as=shop" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-open-shop">
+          {t("me.openShop")}
+        </Link>
+        <Link href="/account/verification" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-verification">
+          {u.kycStatus === "verified" ? t("me.verified") : t("me.verify")}
+        </Link>
+      </nav>
+      <MemberOverview />
+      <MyReliability />
+      {children}
+    </section>
+  );
+}

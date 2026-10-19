@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/*
+ * Kriraghor design tokens (kriraghor-docs/00-platform/09, completed in 0B from the home v3 prototype).
+ * Colour rule: green = every action. Amber (from the logo) = prize money and the esports call to action.
+ * Shape lock: radius 0 for chrome, cards and inputs; 999px for pills and chips only.
+ */
+:root {
+  --kg-bg: #f4f3ef;
+  --kg-surface: #ffffff;
+  --kg-surface-2: #ecebe6;
+  --kg-ink: #16201b;
+  --kg-muted: #55625b;
+  --kg-line: #d5d8d2;
+  --kg-line-strong: #16201b;
+  --kg-brand: #0b7a4b;
+  --kg-brand-hover: #09683f;
+  --kg-brand-soft: #e2f1e8;
+  --kg-brand-text: #075533;
+  --kg-band: #0a1a12;
+  --kg-band-text: #f4f3ef;
+  --kg-danger: #b42318;
+  --kg-info: #2c5aa8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --kg-bg: #0e1411;
+    --kg-surface: #151d18;
+    --kg-surface-2: #1c2620;
+    --kg-ink: #e8ece9;
+    --kg-muted: #a2afa7;
+    --kg-line: #2a3530;
+    --kg-line-strong: #e8ece9;
+    --kg-brand: #19995f;
+    --kg-brand-hover: #22ad6c;
+    --kg-brand-soft: #143a28;
+    --kg-brand-text: #8fd8b2;
+    --kg-band: #07120d;
+    --kg-danger: #f97066;
+    --kg-info: #84adff;
+  }
+}
+
+/* M20: the gym pages (/gym, /gym/gyms/…) use their own dark theme with a lime accent (Index.html GYM). */
+[data-theme="gym"] {
+  --kg-bg: #111210;
+  --kg-surface: #1a1b18;
+  --kg-surface-2: #24261f;
+  --kg-ink: #f1f3ea;
+  --kg-muted: #a9ae9e;
+  --kg-line: #34372d;
+  --kg-line-strong: #f1f3ea;
+  --kg-brand: #c8f53c;
+  --kg-brand-hover: #d7fa6e;
+  --kg-brand-soft: #2a3311;
+  --kg-brand-text: #c8f53c;
+  --kg-danger: #ff8a80;
+  --kg-info: #9cc2ff;
+  background: var(--kg-bg);
+  color: var(--kg-ink);
+}
+/* Lime needs dark text (contrast); brand buttons elsewhere use white text. */
+[data-theme="gym"] .bg-brand.text-white,
+[data-theme="gym"] .bg-brand {
+  color: #111210;
+}
+
+@theme inline {
+  --color-bg: var(--kg-bg);
+  --color-surface: var(--kg-surface);
+  --color-surface-2: var(--kg-surface-2);
+  --color-ink: var(--kg-ink);
+  --color-muted: var(--kg-muted);
+  --color-line: var(--kg-line);
+  --color-line-strong: var(--kg-line-strong);
+  --color-brand: var(--kg-brand);
+  --color-brand-hover: var(--kg-brand-hover);
+  --color-brand-soft: var(--kg-brand-soft);
+  --color-brand-text: var(--kg-brand-text);
+  --color-band: var(--kg-band);
+  --color-band-text: var(--kg-band-text);
+  --color-danger: var(--kg-danger);
+  --color-info: var(--kg-info);
+
+  /* Full ramps for charts, badges and states */
+  --color-green-50: #f0f9f4;
+  --color-green-100: #e2f1e8;
+  --color-green-200: #bfe3cf;
+  --color-green-300: #8fcfae;
+  --color-green-400: #4fb283;
+  --color-green-500: #1f9563;
+  --color-green-600: #0b7a4b;
+  --color-green-700: #09683f;
+  --color-green-800: #075533;
+  --color-green-900: #03301d;
+  --color-amber-50: #fef8ee;
+  --color-amber-100: #fdefd6;
+  --color-amber-200: #fbdcaa;
+  --color-amber-300: #f8c574;
+  --color-amber-400: #f5b052;
+  --color-amber-500: #f2a33a;
+  --color-amber-600: #d9851b;
+  --color-amber-700: #b46714;
+  --color-amber-800: #8f5115;
+  --color-amber-900: #744315;
+  --color-gym: #111210;
+  --color-gym-accent: #c8f53c;
+
+  --font-display: var(--font-bricolage), var(--font-hind), system-ui, sans-serif;
+  --font-sans: var(--font-instrument), var(--font-hind), system-ui, sans-serif;
+  --font-bangla: var(--font-hind), "Noto Sans Bengali", sans-serif;
+
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgb(10 26 18 / 0.08);
+  --shadow-md: 0 6px 20px -8px rgb(10 26 18 / 0.25);
+  --shadow-lg: 0 18px 50px -24px rgb(10 26 18 / 0.35);
+  --ease-kg: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Breakpoints from doc 09 (md and lg differ from Tailwind's defaults) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1180px;
+  --breakpoint-xl: 1280px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  background: var(--kg-bg);
+  color: var(--kg-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+}
+:lang(bn) {
+  font-family: var(--font-bangla);
+  line-height: 1.7;
+}
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+:focus-visible {
+  outline: 3px solid var(--kg-brand);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
