@@ -1,0 +1,75 @@
+import type { Audience } from "@/lib/auth/session";
+import type { HeaderConfig } from "@/components/SiteHeader";
+
+/**
+ * One app, two areas, routed by host (proxy.ts):
+ *   admin.kriraghor.com  → /admin  (staff; admin sessions, ADR-004)
+ *   vendor.kriraghor.com → /vendor (ground owners, shops, gyms, organisers; customer sessions)
+ * On plain localhost (no host to route by) PORTAL_DEFAULT_AREA picks the area (default admin).
+ */
+import type { Area } from "@/lib/area";
+export type { Area };
+
+export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> = {
+  admin: {
+    audience: "admin",
+    header: {
+      titleKey: "admin",
+      homeHref: "/admin",
+      signInHref: "/admin/sign-in",
+      meHref: "/admin",
+      bell: { centreHref: "/admin/notifications" },
+      nav: [
+        { href: "/admin/fees", key: "fees" },
+        { href: "/admin/catalog/esports", key: "esportsCatalog" },
+        { href: "/admin/esports", key: "esportsDesk" },
+        { href: "/admin/esports/organisers", key: "organisersAdmin" },
+        { href: "/admin/esports/events", key: "bigEvents" },
+        { href: "/admin/grounds", key: "groundsAdmin" },
+        { href: "/admin/bookings", key: "bookingsAdmin" },
+        { href: "/admin/catalog/places", key: "places" },
+        { href: "/admin/catalog/items", key: "items" },
+        { href: "/admin/market", key: "market" },
+        { href: "/admin/orders", key: "ordersAdmin" },
+        { href: "/admin/gym", key: "gymAdmin" },
+        { href: "/admin/finance", key: "finance" },
+        { href: "/admin/moderation", key: "moderation" },
+        { href: "/admin/disputes", key: "disputes" },
+        { href: "/admin/reports", key: "reports" },
+        { href: "/admin/reviews", key: "reviews" },
+        { href: "/admin/risk", key: "risk" },
+        { href: "/admin/audit", key: "audit" },
+        { href: "/admin/events", key: "events" },
+      ],
+    },
+  },
+  vendor: {
+    audience: "api",
+    header: {
+      titleKey: "vendor",
+      homeHref: "/vendor",
+      signInHref: "/vendor/sign-in",
+      meHref: "/vendor",
+      nav: [
+        { href: "/vendor/grounds", key: "grounds" },
+        { href: "/vendor/bookings", key: "bookings" },
+        { href: "/vendor/gyms", key: "gyms" },
+        { href: "/vendor/esports", key: "esportsConsole" },
+        { href: "/vendor/tournaments", key: "sportsConsole" },
+        { href: "/vendor/shop", key: "shop" },
+        { href: "/vendor/products", key: "products" },
+        { href: "/vendor/inventory", key: "inventory" },
+        { href: "/vendor/orders", key: "orders" },
+        { href: "/vendor/analytics", key: "analytics" },
+        { href: "/vendor/disputes", key: "vendorDisputes" },
+        { href: "/vendor/reviews", key: "vendorReviews" },
+      ],
+    },
+  },
+};
+
+export const APP = {
+  id: "portal" as const,
+  title: "Kriraghor Portal",
+  description: "Admin and business desks for Kriraghor.",
+};

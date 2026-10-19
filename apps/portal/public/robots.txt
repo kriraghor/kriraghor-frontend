@@ -1,0 +1,3 @@
+# Admin and vendor desks are private: never index.
+User-agent: *
+Disallow: /
