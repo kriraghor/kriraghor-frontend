@@ -16,7 +16,14 @@
     "gym": "Gym",
     "esports": "Esports",
     "language": "বাংলা",
-    "tournaments": "Tournaments"
+    "tournaments": "Tournaments",
+    "skip": "Skip to content",
+    "homeLabel": "Kriraghor home",
+    "main": "Main",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "quick": "Quick links",
+    "account": "Account"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -38,7 +45,8 @@
     "finishSignup": "Create my account",
     "newHere": "New here? Verifying your number creates your account.",
     "googleUnavailable": "Google sign-in is not configured in this environment.",
-    "staffUseAdmin": "Staff accounts sign in at the admin portal."
+    "staffUseAdmin": "Staff accounts sign in at the admin portal.",
+    "forgot": "Forgot password?"
   },
   "me": {
     "title": "My account",
@@ -354,22 +362,6 @@
       }
     }
   },
-  "esportsStrip": {
-    "kicker": "Esports · PUBG Mobile · Free Fire",
-    "title": "Play for real prize money",
-    "all": "All tournaments",
-    "prizes": "Prizes",
-    "entry": "Entry {fee}",
-    "free": "Free entry",
-    "slots": "{left, plural, =0 {Full} one {# slot left} other {# slots left}}",
-    "none": "No tournaments are open right now. New ones are added every week.",
-    "topPlayers": "Top players",
-    "points": "{n} pts",
-    "noPlayers": "Rankings appear after the first tournament.",
-    "eventLive": "Live now",
-    "eventUpcoming": "Big event",
-    "eventPrizes": "Total prizes"
-  },
   "grounds": {
     "title": "Grounds",
     "lead": "Turf and pitches across Dhaka. Prices are per hour and change with the time of day; pay the advance or the full amount online.",
@@ -435,10 +427,6 @@
     "bookingSoon": "Online booking opens soon",
     "bookingSoonHelp": "You will pick a court, a day and half-hour slots here.",
     "owner": "Run by {name}",
-    "homeKicker": "Grounds",
-    "homeTitle": "Book a turf in Dhaka",
-    "homeAll": "All grounds",
-    "homeNone": "The first grounds are being reviewed. Check back soon.",
     "openToday": "{n} h free today",
     "reliability": "Owner reliability {score}%",
     "reliabilityHelp": "How often the owner keeps confirmed bookings and settles disputes fairly, over the last six months."
@@ -1906,5 +1894,301 @@
       "ROLE_REQUIRED": "Verify your NID first to enter tournaments.",
       "REGISTRATION_STATE": "This registration cannot be changed now."
     }
+  },
+  "footer": {
+    "homeLabel": "Kriraghor home",
+    "tagline": "Esports, grounds, gear and talent for players in Bangladesh.",
+    "esports": "Esports",
+    "tournaments": "Tournaments",
+    "leaderboards": "Leaderboards",
+    "fairPlay": "Fair play rules",
+    "play": "Play",
+    "grounds": "Grounds",
+    "shop": "Shop",
+    "hire": "Hire",
+    "gym": "Gym",
+    "sportsTournaments": "Sports tournaments",
+    "business": "Business",
+    "listGround": "List your ground",
+    "openShop": "Open a shop",
+    "getHired": "Get hired",
+    "listGym": "List your gym",
+    "organisers": "Esports organisers",
+    "help": "Help",
+    "helpCentre": "Help centre",
+    "refunds": "Refund policy",
+    "buyerProtection": "Buyer protection",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "legal": "© 2026 Kriraghor, Dhaka."
+  },
+  "home": {
+    "soon": "Coming soon",
+    "hero": {
+      "title": "Play PUBG Mobile and Free Fire.",
+      "titleEm": "Win real prizes.",
+      "sub": "Daily custom rooms. Verified players, the room ID before kick-off, and prizes paid to bKash or Nagad.",
+      "join": "Join a tournament",
+      "how": "How it works",
+      "openCount": "{n}{more} tournaments open for registration",
+      "loading": "Loading the next tournament",
+      "noneTitle": "New tournaments every week",
+      "noneBody": "No tournament is taking registrations right now. See the schedule and past results on Kriraghor Esports.",
+      "browse": "Go to esports",
+      "nextUp": "Next up",
+      "startsIn": "Starts in",
+      "started": "Started",
+      "entry": "Entry",
+      "free": "Free",
+      "perPlayer": "per player",
+      "perSquad": "per squad",
+      "firstPrize": "1st prize",
+      "prizePool": "Prize pool",
+      "place": "{place, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} {amount}",
+      "playersIn": "Players registered",
+      "squadsIn": "Squads registered",
+      "ofMax": "{taken} of {max}",
+      "perKill": "+{amount} for every kill.",
+      "roomNote": "The room ID unlocks for checked-in players shortly before the start.",
+      "register": "Register for {fee}",
+      "registerFree": "Register free",
+      "eventLive": "Live now",
+      "eventUpcoming": "Big event",
+      "eventPrizes": "Total prizes"
+    },
+    "finder": {
+      "label": "Find what you need",
+      "tabsLabel": "What are you looking for?",
+      "tab": {
+        "tournaments": "Tournaments",
+        "grounds": "Grounds",
+        "shop": "Shop",
+        "hire": "Hire"
+      },
+      "game": "Game",
+      "anyGame": "Any game",
+      "sport": "Sport",
+      "anySport": "Any sport",
+      "area": "Area",
+      "anyArea": "Anywhere",
+      "search": "Search the shop",
+      "searchPlaceholder": "Cricket bat, whey protein, futsal boots",
+      "need": "I need",
+      "anyone": "Anyone",
+      "go": {
+        "tournaments": "Find tournaments",
+        "grounds": "Find a ground",
+        "shop": "Search the shop",
+        "hire": "Browse talent"
+      }
+    },
+    "open": {
+      "title": "Open for registration",
+      "sub": "Pay entry online. Full refund if a tournament doesn't fill.",
+      "filter": "Filter by game",
+      "all": "All games",
+      "listLabel": "Tournaments open for registration",
+      "pool": "prize pool",
+      "free": "Free entry",
+      "perPlayer": "{fee} per player",
+      "perSquad": "{fee} per squad",
+      "players": "{taken} of {max} players",
+      "squads": "{taken} of {max} squads",
+      "register": "Register",
+      "none": "Nothing open for this game right now. New tournaments are added every week.",
+      "seeAll": "See all tournaments",
+      "seeAllSub": "Filter by game and stage on Kriraghor Esports.",
+      "browse": "Browse tournaments",
+      "swipe": "Swipe for more"
+    },
+    "players": {
+      "title": "Top players this season",
+      "sub": "Ranked by finalised results and tournament tier.",
+      "full": "Full leaderboard",
+      "points": "{n, number} pts",
+      "record": "{wins} wins · {kills} kills",
+      "none": "Rankings appear after the first finalised tournaments."
+    },
+    "how": {
+      "title": "How it works",
+      "uid": {
+        "title": "Verify your game UID",
+        "body": "Add your UID with a profile screenshot. One UID per game."
+      },
+      "pay": {
+        "title": "Pay the entry fee",
+        "body": "bKash, Nagad or card. Held safely until results are final."
+      },
+      "room": {
+        "title": "Check in, get the room",
+        "body": "The room ID and password appear for you before the match."
+      },
+      "win": {
+        "title": "Win and withdraw",
+        "body": "Prizes land in your balance. Withdraw to bKash or Nagad."
+      }
+    },
+    "grounds": {
+      "eyebrow": "Grounds",
+      "title": "Open tonight",
+      "titleNear": "Open tonight near you",
+      "sub": "Tap a time to book. Pay the advance or the full amount online.",
+      "locate": "Use my location",
+      "locating": "Finding you…",
+      "locationNote": "We use your location only to sort grounds by distance. It isn't saved.",
+      "locationDenied": "We couldn't get your location, so grounds are sorted by price.",
+      "all": "All grounds",
+      "none": "No grounds are listed yet.",
+      "perHour": "{price}/hr",
+      "metres": "{m} m",
+      "km": "{km} km",
+      "timesAt": "Free times tonight at {name}",
+      "full": "No free hours left tonight.",
+      "otherDays": "See other days",
+      "picked": "{name}, tonight at {time} for 1 hour.",
+      "continue": "Continue to booking"
+    },
+    "shop": {
+      "title": "Gear, supplements and used kit",
+      "sub": "New stock from verified shops. Used gear from NID-verified members is coming soon.",
+      "all": "Browse the shop",
+      "gear": {
+        "title": "Sports gear shops",
+        "body": "Bats, boots, rackets and kits from verified shops."
+      },
+      "supplements": {
+        "title": "Supplement houses",
+        "body": "Expiry date and batch number on every listing. Expired stock is never sold."
+      },
+      "gym": {
+        "title": "Gym gear",
+        "body": "Weights, mats and machines."
+      },
+      "used": {
+        "title": "Sell your used gear",
+        "body": "List for free and get paid when the buyer collects."
+      }
+    },
+    "hire": {
+      "title": "Hire players, officials and coaches",
+      "sub": "Chat in the app and pay through Kriraghor. Money is released when the job is done.",
+      "all": "See everyone for hire",
+      "none": "Profiles appear here once they are approved.",
+      "jobs": "{n, plural, one {# job done} other {# jobs done}}",
+      "years": "{n, plural, one {# year} other {# years}} experience",
+      "perHour": "per hour",
+      "perMatch": "per match"
+    },
+    "gym": {
+      "body": "Day, monthly and three-month passes with QR entry at the front desk. Monthly plans with trainers.",
+      "cta": "Find a gym",
+      "none": "Gyms appear here once they are approved.",
+      "openNow": "Open now",
+      "day": "{price} a day",
+      "month": "{price} a month"
+    },
+    "business": {
+      "title": "Run your sports business on Kriraghor",
+      "sub": "Every business gets its own desk for bookings, orders, payouts and analytics.",
+      "grounds": {
+        "title": "Ground owners",
+        "body": "List grounds, set prices and get paid at check-in.",
+        "cta": "List your ground"
+      },
+      "shops": {
+        "title": "Shops and supplement houses",
+        "body": "Sell new stock to verified buyers.",
+        "cta": "Open a shop"
+      },
+      "pros": {
+        "title": "Players, officials and coaches",
+        "body": "Set your rates, accept jobs, get paid to bKash.",
+        "cta": "Get hired"
+      },
+      "organisers": {
+        "title": "Esports organisers",
+        "body": "Run your own tournaments on Kriraghor, on contract.",
+        "cta": "Talk to us"
+      }
+    },
+    "trust": {
+      "money": {
+        "title": "Money held safely",
+        "body": "Entry fees, bookings, orders and hires are held by Kriraghor until you get what you paid for."
+      },
+      "verified": {
+        "title": "Verified people",
+        "body": "Phone-verified players, NID-verified sellers, and owners and officials checked by our staff."
+      },
+      "refunds": {
+        "title": "Clear refunds",
+        "body": "Tournaments that don't fill and bookings the owner cancels are refunded in full."
+      },
+      "more": "Read more:",
+      "protection": "Buyer protection",
+      "refundPolicy": "Refund policy",
+      "esports": "Esports tournaments"
+    }
+  },
+  "notFound": {
+    "title": "We can't find that page",
+    "body": "The link may be old, or the page was moved. Try one of these instead.",
+    "home": "Home",
+    "grounds": "Grounds",
+    "shop": "Shop",
+    "hire": "Hire",
+    "esports": "Esports tournaments"
+  },
+  "pageError": {
+    "title": "Something went wrong",
+    "body": "This page could not load. Try again, or come back in a few minutes.",
+    "retry": "Try again",
+    "home": "Go home",
+    "reference": "Reference: {digest}"
+  },
+  "reset": {
+    "title": "Reset your password",
+    "subtitle": "We will send a code to your phone or email.",
+    "targetLabel": "Phone or email",
+    "targetHint": "The number or email on your account (01XXXXXXXXX or you@example.com).",
+    "targetInvalid": "Enter a mobile number (01XXXXXXXXX) or an email address.",
+    "send": "Send code",
+    "sent": "If an account uses this number or email, we sent it a 6-digit code. It expires in a few minutes.",
+    "newPassword": "New password",
+    "confirm": "Type it again",
+    "passwordHint": "At least {min} characters. Avoid common words and your name.",
+    "save": "Save new password",
+    "resend": "Send a new code",
+    "other": "Use another number or email",
+    "back": "Back to sign in",
+    "show": "Show",
+    "hide": "Hide",
+    "mismatch": "The two passwords don't match.",
+    "doneTitle": "Password changed",
+    "doneBody": "For your safety, every device was signed out and we sent you an alert. Sign in with your new password.",
+    "codeWrong": "That code isn't right. Check it or ask for a new one.",
+    "codeExpired": "That code has expired. Ask for a new one.",
+    "tooMany": "Too many codes asked for. Wait a little and try again.",
+    "tooManyWait": "Too many codes asked for. Try again in {seconds} seconds.",
+    "weak": "Choose a stronger password: at least 8 characters, not a common word or your name.",
+    "breached": "This password has appeared in a data breach. Choose another one.",
+    "blocked": "This account is suspended or closed. See the Help centre."
+  },
+  "legal": {
+    "draft": "Draft, under legal review. This page explains how Kriraghor works today; the final wording may change before paid launch.",
+    "version": "Version {version}, updated {updated}",
+    "contents": "Contents"
+  },
+  "help": {
+    "title": "Help centre",
+    "sub": "Answers to common questions, and where to do each thing.",
+    "policies": "Policies",
+    "refunds": "Refund policy",
+    "protection": "Buyer protection",
+    "fairPlay": "Fair play rules",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "contact": "Contact",
+    "contactBody": "For a booking, order, job or tournament, open it in My account and report a problem: our staff reply there. [Support email and phone will be added before launch.]"
   }
 }

@@ -6,6 +6,9 @@ import { useSearchParams } from "next/navigation";
 import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import { filtersFromParams, grounds, paramsFromFilters, type Filters, type GroundCard } from "@/lib/grounds";
 import { formatTaka } from "@/lib/payments";
+import { PageHeader } from "../PageHeader";
+import Image from "next/image";
+import { PHOTOS } from "@/lib/photos";
 
 /**
  * /grounds (M09 §4.7, FR-25): live grounds with filters (sport, area, surface, facilities, indoor),
@@ -34,10 +37,12 @@ export function GroundsBrowse() {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
-      <h1 className="text-4xl font-extrabold" data-testid="grounds-title">
-        {t("title")}
-      </h1>
-      <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+      <PageHeader photo="groundsNight">
+        <h1 className="text-4xl font-extrabold" data-testid="grounds-title">
+          {t("title")}
+        </h1>
+        <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+      </PageHeader>
       <div className="mt-8 grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside aria-label={t("filters")} className="space-y-6">
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
@@ -131,7 +136,9 @@ export function GroundsBrowse() {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={g.coverUrl} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover" />
           ) : (
-            <span className="aspect-[16/10] w-full bg-surface-2" />
+            <span className="relative block aspect-[16/10] w-full bg-surface-2">
+              <Image src={PHOTOS.groundsFloodlit} alt="" fill sizes="(min-width: 1180px) 30vw, (min-width: 640px) 45vw, 100vw" className="object-cover" />
+            </span>
           )}
           <span className="flex flex-1 flex-col p-4">
             <span className="text-lg font-extrabold leading-snug">{g.name}</span>

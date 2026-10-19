@@ -9,6 +9,7 @@ import { market } from "@/lib/market";
 import { formatTaka } from "@/lib/payments";
 import { ProductCard } from "../market/ProductCard";
 import { GymCardItem } from "./GymCardItem";
+import { PageHeader } from "../PageHeader";
 
 const TABS = ["trainers", "gyms", "gear"] as const;
 type Tab = (typeof TABS)[number];
@@ -46,19 +47,21 @@ export function GymHub() {
   return (
     <div data-theme="gym" className="min-h-[70dvh]">
       <section className="mx-auto max-w-[1320px] px-5 pb-6 pt-12">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{t("kicker")}</p>
-        <h1 className="mt-3 max-w-3xl text-5xl font-extrabold leading-[1.05] tracking-tight md:text-6xl" data-testid="gym-title">
-          {t.rich("title", { em: (chunks) => <span className="text-brand">{chunks}</span> })}
-        </h1>
-        <p className="mt-4 max-w-2xl text-muted">{t("lead")}</p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <button type="button" onClick={() => go({ tab: "trainers" })} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold hover:bg-brand-hover">
-            {t("bookTrainer")}
-          </button>
-          <Link href="/me/passes" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold hover:border-brand">
-            {t("myPasses")}
-          </Link>
-        </div>
+        <PageHeader photo="gym">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{t("kicker")}</p>
+          <h1 className="mt-3 max-w-3xl text-5xl font-extrabold leading-[1.05] tracking-tight md:text-6xl" data-testid="gym-title">
+            {t.rich("title", { em: (chunks) => <span className="text-brand">{chunks}</span> })}
+          </h1>
+          <p className="mt-4 max-w-2xl text-muted">{t("lead")}</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button type="button" onClick={() => go({ tab: "trainers" })} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold hover:bg-brand-hover">
+              {t("bookTrainer")}
+            </button>
+            <Link href="/me/passes" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold hover:border-brand">
+              {t("myPasses")}
+            </Link>
+          </div>
+        </PageHeader>
       </section>
 
       <nav aria-label={t("sections")} className="mx-auto max-w-[1320px] px-5">

@@ -1,12 +1,19 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
+import { detailMetadata, pageMeta } from "@/lib/seo.server";
 import { HireProfileView } from "@/components/hire/HireProfileView";
 
-export const metadata = { title: "Hire" };
+/** Title, description and share image from the public read; an unknown slug is a 404 (seo.server). */
+export async function generateMetadata({ params }: PageProps<"/[locale]/hiring/[slug]">): Promise<Metadata> {
+  const { locale, slug } = await params;
+  return detailMetadata("hire", slug, locale, "Hire", `/hiring/${slug}`);
+}
 
 async function Content({ params }: { params: PageProps<"/[locale]/hiring/[slug]">["params"] }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
+  await pageMeta("hire", slug, locale);
   return <HireProfileView slug={slug} />;
 }
 

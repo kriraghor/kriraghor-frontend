@@ -1,6 +1,6 @@
 "use client";
 
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import { useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
 
 /** Minimal form primitives on the design tokens. Sharp corners (shape lock), 44px+ targets. */
 export function Field({ label, id, hint, error, ...input }: InputHTMLAttributes<HTMLInputElement> & { label: string; id: string; hint?: string; error?: string }) {
@@ -48,5 +48,40 @@ export function Notice({ tone = "info", children }: { tone?: "info" | "error"; c
     <p role={tone === "error" ? "alert" : "status"} className={`border-l-4 px-3 py-2 text-sm ${tone === "error" ? "border-danger text-danger" : "border-info text-ink"}`}>
       {children}
     </p>
+  );
+}
+
+/** A password input with a show/hide toggle (the toggle is a real button, announced by its label). */
+export function PasswordField({ label, id, hint, error, showLabel, hideLabel, ...input }: InputHTMLAttributes<HTMLInputElement> & { label: string; id: string; hint?: string; error?: string; showLabel: string; hideLabel: string }) {
+  const [shown, setShown] = useState(false);
+  return (
+    <div className="flex flex-col gap-1">
+      <label htmlFor={id} className="text-sm font-semibold text-muted">
+        {label}
+      </label>
+      <div className="flex">
+        <input
+          id={id}
+          type={shown ? "text" : "password"}
+          className="min-h-12 min-w-0 flex-1 border-2 border-r-0 border-line bg-surface px-3 text-base text-ink focus:border-brand"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
+          {...input}
+        />
+        <button type="button" onClick={() => setShown((s) => !s)} aria-pressed={shown} aria-controls={id} className="min-h-12 shrink-0 border-2 border-line px-3 text-sm font-semibold">
+          {shown ? hideLabel : showLabel}
+        </button>
+      </div>
+      {hint && !error ? (
+        <p id={`${id}-hint`} className="text-sm text-muted">
+          {hint}
+        </p>
+      ) : null}
+      {error ? (
+        <p id={`${id}-error`} role="alert" className="text-sm text-danger">
+          {error}
+        </p>
+      ) : null}
+    </div>
   );
 }

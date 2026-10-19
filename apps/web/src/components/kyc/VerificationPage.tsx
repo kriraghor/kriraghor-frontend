@@ -143,6 +143,7 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
   const [legalName, setLegalName] = useState("");
   const [number, setNumber] = useState("");
   const [dob, setDob] = useState("");
+  const tf = useTranslations("footer");
   const [consent, setConsent] = useState(false);
   const [uploads, setUploads] = useState<Partial<Record<Slot, Upload>>>({});
   const [busy, setBusy] = useState(false);
@@ -248,7 +249,16 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
       </fieldset>
       <label className="flex items-start gap-2 text-sm">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5" required />
-        <span>{t("consent")}</span>
+        <span>
+          {t("consent")}{" "}
+          <Link href="/privacy" className="underline">
+            {tf("privacy")}
+          </Link>
+          {" · "}
+          <Link href="/terms" className="underline">
+            {tf("terms")}
+          </Link>
+        </span>
       </label>
       {problem ? <Notice tone="error">{problem.title}</Notice> : null}
       <div className="flex flex-wrap gap-3">

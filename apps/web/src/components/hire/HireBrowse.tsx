@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { filtersFromParams, hire, LEVELS, paramsFromFilters, SORTS, type Filters, type Level } from "@/lib/hire";
 import { HireCard } from "./HireCard";
+import { PageHeader } from "../PageHeader";
 
 /**
  * /hiring (M11 FR-01 to FR-07): players, umpires, scorers, coaches, physios and crew by category and
@@ -40,20 +41,22 @@ export function HireBrowse() {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="mr-auto">
-          <h1 className="text-4xl font-extrabold" data-testid="hire-title">
-            {t("title")}
-          </h1>
-          <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+      <PageHeader photo="hire">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="mr-auto">
+            <h1 className="text-4xl font-extrabold" data-testid="hire-title">
+              {t("title")}
+            </h1>
+            <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+          </div>
+          <Link href="/me/hire" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+            {t("myHires")}
+          </Link>
+          <Link href="/pro" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+            {t("getHired")}
+          </Link>
         </div>
-        <Link href="/me/hire" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
-          {t("myHires")}
-        </Link>
-        <Link href="/pro" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
-          {t("getHired")}
-        </Link>
-      </div>
+      </PageHeader>
 
       <nav aria-label={t("categories")} className="mt-8">
         <ul className="flex gap-2 overflow-x-auto pb-1">

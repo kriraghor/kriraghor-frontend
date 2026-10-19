@@ -19,6 +19,12 @@
   --kg-brand-text: #075533;
   --kg-band: #0a1a12;
   --kg-band-text: #f4f3ef;
+  --kg-band-2: #12271c;
+  --kg-band-muted: #b9c6be;
+  --kg-band-line: rgb(244 243 239 / 0.16);
+  --kg-prize: #f2a33a;
+  --kg-prize-ink: #10231a;
+  --kg-live: #e5484d;
   --kg-danger: #b42318;
   --kg-info: #2c5aa8;
 }
@@ -37,6 +43,7 @@
     --kg-brand-soft: #143a28;
     --kg-brand-text: #8fd8b2;
     --kg-band: #07120d;
+    --kg-band-2: #0f2018;
     --kg-danger: #f97066;
     --kg-info: #84adff;
   }
@@ -80,6 +87,12 @@
   --color-brand-text: var(--kg-brand-text);
   --color-band: var(--kg-band);
   --color-band-text: var(--kg-band-text);
+  --color-band-2: var(--kg-band-2);
+  --color-band-muted: var(--kg-band-muted);
+  --color-band-line: var(--kg-band-line);
+  --color-prize: var(--kg-prize);
+  --color-prize-ink: var(--kg-prize-ink);
+  --color-live: var(--kg-live);
   --color-danger: var(--kg-danger);
   --color-info: var(--kg-info);
 
@@ -110,6 +123,7 @@
   --font-display: var(--font-bricolage), var(--font-hind), system-ui, sans-serif;
   --font-sans: var(--font-instrument), var(--font-hind), system-ui, sans-serif;
   --font-bangla: var(--font-hind), "Noto Sans Bengali", sans-serif;
+  --font-gym: var(--font-shoulders), var(--font-bricolage), system-ui, sans-serif;
 
   --radius-pill: 999px;
   --shadow-sm: 0 1px 2px rgb(10 26 18 / 0.08);
@@ -155,5 +169,25 @@ h3 {
   *::after {
     transition: none !important;
     animation: none !important;
+  }
+}
+
+/* home-v3 scroll reveal: only when JS has run and motion is welcome (Reveal.tsx adds .is-in). */
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal .rv {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.5s var(--ease-kg), transform 0.5s var(--ease-kg);
+  }
+  .js-reveal .rv.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media print {
+  header,
+  footer,
+  nav[data-testid="tab-bar"] {
+    display: none !important;
   }
 }
