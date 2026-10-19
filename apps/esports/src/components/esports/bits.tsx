@@ -79,7 +79,7 @@ export function Card({ t: item }: { t: TournamentCard }) {
   const locale = useLocale();
   const title = locale === "bn" ? item.titleBn : item.titleEn;
   return (
-    <Link href={`/t/${item.slug}`} className="group flex flex-col border-2 border-line bg-surface p-4 transition-colors hover:border-line-strong focus-visible:border-brand" data-testid="tournament-card">
+    <Link href={`/events/${item.slug}`} className="group flex flex-col border-2 border-line bg-surface p-4 transition-colors hover:border-line-strong focus-visible:border-brand" data-testid="tournament-card">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-bold uppercase tracking-wide text-muted">{locale === "bn" ? item.game?.nameBn : item.game?.nameEn}</span>
         <span className="text-xs text-muted">·</span>

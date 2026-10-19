@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { REDIRECTS } from "./src/lib/redirects";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
@@ -16,6 +17,10 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  // Old URLs (/tournaments, /t/…, /e/…) answer 308 to the new pages, before the proxy.
+  async redirects() {
+    return REDIRECTS;
   },
   async headers() {
     return [

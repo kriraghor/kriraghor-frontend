@@ -145,7 +145,7 @@ export function EventPage({ slug }: { slug: string }) {
             </section>
           ) : null}
           <p className="text-xs text-muted">
-            {te("guaranteed")} <Link href="/tournaments" className="underline">{t("allTournaments")}</Link>
+            {te("guaranteed")} <Link href="/events" className="underline">{t("allTournaments")}</Link>
           </p>
         </aside>
       </div>
@@ -165,7 +165,7 @@ function FollowButton({ id, slug, signedIn, following, followers }: { id: string
   });
   if (!signedIn)
     return (
-      <Link href={`/sign-in?next=/e/${slug}`} className="inline-flex min-h-11 items-center bg-[var(--event-accent)] px-5 font-bold text-black" data-testid="event-follow">
+      <Link href={`/sign-in?next=/showcases/${slug}`} className="inline-flex min-h-11 items-center bg-[var(--event-accent)] px-5 font-bold text-black" data-testid="event-follow">
         {t("follow")} · {followers}
       </Link>
     );
@@ -204,7 +204,7 @@ function Standings({ bundle }: { bundle: EventBundle }) {
       {current ? (
         <div className="mt-3 border-2 border-line" role="tabpanel">
           <div className="flex flex-wrap items-center gap-2 border-b-2 border-line bg-surface-2 px-3 py-2 text-sm">
-            <Link href={`/t/${current.tournament!.slug}`} className="font-bold underline">
+            <Link href={`/events/${current.tournament!.slug}`} className="font-bold underline">
               {locale === "bn" ? current.tournament!.titleBn : current.tournament!.titleEn}
             </Link>
             <StatusChip status={current.tournament!.status} />
@@ -262,7 +262,7 @@ function Road({ bundle }: { bundle: EventBundle }) {
             <ol className="space-y-2">
               {feeders.map((s) => (
                 <li key={s.id} className="flex flex-wrap items-center gap-2 border-2 border-line p-3">
-                  <Link href={`/t/${s.tournament!.slug}`} className="font-bold underline">
+                  <Link href={`/events/${s.tournament!.slug}`} className="font-bold underline">
                     {locale === "bn" ? s.labelBn : s.labelEn}
                   </Link>
                   <StatusChip status={s.tournament!.status} />
@@ -270,7 +270,7 @@ function Road({ bundle }: { bundle: EventBundle }) {
                 </li>
               ))}
               <li className="flex flex-wrap items-center gap-2 border-2 border-[var(--event-accent)] p-3">
-                <Link href={`/t/${f.tournament!.slug}`} className="font-extrabold underline">
+                <Link href={`/events/${f.tournament!.slug}`} className="font-extrabold underline">
                   {locale === "bn" ? f.labelBn : f.labelEn}
                 </Link>
                 <StatusChip status={f.tournament!.status} />
@@ -374,7 +374,7 @@ function Poll({ eventId, poll, myVote, signedIn, slug }: { eventId: string; poll
                 {locale === "bn" ? o.labelBn : o.labelEn}
               </button>
             ) : (
-              <Link href={`/sign-in?next=/e/${slug}`} className="flex min-h-11 items-center border-2 border-line px-3 text-sm font-semibold">
+              <Link href={`/sign-in?next=/showcases/${slug}`} className="flex min-h-11 items-center border-2 border-line px-3 text-sm font-semibold">
                 {locale === "bn" ? o.labelBn : o.labelEn}
               </Link>
             )}

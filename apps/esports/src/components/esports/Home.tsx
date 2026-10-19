@@ -37,7 +37,7 @@ export function Home() {
             </h1>
             <p className="mt-4 max-w-[52ch] text-lg text-band-text/80">{t("home.lead")}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <LinkButton href="/tournaments" tone="prize">
+              <LinkButton href="/events" tone="prize">
                 {t("home.browse")}
               </LinkButton>
               <LinkButton href="/me/esports" tone="outline">
@@ -54,7 +54,7 @@ export function Home() {
                 </div>
               </div>
             ) : hero ? (
-              <Link href={`/t/${hero.slug}`} className="block border-2 border-band-text/20 bg-band p-6 hover:border-amber-400" data-testid="hero-card">
+              <Link href={`/events/${hero.slug}`} className="block border-2 border-band-text/20 bg-band p-6 hover:border-amber-400" data-testid="hero-card">
                 <p className="text-xs font-bold uppercase tracking-wide text-amber-400">{hero.featured ? t("home.featured") : t("home.next")}</p>
                 <h2 className="mt-2 text-2xl font-extrabold">{locale === "bn" ? hero.titleBn : hero.titleEn}</h2>
                 <p className="mt-1 text-sm text-band-text/70">
@@ -92,7 +92,7 @@ export function Home() {
       <section className="mx-auto max-w-[1320px] px-5 py-12">
         <div className="flex items-end justify-between gap-4">
           <h2 className="text-2xl font-extrabold md:text-3xl">{t("home.openNow")}</h2>
-          <Link href="/tournaments" className="font-semibold text-brand underline">
+          <Link href="/events" className="font-semibold text-brand underline">
             {t("home.seeAll")}
           </Link>
         </div>

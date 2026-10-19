@@ -10,15 +10,15 @@
     "signIn": "Sign in",
     "me": "My account",
     "signOut": "Sign out",
-    "grounds": "Grounds",
+    "grounds": "Venues",
     "hiring": "Hire",
     "shop": "Shop",
     "gym": "Gym",
-    "esports": "Esports",
+    "esports": "Events",
     "language": "বাংলা",
     "leaderboards": "Leaderboards",
     "myMatches": "My matches",
-    "events": "Events"
+    "events": "Showcases"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -70,7 +70,7 @@
   },
   "vendor": {
     "home": "Business desk",
-    "intro": "Manage your grounds, shop, gym or tournaments. Desks arrive with their modules."
+    "intro": "Manage your venues, shop, gym or events. Desks arrive with their modules."
   },
   "errors": {
     "generic": "Something went wrong. Try again.",
@@ -106,7 +106,7 @@
       "hire": "Hire",
       "orders": "Orders",
       "offers": "Offers",
-      "tournaments": "Tournaments",
+      "tournaments": "Events",
       "moderation": "Reviews & approvals",
       "disputes_reports": "Disputes & reports",
       "reviews": "Reviews",
@@ -208,16 +208,16 @@
       "kicker": "PUBG Mobile · Free Fire",
       "title": "Play for real prizes, every day",
       "lead": "Verified UIDs, fixed prize tables published before you pay, prizes paid to your bKash or Nagad.",
-      "browse": "Find a tournament",
+      "browse": "Find an event",
       "addUid": "Add your game UID",
-      "featured": "Big event",
+      "featured": "Showcase",
       "next": "Next up",
       "openNow": "Open for registration",
       "seeAll": "See all",
-      "noneOpen": "No tournaments open right now",
+      "noneOpen": "No events open right now",
       "noneOpenBody": "Add your UID now so you are ready when the next one opens.",
       "topPlayers": "Top players",
-      "noRankingsYet": "Rankings start after the first finished tournaments.",
+      "noRankingsYet": "Rankings start after the first finished events.",
       "leaderboards": "Leaderboards",
       "how": "How it works",
       "step": {
@@ -227,7 +227,7 @@
         },
         "register": {
           "title": "Register and pay",
-          "body": "bKash, Nagad or card. Your fee is held safely until the tournament ends."
+          "body": "bKash, Nagad or card. Your fee is held safely until the event ends."
         },
         "checkin": {
           "title": "Check in",
@@ -238,10 +238,10 @@
           "body": "Results are posted with a dispute window; prizes land in your winnings."
         }
       },
-      "bigEvent": "Big event"
+      "bigEvent": "Showcase"
     },
     "list": {
-      "title": "Tournaments",
+      "title": "Events",
       "game": "Game",
       "allGames": "All games",
       "stage": "Stage",
@@ -260,7 +260,7 @@
     "prizes": "Prizes",
     "place": "#{n}",
     "perKill": "Per kill",
-    "guaranteed": "Prizes are guaranteed once the tournament runs, however many enter.",
+    "guaranteed": "Prizes are guaranteed once the event runs, however many enter.",
     "schedule": "Schedule",
     "match": "Match {n}",
     "checkinWindow": "Check-in {from}–{to}",
@@ -300,7 +300,7 @@
       "picked": "{n} of {of} players picked",
       "confirmFree": "Confirm my entry",
       "confirmPay": "Pay {amount} and register",
-      "refundNote": "Full refund if you withdraw before registration closes or the tournament is cancelled."
+      "refundNote": "Full refund if you withdraw before registration closes or the event is cancelled."
     },
     "me": {
       "title": "UIDs and squads",
@@ -336,7 +336,7 @@
       "join": "Join with a code"
     },
     "mine": {
-      "empty": "You have not entered a tournament yet",
+      "empty": "You have not entered an event yet",
       "offerTaken": "Slot taken.",
       "takeSlot": "Take the slot",
       "checkedIn": "Checked in.",
@@ -408,13 +408,13 @@
       "title": "Leaderboards",
       "rolling": "Last 12 months",
       "season": "Season",
-      "played": "{n} tournaments",
+      "played": "{n} events",
       "empty": "No ranked players yet",
       "how": "How points work",
-      "formula": "Each finished tournament scores your placement percentile (100 for the winner) plus 2 per kill, times the tier weight. Older results fade with a {half}-day half-life. You need at least {min} tournaments to appear."
+      "formula": "Each finished event scores your placement percentile (100 for the winner) plus 2 per kill, times the tier weight. Older results fade with a {half}-day half-life. You need at least {min} events to appear."
     },
     "player": {
-      "tournaments": "Tournaments",
+      "tournaments": "Events",
       "wins": "Wins",
       "kills": "Kills",
       "rank": "Rank #{n}",
@@ -424,20 +424,20 @@
     "organiser": {
       "by": "by {name}",
       "kicker": "Esports organiser",
-      "upcoming": "Tournaments",
+      "upcoming": "Events",
       "past": "Finished",
-      "none": "No tournaments open right now. Check back soon.",
+      "none": "No events open right now. Check back soon.",
       "notFound": "This organiser is not on Kriraghor.",
-      "note": "Tournaments by {name} run on Kriraghor: entry fees and prizes are held in Kriraghor escrow, rooms are revealed to checked-in players, and winnings are withdrawn from your Kriraghor account."
+      "note": "Events by {name} run on Kriraghor: entry fees and prizes are held in Kriraghor escrow, rooms are revealed to checked-in players, and winnings are withdrawn from your Kriraghor account."
     },
     "inviteOnly": "Invite only",
     "partOf": "Part of",
     "events": {
-      "title": "Big events",
+      "title": "Showcases",
       "lead": "Championships with online qualifiers and a grand final, streamed live.",
-      "none": "No big events right now",
-      "noneBody": "Follow an event to hear when it starts and when its streams go live.",
-      "notFound": "This event was not found.",
+      "none": "No showcases right now",
+      "noneBody": "Follow a showcase to hear when it starts and when its streams go live.",
+      "notFound": "This showcase was not found.",
       "phase": {
         "draft": "Draft",
         "upcoming": "Coming up",
@@ -479,9 +479,9 @@
         "gold": "Gold",
         "partner": "Partner"
       },
-      "allTournaments": "All tournaments",
+      "allTournaments": "All events",
       "feedTitle": "Live feed",
-      "feedEmpty": "Updates appear here as the event runs.",
+      "feedEmpty": "Updates appear here as the showcase runs.",
       "feed": {
         "tournament_finalised": "{title}: results are final",
         "tournament_cancelled": "{title} was cancelled",
@@ -490,7 +490,7 @@
         "final_live": "The final is live: {title}",
         "stream_live": "A stream is live",
         "stream_live_t": "A stream is live: {title}",
-        "event_cancelled": "The event was cancelled: {reason}"
+        "event_cancelled": "The showcase was cancelled: {reason}"
       },
       "pollClosed": "Closed",
       "yourVote": "your vote",

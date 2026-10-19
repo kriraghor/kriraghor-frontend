@@ -51,7 +51,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
           {event ? (
             <p className="mt-3 text-sm font-semibold" data-testid="part-of-event">
               {t("partOf")}{" "}
-              <Link href={`/e/${event.slug}`} className="underline">
+              <Link href={`/showcases/${event.slug}`} className="underline">
                 {locale === "bn" ? event.titleBn : event.titleEn}
               </Link>
             </p>
@@ -180,7 +180,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
             </div>
             <div className="mt-5">
               {cta === "register" || cta === "waitlist" ? (
-                <LinkButton href={signedIn ? `/t/${d.slug}/register` : `/sign-in?next=/t/${d.slug}/register`} testId="cta-register">
+                <LinkButton href={signedIn ? `/events/${d.slug}/register` : `/sign-in?next=/events/${d.slug}/register`} testId="cta-register">
                   {t(cta === "register" ? "register" : "joinWaitlist")}
                 </LinkButton>
               ) : cta === "pay" && entry ? (

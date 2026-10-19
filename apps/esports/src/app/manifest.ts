@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Kriraghor Esports",
     short_name: "Kriraghor",
-    description: "PUBG Mobile and Free Fire tournaments with real prizes.",
+    description: "PUBG Mobile and Free Fire events with real prizes.",
     start_url: "/",
     display: "standalone",
     background_color: "#0a1a12",

@@ -88,7 +88,7 @@ export function Winnings() {
           return (
             <li key={item.id} className="flex flex-wrap items-center gap-3 py-3">
               {item.tournament ? (
-                <Link href={`/t/${item.tournament.slug}`} className="font-semibold underline-offset-2 hover:underline">
+                <Link href={`/events/${item.tournament.slug}`} className="font-semibold underline-offset-2 hover:underline">
                   {locale === "bn" ? item.tournament.titleBn : item.tournament.titleEn}
                 </Link>
               ) : null}

@@ -63,7 +63,7 @@ export function RegisterFlow({ slug }: { slug: string }) {
 
   return (
     <section className="mx-auto max-w-3xl px-5 py-10">
-      <Link href={`/t/${d.slug}`} className="text-sm font-semibold text-brand underline">
+      <Link href={`/events/${d.slug}`} className="text-sm font-semibold text-brand underline">
         ← {locale === "bn" ? d.titleBn : d.titleEn}
       </Link>
       <h1 className="mt-3 text-3xl font-extrabold">{t("reg.title")}</h1>

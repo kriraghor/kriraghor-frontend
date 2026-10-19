@@ -46,7 +46,7 @@ export function MyMatches() {
     <section className="mx-auto max-w-[1000px] px-5 py-10">
       <h1 className="text-3xl font-extrabold">{t("myMatches")}</h1>
       {q.isPending ? <div className="mt-6 h-48 animate-pulse bg-surface-2" /> : null}
-      {q.data && !items.length ? <Empty title={t("mine.empty")} action={<LinkButton href="/tournaments">{t("home.browse")}</LinkButton>} /> : null}
+      {q.data && !items.length ? <Empty title={t("mine.empty")} action={<LinkButton href="/events">{t("home.browse")}</LinkButton>} /> : null}
       <ul className="mt-6 space-y-4" data-testid="my-entries">
         {items.map((r) => {
           const tt = r.tournament;
@@ -54,7 +54,7 @@ export function MyMatches() {
           return (
             <li key={r.id} className="border-2 border-line bg-surface p-5">
               <div className="flex flex-wrap items-center gap-2">
-                <Link href={`/t/${tt.slug}`} className="text-lg font-extrabold underline-offset-2 hover:underline">
+                <Link href={`/events/${tt.slug}`} className="text-lg font-extrabold underline-offset-2 hover:underline">
                   {locale === "bn" ? tt.titleBn : tt.titleEn}
                 </Link>
                 <Chip tone={REG_TONE[r.status] ?? "muted"}>{t(`regStatus.${r.status}`)}</Chip>
