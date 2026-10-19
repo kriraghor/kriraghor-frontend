@@ -1,0 +1,17 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  ci:
+    uses: kriraghor/kriraghor-infra/.github/workflows/nextjs-app.yml@main
+    with:
+      image: kriraghor-esports
+      values-files: values/esports/staging.yaml
+    secrets: inherit
