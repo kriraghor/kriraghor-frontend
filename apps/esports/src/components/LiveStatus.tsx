@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { getAccessToken } from "@/lib/auth/session";
-import { publicEnv } from "@/lib/env";
+import { getAccessToken } from "@kriraghor/session/auth";
+import { publicEnv } from "@kriraghor/session/env";
 
 type State = { connected: boolean; rooms: string[]; error?: string };
 

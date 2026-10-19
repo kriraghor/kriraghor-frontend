@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { formatTaka } from "@/lib/admin/finance";
 import { stepUp } from "@/lib/admin/stepUp";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { tournamentsAdmin } from "@/lib/vendor/tournaments";
 import { Notice } from "../../ui";
 import { AdminSubnav } from "../AdminSubnav";

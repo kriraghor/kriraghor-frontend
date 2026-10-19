@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, toPoisha, vendor, type Rules, type RuleInput } from "@/lib/vendor/grounds";
 import { Notice } from "../ui";

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { api, problemOf, type Problem } from "@/lib/api/client";
+import { api, problemOf, type Problem } from "@kriraghor/api-client";
 import { hire, LEVELS, limitKey, poishaToTaka, profileTone, rateOf, takaToPoisha, TONE, type Format, type Level, type OwnerProfile, type ProfileBody, type RateCardBody, type Unit } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { Button, Notice } from "../ui";

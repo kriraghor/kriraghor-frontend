@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { dayLabel, newKey } from "@/lib/bookings";
 import { addDays, gym } from "@/lib/gym";

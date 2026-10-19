@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { api, problemOf } from "@/lib/api/client";
+import { api, problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import type { components } from "@/lib/api/schema";
+import type { components } from "@kriraghor/api-client/schema";
 import { Button, Notice } from "../ui";
 
 type Prefs = components["schemas"]["NotificationPrefs"];

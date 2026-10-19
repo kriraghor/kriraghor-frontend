@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 import { webRedirect } from "@/lib/links";
-import { serverPublicEnv } from "@/lib/env";
+import { serverPublicEnv } from "@kriraghor/session/env";
 
 /**
  * GET /go/web/… sends the visitor on to kriraghor.com/… (help, terms, privacy, venues). Server-rendered

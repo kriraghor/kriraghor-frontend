@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { shopOrders } from "@/lib/vendor/orders";
 import { Notice } from "../../ui";

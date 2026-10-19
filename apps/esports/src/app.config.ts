@@ -1,4 +1,4 @@
-import type { Audience } from "@/lib/auth/session";
+import type { Audience } from "@kriraghor/session/auth";
 
 /** Per-app settings. This is the only file (plus pages) that differs between web, esports and portal. */
 export const APP = {

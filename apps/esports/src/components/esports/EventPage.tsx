@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { dhakaTime, esports, takaOf, useRoom } from "@/lib/esports";
 import { byFinal, events, jitter, type EventBundle, type EventPoll, type FeedItem } from "@/lib/events";
 import { Chip, Countdown, Prize, StatusChip } from "./bits";

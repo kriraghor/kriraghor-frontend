@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { badgeText, listNotifications, markRead, realtimeSocket, relativeTime, type NotificationItem } from "@/lib/notifications";
+import { badgeText, listNotifications, markRead, realtimeSocket, relativeTime, type NotificationItem } from "@kriraghor/api-client/notifications";
 
 /**
  * The bell "Updates" (M08 §4.1): unread badge from the server (99+ cap), a dropdown with the latest

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { api, problemOf, type Problem } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
-import { realtimeSocket } from "@/lib/notifications";
+import { api, problemOf, type Problem } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
+import { realtimeSocket } from "@kriraghor/api-client/notifications";
 
 /**
  * Client for M21 (esports.kriraghor.com): tournaments, registration, check-in, the room, results,

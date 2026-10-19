@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { dhakaDate, finance, formatTaka, type Item } from "@/lib/admin/finance";
 import { Button, Notice } from "../../ui";
 import { formatDhaka } from "../useAdminMe";

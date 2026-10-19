@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { problemOf, type Problem } from "@/lib/api/client";
+import { problemOf, type Problem } from "@kriraghor/api-client";
 import { esports, takaOf } from "@/lib/esports";
 import { Button, Notice } from "../ui";
 import { Empty, LinkButton, Prize } from "./bits";

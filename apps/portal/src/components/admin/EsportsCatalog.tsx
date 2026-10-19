@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { api, problemOf, type Problem } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
+import { api, problemOf, type Problem } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
 import { Button, Notice } from "../ui";
 import { AdminSubnav } from "./AdminSubnav";
 import { useAdminMe } from "./useAdminMe";

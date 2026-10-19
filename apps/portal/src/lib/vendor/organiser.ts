@@ -1,5 +1,5 @@
-import { api } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
+import { api } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
 import type { DeskClient } from "@/components/admin/esports/EsportsDesk";
 import type { ResultRow, TournamentInput } from "../admin/esports";
 import { unwrap } from "../admin/finance";

@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import QRCode from "qrcode";
 import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { dayLabel } from "@/lib/bookings";
 import { gym, passTone, TONE } from "@/lib/gym";

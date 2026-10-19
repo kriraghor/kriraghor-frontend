@@ -1,5 +1,5 @@
-import { api } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
+import { api } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
 
 /**
  * M17 on kriraghor.com: disputes (the member who paid opens one from the booking; the case page shows

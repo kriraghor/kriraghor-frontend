@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { dhakaTime, esports, useRoom } from "@/lib/esports";
 import { Button, Notice } from "../ui";
 import { Chip, Countdown } from "./bits";

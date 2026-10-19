@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { countdown, formatTaka, getPayment, outcomeOf, startAttempt, type Method } from "@/lib/payments";
 import { Button, Notice } from "../ui";
 

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { api } from "@/lib/api/client";
+import { api } from "@kriraghor/api-client";
 import { formatDhaka } from "./useAdminMe";
 
 /**

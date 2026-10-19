@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { stepUp } from "@/lib/admin/stepUp";
 import { formatTaka } from "@/lib/admin/finance";
 import { actionsFor, FAILURE_REASONS, groupWallet, PAYOUT_STATUSES, payouts, type FailureReason, type Payout, type PayoutStatus, type Reveal } from "@/lib/admin/payouts";
-import { problemOf, type Problem } from "@/lib/api/client";
+import { problemOf, type Problem } from "@kriraghor/api-client";
 import { Notice } from "../../ui";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka } from "../useAdminMe";

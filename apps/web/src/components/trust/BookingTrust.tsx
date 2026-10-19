@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { newKey, whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { disputes, reviews, type Category } from "@/lib/trust";

@@ -1,5 +1,5 @@
-import { api } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
+import { api } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
 
 /**
  * Market on kriraghor.com (M12 step 1): browse shop products with filters and facet counts, the

@@ -1,5 +1,5 @@
-import { api } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
+import { api } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
 
 /**
  * Payee side of M07: the payout account (bKash or Nagad in the NID name, confirmed with a code to

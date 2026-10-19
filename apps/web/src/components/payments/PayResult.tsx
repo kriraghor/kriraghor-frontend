@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { publicEnv } from "@/lib/env";
+import { publicEnv } from "@kriraghor/session/env";
 import { formatTaka, getPayment, outcomeOf, POLL_LIMIT_MS, POLL_MS, verifyPayment } from "@/lib/payments";
 import { Notice } from "../ui";
 

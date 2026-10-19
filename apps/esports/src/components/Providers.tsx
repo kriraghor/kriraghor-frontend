@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
-import type { Audience } from "@/lib/auth/session";
+import type { Audience } from "@kriraghor/session/auth";
 
 export function Providers({ audience = "api", children }: { audience?: Audience; children: ReactNode }) {
   const [queryClient] = useState(

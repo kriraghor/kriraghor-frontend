@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
-import { api } from "@/lib/api/client";
+import { api } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
 /**

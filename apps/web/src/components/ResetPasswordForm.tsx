@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { api, problemOf } from "@/lib/api/client";
+import { api, problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { PASSWORD_MAX, PASSWORD_MIN, resetMessage, resetStep, targetKind, type ResetStep } from "@/lib/reset";
 import { Button, Field, Notice, PasswordField } from "./ui";

@@ -6,7 +6,7 @@ import { ArrowRight, SealCheck } from "@phosphor-icons/react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { PHOTOS } from "@/lib/photos";
-import { api } from "@/lib/api/client";
+import { api } from "@kriraghor/api-client";
 import { initials } from "@/lib/home";
 import { formatTaka } from "@/lib/payments";
 import { nameOf, type Named } from "./queries";

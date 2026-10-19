@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { bookings, canStartAt, coveredIndexes, dayLabel, daysBetween, newKey, timeLabel, useGroundLive, type PaymentChoice } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";

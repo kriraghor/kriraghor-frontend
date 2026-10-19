@@ -1,5 +1,5 @@
-import { api } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
+import { api } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
 
 /**
  * Payer side of M06: the pay page, the result page and "My payments". Success is decided by the

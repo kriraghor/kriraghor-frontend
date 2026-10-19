@@ -6,7 +6,7 @@ import { MemberOverview } from "./MemberOverview";
 import { MyReliability } from "./trust/MyReliability";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { api } from "@/lib/api/client";
+import { api } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
 /**

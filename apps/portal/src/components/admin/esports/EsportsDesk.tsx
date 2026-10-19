@@ -8,7 +8,7 @@ import { esportsAdmin, resultsProblem, toPoisha, type ResultRow, type Tournament
 import { formatTaka } from "@/lib/admin/finance";
 import { stepUp } from "@/lib/admin/stepUp";
 import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { Notice } from "../../ui";
 import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";

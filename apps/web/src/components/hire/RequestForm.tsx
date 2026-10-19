@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { newKey } from "@/lib/bookings";
 import { dhakaDay, dhakaInstant, hire, type Engagement, type Format, type ProfilePage, type Unit } from "@/lib/hire";

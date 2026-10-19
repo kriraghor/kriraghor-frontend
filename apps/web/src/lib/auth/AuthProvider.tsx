@@ -2,8 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api/client";
-import { getAccessToken, hasSessionHint, refresh, setAccessToken, type Audience } from "./session";
+import { api } from "@kriraghor/api-client";
+import { getAccessToken, hasSessionHint, refresh, setAccessToken, type Audience } from "@kriraghor/session/auth";
 
 type Status = "loading" | "signed_in" | "signed_out";
 type AuthContext = {

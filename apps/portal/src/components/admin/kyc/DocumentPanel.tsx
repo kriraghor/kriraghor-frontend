@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { kyc, type Reveal } from "@/lib/admin/kyc";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { Notice } from "../../ui";
 import { Field, inputCls } from "../finance/shared";
 

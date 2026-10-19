@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { problemOf, type Problem } from "@/lib/api/client";
+import { problemOf, type Problem } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { ACCEPT, fileProblem, getVerification, MAX_UPLOAD_BYTES, nidLooksValid, SLOTS, submitNid, uploadFile, type Slot, type VerificationItem } from "@/lib/kyc";
 import { risk } from "@/lib/trust";

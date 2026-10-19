@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { api, problemOf } from "@/lib/api/client";
+import { api, problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { publicEnv } from "@/lib/env";
+import { publicEnv } from "@kriraghor/session/env";
 import { Button, Field, Notice, PasswordField } from "./ui";
 
 type Method = "phone" | "email" | "password" | "google";

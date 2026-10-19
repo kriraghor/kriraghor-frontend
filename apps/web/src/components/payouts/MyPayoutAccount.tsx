@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { problemOf, type Problem } from "@/lib/api/client";
+import { problemOf, type Problem } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { addAccount, isWalletNumber, listAccounts, sendAccountCode, type Wallet } from "@/lib/payouts";
 import { Button, Notice } from "../ui";

@@ -1,4 +1,4 @@
-import type { components } from "@/lib/api/schema";
+import type { components } from "@kriraghor/api-client/schema";
 
 /** Audit log screen helpers (M04 §4). */
 export type AuditEntry = components["schemas"]["AuditEntry"];

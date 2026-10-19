@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { problemOf } from "@/lib/api/client";
+import { problemOf } from "@kriraghor/api-client";
 import { stepUp } from "@/lib/admin/stepUp";
 import { finance, formatTaka, parseTaka, type AdminPayment } from "@/lib/admin/finance";
 import { Button, Notice } from "../../ui";

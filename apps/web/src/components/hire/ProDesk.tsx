@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { api, problemOf } from "@/lib/api/client";
+import { api, problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { DECLINE_REASONS, hire, minutesLeft, profileTone, requestTone, TONE, type RequestResult } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";

@@ -1,5 +1,5 @@
-import { api, problemOf, type Problem } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
+import { api, problemOf, type Problem } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
 
 /**
  * Finance desk client (M06 §4 /admin/finance): payments, refunds, escrow, ledger and reconciliation.
