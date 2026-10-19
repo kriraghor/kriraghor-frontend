@@ -1,0 +1,24 @@
+{
+  "name": "@kriraghor/session",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Runtime public config (/env.js), cookies, the access-token session and refresh, cross-site links and the redirect matcher. No React, no API calls.",
+  "exports": {
+    "./env": "./src/env.ts",
+    "./env-route": "./src/env-route.ts",
+    "./cookies": "./src/cookies.ts",
+    "./auth": "./src/auth.ts",
+    "./links": "./src/links.ts",
+    "./redirects": "./src/redirects.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "next": "16.4.0"
+  },
+  "devDependencies": {
+    "@kriraghor/config": "0.1.0"
+  }
+}

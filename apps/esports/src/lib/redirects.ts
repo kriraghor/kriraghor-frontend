@@ -3,7 +3,9 @@
  * next.config.ts serves these as permanent (308) redirects before the locale proxy runs, so links
  * already shared, bookmarked or sent in notifications keep working. Query strings are kept.
  */
-export type Redirect = { source: string; destination: string; permanent: true };
+import { redirectFor as matchRedirect, type Redirect } from "@kriraghor/session/redirects";
+
+export type { Redirect };
 
 export const REDIRECTS: Redirect[] = [
   { source: "/tournaments", destination: "/events", permanent: true },
@@ -13,14 +15,5 @@ export const REDIRECTS: Redirect[] = [
   { source: "/e/:slug", destination: "/showcases/:slug", permanent: true },
 ];
 
-/** Where a path is sent (for tests): ":name" matches one segment, as in Next's path matching. */
-export function redirectFor(path: string, table: Redirect[] = REDIRECTS): string | null {
-  for (const r of table) {
-    const names: string[] = [];
-    const pattern = new RegExp(`^${r.source.replace(/:(\w+)/g, (_, n: string) => (names.push(n), "([^/]+)"))}$`);
-    const m = path.match(pattern);
-    if (!m) continue;
-    return names.reduce((d, n, i) => d.replace(`:${n}`, m[i + 1]), r.destination);
-  }
-  return null;
-}
+/** Where a path is sent by this app's table (for tests). */
+export const redirectFor = (path: string, table: Redirect[] = REDIRECTS) => matchRedirect(path, table);

@@ -3,7 +3,9 @@
  * events became Showcases). next.config.ts serves these as permanent (308) redirects before the host
  * proxy, so links in notifications and bookmarks keep working. /admin/events stays the outbox desk.
  */
-export type Redirect = { source: string; destination: string; permanent: true };
+import { redirectFor as matchRedirect, type Redirect } from "@kriraghor/session/redirects";
+
+export type { Redirect };
 
 export const REDIRECTS: Redirect[] = [
   { source: "/vendor/grounds", destination: "/vendor/venues", permanent: true },
@@ -18,14 +20,5 @@ export const REDIRECTS: Redirect[] = [
   { source: "/admin/esports/events", destination: "/admin/esports/showcases", permanent: true },
 ];
 
-/** Where a path is sent (for tests): ":name" matches one segment, ":name*" the rest, as in Next. */
-export function redirectFor(path: string, table: Redirect[] = REDIRECTS): string | null {
-  for (const r of table) {
-    const names: string[] = [];
-    const pattern = new RegExp(`^${r.source.replace(/:(\w+)(\*)?/g, (_, n: string, star?: string) => (names.push(n), star ? "(.*)" : "([^/]+)"))}$`);
-    const m = path.match(pattern);
-    if (!m) continue;
-    return names.reduce((d, n, i) => d.replace(new RegExp(`:${n}\\*?`), m[i + 1]), r.destination);
-  }
-  return null;
-}
+/** Where a path is sent by this app's table (for tests). */
+export const redirectFor = (path: string, table: Redirect[] = REDIRECTS) => matchRedirect(path, table);
