@@ -10,7 +10,7 @@ The Kriraghor apps in one repository. Each app keeps its own `package.json`, loc
 | `apps/mobile` | The mobile app | App Store, Play Store | React Native, Expo |
 
 ```bash
-cd apps/web && npm ci && npm run dev
+cd apps/web && npm ci &&  npm run dev
 ```
 
 - **CI:** `.github/workflows/<app>.yml` runs only when that app's folder changes, using the reusable workflow in [kriraghor-infrastructure](https://github.com/kriraghor/kriraghor-infrastructure) with `app-dir`.
