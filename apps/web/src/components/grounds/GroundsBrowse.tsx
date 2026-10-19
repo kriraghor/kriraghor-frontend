@@ -47,7 +47,7 @@ export function GroundsBrowse() {
         <aside aria-label={t("filters")} className="space-y-6">
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("area")}
-            <select value={f.areaId ?? ""} onChange={(e) => go({ ...f, areaId: e.target.value || undefined })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink">
+            <select value={f.areaId ?? ""} onChange={(e) => go({ ...f, areaId: e.target.value || undefined })} className="min-h-12 field px-3 text-base text-ink">
               <option value="">{t("anyArea")}</option>
               {(areas.data?.items ?? []).map((a) => (
                 <option key={a.id} value={a.id}>
@@ -82,7 +82,7 @@ export function GroundsBrowse() {
             </p>
             <label className="ml-auto flex items-center gap-2 text-sm font-semibold text-muted">
               {t("sortBy")}
-              <select value={f.sort ?? "cheapest"} onChange={(e) => go({ ...f, sort: e.target.value as Filters["sort"] })} className="min-h-11 border-2 border-line bg-surface px-2 text-ink">
+              <select value={f.sort ?? "cheapest"} onChange={(e) => go({ ...f, sort: e.target.value as Filters["sort"] })} className="min-h-11 field px-2 text-ink">
                 <option value="cheapest">{t("sort.cheapest")}</option>
                 <option value="newest">{t("sort.newest")}</option>
                 <option value="most_open">{t("sort.most_open")}</option>
@@ -131,7 +131,7 @@ export function GroundsBrowse() {
   function Card({ g }: { g: GroundCard }) {
     return (
       <li>
-        <Link href={`/venues/${g.slug}`} className="flex h-full flex-col border-2 border-line bg-surface hover:border-brand" data-testid="ground-card">
+        <Link href={`/venues/${g.slug}`} className="flex h-full flex-col glass-card hover:border-brand" data-testid="ground-card">
           {g.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={g.coverUrl} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover" />

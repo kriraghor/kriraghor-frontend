@@ -46,7 +46,7 @@ export function Winnings() {
       <h1 className="text-3xl font-extrabold">{t("win.title")}</h1>
       {q.isPending ? <div className="mt-6 h-40 animate-pulse bg-surface-2" /> : null}
       {q.data ? (
-        <div className="mt-6 grid gap-4 border-2 border-line-strong bg-surface p-6 md:grid-cols-[1fr_auto]" data-testid="winnings">
+        <div className="mt-6 grid gap-4 glass-strong rounded-[24px] p-6 md:grid-cols-[1fr_auto]" data-testid="winnings">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("win.available")}</p>
             <Prize money={q.data.available} className="text-5xl" />
@@ -82,7 +82,7 @@ export function Winnings() {
       ) : null}
 
       <h2 className="mt-10 text-xl font-extrabold">{t("win.history")}</h2>
-      <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line">
+      <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4">
         {(q.data?.items ?? []).map((s) => {
           const item = s as typeof s & { tournament: { slug: string; titleEn: string; titleBn: string } | null; kind: string | null; place: number | null; createdAt: string };
           return (
@@ -106,7 +106,7 @@ export function Winnings() {
       {wd.data?.items.length ? (
         <>
           <h2 className="mt-10 text-xl font-extrabold">{t("win.withdrawals")}</h2>
-          <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line">
+          <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4">
             {wd.data.items.map((w) => (
               <li key={w.id} className="flex flex-wrap items-center gap-3 py-3 text-sm">
                 <span className="font-mono">{w.code}</span>

@@ -65,7 +65,7 @@ export function HomeGrounds() {
           <p className="mt-2 max-w-[60ch] text-muted">{t("sub")}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <button type="button" onClick={locate} disabled={locating === "asking"} className="inline-flex min-h-11 items-center gap-2 border-2 border-line-strong px-4 text-sm font-bold disabled:opacity-60" data-testid="use-location">
+          <button type="button" onClick={locate} disabled={locating === "asking"} className="glass inline-flex min-h-11 items-center gap-2 rounded-pill px-4 text-sm font-bold disabled:opacity-60" data-testid="use-location">
             <NavigationArrow size={18} aria-hidden />
             {locating === "asking" ? t("locating") : t("locate")}
           </button>
@@ -78,13 +78,13 @@ export function HomeGrounds() {
         {locating === "denied" ? t("locationDenied") : here ? t("locationNote") : ""}
       </p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {list.isPending ? [0, 1, 2].map((i) => <div key={i} className="h-80 animate-pulse bg-surface-2" />) : null}
+        {list.isPending ? [0, 1, 2].map((i) => <div key={i} className="h-80 animate-pulse rounded-[20px] bg-surface-2" />) : null}
         {!list.isPending && !items.length ? <p className="border-2 border-dashed border-line p-6 text-muted md:col-span-3">{t("none")}</p> : null}
         {items.map((g, i) => {
           const grid = grids[i];
           const slots = freeHours(grid?.data);
           return (
-            <article key={g.id} className="rv flex flex-col border-2 border-line bg-surface" data-testid="home-ground">
+            <article key={g.id} className="rv glass-card flex flex-col overflow-hidden" data-testid="home-ground">
               <div className="aspect-[4/3] overflow-hidden bg-brand-soft">
                 {g.coverUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -135,7 +135,7 @@ export function HomeGrounds() {
         })}
       </div>
       {picked ? (
-        <div className="sticky bottom-[calc(72px+env(safe-area-inset-bottom))] z-30 mt-4 flex flex-wrap items-center justify-between gap-3 border-2 border-line-strong bg-surface p-4 shadow-lg md:bottom-4" aria-live="polite" data-testid="booking-bar">
+        <div className="glass-strong sticky bottom-[calc(80px+env(safe-area-inset-bottom))] z-30 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[20px] p-4 md:bottom-4" aria-live="polite" data-testid="booking-bar">
           <span className="font-semibold">{t("picked", { name: picked.ground.name, time: hourOf(picked.slot.time, locale) })}</span>
           <Link href={bookingHref(picked.ground.slug, picked.slot)} className="inline-flex min-h-11 items-center bg-brand px-4 text-sm font-bold text-white hover:bg-brand-hover">
             {t("continue")}

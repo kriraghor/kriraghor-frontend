@@ -197,7 +197,7 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
           <label htmlFor={`nr-${s.id}`} className="font-semibold">
             {t("notReceivedWhat")}
           </label>
-          <textarea id={`nr-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="border-2 border-line bg-surface p-3" data-testid="not-received-text" />
+          <textarea id={`nr-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="glass-card p-3" data-testid="not-received-text" />
           <p className="text-sm text-muted">{t("notReceivedNote", { closes: when(s.notReceivedClosesAt) || t("untilResolved") })}</p>
           <div>
             <Button busy={report.isPending} data-testid="not-received-send">

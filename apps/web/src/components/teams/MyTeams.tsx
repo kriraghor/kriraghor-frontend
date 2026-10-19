@@ -97,7 +97,7 @@ export function MyTeams() {
               {t("noTeams")}
             </p>
           ) : (
-            <ul className="divide-y-2 divide-line border-y-2 border-line" data-testid="my-teams">
+            <ul className="glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-teams">
               {list.data.items.map((team) => (
                 <li key={team.id}>
                   <Link href={`/me/teams/${team.id}`} className="flex items-center gap-3 py-3 hover:bg-surface-2" data-testid="my-team">
@@ -129,7 +129,7 @@ export function MyTeams() {
             <AddPhone />
           ) : (
             <form
-              className="flex flex-col gap-3 border-2 border-line bg-surface p-4"
+              className="flex flex-col gap-3 glass-card p-4"
               data-testid="create-team"
               onSubmit={(e) => {
                 e.preventDefault();
@@ -141,7 +141,7 @@ export function MyTeams() {
                 <label htmlFor="team-sport" className="text-sm font-semibold text-muted">
                   {t("sport")}
                 </label>
-                <select id="team-sport" className="min-h-12 border-2 border-line bg-surface px-3" value={form.sportKey} onChange={(e) => setForm({ ...form, sportKey: e.target.value })}>
+                <select id="team-sport" className="min-h-12 field px-3" value={form.sportKey} onChange={(e) => setForm({ ...form, sportKey: e.target.value })}>
                   {teamSports(sports.data ?? []).map((s) => (
                     <option key={s.key} value={s.key}>
                       {name(s)}

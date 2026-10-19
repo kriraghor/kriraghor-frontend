@@ -18,7 +18,13 @@
     "language": "বাংলা",
     "leaderboards": "Leaderboards",
     "myMatches": "My matches",
-    "events": "Showcases"
+    "events": "Showcases",
+    "skip": "Skip to content",
+    "homeLabel": "Kriraghor Esports home",
+    "main": "Main",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "quick": "Quick links"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -497,5 +503,22 @@
       "votes": "{n, plural, one {# vote} other {# votes}}",
       "failed": "Something went wrong. Try again."
     }
+  },
+  "footer": {
+    "homeLabel": "Kriraghor Esports home",
+    "brand": "Kriraghor Esports",
+    "tagline": "PUBG Mobile and Free Fire events with real prizes, held safely until results are final.",
+    "play": "Play",
+    "events": "Events",
+    "showcases": "Showcases",
+    "leaderboards": "Leaderboards",
+    "myMatches": "My matches",
+    "help": "Help",
+    "fairPlay": "Fair play rules",
+    "refunds": "Refund policy",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "kriraghor": "Kriraghor.com",
+    "legal": "© 2026 Kriraghor, Dhaka."
   }
 }

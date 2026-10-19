@@ -70,7 +70,7 @@ export function VerificationPage() {
             <span className={`border-2 px-3 py-1 text-sm font-bold ${BADGE_CLS[q.data.badge]}`}>{t(`badge.${q.data.badge}`)}</span>
             <span className="text-sm text-muted">{t("progress", { approved: q.data.progress.approved, total: q.data.progress.total })}</span>
           </div>
-          <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="kyc-items">
+          <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="kyc-items">
             {q.data.items.map((i) => (
               <ItemRow key={i.key} item={i} />
             ))}
@@ -198,7 +198,7 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
     >
       <label className="block">
         <span className="text-sm font-semibold text-muted">{t("legalName")}</span>
-        <input value={legalName} onChange={(e) => setLegalName(e.target.value)} autoComplete="name" minLength={3} maxLength={120} className="mt-1 min-h-12 w-full border-2 border-line bg-surface px-3 text-base" required />
+        <input value={legalName} onChange={(e) => setLegalName(e.target.value)} autoComplete="name" minLength={3} maxLength={120} className="mt-1 min-h-12 w-full field px-3 text-base" required />
         <span className="text-xs text-muted">{t("legalNameHelp")}</span>
       </label>
       <label className="block">
@@ -210,7 +210,7 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
           autoComplete="off"
           aria-invalid={number.length > 0 && !nidLooksValid(number)}
           aria-describedby="nid-help"
-          className="mt-1 min-h-12 w-full border-2 border-line bg-surface px-3 font-mono text-lg"
+          className="mt-1 min-h-12 w-full field px-3 font-mono text-lg"
           required
         />
         <span id="nid-help" className={`text-xs ${number.length > 0 && !nidLooksValid(number) ? "text-danger" : "text-muted"}`}>
@@ -219,7 +219,7 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
       </label>
       <label className="block">
         <span className="text-sm font-semibold text-muted">{t("dob")}</span>
-        <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} className="mt-1 min-h-12 border-2 border-line bg-surface px-3 text-base" required />
+        <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} className="mt-1 min-h-12 field px-3 text-base" required />
       </label>
       <fieldset>
         <legend className="text-sm font-semibold text-muted">{t("files")}</legend>

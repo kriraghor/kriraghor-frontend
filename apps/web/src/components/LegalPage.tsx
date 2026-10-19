@@ -11,13 +11,13 @@ export async function LegalPage({ doc, locale }: { doc: LegalDoc; locale: string
   const updated = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Dhaka" }).format(new Date(`${LEGAL_VERSION.updated}T12:00:00+06:00`));
   return (
     <article className="mx-auto max-w-[860px] px-5 py-12" data-testid="legal-page">
-      <p className="border-l-4 border-amber-500 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 dark:bg-amber-900/20 dark:text-amber-100" role="note">
+      <p className="rounded-2xl border-l-4 border-amber-500 bg-amber-50/80 px-4 py-3 text-sm font-semibold text-amber-900 backdrop-blur dark:bg-amber-900/20 dark:text-amber-100" role="note">
         {t("draft")}
       </p>
       <h1 className="mt-6 text-4xl font-extrabold">{doc.title}</h1>
       <p className="mt-2 text-sm text-muted">{t("version", { version: LEGAL_VERSION.version, updated })}</p>
       <p className="mt-6 max-w-[65ch] text-lg">{doc.intro}</p>
-      <nav aria-label={t("contents")} className="mt-8 border-y-2 border-line py-4 print:hidden">
+      <nav aria-label={t("contents")} className="glass-card mt-8 p-5 print:hidden">
         <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-muted">{t("contents")}</h2>
         <ol className="mt-2 grid gap-x-6 sm:grid-cols-2">
           {doc.sections.map((s, i) => (

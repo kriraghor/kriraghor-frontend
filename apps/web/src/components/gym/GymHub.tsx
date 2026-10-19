@@ -80,7 +80,7 @@ export function GymHub() {
             <div className="flex flex-wrap items-end gap-3">
               <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
                 {t("area")}
-                <select value={areaId ?? ""} onChange={(e) => go({ areaId: e.target.value || undefined })} className="min-h-11 border-2 border-line bg-surface px-3 text-ink">
+                <select value={areaId ?? ""} onChange={(e) => go({ areaId: e.target.value || undefined })} className="min-h-11 field px-3 text-ink">
                   <option value="">{t("anyArea")}</option>
                   {(areas.data?.items ?? []).map((a) => (
                     <option key={a.id} value={a.id}>
@@ -91,7 +91,7 @@ export function GymHub() {
               </label>
               <label className="ml-auto flex flex-col gap-1 text-sm font-semibold text-muted">
                 {t("sortBy")}
-                <select value={sort} onChange={(e) => go({ sort: e.target.value })} className="min-h-11 border-2 border-line bg-surface px-3 text-ink">
+                <select value={sort} onChange={(e) => go({ sort: e.target.value })} className="min-h-11 field px-3 text-ink">
                   {(["price", "rating", "newest"] as const).map((s) => (
                     <option key={s} value={s}>
                       {t(`sort.${s}`)}
@@ -132,7 +132,7 @@ export function GymHub() {
               {trainers.data.items.map((tr) => {
                 return (
                   <li key={tr.id}>
-                    <Link href={`/hiring/${tr.slug}`} className="flex h-full flex-col border-2 border-line bg-surface p-5 hover:border-brand">
+                    <Link href={`/hiring/${tr.slug}`} className="flex h-full flex-col glass-card p-5 hover:border-brand">
                       <span className="text-xs font-bold uppercase tracking-wide text-brand">{t("verifiedCoach")}</span>
                       <span className="mt-1 text-xl font-extrabold">{tr.name}</span>
                       <span className="mt-1 text-sm text-muted">{tr.headline}</span>

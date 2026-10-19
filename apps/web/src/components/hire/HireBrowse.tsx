@@ -95,7 +95,7 @@ export function HireBrowse() {
               {t("search")}
             </label>
             <div className="flex">
-              <input id="hire-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("searchHint")} className="min-h-12 w-full border-2 border-line bg-surface px-3 text-base text-ink focus:border-brand" />
+              <input id="hire-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("searchHint")} className="min-h-12 w-full field px-3 text-base text-ink focus:border-brand" />
               <button type="submit" className="min-h-12 border-2 border-l-0 border-line px-3 font-bold">
                 {t("go")}
               </button>
@@ -138,7 +138,7 @@ export function HireBrowse() {
           </fieldset>
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("baseArea")}
-            <select value={f.areaId ?? ""} onChange={(e) => go({ ...f, areaId: e.target.value || undefined })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink">
+            <select value={f.areaId ?? ""} onChange={(e) => go({ ...f, areaId: e.target.value || undefined })} className="min-h-12 field px-3 text-base text-ink">
               <option value="">{t("anyArea")}</option>
               {(areas.data?.items ?? []).map((a) => (
                 <option key={a.id} value={a.id}>
@@ -168,7 +168,7 @@ export function HireBrowse() {
             </p>
             <label className="ml-auto flex items-center gap-2 text-sm font-semibold text-muted">
               {t("sortBy")}
-              <select value={f.sort ?? "rating"} onChange={(e) => go({ ...f, sort: e.target.value as Filters["sort"] })} className="min-h-11 border-2 border-line bg-surface px-2 text-ink">
+              <select value={f.sort ?? "rating"} onChange={(e) => go({ ...f, sort: e.target.value as Filters["sort"] })} className="min-h-11 field px-2 text-ink">
                 {SORTS.map((s) => (
                   <option key={s} value={s}>
                     {t(`sort.${s}`)}

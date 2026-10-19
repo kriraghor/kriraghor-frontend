@@ -38,7 +38,7 @@ export function Sparkline({ points, label }: { points: (number | null)[]; label:
 
 export function KpiTile({ label, value, delta, spark, note, help, testId }: { label: string; value: string; delta?: ReactNode; spark?: (number | null)[] | null; note?: string | null; help?: string; testId?: string }) {
   return (
-    <div className="flex flex-col gap-1 border-2 border-line bg-surface p-4" data-testid={testId}>
+    <div className="flex flex-col gap-1 glass-card p-4" data-testid={testId}>
       <p className="text-xs font-bold uppercase tracking-wide text-muted" title={help}>
         {label}
       </p>
@@ -75,7 +75,7 @@ export function ChartLine({ title, points, compare, format, labelOf }: { title: 
   const y = (v: number) => hgt - 24 - (v / max) * (hgt - 40);
   const path = (vals: number[]) => vals.map((v, i) => `${i === 0 ? "M" : "L"}${(pad + i * step).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
   return (
-    <figure className="border-2 border-line bg-surface p-4">
+    <figure className="glass-card p-4">
       <figcaption className="font-bold">{title}</figcaption>
       <svg viewBox={`0 0 ${w} ${hgt}`} className="mt-2 h-44 w-full" aria-hidden="true">
         {compare ? <path d={path(compare)} fill="none" stroke="var(--color-muted)" strokeDasharray="4 4" strokeWidth="2" /> : null}
@@ -94,7 +94,7 @@ export function ChartLine({ title, points, compare, format, labelOf }: { title: 
 export function ChartBars({ title, bars, format }: { title: string; bars: { label: string; value: number }[]; format: (n: number) => string }) {
   const max = Math.max(1, ...bars.map((b) => b.value));
   return (
-    <figure className="border-2 border-line bg-surface p-4">
+    <figure className="glass-card p-4">
       <figcaption className="font-bold">{title}</figcaption>
       <div className="mt-3 flex h-40 items-end gap-1" aria-hidden="true">
         {bars.map((b) => (
@@ -113,7 +113,7 @@ export function ChartBars({ title, bars, format }: { title: string; bars: { labe
 export function ChartRank({ title, items, format, empty }: { title: string; items: { label: string; value: number }[]; format: (n: number) => string; empty: string }) {
   const max = Math.max(1, ...items.map((i) => i.value));
   return (
-    <figure className="border-2 border-line bg-surface p-4">
+    <figure className="glass-card p-4">
       <figcaption className="font-bold">{title}</figcaption>
       {items.length ? (
         <ol className="mt-3 space-y-2">
@@ -137,7 +137,7 @@ const SPLIT = ["var(--color-brand)", "#d97706", "#2563eb", "#7c3aed", "#0891b2",
 export function ChartSplit({ title, parts, format, empty }: { title: string; parts: { label: string; value: number }[]; format: (n: number) => string; empty: string }) {
   const total = parts.reduce((n, p) => n + p.value, 0);
   return (
-    <figure className="border-2 border-line bg-surface p-4">
+    <figure className="glass-card p-4">
       <figcaption className="font-bold">{title}</figcaption>
       {total > 0 ? (
         <>

@@ -45,7 +45,7 @@ export function MyEligibility() {
       <h1 className="mt-4 text-3xl font-extrabold">{t("eligibility")}</h1>
       <p className="mt-1 text-muted">{t("eligibilityIntro")}</p>
 
-      <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="readiness">
+      <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="readiness">
         {q.data.readiness.map((c) => {
           const href = fixHref(c.fix);
           return (

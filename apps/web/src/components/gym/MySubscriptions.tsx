@@ -144,7 +144,7 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
           <label htmlFor={`problem-${s.id}`} className="text-sm font-semibold">
             {t("problemLabel")}
           </label>
-          <textarea id={`problem-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="border-2 border-line bg-surface p-2" />
+          <textarea id={`problem-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="glass-card p-2" />
           <p className="text-sm text-muted">{t("problemHint")}</p>
           <div className="flex gap-2">
             <button type="submit" disabled={problem.isPending || statement.trim().length < 10} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50">

@@ -58,7 +58,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           <ol className="mt-6 flex flex-col gap-5">
             {steps.map((s) => (
               <li key={s.key} className="rv flex gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center bg-brand-soft text-brand-text">{s.icon}</span>
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-text">{s.icon}</span>
                 <span>
                   <h3 className="text-lg font-extrabold">{t(`how.${s.key}.title`)}</h3>
                   <p className="text-muted">{t(`how.${s.key}.body`)}</p>
@@ -84,16 +84,16 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           </Link>
         </div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr] md:grid-rows-2">
-          <Link href="/shop" className="rv group relative flex min-h-72 flex-col justify-end overflow-hidden bg-band p-6 text-white sm:col-span-2 md:col-span-1 md:row-span-2">
+          <Link href="/shop" className="rv group relative flex min-h-72 flex-col justify-end overflow-hidden rounded-[24px] bg-band p-6 text-white sm:col-span-2 md:col-span-1 md:row-span-2">
             <Image src={PHOTOS.shopGear} alt="" fill sizes="(min-width: 900px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
             <span className="absolute inset-0 bg-gradient-to-t from-band via-band/40 to-transparent" aria-hidden />
-            <span className="relative">
+            <span className="glass-band relative self-start rounded-2xl p-4">
               <SoccerBall size={36} aria-hidden />
               <h3 className="mt-3 text-2xl font-extrabold">{t("shop.gear.title")}</h3>
               <p className="mt-1 text-white/85">{t("shop.gear.body")}</p>
             </span>
           </Link>
-          <Link href="/shop?category=supplements" className="rv group grid min-h-44 overflow-hidden border-2 border-line bg-surface hover:border-ink sm:grid-cols-[1fr_40%] md:col-span-2">
+          <Link href="/shop?category=supplements" className="rv group grid min-h-44 overflow-hidden glass-card hover:border-ink sm:grid-cols-[1fr_40%] md:col-span-2">
             <span className="flex flex-col p-5">
               <Pill size={32} className="text-brand-text" aria-hidden />
               <h3 className="mt-auto pt-6 text-xl font-extrabold">{t("shop.supplements.title")}</h3>
@@ -103,7 +103,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
               <Image src={PHOTOS.shopSupplements} alt="" fill sizes="20vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
             </span>
           </Link>
-          <Link href="/shop?category=gym" className="rv group relative flex min-h-44 flex-col overflow-hidden bg-band p-5 text-white">
+          <Link href="/shop?category=gym" className="rv group relative flex min-h-44 flex-col overflow-hidden rounded-[24px] bg-band p-5 text-white">
             <Image src={PHOTOS.shopGymGear} alt="" fill sizes="(min-width: 900px) 25vw, 50vw" className="object-cover opacity-70 transition-transform duration-500 group-hover:scale-105" />
             <span className="absolute inset-0 bg-gradient-to-t from-band/90 to-transparent" aria-hidden />
             <Barbell size={32} className="relative" aria-hidden />
@@ -111,7 +111,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
             <p className="relative mt-1 text-white/85">{t("shop.gym.body")}</p>
           </Link>
           {/* Used gear is M13 step 2: shown honestly as coming, not as a link to nowhere. */}
-          <div className="rv flex min-h-44 flex-col bg-band p-5 text-band-text">
+          <div className="rv flex min-h-44 flex-col rounded-[24px] bg-band p-5 text-band-text">
             <span className="flex items-start justify-between gap-2">
               <ArrowsClockwise size={32} className="text-prize" aria-hidden />
               <span className="rounded-pill border border-band-line px-3 py-1 text-xs font-bold uppercase">{t("soon")}</span>
@@ -124,7 +124,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
       <HomeHire />
 
-      <section className="mt-[72px] bg-gym text-white" id="gym" aria-labelledby="gym-title" data-testid="home-gym-band">
+      <section className="mx-auto mt-[72px] max-w-[1320px] overflow-hidden bg-gym text-white md:rounded-[32px]" id="gym" aria-labelledby="gym-title" data-testid="home-gym-band">
         <div className="grid md:grid-cols-[2fr_3fr]">
           <div className="relative min-h-64">
             <Image src={PHOTOS.gym} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" />
@@ -154,9 +154,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           {t("business.title")}
         </h2>
         <p className="mt-2 max-w-[60ch] text-muted">{t("business.sub")}</p>
-        <div className="mt-6 grid border-t-2 border-line sm:grid-cols-2 md:grid-cols-4">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {business.map((b) => (
-            <Link key={b.key} href={b.href} className="rv flex flex-col gap-2 border-b-2 border-line py-5 pr-5 hover:text-brand-text md:border-b-0 md:border-r-2 md:pl-5 md:first:pl-0 md:last:border-r-0">
+            <Link key={b.key} href={b.href} className="rv glass-card flex flex-col gap-2 p-5 hover:text-brand-text">
               <b className="text-lg">{t(`business.${b.key}.title`)}</b>
               <span className="text-muted">{t(`business.${b.key}.body`)}</span>
               <em className="mt-auto inline-flex items-center gap-1 pt-2 font-bold not-italic text-brand-text">
@@ -167,7 +167,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         </div>
         <dl className="mt-12 grid gap-6 md:grid-cols-3">
           {trust.map((x) => (
-            <div key={x.key} className="rv">
+            <div key={x.key} className="rv glass-card p-5">
               <dt className="flex items-center gap-2 text-lg font-extrabold">
                 <span className="text-brand-text">{x.icon}</span>
                 {t(`trust.${x.key}.title`)}

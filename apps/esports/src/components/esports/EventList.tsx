@@ -12,7 +12,7 @@ export function EventCard({ e, big = false }: { e: Card; big?: boolean }) {
   const t = useTranslations("esports.events");
   const locale = useLocale();
   return (
-    <Link href={`/showcases/${e.slug}`} className="group block border-2 border-line bg-surface hover:border-line-strong" style={{ borderTopColor: e.accentHex, borderTopWidth: 6 }} data-testid="event-card">
+    <Link href={`/showcases/${e.slug}`} className="group block glass-card hover:border-line-strong" style={{ borderTopColor: e.accentHex, borderTopWidth: 6 }} data-testid="event-card">
       {e.bannerUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={e.bannerUrl} alt="" className={`w-full object-cover ${big ? "h-44" : "h-32"}`} />

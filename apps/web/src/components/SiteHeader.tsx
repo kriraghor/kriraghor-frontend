@@ -51,7 +51,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
   const switchLanguage = () => router.replace(pathname, { locale: locale === "en" ? "bn" : "en" });
 
   return (
-    <header className="sticky top-0 z-40 border-b-2 border-line bg-bg" onKeyDown={(e) => (e.key === "Escape" && menuOpen ? closeMenu() : undefined)}>
+    <header className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150" onKeyDown={(e) => (e.key === "Escape" && menuOpen ? closeMenu() : undefined)}>
       <div className="flex h-1" aria-hidden>
         <span className="w-[72%] bg-brand" />
         <span className="flex-1 bg-amber-500" />
@@ -105,19 +105,19 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
         </div>
       </div>
       {menuOpen ? (
-        <div id="site-menu" className="border-t-2 border-line bg-bg md:hidden" data-testid="site-menu">
+        <div id="site-menu" className="border-t border-[var(--glass-edge)] md:hidden" data-testid="site-menu">
           <nav aria-label={t("nav.main")} className="mx-auto flex max-w-[1320px] flex-col px-5 py-3">
             {nav.map((item) => (
-              <NavLink key={item.href} href={item.href} current={isCurrent(item.href)} onClick={closeMenu} className="flex min-h-12 items-center border-b border-line text-lg font-semibold">
+              <NavLink key={item.href} href={item.href} current={isCurrent(item.href)} onClick={closeMenu} className="flex min-h-12 items-center border-b border-[var(--glass-edge)] text-lg font-semibold">
                 {t(`nav.${item.key}`)}
               </NavLink>
             ))}
             {status === "signed_in" ? (
               <>
-                <Link href={meHref} onClick={closeMenu} className="flex min-h-12 items-center border-b border-line text-lg font-semibold">
+                <Link href={meHref} onClick={closeMenu} className="flex min-h-12 items-center border-b border-[var(--glass-edge)] text-lg font-semibold">
                   {t("nav.me")}
                 </Link>
-                <button type="button" onClick={() => (closeMenu(), void signOut())} className="flex min-h-12 items-center border-b border-line text-left text-lg font-semibold">
+                <button type="button" onClick={() => (closeMenu(), void signOut())} className="flex min-h-12 items-center border-b border-[var(--glass-edge)] text-left text-lg font-semibold">
                   {t("nav.signOut")}
                 </button>
               </>

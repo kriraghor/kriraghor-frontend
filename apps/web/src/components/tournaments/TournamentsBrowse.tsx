@@ -69,7 +69,7 @@ export function TournamentsBrowse() {
           <label htmlFor="tournament-search" className="sr-only">
             {t("search")}
           </label>
-          <input id="tournament-search" value={text} onChange={(e) => setText(e.target.value)} placeholder={t("search")} className="min-h-11 border-2 border-line bg-surface px-3" />
+          <input id="tournament-search" value={text} onChange={(e) => setText(e.target.value)} placeholder={t("search")} className="min-h-11 field px-3" />
         </form>
       </div>
 

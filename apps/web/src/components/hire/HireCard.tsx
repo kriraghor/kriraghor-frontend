@@ -12,7 +12,7 @@ export function HireCard({ card }: { card: Card }) {
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   return (
     <li>
-      <Link href={`/hiring/${card.slug}`} className="flex h-full flex-col border-2 border-line bg-surface p-4 hover:border-brand" data-testid="hire-card">
+      <Link href={`/hiring/${card.slug}`} className="flex h-full flex-col glass-card p-4 hover:border-brand" data-testid="hire-card">
         <span className="text-xs font-bold uppercase tracking-wide text-muted">{name(card.role)}</span>
         <span className="mt-1 text-lg font-extrabold leading-snug">{card.name}</span>
         <span className="mt-1 text-sm">{card.headline}</span>

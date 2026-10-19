@@ -46,7 +46,7 @@ export function MyDisputes() {
           </Link>
         </div>
       ) : null}
-      <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="my-disputes">
+      <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-disputes">
         {items.map((d) => (
           <li key={d.code}>
             <Link href={`/me/disputes/${d.code}`} className="flex flex-wrap items-center justify-between gap-3 py-4 hover:bg-surface-2">

@@ -98,7 +98,7 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
             <label htmlFor="org-about" className="text-sm font-semibold text-muted">
               {t("about")}
             </label>
-            <textarea id="org-about" value={about} onChange={(e) => setAbout(e.target.value)} maxLength={1000} rows={3} className="border-2 border-line bg-surface p-3" />
+            <textarea id="org-about" value={about} onChange={(e) => setAbout(e.target.value)} maxLength={1000} rows={3} className="glass-card p-3" />
           </div>
           <Field id="org-email" type="email" label={t("email")} value={email} onChange={(e) => setEmail(e.target.value)} maxLength={160} autoComplete="email" />
           <Button type="submit" busy={create.isPending} data-testid="org-create">

@@ -67,7 +67,7 @@ export function RegisterFlow({ slug }: { slug: string }) {
         ← {locale === "bn" ? d.titleBn : d.titleEn}
       </Link>
       <h1 className="mt-3 text-3xl font-extrabold">{t("reg.title")}</h1>
-      <div className="mt-4 flex flex-wrap gap-6 border-y-2 border-line py-4">
+      <div className="glass-card mt-4 flex flex-wrap gap-6 p-4">
         <div>
           <p className="text-xs uppercase text-muted">{t("entryFee")}</p>
           <p className="text-xl font-extrabold">{d.entryFee.amount === 0 ? t("free") : takaOf(d.entryFee, locale)}</p>
@@ -94,7 +94,7 @@ export function RegisterFlow({ slug }: { slug: string }) {
           <Empty title={t("reg.needUid")} body={t("reg.needUidBody")} action={<LinkButton href="/me/esports">{t("home.addUid")}</LinkButton>} />
         </div>
       ) : d.entryUnit === "player" ? (
-        <div className="mt-6 border-2 border-line bg-surface p-5">
+        <div className="mt-6 glass-card p-5">
           <p className="text-sm text-muted">{t("reg.playingAs")}</p>
           <p className="mt-1 text-xl font-extrabold">
             {mine.ign} <span className="font-mono text-base text-muted">{mine.uidMasked}</span>
@@ -108,7 +108,7 @@ export function RegisterFlow({ slug }: { slug: string }) {
             <>
               <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
                 {t("reg.squad")}
-                <select value={squadId} onChange={(e) => (setSquadId(e.target.value), setPlayers([]), setSubs([]))} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink">
+                <select value={squadId} onChange={(e) => (setSquadId(e.target.value), setPlayers([]), setSubs([]))} className="min-h-12 field px-3 text-base text-ink">
                   <option value="">{t("reg.chooseSquad")}</option>
                   {mySquads.map((s) => (
                     <option key={s.id} value={s.id}>

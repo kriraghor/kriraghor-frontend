@@ -78,7 +78,7 @@ export function CartView() {
                         <select
                           value={l.qty}
                           onChange={(e) => qty.mutate({ v: l.variantId, n: Number(e.target.value) })}
-                          className="min-h-11 border-2 border-line bg-surface px-2"
+                          className="min-h-11 field px-2"
                           disabled={qty.isPending || (l.maxQty ?? 0) < 1}
                           data-testid="cart-qty"
                         >

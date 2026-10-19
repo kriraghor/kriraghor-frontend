@@ -52,7 +52,7 @@ export function MemberOverview() {
         </div>
       </div>
       {actions.data?.items.length ? (
-        <ul className="divide-y-2 divide-line border-y-2 border-line" data-testid="member-actions">
+        <ul className="glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="member-actions">
           {actions.data.items.map((a) => (
             <li key={`${a.key}-${a.href}`}>
               <Link href={a.href} className="flex min-h-12 items-center gap-3 py-2 hover:bg-surface-2">

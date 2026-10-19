@@ -98,7 +98,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
       <div className="mt-4 grid grid-cols-2 gap-2">
         <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
           {t("court")}
-          <select className="min-h-11 border-2 border-line bg-surface px-2 text-ink" value={court?.id} onChange={(e) => pick(() => setCourtId(e.target.value))}>
+          <select className="min-h-11 field px-2 text-ink" value={court?.id} onChange={(e) => pick(() => setCourtId(e.target.value))}>
             {a.courts.map((k) => (
               <option key={k.id} value={k.id}>
                 {k.name}
@@ -108,7 +108,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
         </label>
         <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
           {t("length")}
-          <select className="min-h-11 border-2 border-line bg-surface px-2 text-ink" value={length} onChange={(e) => pick(() => setMinutes(Number(e.target.value)))}>
+          <select className="min-h-11 field px-2 text-ink" value={length} onChange={(e) => pick(() => setMinutes(Number(e.target.value)))}>
             {a.lengths.map((m) => (
               <option key={m} value={m}>
                 {t("minutes", { n: m })}

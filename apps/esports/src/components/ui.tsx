@@ -11,7 +11,7 @@ export function Field({ label, id, hint, error, ...input }: InputHTMLAttributes<
       </label>
       <input
         id={id}
-        className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink focus:border-brand"
+        className="min-h-12 field px-3 text-base text-ink focus:border-brand"
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
         {...input}

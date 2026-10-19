@@ -128,7 +128,7 @@ export function TeamView({ id }: { id: string }) {
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">
         <div>
           <h2 className="text-xl font-extrabold">{t("members")}</h2>
-          <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="team-members">
+          <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="team-members">
             {sortMembers(team.members).map((m) => (
               <li key={m.userId} className="flex flex-wrap items-center gap-3 py-3" data-testid="team-member">
                 <span className="grid size-10 place-items-center border-2 border-line font-mono font-bold tabular-nums" aria-label={t("jersey")}>
@@ -192,7 +192,7 @@ export function TeamView({ id }: { id: string }) {
           {team.can.invite && team.invites.length ? (
             <>
               <h2 className="mt-8 text-xl font-extrabold">{t("pendingInvites")}</h2>
-              <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="team-pending">
+              <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="team-pending">
                 {team.invites.map((i) => (
                   <li key={i.id} className="flex flex-wrap items-center gap-3 py-3">
                     <span className="min-w-0 flex-1">
@@ -215,7 +215,7 @@ export function TeamView({ id }: { id: string }) {
         <aside className="flex flex-col gap-6">
           {team.can.invite ? (
             <form
-              className="flex flex-col gap-3 border-2 border-line bg-surface p-4"
+              className="flex flex-col gap-3 glass-card p-4"
               data-testid="invite-form"
               onSubmit={(e) => {
                 e.preventDefault();

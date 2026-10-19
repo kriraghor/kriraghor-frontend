@@ -57,7 +57,7 @@ export function MyTournaments() {
           {t("noRegistrations")}
         </p>
       ) : (
-        <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="my-registrations">
+        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-registrations">
           {q.data.items.map((r) => (
             <li key={r.id} className="flex flex-wrap items-center gap-3 py-4" data-testid="my-registration">
               <span className="min-w-0 flex-1">

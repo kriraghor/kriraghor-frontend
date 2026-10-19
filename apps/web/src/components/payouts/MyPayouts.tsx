@@ -76,7 +76,7 @@ export function MyPayouts() {
             </div>
           ) : null}
           <dl className="mt-6 grid gap-3 sm:grid-cols-3" data-testid="payout-summary">
-            <div className="border-2 border-line bg-surface p-4">
+            <div className="glass-card p-4">
               <dt className="text-sm font-semibold text-muted">{t("nextPayout")}</dt>
               <dd className="text-2xl font-extrabold tabular-nums">{formatTaka((sum?.nextPayout.projected ?? 0) + (sum?.inPayouts ?? 0), locale)}</dd>
               <dd className="text-xs text-muted">
@@ -84,11 +84,11 @@ export function MyPayouts() {
                 {sum && sum.nextPayout.projected === 0 && sum.inPayouts === 0 ? ` · ${t("minimum", { amount: formatTaka(sum.nextPayout.minimum, locale) })}` : ""}
               </dd>
             </div>
-            <div className="border-2 border-line bg-surface p-4">
+            <div className="glass-card p-4">
               <dt className="text-sm font-semibold text-muted">{t("onHold")}</dt>
               <dd className="text-2xl font-extrabold tabular-nums">{formatTaka(Math.max(0, sum?.onHold.amount ?? 0), locale)}</dd>
             </div>
-            <div className="border-2 border-line bg-surface p-4">
+            <div className="glass-card p-4">
               <dt className="text-sm font-semibold text-muted">{t("paidThisMonth")}</dt>
               <dd className="text-2xl font-extrabold tabular-nums">{formatTaka(sum?.paidThisMonth ?? 0, locale)}</dd>
               {sum?.feesOwed ? <dd className="text-xs text-danger">{t("feesOwed", { amount: formatTaka(sum.feesOwed, locale) })}</dd> : null}
@@ -99,7 +99,7 @@ export function MyPayouts() {
           {!items.length ? (
             <p className="mt-3 text-muted">{t("empty")}</p>
           ) : (
-            <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="my-payouts">
+            <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-payouts">
               {items.map((p) => (
                 <li key={p.id} className="py-4">
                   <button type="button" onClick={() => setOpen(open === p.id ? null : p.id)} aria-expanded={open === p.id} className="flex w-full flex-wrap items-baseline gap-x-4 gap-y-1 text-left">

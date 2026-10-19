@@ -58,7 +58,7 @@ export function NotificationCentre({ settingsHref, signInHref }: { settingsHref?
       <div className="mt-6 flex flex-wrap items-end gap-3">
         <label className="flex flex-col text-xs font-semibold text-muted">
           {t("category")}
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="min-h-11 border-2 border-line bg-surface px-3 text-sm text-ink">
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className="min-h-11 field px-3 text-sm text-ink">
             <option value="">{t("allCategories")}</option>
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -85,7 +85,7 @@ export function NotificationCentre({ settingsHref, signInHref }: { settingsHref?
         </div>
       </div>
 
-      <div className="mt-4 border-2 border-line bg-surface">
+      <div className="mt-4 glass-card">
         {q.isPending ? (
           <p className="p-5 text-muted" role="status">
             {t("loading")}

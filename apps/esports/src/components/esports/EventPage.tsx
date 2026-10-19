@@ -280,7 +280,7 @@ function Road({ bundle }: { bundle: EventBundle }) {
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-muted">{t("qualified", { n: list.filter((x) => x.status !== "missed").length })}</h3>
               {list.length ? (
-                <ul className="mt-2 divide-y divide-line border-y-2 border-line" data-testid="event-qualified">
+                <ul className="mt-2 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="event-qualified">
                   {list.map((x) => (
                     <li key={x.id} className="flex items-center gap-2 py-2 text-sm">
                       <span className="font-semibold">{x.entry.name}</span>

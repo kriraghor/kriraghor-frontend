@@ -81,7 +81,7 @@ export function BusinessPage() {
           </Notice>
         </div>
       ) : !v.roleStatus || v.roleStatus === "withdrawn" ? (
-        <div className="mt-6 border-2 border-line bg-surface p-5" data-testid="business-apply">
+        <div className="mt-6 glass-card p-5" data-testid="business-apply">
           <p className="font-bold">{t(`role.${role}.applyTitle`)}</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">
             {v.unlocks.map((u) => (
@@ -192,7 +192,7 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
   }
 
   return (
-    <li className="border-2 border-line bg-surface p-4" data-testid={`business-item-${item.key}`}>
+    <li className="glass-card p-4" data-testid={`business-item-${item.key}`}>
       <div className="flex flex-wrap items-center gap-3">
         <span className="font-bold">{item.label}</span>
         {item.required === "optional" ? <span className="text-xs text-muted">{t("optional")}</span> : null}
@@ -230,7 +230,7 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
               {f.label}
               {f.required ? null : <span className="text-xs font-normal">{t("optional")}</span>}
               {isCredential && f.key === "hireRole" ? (
-                <select value={values.hireRole ?? ""} onChange={(e) => setValues({ ...values, hireRole: e.target.value, level: "" })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" required data-testid="credential-role">
+                <select value={values.hireRole ?? ""} onChange={(e) => setValues({ ...values, hireRole: e.target.value, level: "" })} className="min-h-12 field px-3 text-base text-ink" required data-testid="credential-role">
                   <option value="">{t("choose")}</option>
                   {hireRoles.map((r) => (
                     <option key={r.key} value={r.key}>
@@ -239,7 +239,7 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
                   ))}
                 </select>
               ) : isCredential && f.key === "level" ? (
-                <select value={values.level ?? ""} onChange={(e) => setValues({ ...values, level: e.target.value })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" required data-testid="credential-level">
+                <select value={values.level ?? ""} onChange={(e) => setValues({ ...values, level: e.target.value })} className="min-h-12 field px-3 text-base text-ink" required data-testid="credential-level">
                   <option value="">{t("choose")}</option>
                   {(hireRoles.find((r) => r.key === values.hireRole)?.credentialTiers ?? []).map((x) => (
                     <option key={x.level} value={x.level}>
@@ -248,7 +248,7 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
                   ))}
                 </select>
               ) : f.type === "enum" ? (
-                <select value={values[f.key] ?? ""} onChange={(e) => setValues({ ...values, [f.key]: e.target.value })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" required={f.required}>
+                <select value={values[f.key] ?? ""} onChange={(e) => setValues({ ...values, [f.key]: e.target.value })} className="min-h-12 field px-3 text-base text-ink" required={f.required}>
                   <option value="">{t("choose")}</option>
                   {(f.options ?? []).map((o) => (
                     <option key={o} value={o}>
@@ -262,7 +262,7 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
                   inputMode={f.type === "digits" ? "numeric" : undefined}
                   value={values[f.key] ?? ""}
                   onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
-                  className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink"
+                  className="min-h-12 field px-3 text-base text-ink"
                   required={f.required}
                 />
               )}
@@ -270,7 +270,7 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
           ))}
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("file.label")}
-            <input type="file" accept="image/jpeg,image/png,application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 border-2 border-line bg-surface px-3 py-2 text-sm" data-testid={`file-${item.key}`} />
+            <input type="file" accept="image/jpeg,image/png,application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 field px-3 py-2 text-sm" data-testid={`file-${item.key}`} />
             <span className="text-xs font-normal">{t("file.hint")}</span>
           </label>
           {problem ? <Notice tone="error">{problem}</Notice> : null}

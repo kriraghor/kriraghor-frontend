@@ -80,7 +80,7 @@ export function GroundDetail({ slug }: { slug: string }) {
           <h2 className="mt-8 text-2xl font-extrabold">{t("courtsTitle")}</h2>
           <ul className="mt-3 grid gap-3 sm:grid-cols-2" data-testid="ground-courts">
             {g.courts.map((c) => (
-              <li key={c.id} className="border-2 border-line bg-surface p-4">
+              <li key={c.id} className="glass-card p-4">
                 <p className="font-bold">{c.name}</p>
                 <p className="text-sm text-muted">
                   {c.sports.map(name).join(", ")}
@@ -153,7 +153,7 @@ export function GroundDetail({ slug }: { slug: string }) {
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start" data-testid="booking-aside">
-          <div className="border-2 border-line-strong bg-surface p-5">
+          <div className="glass-strong rounded-[24px] p-5">
             <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("priceRange")}</p>
             <p className="text-3xl font-extrabold tabular-nums">
               {money(p.fromPoisha)}–{money(p.toPoisha)}

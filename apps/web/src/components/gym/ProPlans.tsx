@@ -127,7 +127,7 @@ function NewPlan({ profiles }: { profiles: { id: string; headline: string }[] })
       {profiles.length > 1 ? (
         <label className="flex flex-col gap-1 text-sm font-semibold">
           {t("desk.profile")}
-          <select value={profileId} onChange={(e) => setProfileId(e.target.value)} className="min-h-11 border-2 border-line bg-surface px-3">
+          <select value={profileId} onChange={(e) => setProfileId(e.target.value)} className="min-h-11 field px-3">
             {profiles.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.headline}
@@ -156,7 +156,7 @@ function NewPlan({ profiles }: { profiles: { id: string; headline: string }[] })
       {where === "gym" ? (
         <label className="flex flex-col gap-1 text-sm font-semibold">
           {t("desk.planGym")}
-          <select value={gymId} onChange={(e) => setGymId(e.target.value)} required className="min-h-11 border-2 border-line bg-surface px-3">
+          <select value={gymId} onChange={(e) => setGymId(e.target.value)} required className="min-h-11 field px-3">
             <option value="">–</option>
             {(gyms.data?.items ?? []).map((g) => (
               <option key={g.id} value={g.id}>
@@ -171,7 +171,7 @@ function NewPlan({ profiles }: { profiles: { id: string; headline: string }[] })
       {where === "home" ? (
         <label className="flex flex-col gap-1 text-sm font-semibold">
           {t("desk.planArea")}
-          <select value={areaId} onChange={(e) => setAreaId(e.target.value)} required className="min-h-11 border-2 border-line bg-surface px-3">
+          <select value={areaId} onChange={(e) => setAreaId(e.target.value)} required className="min-h-11 field px-3">
             <option value="">–</option>
             {(areas.data?.items ?? []).map((a) => (
               <option key={a.id} value={a.id}>

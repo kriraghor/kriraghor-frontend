@@ -36,7 +36,7 @@ export function MyReports() {
       <div className="mt-6">
         <Gate next="/me/reports">
           {q.data && !q.data.items.length ? <p className="text-muted">{t("noReports")}</p> : null}
-          <ul className="divide-y-2 divide-line border-y-2 border-line">
+          <ul className="glass-card divide-y divide-[var(--glass-edge)] px-4">
             {q.data?.items.map((r) => (
               <li key={r.code} className="flex flex-wrap justify-between gap-3 py-3">
                 <span>
@@ -67,7 +67,7 @@ export function MyReviews() {
       <div className="mt-6">
         <Gate next="/me/reviews">
           {q.data && !q.data.items.length ? <p className="text-muted">{t("noReviews")}</p> : null}
-          <ul className="divide-y-2 divide-line border-y-2 border-line">
+          <ul className="glass-card divide-y divide-[var(--glass-edge)] px-4">
             {q.data?.items.map((r) => (
               <li key={r.id} className="py-3">
                 <div className="flex flex-wrap items-center gap-3">

@@ -13,7 +13,7 @@ export function GymCardItem({ card }: { card: GymCard }) {
   const money = (n: number) => formatTaka(n, locale);
   return (
     <li>
-      <Link href={`/gym/gyms/${card.slug}`} className="flex h-full flex-col border-2 border-line bg-surface hover:border-brand" data-testid="gym-card">
+      <Link href={`/gym/gyms/${card.slug}`} className="flex h-full flex-col glass-card hover:border-brand" data-testid="gym-card">
         {card.cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={card.cover} alt="" loading="lazy" className="aspect-[4/3] w-full object-cover" />

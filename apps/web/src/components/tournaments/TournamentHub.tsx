@@ -170,7 +170,7 @@ export function TournamentHub({ slug }: { slug: string }) {
               {byDay(h.fixtures.matches).map((d) => (
                 <div key={d.day ?? "tbc"}>
                   <h3 className="font-extrabold">{d.day ? dayLabel(d.day, locale) : t("dateTbc")}</h3>
-                  <ul className="mt-2 divide-y-2 divide-line border-y-2 border-line">
+                  <ul className="mt-2 glass-card divide-y divide-[var(--glass-edge)] px-4">
                     {d.matches.map((m) => (
                       <MatchRow key={m.id} m={m} hub={h} />
                     ))}
@@ -228,7 +228,7 @@ export function TournamentHub({ slug }: { slug: string }) {
               <div key={r.name} className="flex min-w-[240px] flex-col gap-3">
                 <h3 className="font-extrabold">{t(`round.${r.name}`, { n: r.name.replace("round_of_", "") })}</h3>
                 {r.matches.map((m) => (
-                  <div key={m.id} className="border-2 border-line bg-surface p-3 text-sm">
+                  <div key={m.id} className="glass-card p-3 text-sm">
                     <p className="font-mono text-xs text-muted">M{m.matchNo}</p>
                     <p>
                       <Side side={m.teamA} bold={m.result?.winnerTeamId === m.teamA.team?.id} />

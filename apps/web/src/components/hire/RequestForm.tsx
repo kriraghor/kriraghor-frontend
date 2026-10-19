@@ -102,16 +102,16 @@ export function RequestForm({ profile }: { profile: ProfilePage }) {
             <div className="mt-2 grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
                 {t("date")}
-                <input type="date" value={r.date} min={today} onChange={(e) => set(i, { date: e.target.value })} required className="min-h-12 border-2 border-line bg-surface px-2 text-base text-ink" />
+                <input type="date" value={r.date} min={today} onChange={(e) => set(i, { date: e.target.value })} required className="min-h-12 field px-2 text-base text-ink" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
                 {t("time")}
-                <input type="time" value={r.time} step={900} onChange={(e) => set(i, { time: e.target.value })} required className="min-h-12 border-2 border-line bg-surface px-2 text-base text-ink" />
+                <input type="time" value={r.time} step={900} onChange={(e) => set(i, { time: e.target.value })} required className="min-h-12 field px-2 text-base text-ink" />
               </label>
               {unit === "match" && profile.role.formatPriced ? (
                 <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
                   {t("format")}
-                  <select value={r.format} onChange={(e) => set(i, { format: e.target.value as Format })} className="min-h-12 border-2 border-line bg-surface px-2 text-base text-ink">
+                  <select value={r.format} onChange={(e) => set(i, { format: e.target.value as Format })} className="min-h-12 field px-2 text-base text-ink">
                     {profile.role.formats.map((f) => (
                       <option key={f} value={f}>
                         {f}
@@ -123,12 +123,12 @@ export function RequestForm({ profile }: { profile: ProfilePage }) {
               {unit === "hourly" ? (
                 <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
                   {t("hours")}
-                  <input type="number" min={1} max={12} step={0.5} value={r.hours} onChange={(e) => set(i, { hours: e.target.value })} required className="min-h-12 border-2 border-line bg-surface px-2 text-base text-ink" />
+                  <input type="number" min={1} max={12} step={0.5} value={r.hours} onChange={(e) => set(i, { hours: e.target.value })} required className="min-h-12 field px-2 text-base text-ink" />
                 </label>
               ) : null}
               <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
                 {t("venueArea")}
-                <select value={r.venueAreaId} onChange={(e) => set(i, { venueAreaId: e.target.value })} required className="min-h-12 border-2 border-line bg-surface px-2 text-base text-ink" data-testid="hire-venue-area">
+                <select value={r.venueAreaId} onChange={(e) => set(i, { venueAreaId: e.target.value })} required className="min-h-12 field px-2 text-base text-ink" data-testid="hire-venue-area">
                   <option value="">{t("choose")}</option>
                   {(areas.data?.items ?? []).map((a) => (
                     <option key={a.id} value={a.id}>
@@ -140,7 +140,7 @@ export function RequestForm({ profile }: { profile: ProfilePage }) {
             </div>
             <label className="mt-2 flex flex-col gap-1 text-sm font-semibold text-muted">
               {t("venue")}
-              <input value={r.venueText} onChange={(e) => set(i, { venueText: e.target.value })} minLength={3} maxLength={200} required placeholder={t("venueHint")} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" data-testid="hire-venue" />
+              <input value={r.venueText} onChange={(e) => set(i, { venueText: e.target.value })} minLength={3} maxLength={200} required placeholder={t("venueHint")} className="min-h-12 field px-3 text-base text-ink" data-testid="hire-venue" />
             </label>
             {quote.data?.lines[i] ? (
               <p className="mt-2 text-sm" data-testid="hire-line-quote">
@@ -157,7 +157,7 @@ export function RequestForm({ profile }: { profile: ProfilePage }) {
       ) : null}
       <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
         {t("note")}
-        <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} placeholder={t("noteHint")} className="border-2 border-line bg-surface p-3 text-base text-ink" />
+        <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} placeholder={t("noteHint")} className="glass-card p-3 text-base text-ink" />
       </label>
       <div className="flex items-baseline justify-between border-t-2 border-line pt-3">
         <span className="font-semibold">{t("total")}</span>

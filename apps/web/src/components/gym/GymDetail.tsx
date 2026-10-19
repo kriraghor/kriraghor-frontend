@@ -114,7 +114,7 @@ export function GymDetail({ slug }: { slug: string }) {
             <h2 className="mt-8 text-2xl font-extrabold">{t("packages")}</h2>
             <ul className="mt-3 grid gap-3 sm:grid-cols-3" data-testid="gym-packages">
               {g.packages.map((p) => (
-                <li key={p.id} className="border-2 border-line bg-surface p-4">
+                <li key={p.id} className="glass-card p-4">
                   <span className="block text-xs font-bold uppercase tracking-wide text-muted">{t(`kind.${p.kind}`)}</span>
                   <span className="mt-1 block font-bold">{p.title}</span>
                   <span className="mt-2 block text-2xl font-extrabold tabular-nums">{formatTaka(p.price, locale)}</span>
@@ -125,7 +125,7 @@ export function GymDetail({ slug }: { slug: string }) {
             <p className="mt-4 max-w-3xl text-sm text-muted">{t("refundRule")}</p>
           </div>
 
-          <aside className="h-fit border-2 border-line bg-surface p-5 lg:sticky lg:top-24">
+          <aside className="h-fit glass-card p-5 lg:sticky lg:top-24">
             <PassBuy page={g} />
           </aside>
         </div>

@@ -49,7 +49,7 @@ export function PublicPlayerView({ handle }: { handle: string }) {
         <div>
           <h2 className="text-xl font-extrabold">{t("teams")}</h2>
           {p.teams.length ? (
-            <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="player-teams">
+            <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="player-teams">
               {p.teams.map((team) => (
                 <li key={team.id} className="flex items-center gap-3 py-2">
                   <span className="min-w-0 flex-1 font-bold">{team.name}</span>

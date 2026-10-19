@@ -44,11 +44,11 @@ export function HomeHire() {
       </div>
       <div className="mt-6 grid gap-6 md:grid-cols-[5fr_7fr]">
         <div className="flex flex-col gap-3">
-          {pros.isPending ? [0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse bg-surface-2" />) : null}
+          {pros.isPending ? [0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse rounded-[20px] bg-surface-2" />) : null}
           {!pros.isPending && !people.length ? <p className="border-2 border-dashed border-line p-6 text-muted">{t("none")}</p> : null}
           {people.map((p) => (
-            <Link key={p.id} href={`/hiring/${p.slug}`} className="rv flex items-center gap-4 border-2 border-line bg-surface p-4 hover:border-ink">
-              <span className="flex h-16 w-16 shrink-0 items-center justify-center bg-brand-soft font-display text-xl font-extrabold text-brand-text" aria-hidden>
+            <Link key={p.id} href={`/hiring/${p.slug}`} className="rv flex items-center gap-4 glass-card p-4 hover:border-ink">
+              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-soft font-display text-xl font-extrabold text-brand-text" aria-hidden>
                 {initials(p.name)}
               </span>
               <span className="min-w-0 flex-1">
@@ -71,11 +71,11 @@ export function HomeHire() {
           ))}
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <div className="relative col-span-2 aspect-[21/9] overflow-hidden sm:col-span-3">
+          <div className="relative col-span-2 aspect-[21/9] overflow-hidden rounded-[24px] sm:col-span-3">
             <Image src={PHOTOS.hire} alt="" fill sizes="(min-width: 900px) 55vw, 100vw" className="object-cover object-[50%_35%]" />
           </div>
           {(taxonomy.data ?? []).map((c) => (
-            <Link key={c.key} href={`/hiring?category=${encodeURIComponent(c.key)}`} className="rv flex min-h-28 flex-col justify-between border-2 border-line bg-surface p-4 hover:border-ink">
+            <Link key={c.key} href={`/hiring?category=${encodeURIComponent(c.key)}`} className="rv flex min-h-28 flex-col justify-between glass-card p-4 hover:border-ink">
               <span className="font-bangla text-sm text-muted" lang="bn">
                 {c.nameBn}
               </span>
@@ -101,7 +101,7 @@ export function HomeGym() {
       {gyms.isPending ? [0, 1, 2].map((i) => <div key={i} className="h-20 animate-pulse bg-white/5" />) : null}
       {!gyms.isPending && !list.length ? <p className="border border-white/20 p-5 text-white/75">{t("none")}</p> : null}
       {list.map((g) => (
-        <Link key={g.id} href={`/gym/gyms/${g.slug}`} className="rv flex items-center gap-4 border border-white/15 p-4 hover:border-gym-accent" data-testid="home-gym">
+        <Link key={g.id} href={`/gym/gyms/${g.slug}`} className="rv glass-band flex items-center gap-4 rounded-[18px] p-4 hover:border-gym-accent" data-testid="home-gym">
           <span className="min-w-0 flex-1">
             <b className="block text-lg">{g.name}</b>
             <span className="block text-sm text-white/70">

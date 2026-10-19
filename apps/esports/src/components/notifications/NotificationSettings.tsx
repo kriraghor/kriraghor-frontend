@@ -92,7 +92,7 @@ export function NotificationSettings({ signInHref }: { signInHref: string }) {
       <h1 className="text-3xl font-extrabold">{t("prefs.title")}</h1>
       <p className="mt-2 text-muted">{t("prefs.intro")}</p>
 
-      <div className="mt-6 overflow-x-auto border-2 border-line bg-surface">
+      <div className="mt-6 overflow-x-auto glass-card">
         <table className="w-full min-w-[480px] text-left text-sm">
           <thead className="border-b-2 border-line">
             <tr>

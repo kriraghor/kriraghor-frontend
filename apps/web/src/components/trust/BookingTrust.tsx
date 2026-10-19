@@ -77,7 +77,7 @@ export function BookingTrust({ bookingId }: { bookingId: string }) {
                 <label htmlFor="dispute-statement" className="text-sm font-semibold text-muted">
                   {t("dispute.statement")}
                 </label>
-                <textarea id="dispute-statement" required minLength={2} maxLength={2000} rows={4} value={statement} onChange={(e) => setStatement(e.target.value)} className="border-2 border-line bg-surface px-3 py-2" />
+                <textarea id="dispute-statement" required minLength={2} maxLength={2000} rows={4} value={statement} onChange={(e) => setStatement(e.target.value)} className="glass-card px-3 py-2" />
                 <p className="text-sm text-muted">{t("dispute.statementHint")}</p>
               </div>
               {problem ? <Notice tone="error">{t.has(`errors.${problem.code}`) ? t(`errors.${problem.code}`) : problem.title}</Notice> : null}
@@ -134,7 +134,7 @@ function RateGround({ bookingId, onDone }: { bookingId: string; onDone: (status:
         <label htmlFor="review-text" className="text-sm font-semibold text-muted">
           {t("text")}
         </label>
-        <textarea id="review-text" maxLength={1000} rows={3} value={text} onChange={(e) => setText(e.target.value)} className="border-2 border-line bg-surface px-3 py-2" />
+        <textarea id="review-text" maxLength={1000} rows={3} value={text} onChange={(e) => setText(e.target.value)} className="glass-card px-3 py-2" />
         <p className="text-sm text-muted">{t("hint")}</p>
       </div>
       {post.error ? <Notice tone="error">{t("failed")}</Notice> : null}

@@ -182,12 +182,12 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           {j.format ? (
             <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
               {t("resultLabel")}
-              <input value={result} onChange={(e) => setResult(e.target.value)} maxLength={120} placeholder={t("resultHint")} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" data-testid="hire-result" />
+              <input value={result} onChange={(e) => setResult(e.target.value)} maxLength={120} placeholder={t("resultHint")} className="min-h-12 field px-3 text-base text-ink" data-testid="hire-result" />
             </label>
           ) : null}
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("workNote")}
-            <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} rows={3} className="border-2 border-line bg-surface p-3 text-base text-ink" />
+            <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} rows={3} className="glass-card p-3 text-base text-ink" />
           </label>
           <p className="text-sm text-muted">{t("completeNote")}</p>
           <div>
@@ -207,7 +207,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("withdrawWhy")}
-            <select value={reason} onChange={(e) => setReason(e.target.value as typeof reason)} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink">
+            <select value={reason} onChange={(e) => setReason(e.target.value as typeof reason)} className="min-h-12 field px-3 text-base text-ink">
               {WITHDRAW_REASONS.map((r) => (
                 <option key={r} value={r}>
                   {t(`withdrawReason.${r}`)}
@@ -234,7 +234,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           <label htmlFor={`hd-${j.id}`} className="font-semibold">
             {open === "no-show" ? t("noShowWhat") : t("problemWhat")}
           </label>
-          <textarea id={`hd-${j.id}`} value={text} onChange={(e) => setText(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="border-2 border-line bg-surface p-3" data-testid="hire-dispute-text" />
+          <textarea id={`hd-${j.id}`} value={text} onChange={(e) => setText(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="glass-card p-3" data-testid="hire-dispute-text" />
           <p className="text-sm text-muted">{t("disputeNote")}</p>
           <div>
             <Button busy={report.isPending} data-testid="hire-dispute-send">

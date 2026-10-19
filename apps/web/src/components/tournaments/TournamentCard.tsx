@@ -12,7 +12,7 @@ export function TournamentCard({ t: x }: { t: Card }) {
   const locale = useLocale();
   const sport = locale === "bn" ? x.sport.nameBn : x.sport.nameEn;
   return (
-    <Link href={`/events/${x.slug}`} className="flex h-full flex-col border-2 border-line bg-surface p-4 hover:border-brand" data-testid="tournament-card">
+    <Link href={`/events/${x.slug}`} className="flex h-full flex-col glass-card p-4 hover:border-brand" data-testid="tournament-card">
       <span className="flex items-start justify-between gap-3">
         <span className="text-xs font-bold uppercase tracking-wide text-muted">
           {sport} · {t(`format.${x.format}`)}

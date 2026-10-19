@@ -35,7 +35,7 @@ export function MyEsports() {
       <p className="mt-2 max-w-[60ch] text-muted">{t("me.lead")}</p>
 
       <h2 className="mt-8 text-xl font-extrabold">{t("me.uids")}</h2>
-      <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="my-uids">
+      <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-uids">
         {(profiles.data?.items ?? []).map((p) => (
           <li key={p.id} className="flex flex-wrap items-center gap-3 py-3">
             <span className="font-bold">{gameName(p.gameId)}</span>
@@ -100,11 +100,11 @@ function AddUid({ games, taken, onDone }: { games: Game[]; taken: string[]; onDo
   }
 
   return (
-    <form onSubmit={submit} className="mt-4 grid gap-4 border-2 border-line bg-surface p-5 md:grid-cols-2" data-testid="add-uid">
+    <form onSubmit={submit} className="mt-4 grid gap-4 glass-card p-5 md:grid-cols-2" data-testid="add-uid">
       <p className="font-bold md:col-span-2">{t("me.addUid")}</p>
       <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
         {t("me.game")}
-        <select value={gameId} onChange={(e) => setGameId(e.target.value)} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" required>
+        <select value={gameId} onChange={(e) => setGameId(e.target.value)} className="min-h-12 field px-3 text-base text-ink" required>
           <option value="">{t("me.chooseGame")}</option>
           {free.map((x) => (
             <option key={x.id} value={x.id}>
@@ -119,7 +119,7 @@ function AddUid({ games, taken, onDone }: { games: Game[]; taken: string[]; onDo
         <label htmlFor="shot" className="text-sm font-semibold text-muted">
           {t("me.screenshot")}
         </label>
-        <input id="shot" type="file" accept="image/jpeg,image/png" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 border-2 border-line bg-surface px-3 py-2 text-sm" required />
+        <input id="shot" type="file" accept="image/jpeg,image/png" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 field px-3 py-2 text-sm" required />
         <p className="text-xs text-muted">{t("me.screenshotHint")}</p>
       </div>
       <div className="md:col-span-2">
@@ -166,7 +166,7 @@ function SquadCard({ squad, gameName, onChange }: { squad: SquadView; gameName: 
     );
   }
   return (
-    <div className="border-2 border-line bg-surface p-4">
+    <div className="glass-card p-4">
       <div className="flex items-baseline gap-2">
         <span className="font-display text-lg font-extrabold">[{squad.tag}]</span>
         <span className="font-bold">{squad.name}</span>
@@ -193,7 +193,7 @@ function SquadCard({ squad, gameName, onChange }: { squad: SquadView; gameName: 
           void act(() => esports.invite(squad.id, username.trim())).then(() => setUsername(""));
         }}
       >
-        <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder={t("squads.username")} aria-label={t("squads.username")} className="min-h-11 flex-1 border-2 border-line bg-surface px-3" />
+        <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder={t("squads.username")} aria-label={t("squads.username")} className="min-h-11 flex-1 field px-3" />
         <button type="submit" className="min-h-11 border-2 border-line-strong px-3 text-sm font-bold">
           {t("squads.invite")}
         </button>
@@ -216,7 +216,7 @@ function CreateSquad({ games, onDone }: { games: Game[]; onDone: () => void }) {
   if (!games.length) return <p className="text-sm text-muted">{t("squads.needUid")}</p>;
   return (
     <form
-      className="grid gap-3 border-2 border-line bg-surface p-4"
+      className="grid gap-3 glass-card p-4"
       onSubmit={async (e) => {
         e.preventDefault();
         setError(null);
@@ -231,7 +231,7 @@ function CreateSquad({ games, onDone }: { games: Game[]; onDone: () => void }) {
       }}
     >
       <p className="font-bold">{t("squads.create")}</p>
-      <select value={gameId} onChange={(e) => setGameId(e.target.value)} aria-label={t("me.game")} className="min-h-12 border-2 border-line bg-surface px-3" required>
+      <select value={gameId} onChange={(e) => setGameId(e.target.value)} aria-label={t("me.game")} className="min-h-12 field px-3" required>
         <option value="">{t("me.chooseGame")}</option>
         {games.map((g) => (
           <option key={g.id} value={g.id}>
@@ -253,7 +253,7 @@ function JoinSquad({ onDone }: { onDone: () => void }) {
   const [error, setError] = useState<string | null>(null);
   return (
     <form
-      className="grid content-start gap-3 border-2 border-line bg-surface p-4"
+      className="grid content-start gap-3 glass-card p-4"
       onSubmit={async (e) => {
         e.preventDefault();
         setError(null);

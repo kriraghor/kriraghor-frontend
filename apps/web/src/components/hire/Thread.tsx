@@ -56,7 +56,7 @@ export function Thread({ requestId }: { requestId: string }) {
         <label htmlFor={`msg-${requestId}`} className="sr-only">
           {t("message")}
         </label>
-        <textarea id={`msg-${requestId}`} value={body} onChange={(e) => setBody(e.target.value)} maxLength={1000} rows={2} placeholder={t("messageHint")} className="border-2 border-line bg-surface p-3 text-base text-ink" data-testid="hire-message-input" />
+        <textarea id={`msg-${requestId}`} value={body} onChange={(e) => setBody(e.target.value)} maxLength={1000} rows={2} placeholder={t("messageHint")} className="glass-card p-3 text-base text-ink" data-testid="hire-message-input" />
         {problem ? <Notice tone="error">{problem.code === "CONTACT_NOT_ALLOWED" ? t("contactRefused") : problem.code === "MESSAGES_RATE_LIMITED" ? t("tooMany") : problem.title}</Notice> : null}
         <button type="submit" disabled={send.isPending || !body.trim()} className="min-h-11 self-end bg-brand px-4 font-bold text-white hover:bg-brand-hover disabled:opacity-50" data-testid="hire-message-send">
           {t("sendMessage")}

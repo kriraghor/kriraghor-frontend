@@ -52,7 +52,7 @@ export function MyPasses() {
           {t(`noPasses.${group}`)}
         </p>
       ) : (
-        <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="my-passes">
+        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-passes">
           {q.data.items.map((p) => (
             <li key={p.id}>
               <Link href={`/me/passes/${p.code}`} className="flex flex-wrap items-center gap-3 py-3 hover:bg-surface-2" data-testid="my-pass">

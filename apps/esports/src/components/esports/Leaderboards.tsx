@@ -45,7 +45,7 @@ export function Leaderboards() {
           </button>
         ))}
         {scope === "season" && data?.seasons?.length ? (
-          <select value={season ?? data.seasonKey} onChange={(e) => set("season", e.target.value)} aria-label={t("lb.season")} className="min-h-11 border-2 border-line bg-surface px-3">
+          <select value={season ?? data.seasonKey} onChange={(e) => set("season", e.target.value)} aria-label={t("lb.season")} className="min-h-11 field px-3">
             {data.seasons.map((k) => (
               <option key={k} value={k}>
                 {k}
@@ -56,7 +56,7 @@ export function Leaderboards() {
       </div>
       {q.isPending && game ? <div className="mt-6 h-64 animate-pulse bg-surface-2" /> : null}
       {data?.items.length ? (
-        <ol className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="leaderboard">
+        <ol className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="leaderboard">
           {data.items.map((r) => {
             const row = r as typeof r & { username: string | null; displayName: string | null; ign: string | null; tournaments: number };
             return (
@@ -79,7 +79,7 @@ export function Leaderboards() {
         </div>
       ) : null}
       {data?.formula ? (
-        <details className="mt-8 border-2 border-line bg-surface p-4">
+        <details className="mt-8 glass-card p-4">
           <summary className="cursor-pointer font-bold">{t("lb.how")}</summary>
           <p className="mt-2 text-sm text-muted">{t("lb.formula", { half: data.formula.halfLifeDays, min: data.formula.minTournaments })}</p>
         </details>
@@ -100,7 +100,7 @@ export function PlayerProfile({ handle }: { handle: string }) {
     <section className="mx-auto max-w-3xl px-5 py-10">
       <h1 className="text-3xl font-extrabold">{p.games[0]?.ign ?? p.username ?? "—"}</h1>
       {p.username ? <p className="text-muted">@{p.username}</p> : null}
-      <dl className="mt-6 grid grid-cols-3 gap-4 border-y-2 border-line py-4 text-center">
+      <dl className="glass-card mt-6 grid grid-cols-3 gap-4 p-4 text-center">
         {(["tournaments", "wins", "kills"] as const).map((k) => (
           <div key={k}>
             <dt className="text-xs uppercase tracking-wide text-muted">{t(`player.${k}`)}</dt>
@@ -110,7 +110,7 @@ export function PlayerProfile({ handle }: { handle: string }) {
       </dl>
       <ul className="mt-6 space-y-3">
         {p.games.map((g) => (
-          <li key={g.game?.key ?? g.ign} className="flex flex-wrap items-center gap-3 border-2 border-line bg-surface p-4">
+          <li key={g.game?.key ?? g.ign} className="flex flex-wrap items-center gap-3 glass-card p-4">
             <span className="font-bold">{g.game ? (locale === "bn" ? g.game.nameBn : g.game.nameEn) : ""}</span>
             <span>{g.ign}</span>
             <span className="font-mono text-sm text-muted">{g.uidMasked}</span>

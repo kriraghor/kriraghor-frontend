@@ -92,7 +92,7 @@ export function MarketBrowse() {
               {t("search")}
             </label>
             <div className="flex">
-              <input id="market-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("searchHint")} className="min-h-12 w-full border-2 border-line bg-surface px-3 text-base text-ink focus:border-brand" />
+              <input id="market-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("searchHint")} className="min-h-12 w-full field px-3 text-base text-ink focus:border-brand" />
               <button type="submit" className="min-h-12 border-2 border-l-0 border-line px-3 font-bold">
                 {t("go")}
               </button>
@@ -125,7 +125,7 @@ export function MarketBrowse() {
           </fieldset>
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("area")}
-            <select value={f.areaId ?? ""} onChange={(e) => go({ ...f, areaId: e.target.value || undefined })} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink">
+            <select value={f.areaId ?? ""} onChange={(e) => go({ ...f, areaId: e.target.value || undefined })} className="min-h-12 field px-3 text-base text-ink">
               <option value="">{t("anyArea")}</option>
               {(areas.data?.items ?? []).map((a) => (
                 <option key={a.id} value={a.id}>
@@ -155,7 +155,7 @@ export function MarketBrowse() {
             </p>
             <label className="ml-auto flex items-center gap-2 text-sm font-semibold text-muted">
               {t("sortBy")}
-              <select value={f.sort ?? "newest"} onChange={(e) => go({ ...f, sort: e.target.value as Filters["sort"] })} className="min-h-11 border-2 border-line bg-surface px-2 text-ink">
+              <select value={f.sort ?? "newest"} onChange={(e) => go({ ...f, sort: e.target.value as Filters["sort"] })} className="min-h-11 field px-2 text-ink">
                 <option value="newest">{t("sort.newest")}</option>
                 <option value="price">{t("sort.price")}</option>
                 <option value="-price">{t("sort.-price")}</option>

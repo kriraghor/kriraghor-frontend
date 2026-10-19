@@ -57,7 +57,7 @@ export function Finder() {
   const select = (id: string, label: string, k: keyof FinderValues, anyLabel: string, options: { value: string; label: string }[]) => (
     <label htmlFor={id} className="flex min-w-0 flex-col gap-1 text-sm font-semibold text-muted">
       {label}
-      <select id={id} value={v[k] ?? ""} onChange={set(k)} className="min-h-12 w-full border-2 border-line bg-surface px-3 text-base font-normal text-ink focus:border-brand">
+      <select id={id} value={v[k] ?? ""} onChange={set(k)} className="min-h-12 w-full field px-3 text-base font-normal text-ink focus:border-brand">
         <option value="">{anyLabel}</option>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -70,8 +70,8 @@ export function Finder() {
   const named = (items: (Named | Area)[] | undefined, value: "key" | "id") => (items ?? []).map((x) => ({ value: (x as Record<string, string>)[value], label: nameOf(x, locale) }));
 
   return (
-    <section className="relative z-10 -mt-16 border-2 border-line-strong bg-surface shadow-lg" aria-label={t("label")} data-testid="finder">
-      <div role="tablist" aria-label={t("tabsLabel")} className="grid grid-cols-4 border-b-2 border-line sm:flex">
+    <section className="glass-strong relative z-10 -mt-16 overflow-hidden rounded-[28px]" aria-label={t("label")} data-testid="finder">
+      <div role="tablist" aria-label={t("tabsLabel")} className="grid grid-cols-4 border-b border-[var(--glass-edge)] px-2 sm:flex">
         {TABS.map((x, i) => (
           <button
             key={x.key}
@@ -104,7 +104,7 @@ export function Finder() {
         {tab === "shop" ? (
           <label htmlFor="f-q" className="flex min-w-0 flex-col gap-1 text-sm font-semibold text-muted sm:col-span-2">
             {t("search")}
-            <input id="f-q" type="search" value={v.q ?? ""} onChange={set("q")} placeholder={t("searchPlaceholder")} autoComplete="off" enterKeyHint="search" className="min-h-12 w-full border-2 border-line bg-surface px-3 text-base font-normal text-ink focus:border-brand" />
+            <input id="f-q" type="search" value={v.q ?? ""} onChange={set("q")} placeholder={t("searchPlaceholder")} autoComplete="off" enterKeyHint="search" className="min-h-12 w-full field px-3 text-base font-normal text-ink focus:border-brand" />
           </label>
         ) : null}
         {tab === "hire" ? (

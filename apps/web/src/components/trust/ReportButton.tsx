@@ -60,7 +60,7 @@ export function ReportButton({ subjectType, subjectId, label }: { subjectType: S
         <label htmlFor={`${id}-reason`} className="text-sm font-semibold text-muted">
           {t("reason")}
         </label>
-        <select id={`${id}-reason`} value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} className="min-h-12 border-2 border-line bg-surface px-3">
+        <select id={`${id}-reason`} value={reason} onChange={(e) => setReason(e.target.value as ReportReason)} className="min-h-12 field px-3">
           {REPORT_REASONS[subjectType].map((r) => (
             <option key={r} value={r}>
               {t(`reasons.${r}`)}
@@ -72,7 +72,7 @@ export function ReportButton({ subjectType, subjectId, label }: { subjectType: S
         <label htmlFor={`${id}-note`} className="text-sm font-semibold text-muted">
           {t("note")}
         </label>
-        <textarea id={`${id}-note`} value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} className="border-2 border-line bg-surface px-3 py-2" />
+        <textarea id={`${id}-note`} value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} className="glass-card px-3 py-2" />
       </div>
       {problem ? <Notice tone="error">{problem.code === "REPORT_SELF" ? t("self") : problem.code === "REPORT_RATE_LIMITED" ? t("limit") : t("failed")}</Notice> : null}
       <div className="flex flex-wrap gap-3">

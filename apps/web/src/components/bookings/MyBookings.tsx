@@ -61,7 +61,7 @@ export function MyBookings() {
           </Link>
         </div>
       ) : (
-        <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="my-bookings">
+        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-bookings">
           {items.map((b) => (
             <li key={b.id}>
               <Link href={`/me/bookings/${b.id}`} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 hover:bg-surface-2">

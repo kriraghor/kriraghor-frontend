@@ -22,6 +22,6 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip API routes, /env.js, Next internals and files with an extension.
-  matcher: ["/((?!api|env\\.js|_next|_vercel|.*\\..*).*)"],
+  // Skip API routes, the /go/ redirects, /env.js, Next internals and files with an extension.
+  matcher: ["/((?!api|go/|env\\.js|_next|_vercel|.*\\..*).*)"],
 };

@@ -98,7 +98,7 @@ export function NotificationBell({ centreHref, settingsHref }: { centreHref: str
       </button>
 
       {open ? (
-        <div role="dialog" aria-label={t("title")} className="absolute right-0 z-50 mt-2 w-[360px] max-w-[calc(100vw-2rem)] border-2 border-line-strong bg-surface shadow-lg">
+        <div role="dialog" aria-label={t("title")} className="absolute right-0 z-50 mt-2 w-[360px] max-w-[calc(100vw-2rem)] glass-strong rounded-[24px] shadow-lg">
           <div className="flex items-center gap-2 border-b-2 border-line px-4 py-3">
             <h2 className="font-bold">{t("title")}</h2>
             <div role="tablist" className="ml-auto flex gap-1 text-sm">

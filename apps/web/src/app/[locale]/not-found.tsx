@@ -17,7 +17,7 @@ export default function NotFound() {
   ];
   return (
     <section className="mx-auto grid max-w-[1320px] gap-10 px-5 py-16 md:grid-cols-[1fr_40%] md:items-center" data-testid="not-found">
-      <div className="relative order-last aspect-[16/10] overflow-hidden bg-surface-2">
+      <div className="relative order-last aspect-[16/10] overflow-hidden rounded-[24px] bg-surface-2 shadow-lg">
         <Image src={PHOTOS.groundsFloodlit} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" />
       </div>
       <div>

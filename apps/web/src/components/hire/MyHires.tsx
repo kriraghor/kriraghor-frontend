@@ -40,7 +40,7 @@ export function MyHires() {
           {t("noHires")}
         </p>
       ) : (
-        <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="my-hires">
+        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-hires">
           {q.data.items.map(({ request: r }) => (
             <li key={r.id}>
               <Link href={`/me/hire/${r.code}`} className="flex flex-wrap items-center gap-3 py-3 hover:bg-surface-2">

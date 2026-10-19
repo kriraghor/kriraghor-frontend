@@ -67,11 +67,11 @@ export function HireProfileView({ slug }: { slug: string }) {
         <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
           {/* M20: a fitness trainer also sells monthly plans. */}
           {p.role.key === "fitness_trainer" ? (
-            <div className="border-2 border-line bg-surface p-5">
+            <div className="glass-card p-5">
               <TrainerPlans profileId={p.id} slug={slug} />
             </div>
           ) : null}
-          <div className="border-2 border-line bg-surface p-5">
+          <div className="glass-card p-5">
             {p.taking ? <RequestForm profile={p} /> : <p className="font-bold">{t("notTaking")}</p>}
           </div>
         </aside>

@@ -52,7 +52,7 @@ export function MyMatches() {
           const tt = r.tournament;
           const open = ["confirmed", "checked_in"].includes(r.status);
           return (
-            <li key={r.id} className="border-2 border-line bg-surface p-5">
+            <li key={r.id} className="glass-card p-5">
               <div className="flex flex-wrap items-center gap-2">
                 <Link href={`/events/${tt.slug}`} className="text-lg font-extrabold underline-offset-2 hover:underline">
                   {locale === "bn" ? tt.titleBn : tt.titleEn}

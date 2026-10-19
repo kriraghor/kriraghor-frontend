@@ -67,7 +67,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
             <h2 id="prizes-h" className="text-xl font-extrabold">
               {t("prizes")}
             </h2>
-            <ol className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="prize-table">
+            <ol className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="prize-table">
               {d.prizes.map((p) => (
                 <li key={p.place} className="flex items-center justify-between py-3">
                   <span className="font-bold">{t("place", { n: p.place })}</span>
@@ -88,7 +88,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
             <h2 id="schedule-h" className="text-xl font-extrabold">
               {t("schedule")}
             </h2>
-            <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line">
+            <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4">
               {d.matches.map((m) => (
                 <li key={m.id} className="flex flex-wrap items-center gap-3 py-3">
                   <span className="font-bold">{t("match", { n: m.seq })}</span>
@@ -158,7 +158,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="border-2 border-line-strong bg-surface p-5" data-testid="entry-box">
+          <div className="glass-strong rounded-[24px] p-5" data-testid="entry-box">
             <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("prizePool")}</p>
             <Prize money={d.prizePool} className="text-4xl" />
             <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">

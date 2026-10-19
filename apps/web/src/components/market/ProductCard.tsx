@@ -13,7 +13,7 @@ export function ProductCard({ card, badges }: { card: MarketCard; badges?: strin
   const price = formatTaka(card.priceFromPoisha, locale);
   return (
     <li>
-      <Link href={`/shop/p/${card.slug}`} className="flex h-full flex-col border-2 border-line bg-surface hover:border-brand" data-testid="product-card">
+      <Link href={`/shop/p/${card.slug}`} className="flex h-full flex-col glass-card hover:border-brand" data-testid="product-card">
         {card.coverUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={card.coverUrl} alt="" loading="lazy" className="aspect-square w-full object-cover" />

@@ -49,7 +49,7 @@ export function MyPayments() {
       ) : !items.length ? (
         <p className="mt-6 text-muted">{t("empty")}</p>
       ) : (
-        <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="my-payments">
+        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-payments">
           {items.map((p) => {
             const outcome = outcomeOf(p.status);
             return (

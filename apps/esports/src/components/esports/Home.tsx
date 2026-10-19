@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -28,7 +29,9 @@ export function Home() {
 
   return (
     <>
-      <section className="bg-band text-band-text">
+      <section className="relative isolate overflow-hidden bg-band text-band-text">
+        <Image src="/images/esports-mobile.jpg" alt="" fill priority sizes="100vw" className="-z-20 object-cover object-[60%_30%] opacity-60" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-band via-band/85 to-band/40" aria-hidden />
         <div className="mx-auto grid max-w-[1320px] gap-10 px-5 py-12 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:py-16">
           <div className="flex flex-col justify-center">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-400">{t("home.kicker")}</p>
@@ -54,7 +57,7 @@ export function Home() {
                 </div>
               </div>
             ) : hero ? (
-              <Link href={`/events/${hero.slug}`} className="block border-2 border-band-text/20 bg-band p-6 hover:border-amber-400" data-testid="hero-card">
+              <Link href={`/events/${hero.slug}`} className="glass-band block rounded-[28px] p-6 shadow-lg hover:border-amber-400" data-testid="hero-card">
                 <p className="text-xs font-bold uppercase tracking-wide text-amber-400">{hero.featured ? t("home.featured") : t("home.next")}</p>
                 <h2 className="mt-2 text-2xl font-extrabold">{locale === "bn" ? hero.titleBn : hero.titleEn}</h2>
                 <p className="mt-1 text-sm text-band-text/70">
@@ -81,9 +84,9 @@ export function Home() {
                 </div>
               </Link>
             ) : featured.isPending || open.isPending ? (
-              <div className="h-72 animate-pulse bg-band-text/10" />
+              <div className="h-72 animate-pulse rounded-[28px] bg-band-text/10" />
             ) : (
-              <div className="border-2 border-dashed border-band-text/30 p-8 text-band-text/80">{t("home.noneOpen")}</div>
+              <div className="glass-band rounded-[28px] border-dashed p-8 text-band-text/80">{t("home.noneOpen")}</div>
             )}
           </div>
         </div>
@@ -106,7 +109,7 @@ export function Home() {
         <div className="mx-auto grid max-w-[1320px] gap-10 px-5 py-12 md:grid-cols-2">
           <div>
             <h2 className="text-2xl font-extrabold">{t("home.topPlayers")}</h2>
-            <ol className="mt-4 divide-y-2 divide-line border-y-2 border-line" data-testid="top-players">
+            <ol className="mt-4 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="top-players">
               {((top.data?.items ?? []) as { rank: number; userId: string; points: number; username: string | null; displayName: string | null }[]).map((p) => (
                 <li key={`${p.userId}-${p.rank}`} className="flex items-center gap-4 py-3">
                   <span className="w-8 font-display text-2xl font-extrabold tabular-nums text-muted">{p.rank}</span>

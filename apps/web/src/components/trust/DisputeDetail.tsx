@@ -147,7 +147,7 @@ export function DisputeDetail({ code }: { code: string }) {
             <label htmlFor="add-statement" className="font-bold">
               {can.respond ? t("yourSide") : t("addStatement")}
             </label>
-            <textarea id="add-statement" required minLength={2} maxLength={2000} rows={4} value={text} onChange={(e) => setText(e.target.value)} className="w-full border-2 border-line bg-surface px-3 py-2" />
+            <textarea id="add-statement" required minLength={2} maxLength={2000} rows={4} value={text} onChange={(e) => setText(e.target.value)} className="w-full glass-card px-3 py-2" />
             {say.error ? <Notice tone="error">{err(say.error)}</Notice> : null}
             <button type="submit" disabled={say.isPending || text.trim().length < 2} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="send-statement">
               {can.respond ? t("sendAnswer") : t("send")}

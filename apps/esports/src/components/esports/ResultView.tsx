@@ -97,15 +97,15 @@ export function ResultView({ matchId }: { matchId: string }) {
         <p className="mt-6 text-muted">{t("result.notYet")}</p>
       )}
       {windowOpen ? (
-        <form onSubmit={dispute} className="mt-8 grid gap-3 border-2 border-line bg-surface p-5" data-testid="dispute-form">
+        <form onSubmit={dispute} className="mt-8 grid gap-3 glass-card p-5" data-testid="dispute-form">
           <p className="font-bold">{t("result.disputeTitle")}</p>
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("result.reason")}
-            <textarea value={reason} onChange={(e) => setReason(e.target.value)} minLength={5} maxLength={500} required className="min-h-24 border-2 border-line bg-surface p-3 text-base text-ink" />
+            <textarea value={reason} onChange={(e) => setReason(e.target.value)} minLength={5} maxLength={500} required className="min-h-24 glass-card p-3 text-base text-ink" />
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("result.screenshot")}
-            <input type="file" accept="image/jpeg,image/png" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 border-2 border-line bg-surface px-3 py-2 text-sm" />
+            <input type="file" accept="image/jpeg,image/png" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 field px-3 py-2 text-sm" />
           </label>
           {msg ? <Notice tone={msg.tone}>{msg.text}</Notice> : null}
           <div>

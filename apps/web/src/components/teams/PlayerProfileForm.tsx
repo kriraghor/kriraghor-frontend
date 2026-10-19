@@ -133,7 +133,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
           <label htmlFor="player-bio" className="text-sm font-semibold text-muted">
             {t("bio")}
           </label>
-          <textarea id="player-bio" rows={3} maxLength={500} value={bio} onChange={(e) => setBio(e.target.value)} className="border-2 border-line bg-surface p-3" />
+          <textarea id="player-bio" rows={3} maxLength={500} value={bio} onChange={(e) => setBio(e.target.value)} className="glass-card p-3" />
         </div>
 
         <fieldset className="flex flex-col gap-2">

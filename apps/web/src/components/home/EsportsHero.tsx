@@ -39,10 +39,10 @@ export function NextUp() {
   const now = useNowSeconds();
   const money = (n: number) => formatTaka(n, locale);
 
-  if (open.isPending) return <div className="h-[340px] animate-pulse bg-band-2" role="status" aria-label={t("loading")} />;
+  if (open.isPending) return <div className="h-[340px] animate-pulse rounded-[28px] bg-band-2" role="status" aria-label={t("loading")} />;
   if (!next) {
     return (
-      <article className="flex flex-col gap-4 border-2 border-band-line bg-band-2 p-6" data-testid="next-up-empty">
+      <article className="glass-band flex flex-col gap-4 rounded-[28px] p-6" data-testid="next-up-empty">
         <h2 className="text-2xl font-extrabold">{t("noneTitle")}</h2>
         <p className="text-band-muted">{t("noneBody")}</p>
         <a href={esportsHref("/events")} className="inline-flex min-h-12 w-fit items-center bg-prize px-5 font-bold text-prize-ink">
@@ -60,7 +60,7 @@ export function NextUp() {
   const free = next.entryFee.amount === 0;
 
   return (
-    <article className="rv flex flex-col gap-5 border-2 border-band-line bg-band-2 p-6 shadow-lg" aria-labelledby="next-title" data-testid="next-up">
+    <article className="rv glass-band flex flex-col gap-5 rounded-[28px] p-6 shadow-lg" aria-labelledby="next-title" data-testid="next-up">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm text-band-muted">{[t("nextUp"), nameOf(next.game, locale), nameOf(next.mode, locale), nameOf(map, locale)].filter(Boolean).join(" · ")}</p>
@@ -100,7 +100,7 @@ export function NextUp() {
           <span>{t(next.entryUnit === "squad" ? "squadsIn" : "playersIn")}</span>
           <b className="tabular-nums">{t("ofMax", { taken: next.slotsTaken, max: next.maxSlots })}</b>
         </div>
-        <div className="mt-2 h-2 bg-band" role="progressbar" aria-label={t(next.entryUnit === "squad" ? "squadsIn" : "playersIn")} aria-valuemin={0} aria-valuemax={next.maxSlots} aria-valuenow={next.slotsTaken}>
+        <div className="mt-2 h-2 overflow-hidden rounded-pill bg-band" role="progressbar" aria-label={t(next.entryUnit === "squad" ? "squadsIn" : "playersIn")} aria-valuemin={0} aria-valuemax={next.maxSlots} aria-valuenow={next.slotsTaken}>
           <i className="block h-full bg-prize transition-[width] duration-700" style={{ width: `${filled(next.slotsTaken, next.maxSlots) * 100}%` }} />
         </div>
         <p className="mt-3 text-sm text-band-muted">
@@ -123,7 +123,7 @@ export function FeaturedEvent() {
   const ev = (q.data?.items ?? []).find((e) => e.phase === "live" || e.phase === "upcoming");
   if (!ev) return null;
   return (
-    <a href={esportsHref(`/showcases/${ev.slug}`)} className="mx-auto mt-6 flex max-w-[1320px] flex-wrap items-center gap-4 border-2 border-band-line px-5 py-4 hover:border-prize" style={{ borderLeftColor: ev.accentHex, borderLeftWidth: 8 }} data-testid="featured-event">
+    <a href={esportsHref(`/showcases/${ev.slug}`)} className="glass-band mx-auto mt-6 flex max-w-[1320px] flex-wrap items-center gap-4 rounded-[20px] px-5 py-4 hover:border-prize" style={{ borderLeftColor: ev.accentHex, borderLeftWidth: 8 }} data-testid="featured-event">
       <span className={`px-2 py-1 text-xs font-bold uppercase ${ev.phase === "live" ? "bg-live text-white" : "bg-band-2"}`}>{t(ev.phase === "live" ? "eventLive" : "eventUpcoming")}</span>
       <span className="text-lg font-extrabold">{locale === "bn" ? ev.titleBn : ev.titleEn}</span>
       <span className="ml-auto text-sm">

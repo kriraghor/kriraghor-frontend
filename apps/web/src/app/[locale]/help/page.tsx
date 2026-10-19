@@ -31,7 +31,7 @@ export default async function HelpPage({ params }: PageProps<"/[locale]/help">) 
               <h2 id={`help-${g.id}`} className="text-2xl font-extrabold">
                 {g.title}
               </h2>
-              <div className="mt-3 divide-y-2 divide-line border-y-2 border-line">
+              <div className="glass-card mt-3 divide-y divide-[var(--glass-edge)] px-5">
                 {g.items.map((it) => (
                   <details key={it.q} className="group">
                     <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 font-bold">
@@ -54,7 +54,7 @@ export default async function HelpPage({ params }: PageProps<"/[locale]/help">) 
             </section>
           ))}
         </div>
-        <aside className="h-fit border-2 border-line p-5">
+        <aside className="glass-card h-fit p-5 md:sticky md:top-24">
           <h2 className="text-lg font-extrabold">{t("policies")}</h2>
           <ul className="mt-2 flex flex-col">
             {policies.map((p) => (

@@ -49,8 +49,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
 
   return (
     <html lang={locale} className={`${bricolage.variable} ${instrument.variable} ${hind.variable} ${shoulders.variable} h-full antialiased`}>
-      {/* Room for the phone tab bar (56px + the home indicator) under 900px. */}
-      <body className="flex min-h-full flex-col pb-[calc(56px+env(safe-area-inset-bottom))] md:pb-0">
+      {/* Room for the floating phone tab bar (56px + its 8px gap + 8px air + the home indicator) under 900px. */}
+      <body className="flex min-h-full flex-col pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0">
         {/* Runtime config (ADR-003): window.__ENV before any client code runs. */}
         <Script src="/env.js" strategy="beforeInteractive" />
         <NextIntlClientProvider>
@@ -76,7 +76,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
 /** Same height as the header, so nothing moves when it streams in. */
 function HeaderPlaceholder() {
   return (
-    <div className="sticky top-0 z-40 border-b-2 border-line bg-bg" aria-hidden>
+    <div className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150" aria-hidden>
       <div className="h-1 bg-brand" />
       <div className="h-16" />
     </div>

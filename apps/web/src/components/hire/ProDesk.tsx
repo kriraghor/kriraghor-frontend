@@ -221,7 +221,7 @@ function ProRequest({ x }: { x: RequestResult }) {
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("declineWhy")}
-            <select value={reason} onChange={(e) => setReason(e.target.value as typeof reason)} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink">
+            <select value={reason} onChange={(e) => setReason(e.target.value as typeof reason)} className="min-h-12 field px-3 text-base text-ink">
               {DECLINE_REASONS.map((d) => (
                 <option key={d} value={d}>
                   {t(`declineReason.${d}`)}

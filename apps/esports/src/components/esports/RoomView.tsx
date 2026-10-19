@@ -45,7 +45,7 @@ export function RoomView({ matchId }: { matchId: string }) {
         </div>
       ) : null}
       {q.data ? (
-        <div className="mt-6 border-2 border-line-strong bg-surface p-6" data-testid="room-card">
+        <div className="mt-6 glass-strong rounded-[24px] p-6" data-testid="room-card">
           {rotated ? (
             <div className="mb-4">
               <Notice>{t("room.updated")}</Notice>

@@ -96,7 +96,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
       {teamId && team.data ? (
         <>
           <h2 className="mt-8 text-lg font-extrabold">{t("step.squad", { n: squad.length })}</h2>
-          <ul className="mt-2 divide-y-2 divide-line border-y-2 border-line">
+          <ul className="mt-2 glass-card divide-y divide-[var(--glass-edge)] px-4">
             {team.data.members.map((m) => {
               const on = (picked ?? []).includes(m.userId);
               return (

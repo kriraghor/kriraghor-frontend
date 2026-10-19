@@ -103,7 +103,7 @@ export function PassView({ code }: { code: string }) {
         </div>
 
         {p.token ? (
-          <div className="mt-6 flex flex-col items-center gap-4 border-2 border-line bg-surface p-6">
+          <div className="mt-6 flex flex-col items-center gap-4 glass-card p-6">
             <button type="button" onClick={() => setFull(true)} aria-label={t("showAtDesk")} className="w-full max-w-[320px]">
               <PassQr token={p.token} label={t("qrOf", { code: p.code })} />
             </button>
@@ -117,7 +117,7 @@ export function PassView({ code }: { code: string }) {
             <p className="text-center text-sm text-muted">{t("deskHint")}</p>
           </div>
         ) : p.status === "pending_payment" && payment ? (
-          <div className="mt-6 border-2 border-line bg-surface p-6">
+          <div className="mt-6 glass-card p-6">
             <p className="font-semibold">{t("awaitingPayment")}</p>
             <a href={payment.payUrl} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold hover:bg-brand-hover">
               {t("payNow", { price: formatTaka(p.money.price, locale) })}

@@ -79,7 +79,7 @@ export function TrainerPlans({ profileId, slug }: { profileId: string; slug: str
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("startOn")}
-            <select value={date} onChange={(e) => choose(() => setStart(e.target.value))} className="min-h-11 border-2 border-line bg-surface px-3 text-ink" data-testid="plan-start">
+            <select value={date} onChange={(e) => choose(() => setStart(e.target.value))} className="min-h-11 field px-3 text-ink" data-testid="plan-start">
               {dates.map((d) => (
                 <option key={d} value={d}>
                   {d === offer.today ? t("today") : dayLabel(d, locale)}

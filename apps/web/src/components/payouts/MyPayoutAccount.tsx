@@ -51,7 +51,7 @@ export function MyPayoutAccount() {
       ) : (
         <>
           {active ? (
-            <div className="mt-6 border-2 border-line bg-surface p-5" data-testid="payout-account">
+            <div className="mt-6 glass-card p-5" data-testid="payout-account">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="font-mono text-xl font-bold">{active.masked}</span>
                 <span className={`border-2 px-2 py-0.5 text-xs font-bold ${STATUS_CLS.active}`}>{t("accountStatus.active")}</span>
@@ -152,7 +152,7 @@ function AddForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
           aria-invalid={accountNo.length > 0 && !numberOk}
           aria-describedby="wallet-help"
           disabled={codeSent}
-          className="mt-1 min-h-12 w-full border-2 border-line bg-surface px-3 font-mono text-lg"
+          className="mt-1 min-h-12 w-full field px-3 font-mono text-lg"
           required
         />
         <span id="wallet-help" className={`text-xs ${accountNo.length > 0 && !numberOk ? "text-danger" : "text-muted"}`}>
@@ -161,7 +161,7 @@ function AddForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
       </label>
       <label className="block">
         <span className="text-sm font-semibold text-muted">{t("name")}</span>
-        <input value={accountName} onChange={(e) => setAccountName(e.target.value)} autoComplete="name" minLength={3} maxLength={120} disabled={codeSent} className="mt-1 min-h-12 w-full border-2 border-line bg-surface px-3 text-base" required />
+        <input value={accountName} onChange={(e) => setAccountName(e.target.value)} autoComplete="name" minLength={3} maxLength={120} disabled={codeSent} className="mt-1 min-h-12 w-full field px-3 text-base" required />
         <span className="text-xs text-muted">{t("nameHelp")}</span>
       </label>
       <label className="flex items-start gap-2 text-sm">
@@ -176,7 +176,7 @@ function AddForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
             onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
             inputMode="numeric"
             autoComplete="one-time-code"
-            className="mt-1 min-h-12 w-40 border-2 border-line bg-surface px-3 font-mono text-lg tracking-widest"
+            className="mt-1 min-h-12 w-40 field px-3 font-mono text-lg tracking-widest"
             required
           />
           <span className="block text-xs text-muted">{t("codeHelp")}</span>

@@ -62,7 +62,7 @@ export function CheckoutView() {
           <Field id="ship-phone" label={t("shipPhone")} value={ship.phone} onChange={set("phone")} required type="tel" inputMode="tel" autoComplete="tel" hint={t("phoneHint")} error={fieldError("phone")} />
           <label htmlFor="ship-area" className="flex flex-col gap-1 font-semibold">
             {t("shipArea")}
-            <select id="ship-area" value={ship.areaId} onChange={(e) => (setChanged(null), set("areaId")(e))} required className="min-h-12 border-2 border-line bg-surface px-3 font-normal" data-testid="ship-area">
+            <select id="ship-area" value={ship.areaId} onChange={(e) => (setChanged(null), set("areaId")(e))} required className="min-h-12 field px-3 font-normal" data-testid="ship-area">
               <option value="">{t("chooseArea")}</option>
               {(areas.data?.items ?? []).map((a) => (
                 <option key={a.id} value={a.id}>

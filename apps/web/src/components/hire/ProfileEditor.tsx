@@ -10,7 +10,7 @@ import { formatTaka } from "@/lib/payments";
 import { Button, Notice } from "../ui";
 
 const EDITABLE = ["draft", "changes_requested", "rejected", "live", "paused"];
-const input = "min-h-12 border-2 border-line bg-surface px-3 text-base text-ink";
+const input = "min-h-12 field px-3 text-base text-ink";
 const label = "flex flex-col gap-1 text-sm font-semibold text-muted";
 const problemText = (p: Problem | null, fallback: string) => (p ? (p.errors?.length ? p.errors.map((e) => e.message).join(" · ") : p.title) : fallback);
 
@@ -129,7 +129,7 @@ function ProfileFields({ values, onChange }: { values: Omit<ProfileBody, "roleKe
       </div>
       <label className={label}>
         {t("desk.bio")}
-        <textarea value={values.bio ?? ""} onChange={(e) => set({ bio: e.target.value || undefined })} maxLength={2000} rows={4} className="border-2 border-line bg-surface p-3 text-base text-ink" />
+        <textarea value={values.bio ?? ""} onChange={(e) => set({ bio: e.target.value || undefined })} maxLength={2000} rows={4} className="glass-card p-3 text-base text-ink" />
       </label>
       <label className="flex min-h-11 items-center gap-3 font-semibold">
         <input type="checkbox" checked={values.worksWithU16} onChange={(e) => set({ worksWithU16: e.target.checked })} className="h-5 w-5" />

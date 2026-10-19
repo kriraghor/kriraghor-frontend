@@ -41,10 +41,10 @@ export function OpenTournaments() {
       </div>
       <ul className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible md:grid-cols-4" aria-label={t("listLabel")}>
         {q.isPending
-          ? [0, 1, 2].map((i) => <li key={i} className="h-72 w-[82%] shrink-0 animate-pulse bg-surface-2 sm:w-auto" />)
+          ? [0, 1, 2].map((i) => <li key={i} className="h-72 w-[82%] shrink-0 animate-pulse rounded-[20px] bg-surface-2 sm:w-auto" />)
           : cards.map((c) => (
               <li key={c.id} className="rv w-[82%] shrink-0 snap-start sm:w-auto">
-                <a href={esportsHref(`/events/${c.slug}`)} className="flex h-full flex-col border-2 border-line bg-surface p-5 hover:border-ink" data-testid="open-card">
+                <a href={esportsHref(`/events/${c.slug}`)} className="flex h-full flex-col glass-card p-5 hover:border-ink" data-testid="open-card">
                   <span className="flex justify-between gap-2 text-sm">
                     <b>{nameOf(c.game, locale)}</b>
                     <span className="text-muted">{nameOf(c.mode, locale)}</span>
@@ -70,7 +70,7 @@ export function OpenTournaments() {
             ))}
         {!q.isPending && !cards.length ? <li className="w-full shrink-0 border-2 border-dashed border-line p-6 text-muted sm:col-span-2 md:col-span-3">{t("none")}</li> : null}
         <li className="rv w-[82%] shrink-0 snap-start sm:w-auto">
-          <a href={esportsHref(game ? `/events?game=${encodeURIComponent(game)}` : "/events")} className="flex h-full min-h-72 flex-col bg-brand p-5 text-white hover:bg-brand-hover">
+          <a href={esportsHref(game ? `/events?game=${encodeURIComponent(game)}` : "/events")} className="flex h-full min-h-72 flex-col rounded-[20px] bg-brand p-5 text-white shadow-lg hover:bg-brand-hover">
             <Trophy size={32} aria-hidden />
             <span className="mt-auto text-xl font-extrabold">{t("seeAll")}</span>
             <span className="mt-1 text-white/85">{t("seeAllSub")}</span>
@@ -110,11 +110,11 @@ export function TopPlayers() {
           {t("full")} <ArrowRight size={16} aria-hidden />
         </a>
       </div>
-      {q.isPending ? <div className="mt-6 h-64 animate-pulse bg-surface-2" /> : null}
-      {!q.isPending && !first ? <p className="mt-6 border-2 border-dashed border-line p-6 text-muted">{t("none")}</p> : null}
+      {q.isPending ? <div className="mt-6 h-64 animate-pulse rounded-[24px] bg-surface-2" /> : null}
+      {!q.isPending && !first ? <p className="mt-6 rounded-[20px] border-2 border-dashed border-line p-6 text-muted">{t("none")}</p> : null}
       {first ? (
         <ol className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-[2fr_1fr_1fr]" data-testid="podium">
-          <li className="rv col-span-2 flex flex-col justify-between gap-6 bg-band p-6 text-band-text sm:col-span-1 sm:row-span-2">
+          <li className="rv col-span-2 flex flex-col justify-between gap-6 rounded-[24px] bg-band p-6 text-band-text shadow-lg sm:col-span-1 sm:row-span-2">
             <a href={esportsHref(`/p/${first.username}`)} className="flex h-full flex-col justify-between gap-6">
               <span>
                 <span className="block text-sm text-band-muted">{label(first)}</span>
@@ -128,7 +128,7 @@ export function TopPlayers() {
             </a>
           </li>
           {rest.map((p) => (
-            <li key={`${p.rank}-${p.username}`} className="rv border-2 border-line bg-surface p-4">
+            <li key={`${p.rank}-${p.username}`} className="rv glass-card p-4">
               <a href={esportsHref(`/p/${p.username}`)} className="flex h-full flex-col">
                 <span className="text-sm text-muted">{label(p)}</span>
                 <span className="mt-1 font-extrabold break-words">{p.displayName ?? p.username}</span>

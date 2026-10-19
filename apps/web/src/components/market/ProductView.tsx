@@ -138,7 +138,7 @@ export function ProductView({ slug }: { slug: string }) {
           <div className="flex items-end gap-3">
             <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
               {t("qty")}
-              <select value={qty} onChange={(e) => setQty(Number(e.target.value))} className="min-h-12 border-2 border-line bg-surface px-3 text-base text-ink" disabled={!variant?.purchasable}>
+              <select value={qty} onChange={(e) => setQty(Number(e.target.value))} className="min-h-12 field px-3 text-base text-ink" disabled={!variant?.purchasable}>
                 {Array.from({ length: Math.max(1, maxQty) }, (_, i) => i + 1).map((n) => (
                   <option key={n} value={n}>
                     {n}

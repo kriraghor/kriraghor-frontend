@@ -25,7 +25,7 @@ export function StreamPlayer({ streams, testId = "stream-player" }: { streams: S
   return (
     <div data-testid={testId}>
       {current ? (
-        <div className="relative aspect-video w-full overflow-hidden border-2 border-line-strong bg-black">
+        <div className="relative aspect-video w-full overflow-hidden rounded-[20px] bg-black">
           {waiting ? (
             <button type="button" onClick={() => setArmed(current.id)} className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white" data-testid="stream-click-to-play">
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 text-3xl" aria-hidden>
