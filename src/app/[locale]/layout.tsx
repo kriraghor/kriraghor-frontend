@@ -19,7 +19,7 @@ const bricolage = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-br
 const instrument = Instrument_Sans({ subsets: ["latin"], variable: "--font-instrument" });
 const hind = Hind_Siliguri({ subsets: ["bengali", "latin"], variable: "--font-hind", weight: ["400", "500", "600", "700"] });
 // The gym sub-brand wordmark only (home gym band, M20).
-const shoulders = Big_Shoulders({ subsets: ["latin"], variable: "--font-shoulders", weight: ["800", "900"], preload: false });
+const shoulders = Big_Shoulders({ subsets: ["latin"], variable: "--font-shoulders", weight: ["800", "900"], preload: false, adjustFontFallback: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),

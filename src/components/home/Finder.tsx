@@ -86,7 +86,7 @@ export function Finder() {
             tabIndex={tab === x.key ? 0 : -1}
             onClick={() => setTab(x.key)}
             onKeyDown={(e) => onKey(e, i)}
-            className={`-mb-0.5 flex min-h-14 flex-col items-center justify-center gap-1 border-b-4 px-4 text-sm font-bold sm:flex-row sm:gap-2 ${tab === x.key ? "border-brand text-ink" : "border-transparent text-muted hover:text-ink"}`}
+            className={`-mb-0.5 flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 border-b-4 px-1 text-xs font-bold sm:flex-row sm:gap-2 sm:px-4 sm:text-sm ${tab === x.key ? "border-brand text-ink" : "border-transparent text-muted hover:text-ink"}`}
           >
             {x.icon}
             {t(`tab.${x.key}`)}

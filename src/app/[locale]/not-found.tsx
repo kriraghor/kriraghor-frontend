@@ -15,6 +15,8 @@ export default function NotFound() {
   ];
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-20" data-testid="not-found">
+      {/* React hoists this into <head>; it keeps the title once the streamed layout metadata lands. */}
+      <title>{`${t("title")} · Kriraghor`}</title>
       <p className="text-sm font-bold uppercase tracking-[0.12em] text-brand-text">404</p>
       <h1 className="mt-3 max-w-[20ch] text-4xl font-extrabold md:text-5xl">{t("title")}</h1>
       <p className="mt-4 max-w-[52ch] text-lg text-muted">{t("body")}</p>
