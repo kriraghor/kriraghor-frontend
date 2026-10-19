@@ -1,0 +1,20 @@
+name: portal
+on:
+  push:
+    branches: [main]
+    paths: ["apps/portal/**", ".github/workflows/portal.yml"]
+  pull_request:
+    paths: ["apps/portal/**", ".github/workflows/portal.yml"]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  ci:
+    uses: kriraghor/kriraghor-infrastructure/.github/workflows/nextjs-app.yml@main
+    with:
+      image: kriraghor-portal
+      app-dir: apps/portal
+      values-files: values/portal/staging.yaml
+    secrets: inherit

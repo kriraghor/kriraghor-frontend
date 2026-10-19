@@ -1,0 +1,20 @@
+name: esports
+on:
+  push:
+    branches: [main]
+    paths: ["apps/esports/**", ".github/workflows/esports.yml"]
+  pull_request:
+    paths: ["apps/esports/**", ".github/workflows/esports.yml"]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  ci:
+    uses: kriraghor/kriraghor-infrastructure/.github/workflows/nextjs-app.yml@main
+    with:
+      image: kriraghor-esports
+      app-dir: apps/esports
+      values-files: values/esports/staging.yaml
+    secrets: inherit

@@ -1,0 +1,20 @@
+name: web
+on:
+  push:
+    branches: [main]
+    paths: ["apps/web/**", ".github/workflows/web.yml"]
+  pull_request:
+    paths: ["apps/web/**", ".github/workflows/web.yml"]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  ci:
+    uses: kriraghor/kriraghor-infrastructure/.github/workflows/nextjs-app.yml@main
+    with:
+      image: kriraghor-web
+      app-dir: apps/web
+      values-files: values/web/staging.yaml
+    secrets: inherit
