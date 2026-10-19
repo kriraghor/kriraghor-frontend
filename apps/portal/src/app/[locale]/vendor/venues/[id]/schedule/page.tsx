@@ -1,17 +1,17 @@
 import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
-import { PricingEditor } from "@/components/vendor/PricingEditor";
+import { GroundSchedule } from "@/components/vendor/GroundSchedule";
 
-export const metadata = { title: "Pricing" };
+export const metadata = { title: "Closures and series" };
 
-async function Content({ params }: { params: PageProps<"/[locale]/vendor/grounds/[id]/pricing">["params"] }) {
+async function Content({ params }: { params: PageProps<"/[locale]/vendor/venues/[id]/schedule">["params"] }) {
   const { locale, id } = await params;
   setRequestLocale(locale);
-  return <PricingEditor id={id} />;
+  return <GroundSchedule groundId={id} />;
 }
 
 // Params are request data (cacheComponents): read them inside Suspense.
-export default function PricingRoute({ params }: PageProps<"/[locale]/vendor/grounds/[id]/pricing">) {
+export default function ScheduleRoute({ params }: PageProps<"/[locale]/vendor/venues/[id]/schedule">) {
   return (
     <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />}>
       <Content params={params} />

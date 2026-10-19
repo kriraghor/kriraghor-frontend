@@ -22,7 +22,7 @@ export const STATUS_TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = {
 };
 const TABS = ["all", "live", "pending_review", "changes_requested", "draft", "paused", "rejected"] as const;
 
-/** /vendor/grounds (M09 §4.4): my grounds by status, and "Add a ground" (the first draft). */
+/** /vendor/grounds (M09 §4.4): my grounds by status, and "Add a venue" (the first draft). */
 export function GroundsDesk() {
   const t = useTranslations("vendorGrounds");
   const locale = useLocale();
@@ -65,7 +65,7 @@ export function GroundsDesk() {
       <ul className="mt-6 grid gap-4 sm:grid-cols-2" data-testid="my-grounds">
         {items.map((g) => (
           <li key={g.id}>
-            <Link href={`/vendor/grounds/${g.id}`} className="flex h-full gap-4 border-2 border-line bg-surface p-3 hover:border-brand">
+            <Link href={`/vendor/venues/${g.id}`} className="flex h-full gap-4 border-2 border-line bg-surface p-3 hover:border-brand">
               {g.coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={g.coverUrl} alt="" className="h-24 w-32 shrink-0 object-cover" />
@@ -91,7 +91,7 @@ export function GroundsDesk() {
   );
 }
 
-/** "Add a ground": name, area, address, map pin and the base price (seeds the first pricing version). */
+/** "Add a venue": name, area, address, map pin and the base price (seeds the first pricing version). */
 function AddGround({ onClose }: { onClose: () => void }) {
   const t = useTranslations("vendorGrounds");
   const router = useRouter();
@@ -120,7 +120,7 @@ function AddGround({ onClose }: { onClose: () => void }) {
         basePricePoisha: base,
       });
       await qc.invalidateQueries({ queryKey: ["vendor-grounds"] });
-      router.push(`/vendor/grounds/${g.id}`);
+      router.push(`/vendor/venues/${g.id}`);
     } catch (err) {
       setProblem(problemOf(err));
     } finally {

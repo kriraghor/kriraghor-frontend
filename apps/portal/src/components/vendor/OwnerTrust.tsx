@@ -172,7 +172,7 @@ export function OwnerReviews() {
         {!q.isPending && !q.data?.items.length ? <li className="py-4 text-muted">{t("noReviews")}</li> : null}
       </ul>
       <p className="mt-4 text-sm">
-        <Link href="/vendor/grounds" className="font-semibold text-brand underline">
+        <Link href="/vendor/venues" className="font-semibold text-brand underline">
           {t("toGrounds")}
         </Link>
       </p>

@@ -75,7 +75,7 @@ export function BookingsDesk() {
       <section className="mx-auto max-w-3xl px-5 py-10">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <p className="mt-3 text-muted">{t("noLive")}</p>
-        <Link href="/vendor/grounds" className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
+        <Link href="/vendor/venues" className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
           {t("toGrounds")}
         </Link>
       </section>
@@ -107,7 +107,7 @@ export function BookingsDesk() {
             {t("walkIn")}
           </button>
           {gid ? (
-            <Link href={`/vendor/grounds/${gid}/schedule`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-semibold">
+            <Link href={`/vendor/venues/${gid}/schedule`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-semibold">
               {t("schedule")}
             </Link>
           ) : null}

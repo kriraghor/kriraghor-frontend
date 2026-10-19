@@ -54,7 +54,7 @@ export function GroundEditor({ id }: { id: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-8">
-      <Link href="/vendor/grounds" className="text-sm font-semibold text-brand underline">
+      <Link href="/vendor/venues" className="text-sm font-semibold text-brand underline">
         ← {t("title")}
       </Link>
       <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -98,7 +98,7 @@ export function GroundEditor({ id }: { id: string }) {
             {t("resume")}
           </button>
         ) : null}
-        <Link href={`/vendor/grounds/${id}/pricing`} className={`${btn} inline-flex items-center border-line`} data-testid="open-pricing">
+        <Link href={`/vendor/venues/${id}/pricing`} className={`${btn} inline-flex items-center border-line`} data-testid="open-pricing">
           {t("pricing")}
         </Link>
         {g.status === "live" ? (

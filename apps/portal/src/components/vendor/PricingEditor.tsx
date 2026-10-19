@@ -79,7 +79,7 @@ export function PricingEditor({ id }: { id: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-8">
-      <Link href={`/vendor/grounds/${id}`} className="text-sm font-semibold text-brand underline">
+      <Link href={`/vendor/venues/${id}`} className="text-sm font-semibold text-brand underline">
         ← {ground.data?.name ?? t("title")}
       </Link>
       <h1 className="mt-3 text-3xl font-extrabold">{t("pricingTitle")}</h1>

@@ -10,7 +10,7 @@
     "signIn": "Sign in",
     "me": "My account",
     "signOut": "Sign out",
-    "grounds": "Grounds",
+    "grounds": "Venues",
     "hiring": "Hire",
     "shop": "Shop",
     "gym": "Gym",
@@ -20,11 +20,11 @@
     "fees": "Fees and rules",
     "esportsCatalog": "Esports catalogue",
     "audit": "Audit log",
-    "events": "Events",
+    "events": "System events",
     "finance": "Finance",
     "moderation": "Moderation",
-    "esportsDesk": "Tournaments",
-    "groundsAdmin": "Grounds",
+    "esportsDesk": "Esports events",
+    "groundsAdmin": "Venues",
     "places": "Places and sports",
     "bookings": "Bookings",
     "bookingsAdmin": "Bookings",
@@ -47,10 +47,10 @@
     "gymAdmin": "Gyms",
     "organisersAdmin": "Organisers",
     "esportsConsole": "Esports",
-    "bigEvents": "Big events",
+    "bigEvents": "Showcases",
     "teamsAdmin": "Teams",
-    "sportsConsole": "Sports tournaments",
-    "tournamentsAdmin": "Tournaments"
+    "sportsConsole": "Sports events",
+    "tournamentsAdmin": "Sports events"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -102,7 +102,7 @@
   },
   "vendor": {
     "home": "Business desk",
-    "intro": "Manage your grounds, shop, gym or tournaments. Desks arrive with their modules."
+    "intro": "Manage your venues, shop, gym or events. Desks arrive with their modules."
   },
   "errors": {
     "generic": "Something went wrong. Try again.",
@@ -113,10 +113,10 @@
   },
   "categories": {
     "fees": "Fees",
-    "booking": "Grounds and bookings",
+    "booking": "Venues and bookings",
     "market": "Market",
     "hire": "Hire",
-    "tournament": "Tournaments",
+    "tournament": "Events",
     "esports": "Esports",
     "gym": "Gym",
     "moderation": "Moderation",
@@ -182,7 +182,7 @@
   },
   "catalog": {
     "title": "Esports catalogue",
-    "intro": "Games, modes, maps and points tables used by tournaments. Rows are never deleted: deactivate hides them from pickers.",
+    "intro": "Games, modes, maps and points tables used by events. Rows are never deleted: deactivate hides them from pickers.",
     "tabs": {
       "esports-games": "Games",
       "esports-modes": "Modes",
@@ -218,7 +218,7 @@
     "killPoints": "Points per kill",
     "version": "Version",
     "latest": "Current",
-    "newVersionNote": "Saving creates version {version}. Tournaments keep the version they started with.",
+    "newVersionNote": "Saving creates version {version}. Events keep the version they started with.",
     "empty": "Nothing here yet.",
     "saved": "Saved."
   },
@@ -333,7 +333,7 @@
       "hire": "Hire",
       "orders": "Orders",
       "offers": "Offers",
-      "tournaments": "Tournaments",
+      "tournaments": "Events",
       "moderation": "Reviews & approvals",
       "disputes_reports": "Disputes & reports",
       "reviews": "Reviews",
@@ -569,7 +569,7 @@
     },
     "schedules": {
       "daily": "Daily (pros, organisers, used gear, test charges)",
-      "ground_weekly": "Weekly: grounds",
+      "ground_weekly": "Weekly: venues",
       "shop_weekly": "Weekly: shops"
     },
     "actions": {
@@ -686,7 +686,7 @@
       "photos_min": "Enough photos",
       "hours_and_rules_valid": "Courts, hours and prices are valid",
       "price_in_range": "Base price within the allowed range",
-      "name_unique_in_area": "No ground with a similar name nearby",
+      "name_unique_in_area": "No venue with a similar name nearby",
       "not_expired": "Document still valid",
       "nid_verified": "NID verified",
       "credential_covers": "Credential covers the level",
@@ -752,14 +752,14 @@
     "kind": {
       "document": "Identity document",
       "game_profile": "Game UID",
-      "esports_tournament": "Esports tournament",
-      "ground": "Ground listing",
+      "esports_tournament": "Esports event",
+      "ground": "Venue listing",
       "shop": "Shop",
       "product": "Shop product",
       "hire_profile": "Hire profile",
       "gym": "Gym",
       "organisation": "Organisation",
-      "tournament": "Tournament"
+      "tournament": "Event"
     },
     "lockLabel": "Lock",
     "lockAny": "Any",
@@ -829,17 +829,17 @@
     "history": "Versions"
   },
   "esportsDesk": {
-    "title": "Tournaments",
-    "intro": "Run Kriraghor's PUBG Mobile and Free Fire tournaments: drafts go to the Moderation desk for a second person to approve. Then check players in, set the room, enter results, settle disputes and finalise the prizes.",
+    "title": "Events",
+    "intro": "Run Kriraghor's PUBG Mobile and Free Fire events: drafts go to the Moderation desk for a second person to approve. Then check players in, set the room, enter results, settle disputes and finalise the prizes.",
     "noAccess": "You need the manage_esports or enter_results permission for this desk.",
     "tab": {
-      "tournaments": "Tournaments",
+      "tournaments": "Events",
       "disputes": "Disputes",
       "bans": "UID bans"
     },
-    "new": "New tournament",
-    "none": "No tournaments yet.",
-    "pick": "Pick a tournament on the left, or create one.",
+    "new": "New event",
+    "none": "No events yet.",
+    "pick": "Pick an event on the left, or create one.",
     "slotsShort": "{taken}/{max} slots",
     "feeShort": "entry {fee}",
     "prizeShort": "prizes {pool}",
@@ -875,7 +875,7 @@
       "killReward": "Per-kill reward (৳)",
       "prizes": "Prize table (৳)",
       "place": "Prize for place {n}",
-      "prizesHelp": "Places 1, 2, 3 … in order. The table is locked once the tournament is approved and is guaranteed if it runs.",
+      "prizesHelp": "Places 1, 2, 3 … in order. The table is locked once the event is approved and is guaranteed if it runs.",
       "opens": "Registration opens (Dhaka time)",
       "matches": "Matches",
       "map": "Map",
@@ -886,14 +886,14 @@
       "save": "Save draft",
       "badMoney": "Enter amounts in taka, with at most 2 decimals.",
       "maxPaidKills": "Most kills paid (needed with a per-kill reward)",
-      "inviteOnly": "Invite only (a big event's final: only qualified or invited entries)"
+      "inviteOnly": "Invite only (a showcase's final: only qualified or invited entries)"
     },
     "failed": "That didn't work. Try again.",
     "loadFailed": "Couldn't load this. Refresh to try again.",
     "submit": "Submit for review",
     "inReview": "Waiting for a second staff member on the Moderation desk.",
-    "cancel": "Cancel tournament",
-    "cancelTitle": "Cancel this tournament?",
+    "cancel": "Cancel event",
+    "cancelTitle": "Cancel this event?",
     "cancelHelp": "Every paid entry is refunded 100%. Enter your authenticator code to confirm.",
     "reason": "Reason",
     "reasonNeeded": "Give a reason of at least 5 characters.",
@@ -1051,15 +1051,15 @@
   },
   "vendorGrounds": {
     "home": {
-      "title": "Ground owner desk",
+      "title": "Venue owner desk",
       "lead": "List your turf or pitch, set your prices and take bookings with an advance. Kriraghor pays you at check-in.",
-      "active": "Your ground owner account is active.",
-      "groundsCount": "{n, plural, =0 {No grounds yet.} one {# ground} other {# grounds}}",
-      "open": "Open my grounds",
+      "active": "Your venue owner account is active.",
+      "groundsCount": "{n, plural, =0 {No venues yet.} one {# venue} other {# venues}}",
+      "open": "Open my venues",
       "step": {
         "nid": "Verify your NID",
         "docs": "Send your trade licence and land documents",
-        "list": "List your first ground"
+        "list": "List your first venue"
       },
       "stepHelp": {
         "nid": "On kriraghor.com, with the same account.",
@@ -1069,7 +1069,7 @@
       "go": {
         "nid": "Verify NID",
         "docs": "Send documents",
-        "list": "Add a ground"
+        "list": "Add a venue"
       }
     },
     "roleStatus": {
@@ -1083,11 +1083,11 @@
       "suspended": "suspended",
       "withdrawn": "withdrawn"
     },
-    "gate": "Your ground owner account is not active yet. Finish the steps on the business desk first.",
+    "gate": "Your venue owner account is not active yet. Finish the steps on the business desk first.",
     "gateLink": "Go to the business desk",
-    "title": "My grounds",
-    "lead": "Staff review a ground before it shows on kriraghor.com. A live ground stays public while staff review your changes.",
-    "add": "Add a ground",
+    "title": "My venues",
+    "lead": "Staff review a venue before it shows on kriraghor.com. A live venue stays public while staff review your changes.",
+    "add": "Add a venue",
     "tab": {
       "all": "All",
       "live": "Live",
@@ -1097,7 +1097,7 @@
       "paused": "Paused",
       "rejected": "Not approved"
     },
-    "empty": "No grounds here yet.",
+    "empty": "No venues here yet.",
     "noPhoto": "No photo",
     "status": {
       "draft": "Draft",
@@ -1119,19 +1119,19 @@
     "courts": "{n, plural, one {# court} other {# courts}}",
     "perHour": "{price}/hour",
     "reason": {
-      "photos_unclear": "The photos are unclear or not of this ground",
+      "photos_unclear": "The photos are unclear or not of this venue",
       "price_wrong": "The price looks wrong",
-      "duplicate": "This ground is already listed",
+      "duplicate": "This venue is already listed",
       "info_incomplete": "Some information is missing",
       "breaks_rules": "It breaks our rules",
       "location_wrong": "The address or map pin is wrong",
       "not_a_venue": "It is not a bookable sports venue",
       "other": "See the note from our team",
-      "owner_role": "Paused: your ground owner account is suspended",
+      "owner_role": "Paused: your venue owner account is suspended",
       "owner_sanction": "Paused: your account is suspended"
     },
     "form": {
-      "name": "Ground name",
+      "name": "Venue name",
       "area": "Area",
       "chooseArea": "Choose an area",
       "address": "Address",
@@ -1139,7 +1139,7 @@
       "lng": "Map pin longitude",
       "basePrice": "Base price per hour (৳)",
       "indoor": "Indoor",
-      "pinHelp": "Leave the pin empty to use the centre of the area; you can change it later. Staff check the photos, price and your documents. The ground shows once approved, usually within 24 hours.",
+      "pinHelp": "Leave the pin empty to use the centre of the area; you can change it later. Staff check the photos, price and your documents. The venue shows once approved, usually within 24 hours.",
       "create": "Create draft",
       "badPrice": "Enter the price in taka, like 2400",
       "description": "Description",
@@ -1150,7 +1150,7 @@
     },
     "cancel": "Cancel",
     "failed": "That didn't work. Try again.",
-    "loadFailed": "Couldn't load this ground.",
+    "loadFailed": "Couldn't load this venue.",
     "reviewNote": "Staff asked for changes: {reason}.",
     "editNote": "You have changes that staff must review. The public sees the approved version until then.",
     "submit": "Send for review",
@@ -1166,7 +1166,7 @@
     "viewPublic": "View on kriraghor.com",
     "basics": "Basics",
     "saved": "Saved.",
-    "reviewFields": "Name, area, address, pin, indoor, photos and courts need review on a live ground. Description, rules, cut-off and facilities change at once.",
+    "reviewFields": "Name, area, address, pin, indoor, photos and courts need review on a live venue. Description, rules, cut-off and facilities change at once.",
     "save": "Save",
     "photos": "Photos",
     "photosHelp": "{n, plural, one {# photo} other {# photos}}. Add at least 3; the first is the cover. JPEG, PNG or WebP.",
@@ -1220,7 +1220,7 @@
     "rules": {
       "base": "Base price",
       "basePrice": "Per hour (৳)",
-      "baseHelp": "{min} to {max}. Locked while the ground is in review.",
+      "baseHelp": "{min} to {max}. Locked while the venue is in review.",
       "time": "Time of day and week",
       "peakFrom": "Peak starts",
       "peak": "Peak surcharge (%)",
@@ -1250,7 +1250,7 @@
     "published": "Published. New bookings use these prices.",
     "discard": "Discard draft",
     "discarded": "Draft discarded.",
-    "applyToAll": "Use these rules on all my grounds (each keeps its own base price)",
+    "applyToAll": "Use these rules on all my venues (each keeps its own base price)",
     "undo": "Undo changes",
     "history": "Change history",
     "noHistory": "Nothing published yet.",
@@ -1263,7 +1263,7 @@
       "usingDraft": "Using your unsaved changes.",
       "rate": "Hourly rate at start",
       "advance": "Advance online",
-      "balance": "Balance at the ground",
+      "balance": "Balance at the venue",
       "fee": "Kriraghor fee",
       "total": "Total",
       "youGet": {
@@ -1280,17 +1280,17 @@
     }
   },
   "groundsAdmin": {
-    "title": "Grounds",
-    "intro": "Every ground and its owner. Reviews happen on the Moderation desk; here ops suspend a listing and masters restore or remove one.",
+    "title": "Venues",
+    "intro": "Every venue and its owner. Reviews happen on the Moderation desk; here ops suspend a listing and masters restore or remove one.",
     "noAccess": "You need approve_listings or manage_users for this desk.",
-    "loadFailed": "Couldn't load this ground.",
+    "loadFailed": "Couldn't load this venue.",
     "failed": "That didn't work. Try again.",
     "statusFilter": "Status",
     "allStatuses": "All statuses",
     "search": "Search by name",
-    "none": "No grounds match.",
+    "none": "No venues match.",
     "col": {
-      "ground": "Ground",
+      "ground": "Venue",
       "owner": "Owner",
       "status": "Status",
       "updated": "Updated"
@@ -1328,7 +1328,7 @@
     "whatChanged": "What changed",
     "firstReview": "First review",
     "diff": {
-      "first": "A new ground with {photos} photos.",
+      "first": "A new venue with {photos} photos.",
       "field": "{field}: {from} → {to}",
       "court_added": "Court added: {name}",
       "court_changed": "Court {name} changed: {fields}",
@@ -1363,7 +1363,7 @@
   },
   "places": {
     "title": "Places and sports",
-    "intro": "Areas, sports, facilities and surfaces that grounds and other listings use. Keys never change; deactivate instead of deleting. Grounds can be listed only in areas with grounds on.",
+    "intro": "Areas, sports, facilities and surfaces that venues and other listings use. Keys never change; deactivate instead of deleting. Venues can be listed only in areas with venues on.",
     "tab": {
       "areas": "Areas",
       "sports": "Sports",
@@ -1371,7 +1371,7 @@
       "surfaces": "Surfaces"
     },
     "failed": "That didn't work. Try again.",
-    "groundsOn": "Grounds",
+    "groundsOn": "Venues",
     "inactive": "Inactive",
     "edit": "Edit",
     "deactivate": "Deactivate",
@@ -1384,7 +1384,7 @@
     "nameEn": "Name (English)",
     "nameBn": "Name (Bangla)",
     "aliases": "Other names (comma separated)",
-    "groundsFlag": "Grounds can be listed here (Dhaka only)",
+    "groundsFlag": "Venues can be listed here (Dhaka only)",
     "add": {
       "areas": "Add an area",
       "facilities": "Add a facility"
@@ -1401,13 +1401,13 @@
     "addButton": "Add"
   },
   "vendorBookings": {
-    "gate": "You need an active ground-owner account to see bookings.",
+    "gate": "You need an active venue-owner account to see bookings.",
     "gateLink": "Go to your business home",
     "title": "Bookings",
-    "lead": "Your ground's day: check players in, mark no-shows, extend, record what they pay at the venue, and add walk-ins.",
-    "noLive": "You have no live ground yet. Bookings start once a ground is approved.",
-    "toGrounds": "My grounds",
-    "ground": "Ground",
+    "lead": "Your venue's day: check players in, mark no-shows, extend, record what they pay at the venue, and add walk-ins.",
+    "noLive": "You have no live venue yet. Bookings start once a venue is approved.",
+    "toGrounds": "My venues",
+    "ground": "Venue",
     "walkIn": "Add a walk-in",
     "schedule": "Closures and series",
     "day": "Day",
@@ -1452,20 +1452,20 @@
     "bkash": "bKash at the venue",
     "collect": "Record {amount} paid",
     "cancelTitle": "Cancel this booking?",
-    "cancelHelp": "The player gets everything they paid online back ({amount}). Cancellations count against your reliability unless the reason is the weather or a waterlogged ground.",
+    "cancelHelp": "The player gets everything they paid online back ({amount}). Cancellations count against your reliability unless the reason is the weather or a waterlogged venue.",
     "reason": "Reason",
     "reasons": {
       "weather": "Weather",
-      "waterlogged": "Waterlogged ground",
+      "waterlogged": "Waterlogged venue",
       "maintenance": "Maintenance",
-      "closure": "Ground closed",
+      "closure": "Venue closed",
       "double_booked_offline": "Booked offline twice",
       "other": "Other"
     },
     "confirmCancel": "Cancel and refund {amount}",
     "keep": "Keep it",
     "moveTitle": "Move to another court (same time, same price)",
-    "otherGround": "another ground",
+    "otherGround": "another venue",
     "noTargets": "No other court is free at this time.",
     "walkInTitle": "Walk-in, paid in full at the counter",
     "court": "Court",
@@ -1480,7 +1480,7 @@
     "retry": "Try again"
   },
   "vendorSchedule": {
-    "loadFailed": "Couldn't load the ground.",
+    "loadFailed": "Couldn't load the venue.",
     "back": "Bookings",
     "title": "Closures and series: {name}",
     "booking": "Booking",
@@ -1545,7 +1545,7 @@
   },
   "bookingsAdmin": {
     "title": "Bookings",
-    "intro": "Every ground booking with its money. The ledger trail shows the escrow release at check-in (fee on the full price), refunds and venue fees owed.",
+    "intro": "Every venue booking with its money. The ledger trail shows the escrow release at check-in (fee on the full price), refunds and venue fees owed.",
     "noAccess": "You need manage users or view payouts.",
     "statusFilter": "Status",
     "status": {
@@ -1596,7 +1596,7 @@
   "dashboard": {
     "overview": "Overview",
     "analytics": "Analytics",
-    "analyticsLead": "Your grounds week by week: what you earned, how full the courts were, and when teams play.",
+    "analyticsLead": "Your venues week by week: what you earned, how full the courts were, and when teams play.",
     "platform": "Platform",
     "period": "Period",
     "periods": {
@@ -1617,7 +1617,7 @@
       "gtv": "GTV",
       "feeRevenue": "Fee revenue",
       "takeRate": "Take rate",
-      "platformBookings": "Ground bookings",
+      "platformBookings": "Venue bookings",
       "esportsEntries": "Esports entries",
       "prizesPaid": "Prizes paid",
       "verifiedMembers": "Verified members",
@@ -1637,8 +1637,8 @@
       "check_in_due": "{n, plural, one {# team is} other {# teams are}} due to check in",
       "balance_unrecorded": "{n, plural, one {# venue balance} other {# venue balances}} not recorded after a week",
       "balance_due": "{n, plural, one {# balance} other {# balances}} to collect at the venue",
-      "ground_changes_requested": "Staff asked for changes to a ground",
-      "ground_draft": "{n, plural, one {# ground draft} other {# ground drafts}} not sent for review",
+      "ground_changes_requested": "Staff asked for changes to a venue",
+      "ground_draft": "{n, plural, one {# venue draft} other {# venue drafts}} not sent for review",
       "hold_to_pay": "A slot is on hold: pay to keep it",
       "verify_nid": "Verify your NID",
       "nid_in_review": "Your NID is in review",
@@ -1652,7 +1652,7 @@
       "revenueVsLastYear": "Revenue, with last year dashed",
       "bookingsByDay": "Bookings by day (this period)",
       "busiestHours": "Busiest hours",
-      "revenueByGround": "Revenue by ground (this period)",
+      "revenueByGround": "Revenue by venue (this period)",
       "volume": "Volume (GTV)",
       "byVertical": "Volume by vertical (this period)",
       "topAreas": "Top areas (bookings this period)"
@@ -1667,13 +1667,13 @@
     },
     "revenueNote": "Revenue is before the Kriraghor fee. Your payouts show what you receive.",
     "verticals": {
-      "grounds": "Grounds",
+      "grounds": "Venues",
       "esports": "Esports",
       "market": "Shop",
       "used": "Used gear",
       "hire": "Hire",
       "gym": "Gym",
-      "tournaments": "Tournaments",
+      "tournaments": "Events",
       "other": "Other"
     }
   },
@@ -1732,7 +1732,7 @@
       "booking_venue_problem": "The booking started but was never checked in; its online money is still held. Nothing back completes it normally (fee on the full value).",
       "booking_played": "Played and paid out: findings only, no money moves.",
       "booking_venue_cash": "Money paid at the venue: findings only (Q96).",
-      "esports_result_dispute": "A result dispute: the match stays open and the tournament cannot pay out until it is decided."
+      "esports_result_dispute": "A result dispute: the match stays open and the event cannot pay out until it is decided."
     },
     "esportsDesk": "Correct the results on the esports desk",
     "recommended": "Staff recommend: {outcome} ({refund}).",
@@ -1789,11 +1789,11 @@
       "escalated": "Escalated"
     },
     "subject": {
-      "ground": "Ground",
+      "ground": "Venue",
       "booking": "Booking",
       "user": "Member",
       "review": "Review",
-      "esports_tournament": "Tournament"
+      "esports_tournament": "Event"
     },
     "reason": {
       "fake_listing": "Fake listing",
@@ -1846,7 +1846,7 @@
   },
   "vendorTrust": {
     "disputesTitle": "Disputes",
-    "disputesIntro": "Members can dispute a no-show or a problem at your ground. Give your side before the deadline; our team then decides. The money stays with Kriraghor until then.",
+    "disputesIntro": "Members can dispute a no-show or a problem at your venue. Give your side before the deadline; our team then decides. The money stays with Kriraghor until then.",
     "noDisputes": "No disputes about your bookings.",
     "pick": "Choose a case.",
     "loadFailed": "Couldn't load the case.",
@@ -1892,14 +1892,14 @@
     "uploading": "Uploading…",
     "fileType": "Upload a JPEG, PNG, WebP or PDF.",
     "reviewsTitle": "Reviews",
-    "reviewsIntro": "Members rate your grounds after they play. A short, polite reply helps the next team decide.",
+    "reviewsIntro": "Members rate your venues after they play. A short, polite reply helps the next team decide.",
     "noReviews": "No reviews yet.",
     "writeReply": "Write a reply",
     "editReply": "Change your reply",
     "reply": "Reply",
-    "toGrounds": "Your grounds",
+    "toGrounds": "Your venues",
     "reliability": "Your reliability",
-    "reliabilityShown": "Members see this on your grounds ({n} bookings).",
+    "reliabilityShown": "Members see this on your venues ({n} bookings).",
     "reliabilityHidden": "Members see it from {min} bookings (you have {n}).",
     "reliabilityHow": "Lowered by cancelling confirmed bookings ({cancels}) and disputes you lost ({disputes}). Weather cancels do not count.",
     "bookerReliability": "Reliability {score}%"
@@ -2025,7 +2025,7 @@
     "codeHelp": "Enter your authenticator code to confirm.",
     "reliability": "Reliability",
     "trustKind": {
-      "owner": "As a ground owner",
+      "owner": "As a venue owner",
       "booker": "As a booker"
     },
     "sample": "{n} bookings",
@@ -2947,7 +2947,7 @@
     },
     "tab": {
       "dashboard": "Overview",
-      "tournaments": "Tournaments",
+      "tournaments": "Events",
       "billing": "Billing",
       "branding": "Branding",
       "members": "Members"
@@ -2981,7 +2981,7 @@
     "cycle": {
       "monthly": "a month",
       "quarterly": "a quarter",
-      "per_tournament": "per tournament"
+      "per_tournament": "per event"
     },
     "dash": {
       "contract": "Contract",
@@ -2991,15 +2991,15 @@
       "invoices": "Invoices",
       "unpaid": "{n} unpaid ({total})",
       "allPaid": "All paid",
-      "submits": "New tournaments",
-      "canSubmit": "You can send tournaments for review",
+      "submits": "New events",
+      "canSubmit": "You can send events for review",
       "cannotSubmit": "Blocked: check the contract and invoices",
-      "upcoming": "Upcoming tournaments",
+      "upcoming": "Upcoming events",
       "none": "Nothing scheduled yet."
     },
     "tour": {
-      "new": "New tournament",
-      "empty": "No tournaments yet.",
+      "new": "New event",
+      "empty": "No events yet.",
       "entry": "Entry fee",
       "pool": "Prize pool",
       "starts": "Starts",
@@ -3020,7 +3020,7 @@
     "fund": {
       "title": "Prize fund",
       "line": "Pool {required} · deposited {deposited}",
-      "funded": "Funded. You can send the tournament for review.",
+      "funded": "Funded. You can send the event for review.",
       "needs": "Fund the prize pool before sending it for review. Prizes are paid from it; Kriraghor never adds money.",
       "over": "The deposit is more than the pool: raise the prizes, or cancel the draft to get the fund back.",
       "now": "Fund now ({amount})"
@@ -3055,15 +3055,15 @@
       "role": "Role",
       "add": "Add",
       "remove": "Remove",
-      "help": "Admins manage tournaments, money and branding; staff run rooms and results."
+      "help": "Admins manage events, money and branding; staff run rooms and results."
     },
     "home": {
-      "active": "You can run esports tournaments as an organiser.",
+      "active": "You can run esports events as an organiser.",
       "open": "Open the organiser console",
-      "sell": "Run esports tournaments? Organisers use Kriraghor under a contract.",
+      "sell": "Run esports events? Organisers use Kriraghor under a contract.",
       "continue": "Continue the application",
       "start": "Apply as an organiser",
-      "openSports": "Sports tournaments"
+      "openSports": "Sports events"
     }
   },
   "organisersDesk": {
@@ -3097,7 +3097,7 @@
     "cycle": {
       "monthly": "monthly",
       "quarterly": "quarterly",
-      "per_tournament": "per tournament"
+      "per_tournament": "per event"
     },
     "members": "Members: {list}",
     "suspend": "Suspend",
@@ -3143,12 +3143,12 @@
     }
   },
   "bigEvents": {
-    "title": "Big events",
-    "intro": "Championships over Kriraghor's tournaments: qualifiers feed an invite-only final. Link them, publish, then run the day: streams, sponsors, polls and announcements.",
+    "title": "Showcases",
+    "intro": "Championships over Kriraghor's events: qualifiers feed an invite-only final. Link them, publish, then run the day: streams, sponsors, polls and announcements.",
     "noAccess": "You need the manage_esports permission.",
-    "new": "New event",
-    "none": "No events yet.",
-    "pick": "Pick an event, or create one.",
+    "new": "New showcase",
+    "none": "No showcases yet.",
+    "pick": "Pick a showcase, or create one.",
     "failed": "That did not work. Try again.",
     "viewPage": "View the page",
     "phase": {
@@ -3160,7 +3160,7 @@
     },
     "tab": {
       "basics": "Basics",
-      "stages": "Tournaments",
+      "stages": "Events",
       "places": "Final places",
       "streams": "Streams",
       "sponsors": "Sponsors",
@@ -3186,24 +3186,24 @@
     "bannerSaved": "Banner uploaded.",
     "publish": "Publish",
     "published": "Published.",
-    "cancel": "Cancel event",
+    "cancel": "Cancel showcase",
     "cancelReason": "Why cancel? (at least 5 characters)",
-    "cancelledMsg": "The event is cancelled.",
-    "cancelNote": "Cancelling the event never cancels its tournaments; cancel those on the esports desk. It is refused while one is running.",
+    "cancelledMsg": "The showcase is cancelled.",
+    "cancelNote": "Cancelling the showcase never cancels its events; cancel those on the esports desk. It is refused while one is running.",
     "stagesHelp": "Add the final first and make it invite only; then each qualifier, how many go through, and the final it feeds. The link check runs when you save.",
     "inviteOnly": "invite only",
     "s": {
       "role": "Role",
       "final": "Final",
       "qualifier": "Qualifier",
-      "tournament": "Tournament",
+      "tournament": "Event",
       "labelEn": "Label (English)",
       "labelBn": "Label (Bangla)",
       "qualifyCount": "How many go through",
       "feeds": "Feeds the final",
       "remove": "Remove",
       "add": "Add a qualifier",
-      "incomplete": "Fill in every row: a tournament, both labels, and for qualifiers the count and the final."
+      "incomplete": "Fill in every row: an event, both labels, and for qualifiers the count and the final."
     },
     "check": {
       "ok": "Links OK",
@@ -3235,14 +3235,14 @@
         "revoked": "Revoked"
       }
     },
-    "streamsHelp": "YouTube and Facebook links embed on the event page; TikTok live opens as a link. Ticking \"live\" on a stream that was not live alerts followers (once per cooldown).",
+    "streamsHelp": "YouTube and Facebook links embed on the showcase page; TikTok live opens as a link. Ticking \"live\" on a stream that was not live alerts followers (once per cooldown).",
     "st": {
       "platform": "Platform",
       "url": "Link",
       "title": "Title",
       "live": "Live"
     },
-    "tournamentStreams": "Plus {n} stream(s) from the tournaments themselves.",
+    "tournamentStreams": "Plus {n} stream(s) from the events themselves.",
     "tier": {
       "title": "Title sponsor",
       "gold": "Gold",
@@ -3279,11 +3279,11 @@
       "kind": {
         "announcement": "Announcement",
         "tournament_finalised": "Results final",
-        "tournament_cancelled": "Tournament cancelled",
+        "tournament_cancelled": "Event cancelled",
         "qualified": "Entries qualified",
         "final_live": "Final live",
         "stream_live": "Stream live",
-        "event_cancelled": "Event cancelled"
+        "event_cancelled": "Showcase cancelled"
       }
     }
   },
@@ -3340,14 +3340,14 @@
     "corrected": "Corrected and recorded in the audit log."
   },
   "sportsConsole": {
-    "title": "Sports tournaments",
+    "title": "Sports events",
     "applyFirst": "You have no verified sports organisation yet.",
-    "applyHelp": "Register one on kriraghor.com (Account → Business → Organiser) and choose \"Sports tournaments\".",
+    "applyHelp": "Register one on kriraghor.com (Account → Business → Organiser) and choose \"Sports events\".",
     "notFound": "Not found",
     "failed": "Something went wrong. Please try again.",
-    "new": "New tournament",
+    "new": "New event",
     "close": "Close",
-    "none": "No tournaments yet.",
+    "none": "No events yet.",
     "format": {
       "league": "League",
       "double_league": "Double league",
@@ -3367,7 +3367,7 @@
     },
     "sport": "Sport",
     "preset": "Preset",
-    "name": "Tournament name",
+    "name": "Event name",
     "formatLabel": "Format",
     "groupCount": "Groups",
     "qualifiers": "Teams through per group",
@@ -3419,7 +3419,7 @@
     "extend": "Reopen registration (once)",
     "reason": "Reason",
     "unlockRules": "Unlock the rules",
-    "cancelTournament": "Cancel the tournament",
+    "cancelTournament": "Cancel the event",
     "unlockedUntil": "Rules unlocked until {at}",
     "publicPage": "Open the public page",
     "rulesLocked": "The rules are locked since the first result. Unlock them with a reason (Overview) to change them.",
@@ -3519,14 +3519,14 @@
     }
   },
   "tournamentsAdmin": {
-    "title": "Tournaments",
-    "intro": "Physical-sport tournaments with their registrations and the entry fees in escrow. Reviews are on the Moderation desk. Masters can cancel a tournament: teams get back what is still held.",
+    "title": "Events",
+    "intro": "Physical-sport events with their registrations and the entry fees in escrow. Reviews are on the Moderation desk. Masters can cancel an event: teams get back what is still held.",
     "name": "Name",
     "status": "Status",
     "all": "All",
     "find": "Find",
-    "none": "No tournaments match.",
-    "pick": "Pick a tournament.",
+    "none": "No events match.",
+    "pick": "Pick an event.",
     "failed": "Something went wrong.",
     "st": {
       "draft": "Draft",
@@ -3574,7 +3574,7 @@
     },
     "open": "Open (NID verified)",
     "venues": "Venues",
-    "ground": "A Kriraghor ground",
+    "ground": "A Kriraghor venue",
     "collected": "Collected",
     "held": "Held",
     "released": "Released",
@@ -3582,8 +3582,8 @@
     "registrations": "Registrations ({n})",
     "waived": "waived",
     "reason": "Reason for cancelling",
-    "cancel": "Cancel the tournament",
-    "cancelTitle": "Cancel the tournament",
+    "cancel": "Cancel the event",
+    "cancelTitle": "Cancel the event",
     "cancelHelp": "Every team gets back what is still held. Enter your authenticator code."
   }
 }

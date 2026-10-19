@@ -55,7 +55,7 @@ export function SportsHome() {
   const q = useQuery({ queryKey: ["my-orgs"], queryFn: () => api.mine(), enabled: status === "signed_in" });
   const usable = (q.data?.items ?? []).filter((o) => o.kind === "sports" && ["verified", "suspended"].includes(o.status));
   useEffect(() => {
-    if (usable.length === 1) router.replace(`/vendor/tournaments/${usable[0].id}`);
+    if (usable.length === 1) router.replace(`/vendor/events/${usable[0].id}`);
   }, [usable, router]);
   if (status !== "signed_in") return <MePanel signInHref="/vendor/sign-in" />;
   if (q.isPending) return <div className="mx-auto mt-10 h-40 max-w-3xl animate-pulse bg-surface-2" />;
@@ -66,7 +66,7 @@ export function SportsHome() {
         <ul className="mt-6 flex flex-col gap-3">
           {usable.map((o) => (
             <li key={o.id}>
-              <Link href={`/vendor/tournaments/${o.id}`} className="flex items-center justify-between border-2 border-line p-4 font-bold hover:border-brand">
+              <Link href={`/vendor/events/${o.id}`} className="flex items-center justify-between border-2 border-line p-4 font-bold hover:border-brand">
                 {o.name}
               </Link>
             </li>
@@ -103,7 +103,7 @@ export function SportsTournaments({ orgId }: { orgId: string }) {
         {q.data && !q.data.items.length ? <li className="border-2 border-dashed border-line p-6 text-muted">{t("none")}</li> : null}
         {(q.data?.items ?? []).map((x) => (
           <li key={x.id}>
-            <Link href={`/vendor/tournaments/${orgId}/t/${x.id}`} className="flex flex-wrap items-center gap-3 border-2 border-line p-3 hover:border-brand" data-testid="sports-tournament">
+            <Link href={`/vendor/events/${orgId}/e/${x.id}`} className="flex flex-wrap items-center gap-3 border-2 border-line p-3 hover:border-brand" data-testid="sports-tournament">
               <span className="min-w-0 flex-1">
                 <span className="block font-bold">{x.name}</span>
                 <span className="block text-sm text-muted">
@@ -174,7 +174,7 @@ function NewTournament({ orgId }: { orgId: string }) {
         ...(f.format === "groups_knockout" ? { formatConfig: { groupCount: Number(f.groupCount), qualifiersPerGroup: Number(f.qualifiers) } } : {}),
         venues: f.venueText && f.areaId ? [{ venueText: f.venueText, areaId: f.areaId, courts: f.courts.split(",").map((x) => x.trim()).filter(Boolean) }] : [],
       }),
-    onSuccess: (x) => router.push(`/vendor/tournaments/${orgId}/t/${x.id}`),
+    onSuccess: (x) => router.push(`/vendor/events/${orgId}/e/${x.id}`),
   });
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   return (
@@ -296,7 +296,7 @@ export function TournamentConsole({ orgId, id }: { orgId: string; id: string }) 
   const x = q.data;
   return (
     <section className="mx-auto max-w-[1200px] px-5 py-8">
-      <Link href={`/vendor/tournaments/${orgId}`} className="text-sm font-semibold text-brand underline">
+      <Link href={`/vendor/events/${orgId}`} className="text-sm font-semibold text-brand underline">
         ← {t("title")}
       </Link>
       <div className="mt-3 flex flex-wrap items-center gap-3">

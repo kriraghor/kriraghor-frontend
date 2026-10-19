@@ -179,7 +179,7 @@ export function OrgDashboard({ orgId }: { orgId: string }) {
               }[]
             ).map((x) => (
               <li key={x.id} className="flex flex-wrap items-center gap-3 py-2">
-                <Link href={`/vendor/esports/${orgId}/tournaments/${x.id}`} className="min-w-0 flex-1 font-semibold underline">
+                <Link href={`/vendor/esports/${orgId}/events/${x.id}`} className="min-w-0 flex-1 font-semibold underline">
                   {x.titleEn}
                 </Link>
                 <span className="text-sm text-muted">{formatDhaka(x.startsAt, locale)}</span>
@@ -211,7 +211,7 @@ export function OrgTournaments({ orgId }: { orgId: string }) {
       </button>
       {adding ? (
         <div className="mt-4">
-          <CreateForm client={orgDesk(orgId)} organiser onCreated={(id) => router.push(`/vendor/esports/${orgId}/tournaments/${id}`)} />
+          <CreateForm client={orgDesk(orgId)} organiser onCreated={(id) => router.push(`/vendor/esports/${orgId}/events/${id}`)} />
         </div>
       ) : null}
       {q.isPending ? <div className="mt-6 h-32 animate-pulse bg-surface-2" /> : null}
@@ -219,7 +219,7 @@ export function OrgTournaments({ orgId }: { orgId: string }) {
       <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="org-tournaments">
         {(q.data?.items ?? []).map((x) => (
           <li key={x.id}>
-            <Link href={`/vendor/esports/${orgId}/tournaments/${x.id}`} className="flex flex-wrap items-center gap-3 py-3 hover:bg-surface-2">
+            <Link href={`/vendor/esports/${orgId}/events/${x.id}`} className="flex flex-wrap items-center gap-3 py-3 hover:bg-surface-2">
               <span className="min-w-0 flex-1 font-bold">{x.titleEn}</span>
               <span className="text-sm text-muted">{formatDhaka(x.startsAt, locale)}</span>
               <span className="text-sm tabular-nums">{formatTaka(x.prizePool.amount, locale)}</span>
@@ -296,7 +296,7 @@ export function OrgTournament({ orgId, id }: { orgId: string; id: string }) {
   return (
     <div className="space-y-6" data-testid="org-tournament">
       <div className="flex flex-wrap items-center gap-3">
-        <Link href={`/vendor/esports/${orgId}/tournaments`} className="text-sm font-semibold text-brand underline">
+        <Link href={`/vendor/esports/${orgId}/events`} className="text-sm font-semibold text-brand underline">
           ← {t("tab.tournaments")}
         </Link>
         <h2 className="text-2xl font-extrabold">{x.titleEn}</h2>

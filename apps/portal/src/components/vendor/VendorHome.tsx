@@ -34,7 +34,7 @@ export function VendorHome() {
   const steps = [
     { key: "nid", done: member === "active", href: `${web}/account/verification` },
     { key: "docs", done: owner === "active", href: `${web}/account/business` },
-    { key: "list", done: (mine.data?.items.length ?? 0) > 0, href: "/vendor/grounds" },
+    { key: "list", done: (mine.data?.items.length ?? 0) > 0, href: "/vendor/venues" },
   ];
   const current = steps.findIndex((s) => !s.done);
 
@@ -46,7 +46,7 @@ export function VendorHome() {
         <div className="mt-6 border-2 border-brand bg-surface p-5" data-testid="owner-active">
           <p className="font-bold">{t("home.active")}</p>
           <p className="mt-1 text-sm text-muted">{t("home.groundsCount", { n: mine.data?.items.length ?? 0 })}</p>
-          <Link href="/vendor/grounds" className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+          <Link href="/vendor/venues" className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
             {t("home.open")}
           </Link>
         </div>
@@ -152,7 +152,7 @@ function OrganiserCard({ status }: { status: string | null }) {
           <Link href="/vendor/esports" className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
             {t("home.open")}
           </Link>
-          <Link href="/vendor/tournaments" className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand" data-testid="open-sports-console">
+          <Link href="/vendor/events" className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand" data-testid="open-sports-console">
             {t("home.openSports")}
           </Link>
         </span>
