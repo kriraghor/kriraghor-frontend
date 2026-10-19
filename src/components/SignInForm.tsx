@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { api, problemOf } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { publicEnv } from "@/lib/env";
-import { Button, Field, Notice } from "./ui";
+import { Button, Field, Notice, PasswordField } from "./ui";
 
 type Method = "phone" | "email" | "password" | "google";
 type Step = { kind: "enter" } | { kind: "code"; target: string } | { kind: "signup"; signupToken: string };
@@ -163,8 +163,11 @@ export function SignInForm({ next = "/me" }: { next?: string }) {
         {method === "password" && step.kind === "enter" ? (
           <form onSubmit={passwordLogin} className="flex flex-col gap-4">
             <Field id="identifier" name="identifier" required label={t("signIn.identifierLabel")} autoComplete="username" />
-            <Field id="password" name="password" required type="password" label={t("signIn.passwordLabel")} autoComplete="current-password" />
+            <PasswordField id="password" name="password" required label={t("signIn.passwordLabel")} autoComplete="current-password" showLabel={t("reset.show")} hideLabel={t("reset.hide")} />
             <Button busy={busy}>{t("signIn.signInButton")}</Button>
+            <Link href={next === "/me" ? "/sign-in/reset" : `/sign-in/reset?next=${encodeURIComponent(next)}`} className="min-h-11 text-sm font-semibold text-brand-text underline" data-testid="forgot-password">
+              {t("signIn.forgot")}
+            </Link>
           </form>
         ) : null}
 

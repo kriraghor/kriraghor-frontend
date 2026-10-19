@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -16,6 +17,8 @@ const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2",
  * table for the week and the v3 payment line. The aside books a slot (M10 BookingWidget).
  */
 export function GroundDetail({ slug }: { slug: string }) {
+  // A slot picked on the home page arrives as ?court=&at= (an ISO start), never personal data.
+  const search = useSearchParams();
   const t = useTranslations("grounds");
   const locale = useLocale();
   const q = useQuery({ queryKey: ["ground", slug], queryFn: () => grounds.detail(slug), retry: false });
@@ -165,7 +168,7 @@ export function GroundDetail({ slug }: { slug: string }) {
               {g.bookingOpen ? (
                 <>
                   <p className="mb-3 font-bold">{t("bookNow")}</p>
-                  <BookingWidget groundId={g.id} slug={slug} />
+                  <BookingWidget groundId={g.id} slug={slug} initial={{ courtId: search.get("court") ?? undefined, start: search.get("at") ?? undefined }} />
                 </>
               ) : (
                 <>

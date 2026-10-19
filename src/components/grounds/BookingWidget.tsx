@@ -8,6 +8,7 @@ import { problemOf } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { bookings, canStartAt, coveredIndexes, dayLabel, daysBetween, newKey, timeLabel, useGroundLive, type PaymentChoice } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
+import { dhakaDateOf } from "@/lib/home";
 import { Notice } from "../ui";
 
 const CELL: Record<string, string> = {
@@ -22,14 +23,16 @@ const CELL: Record<string, string> = {
  * The booking aside of /grounds/[slug] (M10 FR-01 to FR-06, v3): a 7-day strip, court and length, the
  * half-hour grid (live through the ground's socket room), then both payment options from the shared
  * calculator. "Hold and pay" holds the slot for 10 minutes and opens the M06 payment page.
+ * `initial` pre-selects a slot picked on the home page (?court=&at=); any later pick replaces it.
  */
-export function BookingWidget({ groundId, slug }: { groundId: string; slug: string }) {
+export function BookingWidget({ groundId, slug, initial }: { groundId: string; slug: string; initial?: { courtId?: string; start?: string } }) {
   const t = useTranslations("bookings");
   const locale = useLocale();
   const { status } = useAuth();
   const qc = useQueryClient();
-  const [date, setDate] = useState<string | undefined>(undefined);
-  const [courtId, setCourtId] = useState<string | undefined>(undefined);
+  const [date, setDate] = useState<string | undefined>(() => (initial?.start ? dhakaDateOf(initial.start) : undefined));
+  const [courtId, setCourtId] = useState<string | undefined>(initial?.courtId);
+  const [initialStart, setInitialStart] = useState<string | null>(initial?.start ?? null);
   const [minutes, setMinutes] = useState<number | undefined>(undefined);
   const [startIndex, setStartIndex] = useState<number | null>(null);
   const [choice, setChoice] = useState<PaymentChoice>("advance");
@@ -42,8 +45,10 @@ export function BookingWidget({ groundId, slug }: { groundId: string; slug: stri
   const court = a?.courts.find((k) => k.id === courtId) ?? a?.courts[0];
   const length = minutes ?? a?.lengths[0] ?? 60;
   const cells = useMemo(() => court?.cells ?? [], [court]);
-  const selected = startIndex !== null && canStartAt(cells, startIndex, length) ? cells[startIndex] : null;
-  const covered = coveredIndexes(selected ? startIndex : null, length);
+  const preset = initialStart ? cells.findIndex((c) => c.start === initialStart) : -1;
+  const at = startIndex ?? (preset >= 0 ? preset : null);
+  const selected = at !== null && canStartAt(cells, at, length) ? cells[at] : null;
+  const covered = coveredIndexes(selected ? at : null, length);
 
   const quote = useQuery({
     queryKey: ["quote", groundId, court?.id, selected?.start, length],
@@ -63,6 +68,7 @@ export function BookingWidget({ groundId, slug }: { groundId: string; slug: stri
   const pick = (fn: () => void) => {
     fn();
     setStartIndex(null);
+    setInitialStart(null);
     holdIt.reset();
   };
 
@@ -125,6 +131,7 @@ export function BookingWidget({ groundId, slug }: { groundId: string; slug: stri
               aria-pressed={on}
               aria-label={`${timeLabel(c.start, locale)}, ${t(`state.${c.state}`)}`}
               onClick={() => {
+                setInitialStart(null);
                 setStartIndex(i);
                 holdIt.reset();
               }}

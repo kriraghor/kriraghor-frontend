@@ -1,13 +1,26 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
+import { detailJsonLd, detailMetadata } from "@/lib/seo.server";
+import { JsonLd } from "@/components/JsonLd";
 import { GroundDetail } from "@/components/grounds/GroundDetail";
 
-export const metadata = { title: "Ground" };
+/** Title, description and share image from the public read; an unknown slug is a 404 (seo.server). */
+export async function generateMetadata({ params }: PageProps<"/[locale]/grounds/[slug]">): Promise<Metadata> {
+  const { locale, slug } = await params;
+  return detailMetadata("ground", slug, locale, "Ground", `/grounds/${slug}`);
+}
 
 async function Content({ params }: { params: PageProps<"/[locale]/grounds/[slug]">["params"] }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  return <GroundDetail slug={slug} />;
+  const ld = await detailJsonLd("ground", slug, locale);
+  return (
+    <>
+      {ld ? <JsonLd data={ld} /> : null}
+      <GroundDetail slug={slug} />
+    </>
+  );
 }
 
 // Params are request data (cacheComponents): read them inside Suspense.
