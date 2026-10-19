@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { PHOTOS } from "@/lib/photos";
 import { Link } from "@/i18n/navigation";
 import { esportsHref } from "@/lib/links";
 
@@ -14,7 +16,11 @@ export default function NotFound() {
     { href: "/hiring", label: t("hire") },
   ];
   return (
-    <section className="mx-auto max-w-[1320px] px-5 py-20" data-testid="not-found">
+    <section className="mx-auto grid max-w-[1320px] gap-10 px-5 py-16 md:grid-cols-[1fr_40%] md:items-center" data-testid="not-found">
+      <div className="relative order-last aspect-[16/10] overflow-hidden bg-surface-2">
+        <Image src={PHOTOS.groundsFloodlit} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" />
+      </div>
+      <div>
       {/* React hoists this into <head>; it keeps the title once the streamed layout metadata lands. */}
       <title>{`${t("title")} · Kriraghor`}</title>
       <p className="text-sm font-bold uppercase tracking-[0.12em] text-brand-text">404</p>
@@ -34,6 +40,7 @@ export default function NotFound() {
           </a>
         </li>
       </ul>
+      </div>
     </section>
   );
 }

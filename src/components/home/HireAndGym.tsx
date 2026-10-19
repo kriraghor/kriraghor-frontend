@@ -3,7 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, SealCheck } from "@phosphor-icons/react";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { PHOTOS } from "@/lib/photos";
 import { api } from "@/lib/api/client";
 import { initials } from "@/lib/home";
 import { formatTaka } from "@/lib/payments";
@@ -69,6 +71,9 @@ export function HomeHire() {
           ))}
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="relative col-span-2 aspect-[21/9] overflow-hidden sm:col-span-3">
+            <Image src={PHOTOS.hire} alt="" fill sizes="(min-width: 900px) 55vw, 100vw" className="object-cover object-[50%_35%]" />
+          </div>
           {(taxonomy.data ?? []).map((c) => (
             <Link key={c.key} href={`/hiring?category=${encodeURIComponent(c.key)}`} className="rv flex min-h-28 flex-col justify-between border-2 border-line bg-surface p-4 hover:border-ink">
               <span className="font-bangla text-sm text-muted" lang="bn">

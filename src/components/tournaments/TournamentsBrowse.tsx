@@ -9,6 +9,7 @@ import { teams as teamsApi, teamSports } from "@/lib/teams";
 import { tournaments, type Status } from "@/lib/tournaments";
 import { Notice } from "../ui";
 import { TournamentCard } from "./TournamentCard";
+import { PageHeader } from "../PageHeader";
 
 const STATUSES: Status[] = ["open", "live", "completed"];
 
@@ -35,9 +36,11 @@ export function TournamentsBrowse() {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
-      <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand">{t("kicker")}</p>
-      <h1 className="mt-2 text-4xl font-extrabold">{t("title")}</h1>
-      <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+      <PageHeader photo="tournaments">
+        <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand">{t("kicker")}</p>
+        <h1 className="mt-2 text-4xl font-extrabold">{t("title")}</h1>
+        <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+      </PageHeader>
 
       <div className="mt-6 flex gap-1 border-b-2 border-line" role="tablist">
         {STATUSES.map((s) => (

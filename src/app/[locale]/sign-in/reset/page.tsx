@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { AuthShell } from "@/components/AuthShell";
 import { setRequestLocale } from "next-intl/server";
 import { ResetPasswordForm } from "@/components/ResetPasswordForm";
 import { safeNext } from "@/lib/teams";
@@ -15,8 +16,10 @@ export default async function ResetPage({ params, searchParams }: PageProps<"/[l
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <Suspense fallback={<ResetPasswordForm />}>
-      <Content searchParams={searchParams} />
-    </Suspense>
+    <AuthShell photo="badminton">
+      <Suspense fallback={<ResetPasswordForm />}>
+        <Content searchParams={searchParams} />
+      </Suspense>
+    </AuthShell>
   );
 }

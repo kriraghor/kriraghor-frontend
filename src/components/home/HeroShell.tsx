@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { PHOTOS } from "@/lib/photos";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { FeaturedEvent, NextUp, OpenCount } from "./EsportsHero";
 
@@ -10,6 +12,8 @@ export async function EsportsHero() {
   const t = await getTranslations("home.hero");
   return (
     <section className="relative overflow-hidden bg-band pb-28 pt-12 text-band-text md:pt-16" id="esports" aria-labelledby="hero-title" data-testid="hero">
+      <Image src={PHOTOS.esports} alt="" fill priority sizes="100vw" className="object-cover object-[60%_30%] opacity-70" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-band via-band/80 to-band/30" aria-hidden />
       {/* Two soft glows, green and amber, as in the prototype; decorative only. */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_15%_10%,rgb(25_153_95/0.28),transparent),radial-gradient(40%_40%_at_90%_80%,rgb(242_163_58/0.18),transparent)]" aria-hidden />
       <div className="relative mx-auto grid max-w-[1320px] gap-10 px-5 md:grid-cols-[7fr_5fr] md:items-center">

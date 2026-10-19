@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { AuthShell } from "@/components/AuthShell";
 import { setRequestLocale } from "next-intl/server";
 import { SignInForm } from "@/components/SignInForm";
 import { safeNext } from "@/lib/teams";
@@ -15,8 +16,10 @@ export default async function SignInPage({ params, searchParams }: PageProps<"/[
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <Suspense fallback={<SignInForm next="/me" />}>
-      <Content searchParams={searchParams} />
-    </Suspense>
+    <AuthShell photo="cricket">
+      <Suspense fallback={<SignInForm next="/me" />}>
+        <Content searchParams={searchParams} />
+      </Suspense>
+    </AuthShell>
   );
 }

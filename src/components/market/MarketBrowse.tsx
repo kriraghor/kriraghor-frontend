@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import { PRICE_BANDS, bandOf, filtersFromParams, market, paramsFromFilters, type Filters } from "@/lib/market";
 import { ProductCard } from "./ProductCard";
+import { PageHeader } from "../PageHeader";
 
 /**
  * /shop (M12 §4, FR-30 to FR-32): new gear from verified shops, sports gear, gym equipment and
@@ -40,17 +41,19 @@ export function MarketBrowse() {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="mr-auto">
-          <h1 className="text-4xl font-extrabold" data-testid="market-title">
-            {t("title")}
-          </h1>
-          <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+      <PageHeader photo="shopGear">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="mr-auto">
+            <h1 className="text-4xl font-extrabold" data-testid="market-title">
+              {t("title")}
+            </h1>
+            <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+          </div>
+          <Link href="/shop/saved" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+            {t("savedLink")}
+          </Link>
         </div>
-        <Link href="/shop/saved" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
-          {t("savedLink")}
-        </Link>
-      </div>
+      </PageHeader>
 
       <nav aria-label={t("categories")} className="mt-8">
         <ul className="flex gap-2 overflow-x-auto pb-1">

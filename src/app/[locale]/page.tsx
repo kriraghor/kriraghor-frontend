@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, ArrowsClockwise, ArrowUUpLeft, Barbell, HandCoins, IdentificationBadge, Key, Pill, SealCheck, ShieldCheck, SoccerBall, Wallet } from "@phosphor-icons/react/dist/ssr";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { PHOTOS } from "@/lib/photos";
 import { esportsHref } from "@/lib/links";
 import { EsportsHero } from "@/components/home/HeroShell";
 import { Finder } from "@/components/home/Finder";
@@ -82,20 +84,31 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           </Link>
         </div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr] md:grid-rows-2">
-          <Link href="/shop" className="rv flex min-h-56 flex-col justify-end bg-brand p-6 text-white hover:bg-brand-hover sm:col-span-2 md:col-span-1 md:row-span-2">
-            <SoccerBall size={40} aria-hidden />
-            <h3 className="mt-auto pt-10 text-2xl font-extrabold">{t("shop.gear.title")}</h3>
-            <p className="mt-1 text-white/85">{t("shop.gear.body")}</p>
+          <Link href="/shop" className="rv group relative flex min-h-72 flex-col justify-end overflow-hidden bg-band p-6 text-white sm:col-span-2 md:col-span-1 md:row-span-2">
+            <Image src={PHOTOS.shopGear} alt="" fill sizes="(min-width: 900px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+            <span className="absolute inset-0 bg-gradient-to-t from-band via-band/40 to-transparent" aria-hidden />
+            <span className="relative">
+              <SoccerBall size={36} aria-hidden />
+              <h3 className="mt-3 text-2xl font-extrabold">{t("shop.gear.title")}</h3>
+              <p className="mt-1 text-white/85">{t("shop.gear.body")}</p>
+            </span>
           </Link>
-          <Link href="/shop?category=supplements" className="rv flex min-h-44 flex-col border-2 border-line bg-surface p-5 hover:border-ink md:col-span-2">
-            <Pill size={32} className="text-brand-text" aria-hidden />
-            <h3 className="mt-auto pt-6 text-xl font-extrabold">{t("shop.supplements.title")}</h3>
-            <p className="mt-1 text-muted">{t("shop.supplements.body")}</p>
+          <Link href="/shop?category=supplements" className="rv group grid min-h-44 overflow-hidden border-2 border-line bg-surface hover:border-ink sm:grid-cols-[1fr_40%] md:col-span-2">
+            <span className="flex flex-col p-5">
+              <Pill size={32} className="text-brand-text" aria-hidden />
+              <h3 className="mt-auto pt-6 text-xl font-extrabold">{t("shop.supplements.title")}</h3>
+              <p className="mt-1 text-muted">{t("shop.supplements.body")}</p>
+            </span>
+            <span className="relative hidden sm:block">
+              <Image src={PHOTOS.shopSupplements} alt="" fill sizes="20vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+            </span>
           </Link>
-          <Link href="/shop?category=gym" className="rv flex min-h-44 flex-col bg-brand-soft p-5 text-brand-text hover:bg-surface-2">
-            <Barbell size={32} aria-hidden />
-            <h3 className="mt-auto pt-6 text-xl font-extrabold">{t("shop.gym.title")}</h3>
-            <p className="mt-1">{t("shop.gym.body")}</p>
+          <Link href="/shop?category=gym" className="rv group relative flex min-h-44 flex-col overflow-hidden bg-band p-5 text-white">
+            <Image src={PHOTOS.shopGymGear} alt="" fill sizes="(min-width: 900px) 25vw, 50vw" className="object-cover opacity-70 transition-transform duration-500 group-hover:scale-105" />
+            <span className="absolute inset-0 bg-gradient-to-t from-band/90 to-transparent" aria-hidden />
+            <Barbell size={32} className="relative" aria-hidden />
+            <h3 className="relative mt-auto pt-6 text-xl font-extrabold">{t("shop.gym.title")}</h3>
+            <p className="relative mt-1 text-white/85">{t("shop.gym.body")}</p>
           </Link>
           {/* Used gear is M13 step 2: shown honestly as coming, not as a link to nowhere. */}
           <div className="rv flex min-h-44 flex-col bg-band p-5 text-band-text">
@@ -112,7 +125,11 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       <HomeHire />
 
       <section className="mt-[72px] bg-gym text-white" id="gym" aria-labelledby="gym-title" data-testid="home-gym-band">
-        <div className="mx-auto grid max-w-[1320px] gap-8 px-5 py-14 md:grid-cols-2 md:items-center">
+        <div className="grid md:grid-cols-[2fr_3fr]">
+          <div className="relative min-h-64">
+            <Image src={PHOTOS.gym} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" />
+          </div>
+        <div className="flex flex-col justify-center gap-8 px-5 py-14 md:px-10">
           <div>
             <h2 id="gym-title" className="font-gym text-6xl font-black uppercase leading-none tracking-tight">
               <span className="font-bangla normal-case" lang="bn">
@@ -126,6 +143,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
             </Link>
           </div>
           <HomeGym />
+        </div>
         </div>
       </section>
 

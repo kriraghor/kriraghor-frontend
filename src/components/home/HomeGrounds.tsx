@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, NavigationArrow } from "@phosphor-icons/react";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { PHOTOS } from "@/lib/photos";
 import { api } from "@/lib/api/client";
 import { bookings } from "@/lib/bookings";
 import { bookingHref, freeHours, hourOf, type FreeSlot } from "@/lib/home";
@@ -88,8 +90,8 @@ export function HomeGrounds() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={g.coverUrl} alt="" loading="lazy" width={600} height={450} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
                 ) : (
-                  <span className="flex h-full items-end p-4 font-display text-2xl font-extrabold text-brand-text" aria-hidden>
-                    {g.sports.map((s) => nameOf(s, locale)).join(" · ")}
+                  <span className="relative block h-full">
+                    <Image src={PHOTOS.groundsFloodlit} alt="" fill sizes="(min-width: 900px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
                   </span>
                 )}
               </div>
