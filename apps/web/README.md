@@ -6,7 +6,7 @@
 | **Domain** | kriraghor.com (dev: http://localhost:3000, k3d: http://kriraghor.localhost) |
 | **Status** | 0B scaffold: sign-in (phone OTP, email OTP, password, Google), `/me`, placeholders for `/grounds`, `/hiring`, `/shop`, `/gym` |
 | **Specs** | [`../kriraghor-docs`](../kriraghor-docs/README.md) · design: [`home-v3`](../kriraghor-docs/design/home-v3/README.md) |
-| **Decisions** | [ADR-002 contracts](../kriraghor-docs/decisions/ADR-002-polyrepo-api-contracts.md), [ADR-003 runtime config](../kriraghor-docs/decisions/ADR-003-kubernetes-deployment.md), [ADR-004 SSO](../kriraghor-docs/decisions/ADR-004-cross-subdomain-auth.md) |
+| **Decisions** | [ADR-002 contracts](../kriraghor-docs/decisions/ADR-002-polyrepo-api-contracts.md), [ADR-003 runtime config](../kriraghor-docs/decisions/ADR-003-kubernetes-deployment.md),[ADR-004 SSO](../kriraghor-docs/decisions/ADR-004-cross-subdomain-auth.md) |
 
 ## Stack
 Next.js 16 (App Router, Cache Components, `output: 'standalone'`), TypeScript strict, Tailwind v4 with the Kriraghor tokens (`src/app/globals.css`), next-intl (en, bn), TanStack Query, openapi-fetch with types generated from the backend, Vitest, Playwright.
