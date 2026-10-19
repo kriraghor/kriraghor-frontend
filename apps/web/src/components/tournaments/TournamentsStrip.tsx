@@ -21,7 +21,7 @@ export function TournamentsStrip() {
             {t("homeTitle")}
           </h2>
         </div>
-        <Link href="/tournaments" className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+        <Link href="/events" className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
           {t("homeAll")}
         </Link>
       </div>

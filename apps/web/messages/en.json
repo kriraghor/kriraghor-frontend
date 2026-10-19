@@ -10,13 +10,13 @@
     "signIn": "Sign in",
     "me": "My account",
     "signOut": "Sign out",
-    "grounds": "Grounds",
+    "grounds": "Venues",
     "hiring": "Hire",
     "shop": "Shop",
     "gym": "Gym",
     "esports": "Esports",
     "language": "বাংলা",
-    "tournaments": "Tournaments",
+    "tournaments": "Events",
     "skip": "Skip to content",
     "homeLabel": "Kriraghor home",
     "main": "Main",
@@ -79,7 +79,7 @@
     "player": "Player profile",
     "eligibility": "Ready to play",
     "addPhone": "Add a mobile number",
-    "tournaments": "My tournaments"
+    "tournaments": "My events"
   },
   "admin": {
     "title": "Staff sign-in",
@@ -96,7 +96,7 @@
   },
   "vendor": {
     "home": "Business desk",
-    "intro": "Manage your grounds, shop, gym or tournaments. Desks arrive with their modules."
+    "intro": "Manage your venues, shop, gym or events. Desks arrive with their modules."
   },
   "errors": {
     "generic": "Something went wrong. Try again.",
@@ -132,7 +132,7 @@
       "hire": "Hire",
       "orders": "Orders",
       "offers": "Offers",
-      "tournaments": "Tournaments",
+      "tournaments": "Events",
       "moderation": "Reviews & approvals",
       "disputes_reports": "Disputes & reports",
       "reviews": "Reviews",
@@ -363,7 +363,7 @@
     }
   },
   "grounds": {
-    "title": "Grounds",
+    "title": "Venues",
     "lead": "Turf and pitches across Dhaka. Prices are per hour and change with the time of day; pay the advance or the full amount online.",
     "filters": "Filters",
     "area": "Area",
@@ -376,23 +376,23 @@
     "indoor": "Indoor ({n})",
     "outdoor": "Outdoor ({n})",
     "clear": "Clear filters",
-    "count": "{n, plural, =0 {No grounds} one {# ground} other {# grounds}}",
+    "count": "{n, plural, =0 {No venues} one {# venue} other {# venues}}",
     "sortBy": "Sort",
     "sort": {
       "cheapest": "Cheapest first",
       "newest": "Newest first",
       "most_open": "Most open hours today"
     },
-    "error": "Couldn't load grounds.",
+    "error": "Couldn't load venues.",
     "retry": "Try again",
-    "empty": "No grounds match",
+    "empty": "No venues match",
     "more": "Show more",
     "courts": "{n, plural, one {# court} other {# courts}}",
     "indoorShort": "Indoor",
     "outdoorShort": "Outdoor",
     "from": "from {price}/h",
-    "notFound": "This ground is not available.",
-    "back": "Back to grounds",
+    "notFound": "This venue is not available.",
+    "back": "Back to venues",
     "photoOf": "{name}, photo {n}",
     "fact": {
       "sports": "Sports",
@@ -419,7 +419,7 @@
     "priceLead": "Peak +{peak}% from {from}; Friday and Saturday +{weekend}%; early bird −{early}% before {to}. Prices in taka.",
     "priceRange": "Price per hour",
     "perHour": "depends on the time and day",
-    "payAdvance": "Pay a {pct}% advance online, the rest at the ground.",
+    "payAdvance": "Pay a {pct}% advance online, the rest at the venue.",
     "payFull": "Or pay the full amount online.",
     "noRefund": "The advance is not refunded if you cancel or do not come.",
     "refundWindows": "Full refund up to {full} h before, half up to {half} h before.",
@@ -432,16 +432,16 @@
     "reliabilityHelp": "How often the owner keeps confirmed bookings and settles disputes fairly, over the last six months."
   },
   "business": {
-    "title": "Become a ground owner",
-    "intro": "List your turf or pitch on Kriraghor. We check your trade licence and your right to the land once; then you manage your grounds on the business desk.",
+    "title": "Become a venue owner",
+    "intro": "List your turf or pitch on Kriraghor. We check your trade licence and your right to the land once; then you manage your venues on the business desk.",
     "signedOut": "Sign in to continue.",
     "signIn": "Sign in",
     "loading": "Loading",
     "loadFailed": "Couldn't load your documents.",
     "needNid": "First verify your NID.",
     "verifyNid": "Verify my NID",
-    "applyTitle": "As a ground owner you can:",
-    "apply": "Start my ground owner application",
+    "applyTitle": "As a venue owner you can:",
+    "apply": "Start my venue owner application",
     "failed": "That didn't work. Try again.",
     "roleStatus": {
       "applied": "Application started: send your documents",
@@ -449,7 +449,7 @@
       "in_review": "Our team is checking your documents",
       "changes_requested": "Please fix a document",
       "rejected": "Not approved",
-      "active": "You are an approved ground owner",
+      "active": "You are an approved venue owner",
       "suspended": "Suspended",
       "withdrawn": "Withdrawn"
     },
@@ -496,12 +496,12 @@
     "pickRole": "Which business?",
     "role": {
       "ground_owner": {
-        "tab": "Ground owner",
-        "title": "Become a ground owner",
-        "intro": "List your turf or pitch on Kriraghor. We check your trade licence and your right to the land once; then you manage your grounds on the business desk.",
-        "applyTitle": "As a ground owner you can:",
-        "apply": "Start my ground owner application",
-        "active": "You are an approved ground owner"
+        "tab": "Venue owner",
+        "title": "Become a venue owner",
+        "intro": "List your turf or pitch on Kriraghor. We check your trade licence and your right to the land once; then you manage your venues on the business desk.",
+        "applyTitle": "As a venue owner you can:",
+        "apply": "Start my venue owner application",
+        "active": "You are an approved venue owner"
       },
       "shop_owner": {
         "tab": "Shop owner",
@@ -521,8 +521,8 @@
       },
       "organiser": {
         "tab": "Esports organiser",
-        "title": "Run esports tournaments",
-        "intro": "Leagues, college clubs and cafés run PUBG Mobile and Free Fire tournaments on Kriraghor under a contract. We check your NID and your organisation's registration once; then you register the organisation and Kriraghor reviews it.",
+        "title": "Run esports events",
+        "intro": "Leagues, college clubs and cafés run PUBG Mobile and Free Fire events on Kriraghor under a contract. We check your NID and your organisation's registration once; then you register the organisation and Kriraghor reviews it.",
         "applyTitle": "As an esports organiser you can:",
         "apply": "Start my organiser application",
         "active": "Your organiser documents are approved"
@@ -548,7 +548,7 @@
     "addCredential": "Add a credential",
     "org": {
       "title": "Your organisation",
-      "lead": "Register the organisation you run tournaments for. Kriraghor reviews it, then sets up your contract.",
+      "lead": "Register the organisation you run events for. Kriraghor reviews it, then sets up your contract.",
       "name": "Organisation name",
       "about": "About (what you run, for whom)",
       "email": "Contact email (optional)",
@@ -566,15 +566,15 @@
       },
       "kindLabel": "What will you run?",
       "kind": {
-        "sports": "Sports tournaments",
-        "esports": "Esports tournaments"
+        "sports": "Sports events",
+        "esports": "Esports events"
       }
     }
   },
   "bookings": {
     "loading": "Loading",
     "gridFailed": "Couldn't load the free times. Try again.",
-    "notTaking": "This ground is not taking bookings right now.",
+    "notTaking": "This venue is not taking bookings right now.",
     "pickDay": "Day",
     "court": "Court",
     "length": "Length",
@@ -591,8 +591,8 @@
     "howToPay": "How to pay",
     "payAdvanceNow": "Pay {amount} advance now",
     "payFullNow": "Pay the full {amount} now",
-    "atVenue": "and {amount} at the ground",
-    "nothingAtVenue": "nothing to pay at the ground",
+    "atVenue": "and {amount} at the venue",
+    "nothingAtVenue": "nothing to pay at the venue",
     "total": "Total {amount}",
     "advanceKept": "The advance is not refunded if you cancel or do not come.",
     "quoteFailed": "Couldn't price this slot.",
@@ -613,7 +613,7 @@
       "upcoming": "No upcoming bookings.",
       "past": "No past bookings."
     },
-    "findGround": "Find a ground",
+    "findGround": "Find a venue",
     "more": "Show more",
     "paidLine": "{paid} paid online · {due} at the venue",
     "status": {
@@ -631,7 +631,7 @@
     "notFound": "This booking is not available.",
     "price": "Price",
     "paidOnline": "Paid online",
-    "dueAtVenue": "Due at the ground",
+    "dueAtVenue": "Due at the venue",
     "refunded": "Refunded",
     "payNow": "Pay now",
     "releaseHold": "Let the slot go",
@@ -639,7 +639,7 @@
     "cancelTitle": "Cancel this booking?",
     "cancelRefund": "You get {refund} back. The advance of {kept} is kept.",
     "cancelNoRefund": "The advance of {kept} is not refunded.",
-    "cancelFree": "The booking was moved to another ground, so you can cancel for free.",
+    "cancelFree": "The booking was moved to another venue, so you can cancel for free.",
     "refundChanged": "The refund changed. Check the new amount and try again.",
     "confirmCancel": "Yes, cancel",
     "keep": "Keep the booking",
@@ -672,8 +672,8 @@
       "check_in_due": "{n, plural, one {# team is} other {# teams are}} due to check in",
       "balance_unrecorded": "{n, plural, one {# venue balance} other {# venue balances}} not recorded after a week",
       "balance_due": "{n, plural, one {# balance} other {# balances}} to collect at the venue",
-      "ground_changes_requested": "Staff asked for changes to a ground",
-      "ground_draft": "{n, plural, one {# ground draft} other {# ground drafts}} not sent for review",
+      "ground_changes_requested": "Staff asked for changes to a venue",
+      "ground_draft": "{n, plural, one {# venue draft} other {# venue drafts}} not sent for review",
       "hold_to_pay": "A slot is on hold: pay to keep it",
       "verify_nid": "Verify your NID",
       "nid_in_review": "Your NID is in review",
@@ -684,13 +684,13 @@
       "hire_jobs_today": "{n, plural, one {# job} other {# jobs}} in the next 24 hours"
     },
     "verticals": {
-      "grounds": "Grounds",
+      "grounds": "Venues",
       "esports": "Esports",
       "market": "Shop",
       "used": "Used gear",
       "hire": "Hire",
       "gym": "Gym",
-      "tournaments": "Tournaments",
+      "tournaments": "Events",
       "other": "Other"
     },
     "csv": "Download my payments (CSV)",
@@ -706,7 +706,7 @@
     "myReports": "My reports",
     "myReviews": "My reviews",
     "noReports": "You have not reported anything.",
-    "noReviews": "You have not rated a ground yet.",
+    "noReviews": "You have not rated a venue yet.",
     "listHelp": "Cases you opened about your bookings. Our team decides each one.",
     "loadFailed": "Couldn't load your disputes.",
     "emptyTitle": "No disputes",
@@ -794,7 +794,7 @@
       "submit": "Open the dispute"
     },
     "rate": {
-      "title": "Rate this ground",
+      "title": "Rate this venue",
       "stars": "Stars",
       "starN": "{n} stars",
       "text": "What was it like? (optional)",
@@ -813,18 +813,18 @@
       "starsOf": "{stars} out of 5 stars",
       "member": "A member",
       "ownerReply": "Reply from the venue",
-      "none": "No reviews yet. Members can rate a ground after playing there.",
-      "reportGround": "Report this ground",
+      "none": "No reviews yet. Members can rate a venue after playing there.",
+      "reportGround": "Report this venue",
       "reportReview": "Report"
     },
     "report": {
       "open": "Report",
       "title": {
-        "ground": "Report this ground",
+        "ground": "Report this venue",
         "booking": "Report this booking",
         "user": "Report this member",
         "review": "Report this review",
-        "esports_tournament": "Report this tournament",
+        "esports_tournament": "Report this event",
         "shop": "Report this shop",
         "product": "Report this item"
       },
@@ -850,11 +850,11 @@
         "other": "Something else"
       },
       "subject": {
-        "ground": "A ground",
+        "ground": "A venue",
         "booking": "A booking",
         "user": "A member",
         "review": "A review",
-        "esports_tournament": "A tournament",
+        "esports_tournament": "An event",
         "shop": "A shop",
         "product": "A shop item"
       },
@@ -1165,7 +1165,7 @@
     "venueArea": "Venue area",
     "choose": "Choose",
     "venue": "Venue",
-    "venueHint": "Ground name and address",
+    "venueHint": "Venue name and address",
     "line": {
       "base": "Base",
       "night": "Night",
@@ -1548,7 +1548,7 @@
     "myTeams": "My teams",
     "playerProfile": "Player profile",
     "eligibility": "Ready to play",
-    "eligibilityIntro": "What tournaments check before you play. Fix anything missing here.",
+    "eligibilityIntro": "What events check before you play. Fix anything missing here.",
     "invitesForYou": "Team invites for you",
     "invitedBy": "Invited by {name}",
     "accept": "Accept",
@@ -1702,7 +1702,7 @@
   },
   "tournaments": {
     "kicker": "Physical sports",
-    "title": "Tournaments",
+    "title": "Events",
     "lead": "Cricket, football, futsal, badminton and more, run by verified organisers. Enter your team, pay the entry fee safely and follow every result.",
     "tab": {
       "open": "Open for teams",
@@ -1715,12 +1715,12 @@
       "teams": "Teams"
     },
     "allSports": "All sports",
-    "search": "Search tournaments",
+    "search": "Search events",
     "failed": "Something went wrong. Please try again.",
     "none": {
-      "open": "No tournament is taking teams right now.",
+      "open": "No event is taking teams right now.",
       "live": "Nothing is live right now.",
-      "completed": "No finished tournaments yet."
+      "completed": "No finished events yet."
     },
     "format": {
       "league": "League",
@@ -1748,7 +1748,7 @@
     "prize": "Prize",
     "venue": "Venue",
     "dates": "Dates",
-    "notFound": "Tournament not found",
+    "notFound": "Event not found",
     "registerTeam": "Register a team",
     "opensOn": "Registration opens {date}",
     "placesTaken": "{n} of {max} places taken",
@@ -1784,7 +1784,7 @@
       }
     },
     "prizes": "Prizes",
-    "prizeNote": "Prizes are paid by the organiser. Entry fees are held by Kriraghor and paid out as the tournament is played.",
+    "prizeNote": "Prizes are paid by the organiser. Entry fees are held by Kriraghor and paid out as the event is played.",
     "noFixtures": "Fixtures are not out yet.",
     "dateTbc": "Date to be set",
     "timeTbc": "Time to be set",
@@ -1850,14 +1850,14 @@
     "nid": "NID ✓",
     "noNid": "No NID",
     "squadHint": "Players without a verified NID can be picked, but the organiser approves a squad only when enough players are eligible.",
-    "acceptRules": "I accept the tournament rules and the refund rules: a full refund if the team is not accepted or withdraws before registration closes, half after it closes, nothing after the first match.",
+    "acceptRules": "I accept the event rules and the refund rules: a full refund if the team is not accepted or withdraws before registration closes, half after it closes, nothing after the first match.",
     "fullReserve": "All places are taken: your team joins the reserve list and is offered a place if one opens.",
     "joinReserve": "Join the reserve list",
     "payEntry": "Pay {fee}",
     "enterFree": "Enter the team",
-    "myTournaments": "My tournaments",
-    "findTournament": "Find a tournament",
-    "noRegistrations": "Your teams have not entered a tournament yet.",
+    "myTournaments": "My events",
+    "findTournament": "Find an event",
+    "noRegistrations": "Your teams have not entered an event yet.",
     "reservePos": "reserve no. {n}",
     "refunded": "{amount} refunded",
     "regStatus": {
@@ -1870,46 +1870,46 @@
       "lapsed": "Lapsed",
       "withdrawn": "Withdrawn",
       "removed": "Removed",
-      "cancelled": "Tournament cancelled"
+      "cancelled": "Event cancelled"
     },
     "takePlace": "Take the place",
     "withdraw": "Withdraw",
     "withdrawConfirm": "Withdraw the team",
     "cancel": "Cancel",
-    "refundRules": "Refunds: 100% before registration closes or if the team is not accepted, 50% after registration closes, none after the first match. A cancelled tournament refunds what is still held.",
-    "homeKicker": "Tournaments",
+    "refundRules": "Refunds: 100% before registration closes or if the team is not accepted, 50% after registration closes, none after the first match. A cancelled event refunds what is still held.",
+    "homeKicker": "Events",
     "homeTitle": "Enter your team",
-    "homeAll": "All tournaments",
+    "homeAll": "All events",
     "errors": {
       "REGISTRATION_NOT_YET_OPEN": "Registration has not opened yet.",
       "REGISTRATION_CLOSED": "Registration is closed.",
-      "TEAM_ALREADY_REGISTERED": "This team is already in the tournament.",
+      "TEAM_ALREADY_REGISTERED": "This team is already in the event.",
       "TEAM_SPORT_MISMATCH": "This team plays a different sport.",
       "NOT_TEAM_CAPTAIN": "Only the captain or vice-captain can register the team.",
       "SQUAD_TOO_SMALL": "Pick more players.",
       "SQUAD_TOO_LARGE": "Pick fewer players.",
       "PLAYER_NOT_IN_TEAM": "Pick players from the team.",
-      "PLAYER_IN_OTHER_TEAM": "One of the players is already in another team in this tournament.",
-      "KYC_REQUIRED": "Verify your NID first to enter tournaments.",
-      "ROLE_REQUIRED": "Verify your NID first to enter tournaments.",
+      "PLAYER_IN_OTHER_TEAM": "One of the players is already in another team in this event.",
+      "KYC_REQUIRED": "Verify your NID first to enter events.",
+      "ROLE_REQUIRED": "Verify your NID first to enter events.",
       "REGISTRATION_STATE": "This registration cannot be changed now."
     }
   },
   "footer": {
     "homeLabel": "Kriraghor home",
-    "tagline": "Esports, grounds, gear and talent for players in Bangladesh.",
+    "tagline": "Esports, venues, gear and talent for players in Bangladesh.",
     "esports": "Esports",
-    "tournaments": "Tournaments",
+    "tournaments": "Events",
     "leaderboards": "Leaderboards",
     "fairPlay": "Fair play rules",
     "play": "Play",
-    "grounds": "Grounds",
+    "grounds": "Venues",
     "shop": "Shop",
     "hire": "Hire",
     "gym": "Gym",
-    "sportsTournaments": "Sports tournaments",
+    "sportsTournaments": "Sports events",
     "business": "Business",
-    "listGround": "List your ground",
+    "listGround": "List your venue",
     "openShop": "Open a shop",
     "getHired": "Get hired",
     "listGym": "List your gym",
@@ -1928,12 +1928,12 @@
       "title": "Play PUBG Mobile and Free Fire.",
       "titleEm": "Win real prizes.",
       "sub": "Daily custom rooms. Verified players, the room ID before kick-off, and prizes paid to bKash or Nagad.",
-      "join": "Join a tournament",
+      "join": "Join an event",
       "how": "How it works",
-      "openCount": "{n}{more} tournaments open for registration",
-      "loading": "Loading the next tournament",
-      "noneTitle": "New tournaments every week",
-      "noneBody": "No tournament is taking registrations right now. See the schedule and past results on Kriraghor Esports.",
+      "openCount": "{n}{more} events open for registration",
+      "loading": "Loading the next event",
+      "noneTitle": "New events every week",
+      "noneBody": "No event is taking registrations right now. See the schedule and past results on Kriraghor Esports.",
       "browse": "Go to esports",
       "nextUp": "Next up",
       "startsIn": "Starts in",
@@ -1953,15 +1953,15 @@
       "register": "Register for {fee}",
       "registerFree": "Register free",
       "eventLive": "Live now",
-      "eventUpcoming": "Big event",
+      "eventUpcoming": "Showcase",
       "eventPrizes": "Total prizes"
     },
     "finder": {
       "label": "Find what you need",
       "tabsLabel": "What are you looking for?",
       "tab": {
-        "tournaments": "Tournaments",
-        "grounds": "Grounds",
+        "tournaments": "Events",
+        "grounds": "Venues",
         "shop": "Shop",
         "hire": "Hire"
       },
@@ -1976,18 +1976,18 @@
       "need": "I need",
       "anyone": "Anyone",
       "go": {
-        "tournaments": "Find tournaments",
-        "grounds": "Find a ground",
+        "tournaments": "Find events",
+        "grounds": "Find a venue",
         "shop": "Search the shop",
         "hire": "Browse talent"
       }
     },
     "open": {
       "title": "Open for registration",
-      "sub": "Pay entry online. Full refund if a tournament doesn't fill.",
+      "sub": "Pay entry online. Full refund if an event doesn't fill.",
       "filter": "Filter by game",
       "all": "All games",
-      "listLabel": "Tournaments open for registration",
+      "listLabel": "Events open for registration",
       "pool": "prize pool",
       "free": "Free entry",
       "perPlayer": "{fee} per player",
@@ -1995,19 +1995,19 @@
       "players": "{taken} of {max} players",
       "squads": "{taken} of {max} squads",
       "register": "Register",
-      "none": "Nothing open for this game right now. New tournaments are added every week.",
-      "seeAll": "See all tournaments",
+      "none": "Nothing open for this game right now. New events are added every week.",
+      "seeAll": "See all events",
       "seeAllSub": "Filter by game and stage on Kriraghor Esports.",
-      "browse": "Browse tournaments",
+      "browse": "Browse events",
       "swipe": "Swipe for more"
     },
     "players": {
       "title": "Top players this season",
-      "sub": "Ranked by finalised results and tournament tier.",
+      "sub": "Ranked by finalised results and event tier.",
       "full": "Full leaderboard",
       "points": "{n, number} pts",
       "record": "{wins} wins · {kills} kills",
-      "none": "Rankings appear after the first finalised tournaments."
+      "none": "Rankings appear after the first finalised events."
     },
     "how": {
       "title": "How it works",
@@ -2029,16 +2029,16 @@
       }
     },
     "grounds": {
-      "eyebrow": "Grounds",
+      "eyebrow": "Venues",
       "title": "Open tonight",
       "titleNear": "Open tonight near you",
       "sub": "Tap a time to book. Pay the advance or the full amount online.",
       "locate": "Use my location",
       "locating": "Finding you…",
-      "locationNote": "We use your location only to sort grounds by distance. It isn't saved.",
-      "locationDenied": "We couldn't get your location, so grounds are sorted by price.",
-      "all": "All grounds",
-      "none": "No grounds are listed yet.",
+      "locationNote": "We use your location only to sort venues by distance. It isn't saved.",
+      "locationDenied": "We couldn't get your location, so venues are sorted by price.",
+      "all": "All venues",
+      "none": "No venues are listed yet.",
       "perHour": "{price}/hr",
       "metres": "{m} m",
       "km": "{km} km",
@@ -2091,9 +2091,9 @@
       "title": "Run your sports business on Kriraghor",
       "sub": "Every business gets its own desk for bookings, orders, payouts and analytics.",
       "grounds": {
-        "title": "Ground owners",
-        "body": "List grounds, set prices and get paid at check-in.",
-        "cta": "List your ground"
+        "title": "Venue owners",
+        "body": "List venues, set prices and get paid at check-in.",
+        "cta": "List your venue"
       },
       "shops": {
         "title": "Shops and supplement houses",
@@ -2107,7 +2107,7 @@
       },
       "organisers": {
         "title": "Esports organisers",
-        "body": "Run your own tournaments on Kriraghor, on contract.",
+        "body": "Run your own events on Kriraghor, on contract.",
         "cta": "Talk to us"
       }
     },
@@ -2122,22 +2122,22 @@
       },
       "refunds": {
         "title": "Clear refunds",
-        "body": "Tournaments that don't fill and bookings the owner cancels are refunded in full."
+        "body": "Events that don't fill and bookings the owner cancels are refunded in full."
       },
       "more": "Read more:",
       "protection": "Buyer protection",
       "refundPolicy": "Refund policy",
-      "esports": "Esports tournaments"
+      "esports": "Esports events"
     }
   },
   "notFound": {
     "title": "We can't find that page",
     "body": "The link may be old, or the page was moved. Try one of these instead.",
     "home": "Home",
-    "grounds": "Grounds",
+    "grounds": "Venues",
     "shop": "Shop",
     "hire": "Hire",
-    "esports": "Esports tournaments"
+    "esports": "Esports events"
   },
   "pageError": {
     "title": "Something went wrong",
@@ -2189,6 +2189,6 @@
     "terms": "Terms of use",
     "privacy": "Privacy policy",
     "contact": "Contact",
-    "contactBody": "For a booking, order, job or tournament, open it in My account and report a problem: our staff reply there. [Support email and phone will be added before launch.]"
+    "contactBody": "For a booking, order, job or event, open it in My account and report a problem: our staff reply there. [Support email and phone will be added before launch.]"
   }
 }

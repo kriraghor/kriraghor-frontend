@@ -18,9 +18,9 @@ describe("home (launch polish)", () => {
   });
 
   it("builds finder links with only the filters each page supports", () => {
-    expect(finderUrl("tournaments", { game: "free_fire" })).toBe("/go/esports/tournaments?game=free_fire");
-    expect(finderUrl("tournaments", {})).toBe("/go/esports/tournaments");
-    expect(finderUrl("grounds", { sport: "football", areaId: "a1" })).toBe("/grounds?sport=football&areaId=a1");
+    expect(finderUrl("tournaments", { game: "free_fire" })).toBe("/go/esports/events?game=free_fire");
+    expect(finderUrl("tournaments", {})).toBe("/go/esports/events");
+    expect(finderUrl("grounds", { sport: "football", areaId: "a1" })).toBe("/venues?sport=football&areaId=a1");
     expect(finderUrl("shop", { q: "  whey protein " })).toBe("/shop?q=whey+protein");
     expect(finderUrl("shop", { q: "   " })).toBe("/shop");
     expect(finderUrl("hire", { category: "officials" })).toBe("/hiring?category=officials");
@@ -63,7 +63,7 @@ describe("home (launch polish)", () => {
   });
 
   it("links a picked hour to the booking widget without personal data", () => {
-    expect(bookingHref("mirpur-turf-10", { courtId: "c1", start: "2026-10-19T18:00:00+06:00", time: "18:00" })).toBe("/grounds/mirpur-turf-10?court=c1&at=2026-10-19T18%3A00%3A00%2B06%3A00");
+    expect(bookingHref("mirpur-turf-10", { courtId: "c1", start: "2026-10-19T18:00:00+06:00", time: "18:00" })).toBe("/venues/mirpur-turf-10?court=c1&at=2026-10-19T18%3A00%3A00%2B06%3A00");
   });
 
   it("makes initials, a fill ratio and the prize podium", () => {

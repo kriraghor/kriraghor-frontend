@@ -69,7 +69,7 @@ export function HomeGrounds() {
             <NavigationArrow size={18} aria-hidden />
             {locating === "asking" ? t("locating") : t("locate")}
           </button>
-          <Link href="/grounds" className="inline-flex min-h-11 items-center gap-1 font-bold text-brand-text underline">
+          <Link href="/venues" className="inline-flex min-h-11 items-center gap-1 font-bold text-brand-text underline">
             {t("all")} <ArrowRight size={16} aria-hidden />
           </Link>
         </div>
@@ -97,7 +97,7 @@ export function HomeGrounds() {
               </div>
               <div className="flex flex-1 flex-col gap-2 p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <Link href={`/grounds/${g.slug}`} className="text-lg font-extrabold hover:underline">
+                  <Link href={`/venues/${g.slug}`} className="text-lg font-extrabold hover:underline">
                     {g.name}
                   </Link>
                   <b className="shrink-0 tabular-nums">{t("perHour", { price: formatTaka(g.priceFromPoisha, locale) })}</b>
@@ -123,7 +123,7 @@ export function HomeGrounds() {
                   {grid && !grid.isPending && !slots.length ? (
                     <p className="text-sm">
                       {t("full")}{" "}
-                      <Link href={`/grounds/${g.slug}`} className="font-bold text-brand-text underline">
+                      <Link href={`/venues/${g.slug}`} className="font-bold text-brand-text underline">
                         {t("otherDays")}
                       </Link>
                     </p>

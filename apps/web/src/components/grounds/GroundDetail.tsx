@@ -28,7 +28,7 @@ export function GroundDetail({ slug }: { slug: string }) {
     return (
       <section className="mx-auto max-w-[1320px] px-5 py-16">
         <h1 className="text-2xl font-extrabold">{t("notFound")}</h1>
-        <Link href="/grounds" className="mt-3 inline-block font-semibold text-brand underline">
+        <Link href="/venues" className="mt-3 inline-block font-semibold text-brand underline">
           {t("back")}
         </Link>
       </section>
@@ -41,7 +41,7 @@ export function GroundDetail({ slug }: { slug: string }) {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-8">
-      <Link href="/grounds" className="text-sm font-semibold text-brand underline">
+      <Link href="/venues" className="text-sm font-semibold text-brand underline">
         ← {t("title")}
       </Link>
       <div className="mt-4 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">

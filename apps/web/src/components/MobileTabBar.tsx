@@ -26,7 +26,7 @@ export function MobileTabBar() {
         <Trophy size={22} aria-hidden />
         {t("esports")}
       </a>
-      {item("/grounds", t("grounds"), <SoccerBall size={22} aria-hidden />)}
+      {item("/venues", t("grounds"), <SoccerBall size={22} aria-hidden />)}
       {item("/shop", t("shop"), <Storefront size={22} aria-hidden />)}
       {item("/me", t("account"), <UserCircle size={22} aria-hidden />)}
     </nav>

@@ -56,7 +56,7 @@ export function MyBookings() {
       ) : !items.length ? (
         <div className="mt-6">
           <p className="text-muted">{t(`empty.${scope}`)}</p>
-          <Link href="/grounds" className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
+          <Link href="/venues" className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
             {t("findGround")}
           </Link>
         </div>

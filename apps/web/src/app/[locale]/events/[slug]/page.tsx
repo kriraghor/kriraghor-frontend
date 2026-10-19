@@ -6,12 +6,12 @@ import { JsonLd } from "@/components/JsonLd";
 import { TournamentHub } from "@/components/tournaments/TournamentHub";
 
 /** Title, description and share image from the public read; an unknown slug is a 404 (seo.server). */
-export async function generateMetadata({ params }: PageProps<"/[locale]/tournaments/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[locale]/events/[slug]">): Promise<Metadata> {
   const { locale, slug } = await params;
-  return detailMetadata("tournament", slug, locale, "Tournament", `/tournaments/${slug}`);
+  return detailMetadata("tournament", slug, locale, "Event", `/events/${slug}`);
 }
 
-async function Content({ params }: { params: PageProps<"/[locale]/tournaments/[slug]">["params"] }) {
+async function Content({ params }: { params: PageProps<"/[locale]/events/[slug]">["params"] }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const ld = await detailJsonLd("tournament", slug, locale);
@@ -24,7 +24,7 @@ async function Content({ params }: { params: PageProps<"/[locale]/tournaments/[s
 }
 
 // Params are request data (cacheComponents): read them inside Suspense.
-export default function Route({ params }: PageProps<"/[locale]/tournaments/[slug]">) {
+export default function Route({ params }: PageProps<"/[locale]/events/[slug]">) {
   return (
     <Suspense fallback={<div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />}>
       <Content params={params} />

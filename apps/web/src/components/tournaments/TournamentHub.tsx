@@ -60,7 +60,7 @@ export function TournamentHub({ slug }: { slug: string }) {
     return (
       <section className="mx-auto max-w-[640px] px-5 py-16">
         <h1 className="text-2xl font-extrabold">{t("notFound")}</h1>
-        <Link href="/tournaments" className="mt-3 inline-block font-semibold text-brand underline">
+        <Link href="/events" className="mt-3 inline-block font-semibold text-brand underline">
           {t("title")}
         </Link>
       </section>
@@ -97,7 +97,7 @@ export function TournamentHub({ slug }: { slug: string }) {
           </div>
           <div className="flex flex-col items-start gap-2 lg:items-end">
             {canRegister ? (
-              <Link href={`/tournaments/${h.slug}/register`} className="inline-flex min-h-12 items-center bg-brand px-6 font-bold text-white hover:bg-brand-hover" data-testid="hub-register">
+              <Link href={`/events/${h.slug}/register`} className="inline-flex min-h-12 items-center bg-brand px-6 font-bold text-white hover:bg-brand-hover" data-testid="hub-register">
                 {t("registerTeam")}
               </Link>
             ) : h.window === "not_yet" && h.registrationOpensAt ? (

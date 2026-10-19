@@ -186,7 +186,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
               {holdIt.isPending ? t("holding") : t("holdAndPay")}
             </button>
           ) : (
-            <Link href={`/sign-in?next=/grounds/${slug}`} className="mt-4 inline-flex min-h-12 w-full items-center justify-center bg-brand px-5 font-bold text-white">
+            <Link href={`/sign-in?next=/venues/${slug}`} className="mt-4 inline-flex min-h-12 w-full items-center justify-center bg-brand px-5 font-bold text-white">
               {t("signInToBook")}
             </Link>
           )}

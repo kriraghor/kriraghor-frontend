@@ -16,7 +16,7 @@ export async function SiteFooter() {
     {
       title: t("esports"),
       links: [
-        { href: esportsHref("/tournaments"), label: t("tournaments") },
+        { href: esportsHref("/events"), label: t("tournaments") },
         { href: esportsHref("/leaderboards"), label: t("leaderboards") },
         { href: "/fair-play", label: t("fairPlay") },
       ],
@@ -24,11 +24,11 @@ export async function SiteFooter() {
     {
       title: t("play"),
       links: [
-        { href: "/grounds", label: t("grounds") },
+        { href: "/venues", label: t("grounds") },
         { href: "/shop", label: t("shop") },
         { href: "/hiring", label: t("hire") },
         { href: "/gym", label: t("gym") },
-        { href: "/tournaments", label: t("sportsTournaments") },
+        { href: "/events", label: t("sportsTournaments") },
       ],
     },
     {

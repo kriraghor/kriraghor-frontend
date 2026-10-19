@@ -44,7 +44,7 @@ export function OpenTournaments() {
           ? [0, 1, 2].map((i) => <li key={i} className="h-72 w-[82%] shrink-0 animate-pulse bg-surface-2 sm:w-auto" />)
           : cards.map((c) => (
               <li key={c.id} className="rv w-[82%] shrink-0 snap-start sm:w-auto">
-                <a href={esportsHref(`/t/${c.slug}`)} className="flex h-full flex-col border-2 border-line bg-surface p-5 hover:border-ink" data-testid="open-card">
+                <a href={esportsHref(`/events/${c.slug}`)} className="flex h-full flex-col border-2 border-line bg-surface p-5 hover:border-ink" data-testid="open-card">
                   <span className="flex justify-between gap-2 text-sm">
                     <b>{nameOf(c.game, locale)}</b>
                     <span className="text-muted">{nameOf(c.mode, locale)}</span>
@@ -70,7 +70,7 @@ export function OpenTournaments() {
             ))}
         {!q.isPending && !cards.length ? <li className="w-full shrink-0 border-2 border-dashed border-line p-6 text-muted sm:col-span-2 md:col-span-3">{t("none")}</li> : null}
         <li className="rv w-[82%] shrink-0 snap-start sm:w-auto">
-          <a href={esportsHref(game ? `/tournaments?game=${encodeURIComponent(game)}` : "/tournaments")} className="flex h-full min-h-72 flex-col bg-brand p-5 text-white hover:bg-brand-hover">
+          <a href={esportsHref(game ? `/events?game=${encodeURIComponent(game)}` : "/events")} className="flex h-full min-h-72 flex-col bg-brand p-5 text-white hover:bg-brand-hover">
             <Trophy size={32} aria-hidden />
             <span className="mt-auto text-xl font-extrabold">{t("seeAll")}</span>
             <span className="mt-1 text-white/85">{t("seeAllSub")}</span>

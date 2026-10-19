@@ -11,7 +11,7 @@ export default function NotFound() {
   const t = useTranslations("notFound");
   const links = [
     { href: "/", label: t("home") },
-    { href: "/grounds", label: t("grounds") },
+    { href: "/venues", label: t("grounds") },
     { href: "/shop", label: t("shop") },
     { href: "/hiring", label: t("hire") },
   ];
@@ -35,7 +35,7 @@ export default function NotFound() {
           </li>
         ))}
         <li>
-          <a href={esportsHref("/tournaments")} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+          <a href={esportsHref("/events")} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
             {t("esports")}
           </a>
         </li>

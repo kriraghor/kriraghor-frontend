@@ -35,7 +35,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
     mutationFn: () => tournaments.register(hub.data!.id, { teamId: teamId!, rosterUserIds: squad }, key),
     onSuccess: (r) => {
       if (r.payment) window.location.assign(r.payment.payUrl);
-      else router.push("/me/tournaments");
+      else router.push("/me/events");
     },
     onError: () => setKey(newKey()),
   });
@@ -44,7 +44,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
     return (
       <section className="mx-auto max-w-[640px] px-5 py-16">
         <p>{t("signInToRegister")}</p>
-        <Link href={`/sign-in?next=${encodeURIComponent(safeNext(`/tournaments/${slug}/register`))}`} className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
+        <Link href={`/sign-in?next=${encodeURIComponent(safeNext(`/events/${slug}/register`))}`} className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
           {t("signIn")}
         </Link>
       </section>
@@ -65,7 +65,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
 
   return (
     <section className="mx-auto max-w-[760px] px-5 py-10" data-testid="register-team">
-      <Link href={`/tournaments/${h.slug}`} className="text-sm font-semibold text-brand underline">
+      <Link href={`/events/${h.slug}`} className="text-sm font-semibold text-brand underline">
         ← {h.name}
       </Link>
       <h1 className="mt-4 text-3xl font-extrabold">{t("registerTeam")}</h1>

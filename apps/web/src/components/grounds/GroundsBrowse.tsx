@@ -131,7 +131,7 @@ export function GroundsBrowse() {
   function Card({ g }: { g: GroundCard }) {
     return (
       <li>
-        <Link href={`/grounds/${g.slug}`} className="flex h-full flex-col border-2 border-line bg-surface hover:border-brand" data-testid="ground-card">
+        <Link href={`/venues/${g.slug}`} className="flex h-full flex-col border-2 border-line bg-surface hover:border-brand" data-testid="ground-card">
           {g.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={g.coverUrl} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover" />

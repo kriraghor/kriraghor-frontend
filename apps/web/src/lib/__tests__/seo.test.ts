@@ -25,7 +25,7 @@ describe("seo (launch polish)", () => {
     expect(m.title).toBe("Mirpur Turf 10, Mirpur");
     expect(m.description).toBe("Mirpur Turf 10 · Mirpur · Book a slot online");
     expect(m.image).toBe(`${SITE}/files/a.jpg`);
-    expect(m.jsonLd).toMatchObject({ "@type": "SportsActivityLocation", url: `${SITE}/grounds/mirpur-turf-10`, geo: { latitude: 23.8 }, aggregateRating: { ratingCount: 12 } });
+    expect(m.jsonLd).toMatchObject({ "@type": "SportsActivityLocation", url: `${SITE}/venues/mirpur-turf-10`, geo: { latitude: 23.8 }, aggregateRating: { ratingCount: 12 } });
     expect(metaFor("ground", { ...g, area: null, photos: [], lat: null, ratingCount: 0 }, "bn", SITE)).toMatchObject({ title: "Mirpur Turf 10", image: null });
     expect(metaFor("ground", g, "bn", SITE).title).toBe("Mirpur Turf 10, মিরপুর");
   });
@@ -45,8 +45,8 @@ describe("seo (launch polish)", () => {
 
   it("lists static pages, then each source's slugs, unique and capped", () => {
     const e = sitemapEntries(SITE, { grounds: ["a", "a", "b c"], tournaments: ["cup"] });
-    expect(e.slice(0, STATIC_PATHS.length).map((x) => x.url)).toContain(`${SITE}/grounds`);
-    expect(e.map((x) => x.url).slice(STATIC_PATHS.length)).toEqual([`${SITE}/grounds/a`, `${SITE}/grounds/b%20c`, `${SITE}/tournaments/cup`]);
+    expect(e.slice(0, STATIC_PATHS.length).map((x) => x.url)).toContain(`${SITE}/venues`);
+    expect(e.map((x) => x.url).slice(STATIC_PATHS.length)).toEqual([`${SITE}/venues/a`, `${SITE}/venues/b%20c`, `${SITE}/events/cup`]);
     expect(e.some((x) => PRIVATE_PATHS.some((p) => x.url.startsWith(`${SITE}${p}`)))).toBe(false);
     // When the API is down there are no slugs: the static pages alone.
     expect(sitemapEntries(SITE, {})).toHaveLength(STATIC_PATHS.length);
@@ -74,6 +74,6 @@ describe("seo (launch polish)", () => {
     expect(esportsRedirect("https://esports.kriraghor.com", [])).toBe("https://esports.kriraghor.com/");
     expect(isExternal("/go/esports")).toBe(true);
     expect(isExternal("https://example.com")).toBe(true);
-    expect(isExternal("/grounds")).toBe(false);
+    expect(isExternal("/venues")).toBe(false);
   });
 });

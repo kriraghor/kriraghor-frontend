@@ -37,9 +37,9 @@ export function finderUrl(tab: FinderTab, v: FinderValues): string {
   };
   switch (tab) {
     case "tournaments":
-      return esportsHref(`/tournaments${qs([["game", v.game]])}`);
+      return esportsHref(`/events${qs([["game", v.game]])}`);
     case "grounds":
-      return `/grounds${qs([["sport", v.sport], ["areaId", v.areaId]])}`;
+      return `/venues${qs([["sport", v.sport], ["areaId", v.areaId]])}`;
     case "shop":
       return `/shop${qs([["q", v.q]])}`;
     case "hire":
@@ -92,7 +92,7 @@ export function hourOf(time: string, locale: string) {
 }
 
 /** The booking link for a picked hour: the widget on the ground page pre-selects it. */
-export const bookingHref = (slug: string, slot: FreeSlot) => `/grounds/${slug}?${new URLSearchParams({ court: slot.courtId, at: slot.start }).toString()}`;
+export const bookingHref = (slug: string, slot: FreeSlot) => `/venues/${slug}?${new URLSearchParams({ court: slot.courtId, at: slot.start }).toString()}`;
 
 // ---------------- small formatting ----------------
 

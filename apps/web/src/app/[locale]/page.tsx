@@ -186,7 +186,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
             {t("trust.refundPolicy")}
           </Link>
           {" · "}
-          <a href={esportsHref("/tournaments")} className="font-semibold underline">
+          <a href={esportsHref("/events")} className="font-semibold underline">
             {t("trust.esports")}
           </a>
         </p>
