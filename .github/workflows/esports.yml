@@ -2,9 +2,9 @@ name: esports
 on:
   push:
     branches: [main]
-    paths: ["apps/esports/**", ".github/workflows/esports.yml"]
+    paths: ["apps/esports/**", "packages/**", "package.json", "package-lock.json", ".github/workflows/esports.yml"]
   pull_request:
-    paths: ["apps/esports/**", ".github/workflows/esports.yml"]
+    paths: ["apps/esports/**", "packages/**", "package.json", "package-lock.json", ".github/workflows/esports.yml"]
 
 permissions:
   contents: read
@@ -16,5 +16,6 @@ jobs:
     with:
       image: kriraghor-esports
       app-dir: apps/esports
+      workspaces: true
       values-files: values/esports/staging.yaml
     secrets: inherit
