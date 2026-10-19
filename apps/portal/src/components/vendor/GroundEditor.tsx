@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
 import { halfHours, nextActions, vendor, type Court, type HoursRow, type OwnerGround } from "@/lib/vendor/grounds";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 import { STATUS_TONE } from "./GroundsDesk";
 

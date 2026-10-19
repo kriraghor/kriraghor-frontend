@@ -2,12 +2,12 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { orders, type Cart, type CartLine } from "@/lib/orders";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * /shop/cart (M13 FR-01, FR-02): lines grouped by shop with live prices (a changed price is marked),

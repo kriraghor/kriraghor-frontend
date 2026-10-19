@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { api, problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { parseOptions } from "@/lib/admin/market";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "./AdminSubnav";
 import { Chip, Field, inputCls } from "./finance/shared";
 

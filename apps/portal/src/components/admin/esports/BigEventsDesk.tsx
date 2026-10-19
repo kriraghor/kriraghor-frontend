@@ -9,7 +9,7 @@ import { esportsAdmin } from "@/lib/admin/esports";
 import { formatTaka } from "@/lib/admin/finance";
 import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 import { Chip, Field, inputCls } from "../finance/shared";

@@ -2,12 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { hire, requestTone, TONE } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { HireCard } from "./HireCard";
 
 /** /me/hire (M11): the requests I sent as a manager (newest first) and my shortlist. */

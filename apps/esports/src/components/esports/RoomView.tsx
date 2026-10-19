@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { dhakaTime, esports, useUserEvents, type Room } from "@/lib/esports";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * /me/matches/[matchId]/room: the room ID and password for checked-in players, from the reveal time.

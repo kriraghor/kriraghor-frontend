@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
 import { stepUp } from "@/lib/admin/stepUp";
 import { finance, formatTaka, parseTaka, type AdminPayment } from "@/lib/admin/finance";
-import { Button, Notice } from "../../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka } from "../useAdminMe";
 import type { DeskMe } from "./FinanceDesk";

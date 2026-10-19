@@ -3,14 +3,14 @@
 import { useState, type FormEvent } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { newKey } from "@/lib/bookings";
 import { orders, type Quote, type ShipTo } from "@/lib/orders";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { Button, Field, Notice } from "../ui";
+import { Button, Field, Notice } from "@kriraghor/ui/primitives";
 
 /**
  * /shop/checkout (M13 FR-03 to FR-07): the delivery address (any delivery area in Bangladesh), the

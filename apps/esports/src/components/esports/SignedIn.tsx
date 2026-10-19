@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { usePathname } from "@/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
+import { usePathname } from "@kriraghor/ui/i18n/navigation";
 import { LinkButton } from "./bits";
 
 /** Player pages: show a sign-in prompt (back to this page) instead of the content when signed out. */

@@ -2,9 +2,9 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { busyByDay, hire, nextDays, type ProfilePage } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { TrainerPlans } from "../gym/TrainerPlans";

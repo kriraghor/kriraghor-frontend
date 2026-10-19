@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { dayLabel, newKey } from "@/lib/bookings";
 import { gym, subscriptionTone, TONE, type Subscription } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * /me/subscriptions (M20 §6): my trainer subscriptions. Each shows the month it is in, when the next

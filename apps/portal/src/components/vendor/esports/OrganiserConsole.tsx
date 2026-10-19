@@ -3,13 +3,13 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
 import { contrast, fundState, isHex, orgDesk, organiser, type Branding, type Contract, type Fund } from "@/lib/vendor/organiser";
 import { MePanel } from "../../MePanel";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { CheckinBoard, CreateForm, Finalise, Matches } from "../../admin/esports/EsportsDesk";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { formatDhaka } from "../../admin/useAdminMe";

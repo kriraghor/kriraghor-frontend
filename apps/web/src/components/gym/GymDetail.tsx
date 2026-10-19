@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { gym, weekOf } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
 import { PassBuy } from "./PassBuy";

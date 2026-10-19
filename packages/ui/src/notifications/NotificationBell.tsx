@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link, useRouter } from "../i18n/navigation";
+import { useAuth } from "../auth";
 import { badgeText, listNotifications, markRead, realtimeSocket, relativeTime, type NotificationItem } from "@kriraghor/api-client/notifications";
 
 /**
@@ -98,7 +98,7 @@ export function NotificationBell({ centreHref, settingsHref }: { centreHref: str
       </button>
 
       {open ? (
-        <div role="dialog" aria-label={t("title")} className="absolute right-0 z-50 mt-2 w-[360px] max-w-[calc(100vw-2rem)] glass-strong rounded-[24px] shadow-lg">
+        <div role="dialog" aria-label={t("title")} className="absolute right-0 z-50 mt-2 w-[360px] max-w-[calc(100vw-2rem)] popover-surface shadow-lg">
           <div className="flex items-center gap-2 border-b-2 border-line px-4 py-3">
             <h2 className="font-bold">{t("title")}</h2>
             <div role="tablist" className="ml-auto flex gap-1 text-sm">

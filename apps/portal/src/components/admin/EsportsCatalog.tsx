@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { api, problemOf, type Problem } from "@kriraghor/api-client";
 import type { components } from "@kriraghor/api-client/schema";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "./AdminSubnav";
 import { useAdminMe } from "./useAdminMe";
 

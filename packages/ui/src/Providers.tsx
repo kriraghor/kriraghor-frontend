@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "@/lib/auth/AuthProvider";
+import { AuthProvider } from "./auth";
 import type { Audience } from "@kriraghor/session/auth";
 
 export function Providers({ audience = "api", children }: { audience?: Audience; children: ReactNode }) {

@@ -1,0 +1,42 @@
+{
+  "name": "@kriraghor/ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared React UI for the Kriraghor web apps: primitives, the auth provider, notifications, charts, sign-in, the header, next-intl navigation and the glass stylesheet. Surface styles (field, glass-card, popover-surface, btn-primary-finish, notice-surface) are defined by each app, so the portal stays flat.",
+  "exports": {
+    "./primitives": "./src/primitives.tsx",
+    "./auth": "./src/auth.tsx",
+    "./providers": "./src/Providers.tsx",
+    "./live-status": "./src/LiveStatus.tsx",
+    "./charts": "./src/charts.tsx",
+    "./sign-in-form": "./src/SignInForm.tsx",
+    "./site-header": "./src/SiteHeader.tsx",
+    "./notifications/bell": "./src/notifications/NotificationBell.tsx",
+    "./notifications/centre": "./src/notifications/NotificationCentre.tsx",
+    "./notifications/settings": "./src/notifications/NotificationSettings.tsx",
+    "./i18n/routing": "./src/i18n/routing.ts",
+    "./i18n/navigation": "./src/i18n/navigation.ts",
+    "./styles/glass.css": "./styles/glass.css"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@kriraghor/api-client": "0.1.0",
+    "@kriraghor/session": "0.1.0",
+    "@phosphor-icons/react": "2.1.7",
+    "@tanstack/react-query": "^5.104.2",
+    "next-intl": "^4.14.9",
+    "socket.io-client": "^4.8.4"
+  },
+  "peerDependencies": {
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@kriraghor/config": "0.1.0"
+  }
+}

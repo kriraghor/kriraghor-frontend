@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
 import { esports } from "@/lib/esports";
-import { Button, Field, Notice } from "../ui";
+import { Button, Field, Notice } from "@kriraghor/ui/primitives";
 import { Chip } from "./bits";
 
 type Game = { id: string; key: string; nameEn: string; nameBn: string; uidLabelEn?: string; uidLabelBn?: string; ignMaxLen?: number };

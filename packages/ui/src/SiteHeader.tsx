@@ -4,9 +4,9 @@ import { useState, type ReactNode } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { List, X } from "@phosphor-icons/react";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { isExternal } from "@/lib/links";
+import { Link, usePathname, useRouter } from "./i18n/navigation";
+import { useAuth } from "./auth";
+import { isExternal } from "@kriraghor/session/links";
 import { NotificationBell } from "./notifications/NotificationBell";
 
 export type HeaderConfig = {

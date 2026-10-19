@@ -1,4 +1,27 @@
 @import "tailwindcss";
+/* The shared components' classes (packages/ui). */
+@source "../../../../packages/ui/src";
+
+/*
+ * Surface styles the shared components (packages/ui) ask for. The admin and vendor desks stay flat
+ * and square (09 §7), so the glass names are defined here as solid surfaces.
+ */
+@utility field {
+  @apply border-2 border-line bg-surface;
+}
+@utility glass-card {
+  @apply border-2 border-line bg-surface;
+}
+@utility popover-surface {
+  @apply border-2 border-line-strong bg-surface;
+}
+@utility btn-primary-finish {
+  @apply transition-colors;
+}
+@utility notice-surface {
+  background-color: transparent;
+}
+
 
 /*
  * Kriraghor design tokens (kriraghor-docs/00-platform/09, completed in 0B from the home v3 prototype).

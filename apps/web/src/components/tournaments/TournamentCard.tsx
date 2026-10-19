@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { dayLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { statusTone, TONE, type Card } from "@/lib/tournaments";

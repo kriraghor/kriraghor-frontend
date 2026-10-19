@@ -3,13 +3,13 @@
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { disputes, evidenceTypeOk, type PartyCase } from "@/lib/trust";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * /me/disputes/[code] (M17 FR-05 to FR-08): what the case is about and what is held, both sides'

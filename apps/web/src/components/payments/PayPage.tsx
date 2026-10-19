@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { problemOf } from "@kriraghor/api-client";
 import { countdown, formatTaka, getPayment, outcomeOf, startAttempt, type Method } from "@/lib/payments";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 const METHODS: Method[] = ["bkash", "nagad", "card"];
 

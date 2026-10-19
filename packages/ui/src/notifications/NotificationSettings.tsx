@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "../i18n/navigation";
 import { api, problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "../auth";
 import type { components } from "@kriraghor/api-client/schema";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "../primitives";
 
 type Prefs = components["schemas"]["NotificationPrefs"];
 const CHANNELS = ["in_app", "sms", "email"] as const;

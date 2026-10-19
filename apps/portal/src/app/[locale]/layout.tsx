@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Bricolage_Grotesque, Hind_Siliguri, Instrument_Sans } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
+import { routing } from "@kriraghor/ui/i18n/routing";
 import { APP } from "@/app.config";
 import "../globals.css";
 

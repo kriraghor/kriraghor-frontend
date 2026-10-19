@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
 import { teams } from "@/lib/teams";
-import { Button, Field, Notice } from "../ui";
+import { Button, Field, Notice } from "@kriraghor/ui/primitives";
 
 /**
  * Add and verify a phone (M01, for accounts without one, e.g. a Google sign-up). Teams need a

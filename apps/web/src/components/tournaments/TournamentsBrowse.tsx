@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { teams as teamsApi, teamSports } from "@/lib/teams";
 import { tournaments, type Status } from "@/lib/tournaments";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { TournamentCard } from "./TournamentCard";
 import { PageHeader } from "../PageHeader";
 

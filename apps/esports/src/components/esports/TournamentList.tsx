@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter, usePathname } from "@/i18n/navigation";
+import { useRouter, usePathname } from "@kriraghor/ui/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { esports } from "@/lib/esports";
 import { Card, CardSkeleton, Empty } from "./bits";

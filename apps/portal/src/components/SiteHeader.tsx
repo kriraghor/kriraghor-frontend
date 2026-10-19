@@ -1,9 +1,9 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { NotificationBell } from "./notifications/NotificationBell";
+import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
+import { NotificationBell } from "@kriraghor/ui/notifications/bell";
 
 export type HeaderConfig = {
   titleKey: "web" | "esports" | "admin" | "vendor";

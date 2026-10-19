@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname } from "@kriraghor/ui/i18n/navigation";
 
 export const ADMIN_NAV = [
   { href: "/admin", key: "desk" },

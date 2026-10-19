@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { newKey } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { statusTone, TONE, tournaments } from "@/lib/tournaments";
 import { MePanel } from "../MePanel";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /** /me/tournaments (M14): my teams' registrations: pay, take an offered place, withdraw (refund per §6.9). */
 export function MyTournaments() {

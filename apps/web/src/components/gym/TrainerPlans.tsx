@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { dayLabel, newKey } from "@/lib/bookings";
 import { addDays, gym } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 /**
  * Monthly plans on a fitness trainer's page (M20 §6): pick a plan and a start date (today up to

@@ -3,13 +3,13 @@
 import { useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname } from "@kriraghor/ui/i18n/navigation";
 import { api, problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { DECLINE_REASONS, hire, minutesLeft, profileTone, requestTone, TONE, type RequestResult } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { JobCard } from "./JobCard";
 
 const TABS = [

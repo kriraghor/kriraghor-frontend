@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import createMiddleware from "next-intl/middleware";
-import { routing } from "./i18n/routing";
+import { routing } from "@kriraghor/ui/i18n/routing";
 import { areaForHost } from "./lib/area";
 
 const intl = createMiddleware(routing);

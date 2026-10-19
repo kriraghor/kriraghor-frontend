@@ -1,6 +1,6 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest } from "next/server";
-import { routing } from "./i18n/routing";
+import { routing } from "@kriraghor/ui/i18n/routing";
 import { organiserOf } from "./lib/host";
 
 const handleI18n = createMiddleware(routing);

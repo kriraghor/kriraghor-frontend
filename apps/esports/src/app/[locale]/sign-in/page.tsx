@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
-import { SignInForm } from "@/components/SignInForm";
+import { SignInForm } from "@kriraghor/ui/sign-in-form";
 import { SignInNext } from "@/components/esports/SignInNext";
 
 export const metadata = { title: "Sign in" };

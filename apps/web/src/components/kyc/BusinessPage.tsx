@@ -4,13 +4,13 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { publicEnv } from "@kriraghor/session/env";
 import { hire } from "@/lib/hire";
 import { applyForRole, asOfRole, BUSINESS_ROLES, fileProblem, getRoleVerification, isPerson, MAX_UPLOAD_BYTES, missingFields, roleFromAs, submitBusiness, uploadBusinessFile, type BusinessDocType, type BusinessRole, type VerificationItem } from "@/lib/kyc";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { OrganisationApply } from "./OrganisationApply";
 
 const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: "text-ink", changes_requested: "text-danger", rejected: "text-danger", missing: "text-muted" };

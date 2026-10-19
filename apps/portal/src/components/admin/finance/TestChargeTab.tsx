@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
 import { finance, formatTaka, parseTaka } from "@/lib/admin/finance";
-import { Button, Notice } from "../../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { Field, inputCls } from "./shared";
 
 type Person = { id: string; displayName: string };

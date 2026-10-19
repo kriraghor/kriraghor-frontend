@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { webHref } from "@/lib/links";
 
 /** Esports footer: the esports pages, kriraghor.com, and the help and legal pages (on kriraghor.com). */

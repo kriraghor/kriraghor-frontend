@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { decisionProblem, hardFailures, HEARTBEAT_MS, moderation, QUEUE_POLL_MS, QUEUE_STATUSES, type Claimed, type Decision, type Detail, type Status } from "@/lib/admin/moderation";
 import { stepUp } from "@/lib/admin/stepUp";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { DocumentPanel } from "../kyc/DocumentPanel";

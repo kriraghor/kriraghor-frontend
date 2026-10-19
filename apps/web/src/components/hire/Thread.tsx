@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
 import { hire } from "@/lib/hire";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * The request's message thread (M11 v3: contact stays in-app). Before payment the server refuses

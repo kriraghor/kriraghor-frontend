@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { sortMembers, teams, whatsappUrl, type Team } from "@/lib/teams";
 import { MePanel } from "../MePanel";
-import { Button, Field, Notice } from "../ui";
+import { Button, Field, Notice } from "@kriraghor/ui/primitives";
 
 const LOGO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_LOGO = 2 * 1024 * 1024;

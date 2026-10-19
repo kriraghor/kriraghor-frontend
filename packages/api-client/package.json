@@ -9,6 +9,7 @@
     "./notifications": "./src/notifications.ts"
   },
   "scripts": {
+    "lint": "eslint .",
     "api:sync": "node scripts/api-sync.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

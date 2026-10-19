@@ -2,10 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { finance, isTab, TABS, type Tab } from "@/lib/admin/finance";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { useAdminMe } from "../useAdminMe";
 import { PaymentsTab } from "./PaymentsTab";

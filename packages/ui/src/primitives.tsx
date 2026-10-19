@@ -36,7 +36,7 @@ export function Button({ children, busy, ...rest }: ButtonHTMLAttributes<HTMLBut
       {...rest}
       disabled={busy || rest.disabled}
       aria-busy={busy || undefined}
-      className="inline-flex min-h-12 items-center justify-center bg-brand px-5 font-bold text-white shadow-[0_8px_24px_-12px_rgb(11_122_75/0.6)] hover:bg-brand-hover disabled:opacity-50"
+      className="inline-flex min-h-12 items-center justify-center bg-brand px-5 font-bold text-white btn-primary-finish hover:bg-brand-hover disabled:opacity-50"
     >
       {children}
     </button>
@@ -45,7 +45,7 @@ export function Button({ children, busy, ...rest }: ButtonHTMLAttributes<HTMLBut
 
 export function Notice({ tone = "info", children }: { tone?: "info" | "error"; children: ReactNode }) {
   return (
-    <p role={tone === "error" ? "alert" : "status"} className={`rounded-xl border-l-4 bg-[var(--glass-strong-bg)] px-3 py-2 text-sm backdrop-blur ${tone === "error" ? "border-danger text-danger" : "border-info text-ink"}`}>
+    <p role={tone === "error" ? "alert" : "status"} className={`notice-surface border-l-4 px-3 py-2 text-sm ${tone === "error" ? "border-danger text-danger" : "border-info text-ink"}`}>
       {children}
     </p>
   );

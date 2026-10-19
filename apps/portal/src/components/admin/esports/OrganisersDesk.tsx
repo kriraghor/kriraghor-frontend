@@ -7,7 +7,7 @@ import { formatTaka } from "@/lib/admin/finance";
 import { contractBody, organisersAdmin, type Contract, type Invoice, type OrgStatus } from "@/lib/admin/organisers";
 import { stepUp } from "@/lib/admin/stepUp";
 import { problemOf } from "@kriraghor/api-client";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka, useAdminMe } from "../useAdminMe";

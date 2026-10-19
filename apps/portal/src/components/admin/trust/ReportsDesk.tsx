@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
 import { reportsAdmin, reviewsAdmin, type ReportAction, type ReportRow } from "@/lib/admin/trust";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { Chip, inputCls } from "../finance/shared";
 import { formatDhaka, useAdminMe } from "../useAdminMe";

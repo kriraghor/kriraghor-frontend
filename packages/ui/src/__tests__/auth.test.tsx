@@ -3,7 +3,7 @@ import { renderToString } from "react-dom/server";
 import { hydrateRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider, useAuth } from "../auth/AuthProvider";
+import { AuthProvider, useAuth } from "../auth";
 import { setAccessToken } from "@kriraghor/session/auth";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

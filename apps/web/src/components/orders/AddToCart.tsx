@@ -2,9 +2,9 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { orders } from "@/lib/orders";
 
 const ERRORS: Record<string, string> = { OWN_ITEM: "ownItem", INSUFFICIENT_STOCK: "noStock", ITEM_UNAVAILABLE: "unavailable", QTY_LIMIT: "qtyLimit" };

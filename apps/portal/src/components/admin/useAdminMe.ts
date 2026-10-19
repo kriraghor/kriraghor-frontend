@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "@/i18n/navigation";
+import { useRouter } from "@kriraghor/ui/i18n/navigation";
 import { api } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 
 /**
  * The signed-in staff member for an admin desk. Anyone without an admin session is sent to the

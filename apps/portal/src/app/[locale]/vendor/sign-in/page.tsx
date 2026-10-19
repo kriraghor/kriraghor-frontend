@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { SignInForm } from "@/components/SignInForm";
+import { SignInForm } from "@kriraghor/ui/sign-in-form";
 
 export const metadata = { title: "Sign in" };
 

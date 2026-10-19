@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { publicEnv } from "@kriraghor/session/env";
 import { teams } from "@/lib/teams";
 

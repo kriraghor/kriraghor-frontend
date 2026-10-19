@@ -1,4 +1,19 @@
 @import "tailwindcss";
+/* Shared glass design system (packages/ui) and the shared components' classes. */
+@import "@kriraghor/ui/styles/glass.css";
+@source "../../../../packages/ui/src";
+
+/* Surface styles the shared components (packages/ui) ask for: glass pop-overs, plain notices. */
+@utility btn-primary-finish {
+  @apply transition-colors;
+}
+@utility notice-surface {
+  background-color: transparent;
+}
+@utility popover-surface {
+  @apply glass-strong rounded-[24px];
+}
+
 
 /*
  * Kriraghor design tokens (kriraghor-docs/00-platform/09, completed in 0B from the home v3 prototype).
@@ -153,117 +168,3 @@ h3 {
   }
 }
 
-/*
- * Glass design system (19 Oct 2026, 09 §7). Frosted surfaces over a soft ambient background, a
- * rounded shape scale (cards 20px, controls 12px, pills full) in place of the old radius-0 lock.
- * Without backdrop-filter, or when the visitor asks for less transparency, every glass surface turns
- * solid, so text contrast never depends on what is behind it.
- */
-:root {
-  --glass-bg: rgb(255 255 255 / 0.62);
-  --glass-strong-bg: rgb(255 255 255 / 0.82);
-  --glass-edge: rgb(22 32 27 / 0.1);
-  --glass-highlight: rgb(255 255 255 / 0.7);
-  --glass-shadow: 0 12px 40px -18px rgb(10 26 18 / 0.28);
-  --glass-blur: blur(18px) saturate(160%);
-  --glass-band-bg: rgb(10 26 18 / 0.48);
-  --glass-band-edge: rgb(244 243 239 / 0.16);
-  --radius-card: 20px;
-  --radius-control: 12px;
-  --ambient-green: rgb(11 122 75 / 0.12);
-  --ambient-amber: rgb(242 163 58 / 0.12);
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --glass-bg: rgb(21 29 24 / 0.55);
-    --glass-strong-bg: rgb(21 29 24 / 0.8);
-    --glass-edge: rgb(255 255 255 / 0.09);
-    --glass-highlight: rgb(255 255 255 / 0.06);
-    --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
-    --glass-band-bg: rgb(7 18 13 / 0.55);
-    --ambient-green: rgb(25 153 95 / 0.16);
-    --ambient-amber: rgb(242 163 58 / 0.09);
-  }
-}
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  :root {
-    --glass-bg: var(--kg-surface);
-    --glass-strong-bg: var(--kg-surface);
-    --glass-band-bg: var(--kg-band);
-  }
-}
-@media (prefers-reduced-transparency: reduce) {
-  :root {
-    --glass-bg: var(--kg-surface);
-    --glass-strong-bg: var(--kg-surface);
-    --glass-band-bg: var(--kg-band);
-    --glass-blur: none;
-  }
-}
-
-@utility glass {
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-edge);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
-}
-@utility glass-strong {
-  background: var(--glass-strong-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-edge);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
-}
-/* On photos and the dark band: dark frosted glass with light text. */
-@utility glass-band {
-  background: var(--glass-band-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-band-edge);
-  color: var(--kg-band-text);
-}
-/* A card: glass with the card radius. Links lift a little on hover. */
-@utility glass-card {
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-edge);
-  border-radius: var(--radius-card);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
-}
-/* Inputs and selects: a strong glass surface, the control radius, a clear border to focus. */
-@utility field {
-  background: var(--glass-strong-bg);
-  border: 1.5px solid var(--glass-edge);
-  border-radius: var(--radius-control);
-}
-
-@layer base {
-  /* Controls get the control radius and press feedback; :where() keeps this below any utility. */
-  :where(a, button, select, input, textarea, summary)[class~="min-h-11"],
-  :where(a, button, select, input, textarea, summary)[class~="min-h-12"],
-  :where(a, button)[class~="min-h-14"] {
-    border-radius: var(--radius-control);
-  }
-  :where(a, button)[class~="min-h-11"],
-  :where(a, button)[class~="min-h-12"] {
-    transition: transform 150ms var(--ease-kg), background-color 200ms, border-color 200ms, box-shadow 200ms;
-  }
-  :where(a, button)[class~="min-h-11"]:active,
-  :where(a, button)[class~="min-h-12"]:active {
-    transform: scale(0.98);
-  }
-  :where(a).glass-card {
-    transition: transform 200ms var(--ease-kg), box-shadow 200ms, border-color 200ms;
-  }
-  :where(a).glass-card:hover {
-    transform: translateY(-2px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  :where(a, button):active,
-  :where(a).glass-card:hover {
-    transform: none;
-  }
-}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { api, problemOf } from "@kriraghor/api-client";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "./AdminSubnav";
 import { Chip, Field, inputCls } from "./finance/shared";
 

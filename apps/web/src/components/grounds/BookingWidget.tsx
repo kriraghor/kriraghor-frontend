@@ -3,13 +3,13 @@
 import { useCallback, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { bookings, canStartAt, coveredIndexes, dayLabel, daysBetween, newKey, timeLabel, useGroundLive, type PaymentChoice } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { dhakaDateOf } from "@/lib/home";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 const CELL: Record<string, string> = {
   open: "border-line bg-surface hover:border-brand",

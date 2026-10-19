@@ -2,8 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { publicEnv } from "@kriraghor/session/env";
 import { vendor } from "@/lib/vendor/grounds";
 import { MePanel } from "../MePanel";

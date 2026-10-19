@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { teamsAdmin, type Gender, type StaffUser } from "@/lib/admin/teams";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { Chip, inputCls } from "../finance/shared";
 import { formatDhaka, useAdminMe } from "../useAdminMe";

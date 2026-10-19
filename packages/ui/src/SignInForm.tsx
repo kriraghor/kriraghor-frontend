@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "./i18n/navigation";
 import { api, problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "./auth";
 import { publicEnv } from "@kriraghor/session/env";
-import { Button, Field, Notice } from "./ui";
+import { Button, Field, Notice, PasswordField } from "./primitives";
 
 type Method = "phone" | "email" | "password" | "google";
 type Step = { kind: "enter" } | { kind: "code"; target: string } | { kind: "signup"; signupToken: string };
@@ -15,8 +15,10 @@ type Step = { kind: "enter" } | { kind: "code"; target: string } | { kind: "sign
  * Customer sign-in for M01 (web, esports and the vendor portal): phone OTP, email OTP,
  * password (phone, email or username) and Google. A verified code for an unknown number
  * returns a signup token, and the user finishes signup with their name.
+ * `passwordReset` (kriraghor.com, which hosts /sign-in/reset) adds the show/hide password toggle and
+ * the forgot-password link; it needs the reset.show, reset.hide and signIn.forgot messages.
  */
-export function SignInForm({ next = "/me" }: { next?: string }) {
+export function SignInForm({ next = "/me", passwordReset = false }: { next?: string; passwordReset?: boolean }) {
   const t = useTranslations();
   const router = useRouter();
   const { signedIn } = useAuth();
@@ -163,8 +165,17 @@ export function SignInForm({ next = "/me" }: { next?: string }) {
         {method === "password" && step.kind === "enter" ? (
           <form onSubmit={passwordLogin} className="flex flex-col gap-4">
             <Field id="identifier" name="identifier" required label={t("signIn.identifierLabel")} autoComplete="username" />
-            <Field id="password" name="password" required type="password" label={t("signIn.passwordLabel")} autoComplete="current-password" />
+            {passwordReset ? (
+              <PasswordField id="password" name="password" required label={t("signIn.passwordLabel")} autoComplete="current-password" showLabel={t("reset.show")} hideLabel={t("reset.hide")} />
+            ) : (
+              <Field id="password" name="password" required type="password" label={t("signIn.passwordLabel")} autoComplete="current-password" />
+            )}
             <Button busy={busy}>{t("signIn.signInButton")}</Button>
+            {passwordReset ? (
+              <Link href={next === "/me" ? "/sign-in/reset" : `/sign-in/reset?next=${encodeURIComponent(next)}`} className="min-h-11 text-sm font-semibold text-brand-text underline" data-testid="forgot-password">
+                {t("signIn.forgot")}
+              </Link>
+            ) : null}
           </form>
         ) : null}
 

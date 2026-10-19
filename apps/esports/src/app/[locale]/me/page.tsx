@@ -1,6 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { MePanel } from "@/components/MePanel";
-import { LiveStatus } from "@/components/LiveStatus";
+import { LiveStatus } from "@kriraghor/ui/live-status";
 
 export const metadata = { title: "My account" };
 

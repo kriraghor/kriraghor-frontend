@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { helpGroups } from "@/content/legal";
 
 export const metadata = { title: "Help centre", alternates: { canonical: "/help" } };

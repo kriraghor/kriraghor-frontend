@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { tournaments } from "@/lib/tournaments";
 import { TournamentCard } from "./TournamentCard";
 

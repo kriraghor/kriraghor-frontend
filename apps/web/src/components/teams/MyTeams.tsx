@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { api, problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { teams, teamSports } from "@/lib/teams";
 import { MePanel } from "../MePanel";
-import { Button, Field, Notice } from "../ui";
+import { Button, Field, Notice } from "@kriraghor/ui/primitives";
 import { AddPhone } from "./AddPhone";
 
 /** /me/teams (M16 §16): invites waiting for me, my teams, and create a team (a verified phone is needed). */

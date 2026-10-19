@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { dhakaTime, esports, takaOf } from "@/lib/esports";
 import { events } from "@/lib/events";
 import { Card, CardSkeleton, Countdown, Empty, LinkButton, Prize, SlotsBar } from "./bits";

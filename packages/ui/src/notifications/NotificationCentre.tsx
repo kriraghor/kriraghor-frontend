@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link, useRouter } from "../i18n/navigation";
+import { useAuth } from "../auth";
 import { listNotifications, markRead, relativeTime } from "@kriraghor/api-client/notifications";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "../primitives";
 
 const CATEGORIES = ["security", "money", "bookings", "hire", "orders", "offers", "tournaments", "moderation", "disputes_reports", "reviews", "staff_ops"] as const;
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 /**
  * Asks for a fresh authenticator code, then runs `onConfirm(code)` (which does the step-up and the

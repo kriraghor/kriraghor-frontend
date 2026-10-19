@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { formatTaka } from "@/lib/admin/finance";
 import { hireAdmin } from "@/lib/admin/hire";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 type Diff = Record<string, { from: unknown; to: unknown }>;
 

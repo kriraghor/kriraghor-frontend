@@ -2,11 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { api, problemOf } from "@kriraghor/api-client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "@kriraghor/ui/auth";
 import { PASSWORD_MAX, PASSWORD_MIN, resetMessage, resetStep, targetKind, type ResetStep } from "@/lib/reset";
-import { Button, Field, Notice, PasswordField } from "./ui";
+import { Button, Field, Notice, PasswordField } from "@kriraghor/ui/primitives";
 
 /**
  * /sign-in/reset (M01): the phone or email, then the code and a new password in one step. The reply

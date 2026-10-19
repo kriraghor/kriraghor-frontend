@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { stepUp } from "@/lib/admin/stepUp";
 import { MASTER_ACTIONS, SEVERITY_ORDER, riskAdmin, stepUpScope, type RiskActionName, type Severity } from "@/lib/admin/risk";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { Chip, inputCls } from "../finance/shared";

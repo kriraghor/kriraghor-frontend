@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { dhakaTime, takaOf } from "@/lib/esports";
 import { events, type EventCard as Card } from "@/lib/events";
 import { Chip, Empty } from "./bits";

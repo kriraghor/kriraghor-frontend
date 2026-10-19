@@ -3,7 +3,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { Link, useRouter, usePathname } from "@/i18n/navigation";
+import { Link, useRouter, usePathname } from "@kriraghor/ui/i18n/navigation";
 import { filtersFromParams, grounds, paramsFromFilters, type Filters, type GroundCard } from "@/lib/grounds";
 import { formatTaka } from "@/lib/payments";
 import { PageHeader } from "../PageHeader";

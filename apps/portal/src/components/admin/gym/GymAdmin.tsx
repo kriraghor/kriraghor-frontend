@@ -7,7 +7,7 @@ import { formatTaka } from "@/lib/admin/finance";
 import { gymAdmin, heldOf, type GymStatus, type StaffPass } from "@/lib/admin/gym";
 import { stepUp } from "@/lib/admin/stepUp";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka, useAdminMe } from "../useAdminMe";

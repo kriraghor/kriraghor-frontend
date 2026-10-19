@@ -7,7 +7,7 @@ import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { CANCELLABLE, hireAdmin, type ProfileStatus, type RequestStatus, type StaffJob, type StaffProfile } from "@/lib/admin/hire";
 import { stepUp } from "@/lib/admin/stepUp";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka, useAdminMe } from "../useAdminMe";

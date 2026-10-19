@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, ArrowsClockwise, ArrowUUpLeft, Barbell, HandCoins, IdentificationBadge, Key, Pill, SealCheck, ShieldCheck, SoccerBall, Wallet } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { PHOTOS } from "@/lib/photos";
 import { esportsHref } from "@/lib/links";
 import { EsportsHero } from "@/components/home/HeroShell";

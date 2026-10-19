@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf, type Problem } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
 import { dhakaTime, esports, takaOf } from "@/lib/esports";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { Chip, Prize } from "./bits";
 
 /**

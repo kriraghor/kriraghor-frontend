@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { useAuth } from "./auth";
 import { getAccessToken } from "@kriraghor/session/auth";
 import { publicEnv } from "@kriraghor/session/env";
 

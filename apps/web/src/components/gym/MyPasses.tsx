@@ -3,13 +3,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { dayLabel } from "@/lib/bookings";
 import { gym, passTone, TONE } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 const GROUPS = ["active", "used", "expired"] as const;
 type Group = (typeof GROUPS)[number];

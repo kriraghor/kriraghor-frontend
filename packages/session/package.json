@@ -12,6 +12,7 @@
     "./redirects": "./src/redirects.ts"
   },
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },

@@ -17,7 +17,7 @@ import {
   type Setting,
   type SettingValue,
 } from "@/lib/admin/settings";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "./AdminSubnav";
 import { EntityHistory } from "./EntityHistory";
 import { formatDhaka, useAdminMe } from "./useAdminMe";

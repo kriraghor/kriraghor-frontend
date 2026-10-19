@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { formatTaka } from "@/lib/admin/finance";
 import { marketAdmin, productDiffLines, type ProductDiff } from "@/lib/admin/market";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 type Variant = { id: string; attributes: Record<string, string>; sku: string | null; pricePoisha: number; onHand: number; expiryDate: string | null; batchNo: string | null };
 type Photo = { id: string; url: string };

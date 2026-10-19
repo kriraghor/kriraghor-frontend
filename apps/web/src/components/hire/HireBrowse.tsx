@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { filtersFromParams, hire, LEVELS, paramsFromFilters, SORTS, type Filters, type Level } from "@/lib/hire";
 import { HireCard } from "./HireCard";
 import { PageHeader } from "../PageHeader";

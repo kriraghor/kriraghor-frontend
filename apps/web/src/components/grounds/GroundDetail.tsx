@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { grounds, hourLabel, hoursLines } from "@/lib/grounds";
 import { formatTaka } from "@/lib/payments";
 import { BookingWidget } from "./BookingWidget";

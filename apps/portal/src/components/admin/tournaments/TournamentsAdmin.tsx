@@ -7,7 +7,7 @@ import { formatTaka } from "@/lib/admin/finance";
 import { stepUp } from "@/lib/admin/stepUp";
 import { problemOf } from "@kriraghor/api-client";
 import { tournamentsAdmin } from "@/lib/vendor/tournaments";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { Chip, inputCls } from "../finance/shared";

@@ -2,10 +2,10 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka, listMyPayments, outcomeOf } from "@/lib/payments";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 const TONE = { paid: "text-brand", waiting: "text-muted", failed: "text-danger", expired: "text-muted" } as const;
 

@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { api } from "@kriraghor/api-client";
 import type { components } from "@kriraghor/api-client/schema";
 import { formatTaka } from "@/lib/payments";
-import { ChartSplit, DeltaBadge, KpiTile } from "./charts/Charts";
-import { Notice } from "./ui";
+import { ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
+import { Notice } from "@kriraghor/ui/primitives";
 
 type Period = "7w" | "qtr" | "yr";
 type Data = components["schemas"]["MemberDashboard"];

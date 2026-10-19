@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { gymDesk, type Sold } from "@/lib/vendor/gym";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Chip } from "../../admin/finance/shared";
 
 const STATUSES = ["active", "redeemed", "expired", "refunded", "cancelled"] as const;
