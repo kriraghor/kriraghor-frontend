@@ -9,7 +9,7 @@ The Kriraghor web apps in one repository. The mobile app has its own repository,
 | `apps/portal` | Admin and vendor desks, routed by host | admin.kriraghor.com · vendor.kriraghor.com | Next.js |
 
 ```bash
-npm ci                       # once, at the repo root
+npm ci                       # once,at the repo root
 cd apps/web && npm run dev   # or apps/esports, apps/portal
 ```
 
