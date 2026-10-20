@@ -83,9 +83,10 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
           })}
         </nav>
         <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
-          <button type="button" className={cn(iconBtn, "w-auto gap-1.5 px-2.5 text-sm font-semibold")} onClick={switchLanguage} lang={locale === "en" ? "bn" : "en"} aria-label={t("nav.language")} data-testid="language-switch">
-            <Translate size={20} aria-hidden className="hidden sm:block" />
-            <span>{t("nav.language")}</span>
+          {/* Phones: the icon only, so the site name keeps its room; the name stays for screen readers. */}
+          <button type="button" className={cn(iconBtn, "gap-1.5 text-sm font-semibold sm:w-auto sm:px-2.5")} onClick={switchLanguage} lang={locale === "en" ? "bn" : "en"} aria-label={t("nav.language")} data-testid="language-switch">
+            <Translate size={21} aria-hidden />
+            <span className="hidden sm:inline">{t("nav.language")}</span>
           </button>
           {status === "signed_in" ? (
             <>
