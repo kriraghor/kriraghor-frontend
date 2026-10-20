@@ -7,7 +7,7 @@
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0, fontFamily: "system-ui, sans-serif", background: "#f4f3ef", color: "#16201b" }}>
+      <body style={{ margin: 0, fontFamily: "system-ui, sans-serif", background: "#f3f5f3", color: "#111a15" }}>
         <main style={{ maxWidth: 640, margin: "0 auto", padding: "80px 20px" }}>
           <h1 style={{ fontSize: 32 }}>Something went wrong</h1>
           <p lang="bn">কিছু একটা ভুল হয়েছে। আবার চেষ্টা করুন।</p>

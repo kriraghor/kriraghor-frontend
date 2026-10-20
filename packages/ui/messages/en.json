@@ -1,0 +1,12 @@
+{
+  "kit": {
+    "close": "Close",
+    "loading": "Loading",
+    "retry": "Try again",
+    "errorTitle": "Something went wrong",
+    "errorBody": "We couldn't load this. Check your connection and try again.",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu",
+    "optional": "Optional"
+  }
+}

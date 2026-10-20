@@ -18,9 +18,23 @@ export const boundaries = {
   },
 };
 
+// Design system (09 §7): icons come from Phosphor, never typed arrows, stars, ticks or crosses.
+// "warn" while the page sweep (design plan phase 5) replaces the old glyphs; then "error".
+const GLYPHS = "[←→★☆✓✔✕✖×]";
+export const iconGlyphs = {
+  rules: {
+    "no-restricted-syntax": [
+      "warn",
+      { selector: `JSXText[value=/${GLYPHS}/]`, message: "Use a Phosphor icon (@phosphor-icons/react), not a typed glyph." },
+      { selector: `JSXExpressionContainer > Literal[value=/${GLYPHS}/]`, message: "Use a Phosphor icon (@phosphor-icons/react), not a typed glyph." },
+    ],
+  },
+};
+
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
   boundaries,
+  iconGlyphs,
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ]);

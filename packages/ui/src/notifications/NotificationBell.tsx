@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { Bell, Checks } from "@phosphor-icons/react";
 import { Link, useRouter } from "../i18n/navigation";
+import { SegmentedControl } from "../kit/Tabs";
+import { Skeleton } from "../kit/Display";
 import { useAuth } from "../auth";
 import { badgeText, listNotifications, markRead, realtimeSocket, relativeTime, type NotificationItem } from "@kriraghor/api-client/notifications";
 
@@ -83,51 +86,47 @@ export function NotificationBell({ centreHref, settingsHref }: { centreHref: str
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label={badge ? t("bellUnread", { count: unread }) : t("bell")}
-        className="relative inline-flex min-h-11 min-w-11 items-center justify-center border border-line"
+        className="relative inline-flex size-11 items-center justify-center rounded-control text-ink transition-colors hover:bg-surface-2"
         data-testid="notification-bell"
       >
-        <svg aria-hidden width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-        </svg>
+        <Bell size={22} weight={open ? "fill" : "regular"} aria-hidden />
         {badge ? (
-          <span className="absolute -right-2 -top-2 min-w-5 rounded-full bg-danger px-1.5 text-center text-xs font-bold leading-5 text-white tabular-nums" data-testid="notification-badge">
+          <span className="absolute right-0.5 top-0.5 min-w-5 rounded-pill bg-live px-1 text-center text-[11px] font-bold leading-5 text-white tabular-nums ring-2 ring-surface" data-testid="notification-badge">
             {badge}
           </span>
         ) : null}
       </button>
 
       {open ? (
-        <div role="dialog" aria-label={t("title")} className="absolute right-0 z-50 mt-2 w-[360px] max-w-[calc(100vw-2rem)] popover-surface shadow-lg">
-          <div className="flex items-center gap-2 border-b-2 border-line px-4 py-3">
-            <h2 className="font-bold">{t("title")}</h2>
-            <div role="tablist" className="ml-auto flex gap-1 text-sm">
-              {(["all", "unread"] as const).map((k) => (
-                <button key={k} role="tab" type="button" aria-selected={tab === k} onClick={() => setTab(k)} className={`min-h-9 px-2 font-semibold ${tab === k ? "border-b-2 border-brand" : "text-muted"}`}>
-                  {t(k)}
-                </button>
-              ))}
-            </div>
+        <div role="dialog" aria-label={t("title")} className="absolute -right-12 z-50 mt-2 w-[380px] max-w-[calc(100vw-1.5rem)] overflow-hidden popover-surface sm:right-0">
+          <div className="flex items-center gap-2 border-b border-line px-4 py-3">
+            <h2 className="text-base font-bold">{t("title")}</h2>
+            <SegmentedControl size="sm" className="ml-auto" label={t("title")} value={tab} onChange={setTab} options={[{ value: "all", label: t("all") }, { value: "unread", label: t("unread") }]} />
           </div>
           <div className="max-h-[420px] overflow-y-auto">
             {q.isPending ? (
-              <p className="p-4 text-sm text-muted" role="status">
-                {t("loading")}
-              </p>
+              <div className="flex flex-col gap-3 p-4" role="status" aria-label={t("loading")}>
+                <Skeleton className="h-12" />
+                <Skeleton className="h-12" />
+                <Skeleton className="h-12" />
+              </div>
             ) : q.isError ? (
               <p className="p-4 text-sm">
                 {t("error")}{" "}
-                <button type="button" className="underline" onClick={() => void q.refetch()}>
+                <button type="button" className="font-semibold text-brand-text underline" onClick={() => void q.refetch()}>
                   {t("retry")}
                 </button>
               </p>
             ) : !q.data?.items.length ? (
-              <p className="p-4 text-sm text-muted">{t("empty")}</p>
+              <p className="flex flex-col items-center gap-2 px-4 py-10 text-center text-sm text-muted">
+                <Bell size={28} aria-hidden />
+                {t("empty")}
+              </p>
             ) : (
               <ul className="divide-y divide-line">
                 {q.data.items.map((n) => (
                   <li key={n.id}>
-                    <button type="button" onClick={() => void openItem(n)} className="flex w-full gap-3 px-4 py-3 text-left hover:bg-surface-2" data-testid="notification-item">
+                    <button type="button" onClick={() => void openItem(n)} className="flex w-full gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-2" data-testid="notification-item">
                       <span aria-hidden className={`mt-1.5 inline-block size-2 shrink-0 rounded-full ${n.readAt ? "bg-transparent" : "bg-brand"}`} />
                       <span className="min-w-0">
                         <span className="block text-sm font-semibold">{n.title}</span>
@@ -144,15 +143,16 @@ export function NotificationBell({ centreHref, settingsHref }: { centreHref: str
               </ul>
             )}
           </div>
-          <div className="flex flex-wrap items-center gap-3 border-t-2 border-line px-4 py-3 text-sm font-semibold">
-            <button type="button" onClick={() => void readAll()} disabled={!unread} className="min-h-9 underline disabled:opacity-50">
+          <div className="flex flex-wrap items-center gap-1 border-t border-line bg-surface-2/50 px-2 py-2 text-sm font-semibold">
+            <button type="button" onClick={() => void readAll()} disabled={!unread} className="inline-flex min-h-9 items-center gap-1.5 rounded-[9px] px-2 hover:bg-surface-2 disabled:opacity-50">
+              <Checks size={18} aria-hidden />
               {t("markAllRead")}
             </button>
-            <Link href={centreHref} onClick={() => setOpen(false)} className="ml-auto min-h-9 py-2 underline">
+            <Link href={centreHref} onClick={() => setOpen(false)} className="ml-auto inline-flex min-h-9 items-center rounded-[9px] px-2 text-brand-text no-underline hover:bg-surface-2">
               {t("seeAll")}
             </Link>
             {settingsHref ? (
-              <Link href={settingsHref} onClick={() => setOpen(false)} className="min-h-9 py-2 underline">
+              <Link href={settingsHref} onClick={() => setOpen(false)} className="inline-flex min-h-9 items-center rounded-[9px] px-2 text-brand-text no-underline hover:bg-surface-2">
                 {t("settings")}
               </Link>
             ) : null}

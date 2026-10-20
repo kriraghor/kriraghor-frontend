@@ -3,6 +3,8 @@
 import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./auth";
+import { TooltipProvider } from "./kit/Overlay";
+import { ToastProvider } from "./kit/Toast";
 import type { Audience } from "@kriraghor/session/auth";
 
 export function Providers({ audience = "api", children }: { audience?: Audience; children: ReactNode }) {
@@ -14,7 +16,11 @@ export function Providers({ audience = "api", children }: { audience?: Audience;
   );
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider audience={audience}>{children}</AuthProvider>
+      <AuthProvider audience={audience}>
+        <TooltipProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

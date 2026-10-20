@@ -11,6 +11,8 @@ export function vitestPreset(dir) {
     test: {
       environment: "jsdom",
       include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+      // next-intl imports "next/navigation" without an extension; inlined, Vite resolves it.
+      server: { deps: { inline: ["next-intl"] } },
     },
   };
 }

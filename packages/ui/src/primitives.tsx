@@ -1,87 +1,16 @@
 "use client";
 
-import { useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
+/**
+ * The first form primitives, kept as names for the pages that import them; they are the kit's
+ * components now (./kit), so every page picks up the 09 §7 look.
+ */
+import type { ReactNode } from "react";
+import { Notice as KitNotice } from "./kit/Display";
 
-/** Minimal form primitives on the design tokens. Sharp corners (shape lock), 44px+ targets. */
-export function Field({ label, id, hint, error, ...input }: InputHTMLAttributes<HTMLInputElement> & { label: string; id: string; hint?: string; error?: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-semibold text-muted">
-        {label}
-      </label>
-      <input
-        id={id}
-        className="min-h-12 field px-3 text-base text-ink focus:border-brand"
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
-        {...input}
-      />
-      {hint && !error ? (
-        <p id={`${id}-hint`} className="text-sm text-muted">
-          {hint}
-        </p>
-      ) : null}
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-sm text-danger">
-          {error}
-        </p>
-      ) : null}
-    </div>
-  );
-}
+export { Field, PasswordField } from "./kit/Form";
+export { Button } from "./kit/Button";
 
-export function Button({ children, busy, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { busy?: boolean; children: ReactNode }) {
-  return (
-    <button
-      {...rest}
-      disabled={busy || rest.disabled}
-      aria-busy={busy || undefined}
-      className="inline-flex min-h-12 items-center justify-center bg-brand px-5 font-bold text-white btn-primary-finish hover:bg-brand-hover disabled:opacity-50"
-    >
-      {children}
-    </button>
-  );
-}
-
+/** The old two-tone notice: "info" or "error". */
 export function Notice({ tone = "info", children }: { tone?: "info" | "error"; children: ReactNode }) {
-  return (
-    <p role={tone === "error" ? "alert" : "status"} className={`notice-surface border-l-4 px-3 py-2 text-sm ${tone === "error" ? "border-danger text-danger" : "border-info text-ink"}`}>
-      {children}
-    </p>
-  );
-}
-
-/** A password input with a show/hide toggle (the toggle is a real button, announced by its label). */
-export function PasswordField({ label, id, hint, error, showLabel, hideLabel, ...input }: InputHTMLAttributes<HTMLInputElement> & { label: string; id: string; hint?: string; error?: string; showLabel: string; hideLabel: string }) {
-  const [shown, setShown] = useState(false);
-  return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-semibold text-muted">
-        {label}
-      </label>
-      <div className="field flex overflow-hidden focus-within:border-brand">
-        <input
-          id={id}
-          type={shown ? "text" : "password"}
-          className="min-h-12 min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 text-base text-ink focus-visible:outline-offset-[-3px]"
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
-          {...input}
-        />
-        <button type="button" onClick={() => setShown((s) => !s)} aria-pressed={shown} aria-controls={id} className="min-h-12 shrink-0 rounded-none border-l border-[var(--glass-edge)] px-3 text-sm font-semibold hover:bg-[var(--glass-bg)]">
-          {shown ? hideLabel : showLabel}
-        </button>
-      </div>
-      {hint && !error ? (
-        <p id={`${id}-hint`} className="text-sm text-muted">
-          {hint}
-        </p>
-      ) : null}
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-sm text-danger">
-          {error}
-        </p>
-      ) : null}
-    </div>
-  );
+  return <KitNotice tone={tone}>{children}</KitNotice>;
 }

@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Esports, venues, gear and talent for players in Bangladesh.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f4f3ef",
+    background_color: "#f3f5f3",
     theme_color: "#0b7a4b",
     icons: [
       { src: "/favicon.ico", sizes: "any", type: "image/x-icon" },
