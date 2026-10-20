@@ -10,9 +10,9 @@
     "optional": "Optional",
     "theme": {
       "label": "Theme",
+      "toggle": "Switch between light and dark",
       "light": "Light",
-      "dark": "Dark",
-      "system": "Same as device"
+      "dark": "Dark"
     }
   },
   "auth": {

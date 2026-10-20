@@ -220,3 +220,52 @@ html[data-splash="on"] .kg-hero > .kg-hero-item {
     transform: translateY(36px);
   }
 }
+
+/* ---------------------------------------------------------------- theme switch */
+/* The toggle's icon: a moon in light (go dark), a sun in dark; the swap spins and springs. */
+.kg-tt-moon,
+.kg-tt-sun {
+  transition:
+    transform 450ms var(--kg-spring),
+    opacity 220ms ease;
+}
+.kg-tt-sun {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.4);
+  color: var(--kg-prize);
+}
+:root[data-theme="dark"] .kg-tt-sun {
+  opacity: 1;
+  transform: none;
+}
+:root[data-theme="dark"] .kg-tt-moon {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.4);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .kg-tt-sun {
+    opacity: 1;
+    transform: none;
+  }
+  :root:not([data-theme="light"]) .kg-tt-moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.4);
+  }
+}
+/* The new theme spreads as a circle from the button (ThemeToggle drives the clip-path). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+/* Browsers without View Transitions: colours cross-fade for a moment. */
+.kg-theme-anim,
+.kg-theme-anim *,
+.kg-theme-anim *::before,
+.kg-theme-anim *::after {
+  transition:
+    background-color 350ms ease,
+    color 350ms ease,
+    border-color 350ms ease,
+    fill 350ms ease !important;
+}

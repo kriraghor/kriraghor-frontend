@@ -10,8 +10,7 @@ import { isExternal } from "@kriraghor/session/links";
 import { NotificationBell } from "./notifications/NotificationBell";
 import { ButtonLink } from "./kit/Button";
 import { Menu } from "./kit/Overlay";
-import { SegmentedControl } from "./kit/Tabs";
-import { ThemeToggle, setTheme, useTheme, type ThemeChoice } from "./ThemeToggle";
+import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "./cn";
 
 export type HeaderConfig = {
@@ -50,7 +49,6 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
   const pathname = usePathname();
   const router = useRouter();
   const { status, signOut } = useAuth();
-  const theme = useTheme();
   // The menu belongs to the page it was opened on, so it closes by itself after navigating.
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const menuOpen = menuFor === pathname;
@@ -145,19 +143,8 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
                 </button>
               </>
             ) : null}
-            <div className="mt-2 flex items-center justify-between gap-3 border-t border-line px-3 pt-4">
-              <span className="text-sm font-semibold text-muted">{t("kit.theme.label")}</span>
-              <SegmentedControl<ThemeChoice>
-                size="sm"
-                label={t("kit.theme.label")}
-                value={theme}
-                onChange={setTheme}
-                options={[
-                  { value: "light", label: t("kit.theme.light") },
-                  { value: "dark", label: t("kit.theme.dark") },
-                  { value: "system", label: t("kit.theme.system") },
-                ]}
-              />
+            <div className="mt-2 border-t border-line px-1 pt-3">
+              <ThemeToggle withLabel />
             </div>
           </nav>
         </div>

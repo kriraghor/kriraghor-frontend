@@ -1,63 +1,84 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
-import { Desktop, Moon, Sun } from "@phosphor-icons/react";
-import { Menu } from "./kit/Overlay";
+import { Moon, Sun } from "@phosphor-icons/react";
 import { THEME_KEY } from "./brand/ThemeScript";
 import { cn } from "./cn";
 
-export type ThemeChoice = "light" | "dark" | "system";
+export type Theme = "light" | "dark";
 
-const listeners = new Set<() => void>();
-const read = (): ThemeChoice => {
-  try {
-    const t = window.localStorage.getItem(THEME_KEY);
-    return t === "light" || t === "dark" ? t : "system";
-  } catch {
-    return "system";
-  }
-};
-const subscribe = (fn: () => void) => {
-  listeners.add(fn);
-  return () => listeners.delete(fn);
-};
+/** The theme showing now: the visitor's pick, else the device's. */
+export function currentTheme(): Theme {
+  const picked = document.documentElement.dataset.theme;
+  if (picked === "light" || picked === "dark") return picked;
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
-/** Saves the pick and applies it to <html data-theme> at once ("system" removes it). */
-export function setTheme(choice: ThemeChoice) {
+function apply(theme: Theme) {
   try {
-    if (choice === "system") window.localStorage.removeItem(THEME_KEY);
-    else window.localStorage.setItem(THEME_KEY, choice);
+    window.localStorage.setItem(THEME_KEY, theme);
   } catch {
     /* private mode: this page only */
   }
-  if (choice === "system") delete document.documentElement.dataset.theme;
-  else document.documentElement.dataset.theme = choice;
-  listeners.forEach((fn) => fn());
+  document.documentElement.dataset.theme = theme;
 }
 
-export function useTheme(): ThemeChoice {
-  return useSyncExternalStore(subscribe, read, () => "system");
+type ViewTransitionDoc = Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
+
+/**
+ * Switches light ↔ dark with a transition: where the browser has View Transitions, the new theme
+ * spreads as a circle from the button; elsewhere the colours cross-fade. Reduced motion: instant.
+ */
+export function toggleTheme(origin?: { x: number; y: number }) {
+  const next: Theme = currentTheme() === "dark" ? "light" : "dark";
+  const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const doc = document as ViewTransitionDoc;
+  if (reduce) return apply(next);
+  if (doc.startViewTransition && origin) {
+    const { x, y } = origin;
+    const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const vt = doc.startViewTransition(() => apply(next));
+    void vt.ready.then(() => {
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+        { duration: 520, easing: "cubic-bezier(.16,1,.3,1)", pseudoElement: "::view-transition-new(root)" },
+      );
+    });
+    return;
+  }
+  const html = document.documentElement;
+  html.classList.add("kg-theme-anim");
+  apply(next);
+  window.setTimeout(() => html.classList.remove("kg-theme-anim"), 450);
 }
 
-const ICON = { light: Sun, dark: Moon, system: Desktop } as const;
-
-/** The header's theme button: Light, Dark or the system's, remembered per browser. */
-export function ThemeToggle({ className }: { className?: string }) {
+/**
+ * The header's theme button: one toggle, light ↔ dark. The icon (moon in light, sun in dark) is
+ * chosen by CSS from <html data-theme>, so it is right on the first paint and the swap spins.
+ */
+export function ThemeToggle({ className, withLabel = false }: { className?: string; withLabel?: boolean }) {
   const t = useTranslations("kit.theme");
-  const choice = useTheme();
-  const Current = ICON[choice];
   return (
-    <Menu
-      trigger={
-        <button type="button" aria-label={t("label")} className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-control text-ink transition-colors hover:bg-surface-2", className)} data-testid="theme-toggle">
-          <Current size={21} aria-hidden />
-        </button>
-      }
-      items={(["light", "dark", "system"] as const).map((c) => {
-        const Icon = ICON[c];
-        return { label: <span className={cn(c === choice && "font-semibold text-brand-text")}>{t(c)}</span>, icon: <Icon weight={c === choice ? "fill" : "regular"} />, onSelect: () => setTheme(c) };
-      })}
-    />
+    <button
+      type="button"
+      onClick={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        toggleTheme({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+      }}
+      aria-label={t("toggle")}
+      title={t("toggle")}
+      className={cn(
+        "kg-theme-toggle inline-flex h-11 shrink-0 items-center justify-center gap-2.5 rounded-control text-ink transition-[background-color,transform] duration-150 hover:bg-surface-2 active:scale-90",
+        withLabel ? "px-3 text-sm font-semibold" : "w-11",
+        className,
+      )}
+      data-testid="theme-toggle"
+    >
+      <span className="relative inline-flex size-[22px]" aria-hidden>
+        <Moon className="kg-tt-moon absolute inset-0" size={22} weight="fill" />
+        <Sun className="kg-tt-sun absolute inset-0" size={22} weight="fill" />
+      </span>
+      {withLabel ? <span>{t("label")}</span> : null}
+    </button>
   );
 }
