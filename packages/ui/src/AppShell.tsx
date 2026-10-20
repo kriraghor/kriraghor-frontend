@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore, type ReactNode } from "react";
+import { Suspense, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { Icon } from "@phosphor-icons/react";
 import { List, SidebarSimple } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
@@ -52,33 +52,7 @@ const HEADER = "68px";
  */
 export function AppShell({ groups, title, top, children }: { groups: ShellGroup[]; title: string; top?: (collapsed: boolean) => ReactNode; children: ReactNode }) {
   const t = useTranslations("kit");
-  const pathname = usePathname();
   const collapsed = useSyncExternalStore(subscribe, readCollapsed, () => false);
-  const [sheetFor, setSheetFor] = useState<string | null>(null);
-
-  const isActive = (it: ShellItem) => (it.match === "exact" ? pathname === it.href : pathname === it.href || pathname.startsWith(`${it.href}/`));
-  // The most specific item wins (/me/notifications/settings over /me/notifications).
-  const all = groups.flatMap((g) => g.items);
-  const active = all.filter(isActive).sort((a, b) => b.href.length - a.href.length)[0];
-
-  const nav = (rail: boolean, onNavigate?: () => void) => (
-    <nav aria-label={title} className="flex flex-col gap-5">
-      {groups.map((g, gi) => (
-        <div key={gi} className="flex flex-col gap-0.5">
-          {g.label ? (
-            rail ? (
-              gi > 0 ? <hr className="mx-3 mb-2 border-line" /> : null
-            ) : (
-              <p className="px-3 pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">{g.label}</p>
-            )
-          ) : null}
-          {g.items.map((it) => (
-            <ShellLink key={it.href} item={it} active={it === active} rail={rail} onNavigate={onNavigate} />
-          ))}
-        </div>
-      ))}
-    </nav>
-  );
 
   return (
     <div
@@ -92,7 +66,10 @@ export function AppShell({ groups, title, top, children }: { groups: ShellGroup[
       <aside className="hidden md:block">
         <div className="sticky flex flex-col overflow-y-auto overflow-x-hidden py-6" style={{ top: HEADER, maxHeight: `calc(100dvh - ${HEADER})` }}>
           {top ? <div className="mb-5">{top(collapsed)}</div> : null}
-          {nav(collapsed)}
+          {/* The path is request data (Cache Components): only the highlight waits for it. */}
+          <Suspense fallback={<NavList groups={groups} title={title} rail={collapsed} active={null} />}>
+            <ActiveNav groups={groups} title={title} rail={collapsed} />
+          </Suspense>
           <div className="mt-6 border-t border-line pt-3">
             <Tooltip content={collapsed ? t("expand") : t("collapse")} side="right">
               <button
@@ -113,28 +90,72 @@ export function AppShell({ groups, title, top, children }: { groups: ShellGroup[
 
       <div className="min-w-0">
         {/* Phones: the page name and a button that opens the same menu as a sheet. */}
-        <div className="sticky z-30 flex items-center gap-2 border-b border-line bg-bg/90 px-3 py-2 backdrop-blur md:hidden" style={{ top: HEADER }}>
-          <Sheet
-            open={sheetFor === pathname}
-            onOpenChange={(o) => setSheetFor(o ? pathname : null)}
-            title={title}
-            side="left"
-            trigger={
-              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-control px-2 text-sm font-semibold hover:bg-surface-2" data-testid="shell-menu">
-                <List size={22} aria-hidden />
-                <span>{active?.label ?? title}</span>
-              </button>
-            }
-          >
-            <div className="px-3 pb-8">
-              {top ? <div className="mb-4 px-2">{top(false)}</div> : null}
-              {nav(false, () => setSheetFor(null))}
-            </div>
-          </Sheet>
+        <div className="sticky z-30 flex min-h-[61px] items-center gap-2 border-b border-line bg-bg/90 px-3 py-2 backdrop-blur md:hidden" style={{ top: HEADER }}>
+          <Suspense fallback={null}>
+            <PhoneMenu groups={groups} title={title} top={top} />
+          </Suspense>
         </div>
         {children}
       </div>
     </div>
+  );
+}
+
+/** The item for this path: the most specific match wins (/me/notifications/settings over /me/notifications). */
+function activeItem(groups: ShellGroup[], pathname: string) {
+  const on = (it: ShellItem) => (it.match === "exact" ? pathname === it.href : pathname === it.href || pathname.startsWith(`${it.href}/`));
+  return groups.flatMap((g) => g.items).filter(on).sort((a, b) => b.href.length - a.href.length)[0] ?? null;
+}
+
+function ActiveNav(props: { groups: ShellGroup[]; title: string; rail: boolean }) {
+  const pathname = usePathname();
+  return <NavList {...props} active={activeItem(props.groups, pathname)} />;
+}
+
+function NavList({ groups, title, rail, active, onNavigate }: { groups: ShellGroup[]; title: string; rail: boolean; active: ShellItem | null; onNavigate?: () => void }) {
+  return (
+    <nav aria-label={title} className="flex flex-col gap-5">
+      {groups.map((g, gi) => (
+        <div key={gi} className="flex flex-col gap-0.5">
+          {g.label ? (
+            rail ? (
+              gi > 0 ? <hr className="mx-3 mb-2 border-line" /> : null
+            ) : (
+              <p className="px-3 pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">{g.label}</p>
+            )
+          ) : null}
+          {g.items.map((it) => (
+            <ShellLink key={it.href} item={it} active={active !== null && it.href === active.href} rail={rail} onNavigate={onNavigate} />
+          ))}
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+function PhoneMenu({ groups, title, top }: { groups: ShellGroup[]; title: string; top?: (collapsed: boolean) => ReactNode }) {
+  const pathname = usePathname();
+  // The sheet belongs to the page it was opened on, so it closes by itself after navigating.
+  const [sheetFor, setSheetFor] = useState<string | null>(null);
+  const active = activeItem(groups, pathname);
+  return (
+    <Sheet
+      open={sheetFor === pathname}
+      onOpenChange={(o) => setSheetFor(o ? pathname : null)}
+      title={title}
+      side="left"
+      trigger={
+        <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-control px-2 text-sm font-semibold hover:bg-surface-2" data-testid="shell-menu">
+          <List size={22} aria-hidden />
+          <span>{active?.label ?? title}</span>
+        </button>
+      }
+    >
+      <div className="px-3 pb-8">
+        {top ? <div className="mb-4 px-2">{top(false)}</div> : null}
+        <NavList groups={groups} title={title} rail={false} active={active} onNavigate={() => setSheetFor(null)} />
+      </div>
+    </Sheet>
   );
 }
 
