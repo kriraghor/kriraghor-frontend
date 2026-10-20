@@ -6,6 +6,7 @@ import { Link } from "@kriraghor/ui/i18n/navigation";
 import { PHOTOS } from "@/lib/photos";
 import { esportsHref } from "@/lib/links";
 import { EsportsHero } from "@/components/home/HeroShell";
+import { FeaturedEvent } from "@/components/home/EsportsHero";
 import { Finder } from "@/components/home/Finder";
 import { OpenTournaments, TopPlayers } from "@/components/home/EsportsSections";
 import { HomeGrounds } from "@/components/home/HomeGrounds";
@@ -48,6 +49,8 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       <EsportsHero />
       <div className="mx-auto max-w-[1320px] px-5">
         <Finder />
+        {/* A live or upcoming featured big event (M23), when there is one. */}
+        <FeaturedEvent />
       </div>
 
       <OpenTournaments />

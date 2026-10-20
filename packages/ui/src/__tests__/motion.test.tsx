@@ -36,17 +36,24 @@ const rows = () => Array.from(host.querySelectorAll("li")).map((li) => li.textCo
 const click = (id: string) => act(() => void host.querySelector<HTMLElement>(`[data-testid=${id}]`)!.click());
 
 describe("FlipTicker (the hire scoreboard)", () => {
-  it("shows three at a time; up and down wrap round", () => {
+  it("shows three at a time in a window that moves round the list", () => {
     act(() => root.render(ticker()));
     expect(rows()).toEqual(["A", "B", "C"]);
     click("ticker-next");
     expect(rows()).toEqual(["D", "E", "F"]);
     click("ticker-next");
-    expect(rows()).toEqual(["G"]);
-    click("ticker-next");
+    expect(rows()).toEqual(["G", "A", "B"]);
+    click("ticker-prev");
+    click("ticker-prev");
     expect(rows()).toEqual(["A", "B", "C"]);
     click("ticker-prev");
-    expect(rows()).toEqual(["G"]);
+    expect(rows()).toEqual(["E", "F", "G"]);
+  });
+
+  it("a list no longer than a page still flips, one place at a time (as in the design)", () => {
+    act(() => root.render(ticker({ items: ["A", "B", "C"] })));
+    act(() => void vi.advanceTimersByTime(1000));
+    expect(rows()).toEqual(["B", "C", "A"]);
   });
 
   it("advances by itself and holds while hovered", () => {
@@ -80,8 +87,8 @@ describe("FlipTicker (the hire scoreboard)", () => {
     expect(rows()).toEqual(["D", "E", "F"]);
   });
 
-  it("one page: no controls", () => {
-    act(() => root.render(ticker({ items: ["A", "B"] })));
+  it("one person: nothing to flip, no controls", () => {
+    act(() => root.render(ticker({ items: ["A"] })));
     expect(host.querySelector("[data-testid=ticker-next]")).toBeNull();
   });
 });

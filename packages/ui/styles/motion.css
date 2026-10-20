@@ -269,3 +269,41 @@ html[data-splash="on"] .kg-hero > .kg-hero-item {
     border-color 350ms ease,
     fill 350ms ease !important;
 }
+
+/* ---------------------------------------------------------------- the home hero (HeroCarousel) */
+/* The active slide's lines rise in one after another (from the Claude Design: 30 px, 0.8 s, 80 ms apart). */
+.kg-slide-in > .kg-slide-line {
+  animation: kg-slide-up 800ms var(--ease-kg) 150ms both;
+}
+.kg-slide-in > .kg-slide-line:nth-child(2) {
+  animation-delay: 230ms;
+}
+.kg-slide-in > .kg-slide-line:nth-child(3) {
+  animation-delay: 310ms;
+}
+.kg-slide-in > .kg-slide-line:nth-child(4) {
+  animation-delay: 390ms;
+}
+@keyframes kg-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+/* While the logo splash is up the first slide waits, so it rises in as the splash fades. */
+html[data-splash="on"] .kg-slide-in > .kg-slide-line {
+  animation-play-state: paused;
+}
+/* The progress bar of the slide on show fills over its dwell (duration set inline). */
+.kg-hero-fill {
+  transform-origin: left;
+  animation: kg-fill linear forwards;
+}
+@keyframes kg-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

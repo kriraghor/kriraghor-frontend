@@ -29,7 +29,9 @@ const canAnimate = (el: Element | null): el is HTMLElement => Boolean(el && type
 export type FlipTickerLabels = { prev: string; next: string; pause: string; play: string };
 
 /**
- * The scoreboard flip (hire section): `perPage` rows at a time; on each turn the rows rotate out
+ * The scoreboard flip (hire section): `perPage` rows at a time, a window that moves round the
+ * list (as in the Claude Design: by `perPage`, or by one when the list is that short), so it flips
+ * whenever there are two people or more. On each turn the rows rotate out
  * one after another (rotateX, 280 ms, 90 ms apart) and the next set rotates in (420 ms, spring).
  * It advances every `interval` ms, pauses while hovered, focused, off-screen or in a hidden tab,
  * and has up/down buttons and a Pause/Play button (WCAG 2.2.2).
@@ -57,22 +59,24 @@ export function FlipTicker<T>({
   className?: string;
 }) {
   const motionOk = useMotionOk();
-  const pages = Math.max(1, Math.ceil(items.length / perPage));
-  const [page, setPage] = useState(0);
+  const n = items.length;
+  const step = n > perPage ? perPage : 1;
+  const moves = n > 1;
+  const [offset, setOffset] = useState(0);
   const [paused, setPaused] = useState(false);
   const hold = useRef({ hover: false, focus: false, hidden: false, offscreen: false });
   const busy = useRef(false);
   const list = useRef<HTMLUListElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const shown = items.slice(page * perPage, page * perPage + perPage);
+  const shown = Array.from({ length: Math.min(perPage, n) }, (_, i) => items[(offset + i) % n]);
 
   const turn = (dir: 1 | -1) => {
-    if (pages < 2 || busy.current) return;
-    const next = (p: number) => (p + dir + pages) % pages;
+    if (!moves || busy.current) return;
+    const next = (o: number) => (((o + dir * step) % n) + n) % n;
     const rows = list.current ? Array.from(list.current.children) : [];
     if (!motionOk || !rows.length || !rows.every(canAnimate)) {
-      setPage(next);
+      setOffset(next);
       return;
     }
     busy.current = true;
@@ -80,7 +84,7 @@ export function FlipTicker<T>({
     const OUT = 280, GAP = 90;
     rows.forEach((r, i) => (r as HTMLElement).animate([{ transform: "rotateX(0)", opacity: 1 }, { transform: `rotateX(${out}deg)`, opacity: 0.2 }], { duration: OUT, delay: i * GAP, easing: "cubic-bezier(.55,0,1,.45)", fill: "forwards" }));
     window.setTimeout(() => {
-      setPage(next);
+      setOffset(next);
       requestAnimationFrame(() => {
         const fresh = list.current ? Array.from(list.current.children) : [];
         fresh.forEach((r, i) => {
@@ -99,7 +103,7 @@ export function FlipTicker<T>({
 
   // Auto-advance, unless paused, held, reduced motion or only one page.
   useEffect(() => {
-    if (!motionOk || paused || pages < 2) return;
+    if (!motionOk || paused || !moves) return;
     let id = 0;
     const start = window.setTimeout(() => {
       id = window.setInterval(() => {
@@ -111,7 +115,7 @@ export function FlipTicker<T>({
       window.clearTimeout(start);
       window.clearInterval(id);
     };
-  }, [motionOk, paused, pages, interval, delay]);
+  }, [motionOk, paused, moves, interval, delay]);
 
   // Hidden tab and off-screen hold it.
   useEffect(() => {
@@ -143,7 +147,7 @@ export function FlipTicker<T>({
     >
       <div className="flex items-center justify-between gap-3 border-b border-line pb-3">
         <div className="min-w-0">{title}</div>
-        {pages > 1 ? (
+        {moves ? (
           <div className="flex shrink-0 gap-1.5">
             {motionOk ? (
               <button type="button" className={btn} onClick={() => setPaused((p) => !p)} aria-pressed={paused} aria-label={paused ? labels.play : labels.pause} data-testid="ticker-pause">
@@ -161,8 +165,8 @@ export function FlipTicker<T>({
       </div>
       {/* The rows are the content: announced politely when they change by a button. */}
       <ul ref={list} className="flex flex-col [perspective:900px]" aria-live={paused ? "polite" : "off"}>
-        {shown.map((it) => (
-          <li key={keyOf(it)} className="border-b border-line [backface-visibility:hidden] [transform-origin:50%_50%] last:border-b-0">
+        {shown.map((it, i) => (
+          <li key={`${keyOf(it)}-${i}`} className="border-b border-line [backface-visibility:hidden] [transform-origin:50%_50%] last:border-b-0">
             {render(it)}
           </li>
         ))}

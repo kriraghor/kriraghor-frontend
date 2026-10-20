@@ -17,11 +17,11 @@ const subscribe = (cb: () => void) => {
 const useNowSeconds = () => useSyncExternalStore(subscribe, () => Math.floor(Date.now() / 1000), () => null);
 
 /** "12 open for registration" over the hero headline; hidden until the count is known. */
-export function OpenCount() {
+export function OpenCount({ fallback }: { fallback?: string }) {
   const t = useTranslations("home.hero");
   const q = useOpenEsports();
   const n = q.data?.items.length ?? 0;
-  if (!n) return <span className="block h-8" aria-hidden />;
+  if (!n) return fallback ? <span className="inline-flex min-h-8 items-center">{fallback}</span> : <span className="block h-8" aria-hidden />;
   return (
     <span className="inline-flex min-h-8 items-center gap-2 rounded-pill border border-band-line px-3 text-sm font-semibold">
       <span className="kg-pulse size-2 rounded-pill bg-live" aria-hidden />
@@ -128,7 +128,7 @@ export function FeaturedEvent() {
   const ev = (q.data?.items ?? []).find((e) => e.phase === "live" || e.phase === "upcoming");
   if (!ev) return null;
   return (
-    <a href={esportsHref(`/showcases/${ev.slug}`)} className="glass-band mx-auto mt-6 flex max-w-[1320px] flex-wrap items-center gap-4 rounded-[20px] px-5 py-4 hover:border-prize" style={{ borderLeftColor: ev.accentHex, borderLeftWidth: 8 }} data-testid="featured-event">
+    <a href={esportsHref(`/showcases/${ev.slug}`)} className="mx-auto mt-6 flex max-w-wide flex-wrap items-center gap-4 rounded-card bg-band px-5 py-4 text-band-text no-underline shadow-md transition-transform hover:-translate-y-0.5" style={{ borderLeftColor: ev.accentHex, borderLeftWidth: 8 }} data-testid="featured-event">
       <span className={`px-2 py-1 text-xs font-bold uppercase ${ev.phase === "live" ? "kg-pulse bg-live text-white" : "bg-band-2"}`}>{t(ev.phase === "live" ? "eventLive" : "eventUpcoming")}</span>
       <span className="text-lg font-extrabold">{locale === "bn" ? ev.titleBn : ev.titleEn}</span>
       <span className="ml-auto text-sm">

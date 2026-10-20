@@ -2153,6 +2153,49 @@
       "gyms": "{n, plural, one {# gym} other {# gyms}}",
       "prev": "Previous sports",
       "next": "More sports"
+    },
+    "carousel": {
+      "label": "Highlights",
+      "prev": "Previous slide",
+      "next": "Next slide",
+      "pause": "Pause the slides",
+      "play": "Play the slides",
+      "goTo": "Show {name}",
+      "slides": {
+        "esports": {
+          "tab": "Esports",
+          "kicker": "PUBG Mobile and Free Fire",
+          "cta": "Join an event"
+        },
+        "venues": {
+          "tab": "Venues",
+          "kicker": "Venue booking",
+          "title": "Book a turf, court or pitch by the hour",
+          "sub": "See open slots at venues across Dhaka and lock one with an advance by bKash or Nagad.",
+          "cta": "Find a venue"
+        },
+        "hire": {
+          "tab": "Hire",
+          "kicker": "Officials and players",
+          "title": "Short an umpire? Hire one for tonight.",
+          "sub": "Licensed umpires and referees, plus rated players, available by the match.",
+          "cta": "Hire now"
+        },
+        "shop": {
+          "tab": "Shop",
+          "kicker": "Shop",
+          "title": "New gear from shops. Used gear from players.",
+          "sub": "Bats, boots, rackets, supplements and gym gear from verified shops and NID-verified sellers.",
+          "cta": "Shop now"
+        },
+        "gym": {
+          "tab": "Gym",
+          "kicker": "Gym and fitness",
+          "title": "Train with certified coaches near you",
+          "sub": "Day passes, monthly memberships and personal trainers in one place.",
+          "cta": "Enter the gym"
+        }
+      }
     }
   },
   "notFound": {

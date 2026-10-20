@@ -3,8 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, SealCheck } from "@phosphor-icons/react";
+import Image from "next/image";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Avatar, ButtonLink, Skeleton, SkeletonList } from "@kriraghor/ui/kit";
+import { PHOTOS } from "@/lib/photos";
+import { ButtonLink, Skeleton, SkeletonList } from "@kriraghor/ui/kit";
 import { FlipTicker } from "@kriraghor/ui/motion";
 import { api } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/payments";
@@ -70,6 +72,15 @@ export function HomeHire() {
   );
 }
 
+/** A sport photo for a hire role's row (as in the Claude Design); profiles have no photos yet. */
+function sportPhoto(roleKey: string | undefined) {
+  const k = roleKey ?? "";
+  if (k.includes("cricket")) return PHOTOS.cricket;
+  if (k.includes("badminton")) return PHOTOS.badminton;
+  if (k.includes("football") || k.includes("futsal")) return PHOTOS.groundsFloodlit;
+  return PHOTOS.hire;
+}
+
 /** One scoreboard column: the top-rated nine in a category, three at a time. */
 function HireColumn({ category, title, delay }: { category: "officials" | "players"; title: string; delay: number }) {
   const t = useTranslations("home.hire");
@@ -100,8 +111,10 @@ function HireColumn({ category, title, delay }: { category: "officials" | "playe
             </h3>
           }
           render={(p) => (
-            <Link href={`/hiring/${p.slug}`} className="flex min-h-[76px] items-center gap-4 py-3 no-underline">
-              <Avatar name={p.name} size={52} className="rounded-[14px]" />
+            <Link href={`/hiring/${p.slug}`} className="grid min-h-[88px] grid-cols-[64px_minmax(0,1fr)_auto] items-center gap-3.5 py-3 no-underline transition-colors hover:bg-ink/[0.03]">
+              <span className="relative size-16 overflow-hidden rounded-[12px] bg-surface-2">
+                <Image src={sportPhoto(p.role?.key)} alt="" fill sizes="64px" className="object-cover" />
+              </span>
               <span className="min-w-0 flex-1">
                 <b className="block truncate">{p.name}</b>
                 <span className="block truncate text-sm text-muted">{nameOf(p.role, locale)}</span>
