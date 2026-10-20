@@ -24,7 +24,8 @@
     "./i18n/messages": "./src/i18n/messages.ts",
     "./sign-up": "./src/auth/SignUpWizard.tsx",
     "./auth-layout": "./src/auth/AuthLayout.tsx",
-    "./auth-flow": "./src/auth/flow.ts"
+    "./auth-flow": "./src/auth/flow.ts",
+    "./account": "./src/account/parts.tsx"
   },
   "scripts": {
     "lint": "eslint .",

@@ -70,7 +70,7 @@
     "signup": {
       "title": "Create your account",
       "subtitle": "One account for kriraghor.com, esports and the app.",
-      "stepOf": "Step {n} of {total}",
+      "stepOf": "Step {n, number} of {total, number}",
       "steps": {
         "verify": "Verify",
         "about": "About you",
@@ -137,6 +137,102 @@
       "hireProfile": "Build your hire profile",
       "business": "Send your documents for review",
       "nid": "Verify your NID to withdraw winnings and sell used gear"
+    }
+  },
+  "account": {
+    "menu": "Account menu",
+    "groups": {
+      "play": "Play",
+      "bookings": "Bookings",
+      "shopping": "Shopping",
+      "money": "Money",
+      "help": "Help",
+      "settings": "Settings",
+      "work": "Work"
+    },
+    "items": {
+      "overview": "Overview",
+      "events": "My events",
+      "teams": "Teams",
+      "player": "Player profile",
+      "ready": "Ready to play",
+      "addPhone": "Add a mobile number",
+      "hires": "My hires",
+      "bookings": "Bookings",
+      "passes": "Gym passes",
+      "subscriptions": "Trainer plans",
+      "orders": "Orders",
+      "saved": "Saved items",
+      "payments": "Payments",
+      "payouts": "Payouts",
+      "payoutAccount": "Payout account",
+      "winnings": "Winnings",
+      "disputes": "Disputes",
+      "reports": "Reports",
+      "reviews": "Reviews",
+      "notifications": "Notifications",
+      "verify": "Verify your identity",
+      "verified": "Identity verified",
+      "roles": "Roles",
+      "business": "Business",
+      "proDesk": "Pro desk",
+      "gameIds": "Game IDs",
+      "matches": "Matches"
+    },
+    "roles": {
+      "member": "Member",
+      "player": "Player",
+      "pro": "Pro",
+      "ground_owner": "Venue owner",
+      "shop_owner": "Shop owner",
+      "gym_owner": "Gym owner",
+      "organiser": "Organiser",
+      "staff": "Staff",
+      "master_admin": "Master admin"
+    },
+    "roleStatus": {
+      "applied": "applied",
+      "documents_pending": "documents needed",
+      "in_review": "in review",
+      "changes_requested": "changes needed",
+      "active": "active",
+      "rejected": "not approved",
+      "suspended": "suspended",
+      "withdrawn": "withdrawn"
+    },
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "signedOutTitle": "Sign in to see your account",
+    "signedOutBody": "Your bookings, events, orders and winnings live here.",
+    "setup": {
+      "title": "Finish setting up",
+      "progress": "{done, number} of {total, number} done",
+      "phone": "Verify your mobile number",
+      "phoneDone": "Mobile number verified",
+      "email": "Add and verify an email",
+      "emailDone": "Email verified",
+      "gameId": "Add a PUBG Mobile or Free Fire ID",
+      "gameIdPending": "Game ID waiting for review",
+      "gameIdDone": "Game ID verified",
+      "nid": "Verify your NID",
+      "nidDone": "NID verified",
+      "nidWhy": "Needed to withdraw winnings and sell used gear.",
+      "go": "Do it"
+    },
+    "stats": {
+      "winnings": "Winnings to withdraw",
+      "totalWon": "Won so far: {amount}",
+      "withdraw": "Withdraw"
+    },
+    "quick": {
+      "title": "Jump back in",
+      "venues": "Book a venue",
+      "events": "Join an event",
+      "shop": "Shop gear",
+      "hire": "Hire a pro"
     }
   }
 }

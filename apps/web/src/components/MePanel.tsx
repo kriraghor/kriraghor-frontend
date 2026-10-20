@@ -2,117 +2,135 @@
 
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
+import { ArrowRight, CalendarPlus, CheckCircle, Circle, Handshake, Hourglass, ShoppingBag, Trophy } from "@phosphor-icons/react";
+import { api } from "@kriraghor/api-client";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { Card, ErrorState } from "@kriraghor/ui/kit";
+import { AccountHeader, DashboardSkeleton, SignedOutCard, WinningsCard, useMe } from "@kriraghor/ui/account";
 import { MemberOverview } from "./MemberOverview";
 import { MyReliability } from "./trust/MyReliability";
-import { useTranslations } from "next-intl";
-import { Link } from "@kriraghor/ui/i18n/navigation";
-import { api } from "@kriraghor/api-client";
-import { useAuth } from "@kriraghor/ui/auth";
+import { esportsHref } from "@/lib/links";
+import { formatTaka } from "@/lib/payments";
 
 /**
- * The signed-in user from GET /me. Opening this page on kriraghor.com after signing in on
- * esports.kriraghor.com (or the reverse) shows the same account: the SSO proof for 0B.
+ * /me (design plan Part D): greeting, set-up checklist, winnings, quick actions, then the M19
+ * member overview. Signed out it is the sign-in prompt (the /me pages render it for that). The
+ * same account works on every Kriraghor site (SSO).
  */
 export function MePanel({ children, signInHref = "/sign-in" }: { children?: ReactNode; signInHref?: string }) {
-  const t = useTranslations();
-  const { status } = useAuth();
-  const me = useQuery({
-    queryKey: ["me"],
-    enabled: status === "signed_in",
-    queryFn: async () => {
-      const { data, error } = await api().GET("/me");
-      if (error) throw error;
-      return data;
-    },
-  });
+  const locale = useLocale();
+  const { status, me } = useMe();
 
-  if (status === "loading" || (me.isPending && status === "signed_in")) {
-    return <p className="px-5 py-12 text-muted" role="status">{t("me.loading")}</p>;
-  }
-  if (status === "signed_out" || !me.data) {
+  if (status === "signed_out") return <SignedOutCard signInHref={signInHref} />;
+  if (status === "loading" || me.isPending) return <DashboardSkeleton />;
+  if (me.isError || !me.data) {
     return (
-      <section className="mx-auto max-w-xl px-5 py-12">
-        <p data-testid="signed-out">{t("me.signedOut")}</p>
-        <Link href={signInHref} className="mt-4 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-          {t("nav.signIn")}
-        </Link>
+      <section className="px-5 py-10 md:px-0">
+        <ErrorState onRetry={() => void me.refetch()} />
       </section>
     );
   }
 
   const u = me.data;
   return (
-    <section className="mx-auto max-w-3xl px-5 py-12">
-      <h1 className="text-3xl font-extrabold" data-testid="me-name">
-        {u.displayName}
-      </h1>
-      <p className="mt-2 text-muted">{t("me.ssoNote")}</p>
-      <dl className="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 border-t-2 border-line-strong pt-4">
-        <dt className="text-muted">{t("me.id")}</dt>
-        <dd data-testid="me-id" className="font-mono text-sm">{u.id}</dd>
-        <dt className="text-muted">{t("me.phone")}</dt>
-        <dd>{u.phone ?? "–"}</dd>
-        <dt className="text-muted">{t("me.email")}</dt>
-        <dd>{u.email ?? "–"}</dd>
-        <dt className="text-muted">{t("me.roles")}</dt>
-        <dd>{u.roles.map((r) => `${r.role} (${r.status})`).join(", ")}</dd>
-      </dl>
-      <nav aria-label={t("me.money")} className="mt-6 flex flex-wrap gap-x-6">
-        <Link href="/me/bookings" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-bookings">
-          {t("me.bookings")}
-        </Link>
-        <Link href="/me/disputes" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-disputes">
-          {t("me.disputes")}
-        </Link>
-        <Link href="/me/orders" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-orders">
-          {t("me.orders")}
-        </Link>
-        <Link href="/me/hire" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-hire">
-          {t("me.hire")}
-        </Link>
-        <Link href="/me/teams" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-teams">
-          {t("me.teams")}
-        </Link>
-        <Link href="/me/events" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-tournaments">
-          {t("me.tournaments")}
-        </Link>
-        <Link href="/me/player" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-player">
-          {t("me.player")}
-        </Link>
-        <Link href="/me/eligibility" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-eligibility">
-          {u.phoneVerified ? t("me.eligibility") : t("me.addPhone")}
-        </Link>
-        <Link href="/me/passes" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-passes">
-          {t("me.passes")}
-        </Link>
-        <Link href="/me/subscriptions" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-subscriptions">
-          {t("me.subscriptions")}
-        </Link>
-        <Link href="/pro" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-pro">
-          {t("me.proDesk")}
-        </Link>
-        <Link href="/me/payments" className="inline-flex min-h-11 items-center font-semibold underline">
-          {t("me.payments")}
-        </Link>
-        <Link href="/me/payouts" className="inline-flex min-h-11 items-center font-semibold underline">
-          {t("me.payouts")}
-        </Link>
-        <Link href="/me/payout-account" className="inline-flex min-h-11 items-center font-semibold underline">
-          {t("me.payoutAccount")}
-        </Link>
-        <Link href="/shop/saved" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-saved">
-          {t("me.saved")}
-        </Link>
-        <Link href="/account/business?as=shop" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-open-shop">
-          {t("me.openShop")}
-        </Link>
-        <Link href="/account/verification" className="inline-flex min-h-11 items-center font-semibold underline" data-testid="me-verification">
-          {u.kycStatus === "verified" ? t("me.verified") : t("me.verify")}
-        </Link>
-      </nav>
+    <section className="flex flex-col gap-6 px-4 py-6 md:px-0 md:py-8" data-testid="me-dashboard">
+      <AccountHeader user={u} />
+
+      {/* Either card may be absent (all set up, nothing won): the other then takes the row. */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:[&>*:first-child]:flex-[1.4_1_0%] lg:[&>*]:min-w-0 lg:[&>*]:flex-[1_1_0%]">
+        <SetupChecklist phoneVerified={u.phoneVerified} emailVerified={u.emailVerified} kycVerified={u.kycStatus === "verified"} />
+        <WinningsCard withdrawHref={esportsHref("/me/winnings")} format={(p) => formatTaka(p, locale)} />
+      </div>
+
+      <QuickActions />
       <MemberOverview />
       <MyReliability />
       {children}
+    </section>
+  );
+}
+
+type Step = { key: string; done: boolean; pending?: boolean; label: string; href: string; hint?: string };
+
+/** Phone, email, game ID, NID: what is left, with a link for each; hidden once all are done. */
+function SetupChecklist({ phoneVerified, emailVerified, kycVerified }: { phoneVerified: boolean; emailVerified: boolean; kycVerified: boolean }) {
+  const t = useTranslations("account.setup");
+  const profiles = useQuery({
+    queryKey: ["esports-profiles"],
+    queryFn: async () => {
+      const { data, error } = await api().GET("/me/esports/profiles");
+      if (error) throw error;
+      return data.items;
+    },
+  });
+  const ids = profiles.data ?? [];
+  const idVerified = ids.some((p) => p.status === "verified");
+  const idPending = !idVerified && ids.some((p) => p.status === "pending" || p.status === "pending_review");
+  const steps: Step[] = [
+    { key: "phone", done: phoneVerified, label: phoneVerified ? t("phoneDone") : t("phone"), href: "/me/eligibility" },
+    { key: "email", done: emailVerified, label: emailVerified ? t("emailDone") : t("email"), href: "/me/notifications/settings" },
+    { key: "gameId", done: idVerified, pending: idPending, label: idVerified ? t("gameIdDone") : idPending ? t("gameIdPending") : t("gameId"), href: esportsHref("/me/esports") },
+    { key: "nid", done: kycVerified, label: kycVerified ? t("nidDone") : t("nid"), hint: kycVerified ? undefined : t("nidWhy"), href: "/account/verification" },
+  ];
+  const done = steps.filter((s) => s.done).length;
+  if (done === steps.length) return null;
+
+  return (
+    <Card className="flex flex-col gap-4" data-testid="setup-checklist">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 className="text-xl">{t("title")}</h2>
+        <span className="text-sm font-semibold text-muted tabular">{t("progress", { done, total: steps.length })}</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-pill bg-surface-2" role="progressbar" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={done} aria-label={t("title")}>
+        <div className="h-full rounded-pill bg-brand transition-[width] duration-500" style={{ width: `${(done / steps.length) * 100}%` }} />
+      </div>
+      <ul className="-mx-2 flex flex-col">
+        {steps.map((s) => (
+          <li key={s.key}>
+            {s.done ? (
+              <div className="flex min-h-12 items-center gap-3 px-2 text-muted">
+                <CheckCircle size={22} weight="fill" className="shrink-0 text-brand" aria-hidden />
+                <span className="line-through decoration-line-strong/60">{s.label}</span>
+              </div>
+            ) : (
+              <Link href={s.href} className="group flex min-h-12 items-center gap-3 rounded-control px-2 py-2 no-underline transition-colors hover:bg-surface-2">
+                {s.pending ? <Hourglass size={22} className="shrink-0 text-warning" aria-hidden /> : <Circle size={22} className="shrink-0 text-line-strong" aria-hidden />}
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold">{s.label}</span>
+                  {s.hint ? <span className="block text-sm text-muted">{s.hint}</span> : null}
+                </span>
+                <ArrowRight size={18} className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function QuickActions() {
+  const t = useTranslations("account.quick");
+  const items = [
+    { href: "/venues", label: t("venues"), icon: <CalendarPlus /> },
+    { href: esportsHref("/events"), label: t("events"), icon: <Trophy /> },
+    { href: "/shop", label: t("shop"), icon: <ShoppingBag /> },
+    { href: "/hiring", label: t("hire"), icon: <Handshake /> },
+  ];
+  return (
+    <section aria-labelledby="quick-title">
+      <h2 id="quick-title" className="mb-3 text-xl">
+        {t("title")}
+      </h2>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {items.map((it) => (
+          <Link key={it.href} href={it.href} className="group flex min-h-24 flex-col justify-between gap-3 rounded-card border border-line bg-surface p-4 no-underline shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md">
+            <span className="flex size-10 items-center justify-center rounded-pill bg-brand-soft text-brand-text [&>svg]:size-5">{it.icon}</span>
+            <span className="font-semibold">{it.label}</span>
+          </Link>
+        ))}
+      </div>
     </section>
   );
 }

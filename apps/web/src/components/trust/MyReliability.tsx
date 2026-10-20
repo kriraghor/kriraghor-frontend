@@ -16,9 +16,9 @@ export function MyReliability() {
   const s = (q.data?.items as Score[] | undefined)?.find((x) => x.kind === "booker");
   if (!s) return null;
   return (
-    <section className="mt-6 border-2 border-line p-4" data-testid="my-reliability">
-      <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("title")}</p>
-      <p className="text-3xl font-extrabold tabular-nums">{s.score === null ? "–" : `${s.score}%`}</p>
+    <section className="glass-card p-5" data-testid="my-reliability">
+      <p className="text-sm font-semibold text-muted">{t("title")}</p>
+      <p className="mt-1 font-display text-3xl font-bold tabular-nums">{s.score === null ? "–" : `${s.score}%`}</p>
       <p className="text-sm text-muted">{s.shown ? t("shown", { n: s.sample }) : t("hidden", { n: s.sample, min: s.minSample ?? 0 })}</p>
       <p className="mt-1 text-xs text-muted">{t("how", { noShows: s.detail?.booker_no_show ?? 0, late: s.detail?.booker_late_cancel ?? 0 })}</p>
     </section>

@@ -31,7 +31,7 @@
     "codeIncomplete": "৬টি সংখ্যাই লিখুন।",
     "verify": "যাচাই করে এগিয়ে যান",
     "resend": "আবার কোড পাঠান",
-    "resendIn": "{seconds} সেকেন্ড পরে আবার পাঠান",
+    "resendIn": "{seconds, number} সেকেন্ড পরে আবার পাঠান",
     "resent": "নতুন কোড পাঠানো হয়েছে।",
     "change": "বদলান",
     "noAccount": "ক্রীড়াঘরে নতুন?",
@@ -70,7 +70,7 @@
     "signup": {
       "title": "অ্যাকাউন্ট খুলুন",
       "subtitle": "kriraghor.com, ইস্পোর্টস আর অ্যাপের জন্য একটিই অ্যাকাউন্ট।",
-      "stepOf": "ধাপ {n} / {total}",
+      "stepOf": "ধাপ {n, number} / {total, number}",
       "steps": {
         "verify": "যাচাই",
         "about": "আপনার পরিচয়",
@@ -137,6 +137,102 @@
       "hireProfile": "আপনার হায়ার প্রোফাইল তৈরি করুন",
       "business": "যাচাইয়ের জন্য কাগজপত্র পাঠান",
       "nid": "জেতা টাকা তুলতে ও পুরোনো গিয়ার বেচতে NID যাচাই করুন"
+    }
+  },
+  "account": {
+    "menu": "অ্যাকাউন্ট মেনু",
+    "groups": {
+      "play": "খেলা",
+      "bookings": "বুকিং",
+      "shopping": "কেনাকাটা",
+      "money": "টাকা",
+      "help": "সহায়তা",
+      "settings": "সেটিংস",
+      "work": "কাজ"
+    },
+    "items": {
+      "overview": "সারসংক্ষেপ",
+      "events": "আমার ইভেন্ট",
+      "teams": "দল",
+      "player": "খেলোয়াড় প্রোফাইল",
+      "ready": "খেলার জন্য প্রস্তুত",
+      "addPhone": "মোবাইল নম্বর যোগ করুন",
+      "hires": "আমার হায়ার",
+      "bookings": "বুকিং",
+      "passes": "জিম পাস",
+      "subscriptions": "ট্রেইনার প্ল্যান",
+      "orders": "অর্ডার",
+      "saved": "সেভ করা পণ্য",
+      "payments": "পেমেন্ট",
+      "payouts": "পেআউট",
+      "payoutAccount": "পেআউট অ্যাকাউন্ট",
+      "winnings": "জেতা টাকা",
+      "disputes": "অভিযোগ",
+      "reports": "রিপোর্ট",
+      "reviews": "রিভিউ",
+      "notifications": "নোটিফিকেশন",
+      "verify": "পরিচয় যাচাই করুন",
+      "verified": "পরিচয় যাচাই হয়েছে",
+      "roles": "ভূমিকা",
+      "business": "ব্যবসা",
+      "proDesk": "প্রো ডেস্ক",
+      "gameIds": "গেম আইডি",
+      "matches": "ম্যাচ"
+    },
+    "roles": {
+      "member": "সদস্য",
+      "player": "খেলোয়াড়",
+      "pro": "প্রো",
+      "ground_owner": "ভেন্যু মালিক",
+      "shop_owner": "দোকান মালিক",
+      "gym_owner": "জিম মালিক",
+      "organiser": "আয়োজক",
+      "staff": "স্টাফ",
+      "master_admin": "মাস্টার অ্যাডমিন"
+    },
+    "roleStatus": {
+      "applied": "আবেদন করা",
+      "documents_pending": "কাগজ লাগবে",
+      "in_review": "যাচাই চলছে",
+      "changes_requested": "সংশোধন লাগবে",
+      "active": "চালু",
+      "rejected": "অনুমোদন হয়নি",
+      "suspended": "স্থগিত",
+      "withdrawn": "প্রত্যাহার করা"
+    },
+    "greeting": {
+      "morning": "শুভ সকাল",
+      "afternoon": "শুভ দুপুর",
+      "evening": "শুভ সন্ধ্যা"
+    },
+    "signedOutTitle": "অ্যাকাউন্ট দেখতে সাইন ইন করুন",
+    "signedOutBody": "আপনার বুকিং, ইভেন্ট, অর্ডার আর জেতা টাকা এখানে থাকে।",
+    "setup": {
+      "title": "সেটআপ শেষ করুন",
+      "progress": "{total, number}টির মধ্যে {done, number}টি হয়েছে",
+      "phone": "মোবাইল নম্বর যাচাই করুন",
+      "phoneDone": "মোবাইল নম্বর যাচাই হয়েছে",
+      "email": "ইমেইল যোগ করে যাচাই করুন",
+      "emailDone": "ইমেইল যাচাই হয়েছে",
+      "gameId": "PUBG Mobile বা Free Fire আইডি যোগ করুন",
+      "gameIdPending": "গেম আইডি যাচাইয়ের অপেক্ষায়",
+      "gameIdDone": "গেম আইডি যাচাই হয়েছে",
+      "nid": "NID যাচাই করুন",
+      "nidDone": "NID যাচাই হয়েছে",
+      "nidWhy": "জেতা টাকা তুলতে আর পুরোনো গিয়ার বেচতে লাগে।",
+      "go": "করুন"
+    },
+    "stats": {
+      "winnings": "তোলার মতো জেতা টাকা",
+      "totalWon": "এ পর্যন্ত জিতেছেন: {amount}",
+      "withdraw": "টাকা তুলুন"
+    },
+    "quick": {
+      "title": "আবার শুরু করুন",
+      "venues": "ভেন্যু বুক করুন",
+      "events": "ইভেন্টে যোগ দিন",
+      "shop": "গিয়ার কিনুন",
+      "hire": "প্রো ভাড়া করুন"
     }
   }
 }

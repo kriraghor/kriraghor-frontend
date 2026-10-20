@@ -38,11 +38,11 @@ export function Sparkline({ points, label }: { points: (number | null)[]; label:
 
 export function KpiTile({ label, value, delta, spark, note, help, testId }: { label: string; value: string; delta?: ReactNode; spark?: (number | null)[] | null; note?: string | null; help?: string; testId?: string }) {
   return (
-    <div className="flex flex-col gap-1 glass-card p-4" data-testid={testId}>
-      <p className="text-xs font-bold uppercase tracking-wide text-muted" title={help}>
+    <div className="flex flex-col gap-1 glass-card p-5" data-testid={testId}>
+      <p className="text-sm font-semibold text-muted" title={help}>
         {label}
       </p>
-      <p className="text-3xl font-extrabold tabular-nums">{value}</p>
+      <p className="font-display text-3xl font-bold tabular-nums">{value}</p>
       {delta}
       {note ? <p className="text-xs text-muted">{note}</p> : null}
       {spark ? <Sparkline points={spark} label={label} /> : null}
