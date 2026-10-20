@@ -19,12 +19,13 @@ test("home renders and links to sign-in", async ({ page }) => {
   await expect(page.getByTestId("home-title")).toBeVisible();
   await page.getByRole("link", { name: /sign in/i }).first().click();
   await expect(page).toHaveURL(/\/sign-in$/);
-  await expect(page.getByRole("tab", { name: /phone code/i })).toBeVisible();
+  await expect(page.getByLabel("Mobile number or email")).toBeVisible();
+  await expect(page.getByTestId("create-account")).toHaveAttribute("href", /signup$/);
 });
 
 test("switches to Bangla without changing the URL", async ({ page }) => {
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "বাংলা" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("ক্রীড়াঘরে সাইন ইন করুন");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("আবার স্বাগতম");
   await expect(page).toHaveURL(/\/sign-in$/);
 });

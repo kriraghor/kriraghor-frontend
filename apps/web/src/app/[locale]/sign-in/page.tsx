@@ -1,7 +1,8 @@
 import { Suspense } from "react";
-import { AuthShell } from "@/components/AuthShell";
 import { setRequestLocale } from "next-intl/server";
+import { AuthLayout } from "@kriraghor/ui/auth-layout";
 import { SignInForm } from "@kriraghor/ui/sign-in-form";
+import { PHOTOS } from "@/lib/photos";
 import { safeNext } from "@/lib/teams";
 
 export const metadata = { title: "Sign in" };
@@ -16,10 +17,10 @@ export default async function SignInPage({ params, searchParams }: PageProps<"/[
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <AuthShell photo="cricket">
+    <AuthLayout brand="web" image={PHOTOS.groundsFloodlit}>
       <Suspense fallback={<SignInForm next="/me" passwordReset />}>
         <Content searchParams={searchParams} />
       </Suspense>
-    </AuthShell>
+    </AuthLayout>
   );
 }

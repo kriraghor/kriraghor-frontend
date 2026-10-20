@@ -150,7 +150,9 @@ export function OtpInput({ id, name, length = 6, label, error, hint, value, onCh
 
   return (
     <fieldset className="flex flex-col gap-1.5" aria-describedby={describedBy(id, hint, error)}>
-      <legend className="mb-1.5 text-sm font-semibold text-ink">{label}</legend>
+      <legend id={`${id}-label`} className="mb-1.5 text-sm font-semibold text-ink">
+        {label}
+      </legend>
       {name ? <input type="hidden" name={name} value={value} /> : null}
       <div className="flex gap-2 sm:gap-2.5">
         {digits.map((d, i) => (
@@ -162,7 +164,9 @@ export function OtpInput({ id, name, length = 6, label, error, hint, value, onCh
             id={i === 0 ? id : `${id}-${i}`}
             inputMode="numeric"
             autoComplete={i === 0 ? "one-time-code" : "off"}
-            aria-label={`${i + 1}`}
+            // The first box carries the field's label (autofill and "fill" land there); the rest say which digit.
+            aria-labelledby={i === 0 ? `${id}-label` : undefined}
+            aria-label={i === 0 ? undefined : `${i + 1} / ${length}`}
             aria-invalid={error ? true : undefined}
             maxLength={i === 0 ? length : 1}
             value={d}

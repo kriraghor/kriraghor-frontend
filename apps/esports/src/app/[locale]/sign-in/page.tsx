@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
+import { AuthLayout } from "@kriraghor/ui/auth-layout";
 import { SignInForm } from "@kriraghor/ui/sign-in-form";
 import { SignInNext } from "@/components/esports/SignInNext";
 
@@ -9,8 +10,10 @@ export default async function SignInPage({ params }: PageProps<"/[locale]/sign-i
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <Suspense fallback={<SignInForm next="/me" />}>
-      <SignInNext />
-    </Suspense>
+    <AuthLayout brand="esports" image="/images/esports-mobile.jpg">
+      <Suspense fallback={<SignInForm next="/me" />}>
+        <SignInNext />
+      </Suspense>
+    </AuthLayout>
   );
 }
