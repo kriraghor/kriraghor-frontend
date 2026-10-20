@@ -36,7 +36,7 @@ export function Sparkline({ points, label }: { points: (number | null)[]; label:
   );
 }
 
-export function KpiTile({ label, value, delta, spark, note, help, testId }: { label: string; value: string; delta?: ReactNode; spark?: (number | null)[] | null; note?: string | null; help?: string; testId?: string }) {
+export function KpiTile({ label, value, delta, spark, note, help, testId }: { label: string; value: ReactNode; delta?: ReactNode; spark?: (number | null)[] | null; note?: string | null; help?: string; testId?: string }) {
   return (
     <div className="flex flex-col gap-1 glass-card p-5" data-testid={testId}>
       <p className="text-sm font-semibold text-muted" title={help}>

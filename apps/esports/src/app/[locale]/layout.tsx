@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { fontVariables } from "@kriraghor/ui/fonts";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { ThemeScript } from "@kriraghor/ui/brand/theme-script";
+import { BootSplash } from "@kriraghor/ui/brand/boot-splash";
 import { routing } from "@kriraghor/ui/i18n/routing";
 import { Providers } from "@kriraghor/ui/providers";
 import { SiteHeader } from "@kriraghor/ui/site-header";
@@ -29,8 +31,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className={`${fontVariables} h-full antialiased`}>
+    <html lang={locale} suppressHydrationWarning className={`${fontVariables} h-full antialiased`}>
       <body className="flex min-h-full flex-col pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0">
+        {/* Theme before paint; the logo splash once per session (kriraghor-docs 09 §8). */}
+        <ThemeScript />
+        <BootSplash word={locale === "bn" ? "ক্রীড়াঘর ই-স্পোর্টস" : "Kriraghor Esports"} />
         {/* Runtime config (ADR-003): window.__ENV before any client code runs. */}
         <Script src="/env.js" strategy="beforeInteractive" />
         <NextIntlClientProvider>

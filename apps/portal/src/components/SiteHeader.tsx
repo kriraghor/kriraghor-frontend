@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { useAuth } from "@kriraghor/ui/auth";
 import { NotificationBell } from "@kriraghor/ui/notifications/bell";
+import { ThemeToggle } from "@kriraghor/ui/theme-toggle";
 
 export type HeaderConfig = {
   titleKey: "web" | "esports" | "admin" | "vendor";
@@ -40,6 +41,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell }
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
           <button
             type="button"
             className="min-h-11 border border-line px-3 text-sm"

@@ -17,13 +17,16 @@ export async function EsportsHero() {
       {/* Two soft glows, green and amber, as in the prototype; decorative only. */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_15%_10%,rgb(25_153_95/0.28),transparent),radial-gradient(40%_40%_at_90%_80%,rgb(242_163_58/0.18),transparent)]" aria-hidden />
       <div className="relative mx-auto grid max-w-[1320px] gap-10 px-5 md:grid-cols-[7fr_5fr] md:items-center">
-        <div>
-          <OpenCount />
-          <h1 id="hero-title" className="mt-5 text-[clamp(38px,5.4vw,68px)] font-extrabold leading-[1.02] tracking-[-0.045em]" data-testid="home-title">
+        {/* The Claude Design hero entrance: each line rises in, 100 ms apart (motion.css). */}
+        <div className="kg-hero">
+          <div className="kg-hero-item">
+            <OpenCount />
+          </div>
+          <h1 id="hero-title" className="kg-hero-item mt-5 text-[clamp(38px,5.4vw,68px)] font-extrabold leading-[1.02] tracking-[-0.045em]" data-testid="home-title">
             {t("title")} <em className="not-italic text-prize">{t("titleEm")}</em>
           </h1>
-          <p className="mt-5 max-w-[52ch] text-lg text-band-muted">{t("sub")}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <p className="kg-hero-item mt-5 max-w-[52ch] text-lg text-band-muted">{t("sub")}</p>
+          <div className="kg-hero-item mt-8 flex flex-wrap gap-3">
             <a href="#open" className="inline-flex min-h-12 items-center gap-2 bg-prize px-5 font-bold text-prize-ink hover:brightness-95">
               {t("join")} <ArrowRight size={18} aria-hidden />
             </a>

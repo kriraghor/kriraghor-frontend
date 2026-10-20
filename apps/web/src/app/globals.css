@@ -2,6 +2,7 @@
 /* Design tokens (one source for every app) and the shared surfaces. */
 @import "@kriraghor/tokens/tokens.css";
 @import "@kriraghor/ui/styles/glass.css";
+@import "@kriraghor/ui/styles/motion.css";
 @source "../../../../packages/ui/src";
 
 /* Surface styles the shared components (packages/ui) ask for. */

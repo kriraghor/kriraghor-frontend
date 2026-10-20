@@ -11,6 +11,7 @@ import { OpenTournaments, TopPlayers } from "@/components/home/EsportsSections";
 import { HomeGrounds } from "@/components/home/HomeGrounds";
 import { HomeGym, HomeHire } from "@/components/home/HireAndGym";
 import { Reveal } from "@/components/home/Reveal";
+import { SportCards } from "@/components/home/SportCards";
 import { TournamentsStrip } from "@/components/tournaments/TournamentsStrip";
 
 /**
@@ -68,6 +69,8 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           </ol>
         </div>
       </section>
+
+      <SportCards />
 
       <HomeGrounds />
 

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, HandSwipeLeft, Trophy } from "@phosphor-icons/react";
 import { esportsHref } from "@/lib/links";
 import { formatTaka } from "@/lib/payments";
+import { Flash } from "@kriraghor/ui/motion";
 import { nameOf, useEsportsGames, useOpenEsports, useTopPlayers } from "./queries";
 
 const when = (iso: string, locale: string) =>
@@ -56,7 +57,7 @@ export function OpenTournaments() {
                     </span>
                     <span className="mt-3 flex justify-between gap-2 border-t border-line pt-3 text-sm">
                       <span>{c.entryFee.amount === 0 ? t("free") : t(c.entryUnit === "squad" ? "perSquad" : "perPlayer", { fee: money(c.entryFee.amount) })}</span>
-                      <span className="tabular-nums text-muted">{t(c.entryUnit === "squad" ? "squads" : "players", { taken: c.slotsTaken, max: c.maxSlots })}</span>
+                      <Flash value={c.slotsTaken} className="tabular-nums text-muted">{t(c.entryUnit === "squad" ? "squads" : "players", { taken: c.slotsTaken, max: c.maxSlots })}</Flash>
                     </span>
                     <span className="mt-2 flex justify-between gap-2 text-sm">
                       <span>{when(c.startsAt, locale)}</span>

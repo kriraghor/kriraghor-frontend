@@ -10,6 +10,7 @@ import { formatTaka } from "@/lib/payments";
 import { ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
 import { ArrowRight, DownloadSimple } from "@phosphor-icons/react";
 import { Button, Notice, SegmentedControl, Skeleton } from "@kriraghor/ui/kit";
+import { CountUp } from "@kriraghor/ui/motion";
 
 type Period = "7w" | "qtr" | "yr";
 type Data = components["schemas"]["MemberDashboard"];
@@ -66,9 +67,9 @@ export function MemberOverview() {
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-3">
-            <KpiTile testId="tile-spent" label={t("tiles.spent")} help={d.data.definitions.spent} value={money(d.data.tiles.spent.value ?? 0)} delta={<DeltaBadge value={d.data.tiles.spent.delta} kind="pct" label={vs} />} spark={d.data.tiles.spent.spark} />
-            <KpiTile label={t("tiles.bookings")} help={d.data.definitions.member_bookings} value={String(d.data.tiles.bookings.value ?? 0)} delta={<DeltaBadge value={d.data.tiles.bookings.delta} kind="pct" label={vs} />} spark={d.data.tiles.bookings.spark} />
-            <KpiTile label={t("tiles.upcoming")} value={String(d.data.tiles.upcoming.value ?? 0)} />
+            <KpiTile testId="tile-spent" label={t("tiles.spent")} help={d.data.definitions.spent} value={<CountUp value={d.data.tiles.spent.value ?? 0} format={(n) => money(Math.round(n))} />} delta={<DeltaBadge value={d.data.tiles.spent.delta} kind="pct" label={vs} />} spark={d.data.tiles.spent.spark} />
+            <KpiTile label={t("tiles.bookings")} help={d.data.definitions.member_bookings} value={<CountUp value={d.data.tiles.bookings.value ?? 0} format={(n) => Math.round(n).toLocaleString(locale === "bn" ? "bn-BD" : "en-IN")} />} delta={<DeltaBadge value={d.data.tiles.bookings.delta} kind="pct" label={vs} />} spark={d.data.tiles.bookings.spark} />
+            <KpiTile label={t("tiles.upcoming")} value={<CountUp value={d.data.tiles.upcoming.value ?? 0} format={(n) => Math.round(n).toLocaleString(locale === "bn" ? "bn-BD" : "en-IN")} />} />
           </div>
           <ChartSplit title={t("whereItWent")} parts={d.data.charts.whereItWent.map((w) => ({ label: t(`verticals.${w.vertical}`), value: w.value }))} format={money} empty={t("empty")} />
           <Button type="button" variant="secondary" onClick={() => void csv()} icon={<DownloadSimple size={18} aria-hidden />}>

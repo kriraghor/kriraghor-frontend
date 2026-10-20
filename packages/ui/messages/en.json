@@ -7,7 +7,13 @@
     "errorBody": "We couldn't load this. Check your connection and try again.",
     "collapse": "Collapse menu",
     "expand": "Expand menu",
-    "optional": "Optional"
+    "optional": "Optional",
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "Same as device"
+    }
   },
   "auth": {
     "signInTitle": "Welcome back",

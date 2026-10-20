@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { fontVariables } from "@kriraghor/ui/fonts";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { ThemeScript } from "@kriraghor/ui/brand/theme-script";
 import { routing } from "@kriraghor/ui/i18n/routing";
 import { APP } from "@/app.config";
 import "../globals.css";
@@ -26,8 +27,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className={`${fontVariables} h-full antialiased`}>
+    <html lang={locale} suppressHydrationWarning className={`${fontVariables} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
+        <ThemeScript />
         <Script src="/env.js" strategy="beforeInteractive" />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>

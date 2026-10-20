@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { countdown, filled, podium } from "@/lib/home";
 import { esportsHref } from "@/lib/links";
 import { formatTaka } from "@/lib/payments";
+import { Flash } from "@kriraghor/ui/motion";
 import { nameOf, useEsportsDetail, useFeaturedEvents, useOpenEsports } from "./queries";
 
 // A one-second clock. The server snapshot is null, so the first client render matches the server
@@ -23,7 +24,7 @@ export function OpenCount() {
   if (!n) return <span className="block h-8" aria-hidden />;
   return (
     <span className="inline-flex min-h-8 items-center gap-2 rounded-pill border border-band-line px-3 text-sm font-semibold">
-      <span className="h-2 w-2 animate-pulse rounded-pill bg-live" aria-hidden />
+      <span className="kg-pulse size-2 rounded-pill bg-live" aria-hidden />
       {t("openCount", { n, more: q.data?.nextCursor ? "+" : "" })}
     </span>
   );
@@ -84,7 +85,9 @@ export function NextUp() {
         </div>
         <div>
           <dt className="text-sm text-band-muted">{places.length ? t("firstPrize") : t("prizePool")}</dt>
-          <dd className="font-display text-2xl font-extrabold tabular-nums text-prize">{money(places[0]?.amount.amount ?? next.prizePool.amount)}</dd>
+          <dd className="font-display text-2xl font-extrabold tabular-nums text-prize">
+            <Flash value={places[0]?.amount.amount ?? next.prizePool.amount}>{money(places[0]?.amount.amount ?? next.prizePool.amount)}</Flash>
+          </dd>
           {places.length > 1 ? (
             <dd className="text-sm text-band-muted tabular-nums">
               {places
@@ -98,7 +101,9 @@ export function NextUp() {
       <div>
         <div className="flex justify-between text-sm">
           <span>{t(next.entryUnit === "squad" ? "squadsIn" : "playersIn")}</span>
-          <b className="tabular-nums">{t("ofMax", { taken: next.slotsTaken, max: next.maxSlots })}</b>
+          <Flash value={next.slotsTaken}>
+            <b className="tabular-nums">{t("ofMax", { taken: next.slotsTaken, max: next.maxSlots })}</b>
+          </Flash>
         </div>
         <div className="mt-2 h-2 overflow-hidden rounded-pill bg-band" role="progressbar" aria-label={t(next.entryUnit === "squad" ? "squadsIn" : "playersIn")} aria-valuemin={0} aria-valuemax={next.maxSlots} aria-valuenow={next.slotsTaken}>
           <i className="block h-full bg-prize transition-[width] duration-700" style={{ width: `${filled(next.slotsTaken, next.maxSlots) * 100}%` }} />
@@ -124,7 +129,7 @@ export function FeaturedEvent() {
   if (!ev) return null;
   return (
     <a href={esportsHref(`/showcases/${ev.slug}`)} className="glass-band mx-auto mt-6 flex max-w-[1320px] flex-wrap items-center gap-4 rounded-[20px] px-5 py-4 hover:border-prize" style={{ borderLeftColor: ev.accentHex, borderLeftWidth: 8 }} data-testid="featured-event">
-      <span className={`px-2 py-1 text-xs font-bold uppercase ${ev.phase === "live" ? "bg-live text-white" : "bg-band-2"}`}>{t(ev.phase === "live" ? "eventLive" : "eventUpcoming")}</span>
+      <span className={`px-2 py-1 text-xs font-bold uppercase ${ev.phase === "live" ? "kg-pulse bg-live text-white" : "bg-band-2"}`}>{t(ev.phase === "live" ? "eventLive" : "eventUpcoming")}</span>
       <span className="text-lg font-extrabold">{locale === "bn" ? ev.titleBn : ev.titleEn}</span>
       <span className="ml-auto text-sm">
         {t("eventPrizes")} <b className="tabular-nums text-prize">{formatTaka(ev.prizeTotal.amount, locale)}</b>

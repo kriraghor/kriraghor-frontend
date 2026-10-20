@@ -10,6 +10,8 @@ import { isExternal } from "@kriraghor/session/links";
 import { NotificationBell } from "./notifications/NotificationBell";
 import { ButtonLink } from "./kit/Button";
 import { Menu } from "./kit/Overlay";
+import { SegmentedControl } from "./kit/Tabs";
+import { ThemeToggle, setTheme, useTheme, type ThemeChoice } from "./ThemeToggle";
 import { cn } from "./cn";
 
 export type HeaderConfig = {
@@ -48,6 +50,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
   const pathname = usePathname();
   const router = useRouter();
   const { status, signOut } = useAuth();
+  const theme = useTheme();
   // The menu belongs to the page it was opened on, so it closes by itself after navigating.
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const menuOpen = menuFor === pathname;
@@ -63,15 +66,16 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
         <span className="w-[72%] bg-brand" />
         <span className="flex-1 bg-amber-500" />
       </div>
-      <div className="mx-auto flex h-16 max-w-wide items-center gap-2 px-3 sm:px-5 md:gap-6">
+      {/* Desktop: logo left, the links centred, actions right (three columns). */}
+      <div className="mx-auto grid h-16 max-w-wide grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:px-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6">
         <a href="#main" className="sr-only focus:not-sr-only">
           {t("nav.skip")}
         </a>
-        <Link href={homeHref} className="flex min-w-0 items-center gap-2.5 no-underline" aria-label={t("nav.homeLabel")}>
+        <Link href={homeHref} className="flex min-w-0 items-center gap-2.5 justify-self-start no-underline" aria-label={t("nav.homeLabel")}>
           <Image src="/logo.png" alt="" width={36} height={36} priority className="shrink-0" />
           <span className="truncate whitespace-nowrap font-display text-lg font-bold tracking-tight sm:text-xl">{t(`app.${titleKey}`)}</span>
         </Link>
-        <nav aria-label={t("nav.main")} className="hidden items-center gap-1 md:flex">
+        <nav aria-label={t("nav.main")} className="hidden items-center gap-1 justify-self-center md:flex">
           {nav.map((item) => {
             const on = isCurrent(item.href);
             return (
@@ -82,7 +86,8 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
             );
           })}
         </nav>
-        <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
+        <div className="flex items-center gap-1 justify-self-end sm:gap-1.5">
+          <ThemeToggle className="hidden md:inline-flex" />
           {/* Phones: the icon only, so the site name keeps its room; the name stays for screen readers. */}
           <button type="button" className={cn(iconBtn, "gap-1.5 text-sm font-semibold sm:w-auto sm:px-2.5")} onClick={switchLanguage} lang={locale === "en" ? "bn" : "en"} aria-label={t("nav.language")} data-testid="language-switch">
             <Translate size={21} aria-hidden />
@@ -140,6 +145,20 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
                 </button>
               </>
             ) : null}
+            <div className="mt-2 flex items-center justify-between gap-3 border-t border-line px-3 pt-4">
+              <span className="text-sm font-semibold text-muted">{t("kit.theme.label")}</span>
+              <SegmentedControl<ThemeChoice>
+                size="sm"
+                label={t("kit.theme.label")}
+                value={theme}
+                onChange={setTheme}
+                options={[
+                  { value: "light", label: t("kit.theme.light") },
+                  { value: "dark", label: t("kit.theme.dark") },
+                  { value: "system", label: t("kit.theme.system") },
+                ]}
+              />
+            </div>
           </nav>
         </div>
       ) : null}
