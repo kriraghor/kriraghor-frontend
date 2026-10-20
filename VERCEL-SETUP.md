@@ -49,7 +49,7 @@ None of these is a secret: they are all public URLs or IDs, and the apps only ev
 
 The backend must allow these origins: `CORS_ORIGINS` and `ADMIN_ORIGINS` on Render list the four domains above.
 
-## Who can deploy
+## Who can  deploy
 
 On the Vercel **Hobby** plan, only commits authored by the account that owns the Vercel team (`kriraghor`) start a deployment. Commits pushed by collaborators (for example `RyUk346`) are not deployed automatically. When that happens, deploy from the dashboard: Deployments → Create Deployment → branch `main`. A Deploy Hook URL also works. Never rewrite a commit's author to get around it.
 
