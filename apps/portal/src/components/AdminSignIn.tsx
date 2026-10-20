@@ -2,10 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
-import { api, problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { Button, Field, Notice } from "./ui";
+import { useRouter } from "@kriraghor/ui/i18n/navigation";
+import { api, problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
+import { Button, Field, Notice, SegmentedControl } from "@kriraghor/ui/kit";
 
 type Step =
   | { kind: "enter" }
@@ -104,8 +104,8 @@ export function AdminSignIn() {
   };
 
   return (
-    <section className="mx-auto w-full max-w-md px-5 py-12">
-      <h1 className="text-3xl font-extrabold">{t("admin.title")}</h1>
+    <div>
+      <h1 className="text-3xl sm:text-4xl">{t("admin.title")}</h1>
       <p className="mt-2 text-muted">{t("admin.subtitle")}</p>
 
       <div className="mt-6 flex flex-col gap-4">
@@ -113,29 +113,17 @@ export function AdminSignIn() {
 
         {step.kind === "enter" ? (
           <>
-            <div role="group" aria-label={t("admin.otpOrPassword")} className="grid grid-cols-2 border-b-2 border-line">
-              {(["password", "phone"] as const).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  aria-pressed={mode === m}
-                  onClick={() => setMode(m)}
-                  className={`-mb-0.5 min-h-12 border-b-4 text-sm font-bold ${mode === m ? "border-brand" : "border-transparent text-muted"}`}
-                >
-                  {t(`signIn.${m}`)}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl label={t("admin.otpOrPassword")} value={mode} onChange={setMode} className="w-full" options={[{ value: "password", label: t("signIn.password") }, { value: "phone", label: t("signIn.phone") }]} />
             {mode === "password" ? (
               <form onSubmit={passwordLogin} className="flex flex-col gap-4">
                 <Field id="identifier" name="identifier" required label={t("signIn.identifierLabel")} autoComplete="username" />
                 <Field id="password" name="password" required type="password" label={t("signIn.passwordLabel")} autoComplete="current-password" />
-                <Button busy={busy}>{t("signIn.signInButton")}</Button>
+                <Button size="lg" block busy={busy}>{t("signIn.signInButton")}</Button>
               </form>
             ) : (
               <form onSubmit={sendCode} className="flex flex-col gap-4">
                 <Field id="target" name="target" required type="tel" inputMode="tel" autoComplete="tel" label={t("signIn.phoneLabel")} placeholder="01XXXXXXXXX" />
-                <Button busy={busy}>{t("signIn.sendCode")}</Button>
+                <Button size="lg" block busy={busy}>{t("signIn.sendCode")}</Button>
               </form>
             )}
           </>
@@ -145,15 +133,15 @@ export function AdminSignIn() {
           <form onSubmit={verifyCode} className="flex flex-col gap-4">
             <Notice>{t("signIn.codeSent")}</Notice>
             <Field id="code" name="code" required label={t("signIn.codeLabel")} inputMode="numeric" autoComplete="one-time-code" pattern="\d{6}" maxLength={6} />
-            <Button busy={busy}>{t("signIn.verify")}</Button>
+            <Button size="lg" block busy={busy}>{t("signIn.verify")}</Button>
           </form>
         ) : null}
 
         {step.kind === "setup" ? (
-          <div className="flex flex-col gap-3 border-2 border-line p-4">
+          <div className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
             <h2 className="text-xl font-bold">{t("admin.totpSetup")}</h2>
             <p className="text-sm text-muted">{t("admin.totpSetupHelp")}</p>
-            <code data-testid="totp-secret" className="break-all bg-surface-2 p-3 font-mono text-lg tracking-widest">
+            <code data-testid="totp-secret" className="break-all rounded-control bg-surface-2 p-3 font-mono text-lg tracking-widest">
               {step.secret}
             </code>
             <a href={step.otpauthUrl} className="text-sm font-bold text-brand-text underline">
@@ -165,10 +153,10 @@ export function AdminSignIn() {
         {step.kind === "totp" || step.kind === "setup" ? (
           <form onSubmit={confirmTotp} className="flex flex-col gap-4">
             <Field id="totp" name="totp" required label={t("admin.totpCode")} inputMode="numeric" autoComplete="one-time-code" pattern="\d{6}" maxLength={6} />
-            <Button busy={busy}>{t("admin.confirm")}</Button>
+            <Button size="lg" block busy={busy}>{t("admin.confirm")}</Button>
           </form>
         ) : null}
       </div>
-    </section>
+    </div>
   );
 }

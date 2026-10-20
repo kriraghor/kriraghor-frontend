@@ -1,0 +1,244 @@
+{
+  "kit": {
+    "close": "Close",
+    "loading": "Loading",
+    "retry": "Try again",
+    "errorTitle": "Something went wrong",
+    "errorBody": "We couldn't load this. Check your connection and try again.",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu",
+    "optional": "Optional",
+    "theme": {
+      "label": "Theme",
+      "toggle": "Switch between light and dark",
+      "light": "Light",
+      "dark": "Dark"
+    }
+  },
+  "auth": {
+    "signInTitle": "Welcome back",
+    "signInSubtitle": "Sign in to book venues, join events and track your winnings.",
+    "or": "or",
+    "identifierLabel": "Mobile number or email",
+    "identifierHint": "We'll send you a 6-digit code.",
+    "identifierInvalid": "Enter a Bangladesh mobile number (01XXXXXXXXX) or an email address.",
+    "continue": "Continue",
+    "usePassword": "Sign in with a password",
+    "useCode": "Get a one-time code instead",
+    "passwordIdentifierLabel": "Mobile, email or username",
+    "passwordLabel": "Password",
+    "show": "Show password",
+    "hide": "Hide password",
+    "forgot": "Forgot password?",
+    "signIn": "Sign in",
+    "codeTitle": "Check your messages",
+    "codeSentTo": "We sent a 6-digit code to {target}. It expires in 5 minutes.",
+    "codeLabel": "6-digit code",
+    "codeIncomplete": "Enter all 6 digits.",
+    "verify": "Verify and continue",
+    "resend": "Resend code",
+    "resendIn": "Resend in {seconds}s",
+    "resent": "We sent a new code.",
+    "change": "Change",
+    "noAccount": "New to Kriraghor?",
+    "createAccount": "Create an account",
+    "haveAccount": "Already have an account?",
+    "googleUnavailable": "Google sign-in isn't set up here yet.",
+    "staffUseAdmin": "Staff accounts sign in at the admin portal.",
+    "back": "Back",
+    "legal": "By continuing you agree to our <terms>Terms</terms> and <privacy>Privacy policy</privacy>.",
+    "panel": {
+      "web": {
+        "title": "Bangladesh's home for sport and esports",
+        "p1": "Book turfs and courts with a protected advance",
+        "p2": "Enter PUBG Mobile and Free Fire events for real prizes",
+        "p3": "Buy gear and hire players, umpires and coaches"
+      },
+      "esports": {
+        "title": "Play. Climb. Get paid.",
+        "p1": "Daily PUBG Mobile and Free Fire custom rooms",
+        "p2": "Room ID and password right before the match",
+        "p3": "Prizes paid out to bKash or Nagad"
+      },
+      "vendor": {
+        "title": "Run your venue, shop or gym",
+        "p1": "Bookings, orders and passes in one desk",
+        "p2": "Money held safely until the job is done",
+        "p3": "Payouts straight to your account"
+      },
+      "admin": {
+        "title": "Kriraghor staff desk",
+        "p1": "Every action is audited",
+        "p2": "Sensitive changes ask for your second factor",
+        "p3": "Customer data stays masked"
+      }
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "One account for kriraghor.com, esports and the app.",
+      "stepOf": "Step {n, number} of {total, number}",
+      "steps": {
+        "verify": "Verify",
+        "about": "About you",
+        "role": "Your goal",
+        "done": "Done"
+      },
+      "verifyTitle": "Start with your mobile, email or Google",
+      "aboutTitle": "Tell us about you",
+      "nameLabel": "Your name",
+      "nameHint": "Shown on your profile, bookings and match results.",
+      "usernameLabel": "Username",
+      "usernameHint": "3–30 characters: letters, numbers, dots and underscores, starting with a letter.",
+      "usernameChecking": "Checking…",
+      "usernameFree": "@{username} is available",
+      "usernameTaken": "That username is taken. Try another.",
+      "usernameInvalid": "Use 3–30 letters, numbers, dots or underscores, starting with a letter.",
+      "passwordLabel": "Password",
+      "passwordHint": "At least 8 characters. With a password you can sign in without a code.",
+      "roleTitle": "What brings you to Kriraghor?",
+      "roleHint": "Pick one for now; you can add more later from your account.",
+      "roles": {
+        "none": {
+          "title": "Play and join events",
+          "body": "Book venues, enter esports events, shop gear."
+        },
+        "player": {
+          "title": "Get hired as a player",
+          "body": "Teams and managers hire you for matches."
+        },
+        "pro": {
+          "title": "Work as a pro",
+          "body": "Umpire, referee, coach, trainer, scorer and more."
+        },
+        "ground_owner": {
+          "title": "I own a venue",
+          "body": "List turfs and courts and take bookings."
+        },
+        "shop_owner": {
+          "title": "I run a shop",
+          "body": "Sell sports gear, supplements or gym equipment."
+        },
+        "gym_owner": {
+          "title": "I run a gym",
+          "body": "Sell day passes, memberships and training."
+        },
+        "organiser": {
+          "title": "I organise events",
+          "body": "Run tournaments and esports events."
+        }
+      },
+      "create": "Create my account",
+      "doneTitle": "You're in, {name}",
+      "doneBody": "Your account works on kriraghor.com, esports and the app.",
+      "next": "What to do next",
+      "welcomeBack": "You already had an account, so we signed you in.",
+      "goAccount": "Go to my account",
+      "expired": "That step took too long. Verify again to continue.",
+      "nameRequired": "Enter your name (at least 2 letters)."
+    },
+    "nextSteps": {
+      "gameId": "Add your PUBG Mobile or Free Fire ID",
+      "events": "See open esports events",
+      "venues": "Find a venue to book",
+      "hireProfile": "Build your hire profile",
+      "business": "Send your documents for review",
+      "nid": "Verify your NID to withdraw winnings and sell used gear"
+    }
+  },
+  "account": {
+    "menu": "Account menu",
+    "groups": {
+      "play": "Play",
+      "bookings": "Bookings",
+      "shopping": "Shopping",
+      "money": "Money",
+      "help": "Help",
+      "settings": "Settings",
+      "work": "Work"
+    },
+    "items": {
+      "overview": "Overview",
+      "events": "My events",
+      "teams": "Teams",
+      "player": "Player profile",
+      "ready": "Ready to play",
+      "addPhone": "Add a mobile number",
+      "hires": "My hires",
+      "bookings": "Bookings",
+      "passes": "Gym passes",
+      "subscriptions": "Trainer plans",
+      "orders": "Orders",
+      "saved": "Saved items",
+      "payments": "Payments",
+      "payouts": "Payouts",
+      "payoutAccount": "Payout account",
+      "winnings": "Winnings",
+      "disputes": "Disputes",
+      "reports": "Reports",
+      "reviews": "Reviews",
+      "notifications": "Notifications",
+      "verify": "Verify your identity",
+      "verified": "Identity verified",
+      "roles": "Roles",
+      "business": "Business",
+      "proDesk": "Pro desk",
+      "gameIds": "Game IDs",
+      "matches": "Matches"
+    },
+    "roles": {
+      "member": "Member",
+      "player": "Player",
+      "pro": "Pro",
+      "ground_owner": "Venue owner",
+      "shop_owner": "Shop owner",
+      "gym_owner": "Gym owner",
+      "organiser": "Organiser",
+      "staff": "Staff",
+      "master_admin": "Master admin"
+    },
+    "roleStatus": {
+      "applied": "applied",
+      "documents_pending": "documents needed",
+      "in_review": "in review",
+      "changes_requested": "changes needed",
+      "active": "active",
+      "rejected": "not approved",
+      "suspended": "suspended",
+      "withdrawn": "withdrawn"
+    },
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "signedOutTitle": "Sign in to see your account",
+    "signedOutBody": "Your bookings, events, orders and winnings live here.",
+    "setup": {
+      "title": "Finish setting up",
+      "progress": "{done, number} of {total, number} done",
+      "phone": "Verify your mobile number",
+      "phoneDone": "Mobile number verified",
+      "email": "Add and verify an email",
+      "emailDone": "Email verified",
+      "gameId": "Add a PUBG Mobile or Free Fire ID",
+      "gameIdPending": "Game ID waiting for review",
+      "gameIdDone": "Game ID verified",
+      "nid": "Verify your NID",
+      "nidDone": "NID verified",
+      "nidWhy": "Needed to withdraw winnings and sell used gear.",
+      "go": "Do it"
+    },
+    "stats": {
+      "winnings": "Winnings to withdraw",
+      "totalWon": "Won so far: {amount}",
+      "withdraw": "Withdraw"
+    },
+    "quick": {
+      "title": "Jump back in",
+      "venues": "Book a venue",
+      "events": "Join an event",
+      "shop": "Shop gear",
+      "hire": "Hire a pro"
+    }
+  }
+}

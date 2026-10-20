@@ -3,14 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
-import { publicEnv } from "@/lib/env";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { publicEnv } from "@kriraghor/session/env";
+import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
 import { fromLocalInput, oversToBalls, presetValues, resultBody, sportsConsole as api, toLocalInput, type Match, type RuleField, type Seeding, type Tournament } from "@/lib/vendor/tournaments";
 import { MePanel } from "../../MePanel";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { formatDhaka } from "../../admin/useAdminMe";
 

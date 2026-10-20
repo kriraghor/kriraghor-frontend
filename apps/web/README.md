@@ -27,7 +27,7 @@ The backend must be running (`npm run dev` in `../kriraghor-backend`) with `CORS
 | `npm run lint` · `npm run typecheck` | ESLint, `next typegen` + `tsc` |
 | `npm test` | Vitest unit tests (session, refresh, CSRF header, runtime env) |
 | `npm run test:e2e` | Playwright smoke against `next start` (or `BASE_URL=http://kriraghor.localhost`) |
-| `npm run api:sync` | Regenerate `src/lib/api/schema.d.ts` from `../kriraghor-backend/openapi.json` (or `API_SPEC=<url>`) |
+| `npm run api:sync` (repo root) | Regenerate `packages/api-client/src/schema.d.ts` from `kriraghor-backend/openapi.json` (or `API_SPEC=<url>`) |
 
 ## How it works
 

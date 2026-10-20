@@ -2,15 +2,17 @@ import type { ReactNode } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, ArrowsClockwise, ArrowUUpLeft, Barbell, HandCoins, IdentificationBadge, Key, Pill, SealCheck, ShieldCheck, SoccerBall, Wallet } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { PHOTOS } from "@/lib/photos";
 import { esportsHref } from "@/lib/links";
 import { EsportsHero } from "@/components/home/HeroShell";
+import { FeaturedEvent } from "@/components/home/EsportsHero";
 import { Finder } from "@/components/home/Finder";
 import { OpenTournaments, TopPlayers } from "@/components/home/EsportsSections";
 import { HomeGrounds } from "@/components/home/HomeGrounds";
 import { HomeGym, HomeHire } from "@/components/home/HireAndGym";
 import { Reveal } from "@/components/home/Reveal";
+import { SportCards } from "@/components/home/SportCards";
 import { TournamentsStrip } from "@/components/tournaments/TournamentsStrip";
 
 /**
@@ -47,6 +49,8 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       <EsportsHero />
       <div className="mx-auto max-w-[1320px] px-5">
         <Finder />
+        {/* A live or upcoming featured big event (M23), when there is one. */}
+        <FeaturedEvent />
       </div>
 
       <OpenTournaments />
@@ -68,6 +72,8 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
           </ol>
         </div>
       </section>
+
+      <SportCards />
 
       <HomeGrounds />
 

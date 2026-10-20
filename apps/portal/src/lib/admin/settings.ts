@@ -1,4 +1,4 @@
-import type { components } from "@/lib/api/schema";
+import type { components } from "@kriraghor/api-client/schema";
 
 /**
  * Fees and rules screen helpers (M03 §4). The server is the authority (types, ranges and

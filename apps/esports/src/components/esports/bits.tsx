@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { countdown, fill, pad, takaOf, dhakaTime, type Money, type TournamentCard } from "@/lib/esports";
 
 /** Small shared pieces for the esports pages. Sharp corners; amber only for prize money (design v3). */

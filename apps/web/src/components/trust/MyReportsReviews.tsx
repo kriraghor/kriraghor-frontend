@@ -2,11 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { whenLabel } from "@/lib/bookings";
 import { reports, reviews } from "@/lib/trust";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Stars } from "./GroundReviews";
 
 function Gate({ next, children }: { next: string; children: React.ReactNode }) {

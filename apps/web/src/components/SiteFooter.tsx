@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { esportsHref } from "@/lib/links";
 
 type Col = { title: string; links: { href: string; label: string }[] };

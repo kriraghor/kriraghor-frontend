@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { api, problemOf, type Problem } from "@/lib/api/client";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { api, problemOf, type Problem } from "@kriraghor/api-client";
 import { hire, LEVELS, limitKey, poishaToTaka, profileTone, rateOf, takaToPoisha, TONE, type Format, type Level, type OwnerProfile, type ProfileBody, type RateCardBody, type Unit } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 const EDITABLE = ["draft", "changes_requested", "rejected", "live", "paused"];
 const input = "min-h-12 field px-3 text-base text-ink";

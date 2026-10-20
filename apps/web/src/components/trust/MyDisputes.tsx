@@ -2,12 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { ACTIVE_CASE, disputes } from "@/lib/trust";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /** /me/disputes (M17): my cases, open ones first. */
 export function MyDisputes() {

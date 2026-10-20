@@ -1,0 +1,13 @@
+{
+  "name": "@kriraghor/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared tooling presets for the Kriraghor web apps: eslint, TypeScript, Vitest and Playwright.",
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint.mjs",
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./vitest": "./vitest.mjs",
+    "./playwright": "./playwright.mjs"
+  }
+}

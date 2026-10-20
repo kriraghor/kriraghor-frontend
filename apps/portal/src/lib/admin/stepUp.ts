@@ -1,4 +1,4 @@
-import { api, problemOf, type Problem } from "@/lib/api/client";
+import { api, problemOf, type Problem } from "@kriraghor/api-client";
 
 type Scope = "settings.write" | "staff.write" | "audit.export" | "events.replay" | "refund.large" | "escrow.manage" | "payout.approve" | "moderation.override" | "esports.money" | "risk.manage" | "user.ban";
 

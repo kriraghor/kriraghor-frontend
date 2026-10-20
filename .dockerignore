@@ -1,0 +1,13 @@
+# Build context is the repo root (apps/<app>/Dockerfile). Keep it small: no installs, builds or tests.
+**/node_modules
+**/.next
+.git
+.github
+**/.env
+**/.env.*
+!**/.env.example
+**/coverage
+**/test-results
+**/playwright-report
+**/e2e
+**/*.md

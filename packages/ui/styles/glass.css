@@ -1,0 +1,130 @@
+/*
+ * Surfaces (09 §7, revised 20 Oct 2026). Glass is kept for the floating chrome only: the header,
+ * the phone tab bar, hero cards over photos. Content cards and form fields are solid (glass-card and
+ * field keep their names so every page moved over at once). Without backdrop-filter, or when the
+ * visitor asks for less transparency, glass turns solid.
+ */
+:root {
+  --glass-bg: rgb(255 255 255 / 0.66);
+  --glass-strong-bg: rgb(255 255 255 / 0.86);
+  --glass-edge: rgb(17 26 21 / 0.08);
+  --glass-highlight: rgb(255 255 255 / 0.7);
+  --glass-shadow: 0 12px 40px -18px rgb(10 26 18 / 0.24);
+  --glass-blur: blur(18px) saturate(160%);
+  --glass-band-bg: rgb(10 26 18 / 0.5);
+  --glass-band-edge: rgb(241 244 242 / 0.16);
+  --ambient-green: rgb(11 122 75 / 0.07);
+  --ambient-amber: rgb(242 163 58 / 0.06);
+}
+/* Dark glass: the same rule as the tokens (system, or the visitor's pick on <html>). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --glass-bg: rgb(20 28 24 / 0.6);
+    --glass-strong-bg: rgb(20 28 24 / 0.84);
+    --glass-edge: rgb(255 255 255 / 0.08);
+    --glass-highlight: rgb(255 255 255 / 0.05);
+    --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
+    --glass-band-bg: rgb(7 18 13 / 0.58);
+    --ambient-green: rgb(25 153 95 / 0.1);
+    --ambient-amber: rgb(242 163 58 / 0.05);
+  }
+}
+:root[data-theme="dark"] {
+  --glass-bg: rgb(20 28 24 / 0.6);
+  --glass-strong-bg: rgb(20 28 24 / 0.84);
+  --glass-edge: rgb(255 255 255 / 0.08);
+  --glass-highlight: rgb(255 255 255 / 0.05);
+  --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
+  --glass-band-bg: rgb(7 18 13 / 0.58);
+  --ambient-green: rgb(25 153 95 / 0.1);
+  --ambient-amber: rgb(242 163 58 / 0.05);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-bg: var(--kg-surface);
+    --glass-strong-bg: var(--kg-surface);
+    --glass-band-bg: var(--kg-band);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-bg: var(--kg-surface);
+    --glass-strong-bg: var(--kg-surface);
+    --glass-band-bg: var(--kg-band);
+    --glass-blur: none;
+  }
+}
+
+@utility glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+}
+@utility glass-strong {
+  background: var(--glass-strong-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+}
+/* On photos and the dark band: dark frosted glass with light text. */
+@utility glass-band {
+  background: var(--glass-band-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-band-edge);
+  color: var(--kg-band-text);
+}
+/* A content card (the kit's Card): solid surface, 1px line, the card radius. */
+@utility glass-card {
+  background: var(--kg-surface);
+  border: 1px solid var(--kg-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--kg-shadow-sm);
+}
+/* Inputs and selects written by hand (the kit's controlClass is the same look). */
+@utility field {
+  background: var(--kg-surface);
+  border: 1px solid color-mix(in oklab, var(--kg-line-strong) 70%, transparent);
+  border-radius: var(--radius-control);
+  transition: border-color 150ms, box-shadow 150ms;
+  &:hover {
+    border-color: var(--kg-line-strong);
+  }
+  &:focus,
+  &:focus-within {
+    border-color: var(--kg-brand);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--kg-brand) 15%, transparent);
+    outline: none;
+  }
+}
+
+@layer base {
+  /*
+   * Hand-written button links (pages not yet on the kit's ButtonLink) get the control radius and
+   * press feedback from their height class. Buttons and inputs get the radius from tokens.css.
+   * Goes when the page sweep (design plan phase 5) has moved every page to ButtonLink.
+   */
+  :where(a, summary)[class~="min-h-11"],
+  :where(a, summary)[class~="min-h-12"],
+  :where(a)[class~="min-h-14"] {
+    border-radius: var(--radius-control);
+  }
+  :where(a, button)[class~="min-h-11"],
+  :where(a, button)[class~="min-h-12"] {
+    transition: transform 150ms var(--ease-kg), background-color 200ms, border-color 200ms, box-shadow 200ms;
+  }
+  :where(a, button)[class~="min-h-11"]:active,
+  :where(a, button)[class~="min-h-12"]:active {
+    transform: scale(0.98);
+  }
+  :where(a).glass-card {
+    transition: transform 200ms var(--ease-kg), box-shadow 200ms, border-color 200ms;
+  }
+  :where(a).glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--kg-shadow-md);
+  }
+}

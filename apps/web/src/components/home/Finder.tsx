@@ -4,8 +4,8 @@ import { useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, Handshake, SoccerBall, Storefront, Trophy } from "@phosphor-icons/react";
-import { useRouter } from "@/i18n/navigation";
-import { api } from "@/lib/api/client";
+import { useRouter } from "@kriraghor/ui/i18n/navigation";
+import { api } from "@kriraghor/api-client";
 import { finderUrl, nextTab, type FinderTab, type FinderValues } from "@/lib/home";
 import { isExternal } from "@/lib/links";
 import { nameOf, useEsportsGames, type Named } from "./queries";

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { Link, useRouter, usePathname } from "@/i18n/navigation";
+import { Link, useRouter, usePathname } from "@kriraghor/ui/i18n/navigation";
 import { PRICE_BANDS, bandOf, filtersFromParams, market, paramsFromFilters, type Filters } from "@/lib/market";
 import { ProductCard } from "./ProductCard";
 import { PageHeader } from "../PageHeader";

@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { bookings, whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /** /me/bookings (M10 FR-11): upcoming and past bookings, newest first for the past. */
 export function MyBookings() {

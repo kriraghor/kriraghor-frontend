@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { api, problemOf } from "@/lib/api/client";
-import { publicEnv } from "@/lib/env";
-import { Button, Field, Notice } from "../ui";
+import { api, problemOf } from "@kriraghor/api-client";
+import { publicEnv } from "@kriraghor/session/env";
+import { Button, Field, Notice } from "@kriraghor/ui/primitives";
 
 const ok = async <T,>(res: { data?: T; error?: unknown }): Promise<T> => {
   if (res.error || res.data === undefined) throw res.error;

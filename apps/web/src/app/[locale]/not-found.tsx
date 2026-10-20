@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { PHOTOS } from "@/lib/photos";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { esportsHref } from "@/lib/links";
 
 export const metadata = { title: "Page not found", robots: { index: false } };

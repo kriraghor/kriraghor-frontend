@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { Link } from "@/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { REPORT_REASONS, reports, type ReportReason, type SubjectType } from "@/lib/trust";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * "Report" (M17 FR-15): a reason and an optional note. Reports from NID-verified members count toward

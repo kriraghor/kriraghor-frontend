@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { diffLines, groundsAdmin, type ReviewDiff } from "@/lib/admin/grounds";
 import { formatTaka } from "@/lib/admin/finance";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * The `ground` panel on the Moderation desk (M09): what changed (the diff in the submission), then the

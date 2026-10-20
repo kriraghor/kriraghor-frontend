@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 import { esportsRedirect } from "@/lib/links";
-import { serverPublicEnv } from "@/lib/env";
+import { serverPublicEnv } from "@kriraghor/session/env";
 
 /**
  * GET /go/esports/… sends the visitor on to esports.kriraghor.com/… (with the query string).

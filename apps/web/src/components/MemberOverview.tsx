@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { api } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { api } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
 import { formatTaka } from "@/lib/payments";
-import { ChartSplit, DeltaBadge, KpiTile } from "./charts/Charts";
-import { Notice } from "./ui";
+import { ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
+import { ArrowRight, DownloadSimple } from "@phosphor-icons/react";
+import { Button, Notice, SegmentedControl, Skeleton } from "@kriraghor/ui/kit";
+import { CountUp } from "@kriraghor/ui/motion";
 
 type Period = "7w" | "qtr" | "yr";
 type Data = components["schemas"]["MemberDashboard"];
@@ -40,48 +42,42 @@ export function MemberOverview() {
   }
 
   return (
-    <div className="mt-8 space-y-5 border-t-2 border-line-strong pt-6" data-testid="member-overview">
+    <section className="space-y-4" data-testid="member-overview">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-extrabold">{t("title")}</h2>
-        <div className="flex gap-1" role="tablist" aria-label={t("period")}>
-          {(["7w", "qtr", "yr"] as Period[]).map((p) => (
-            <button key={p} type="button" role="tab" aria-selected={p === period} onClick={() => setPeriod(p)} className={`min-h-11 border-2 px-3 text-sm font-semibold ${p === period ? "border-brand bg-brand text-white" : "border-line"}`}>
-              {t(`periods.${p}`)}
-            </button>
-          ))}
-        </div>
+        <h2 className="text-xl">{t("title")}</h2>
+        <SegmentedControl size="sm" label={t("period")} value={period} onChange={setPeriod} options={(["7w", "qtr", "yr"] as Period[]).map((p) => ({ value: p, label: t(`periods.${p}`) }))} />
       </div>
       {actions.data?.items.length ? (
-        <ul className="glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="member-actions">
+        <ul className="glass-card divide-y divide-line overflow-hidden" data-testid="member-actions">
           {actions.data.items.map((a) => (
             <li key={`${a.key}-${a.href}`}>
-              <Link href={a.href} className="flex min-h-12 items-center gap-3 py-2 hover:bg-surface-2">
-                <span className={`h-2.5 w-2.5 shrink-0 ${a.severity === "high" ? "bg-danger" : "bg-brand"}`} aria-hidden="true" />
+              <Link href={a.href} className="group flex min-h-12 items-center gap-3 px-4 py-2 no-underline transition-colors hover:bg-surface-2">
+                <span className={`size-2.5 shrink-0 rounded-pill ${a.severity === "high" ? "bg-danger" : "bg-brand"}`} aria-hidden="true" />
                 <span className="flex-1">{t(`actions.${a.key}`, { n: a.count })}</span>
-                <span aria-hidden="true">→</span>
+                <ArrowRight size={18} aria-hidden className="text-muted transition-transform group-hover:translate-x-0.5" />
               </Link>
             </li>
           ))}
         </ul>
       ) : null}
       {d.isPending ? (
-        <div className="h-32 animate-pulse bg-surface-2" />
+        <Skeleton className="h-32 rounded-card" />
       ) : d.isError || !d.data ? (
         <Notice tone="error">{t("loadFailed")}</Notice>
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-3">
-            <KpiTile testId="tile-spent" label={t("tiles.spent")} help={d.data.definitions.spent} value={money(d.data.tiles.spent.value ?? 0)} delta={<DeltaBadge value={d.data.tiles.spent.delta} kind="pct" label={vs} />} spark={d.data.tiles.spent.spark} />
-            <KpiTile label={t("tiles.bookings")} help={d.data.definitions.member_bookings} value={String(d.data.tiles.bookings.value ?? 0)} delta={<DeltaBadge value={d.data.tiles.bookings.delta} kind="pct" label={vs} />} spark={d.data.tiles.bookings.spark} />
-            <KpiTile label={t("tiles.upcoming")} value={String(d.data.tiles.upcoming.value ?? 0)} />
+            <KpiTile testId="tile-spent" label={t("tiles.spent")} help={d.data.definitions.spent} value={<CountUp value={d.data.tiles.spent.value ?? 0} format={(n) => money(Math.round(n))} />} delta={<DeltaBadge value={d.data.tiles.spent.delta} kind="pct" label={vs} />} spark={d.data.tiles.spent.spark} />
+            <KpiTile label={t("tiles.bookings")} help={d.data.definitions.member_bookings} value={<CountUp value={d.data.tiles.bookings.value ?? 0} format={(n) => Math.round(n).toLocaleString(locale === "bn" ? "bn-BD" : "en-IN")} />} delta={<DeltaBadge value={d.data.tiles.bookings.delta} kind="pct" label={vs} />} spark={d.data.tiles.bookings.spark} />
+            <KpiTile label={t("tiles.upcoming")} value={<CountUp value={d.data.tiles.upcoming.value ?? 0} format={(n) => Math.round(n).toLocaleString(locale === "bn" ? "bn-BD" : "en-IN")} />} />
           </div>
           <ChartSplit title={t("whereItWent")} parts={d.data.charts.whereItWent.map((w) => ({ label: t(`verticals.${w.vertical}`), value: w.value }))} format={money} empty={t("empty")} />
-          <button type="button" onClick={() => void csv()} className="min-h-11 border-2 border-line px-4 font-semibold">
+          <Button type="button" variant="secondary" onClick={() => void csv()} icon={<DownloadSimple size={18} aria-hidden />}>
             {t("csv")}
-          </button>
+          </Button>
           {csvFailed ? <Notice tone="error">{t("csvFailed")}</Notice> : null}
         </>
       )}
-    </div>
+    </section>
   );
 }

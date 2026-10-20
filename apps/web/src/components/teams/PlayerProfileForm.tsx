@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { setUsername, teams, teamSports, togglePosition, type PlayerProfile } from "@/lib/teams";
 import { MePanel } from "../MePanel";
-import { Button, Field, Notice } from "../ui";
+import { Button, Field, Notice } from "@kriraghor/ui/primitives";
 
 type Pick = { sportKey: string; positions: string[] };
 

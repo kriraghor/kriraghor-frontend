@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf, type Problem } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf, type Problem } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { ACCEPT, fileProblem, getVerification, MAX_UPLOAD_BYTES, nidLooksValid, SLOTS, submitNid, uploadFile, type Slot, type VerificationItem } from "@/lib/kyc";
 import { risk } from "@/lib/trust";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 const BADGE_CLS = { fully_verified: "border-brand text-brand", documents_in_review: "border-amber-500 text-ink", verification_needed: "border-danger text-danger" } as const;
 const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: "text-ink", changes_requested: "text-danger", rejected: "text-danger", missing: "text-muted" };

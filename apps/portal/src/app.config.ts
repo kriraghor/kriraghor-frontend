@@ -1,4 +1,4 @@
-import type { Audience } from "@/lib/auth/session";
+import type { Audience } from "@kriraghor/session/auth";
 import type { HeaderConfig } from "@/components/SiteHeader";
 
 /**

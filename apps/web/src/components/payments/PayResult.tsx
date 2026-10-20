@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { publicEnv } from "@/lib/env";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
+import { publicEnv } from "@kriraghor/session/env";
 import { formatTaka, getPayment, outcomeOf, POLL_LIMIT_MS, POLL_MS, verifyPayment } from "@/lib/payments";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * /pay/[paymentId]/result (M06 §4): asks the server to verify once, then reads the status every 2 s for

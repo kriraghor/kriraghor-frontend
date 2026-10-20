@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { api } from "@/lib/api/client";
-import type { components } from "@/lib/api/schema";
-import { realtimeSocket } from "@/lib/notifications";
+import { api } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
+import { realtimeSocket } from "@kriraghor/api-client/notifications";
 
 /**
  * M10 bookings on kriraghor.com: the half-hour grid of a ground, holds (advance or full online, v3),

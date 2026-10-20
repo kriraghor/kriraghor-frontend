@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
 import { dhakaTime, esports, useRoom } from "@/lib/esports";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { Chip, Countdown } from "./bits";
 
 type ResultRow = { registrationId: string; entry: { name: string } | null; placement: number | null; kills: number; placementPoints: number; killPoints: number; totalPoints: number };

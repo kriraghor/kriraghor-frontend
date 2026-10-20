@@ -3,11 +3,11 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, toPoisha, vendor, type Rules, type RuleInput } from "@/lib/vendor/grounds";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Field, inputCls } from "../admin/finance/shared";
 
 const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";

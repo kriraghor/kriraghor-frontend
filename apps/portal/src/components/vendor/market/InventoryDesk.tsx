@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { shopDesk, type InventoryRow, type ReasonCode } from "@/lib/vendor/market";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, inputCls } from "../../admin/finance/shared";
 import { Gate } from "./ShopDesk";
 

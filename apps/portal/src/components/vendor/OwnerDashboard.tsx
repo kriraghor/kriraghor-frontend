@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { bucketLabel, compactTaka, dashboards, downloadCsv, hourLabel, pct, type OwnerDashboard as Data, type Period } from "@/lib/dashboard";
 import { ownerTrust } from "@/lib/vendor/trust";
-import { ChartBars, ChartLine, ChartRank, ChartSplit, DeltaBadge, KpiTile } from "../charts/Charts";
-import { Notice } from "../ui";
+import { ChartBars, ChartLine, ChartRank, ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
+import { Notice } from "@kriraghor/ui/primitives";
 
 const PERIODS: Period[] = ["7w", "qtr", "yr"];
 

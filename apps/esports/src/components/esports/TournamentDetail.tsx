@@ -2,8 +2,8 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { ctaFor, dhakaTime, esports, takaOf, useRoom } from "@/lib/esports";
 import { events } from "@/lib/events";
 import { Chip, Countdown, LinkButton, Prize, SlotsBar, StatusChip } from "./bits";

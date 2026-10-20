@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { ChartBar, GameController, House, Star, Trophy } from "@phosphor-icons/react";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname } from "@kriraghor/ui/i18n/navigation";
 
 /** Phone tab bar (under 900px): a floating glass bar with the five places players go most. */
 export function MobileTabBar() {

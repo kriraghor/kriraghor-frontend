@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
 import { cleanCode, gymDesk, scanInput, type Admission } from "@/lib/vendor/gym";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { inputCls } from "../../admin/finance/shared";
 
 type Result = { ok: true; a: Admission } | { ok: false; code: string; title: string; at?: string; validFrom?: string; validTo?: string };

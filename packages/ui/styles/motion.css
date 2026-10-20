@@ -1,0 +1,309 @@
+/*
+ * Motion (kriraghor-docs 09 §8): the logo loader, the route spinner and the live touches.
+ * Everything here is decoration over content that is already there; under reduced motion the
+ * global rule in tokens.css cuts every animation to 1 ms (the end state), and the boot splash
+ * does not show at all.
+ */
+:root {
+  --kg-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------------------------------------------------------------- the logo, in three pieces */
+.kg-mark {
+  position: relative;
+  width: var(--kg-mark, 112px);
+  aspect-ratio: 1;
+  flex: none;
+}
+.kg-mark > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Join: the cricket ball comes from the top left, the shuttlecock from the bottom left and the
+   football from the right, each turning as it flies, 90 ms apart; then the mark pulses once and a
+   ring ripples out. Transforms only (no layout). */
+.kg-join > .kg-c {
+  animation: kg-in-c 780ms var(--kg-spring) both;
+}
+.kg-join > .kg-s {
+  animation: kg-in-s 780ms var(--kg-spring) 90ms both;
+}
+.kg-join > .kg-f {
+  animation: kg-in-f 780ms var(--kg-spring) 180ms both;
+}
+.kg-join {
+  animation: kg-lock 460ms ease-out 900ms both;
+}
+.kg-join > .kg-ring {
+  position: absolute;
+  inset: 2%;
+  border-radius: 9999px;
+  border: 2px solid var(--kg-brand);
+  opacity: 0;
+  animation: kg-ring 900ms ease-out 900ms forwards;
+}
+@keyframes kg-in-c {
+  from {
+    opacity: 0;
+    transform: translate(-70%, -70%) rotate(-55deg) scale(0.55);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes kg-in-s {
+  from {
+    opacity: 0;
+    transform: translate(-70%, 75%) rotate(45deg) scale(0.55);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes kg-in-f {
+  from {
+    opacity: 0;
+    transform: translate(90%, -10%) rotate(75deg) scale(0.55);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes kg-lock {
+  40% {
+    transform: scale(1.07);
+  }
+}
+@keyframes kg-ring {
+  from {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.55);
+  }
+}
+
+/* Loop (route loading): the pieces drift apart and snap back together, 1.6 s a round. */
+.kg-loop > .kg-c {
+  animation: kg-loop-c 1.6s var(--ease-kg) infinite;
+}
+.kg-loop > .kg-s {
+  animation: kg-loop-s 1.6s var(--ease-kg) infinite;
+}
+.kg-loop > .kg-f {
+  animation: kg-loop-f 1.6s var(--ease-kg) infinite;
+}
+@keyframes kg-loop-c {
+  0%,
+  100% {
+    transform: none;
+  }
+  40%,
+  55% {
+    transform: translate(-9%, -9%) rotate(-14deg);
+  }
+}
+@keyframes kg-loop-s {
+  0%,
+  100% {
+    transform: none;
+  }
+  45%,
+  60% {
+    transform: translate(-9%, 10%) rotate(12deg);
+  }
+}
+@keyframes kg-loop-f {
+  0%,
+  100% {
+    transform: none;
+  }
+  50%,
+  65% {
+    transform: translate(11%, -2%) rotate(16deg);
+  }
+}
+
+/* ---------------------------------------------------------------- the boot splash */
+/* Hidden unless the splash script switched it on, so it can never trap a page without JavaScript. */
+.kg-splash {
+  display: none;
+}
+html[data-splash="on"] .kg-splash,
+html[data-splash="out"] .kg-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background:
+    radial-gradient(520px 360px at 50% 46%, var(--ambient-green, transparent), transparent 70%),
+    var(--kg-bg);
+  transition:
+    opacity 320ms ease-in,
+    visibility 320ms;
+}
+.kg-splash-word {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--kg-ink);
+  animation: kg-rise 520ms var(--ease-kg) 760ms both;
+}
+@keyframes kg-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+/* "out": played and the page loaded, so it fades away. */
+html[data-splash="out"] .kg-splash {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- live touches */
+/* A live dot that breathes. */
+.kg-pulse {
+  animation: kg-pulse 1.6s ease-in-out infinite;
+}
+@keyframes kg-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+/* A value that just changed (Flash): a green glint that fades back. */
+.kg-flash {
+  animation: kg-flash 1.2s var(--ease-kg);
+}
+@keyframes kg-flash {
+  0% {
+    color: var(--kg-brand);
+    text-shadow: 0 0 18px color-mix(in oklab, var(--kg-brand) 45%, transparent);
+    transform: translateY(-2px) scale(1.06);
+  }
+}
+/* Hero entrance: children with .kg-hero-item rise in, 100 ms apart. */
+.kg-hero > .kg-hero-item {
+  animation: kg-hero-in 900ms var(--ease-kg) both;
+}
+.kg-hero > .kg-hero-item:nth-child(2) {
+  animation-delay: 100ms;
+}
+.kg-hero > .kg-hero-item:nth-child(3) {
+  animation-delay: 200ms;
+}
+.kg-hero > .kg-hero-item:nth-child(4) {
+  animation-delay: 300ms;
+}
+.kg-hero > .kg-hero-item:nth-child(n + 5) {
+  animation-delay: 400ms;
+}
+/* While the splash is up the hero waits, so it rises in as the splash fades. */
+html[data-splash="on"] .kg-hero > .kg-hero-item {
+  animation-play-state: paused;
+}
+@keyframes kg-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+}
+
+/* ---------------------------------------------------------------- theme switch */
+/* The toggle's icon: a moon in light (go dark), a sun in dark; the swap spins and springs. */
+.kg-tt-moon,
+.kg-tt-sun {
+  transition:
+    transform 450ms var(--kg-spring),
+    opacity 220ms ease;
+}
+.kg-tt-sun {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.4);
+  color: var(--kg-prize);
+}
+:root[data-theme="dark"] .kg-tt-sun {
+  opacity: 1;
+  transform: none;
+}
+:root[data-theme="dark"] .kg-tt-moon {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.4);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .kg-tt-sun {
+    opacity: 1;
+    transform: none;
+  }
+  :root:not([data-theme="light"]) .kg-tt-moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.4);
+  }
+}
+/* The new theme spreads as a circle from the button (ThemeToggle drives the clip-path). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+/* Browsers without View Transitions: colours cross-fade for a moment. */
+.kg-theme-anim,
+.kg-theme-anim *,
+.kg-theme-anim *::before,
+.kg-theme-anim *::after {
+  transition:
+    background-color 350ms ease,
+    color 350ms ease,
+    border-color 350ms ease,
+    fill 350ms ease !important;
+}
+
+/* ---------------------------------------------------------------- the home hero (HeroCarousel) */
+/* The active slide's lines rise in one after another (from the Claude Design: 30 px, 0.8 s, 80 ms apart). */
+.kg-slide-in > .kg-slide-line {
+  animation: kg-slide-up 800ms var(--ease-kg) 150ms both;
+}
+.kg-slide-in > .kg-slide-line:nth-child(2) {
+  animation-delay: 230ms;
+}
+.kg-slide-in > .kg-slide-line:nth-child(3) {
+  animation-delay: 310ms;
+}
+.kg-slide-in > .kg-slide-line:nth-child(4) {
+  animation-delay: 390ms;
+}
+@keyframes kg-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+/* While the logo splash is up the first slide waits, so it rises in as the splash fades. */
+html[data-splash="on"] .kg-slide-in > .kg-slide-line {
+  animation-play-state: paused;
+}
+/* The progress bar of the slide on show fills over its dwell (duration set inline). */
+.kg-hero-fill {
+  transform-origin: left;
+  animation: kg-fill linear forwards;
+}
+@keyframes kg-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@kriraghor/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The typed Kriraghor API client (openapi-fetch) generated from kriraghor-backend/openapi.json, and the notifications helpers. One schema for every app.",
+  "exports": {
+    ".": "./src/client.ts",
+    "./schema": "./src/schema.d.ts",
+    "./notifications": "./src/notifications.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "api:sync": "node scripts/api-sync.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@kriraghor/session": "0.1.0",
+    "openapi-fetch": "^0.17.0",
+    "socket.io-client": "^4.8.4"
+  },
+  "devDependencies": {
+    "@kriraghor/config": "0.1.0",
+    "openapi-typescript": "^7.13.0"
+  }
+}

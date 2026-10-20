@@ -2,20 +2,19 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { notFound } from "next/navigation";
-import { Bricolage_Grotesque, Hind_Siliguri, Instrument_Sans } from "next/font/google";
+import { fontVariables } from "@kriraghor/ui/fonts";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
-import { Providers } from "@/components/Providers";
-import { SiteHeader } from "@/components/SiteHeader";
+import { ThemeScript } from "@kriraghor/ui/brand/theme-script";
+import { BootSplash } from "@kriraghor/ui/brand/boot-splash";
+import { routing } from "@kriraghor/ui/i18n/routing";
+import { Providers } from "@kriraghor/ui/providers";
+import { SiteHeader } from "@kriraghor/ui/site-header";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { APP } from "@/app.config";
 import "../globals.css";
 
-const bricolage = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-bricolage", weight: ["600", "700", "800"] });
-const instrument = Instrument_Sans({ subsets: ["latin"], variable: "--font-instrument" });
-const hind = Hind_Siliguri({ subsets: ["bengali", "latin"], variable: "--font-hind", weight: ["400", "500", "600", "700"] });
 
 export const metadata: Metadata = {
   title: { default: APP.title, template: `%s · ${APP.title}` },
@@ -32,8 +31,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className={`${bricolage.variable} ${instrument.variable} ${hind.variable} h-full antialiased`}>
+    <html lang={locale} suppressHydrationWarning className={`${fontVariables} h-full antialiased`}>
       <body className="flex min-h-full flex-col pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0">
+        {/* Theme before paint; the logo splash once per session (kriraghor-docs 09 §8). */}
+        <ThemeScript />
+        <BootSplash word={locale === "bn" ? "ক্রীড়াঘর ই-স্পোর্টস" : "Kriraghor Esports"} />
         {/* Runtime config (ADR-003): window.__ENV before any client code runs. */}
         <Script src="/env.js" strategy="beforeInteractive" />
         <NextIntlClientProvider>

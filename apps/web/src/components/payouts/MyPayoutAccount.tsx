@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf, type Problem } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf, type Problem } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { addAccount, isWalletNumber, listAccounts, sendAccountCode, type Wallet } from "@/lib/payouts";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 const STATUS_CLS = { active: "border-brand text-brand", pending_verification: "border-line text-ink", rejected: "border-danger text-danger" } as const;
 

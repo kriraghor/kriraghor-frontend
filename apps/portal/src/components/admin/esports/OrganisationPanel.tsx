@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { organisersAdmin } from "@/lib/admin/organisers";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /**
  * The `organisation` panel on the Moderation desk (M14 lite, for M22): the organisation's name,

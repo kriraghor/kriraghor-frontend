@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { bucketLabel, compactTaka, dashboards, downloadCsv, pct, type Period } from "@/lib/dashboard";
-import { ChartLine, ChartRank, ChartSplit, DeltaBadge, KpiTile } from "../charts/Charts";
-import { Notice } from "../ui";
+import { ChartLine, ChartRank, ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
+import { Notice } from "@kriraghor/ui/primitives";
 import { ActionList } from "../vendor/OwnerDashboard";
 
 const PERIODS: Period[] = ["7w", "qtr", "yr"];

@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { formatTaka } from "@/lib/admin/finance";
 import { ordersAdmin, type StaffOrder } from "@/lib/admin/orders";
 import { stepUp } from "@/lib/admin/stepUp";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka, useAdminMe } from "../useAdminMe";

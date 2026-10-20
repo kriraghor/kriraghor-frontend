@@ -2077,7 +2077,16 @@
       "jobs": "{n, plural, one {# job done} other {# jobs done}}",
       "years": "{n, plural, one {# year} other {# years}} experience",
       "perHour": "per hour",
-      "perMatch": "per match"
+      "perMatch": "per match",
+      "officials": "Umpires and referees",
+      "playersTitle": "Players",
+      "available": "{n, number} available",
+      "checked": "Every profile is checked by our staff, with an NID and the licence or certificate for that role.",
+      "byRole": "Everyone your team needs, by role",
+      "prev": "Previous three",
+      "next": "Next three",
+      "pause": "Pause the list",
+      "play": "Play the list"
     },
     "gym": {
       "body": "Day, monthly and three-month passes with QR entry at the front desk. Monthly plans with trainers.",
@@ -2128,6 +2137,65 @@
       "protection": "Buyer protection",
       "refundPolicy": "Refund policy",
       "esports": "Esports events"
+    },
+    "sports": {
+      "title": "Pick your sport",
+      "sub": "Venues, events and gyms for the game you play.",
+      "names": {
+        "esports": "Esports",
+        "cricket": "Cricket",
+        "football": "Football",
+        "badminton": "Badminton",
+        "gym": "Gym"
+      },
+      "venues": "{n, plural, one {# venue} other {# venues}}",
+      "events": "{n, plural, one {# event open} other {# events open}}",
+      "gyms": "{n, plural, one {# gym} other {# gyms}}",
+      "prev": "Previous sports",
+      "next": "More sports"
+    },
+    "carousel": {
+      "label": "Highlights",
+      "prev": "Previous slide",
+      "next": "Next slide",
+      "pause": "Pause the slides",
+      "play": "Play the slides",
+      "goTo": "Show {name}",
+      "slides": {
+        "esports": {
+          "tab": "Esports",
+          "kicker": "PUBG Mobile and Free Fire",
+          "cta": "Join an event"
+        },
+        "venues": {
+          "tab": "Venues",
+          "kicker": "Venue booking",
+          "title": "Book a turf, court or pitch by the hour",
+          "sub": "See open slots at venues across Dhaka and lock one with an advance by bKash or Nagad.",
+          "cta": "Find a venue"
+        },
+        "hire": {
+          "tab": "Hire",
+          "kicker": "Officials and players",
+          "title": "Short an umpire? Hire one for tonight.",
+          "sub": "Licensed umpires and referees, plus rated players, available by the match.",
+          "cta": "Hire now"
+        },
+        "shop": {
+          "tab": "Shop",
+          "kicker": "Shop",
+          "title": "New gear from shops. Used gear from players.",
+          "sub": "Bats, boots, rackets, supplements and gym gear from verified shops and NID-verified sellers.",
+          "cta": "Shop now"
+        },
+        "gym": {
+          "tab": "Gym",
+          "kicker": "Gym and fitness",
+          "title": "Train with certified coaches near you",
+          "sub": "Day passes, monthly memberships and personal trainers in one place.",
+          "cta": "Enter the gym"
+        }
+      }
     }
   },
   "notFound": {

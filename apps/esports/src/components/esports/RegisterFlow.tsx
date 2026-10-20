@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { problemOf, type Problem } from "@/lib/api/client";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { problemOf, type Problem } from "@kriraghor/api-client";
 import { esports, takaOf } from "@/lib/esports";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { Empty, LinkButton, Prize } from "./bits";
 
 type Member = { userId: string; profileId: string | null; ign: string | null; username: string | null; status: string; role: string };

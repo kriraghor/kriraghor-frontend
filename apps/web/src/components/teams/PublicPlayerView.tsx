@@ -2,8 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { publicEnv } from "@/lib/env";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { publicEnv } from "@kriraghor/session/env";
 import { teams } from "@/lib/teams";
 
 /** /players/[handle] (M16-FR-05): the public player page. Never gender, DOB, age or phone. */

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api/client";
+import { api } from "@kriraghor/api-client";
 
 /** Shapes of the public esports reads used on the home page (fields the backend guarantees). */
 export type Named = { key: string; nameEn: string; nameBn: string };

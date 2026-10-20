@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { api, problemOf } from "@/lib/api/client";
+import { api, problemOf } from "@kriraghor/api-client";
 import { stepUp } from "@/lib/admin/stepUp";
 import { diffRows, toApiFilters, type AuditEntry, type AuditFilters } from "@/lib/admin/audit";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "./AdminSubnav";
 import { CodeDialog } from "./CodeDialog";
 import { formatDhaka, useAdminMe } from "./useAdminMe";

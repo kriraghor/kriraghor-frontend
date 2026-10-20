@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
-import { publicEnv } from "@/lib/env";
+import { publicEnv } from "@kriraghor/session/env";
 import { copyDayToAll, gymActions, gymDesk, hoursProblems, packagesBody, windowsOf, type Hours, type OwnerGym, type PackageKind } from "@/lib/vendor/gym";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
 

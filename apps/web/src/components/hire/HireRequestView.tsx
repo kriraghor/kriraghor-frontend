@@ -2,13 +2,13 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { hire, minutesLeft, requestTone, TONE, type RequestResult } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { JobCard } from "./JobCard";
 import { Thread } from "./Thread";
 

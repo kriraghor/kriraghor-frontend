@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { House, SoccerBall, Storefront, Trophy, UserCircle } from "@phosphor-icons/react";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname } from "@kriraghor/ui/i18n/navigation";
 import { esportsHref } from "@/lib/links";
 
 /** Phone tab bar (home-v3, under 900px): five labelled items; the rest of the nav is in the header menu. */

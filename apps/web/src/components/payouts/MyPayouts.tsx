@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/payments";
 import { downloadStatement, getPayout, getSummary, listPayouts, toneOf } from "@/lib/payouts";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 const TONE = { ok: "text-brand", waiting: "text-ink", bad: "text-danger", muted: "text-muted" } as const;
 

@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { market } from "@/lib/market";
 import { ReportButton } from "../trust/ReportButton";
 import { ProductCard } from "./ProductCard";

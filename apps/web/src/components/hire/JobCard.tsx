@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
 import { newKey } from "@/lib/bookings";
 import { hire, jobTone, TONE, WITHDRAW_REASONS, type CancelPlan, type Job } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 type Open = null | "cancel" | "no-show" | "problem" | "complete" | "withdraw";
 

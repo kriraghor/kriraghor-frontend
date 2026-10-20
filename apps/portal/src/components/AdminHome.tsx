@@ -3,10 +3,10 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
-import { api } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { LiveStatus } from "./LiveStatus";
+import { useRouter } from "@kriraghor/ui/i18n/navigation";
+import { api } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
+import { LiveStatus } from "@kriraghor/ui/live-status";
 import { PlatformOverview } from "./admin/PlatformOverview";
 
 /**

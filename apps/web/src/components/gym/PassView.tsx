@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import QRCode from "qrcode";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { dayLabel } from "@/lib/bookings";
 import { gym, passTone, TONE } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 /** The QR, drawn on the device from the signed token (never fetched as an image, so it stays private). */
 function PassQr({ token, label }: { token: string; label: string }) {

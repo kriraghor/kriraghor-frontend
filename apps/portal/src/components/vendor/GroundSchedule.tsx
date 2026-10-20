@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf, type Problem } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf, type Problem } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, vendor } from "@/lib/vendor/grounds";
 import { desk, hhmm, type ClosureReason, type SeriesInput } from "@/lib/vendor/bookings";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 
 const REASONS: ClosureReason[] = ["maintenance", "re_turfing", "floodlight_repair", "private_event", "waterlogged"];

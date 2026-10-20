@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { finance, formatTaka } from "@/lib/admin/finance";
-import { Button, Notice } from "../../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { formatDhaka } from "../useAdminMe";
 import { Chip, DataTable, Field, inputCls } from "./shared";
 

@@ -2,9 +2,9 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
-import { Link } from "@/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { market } from "@/lib/market";
 
 /** Save or unsave a product (FR-33). Signed-out visitors are asked to sign in. */

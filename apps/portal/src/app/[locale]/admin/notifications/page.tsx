@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { NotificationCentre } from "@/components/notifications/NotificationCentre";
+import { NotificationCentre } from "@kriraghor/ui/notifications/centre";
 
 export const metadata = { title: "Updates" };
 

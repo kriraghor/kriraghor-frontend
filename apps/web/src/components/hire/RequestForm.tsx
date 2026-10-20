@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { newKey } from "@/lib/bookings";
 import { dhakaDay, dhakaInstant, hire, type Engagement, type Format, type ProfilePage, type Unit } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 type Row = { date: string; time: string; format: Format | ""; hours: string; venueText: string; venueAreaId: string };
 const MAX_ROWS = 10;

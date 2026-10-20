@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { api, problemOf, type Problem } from "@/lib/api/client";
+import { api, problemOf, type Problem } from "@kriraghor/api-client";
 import { stepUp } from "@/lib/admin/stepUp";
 import {
   CATEGORY_ORDER,
@@ -17,7 +17,7 @@ import {
   type Setting,
   type SettingValue,
 } from "@/lib/admin/settings";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 import { AdminSubnav } from "./AdminSubnav";
 import { EntityHistory } from "./EntityHistory";
 import { formatDhaka, useAdminMe } from "./useAdminMe";

@@ -1,52 +1,28 @@
 @import "tailwindcss";
+/* Design tokens (one source for every app) and the shared surfaces. */
+@import "@kriraghor/tokens/tokens.css";
+@import "@kriraghor/ui/styles/glass.css";
+@import "@kriraghor/ui/styles/motion.css";
+@source "../../../../packages/ui/src";
 
-/*
- * Kriraghor design tokens (kriraghor-docs/00-platform/09, completed in 0B from the home v3 prototype).
- * Colour rule: green = every action. Amber (from the logo) = prize money and the esports call to action.
- * Shape: cards 20px, controls 12px, pills and chips 999px (the glass system below replaces the radius-0 lock).
- */
-:root {
-  --kg-bg: #f4f3ef;
-  --kg-surface: #ffffff;
-  --kg-surface-2: #ecebe6;
-  --kg-ink: #16201b;
-  --kg-muted: #55625b;
-  --kg-line: #d5d8d2;
-  --kg-line-strong: #16201b;
-  --kg-brand: #0b7a4b;
-  --kg-brand-hover: #09683f;
-  --kg-brand-soft: #e2f1e8;
-  --kg-brand-text: #075533;
-  --kg-band: #0a1a12;
-  --kg-band-text: #f4f3ef;
-  --kg-band-2: #12271c;
-  --kg-band-muted: #b9c6be;
-  --kg-band-line: rgb(244 243 239 / 0.16);
-  --kg-prize: #f2a33a;
-  --kg-prize-ink: #10231a;
-  --kg-live: #e5484d;
-  --kg-danger: #b42318;
-  --kg-info: #2c5aa8;
+/* Surface styles the shared components (packages/ui) ask for. */
+@utility btn-primary-finish {
+  @apply shadow-[0_6px_18px_-10px_rgb(11_122_75/0.7)];
+}
+@utility notice-surface {
+  @apply rounded-control bg-surface;
+}
+@utility popover-surface {
+  @apply rounded-card border border-line bg-surface shadow-lg;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --kg-bg: #0e1411;
-    --kg-surface: #151d18;
-    --kg-surface-2: #1c2620;
-    --kg-ink: #e8ece9;
-    --kg-muted: #a2afa7;
-    --kg-line: #2a3530;
-    --kg-line-strong: #e8ece9;
-    --kg-brand: #19995f;
-    --kg-brand-hover: #22ad6c;
-    --kg-brand-soft: #143a28;
-    --kg-brand-text: #8fd8b2;
-    --kg-band: #07120d;
-    --kg-band-2: #0f2018;
-    --kg-danger: #f97066;
-    --kg-info: #84adff;
-  }
+/* A faint wash of brand light behind the page (the header and tab bar glass sit on it). */
+body {
+  background:
+    radial-gradient(1000px 520px at -6% -8%, var(--ambient-green), transparent 62%),
+    radial-gradient(820px 480px at 106% 18%, var(--ambient-amber), transparent 60%),
+    var(--kg-bg);
+  background-attachment: fixed;
 }
 
 /* M20: the gym pages (/gym, /gym/gyms/…) use their own dark theme with a lime accent (Index.html GYM). */
@@ -57,7 +33,8 @@
   --kg-ink: #f1f3ea;
   --kg-muted: #a9ae9e;
   --kg-line: #34372d;
-  --kg-line-strong: #f1f3ea;
+  --kg-line-strong: #6f7464;
+  --kg-on-brand: #111210;
   --kg-brand: #c8f53c;
   --kg-brand-hover: #d7fa6e;
   --kg-brand-soft: #2a3311;
@@ -72,227 +49,6 @@
 [data-theme="gym"] .bg-brand {
   color: #111210;
 }
-
-@theme inline {
-  --color-bg: var(--kg-bg);
-  --color-surface: var(--kg-surface);
-  --color-surface-2: var(--kg-surface-2);
-  --color-ink: var(--kg-ink);
-  --color-muted: var(--kg-muted);
-  --color-line: var(--kg-line);
-  --color-line-strong: var(--kg-line-strong);
-  --color-brand: var(--kg-brand);
-  --color-brand-hover: var(--kg-brand-hover);
-  --color-brand-soft: var(--kg-brand-soft);
-  --color-brand-text: var(--kg-brand-text);
-  --color-band: var(--kg-band);
-  --color-band-text: var(--kg-band-text);
-  --color-band-2: var(--kg-band-2);
-  --color-band-muted: var(--kg-band-muted);
-  --color-band-line: var(--kg-band-line);
-  --color-prize: var(--kg-prize);
-  --color-prize-ink: var(--kg-prize-ink);
-  --color-live: var(--kg-live);
-  --color-danger: var(--kg-danger);
-  --color-info: var(--kg-info);
-
-  /* Full ramps for charts, badges and states */
-  --color-green-50: #f0f9f4;
-  --color-green-100: #e2f1e8;
-  --color-green-200: #bfe3cf;
-  --color-green-300: #8fcfae;
-  --color-green-400: #4fb283;
-  --color-green-500: #1f9563;
-  --color-green-600: #0b7a4b;
-  --color-green-700: #09683f;
-  --color-green-800: #075533;
-  --color-green-900: #03301d;
-  --color-amber-50: #fef8ee;
-  --color-amber-100: #fdefd6;
-  --color-amber-200: #fbdcaa;
-  --color-amber-300: #f8c574;
-  --color-amber-400: #f5b052;
-  --color-amber-500: #f2a33a;
-  --color-amber-600: #d9851b;
-  --color-amber-700: #b46714;
-  --color-amber-800: #8f5115;
-  --color-amber-900: #744315;
-  --color-gym: #111210;
-  --color-gym-accent: #c8f53c;
-
-  --font-display: var(--font-bricolage), var(--font-hind), system-ui, sans-serif;
-  --font-sans: var(--font-instrument), var(--font-hind), system-ui, sans-serif;
-  --font-bangla: var(--font-hind), "Noto Sans Bengali", sans-serif;
-  --font-gym: var(--font-shoulders), var(--font-bricolage), system-ui, sans-serif;
-
-  --radius-pill: 999px;
-  --shadow-sm: 0 1px 2px rgb(10 26 18 / 0.08);
-  --shadow-md: 0 6px 20px -8px rgb(10 26 18 / 0.25);
-  --shadow-lg: 0 18px 50px -24px rgb(10 26 18 / 0.35);
-  --ease-kg: cubic-bezier(0.16, 1, 0.3, 1);
-
-  /* Breakpoints from doc 09 (md and lg differ from Tailwind's defaults) */
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 900px;
-  --breakpoint-lg: 1180px;
-  --breakpoint-xl: 1280px;
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-}
-body {
-  /* The ambient light the glass sits on (glass system below). */
-  background:
-    radial-gradient(1100px 620px at -8% -6%, var(--ambient-green), transparent 62%),
-    radial-gradient(900px 560px at 108% 32%, var(--ambient-amber), transparent 60%),
-    radial-gradient(900px 620px at 40% 112%, var(--ambient-green), transparent 62%),
-    var(--kg-bg);
-  background-attachment: fixed;
-  color: var(--kg-ink);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.55;
-}
-:lang(bn) {
-  font-family: var(--font-bangla);
-  line-height: 1.7;
-}
-h1,
-h2,
-h3 {
-  font-family: var(--font-display);
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-}
-:focus-visible {
-  outline: 3px solid var(--kg-brand);
-  outline-offset: 2px;
-}
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition: none !important;
-    animation: none !important;
-  }
-}
-
-/*
- * Glass design system (19 Oct 2026, 09 §7). Frosted surfaces over a soft ambient background, a
- * rounded shape scale (cards 20px, controls 12px, pills full) in place of the old radius-0 lock.
- * Without backdrop-filter, or when the visitor asks for less transparency, every glass surface turns
- * solid, so text contrast never depends on what is behind it.
- */
-:root {
-  --glass-bg: rgb(255 255 255 / 0.62);
-  --glass-strong-bg: rgb(255 255 255 / 0.82);
-  --glass-edge: rgb(22 32 27 / 0.1);
-  --glass-highlight: rgb(255 255 255 / 0.7);
-  --glass-shadow: 0 12px 40px -18px rgb(10 26 18 / 0.28);
-  --glass-blur: blur(18px) saturate(160%);
-  --glass-band-bg: rgb(10 26 18 / 0.48);
-  --glass-band-edge: rgb(244 243 239 / 0.16);
-  --radius-card: 20px;
-  --radius-control: 12px;
-  --ambient-green: rgb(11 122 75 / 0.12);
-  --ambient-amber: rgb(242 163 58 / 0.12);
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --glass-bg: rgb(21 29 24 / 0.55);
-    --glass-strong-bg: rgb(21 29 24 / 0.8);
-    --glass-edge: rgb(255 255 255 / 0.09);
-    --glass-highlight: rgb(255 255 255 / 0.06);
-    --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
-    --glass-band-bg: rgb(7 18 13 / 0.55);
-    --ambient-green: rgb(25 153 95 / 0.16);
-    --ambient-amber: rgb(242 163 58 / 0.09);
-  }
-}
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  :root {
-    --glass-bg: var(--kg-surface);
-    --glass-strong-bg: var(--kg-surface);
-    --glass-band-bg: var(--kg-band);
-  }
-}
-@media (prefers-reduced-transparency: reduce) {
-  :root {
-    --glass-bg: var(--kg-surface);
-    --glass-strong-bg: var(--kg-surface);
-    --glass-band-bg: var(--kg-band);
-    --glass-blur: none;
-  }
-}
-
-@utility glass {
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-edge);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
-}
-@utility glass-strong {
-  background: var(--glass-strong-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-edge);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
-}
-/* On photos and the dark band: dark frosted glass with light text. */
-@utility glass-band {
-  background: var(--glass-band-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-band-edge);
-  color: var(--kg-band-text);
-}
-/* A card: glass with the card radius. Links lift a little on hover. */
-@utility glass-card {
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-edge);
-  border-radius: var(--radius-card);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
-}
-/* Inputs and selects: a strong glass surface, the control radius, a clear border to focus. */
-@utility field {
-  background: var(--glass-strong-bg);
-  border: 1.5px solid var(--glass-edge);
-  border-radius: var(--radius-control);
-}
-
-@layer base {
-  /* Controls get the control radius and press feedback; :where() keeps this below any utility. */
-  :where(a, button, select, input, textarea, summary)[class~="min-h-11"],
-  :where(a, button, select, input, textarea, summary)[class~="min-h-12"],
-  :where(a, button)[class~="min-h-14"] {
-    border-radius: var(--radius-control);
-  }
-  :where(a, button)[class~="min-h-11"],
-  :where(a, button)[class~="min-h-12"] {
-    transition: transform 150ms var(--ease-kg), background-color 200ms, border-color 200ms, box-shadow 200ms;
-  }
-  :where(a, button)[class~="min-h-11"]:active,
-  :where(a, button)[class~="min-h-12"]:active {
-    transform: scale(0.98);
-  }
-  :where(a).glass-card {
-    transition: transform 200ms var(--ease-kg), box-shadow 200ms, border-color 200ms;
-  }
-  :where(a).glass-card:hover {
-    transform: translateY(-2px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  :where(a, button):active,
-  :where(a).glass-card:hover {
-    transform: none;
-  }
-}
-
 /* home-v3 scroll reveal: only when JS has run and motion is welcome (Reveal.tsx adds .is-in). */
 @media (prefers-reduced-motion: no-preference) {
   .js-reveal .rv {

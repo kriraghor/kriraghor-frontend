@@ -3,14 +3,14 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { newKey } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { safeNext, teams as teamsApi } from "@/lib/teams";
 import { squadOk, tournaments } from "@/lib/tournaments";
-import { Button, Notice } from "../ui";
+import { Button, Notice } from "@kriraghor/ui/primitives";
 
 /**
  * /tournaments/[slug]/register (M14 §4.7): pick a team I captain or vice-captain in this sport, pick

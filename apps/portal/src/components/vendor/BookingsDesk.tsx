@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { problemOf } from "@/lib/api/client";
-import { useAuth } from "@/lib/auth/AuthProvider";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { problemOf } from "@kriraghor/api-client";
+import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, vendor } from "@/lib/vendor/grounds";
 import { blockColumns, desk, hhmm, ownerActions, timelineWindow, type OwnerBooking, type OwnerCancelReason } from "@/lib/vendor/bookings";
 import { ownerTrust } from "@/lib/vendor/trust";
-import { Notice } from "../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 
 const TONE: Record<string, string> = {

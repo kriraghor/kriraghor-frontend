@@ -1,5 +1,5 @@
 import { Suspense, type ReactNode } from "react";
-import { Providers } from "./Providers";
+import { Providers } from "@kriraghor/ui/providers";
 import { SiteHeader } from "./SiteHeader";
 import { AREAS, type Area } from "@/app.config";
 

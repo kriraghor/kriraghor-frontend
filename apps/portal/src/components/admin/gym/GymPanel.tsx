@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { formatTaka } from "@/lib/admin/finance";
 import { gymAdmin, outOfLimits } from "@/lib/admin/gym";
-import { Notice } from "../../ui";
+import { Notice } from "@kriraghor/ui/primitives";
 
 type Diff = Record<string, { from: unknown; to: unknown }>;
 const WEEK = [6, 0, 1, 2, 3, 4, 5];

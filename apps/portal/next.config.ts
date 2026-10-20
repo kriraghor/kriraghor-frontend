@@ -1,16 +1,23 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 import createNextIntlPlugin from "next-intl/plugin";
 import { REDIRECTS } from "./src/lib/redirects";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
+// The repo root (npm workspaces): packages/* are compiled from source and traced into the standalone build.
+const root = path.join(__dirname, "..", "..");
+
 const nextConfig: NextConfig = {
   // One image for every environment (ADR-003): a self-contained server, config read at runtime.
   output: "standalone",
+  outputFileTracingRoot: root,
+  transpilePackages: ["@kriraghor/session", "@kriraghor/api-client", "@kriraghor/ui"],
   poweredByHeader: false,
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
+    root,
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],
