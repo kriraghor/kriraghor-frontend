@@ -67,7 +67,9 @@ export const finance = {
       ? unwrap(await api("admin").POST("/admin/escrow/{id}/freeze", { params: { path: { id }, header: { "x-step-up": stepUpToken } }, body: { reason } }))
       : unwrap(await api("admin").POST("/admin/escrow/{id}/unfreeze", { params: { path: { id }, header: { "x-step-up": stepUpToken } }, body: { reason } })),
   accounts: async (code?: string) => unwrap(await api("admin").GET("/admin/ledger/accounts", { params: { query: { code: code || undefined, limit: 100 } } })),
-  entries: async (id: string) => unwrap(await api("admin").GET("/admin/ledger/accounts/{id}/entries", { params: { path: { id }, query: { limit: 100 } } })),
+  /** An account's postings; `cursor` is the previous page's nextCursor (the API takes it as a number). */
+  entries: async (id: string, cursor?: string) =>
+    unwrap(await api("admin").GET("/admin/ledger/accounts/{id}/entries", { params: { path: { id }, query: { limit: 100, cursor: cursor ? Number(cursor) : undefined } } })),
   trialBalance: async () => unwrap(await api("admin").GET("/admin/ledger/trial-balance")),
   invariants: async () => unwrap(await api("admin").GET("/admin/ledger/invariants")),
   runs: async () => unwrap(await api("admin").GET("/admin/reconciliation/runs")),

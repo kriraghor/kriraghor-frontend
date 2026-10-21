@@ -3,19 +3,20 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
+import { Button, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, Skeleton, Textarea, cn, type Column } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
 import { stepUp } from "@/lib/admin/stepUp";
 import { disputesAdmin, takaToPoisha, type Outcome, type StaffCase } from "@/lib/admin/trust";
-import { Notice } from "@kriraghor/ui/primitives";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
-import { Chip, inputCls } from "../finance/shared";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 
-const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { awaiting_response: "muted", under_review: "warn", escalated: "bad", resolved: "ok", withdrawn: "muted" };
 const VIEWS = ["active", "escalated", "resolved", "withdrawn"] as const;
+type Row = Awaited<ReturnType<typeof disputesAdmin.list>>["items"][number];
 
 /**
  * /admin/disputes (M17 FR-09 to FR-13): the queue, escalated and most urgent first; a claimed case
@@ -28,71 +29,90 @@ export function DisputesDesk() {
   const t = useTranslations("disputesDesk");
   const locale = useLocale();
   const qc = useQueryClient();
-  const params = useSearchParams();
   const { ready, me } = useAdminMe();
-  const [view, setView] = useState<(typeof VIEWS)[number]>("active");
-  const [open, setOpen] = useState<string | null>(params.get("code"));
+  // ?view= picks the queue; ?code= opens a case (links from notifications land here).
+  const { values, set, params } = useUrlFilters({ view: { default: "active", allowed: VIEWS } });
+  const view = values.view;
+  const open = params.get("code");
   const can = (p: string) => Boolean(me && (me.isMaster || me.permissions.includes(p as never)));
   const allowed = can("resolve_reports") || can("manage_esports");
-  const q = useQuery({ queryKey: ["admin-disputes", view], enabled: ready && allowed, queryFn: () => disputesAdmin.list({ status: view }) });
+  const list = useCursorList<Row>(["admin-disputes", view], (cursor) => disputesAdmin.list({ status: view, cursor }), { enabled: ready && allowed });
   const money = (n: number | null | undefined) => formatTaka(n ?? 0, locale);
 
+  const columns: Column<Row>[] = [
+    { id: "code", header: t("col.code"), primary: true, sort: (d) => d.code, cell: (d) => <span className="font-mono">{d.code}</span> },
+    {
+      id: "about",
+      header: t("col.about"),
+      cell: (d) => (
+        <>
+          <span className="block font-semibold">{t(`category.${d.category}`)}</span>
+          <span className="block font-mono text-xs text-muted">{d.sourceRef}</span>
+        </>
+      ),
+    },
+    {
+      id: "status",
+      header: t("col.status"),
+      sort: (d) => d.status,
+      cell: (d) => (
+        <span className="inline-flex flex-wrap items-center gap-2">
+          <StatusBadge status={d.status} domain="dispute">
+            {t(`status.${d.status}`)}
+          </StatusBadge>
+          {d.claimedByMe ? <span className="text-xs font-semibold text-brand-text">{t("mine")}</span> : d.claimedBy ? <span className="text-xs text-muted">{t("claimed")}</span> : null}
+        </span>
+      ),
+    },
+    {
+      id: "due",
+      header: t("col.due"),
+      sort: (d) => d.dueAt,
+      cell: (d) => <span className={cn("whitespace-nowrap", d.overdue && "font-semibold text-danger")}>{d.dueAt ? formatDhaka(d.dueAt, locale) : "–"}</span>,
+    },
+    { id: "held", header: t("col.held"), align: "end", sort: (d) => (d.money ? d.held : null), cell: (d) => (d.money ? money(d.held) : <span className="text-muted">{t("findings")}</span>) },
+  ];
+
   return (
-    <>
-      <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
-        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-        <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
-        {ready && !allowed ? (
-          <div className="mt-6 max-w-3xl">
-            <Notice tone="error">{t("noAccess")}</Notice>
+    <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
+      <PageTitle title={t("title")} description={t("intro")} />
+      {ready && !allowed ? (
+        <Notice tone="error" className="mt-6 max-w-3xl">
+          {t("noAccess")}
+        </Notice>
+      ) : (
+        <DetailLayout
+          className="mt-6"
+          open={Boolean(open)}
+          onClose={() => set({ code: null })}
+          title={<span className="font-mono">{open}</span>}
+          pane={open ? <CasePane key={open} code={open} isMaster={Boolean(me?.isMaster)} onChanged={() => qc.invalidateQueries({ queryKey: ["admin-disputes"] })} /> : null}
+          width={520}
+          testId="dispute-pane"
+        >
+          <div className="flex flex-col gap-4">
+            <FilterBar chips={{ value: view, onChange: (v) => set({ view: v }), label: t("title"), options: VIEWS.map((v) => ({ value: v, label: t(`view.${v}`) })), testId: "dispute-views" }} />
+            <DataTable
+              label={t("title")}
+              testId="disputes-queue"
+              columns={columns}
+              rows={list.rows}
+              rowId={(d) => d.code}
+              loading={list.loading}
+              error={list.error}
+              onRetry={list.retry}
+              empty={{ title: t("empty") }}
+              hasMore={list.hasMore}
+              onMore={list.more}
+              busy={list.busy}
+              onRowClick={(d) => set({ code: d.code })}
+              selectedId={open}
+              rowTestId="dispute-row"
+            />
           </div>
-        ) : (
-          <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_520px]">
-            <div>
-              <div className="flex flex-wrap gap-2" role="tablist">
-                {VIEWS.map((v) => (
-                  <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => setView(v)} className={`min-h-11 border-2 px-4 text-sm font-semibold ${view === v ? "border-brand bg-brand text-white" : "border-line"}`} data-testid={`view-${v}`}>
-                    {t(`view.${v}`)}
-                  </button>
-                ))}
-              </div>
-              <div className="mt-4 overflow-x-auto border-2 border-line">
-                <table className="w-full min-w-[720px] text-sm" data-testid="disputes-queue">
-                  <thead className="bg-surface-2 text-left text-xs uppercase tracking-wide text-muted">
-                    <tr>
-                      <th className="px-3 py-2">{t("col.code")}</th>
-                      <th className="px-3 py-2">{t("col.about")}</th>
-                      <th className="px-3 py-2">{t("col.status")}</th>
-                      <th className="px-3 py-2">{t("col.due")}</th>
-                      <th className="px-3 py-2 text-right">{t("col.held")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(q.data?.items ?? []).map((d) => (
-                      <tr key={d.code} className={`cursor-pointer border-t border-line hover:bg-surface-2 ${open === d.code ? "bg-surface-2" : ""}`} onClick={() => setOpen(d.code)} data-testid="dispute-row">
-                        <td className="px-3 py-2 font-mono">{d.code}</td>
-                        <td className="px-3 py-2">
-                          <span className="block font-semibold">{t(`category.${d.category}`)}</span>
-                          <span className="block font-mono text-xs text-muted">{d.sourceRef}</span>
-                        </td>
-                        <td className="px-3 py-2">
-                          <Chip tone={TONE[d.status] ?? "muted"}>{t(`status.${d.status}`)}</Chip>
-                          {d.claimedByMe ? <span className="ml-2 text-xs font-bold text-brand">{t("mine")}</span> : d.claimedBy ? <span className="ml-2 text-xs text-muted">{t("claimed")}</span> : null}
-                        </td>
-                        <td className={`px-3 py-2 ${d.overdue ? "font-bold text-danger" : ""}`}>{d.dueAt ? formatDhaka(d.dueAt, locale) : "–"}</td>
-                        <td className="px-3 py-2 text-right tabular-nums">{d.money ? money(d.held) : t("findings")}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {!q.isPending && !q.data?.items.length ? <p className="p-4 text-muted">{t("empty")}</p> : null}
-              </div>
-            </div>
-            <div>{open ? <CasePane key={open} code={open} isMaster={Boolean(me?.isMaster)} onChanged={() => qc.invalidateQueries({ queryKey: ["admin-disputes"] })} /> : <p className="text-muted">{t("pick")}</p>}</div>
-          </div>
-        )}
-      </div>
-    </>
+        </DetailLayout>
+      )}
+    </div>
   );
 }
 
@@ -124,7 +144,7 @@ function CasePane({ code, isMaster, onChanged }: { code: string; isMaster: boole
     return () => clearInterval(id);
   }, [claimMine, code, qc]);
 
-  if (q.isPending) return <div className="h-96 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <Skeleton className="h-96" />;
   if (q.isError || !q.data) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const { dispute: d, source, evidence, outcomes, previews, limits } = q.data;
   const held = q.data.claim as Claim | null;
@@ -140,20 +160,22 @@ function CasePane({ code, isMaster, onChanged }: { code: string; isMaster: boole
   const policy = d.policy as Record<string, unknown>;
 
   return (
-    <div className="border-2 border-line-strong p-4" data-testid="dispute-case">
+    <div data-testid="dispute-case">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="font-mono text-xs text-muted">{d.code}</p>
-          <p className="text-lg font-extrabold">{t(`category.${d.category}`)}</p>
+          <p className="text-lg font-bold">{t(`category.${d.category}`)}</p>
           <p className="text-sm text-muted">
             {String(src.groundName ?? src.shopName ?? src.tournamentTitle ?? d.sourceRef)}
             {src.start ? ` · ${formatDhaka(String(src.start), locale)}` : ""}
           </p>
         </div>
-        <Chip tone={TONE[d.status] ?? "muted"}>{t(`status.${d.status}`)}</Chip>
+        <StatusBadge status={d.status} domain="dispute">
+          {t(`status.${d.status}`)}
+        </StatusBadge>
       </div>
 
-      <dl className="mt-3 grid grid-cols-2 gap-y-1 text-sm">
+      <dl className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1.5 text-sm">
         <dt className="text-muted">{t("claimant")}</dt>
         <dd className="text-right">{nameOf(q.data.claimant)}</dd>
         {q.data.respondent ? (
@@ -163,38 +185,38 @@ function CasePane({ code, isMaster, onChanged }: { code: string; isMaster: boole
           </>
         ) : null}
         <dt className="text-muted">{t("paid")}</dt>
-        <dd className="text-right tabular-nums">{money(d.paid)}</dd>
+        <dd className="tabular text-right">{money(d.paid)}</dd>
         <dt className="text-muted">{t("held")}</dt>
-        <dd className="text-right font-bold tabular-nums" data-testid="case-held">
+        <dd className="tabular text-right font-bold" data-testid="case-held">
           {d.money ? money(d.held) : t("findings")}
         </dd>
       </dl>
-      <p className="mt-2 border-l-4 border-info pl-3 text-sm">{t(`policy.${d.policyKey.replace(".", "_")}`, { advance: money(Number(policy.advance ?? 0)), fee: Number(policy.feeBps ?? 0) / 100 })}</p>
+      <p className="mt-3 rounded-control bg-info-soft px-3 py-2 text-sm">{t(`policy.${d.policyKey.replace(".", "_")}`, { advance: money(Number(policy.advance ?? 0)), fee: Number(policy.feeBps ?? 0) / 100 })}</p>
       {esports && src.matchId ? (
         <p className="mt-2 text-sm">
-          <Link href={`/admin/esports?match=${String(src.matchId)}`} className="font-semibold text-brand underline">
+          <Link href={`/admin/esports?match=${String(src.matchId)}`} className="font-semibold text-brand-text underline">
             {t("esportsDesk")}
           </Link>
         </p>
       ) : null}
       {d.status === "escalated" ? (
-        <Notice>
+        <Notice tone="warning" className="mt-3">
           {t("recommended", { outcome: d.recommendedOutcome ? t(`outcome.${d.recommendedOutcome}`) : "–", refund: money(d.recommendedRefund as number | null) })} {d.escalationNote ? `“${d.escalationNote}”` : ""}
         </Notice>
       ) : null}
 
-      <h2 className="mt-4 text-sm font-bold uppercase tracking-wide text-muted">{t("timeline")}</h2>
+      <h3 className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted">{t("timeline")}</h3>
       <ol className="mt-2 max-h-80 space-y-2 overflow-y-auto pr-1">
         {evidence.map((e) => (
-          <li key={e.id} className={`border-l-4 pl-3 text-sm ${e.party === "claimant" ? "border-brand" : e.party === "respondent" ? "border-info" : "border-line"}`}>
-            <p className="text-xs font-bold uppercase tracking-wide text-muted">
+          <li key={e.id} className={cn("border-l-2 pl-3 text-sm", e.party === "claimant" ? "border-brand" : e.party === "respondent" ? "border-info" : "border-line")}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               {t(`party.${e.party}`)} · {formatDhaka(e.createdAt, locale)}
             </p>
             {e.text ? <p className="whitespace-pre-line">{e.text}</p> : null}
             {e.file ? (
-              <button type="button" onClick={() => disputesAdmin.openFile(code, e.id)} className="font-semibold text-brand underline" data-testid="open-evidence">
+              <Button type="button" variant="link" onClick={() => disputesAdmin.openFile(code, e.id)} data-testid="open-evidence">
                 {t("openFile", { mime: e.file.mime })}
-              </button>
+              </Button>
             ) : null}
             {e.kind === "system" ? <p className="text-muted">{t(`system.${String((e.systemRef as { type?: string } | null)?.type ?? "snapshot")}`)}</p> : null}
             {e.hidden ? <p className="text-xs text-danger">{t("hidden", { reason: String(e.hiddenReason ?? "") })}</p> : null}
@@ -203,72 +225,67 @@ function CasePane({ code, isMaster, onChanged }: { code: string; isMaster: boole
       </ol>
 
       {active ? (
-        <div className="mt-4 space-y-4 border-t-2 border-line pt-4">
+        <div className="mt-5 space-y-4 border-t border-line pt-4">
           {!held || !claimMine ? (
-            <button type="button" onClick={() => claim.mutate()} disabled={claim.isPending || (Boolean(held) && !claimMine)} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50" data-testid="claim-case">
+            <Button type="button" onClick={() => claim.mutate()} busy={claim.isPending} disabled={Boolean(held) && !claimMine} data-testid="claim-case">
               {held && !claimMine ? t("claimedBy", { name: held.by?.displayName ?? "" }) : t("claim")}
-            </button>
+            </Button>
           ) : (
-            <p className="text-sm font-semibold text-brand">{t("yourClaim", { until: formatDhaka(held.expiresAt, locale) })}</p>
+            <p className="text-sm font-semibold text-brand-text">{t("yourClaim", { until: formatDhaka(held.expiresAt, locale) })}</p>
           )}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               addNote.mutate();
             }}
-            className="flex gap-2"
+            className="flex items-end gap-2"
           >
-            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("notePlaceholder")} aria-label={t("note")} className={`${inputCls} flex-1`} />
-            <button type="submit" disabled={note.trim().length < 2 || addNote.isPending} className="min-h-11 border-2 border-line px-3 font-semibold">
+            <Field id="dispute-note" className="flex-1" label={t("note")} value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("notePlaceholder")} />
+            <Button type="submit" variant="secondary" disabled={note.trim().length < 2} busy={addNote.isPending} className="min-h-12">
               {t("addNote")}
-            </button>
+            </Button>
           </form>
 
           {staffCanDecide || masterCanDecide ? (
             <fieldset className="space-y-2">
-              <legend className="font-bold">{t("outcomeTitle")}</legend>
+              <legend className="mb-1 font-semibold">{t("outcomeTitle")}</legend>
               {choices.map((o) => (
-                <label key={o} className={`flex cursor-pointer items-center justify-between gap-3 border-2 p-2 text-sm ${outcome === o ? "border-brand" : "border-line"}`}>
+                <label key={o} className={cn("flex cursor-pointer items-center justify-between gap-3 rounded-control border p-3 text-sm transition-colors", outcome === o ? "border-brand bg-brand-soft" : "border-line hover:border-line-strong")}>
                   <span className="flex items-center gap-2">
-                    <input type="radio" name="outcome" value={o} checked={outcome === o} onChange={() => setOutcome(o)} data-testid={`outcome-${o}`} />
+                    <input type="radio" name="outcome" value={o} checked={outcome === o} onChange={() => setOutcome(o)} className="size-4 accent-[var(--kg-brand)]" data-testid={`outcome-${o}`} />
                     <span className="font-semibold">{t(`outcome.${o}`)}</span>
                   </span>
-                  {previews[o] && d.money ? <span className="tabular-nums text-muted">{t("moves", { refund: money(previews[o].refund), net: money(previews[o].net), fee: money(previews[o].fee) })}</span> : null}
+                  {previews[o] && d.money ? <span className="tabular text-muted">{t("moves", { refund: money(previews[o].refund), net: money(previews[o].net), fee: money(previews[o].fee) })}</span> : null}
                 </label>
               ))}
-              {outcome === "custom" ? (
-                <input value={custom} onChange={(e) => setCustom(e.target.value)} inputMode="decimal" placeholder={t("customPlaceholder", { max: money(d.held) })} aria-label={t("customRefund")} className={`${inputCls} w-full`} />
-              ) : null}
+              {outcome === "custom" ? <Field id="dispute-custom" label={t("customRefund")} value={custom} onChange={(e) => setCustom(e.target.value)} inputMode="decimal" placeholder={t("customPlaceholder", { max: money(d.held) })} /> : null}
               {plan && d.money ? <p className="text-sm">{t("planLine", { refund: money(plan.refund), net: money(plan.net), fee: money(plan.fee) })}</p> : null}
               {!isMaster && limits && !limits.canRefund ? <p className="text-sm text-muted">{t("noRefundPermission")}</p> : null}
               {!isMaster ? <p className="text-sm text-muted">{t("staffLimit", { limit: money(limits.staffRefundPoisha) })}</p> : null}
-              <label htmlFor="decision-reason" className="block text-sm font-semibold text-muted">
-                {t("reason")}
-              </label>
-              <textarea id="decision-reason" value={reason} onChange={(e) => setReason(e.target.value)} rows={3} maxLength={1000} className="w-full border-2 border-line bg-surface px-3 py-2" />
+              <Textarea id="decision-reason" className="pt-2" label={t("reason")} value={reason} onChange={(e) => setReason(e.target.value)} rows={3} maxLength={1000} />
               {problem ? <Notice tone="error">{t.has(`errors.${problem.code}`) ? t(`errors.${problem.code}`) : problem.title}</Notice> : null}
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 pt-1">
                 {staffCanDecide && !isMaster ? (
                   <>
-                    <button type="button" disabled={!outcome || reason.trim().length < 2 || decide.isPending} onClick={() => decide.mutate()} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50" data-testid="decide">
+                    <Button type="button" disabled={!outcome || reason.trim().length < 2} busy={decide.isPending} onClick={() => decide.mutate()} data-testid="decide">
                       {t("decide")}
-                    </button>
-                    <button type="button" disabled={reason.trim().length < 2 || escalate.isPending} onClick={() => escalate.mutate()} className="min-h-11 border-2 border-line-strong px-4 font-semibold disabled:opacity-50" data-testid="escalate">
+                    </Button>
+                    <Button type="button" variant="secondary" disabled={reason.trim().length < 2} busy={escalate.isPending} onClick={() => escalate.mutate()} data-testid="escalate">
                       {t("escalate")}
-                    </button>
+                    </Button>
                   </>
                 ) : null}
                 {masterCanDecide ? (
-                  <button type="button" disabled={!outcome || reason.trim().length < 2} onClick={() => setAskCode(true)} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50" data-testid="master-decide">
+                  <Button type="button" disabled={!outcome || reason.trim().length < 2} onClick={() => setAskCode(true)} data-testid="master-decide">
                     {t("masterDecide")}
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             </fieldset>
           ) : null}
         </div>
       ) : (
-        <div className="mt-4 border-t-2 border-line pt-4 text-sm">
+        <div className="mt-5 border-t border-line pt-4 text-sm">
           {d.outcome ? (
             <p>
               <span className="font-bold">{t(`outcome.${d.outcome}`)}</span>

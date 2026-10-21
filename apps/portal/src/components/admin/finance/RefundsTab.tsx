@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { Check, X } from "@phosphor-icons/react";
+import { DataTable, FilterBar, Field, type Column } from "@kriraghor/ui/kit";
 import { stepUp } from "@/lib/admin/stepUp";
 import { finance, formatTaka, type Refund } from "@/lib/admin/finance";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka } from "../useAdminMe";
 import type { DeskMe } from "./FinanceDesk";
-import { Chip, DataTable, Field, inputCls, MoreButton, TONE } from "./shared";
+
+type Row = Awaited<ReturnType<typeof finance.refunds>>["items"][number];
 
 const STATUSES = ["pending_master", "approved", "processing", "succeeded", "failed", "manual_required", "rejected"] as const;
 
@@ -17,64 +23,88 @@ export function RefundsTab({ me }: { me: DeskMe }) {
   const t = useTranslations("finance");
   const locale = useLocale();
   const qc = useQueryClient();
-  const [status, setStatus] = useState<Refund["status"] | "">("pending_master");
-  const [deciding, setDeciding] = useState<{ refund: Refund; action: "approve" | "reject" } | null>(null);
+  const { values, set, clear } = useUrlFilters({ status: { default: "pending_master", allowed: ["", ...STATUSES] } });
+  const status = values.status as Refund["status"] | "";
+  const [deciding, setDeciding] = useState<{ refund: Row; action: "approve" | "reject" } | null>(null);
   const [note, setNote] = useState("");
+  const list = useCursorList<Row>(["finance-refunds", status], (cursor) => finance.refunds({ status: status || undefined, cursor }));
 
-  const q = useInfiniteQuery({
-    queryKey: ["finance-refunds", status],
-    initialPageParam: undefined as string | undefined,
-    queryFn: ({ pageParam }) => finance.refunds({ status: status || undefined, cursor: pageParam }),
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
-  });
-  const items = q.data?.pages.flatMap((p) => p.items) ?? [];
+  const columns: Column<Row>[] = [
+    {
+      id: "payment",
+      header: t("payment"),
+      primary: true,
+      sort: (r) => r.payment.code,
+      cell: (r) => (
+        <>
+          <span className="font-mono">{r.payment.code}</span>
+          <span className="block text-xs text-muted">{r.payment.title}</span>
+        </>
+      ),
+    },
+    { id: "amount", header: t("amount"), align: "end", sort: (r) => r.amount, cell: (r) => formatTaka(r.amount, locale) },
+    {
+      id: "reason",
+      header: t("reason"),
+      cell: (r) => (
+        <>
+          {t.has(`reasons.${r.reasonCode}`) ? t(`reasons.${r.reasonCode}`) : r.reasonCode}
+          {r.reasonText ? <span className="block text-xs text-muted">{r.reasonText}</span> : null}
+        </>
+      ),
+    },
+    {
+      id: "status",
+      header: t("status"),
+      sort: (r) => r.status,
+      cell: (r) => (
+        <>
+          <StatusBadge status={r.status}>{t(`refundStatus.${r.status}`)}</StatusBadge>
+          {r.lastError ? <span className="block text-xs text-danger">{r.lastError}</span> : null}
+        </>
+      ),
+    },
+    { id: "source", header: t("source"), hideBelow: "xl", cell: (r) => t(`sources.${r.source}`) },
+    { id: "when", header: t("when"), sort: (r) => r.createdAt, cell: (r) => <span className="whitespace-nowrap">{formatDhaka(r.createdAt, locale)}</span> },
+  ];
 
   return (
-    <div className="mt-6">
-      <Field label={t("status")}>
-        <select value={status} onChange={(e) => setStatus(e.target.value as typeof status)} className={`${inputCls} w-64`}>
-          <option value="">{t("all")}</option>
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {t(`refundStatus.${s}`)}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <DataTable head={[t("payment"), t("amount"), t("reason"), t("status"), t("source"), t("when"), ""]} loading={q.isPending} error={q.isError} empty={!items.length} testId="finance-refunds">
-        {items.map((r) => (
-          <tr key={r.id}>
-            <td className="px-3 py-2">
-              <span className="font-mono">{r.payment.code}</span>
-              <span className="block text-xs text-muted">{r.payment.title}</span>
-            </td>
-            <td className="px-3 py-2 tabular-nums">{formatTaka(r.amount, locale)}</td>
-            <td className="px-3 py-2">
-              {t.has(`reasons.${r.reasonCode}`) ? t(`reasons.${r.reasonCode}`) : r.reasonCode}
-              {r.reasonText ? <span className="block text-xs text-muted">{r.reasonText}</span> : null}
-            </td>
-            <td className="px-3 py-2">
-              <Chip tone={TONE[r.status] ?? "muted"}>{t(`refundStatus.${r.status}`)}</Chip>
-              {r.lastError ? <span className="block text-xs text-danger">{r.lastError}</span> : null}
-            </td>
-            <td className="px-3 py-2">{t(`sources.${r.source}`)}</td>
-            <td className="px-3 py-2 whitespace-nowrap">{formatDhaka(r.createdAt, locale)}</td>
-            <td className="px-3 py-2 whitespace-nowrap">
-              {r.status === "pending_master" && me.isMaster ? (
-                <span className="flex gap-2">
-                  <button type="button" className="min-h-9 border-2 border-brand px-3 font-semibold" onClick={() => setDeciding({ refund: r, action: "approve" })}>
-                    {t("approve")}
-                  </button>
-                  <button type="button" className="min-h-9 border-2 border-line px-3 font-semibold" onClick={() => setDeciding({ refund: r, action: "reject" })}>
-                    {t("reject")}
-                  </button>
-                </span>
-              ) : null}
-            </td>
-          </tr>
-        ))}
-      </DataTable>
-      <MoreButton show={Boolean(q.hasNextPage)} busy={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} />
+    <div className="mt-6 flex flex-col gap-4">
+      <FilterBar
+        selects={[
+          {
+            id: "status",
+            label: t("status"),
+            value: status,
+            onChange: (v) => set({ status: v }),
+            anyLabel: t("all"),
+            options: STATUSES.map((s) => ({ value: s, label: t(`refundStatus.${s}`) })),
+          },
+        ]}
+        onClear={status !== "pending_master" ? clear : undefined}
+      />
+      <DataTable
+        label={t("tabs.refunds")}
+        testId="finance-refunds"
+        columns={columns}
+        rows={list.rows}
+        rowId={(r) => r.id}
+        loading={list.loading}
+        error={list.error}
+        onRetry={list.retry}
+        empty={{ title: t("empty") }}
+        hasMore={list.hasMore}
+        onMore={list.more}
+        busy={list.busy}
+        rowActions={(r) =>
+          r.status === "pending_master" && me.isMaster
+            ? [
+                { label: t("approve"), icon: <Check />, onSelect: () => setDeciding({ refund: r, action: "approve" }) },
+                { label: t("reject"), icon: <X />, danger: true, onSelect: () => setDeciding({ refund: r, action: "reject" }) },
+              ]
+            : []
+        }
+      />
 
       {deciding ? (
         <CodeDialog
@@ -92,10 +122,14 @@ export function RefundsTab({ me }: { me: DeskMe }) {
             await qc.invalidateQueries({ queryKey: ["finance-refunds"] });
           }}
         >
-          <label htmlFor="refund-note" className="mt-4 block text-sm font-semibold text-muted">
-            {deciding.action === "reject" ? t("noteRequired") : t("note")}
-          </label>
-          <input id="refund-note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} className={`${inputCls} mt-1 w-full`} />
+          <Field
+            id="refund-note"
+            className="mt-4"
+            label={deciding.action === "reject" ? t("noteRequired") : t("note")}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            maxLength={500}
+          />
         </CodeDialog>
       ) : null}
     </div>

@@ -3,18 +3,18 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
+import { Button, DataTable, Field, FilterBar, Notice, PageTitle, Select, Skeleton, Stat, type Column } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
 import { shopDesk, type InventoryRow, type ReasonCode } from "@/lib/vendor/market";
-import { Notice } from "@kriraghor/ui/primitives";
-import { Chip, inputCls } from "../../admin/finance/shared";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { Gate } from "./ShopDesk";
 
-const FILTERS = ["all", "low", "out", "mto", "blocked"] as const;
+const FILTERS = ["low", "out", "mto", "blocked"] as const;
 const REASONS: ReasonCode[] = ["received", "count_correction", "damaged", "lost", "other"];
-const STOCK_TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { in_stock: "ok", low: "warn", out: "bad", out_hidden: "bad", mto: "muted", blocked: "bad" };
+type AdjustBody = Parameters<typeof shopDesk.adjust>[1];
 
 /**
  * /vendor/inventory (M12 §4 "Inventory"): stock value at selling price, out of stock, running low,
@@ -23,88 +23,21 @@ const STOCK_TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { in_stock: 
  */
 export function InventoryDesk() {
   const t = useTranslations("vendorMarket");
+  const tk = useTranslations("kit.table");
   const locale = useLocale();
-  const initial = useSearchParams().get("status");
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>((FILTERS as readonly string[]).includes(initial ?? "") ? (initial as (typeof FILTERS)[number]) : "all");
-  const q = useQuery({ queryKey: ["vendor-inventory", filter], queryFn: () => shopDesk.inventory(filter === "all" ? undefined : filter), retry: false });
-  const problem = problemOf(q.error);
-  if (problem && ["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code)) return <Gate />;
-  if (problem?.code === "SHOP_REQUIRED")
-    return (
-      <section className="mx-auto max-w-3xl px-5 py-10">
-        <Notice>{t("products.noShop")}</Notice>
-        <Link href="/vendor/shop" className="mt-4 inline-block font-semibold text-brand underline">
-          {t("products.openShop")}
-        </Link>
-      </section>
-    );
-  const k = q.data?.kpis;
-  return (
-    <section className="mx-auto max-w-[1100px] px-5 py-10">
-      <h1 className="text-3xl font-extrabold">{t("inventory.title")}</h1>
-      <p className="mt-1 max-w-2xl text-muted">{t("inventory.lead")}</p>
-      <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5" data-testid="inventory-kpis">
-        {[
-          ["value", k ? formatTaka(k.stockValuePoisha, locale) : "–"],
-          ["out", k?.outOfStock ?? "–"],
-          ["low", k?.runningLow ?? "–"],
-          ["held", k?.heldForOrders ?? "–"],
-          ["blocked", k?.blocked ?? "–"],
-        ].map(([key, value]) => (
-          <div key={key} className="border-2 border-line bg-surface p-3">
-            <dt className="text-xs font-bold uppercase text-muted">{t(`inventory.kpi.${key}`)}</dt>
-            <dd className="mt-1 text-xl font-extrabold tabular-nums">{value}</dd>
-          </div>
-        ))}
-      </dl>
-      <div role="tablist" aria-label={t("inventory.title")} className="mt-6 flex flex-wrap gap-2">
-        {FILTERS.map((f) => (
-          <button key={f} type="button" role="tab" aria-selected={filter === f} onClick={() => setFilter(f)} className={`min-h-11 border-2 px-3 text-sm font-bold ${filter === f ? "border-brand text-ink" : "border-line text-muted"}`}>
-            {t(`inventory.filter.${f}`)}
-          </button>
-        ))}
-      </div>
-      {q.isPending ? <div className="mt-6 h-48 animate-pulse bg-surface-2" /> : null}
-      {q.data && !q.data.items.length ? <p className="mt-8 border-2 border-dashed border-line p-8 text-center text-muted">{t("inventory.empty")}</p> : null}
-      {q.data?.items.length ? (
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-sm" data-testid="inventory-table">
-            <thead>
-              <tr className="border-b-2 border-line">
-                <th className="py-2 pr-3">{t("inventory.col.product")}</th>
-                <th className="py-2 pr-3">{t("inventory.col.variant")}</th>
-                <th className="py-2 pr-3 text-right">{t("inventory.col.onHand")}</th>
-                <th className="py-2 pr-3 text-right">{t("inventory.col.held")}</th>
-                <th className="py-2 pr-3 text-right">{t("inventory.col.available")}</th>
-                <th className="py-2 pr-3">{t("inventory.col.status")}</th>
-                <th className="py-2" />
-              </tr>
-            </thead>
-            <tbody>
-              {q.data.items.map((r) => (
-                <Row key={r.id} r={r} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
-function Row({ r }: { r: InventoryRow }) {
-  const t = useTranslations("vendorMarket");
   const qc = useQueryClient();
-  const [open, setOpen] = useState<"set" | "history" | null>(null);
-  const [setTo, setSetTo] = useState(String(r.onHand));
-  const [reason, setReason] = useState<ReasonCode>("count_correction");
-  const [text, setText] = useState("");
-  const [msg, setMsg] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const history = useQuery({ queryKey: ["vendor-movements", r.id], queryFn: () => shopDesk.movements(r.id), enabled: open === "history" });
-  const adjust = async (body: Parameters<typeof shopDesk.adjust>[1]) => {
+  const { values, set, clear } = useUrlFilters({ status: { default: "", allowed: ["", ...FILTERS] } });
+  const filter = values.status as (typeof FILTERS)[number] | "";
+  const [open, setOpen] = useState<{ id: string; kind: "set" | "history" } | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [msg, setMsg] = useState<{ id: string; text: string } | null>(null);
+  const q = useQuery({ queryKey: ["vendor-inventory", filter || "all"], queryFn: () => shopDesk.inventory(filter || undefined), retry: false });
+  const problem = problemOf(q.error);
+
+  const toggle = (id: string, kind: "set" | "history") => setOpen((o) => (o?.id === id && o.kind === kind ? null : { id, kind }));
+  async function adjust(r: InventoryRow, body: AdjustBody) {
     setMsg(null);
-    setBusy(true);
+    setBusyId(r.id);
     try {
       await shopDesk.adjust(r.id, body);
       await qc.invalidateQueries({ queryKey: ["vendor-inventory"] });
@@ -112,116 +45,193 @@ function Row({ r }: { r: InventoryRow }) {
       setOpen(null);
     } catch (err) {
       const p = problemOf(err);
-      setMsg(p?.errors?.length ? p.errors.map((e) => e.message).join(" · ") : p?.title ?? t("failed"));
+      setMsg({ id: r.id, text: p?.errors?.length ? p.errors.map((e) => e.message).join(" · ") : (p?.title ?? t("failed")) });
     } finally {
-      setBusy(false);
+      setBusyId(null);
     }
-  };
-  const mto = r.stock.code === "mto";
-  return (
-    <>
-      <tr className="border-b border-line" data-testid="inventory-row">
-        <td className="py-2 pr-3">
-          <Link href={`/vendor/products/${r.product.id}`} className="font-semibold hover:underline">
-            {r.product.title}
-          </Link>
-        </td>
-        <td className="py-2 pr-3">{r.label}</td>
-        <td className="py-2 pr-3 text-right tabular-nums">{mto ? "–" : r.onHand}</td>
-        <td className="py-2 pr-3 text-right tabular-nums">{mto ? "–" : r.held}</td>
-        <td className="py-2 pr-3 text-right font-bold tabular-nums">{mto ? "–" : r.available}</td>
-        <td className="py-2 pr-3">
-          <Chip tone={STOCK_TONE[r.stock.code] ?? "muted"}>{t(`stock.${r.stock.code}`, { days: r.stock.days ?? 0 })}</Chip>
-        </td>
-        <td className="py-2 text-right">
+  }
+
+  if (problem && ["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code)) return <Gate />;
+  if (problem?.code === "SHOP_REQUIRED")
+    return (
+      <section className="mx-auto max-w-3xl px-5 py-10">
+        <Notice>{t("products.noShop")}</Notice>
+        <Link href="/vendor/shop" className="mt-4 inline-block font-semibold text-brand-text underline">
+          {t("products.openShop")}
+        </Link>
+      </section>
+    );
+  const k = q.data?.kpis;
+
+  const columns: Column<InventoryRow>[] = [
+    {
+      id: "product",
+      header: t("inventory.col.product"),
+      primary: true,
+      sort: (r) => r.product.title,
+      cell: (r) => (
+        <Link href={`/vendor/products/${r.product.id}`} className="font-semibold hover:underline">
+          {r.product.title}
+        </Link>
+      ),
+    },
+    { id: "variant", header: t("inventory.col.variant"), sort: (r) => r.label, cell: (r) => r.label },
+    { id: "onHand", header: t("inventory.col.onHand"), align: "end", sort: (r) => (r.stock.code === "mto" ? null : r.onHand), cell: (r) => (r.stock.code === "mto" ? "–" : r.onHand) },
+    { id: "held", header: t("inventory.col.held"), align: "end", hideBelow: "lg", sort: (r) => (r.stock.code === "mto" ? null : r.held), cell: (r) => (r.stock.code === "mto" ? "–" : r.held) },
+    { id: "available", header: t("inventory.col.available"), align: "end", sort: (r) => (r.stock.code === "mto" ? null : r.available), cell: (r) => <span className="font-semibold">{r.stock.code === "mto" ? "–" : r.available}</span> },
+    {
+      id: "status",
+      header: t("inventory.col.status"),
+      sort: (r) => r.stock.code,
+      cell: (r) => (
+        <StatusBadge status={r.stock.code} domain="stock">
+          {t(`stock.${r.stock.code}`, { days: r.stock.days ?? 0 })}
+        </StatusBadge>
+      ),
+    },
+    {
+      id: "actions",
+      header: <span className="sr-only">{tk("actions")}</span>,
+      label: tk("actions"),
+      align: "end",
+      cell: (r) => {
+        const busy = busyId === r.id;
+        return (
           <span className="inline-flex flex-wrap justify-end gap-1">
-            {mto ? null : (
+            {r.stock.code === "mto" ? null : (
               <>
-                <button type="button" disabled={busy || r.available <= 0} className="min-h-9 min-w-9 border-2 border-line font-bold disabled:opacity-40" aria-label={t("inventory.minus")} onClick={() => void adjust({ delta: -1, reasonCode: "count_correction" })} data-testid="minus-one">
+                <Button type="button" variant="secondary" size="sm" disabled={busy || r.available <= 0} aria-label={t("inventory.minus")} onClick={() => void adjust(r, { delta: -1, reasonCode: "count_correction" })} data-testid="minus-one">
                   −1
-                </button>
-                <button type="button" disabled={busy} className="min-h-9 min-w-9 border-2 border-line font-bold" aria-label={t("inventory.plus")} onClick={() => void adjust({ delta: 1, reasonCode: "received" })} data-testid="plus-one">
+                </Button>
+                <Button type="button" variant="secondary" size="sm" disabled={busy} aria-label={t("inventory.plus")} onClick={() => void adjust(r, { delta: 1, reasonCode: "received" })} data-testid="plus-one">
                   +1
-                </button>
-                <button type="button" disabled={busy} className="min-h-9 border-2 border-line px-2 font-bold" onClick={() => void adjust({ delta: 10, reasonCode: "received" })} data-testid="plus-ten">
+                </Button>
+                <Button type="button" variant="secondary" size="sm" disabled={busy} onClick={() => void adjust(r, { delta: 10, reasonCode: "received" })} data-testid="plus-ten">
                   +10
-                </button>
-                <button type="button" className="min-h-9 border-2 border-line px-2 text-xs font-semibold" onClick={() => setOpen(open === "set" ? null : "set")} data-testid="set-count">
+                </Button>
+                <Button type="button" variant="ghost" size="sm" aria-expanded={open?.id === r.id && open.kind === "set"} onClick={() => toggle(r.id, "set")} data-testid="set-count">
                   {t("inventory.setCount")}
-                </button>
+                </Button>
               </>
             )}
-            <button type="button" className="min-h-9 border-2 border-line px-2 text-xs font-semibold" onClick={() => setOpen(open === "history" ? null : "history")}>
+            <Button type="button" variant="ghost" size="sm" aria-expanded={open?.id === r.id && open.kind === "history"} onClick={() => toggle(r.id, "history")}>
               {t("inventory.history")}
-            </button>
+            </Button>
           </span>
-        </td>
-      </tr>
-      {open === "set" ? (
-        <tr className="border-b border-line bg-surface-2">
-          <td colSpan={7} className="p-3">
-            <form
-              className="flex flex-wrap items-end gap-3"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void adjust({ setTo: Number(setTo), reasonCode: reason, ...(text.trim() ? { reasonText: text.trim() } : {}) });
-              }}
-            >
-              <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-                {t("inventory.newCount")}
-                <input type="number" min={r.held} value={setTo} onChange={(e) => setSetTo(e.target.value)} className={inputCls} data-testid="set-to" />
-              </label>
-              <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-                {t("inventory.reason")}
-                <select value={reason} onChange={(e) => setReason(e.target.value as ReasonCode)} className={inputCls}>
-                  {REASONS.map((x) => (
-                    <option key={x} value={x}>
-                      {t(`inventory.reasons.${x}`)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-                {t("inventory.note")}
-                <input value={text} onChange={(e) => setText(e.target.value)} maxLength={200} required={reason === "other"} className={inputCls} />
-              </label>
-              <button type="submit" disabled={busy} className="min-h-11 border-2 border-brand px-4 text-sm font-bold" data-testid="save-count">
-                {t("save")}
-              </button>
-              {msg ? <span className="text-sm text-danger">{msg}</span> : null}
-            </form>
-          </td>
-        </tr>
+        );
+      },
+    },
+  ];
+
+  const expanded = (r: InventoryRow) => {
+    const error = msg?.id === r.id ? msg.text : null;
+    if (open?.id === r.id && open.kind === "set") return <SetCount r={r} busy={busyId === r.id} error={error} onSave={(body) => void adjust(r, body)} />;
+    if (open?.id === r.id && open.kind === "history") return <History variantId={r.id} />;
+    return error ? (
+      <p role="alert" className="text-sm text-danger">
+        {error}
+      </p>
+    ) : null;
+  };
+
+  const kpis: [string, string | number][] = [
+    ["value", k ? formatTaka(k.stockValuePoisha, locale) : "–"],
+    ["out", k?.outOfStock ?? "–"],
+    ["low", k?.runningLow ?? "–"],
+    ["held", k?.heldForOrders ?? "–"],
+    ["blocked", k?.blocked ?? "–"],
+  ];
+
+  return (
+    <section className="mx-auto max-w-[1320px] px-5 py-10">
+      <PageTitle title={t("inventory.title")} description={t("inventory.lead")} />
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5" data-testid="inventory-kpis">
+        {kpis.map(([key, value]) => (
+          <Stat key={key} label={t(`inventory.kpi.${key}`)} value={value} className="p-4 sm:p-4 [&>p]:text-2xl" />
+        ))}
+      </div>
+      <div className="mt-6 flex flex-col gap-4">
+        <FilterBar
+          chips={{
+            value: filter,
+            onChange: (v) => {
+              setOpen(null);
+              set({ status: v });
+            },
+            label: t("inventory.title"),
+            options: [{ value: "", label: t("inventory.filter.all") }, ...FILTERS.map((f) => ({ value: f, label: t(`inventory.filter.${f}`) }))],
+          }}
+          onClear={clear}
+        />
+        <DataTable
+          label={t("inventory.title")}
+          testId="inventory-table"
+          columns={columns}
+          rows={q.data?.items}
+          rowId={(r) => r.id}
+          loading={q.isPending}
+          error={q.error}
+          onRetry={() => void q.refetch()}
+          empty={{ title: t("inventory.empty") }}
+          rowTestId="inventory-row"
+          expanded={expanded}
+        />
+      </div>
+    </section>
+  );
+}
+
+function SetCount({ r, busy, error, onSave }: { r: InventoryRow; busy: boolean; error: string | null; onSave: (body: AdjustBody) => void }) {
+  const t = useTranslations("vendorMarket");
+  const [setTo, setSetTo] = useState(String(r.onHand));
+  const [reason, setReason] = useState<ReasonCode>("count_correction");
+  const [text, setText] = useState("");
+  return (
+    <form
+      className="flex flex-wrap items-end gap-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSave({ setTo: Number(setTo), reasonCode: reason, ...(text.trim() ? { reasonText: text.trim() } : {}) });
+      }}
+    >
+      <Field id={`set-to-${r.id}`} type="number" min={r.held} label={t("inventory.newCount")} value={setTo} onChange={(e) => setSetTo(e.target.value)} className="w-32" data-testid="set-to" />
+      <Select id={`set-reason-${r.id}`} label={t("inventory.reason")} value={reason} onChange={(e) => setReason(e.target.value as ReasonCode)} className="w-52">
+        {REASONS.map((x) => (
+          <option key={x} value={x}>
+            {t(`inventory.reasons.${x}`)}
+          </option>
+        ))}
+      </Select>
+      <Field id={`set-note-${r.id}`} label={t("inventory.note")} value={text} onChange={(e) => setText(e.target.value)} maxLength={200} required={reason === "other"} className="min-w-48 flex-1" />
+      <Button type="submit" busy={busy} data-testid="save-count">
+        {t("save")}
+      </Button>
+      {error ? (
+        <p role="alert" className="w-full text-sm text-danger">
+          {error}
+        </p>
       ) : null}
-      {open === "history" ? (
-        <tr className="border-b border-line bg-surface-2">
-          <td colSpan={7} className="p-3">
-            {history.isPending ? (
-              <div className="h-16 animate-pulse bg-surface" />
-            ) : (
-              <ul className="space-y-1 text-sm" data-testid="movements">
-                {(history.data?.items ?? []).map((m) => (
-                  <li key={m.id} className="flex flex-wrap gap-3">
-                    <span className="text-muted">{new Date(m.createdAt).toLocaleString()}</span>
-                    <span className="font-semibold">{t(`inventory.type.${m.type}`)}</span>
-                    <span className="tabular-nums">{m.deltaOnHand > 0 ? `+${m.deltaOnHand}` : m.deltaOnHand}</span>
-                    <span className="text-muted">{t("inventory.after", { onHand: m.onHandAfter, held: m.heldAfter })}</span>
-                    {m.reasonCode ? <span>{t(`inventory.reasons.${m.reasonCode}`)}</span> : null}
-                    {m.reasonText ? <span className="text-muted">“{m.reasonText}”</span> : null}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </td>
-        </tr>
-      ) : null}
-      {msg && open !== "set" ? (
-        <tr>
-          <td colSpan={7} className="pb-2 text-sm text-danger">
-            {msg}
-          </td>
-        </tr>
-      ) : null}
-    </>
+    </form>
+  );
+}
+
+function History({ variantId }: { variantId: string }) {
+  const t = useTranslations("vendorMarket");
+  const locale = useLocale();
+  const history = useQuery({ queryKey: ["vendor-movements", variantId], queryFn: () => shopDesk.movements(variantId) });
+  if (history.isPending) return <Skeleton className="h-16" />;
+  return (
+    <ul className="space-y-1 text-sm" data-testid="movements">
+      {(history.data?.items ?? []).map((m) => (
+        <li key={m.id} className="flex flex-wrap gap-3">
+          <span className="text-muted">{new Date(m.createdAt).toLocaleString(locale === "bn" ? "bn-BD" : "en-GB", { timeZone: "Asia/Dhaka" })}</span>
+          <span className="font-semibold">{t(`inventory.type.${m.type}`)}</span>
+          <span className="tabular">{m.deltaOnHand > 0 ? `+${m.deltaOnHand}` : m.deltaOnHand}</span>
+          <span className="text-muted">{t("inventory.after", { onHand: m.onHandAfter, held: m.heldAfter })}</span>
+          {m.reasonCode ? <span>{t(`inventory.reasons.${m.reasonCode}`)}</span> : null}
+          {m.reasonText ? <span className="text-muted">“{m.reasonText}”</span> : null}
+        </li>
+      ))}
+    </ul>
   );
 }

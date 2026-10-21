@@ -1,37 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { ArrowCounterClockwise, Prohibit } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
+import { Button, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, ReasonDialog, Skeleton, Tabs, type Column, type MenuItem } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
 import { CANCELLABLE, hireAdmin, type ProfileStatus, type RequestStatus, type StaffJob, type StaffProfile } from "@/lib/admin/hire";
 import { stepUp } from "@/lib/admin/stepUp";
-import { Notice } from "@kriraghor/ui/primitives";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
-import { Chip, inputCls } from "../finance/shared";
 
-const REQUEST_STATUSES = ["", "pending", "accepted_unpaid", "confirmed", "completed", "declined", "expired", "withdrawn", "lapsed", "cancelled"] as const;
-const PROFILE_STATUSES = ["", "pending_review", "live", "paused", "suspended", "changes_requested", "rejected"] as const;
-type Tone = "ok" | "warn" | "bad" | "muted";
-const TONE: Record<string, Tone> = {
-  pending: "warn",
-  accepted_unpaid: "warn",
-  confirmed: "ok",
-  completed: "ok",
-  reserved: "warn",
-  scheduled: "warn",
-  checked_in: "warn",
-  live: "ok",
-  completed_marked: "warn",
-  released: "ok",
-  disputed: "bad",
-  suspended: "bad",
-  rejected: "bad",
-  changes_requested: "bad",
-  pending_review: "warn",
-};
+type RequestRow = Awaited<ReturnType<typeof hireAdmin.requests>>["items"][number];
+type ProfileRow = Awaited<ReturnType<typeof hireAdmin.profiles>>["items"][number];
+
+const REQUEST_STATUSES = ["pending", "accepted_unpaid", "confirmed", "completed", "declined", "expired", "withdrawn", "lapsed", "cancelled"] as const;
+const PROFILE_STATUSES = ["pending_review", "live", "paused", "suspended", "changes_requested", "rejected"] as const;
+const TABS = ["requests", "profiles"] as const;
 type Hold = { held?: number; released?: number; refunded?: number; status?: string; available?: number } | null;
 const TIMES = ["checkedInAt", "startedAt", "completedAt", "releasedAt", "cancelledAt"] as const;
 
@@ -42,152 +31,164 @@ const TIMES = ["checkedInAt", "startedAt", "completedAt", "releasedAt", "cancell
  * reason; the review itself happens on the Moderation desk.
  */
 export function HireAdmin() {
-  const t = useTranslations("hireAdmin");
-  const [tab, setTab] = useState<"requests" | "profiles">("requests");
+  // The tab, the filters and the open request live in the URL (useSearchParams), so the desk renders inside Suspense.
   return (
-    <>
-      <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-8">
-        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-        <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
-        <div className="mt-6 flex gap-2" role="tablist">
-          {(["requests", "profiles"] as const).map((k) => (
-            <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`min-h-11 border-2 px-4 font-bold ${tab === k ? "border-brand bg-brand text-white" : "border-line"}`} data-testid={`hire-tab-${k}`}>
-              {t(`tab.${k}`)}
-            </button>
-          ))}
-        </div>
-        {tab === "requests" ? <Requests /> : <Profiles />}
-      </div>
-    </>
+    <Suspense fallback={<Skeleton className="mx-auto mt-10 h-64 max-w-[1320px]" />}>
+      <Desk />
+    </Suspense>
+  );
+}
+
+function Desk() {
+  const t = useTranslations("hireAdmin");
+  const { values, set } = useUrlFilters({ tab: { default: "requests", allowed: TABS } });
+  return (
+    <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
+      <PageTitle title={t("title")} description={t("intro")} />
+      <Tabs
+        className="mt-6"
+        label={t("title")}
+        value={values.tab}
+        onValueChange={(v) => set({ tab: v, status: null, q: null, code: null, id: null })}
+        items={TABS.map((k) => ({ value: k, label: t(`tab.${k}`), testId: `hire-tab-${k}`, content: k === "requests" ? <Requests /> : <Profiles /> }))}
+      />
+    </div>
   );
 }
 
 function Requests() {
   const t = useTranslations("hireAdmin");
   const locale = useLocale();
-  const qc = useQueryClient();
-  const { ready, me } = useAdminMe();
-  const [status, setStatus] = useState<(typeof REQUEST_STATUSES)[number]>("");
-  const [code, setCode] = useState("");
-  const [search, setSearch] = useState("");
-  const [open, setOpen] = useState<string | null>(null);
-  const [cancelling, setCancelling] = useState<StaffJob | null>(null);
-  const [reason, setReason] = useState("");
-  const list = useQuery({ queryKey: ["admin-hire-requests", status, search], queryFn: () => hireAdmin.requests({ code: search || undefined, status: (status || undefined) as RequestStatus | undefined }), enabled: ready });
-  const detail = useQuery({ queryKey: ["admin-hire-request", open], queryFn: () => hireAdmin.request(open!), enabled: ready && Boolean(open) });
+  const { ready } = useAdminMe();
+  const { values, set, clear, params } = useUrlFilters({ status: { default: "", allowed: ["", ...REQUEST_STATUSES] }, code: { default: "" } });
+  const status = values.status as RequestStatus | "";
+  const search = values.code;
+  const open = params.get("id");
+  const list = useCursorList<RequestRow>(["admin-hire-requests", status, search], (cursor) => hireAdmin.requests({ code: search || undefined, status: status || undefined, cursor }), { enabled: ready });
   const money = (n: number | undefined) => formatTaka(n ?? 0, locale);
 
+  const columns: Column<RequestRow>[] = [
+    { id: "code", header: t("col.request"), primary: true, sort: (r) => r.code, cell: (r) => <span className="font-mono font-semibold">{r.code}</span> },
+    {
+      id: "status",
+      header: t("status"),
+      sort: (r) => r.status,
+      cell: (r) => (
+        <StatusBadge status={r.status} domain="hire">
+          {t(`requestStatus.${r.status}`)}
+        </StatusBadge>
+      ),
+    },
+    { id: "jobs", header: t("col.jobs"), align: "end", sort: (r) => r.jobs, cell: (r) => t("jobsCount", { n: r.jobs }) },
+    { id: "total", header: t("col.total"), align: "end", sort: (r) => r.total, cell: (r) => money(r.total) },
+    { id: "created", header: t("col.created"), hideBelow: "lg", sort: (r) => r.createdAt, cell: (r) => <span className="whitespace-nowrap text-muted">{r.createdAt ? formatDhaka(r.createdAt, locale) : "–"}</span> },
+  ];
+
   return (
-    <>
-      <form
-        className="mt-6 flex flex-wrap items-end gap-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setSearch(code.trim().toUpperCase());
-        }}
-      >
-        <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-          {t("code")}
-          <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="HR-26-000123" className={inputCls} data-testid="hire-code" />
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-          {t("status")}
-          <select value={status} onChange={(e) => setStatus(e.target.value as (typeof REQUEST_STATUSES)[number])} className={inputCls}>
-            {REQUEST_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s ? t(`requestStatus.${s}`) : t("all")}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="submit" className="min-h-11 border-2 border-brand bg-brand px-4 font-bold text-white">
-          {t("find")}
-        </button>
-      </form>
-      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
-        <ul className="flex flex-col gap-2" data-testid="hire-requests">
-          {list.isPending ? <li className="h-32 animate-pulse bg-surface-2" /> : null}
-          {list.data && !list.data.items.length ? <li className="text-muted">{t("none")}</li> : null}
-          {(list.data?.items ?? []).map((r) => (
-            <li key={r.id}>
-              <button type="button" onClick={() => setOpen(r.code)} className={`block w-full border-2 p-3 text-left ${open === r.code ? "border-brand" : "border-line hover:border-brand"}`}>
-                <div className="flex justify-between gap-2">
-                  <span className="font-bold">{r.code}</span>
-                  <span className="tabular-nums">{money(r.total)}</span>
-                </div>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted">
-                  <Chip tone={TONE[r.status] ?? "muted"}>{t(`requestStatus.${r.status}`)}</Chip>
-                  {t("jobsCount", { n: r.jobs })} · {formatDhaka(r.createdAt, locale)}
-                </div>
-              </button>
-            </li>
-          ))}
-        </ul>
-        <div>
-          {open && detail.isPending ? <div className="h-64 animate-pulse bg-surface-2" /> : null}
-          {detail.isError ? <Notice tone="error">{t("failed")}</Notice> : null}
-          {detail.data ? (
-            <div className="border-2 border-line" data-testid="hire-request-detail">
-              <div className="border-b-2 border-line px-4 py-3">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-xl font-extrabold">{detail.data.code}</p>
-                  <Chip tone={TONE[detail.data.status] ?? "muted"}>{t(`requestStatus.${detail.data.status}`)}</Chip>
-                </div>
-                <p className="text-sm text-muted">{detail.data.profile.headline}</p>
-                <p className="mt-1 text-sm">{t("money", { total: money(detail.data.money.total), fee: money(detail.data.money.fee), net: money(detail.data.money.net), pct: detail.data.money.feeBps / 100 })}</p>
-              </div>
-              {detail.data.jobs.map((j) => {
-                const hold = j.escrow as Hold;
-                return (
-                  <section key={j.id} className="border-b-2 border-line px-4 py-3 last:border-b-0" data-testid="staff-job">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="font-bold">
-                        {j.code} · {formatDhaka(j.start, locale)}
-                        {j.format ? ` · ${j.format}` : ""}
-                      </p>
-                      <Chip tone={TONE[j.status] ?? "muted"}>{t(`jobStatus.${j.status}`)}</Chip>
-                    </div>
-                    <p className="mt-1 text-sm text-muted">{j.venue.text}</p>
-                    <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
-                      <div>
-                        <dt className="text-muted">{t("quote")}</dt>
-                        <dd className="tabular-nums">{money(j.money.quote)}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-muted">{t("held")}</dt>
-                        <dd className="tabular-nums">{hold ? `${money(hold.available)} · ${hold.status}` : "—"}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-muted">{t("released")}</dt>
-                        <dd className="tabular-nums">{money(j.money.released)}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-muted">{t("refunded")}</dt>
-                        <dd className="tabular-nums">{money(j.money.refunded)}</dd>
-                      </div>
-                    </dl>
-                    <ol className="mt-2 text-xs text-muted">
-                      {TIMES.filter((k) => j[k]).map((k) => (
-                        <li key={k}>
-                          {t(`at.${k}`)}: {formatDhaka(j[k], locale)}
-                          {k === "checkedInAt" && j.late ? ` (${t("late")})` : ""}
-                        </li>
-                      ))}
-                    </ol>
-                    {me?.isMaster && CANCELLABLE.includes(j.status) ? (
-                      <button type="button" className="mt-3 min-h-11 border-2 border-danger px-4 font-semibold text-danger" onClick={() => setCancelling(j)} data-testid="hire-platform-cancel">
-                        {t("cancel")}
-                      </button>
-                    ) : null}
-                  </section>
-                );
-              })}
-            </div>
-          ) : open ? null : (
-            <p className="text-muted">{t("pick")}</p>
-          )}
-        </div>
+    <DetailLayout
+      open={Boolean(open)}
+      onClose={() => set({ id: null })}
+      title={<span className="font-mono">{open}</span>}
+      pane={open ? <RequestPane key={open} code={open} /> : null}
+      width={520}
+      testId="hire-request-detail"
+    >
+      <div className="flex flex-col gap-4">
+        <FilterBar
+          search={{ value: search, onChange: (v) => set({ code: v.toUpperCase(), id: null }), label: t("code"), placeholder: "HR-26-000123", testId: "hire-code" }}
+          selects={[{ id: "status", label: t("status"), value: status, onChange: (v) => set({ status: v }), anyLabel: t("all"), options: REQUEST_STATUSES.map((s) => ({ value: s, label: t(`requestStatus.${s}`) })) }]}
+          onClear={clear}
+        />
+        <DataTable
+          label={t("tab.requests")}
+          testId="hire-requests"
+          columns={columns}
+          rows={list.rows}
+          rowId={(r) => r.code}
+          loading={list.loading}
+          error={list.error}
+          onRetry={list.retry}
+          empty={{ title: t("none") }}
+          hasMore={list.hasMore}
+          onMore={list.more}
+          busy={list.busy}
+          onRowClick={(r) => set({ id: r.code })}
+          selectedId={open}
+        />
       </div>
+    </DetailLayout>
+  );
+}
+
+function RequestPane({ code }: { code: string }) {
+  const t = useTranslations("hireAdmin");
+  const locale = useLocale();
+  const qc = useQueryClient();
+  const { ready, me } = useAdminMe();
+  const [cancelling, setCancelling] = useState<StaffJob | null>(null);
+  const [reason, setReason] = useState("");
+  const detail = useQuery({ queryKey: ["admin-hire-request", code], queryFn: () => hireAdmin.request(code), enabled: ready });
+  const money = (n: number | undefined) => formatTaka(n ?? 0, locale);
+  if (detail.isError) return <Notice tone="error">{t("failed")}</Notice>;
+  if (!detail.data) return <Skeleton className="h-64" />;
+  const r = detail.data;
+  return (
+    <div className="flex flex-col gap-4">
+      <div>
+        <StatusBadge status={r.status} domain="hire">
+          {t(`requestStatus.${r.status}`)}
+        </StatusBadge>
+        <p className="mt-2 text-sm text-muted">{r.profile.headline}</p>
+        <p className="mt-1 text-sm tabular">{t("money", { total: money(r.money.total), fee: money(r.money.fee), net: money(r.money.net), pct: r.money.feeBps / 100 })}</p>
+      </div>
+      {r.jobs.map((j) => {
+        const hold = j.escrow as Hold;
+        return (
+          <section key={j.id} className="rounded-card border border-line p-4" data-testid="staff-job">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="font-semibold">
+                <span className="font-mono">{j.code}</span> · {formatDhaka(j.start, locale)}
+                {j.format ? ` · ${j.format}` : ""}
+              </p>
+              <StatusBadge status={j.status} domain="hire">
+                {t(`jobStatus.${j.status}`)}
+              </StatusBadge>
+            </div>
+            <p className="mt-1 text-sm text-muted">{j.venue.text}</p>
+            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div>
+                <dt className="text-muted">{t("quote")}</dt>
+                <dd className="tabular">{money(j.money.quote)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted">{t("held")}</dt>
+                <dd className="tabular">{hold ? `${money(hold.available)} · ${hold.status}` : "–"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted">{t("released")}</dt>
+                <dd className="tabular">{money(j.money.released)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted">{t("refunded")}</dt>
+                <dd className="tabular">{money(j.money.refunded)}</dd>
+              </div>
+            </dl>
+            <ol className="mt-3 text-xs text-muted">
+              {TIMES.filter((k) => j[k]).map((k) => (
+                <li key={k}>
+                  {t(`at.${k}`)}: {formatDhaka(j[k], locale)}
+                  {k === "checkedInAt" && j.late ? ` (${t("late")})` : ""}
+                </li>
+              ))}
+            </ol>
+            {me?.isMaster && CANCELLABLE.includes(j.status) ? (
+              <Button type="button" variant="danger" size="sm" className="mt-3" onClick={() => setCancelling(j)} data-testid="hire-platform-cancel">
+                {t("cancel")}
+              </Button>
+            ) : null}
+          </section>
+        );
+      })}
       {cancelling ? (
         <CodeDialog
           title={t("cancelTitle", { code: cancelling.code })}
@@ -199,16 +200,13 @@ function Requests() {
             await hireAdmin.cancelJob(cancelling.id, reason.trim(), token);
             setCancelling(null);
             await qc.invalidateQueries({ queryKey: ["admin-hire-requests"] });
-            await qc.invalidateQueries({ queryKey: ["admin-hire-request", open] });
+            await qc.invalidateQueries({ queryKey: ["admin-hire-request", code] });
           }}
         >
-          <label htmlFor="hire-cancel-reason" className="mt-4 block text-sm font-semibold text-muted">
-            {t("reason")}
-          </label>
-          <input id="hire-cancel-reason" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={300} className={`${inputCls} mt-1 w-full`} />
+          <Field id="hire-cancel-reason" className="mt-4" label={t("reason")} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={300} />
         </CodeDialog>
       ) : null}
-    </>
+    </div>
   );
 }
 
@@ -217,107 +215,111 @@ function Profiles() {
   const locale = useLocale();
   const qc = useQueryClient();
   const { ready, me } = useAdminMe();
-  const [status, setStatus] = useState<(typeof PROFILE_STATUSES)[number]>("");
-  const [q, setQ] = useState("");
-  const [search, setSearch] = useState("");
+  const { values, set, clear } = useUrlFilters({ status: { default: "", allowed: ["", ...PROFILE_STATUSES] }, q: { default: "" } });
+  const status = values.status as ProfileStatus | "";
+  const search = values.q;
   const [acting, setActing] = useState<{ p: StaffProfile; action: "suspend" | "restore" } | null>(null);
-  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const list = useQuery({ queryKey: ["admin-hire-profiles", status, search], queryFn: () => hireAdmin.profiles({ status: (status || undefined) as ProfileStatus | undefined, q: search || undefined }), enabled: ready });
+  const list = useQuery({ queryKey: ["admin-hire-profiles", status, search], queryFn: () => hireAdmin.profiles({ status: status || undefined, q: search || undefined }), enabled: ready });
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const canSuspend = Boolean(me && (me.isMaster || me.permissions.includes("manage_users" as never)));
 
-  async function act() {
+  async function act(reason: string) {
     if (!acting) return;
     setError(null);
-    if (reason.trim().length < 5) return setError(t("reasonNeeded"));
+    setBusy(true);
     try {
-      await (acting.action === "suspend" ? hireAdmin.suspend(acting.p.id, reason.trim()) : hireAdmin.restore(acting.p.id, reason.trim()));
+      await (acting.action === "suspend" ? hireAdmin.suspend(acting.p.id, reason) : hireAdmin.restore(acting.p.id, reason));
       setActing(null);
-      setReason("");
       await qc.invalidateQueries({ queryKey: ["admin-hire-profiles"] });
     } catch (err) {
       setError(problemOf(err)?.title ?? t("failed"));
+    } finally {
+      setBusy(false);
     }
   }
 
+  const columns: Column<ProfileRow>[] = [
+    {
+      id: "person",
+      header: t("person"),
+      primary: true,
+      sort: (p) => p.owner.displayName,
+      cell: (p) => (
+        <>
+          <span className="block font-semibold">{p.owner.displayName ?? "–"}</span>
+          <span className="block text-xs font-normal text-muted">{p.role ? name(p.role) : ""}</span>
+        </>
+      ),
+    },
+    {
+      id: "headline",
+      header: t("headline"),
+      cell: (p) => (
+        <>
+          {p.headline ?? "–"}
+          {p.credential ? <span className="block text-xs text-muted">{t("credential", { level: t(`level.${p.credential.level}`) })}</span> : null}
+        </>
+      ),
+    },
+    { id: "area", header: t("baseArea"), hideBelow: "lg", sort: (p) => (p.baseArea ? name(p.baseArea) : null), cell: (p) => (p.baseArea ? name(p.baseArea) : "–") },
+    {
+      id: "status",
+      header: t("status"),
+      sort: (p) => p.status,
+      cell: (p) => (
+        <StatusBadge status={p.status} domain="hire">
+          {t(`profileStatus.${p.status}`)}
+        </StatusBadge>
+      ),
+    },
+  ];
+
+  const actions = (p: ProfileRow): MenuItem[] => {
+    const items: MenuItem[] = [];
+    if (canSuspend && ["live", "paused"].includes(p.status)) items.push({ label: t("suspend"), icon: <Prohibit />, danger: true, onSelect: () => setActing({ p, action: "suspend" }) });
+    if (me?.isMaster && p.status === "suspended") items.push({ label: t("restore"), icon: <ArrowCounterClockwise />, onSelect: () => setActing({ p, action: "restore" }) });
+    return items;
+  };
+
   return (
-    <>
-      <form
-        className="mt-6 flex flex-wrap items-end gap-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setSearch(q.trim());
+    <div className="flex flex-col gap-4">
+      <FilterBar
+        search={{ value: search, onChange: (v) => set({ q: v }), label: t("headline") }}
+        selects={[{ id: "status", label: t("status"), value: status, onChange: (v) => set({ status: v }), anyLabel: t("all"), options: PROFILE_STATUSES.map((s) => ({ value: s, label: t(`profileStatus.${s}`) })) }]}
+        onClear={clear}
+      />
+      <DataTable
+        label={t("tab.profiles")}
+        testId="hire-profiles"
+        columns={columns}
+        rows={list.data?.items}
+        rowId={(p) => p.id}
+        loading={list.isPending}
+        error={list.error}
+        onRetry={() => void list.refetch()}
+        empty={{ title: t("none") }}
+        rowActions={actions}
+      />
+      <ReasonDialog
+        open={Boolean(acting)}
+        onOpenChange={(o) => {
+          if (!o) {
+            setActing(null);
+            setError(null);
+          }
         }}
-      >
-        <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-          {t("headline")}
-          <input value={q} onChange={(e) => setQ(e.target.value)} className={inputCls} />
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-          {t("status")}
-          <select value={status} onChange={(e) => setStatus(e.target.value as (typeof PROFILE_STATUSES)[number])} className={inputCls}>
-            {PROFILE_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s ? t(`profileStatus.${s}`) : t("all")}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="submit" className="min-h-11 border-2 border-brand bg-brand px-4 font-bold text-white">
-          {t("find")}
-        </button>
-      </form>
-      <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="hire-profiles">
-        {list.isPending ? <li className="h-32 animate-pulse bg-surface-2" /> : null}
-        {list.data && !list.data.items.length ? <li className="py-4 text-muted">{t("none")}</li> : null}
-        {(list.data?.items ?? []).map((p) => (
-          <li key={p.id} className="flex flex-wrap items-center gap-3 py-3">
-            <span className="min-w-0 flex-1">
-              <span className="block font-bold">
-                {p.owner.displayName ?? "—"} · {p.role ? name(p.role) : ""}
-              </span>
-              <span className="block text-sm text-muted">
-                {p.headline} · {p.baseArea ? name(p.baseArea) : "—"}
-                {p.credential ? ` · ${t("credential", { level: t(`level.${p.credential.level}`) })}` : ""}
-              </span>
-            </span>
-            <Chip tone={TONE[p.status] ?? "muted"}>{t(`profileStatus.${p.status}`)}</Chip>
-            {canSuspend && ["live", "paused"].includes(p.status) ? (
-              <button type="button" className="min-h-11 border-2 border-danger px-3 text-sm font-semibold text-danger" onClick={() => setActing({ p, action: "suspend" })}>
-                {t("suspend")}
-              </button>
-            ) : null}
-            {me?.isMaster && p.status === "suspended" ? (
-              <button type="button" className="min-h-11 border-2 border-line px-3 text-sm font-semibold" onClick={() => setActing({ p, action: "restore" })}>
-                {t("restore")}
-              </button>
-            ) : null}
-          </li>
-        ))}
-      </ul>
-      {acting ? (
-        <div className="mt-4 border-2 border-line p-4" role="dialog" aria-label={t(acting.action)}>
-          <p className="font-bold">{t(`${acting.action}Title`, { headline: acting.p.headline ?? "" })}</p>
-          <label htmlFor="hire-profile-reason" className="mt-3 block text-sm font-semibold text-muted">
-            {t("reason")}
-          </label>
-          <input id="hire-profile-reason" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={300} className={`${inputCls} mt-1 w-full`} />
-          {error ? (
-            <div className="mt-2">
-              <Notice tone="error">{error}</Notice>
-            </div>
-          ) : null}
-          <div className="mt-3 flex gap-2">
-            <button type="button" className="min-h-11 border-2 border-brand bg-brand px-4 font-bold text-white" onClick={() => void act()}>
-              {t(acting.action)}
-            </button>
-            <button type="button" className="min-h-11 border-2 border-line px-4 font-bold" onClick={() => setActing(null)}>
-              {t("close")}
-            </button>
-          </div>
-        </div>
-      ) : null}
-    </>
+        title={acting ? t(`${acting.action}Title`, { headline: acting.p.headline ?? "" }) : ""}
+        label={t("reason")}
+        confirmLabel={acting ? t(acting.action) : ""}
+        danger={acting?.action === "suspend"}
+        minLength={5}
+        maxLength={300}
+        busy={busy}
+        error={error}
+        onConfirm={(reason) => void act(reason)}
+      />
+    </div>
   );
 }

@@ -1,14 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { HandCoins, LockSimple, LockSimpleOpen } from "@phosphor-icons/react";
+import { DataTable, Field, FilterBar, Stat, type Column, type MenuItem } from "@kriraghor/ui/kit";
 import { stepUp } from "@/lib/admin/stepUp";
 import { finance, formatTaka, parseTaka, type Hold } from "@/lib/admin/finance";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka } from "../useAdminMe";
 import type { DeskMe } from "./FinanceDesk";
-import { Chip, DataTable, Field, inputCls, MoreButton, TONE } from "./shared";
+
+type Page = Awaited<ReturnType<typeof finance.holds>>;
+type Row = Page["items"][number];
 
 const STATUSES = ["holding", "partially_released", "frozen", "released", "refunded", "closed"] as const;
 type Action = "release" | "freeze" | "unfreeze";
@@ -18,88 +25,95 @@ export function EscrowTab({ me }: { me: DeskMe }) {
   const t = useTranslations("finance");
   const locale = useLocale();
   const qc = useQueryClient();
-  const [status, setStatus] = useState<Hold["status"] | "">("holding");
-  const [acting, setActing] = useState<{ hold: Hold; action: Action } | null>(null);
+  const { values, set, clear } = useUrlFilters({ status: { default: "holding", allowed: ["", ...STATUSES] } });
+  const status = values.status as Hold["status"] | "";
+  const [acting, setActing] = useState<{ hold: Row; action: Action } | null>(null);
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
 
-  const q = useInfiniteQuery({
-    queryKey: ["finance-escrow", status],
-    initialPageParam: undefined as string | undefined,
-    queryFn: ({ pageParam }) => finance.holds({ status: status || undefined, cursor: pageParam }),
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
-  });
-  const items = q.data?.pages.flatMap((p) => p.items) ?? [];
-  const totals = q.data?.pages[0]?.totals ?? {};
+  const list = useCursorList<Row, Page>(["finance-escrow", status], (cursor) => finance.holds({ status: status || undefined, cursor }));
+  const totals = list.first?.totals ?? {};
   const close = () => {
     setActing(null);
     setAmount("");
     setReason("");
   };
 
+  const columns: Column<Row>[] = [
+    {
+      id: "purpose",
+      header: t("purpose"),
+      primary: true,
+      sort: (h) => h.purpose,
+      cell: (h) => (
+        <>
+          {t.has(`purposes.${h.purpose}`) ? t(`purposes.${h.purpose}`) : h.purpose}
+          <span className="block font-mono text-xs font-normal text-muted">{h.id.slice(0, 8)}</span>
+        </>
+      ),
+    },
+    { id: "held", header: t("held"), align: "end", sort: (h) => h.held, cell: (h) => formatTaka(h.held, locale) },
+    { id: "available", header: t("available"), align: "end", sort: (h) => h.available, cell: (h) => formatTaka(h.available, locale) },
+    { id: "fee", header: t("fee"), align: "end", hideBelow: "lg", sort: (h) => h.fee.bps, cell: (h) => `${h.fee.bps / 100}%` },
+    {
+      id: "status",
+      header: t("status"),
+      sort: (h) => h.status,
+      cell: (h) => (
+        <>
+          <StatusBadge status={h.status}>{t(`holdStatus.${h.status}`)}</StatusBadge>
+          {h.frozenReason ? <span className="block text-xs text-danger">{h.frozenReason}</span> : null}
+        </>
+      ),
+    },
+    { id: "when", header: t("when"), sort: (h) => h.createdAt, cell: (h) => <span className="whitespace-nowrap">{formatDhaka(h.createdAt, locale)}</span> },
+  ];
+
+  const rowActions = (h: Row): MenuItem[] => {
+    if (!me.isMaster) return [];
+    const open = h.status === "holding" || h.status === "partially_released";
+    const out: MenuItem[] = [];
+    if (open && h.payeeId) out.push({ label: <span data-testid="release-hold">{t("release")}</span>, icon: <HandCoins />, onSelect: () => setActing({ hold: h, action: "release" }) });
+    if (open) out.push({ label: t("freeze"), icon: <LockSimple />, danger: true, onSelect: () => setActing({ hold: h, action: "freeze" }) });
+    if (h.status === "frozen") out.push({ label: t("unfreeze"), icon: <LockSimpleOpen />, onSelect: () => setActing({ hold: h, action: "unfreeze" }) });
+    return out;
+  };
+
   return (
-    <div className="mt-6">
-      <dl className="grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
+    <div className="mt-6 flex flex-col gap-4">
+      <div className="grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
         {(["holding", "partially_released", "frozen"] as const).map((s) => (
-          <div key={s} className="border-2 border-line bg-surface p-4">
-            <dt className="text-sm font-semibold text-muted">{t(`holdStatus.${s}`)}</dt>
-            <dd className="text-2xl font-extrabold tabular-nums">{formatTaka(totals[s]?.amount ?? 0, locale)}</dd>
-            <dd className="text-xs text-muted">{t("holdsCount", { n: totals[s]?.count ?? 0 })}</dd>
-          </div>
+          <Stat key={s} label={t(`holdStatus.${s}`)} value={formatTaka(totals[s]?.amount ?? 0, locale)} hint={t("holdsCount", { n: totals[s]?.count ?? 0 })} />
         ))}
-      </dl>
-      <div className="mt-4">
-        <Field label={t("status")}>
-          <select value={status} onChange={(e) => setStatus(e.target.value as typeof status)} className={`${inputCls} w-64`}>
-            <option value="">{t("all")}</option>
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {t(`holdStatus.${s}`)}
-              </option>
-            ))}
-          </select>
-        </Field>
       </div>
-      <DataTable head={[t("purpose"), t("held"), t("available"), t("fee"), t("status"), t("when"), ""]} loading={q.isPending} error={q.isError} empty={!items.length} testId="finance-escrow">
-        {items.map((h) => (
-          <tr key={h.id}>
-            <td className="px-3 py-2">
-              {t.has(`purposes.${h.purpose}`) ? t(`purposes.${h.purpose}`) : h.purpose}
-              <span className="block font-mono text-xs text-muted">{h.id.slice(0, 8)}</span>
-            </td>
-            <td className="px-3 py-2 tabular-nums">{formatTaka(h.held, locale)}</td>
-            <td className="px-3 py-2 tabular-nums">{formatTaka(h.available, locale)}</td>
-            <td className="px-3 py-2 tabular-nums">{h.fee.bps / 100}%</td>
-            <td className="px-3 py-2">
-              <Chip tone={TONE[h.status] ?? "muted"}>{t(`holdStatus.${h.status}`)}</Chip>
-              {h.frozenReason ? <span className="block text-xs text-danger">{h.frozenReason}</span> : null}
-            </td>
-            <td className="px-3 py-2 whitespace-nowrap">{formatDhaka(h.createdAt, locale)}</td>
-            <td className="px-3 py-2 whitespace-nowrap">
-              {me.isMaster ? (
-                <span className="flex gap-2">
-                  {(h.status === "holding" || h.status === "partially_released") && h.payeeId ? (
-                    <button type="button" className="min-h-9 border-2 border-brand px-3 font-semibold" onClick={() => setActing({ hold: h, action: "release" })} data-testid="release-hold">
-                      {t("release")}
-                    </button>
-                  ) : null}
-                  {h.status === "holding" || h.status === "partially_released" ? (
-                    <button type="button" className="min-h-9 border-2 border-line px-3 font-semibold" onClick={() => setActing({ hold: h, action: "freeze" })}>
-                      {t("freeze")}
-                    </button>
-                  ) : null}
-                  {h.status === "frozen" ? (
-                    <button type="button" className="min-h-9 border-2 border-line px-3 font-semibold" onClick={() => setActing({ hold: h, action: "unfreeze" })}>
-                      {t("unfreeze")}
-                    </button>
-                  ) : null}
-                </span>
-              ) : null}
-            </td>
-          </tr>
-        ))}
-      </DataTable>
-      <MoreButton show={Boolean(q.hasNextPage)} busy={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} />
+      <FilterBar
+        selects={[
+          {
+            id: "status",
+            label: t("status"),
+            value: status,
+            onChange: (v) => set({ status: v }),
+            anyLabel: t("all"),
+            options: STATUSES.map((s) => ({ value: s, label: t(`holdStatus.${s}`) })),
+          },
+        ]}
+        onClear={status !== "holding" ? clear : undefined}
+      />
+      <DataTable
+        label={t("tabs.escrow")}
+        testId="finance-escrow"
+        columns={columns}
+        rows={list.rows}
+        rowId={(h) => h.id}
+        loading={list.loading}
+        error={list.error}
+        onRetry={list.retry}
+        empty={{ title: t("empty") }}
+        hasMore={list.hasMore}
+        onMore={list.more}
+        busy={list.busy}
+        rowActions={me.isMaster ? rowActions : undefined}
+      />
 
       {acting ? (
         <CodeDialog
@@ -116,18 +130,12 @@ export function EscrowTab({ me }: { me: DeskMe }) {
             await qc.invalidateQueries({ queryKey: ["finance-escrow"] });
           }}
         >
-          {acting.action === "release" ? (
-            <>
-              <label htmlFor="release-amount" className="mt-4 block text-sm font-semibold text-muted">
-                {t("releaseAmount")}
-              </label>
-              <input id="release-amount" value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" placeholder={t("everything")} className={`${inputCls} mt-1 w-40`} />
-            </>
-          ) : null}
-          <label htmlFor="escrow-reason" className="mt-4 block text-sm font-semibold text-muted">
-            {t("reasonRequired")}
-          </label>
-          <input id="escrow-reason" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={200} className={`${inputCls} mt-1 w-full`} />
+          <div className="mt-4 flex flex-col gap-4">
+            {acting.action === "release" ? (
+              <Field id="release-amount" label={t("releaseAmount")} value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" placeholder={t("everything")} inputClassName="tabular" />
+            ) : null}
+            <Field id="escrow-reason" label={t("reasonRequired")} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={200} />
+          </div>
         </CodeDialog>
       ) : null}
     </div>

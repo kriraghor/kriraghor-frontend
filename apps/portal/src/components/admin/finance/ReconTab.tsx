@@ -3,14 +3,20 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { CaretDown, CaretRight } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
-import { dhakaDate, finance, formatTaka, type Item } from "@/lib/admin/finance";
-import { Button, Notice } from "@kriraghor/ui/primitives";
+import { Badge, Button, Checkbox, DataTable, Field, Notice, type Column } from "@kriraghor/ui/kit";
+import { dhakaDate, finance, formatTaka, type Item, type Run } from "@/lib/admin/finance";
+import { StatusBadge } from "../../StatusBadge";
 import { formatDhaka } from "../useAdminMe";
 import type { DeskMe } from "./FinanceDesk";
-import { Chip, DataTable, Field, inputCls, TONE } from "./shared";
 
-/** Daily reconciliation runs; open exceptions resolved with a note (masters). */
+const total = (r: Run, k: string) => {
+  const v = r.totals?.[k];
+  return v === undefined || v === null ? null : Number(v);
+};
+
+/** Daily reconciliation runs (expanding rows show a run's items); open exceptions resolved with a note (masters). */
 export function ReconTab({ me }: { me: DeskMe }) {
   const t = useTranslations("finance");
   const locale = useLocale();
@@ -19,10 +25,10 @@ export function ReconTab({ me }: { me: DeskMe }) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ tone: "info" | "error"; text: string } | null>(null);
   const [run, setRun] = useState<string | null>(null);
-  const [openOnly, setOpenOnly] = useState(true);
+  const toggle = (id: string) => setRun((r) => (r === id ? null : id));
 
+  // The runs endpoint returns a nextCursor but takes no cursor yet: one page, as before.
   const runs = useQuery({ queryKey: ["finance-runs"], queryFn: finance.runs });
-  const items = useQuery({ queryKey: ["finance-items", run, openOnly], enabled: Boolean(run), queryFn: () => finance.items(run as string, openOnly) });
 
   async function reconcile(e: React.FormEvent) {
     e.preventDefault();
@@ -40,62 +46,99 @@ export function ReconTab({ me }: { me: DeskMe }) {
     }
   }
 
+  const columns: Column<Run>[] = [
+    {
+      id: "day",
+      header: t("businessDay"),
+      primary: true,
+      sort: (r) => r.businessDate,
+      cell: (r) => (
+        <button type="button" className="inline-flex items-center gap-1.5 font-mono font-semibold hover:underline" onClick={() => toggle(r.id)} aria-expanded={run === r.id}>
+          {run === r.id ? <CaretDown size={14} weight="bold" aria-hidden /> : <CaretRight size={14} weight="bold" aria-hidden />}
+          {r.businessDate}
+        </button>
+      ),
+    },
+    { id: "status", header: t("status"), sort: (r) => r.status, cell: (r) => <StatusBadge status={r.status}>{r.status}</StatusBadge> },
+    { id: "matched", header: t("matched"), align: "end", sort: (r) => total(r, "matched"), cell: (r) => String(r.totals?.matched ?? "–") },
+    { id: "autoHealed", header: t("autoHealed"), align: "end", hideBelow: "lg", sort: (r) => total(r, "autoHealed"), cell: (r) => String(r.totals?.autoHealed ?? "–") },
+    { id: "exceptions", header: t("exceptions"), align: "end", sort: (r) => total(r, "exceptions"), cell: (r) => String(r.totals?.exceptions ?? "–") },
+    { id: "when", header: t("when"), hideBelow: "lg", sort: (r) => r.finishedAt ?? r.startedAt, cell: (r) => <span className="whitespace-nowrap">{formatDhaka(r.finishedAt ?? r.startedAt, locale)}</span> },
+  ];
+
   return (
-    <div className="mt-6">
+    <div className="mt-6 flex flex-col gap-4">
       {me.isMaster ? (
         <form onSubmit={reconcile} className="flex flex-wrap items-end gap-3">
-          <Field label={t("businessDay")}>
-            <input type="date" value={day} onChange={(e) => setDay(e.target.value)} className={inputCls} />
-          </Field>
+          <Field id="recon-day" type="date" className="w-full sm:w-56" label={t("businessDay")} value={day} onChange={(e) => setDay(e.target.value)} />
           <Button type="submit" busy={busy}>
             {t("reconcile")}
           </Button>
         </form>
       ) : null}
       {msg ? (
-        <div className="mt-3 max-w-3xl">
+        <div className="max-w-3xl">
           <Notice tone={msg.tone}>{msg.text}</Notice>
         </div>
       ) : null}
-      <DataTable head={[t("businessDay"), t("status"), t("matched"), t("autoHealed"), t("exceptions"), t("when")]} loading={runs.isPending} error={runs.isError} empty={!runs.data?.items.length} testId="finance-runs">
-        {runs.data?.items.map((r) => (
-          <tr key={r.id} className={run === r.id ? "bg-surface-2" : undefined}>
-            <td className="px-3 py-2">
-              <button type="button" className="font-mono underline" onClick={() => setRun(run === r.id ? null : r.id)} aria-expanded={run === r.id}>
-                {r.businessDate}
-              </button>
-            </td>
-            <td className="px-3 py-2">
-              <Chip tone={TONE[r.status] ?? "muted"}>{r.status}</Chip>
-            </td>
-            <td className="px-3 py-2 tabular-nums">{String(r.totals?.matched ?? "–")}</td>
-            <td className="px-3 py-2 tabular-nums">{String(r.totals?.autoHealed ?? "–")}</td>
-            <td className="px-3 py-2 tabular-nums">{String(r.totals?.exceptions ?? "–")}</td>
-            <td className="px-3 py-2 whitespace-nowrap">{formatDhaka(r.finishedAt ?? r.startedAt, locale)}</td>
-          </tr>
-        ))}
-      </DataTable>
-
-      {run ? (
-        <section className="mt-6">
-          <label className="flex min-h-11 items-center gap-2 text-sm font-semibold">
-            <input type="checkbox" checked={openOnly} onChange={(e) => setOpenOnly(e.target.checked)} className="size-5 accent-brand" />
-            {t("openOnly")}
-          </label>
-          <DataTable head={[t("type"), t("ours"), t("theirs"), t("detail"), t("resolution")]} loading={items.isPending} error={items.isError} empty={!items.data?.items.length}>
-            {items.data?.items.map((i) => (
-              <ItemRow key={i.id} item={i} canResolve={me.isMaster} />
-            ))}
-          </DataTable>
-        </section>
-      ) : null}
+      <DataTable
+        label={t("tabs.reconciliation")}
+        testId="finance-runs"
+        columns={columns}
+        rows={runs.data?.items}
+        rowId={(r) => r.id}
+        loading={runs.isPending}
+        error={runs.error}
+        onRetry={() => void runs.refetch()}
+        empty={{ title: t("empty") }}
+        selectedId={run}
+        onRowClick={(r) => toggle(r.id)}
+        expanded={(r) => (run === r.id ? <RunItems runId={r.id} canResolve={me.isMaster} /> : null)}
+      />
     </div>
   );
 }
 
-function ItemRow({ item, canResolve }: { item: Item; canResolve: boolean }) {
+/** A run's items (no cursor on this endpoint: one page), open exceptions only by default. */
+function RunItems({ runId, canResolve }: { runId: string; canResolve: boolean }) {
   const t = useTranslations("finance");
   const locale = useLocale();
+  const [openOnly, setOpenOnly] = useState(true);
+  const items = useQuery({ queryKey: ["finance-items", runId, openOnly], queryFn: () => finance.items(runId, openOnly) });
+
+  const columns: Column<Item>[] = [
+    {
+      id: "type",
+      header: t("type"),
+      primary: true,
+      cell: (i) => <Badge tone={i.type === "matched" ? "brand" : i.resolution ? "neutral" : "danger"}>{t(`itemTypes.${i.type}`)}</Badge>,
+    },
+    { id: "ours", header: t("ours"), align: "end", cell: (i) => formatTaka(i.internalAmount, locale) },
+    { id: "theirs", header: t("theirs"), align: "end", cell: (i) => formatTaka(i.providerAmount, locale) },
+    { id: "detail", header: t("detail"), cell: (i) => i.detail ?? "" },
+    { id: "resolution", header: t("resolution"), cell: (i) => <Resolution item={i} canResolve={canResolve} /> },
+  ];
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Checkbox id={`recon-open-${runId}`} label={t("openOnly")} checked={openOnly} onChange={(e) => setOpenOnly(e.target.checked)} />
+      <DataTable
+        label={t("exceptions")}
+        testId="finance-items"
+        columns={columns}
+        rows={items.data?.items}
+        rowId={(i) => i.id}
+        loading={items.isPending}
+        error={items.error}
+        onRetry={() => void items.refetch()}
+        empty={{ title: t("empty") }}
+      />
+    </div>
+  );
+}
+
+function Resolution({ item, canResolve }: { item: Item; canResolve: boolean }) {
+  const t = useTranslations("finance");
   const qc = useQueryClient();
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
@@ -115,30 +158,26 @@ function ItemRow({ item, canResolve }: { item: Item; canResolve: boolean }) {
     }
   }
 
+  if (!(open && canResolve))
+    return <span className="text-sm text-muted">{item.resolution ? `${t(`resolutions.${item.resolution}`)}${item.note ? `: ${item.note}` : ""}` : ""}</span>;
+  const short = note.trim().length < 3;
   return (
-    <tr>
-      <td className="px-3 py-2">
-        <Chip tone={item.type === "matched" ? "ok" : item.resolution ? "muted" : "bad"}>{t(`itemTypes.${item.type}`)}</Chip>
-      </td>
-      <td className="px-3 py-2 tabular-nums">{formatTaka(item.internalAmount, locale)}</td>
-      <td className="px-3 py-2 tabular-nums">{formatTaka(item.providerAmount, locale)}</td>
-      <td className="px-3 py-2">{item.detail ?? ""}</td>
-      <td className="px-3 py-2">
-        {open && canResolve ? (
-          <span className="flex flex-wrap items-center gap-2">
-            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("note")} aria-label={t("note")} maxLength={500} className={`${inputCls} w-56`} />
-            <button type="button" disabled={busy || note.trim().length < 3} onClick={() => void resolve("resolved")} className="min-h-9 border-2 border-brand px-3 font-semibold disabled:opacity-50">
-              {t("resolve")}
-            </button>
-            <button type="button" disabled={busy || note.trim().length < 3} onClick={() => void resolve("ignored")} className="min-h-9 border-2 border-line px-3 font-semibold disabled:opacity-50">
-              {t("ignore")}
-            </button>
-            {error ? <span className="text-xs text-danger">{error}</span> : null}
-          </span>
-        ) : (
-          <span className="text-sm text-muted">{item.resolution ? `${t(`resolutions.${item.resolution}`)}${item.note ? `: ${item.note}` : ""}` : ""}</span>
-        )}
-      </td>
-    </tr>
+    <span className="flex flex-wrap items-center gap-2">
+      <input
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder={t("note")}
+        aria-label={t("note")}
+        maxLength={500}
+        className="min-h-9 w-56 rounded-control border border-line-strong/70 bg-surface px-3 text-sm text-ink placeholder:text-muted/70 focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
+      />
+      <Button type="button" size="sm" disabled={busy || short} onClick={() => void resolve("resolved")}>
+        {t("resolve")}
+      </Button>
+      <Button type="button" size="sm" variant="secondary" disabled={busy || short} onClick={() => void resolve("ignored")}>
+        {t("ignore")}
+      </Button>
+      {error ? <span className="text-xs text-danger">{error}</span> : null}
+    </span>
   );
 }

@@ -20,10 +20,19 @@ const key = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? cry
 const a = () => api("admin");
 
 export const disputesAdmin = {
-  list: async (query: { status?: string; sourceType?: string; mine?: boolean; code?: string }) =>
+  list: async (query: { status?: string; sourceType?: string; mine?: boolean; code?: string; cursor?: string }) =>
     unwrap(
       await a().GET("/admin/disputes", {
-        params: { query: { status: (query.status || "active") as never, ...(query.sourceType ? { sourceType: query.sourceType as never } : {}), ...(query.mine ? { mine: "true" as const } : {}), ...(query.code ? { code: query.code } : {}), limit: 100 } },
+        params: {
+          query: {
+            status: (query.status || "active") as never,
+            ...(query.sourceType ? { sourceType: query.sourceType as never } : {}),
+            ...(query.mine ? { mine: "true" as const } : {}),
+            ...(query.code ? { code: query.code } : {}),
+            ...(query.cursor ? { cursor: query.cursor } : {}),
+            limit: 100,
+          },
+        },
       }),
     ),
   get: async (code: string) => unwrap(await a().GET("/admin/disputes/{code}", { params: { path: { code } } })),
@@ -55,7 +64,7 @@ export const reportsAdmin = {
 };
 
 export const reviewsAdmin = {
-  list: async (status: "held" | "hidden" | "published") => unwrap(await a().GET("/admin/reviews", { params: { query: { status, limit: 100 } } })),
+  list: async (status: "held" | "hidden" | "published", cursor?: string) => unwrap(await a().GET("/admin/reviews", { params: { query: { status, ...(cursor ? { cursor } : {}), limit: 100 } } })),
   hide: async (id: string, reason: string) => unwrap(await a().POST("/admin/reviews/{id}/hide", { params: { path: { id } }, body: { reason } })),
   restore: async (id: string) => unwrap(await a().POST("/admin/reviews/{id}/restore", { params: { path: { id } } })),
   publish: async (id: string) => unwrap(await a().POST("/admin/reviews/{id}/publish", { params: { path: { id } } })),

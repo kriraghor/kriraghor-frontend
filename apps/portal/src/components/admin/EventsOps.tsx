@@ -1,27 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { ArrowCounterClockwise } from "@phosphor-icons/react";
 import { api, problemOf } from "@kriraghor/api-client";
+import type { components } from "@kriraghor/api-client/schema";
+import { DataTable, FilterBar, Notice, Stat, type Column } from "@kriraghor/ui/kit";
 import { stepUp } from "@/lib/admin/stepUp";
-import { Notice } from "@kriraghor/ui/primitives";
+import { useUrlFilters } from "@/lib/use-url-filters";
 import { CodeDialog } from "./CodeDialog";
 import { formatDhaka, useAdminMe } from "./useAdminMe";
 
-type Status = "dead" | "failed" | "pending";
+const STATUSES = ["dead", "failed", "pending"] as const;
+type Status = (typeof STATUSES)[number];
 const LAG_ALERT_SECONDS = 60; // M04 §4: alert banner when the oldest pending event is older than 60 s
+
+type Row = components["schemas"]["OutboxEventItem"];
 
 /** M04 §4 /admin/events (master, ops): outbox health, failed relays, dead letters and replay. */
 export function EventsOps() {
+  // The status filter lives in the URL (useSearchParams), so the desk renders inside Suspense.
+  return (
+    <Suspense fallback={<div className="mx-auto mt-8 h-40 max-w-[1320px] animate-pulse rounded-card bg-surface-2" />}>
+      <EventsDesk />
+    </Suspense>
+  );
+}
+
+function EventsDesk() {
   const t = useTranslations("eventsOps");
   const locale = useLocale();
   const qc = useQueryClient();
   const { ready } = useAdminMe();
-  const [status, setStatus] = useState<Status>("dead");
+  const { values, set } = useUrlFilters({ status: { default: "dead", allowed: STATUSES } });
+  const status = values.status as Status;
   const [replaying, setReplaying] = useState<{ id: string; consumer: string } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
+  // The events endpoint has no cursor: one page of up to 100, refreshed every 10 s.
   const q = useQuery({
     queryKey: ["events-ops", status],
     enabled: ready,
@@ -34,24 +51,33 @@ export function EventsOps() {
   });
   const health = q.data?.health;
 
+  const columns: Column<Row>[] = [
+    { id: "name", header: t("name"), primary: true, sort: (e) => e.name, cell: (e) => <span className="font-mono text-xs">{e.name}</span> },
+    { id: "occurred", header: t("occurred"), sort: (e) => e.occurredAt, cell: (e) => <span className="whitespace-nowrap">{formatDhaka(e.occurredAt, locale)}</span> },
+    { id: "consumer", header: t("consumer"), cell: (e) => <span className="font-mono text-xs">{e.consumer ?? e.consumers.join(", ")}</span> },
+    { id: "attempts", header: t("attempts"), align: "end", sort: (e) => e.attempts, cell: (e) => e.attempts },
+    {
+      id: "error",
+      header: t("error"),
+      hideBelow: "lg",
+      cell: (e) => (
+        <span className="block max-w-xs truncate text-xs text-danger" title={e.lastError ?? ""}>
+          {e.lastError ?? ""}
+        </span>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
 
-        <dl className="mt-6 grid max-w-xl grid-cols-2 gap-4">
-          <div className="border-2 border-line bg-surface p-4">
-            <dt className="text-sm font-semibold text-muted">{t("pending")}</dt>
-            <dd className="text-3xl font-extrabold tabular-nums" data-testid="events-pending">
-              {health?.pending ?? "–"}
-            </dd>
-          </div>
-          <div className="border-2 border-line bg-surface p-4">
-            <dt className="text-sm font-semibold text-muted">{t("oldest")}</dt>
-            <dd className="text-3xl font-extrabold tabular-nums">{health ? (health.oldestPendingSeconds == null ? t("none") : t("seconds", { n: health.oldestPendingSeconds })) : "–"}</dd>
-          </div>
-        </dl>
+        <div className="mt-6 grid max-w-xl grid-cols-2 gap-4">
+          <Stat label={t("pending")} value={<span data-testid="events-pending">{health?.pending ?? "–"}</span>} />
+          <Stat label={t("oldest")} value={health ? (health.oldestPendingSeconds == null ? t("none") : t("seconds", { n: health.oldestPendingSeconds })) : "–"} />
+        </div>
         {health && (health.oldestPendingSeconds ?? 0) > LAG_ALERT_SECONDS ? (
           <div className="mt-4 max-w-3xl">
             <Notice tone="error">{t("lagAlert")}</Notice>
@@ -63,58 +89,22 @@ export function EventsOps() {
           </div>
         ) : null}
 
-        <div role="tablist" aria-label={t("title")} className="mt-6 flex gap-1 border-b-2 border-line">
-          {(["dead", "failed", "pending"] as const).map((s) => (
-            <button key={s} role="tab" type="button" aria-selected={status === s} onClick={() => setStatus(s)} className={`min-h-11 border-b-4 px-4 text-sm font-bold ${status === s ? "border-brand text-ink" : "border-transparent text-muted"}`}>
-              {t(`tabs.${s}`)}
-            </button>
-          ))}
-        </div>
-
-        <div role="tabpanel" className="mt-4 overflow-x-auto border-2 border-line bg-surface">
-          {q.isPending ? (
-            <p className="p-5 text-muted" role="status">
-              {t("loading")}
-            </p>
-          ) : q.isError ? (
-            <div className="p-5">
-              <Notice tone="error">{problemOf(q.error)?.title ?? "Error"}</Notice>
-            </div>
-          ) : !q.data?.items.length ? (
-            <p className="p-5 text-muted">{t("empty")}</p>
-          ) : (
-            <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="border-b-2 border-line">
-                <tr>
-                  {[t("name"), t("occurred"), t("consumer"), t("attempts"), t("error"), ""].map((h, i) => (
-                    <th key={i} scope="col" className="px-4 py-2">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                {q.data.items.map((e) => (
-                  <tr key={`${e.id}-${e.consumer ?? ""}`}>
-                    <td className="px-4 py-2 font-mono text-xs">{e.name}</td>
-                    <td className="whitespace-nowrap px-4 py-2">{formatDhaka(e.occurredAt, locale)}</td>
-                    <td className="px-4 py-2 font-mono text-xs">{e.consumer ?? e.consumers.join(", ")}</td>
-                    <td className="px-4 py-2 tabular-nums">{e.attempts}</td>
-                    <td className="max-w-xs truncate px-4 py-2 text-xs text-danger" title={e.lastError ?? ""}>
-                      {e.lastError ?? ""}
-                    </td>
-                    <td className="px-4 py-2 text-right">
-                      {e.status === "dead" && e.consumer ? (
-                        <button type="button" className="min-h-11 border-2 border-line px-3 text-xs font-semibold" onClick={() => setReplaying({ id: e.id, consumer: e.consumer! })}>
-                          {t("replay")}
-                        </button>
-                      ) : null}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+        <div className="mt-6 flex flex-col gap-4">
+          <FilterBar chips={{ label: t("title"), value: status, onChange: (v) => set({ status: v }), options: STATUSES.map((s) => ({ value: s, label: t(`tabs.${s}`) })) }} />
+          <DataTable
+            label={t(`tabs.${status}`)}
+            testId="events-table"
+            columns={columns}
+            rows={q.data?.items}
+            rowId={(e) => `${e.id}-${e.consumer ?? ""}`}
+            loading={!ready || q.isPending}
+            error={q.error}
+            onRetry={() => void q.refetch()}
+            empty={{ title: t("empty") }}
+            rowActions={(e) =>
+              e.status === "dead" && e.consumer ? [{ label: t("replay"), icon: <ArrowCounterClockwise />, onSelect: () => setReplaying({ id: e.id, consumer: e.consumer! }) }] : []
+            }
+          />
         </div>
       </div>
 
