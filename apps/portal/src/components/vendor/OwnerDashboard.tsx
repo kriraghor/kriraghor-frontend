@@ -3,18 +3,20 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { CaretRight, ChartLineUp } from "@phosphor-icons/react";
+import { CaretRight, ChartLineUp, DownloadSimple } from "@phosphor-icons/react";
+import { problemOf } from "@kriraghor/api-client";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { useAuth } from "@kriraghor/ui/auth";
 import { Badge, ButtonLink, Card, SegmentedControl, Skeleton } from "@kriraghor/ui/kit";
-import { bucketLabel, compactTaka, dashboards, deskHref, downloadCsv, hourLabel, pct, type OwnerDashboard as Data, type Period } from "@/lib/dashboard";
+import { bucketLabel, compactTaka, csvErrorKey, dashboards, deskHref, downloadCsv, hourLabel, pct, type OwnerDashboard as Data, type Period } from "@/lib/dashboard";
+import { analyticsHref, dayBars } from "@/lib/vendor/analytics";
 import { ownerTrust } from "@/lib/vendor/trust";
 import { ChartBars, ChartLine, ChartRank, ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
 import { Notice } from "@kriraghor/ui/primitives";
 
-const PERIODS: Period[] = ["7w", "qtr", "yr"];
+export const PERIODS: Period[] = ["7w", "qtr", "yr"];
 
-function PeriodSwitch({ period, onChange }: { period: Period; onChange: (p: Period) => void }) {
+export function PeriodSwitch({ period, onChange }: { period: Period; onChange: (p: Period) => void }) {
   const t = useTranslations("dashboard");
   return <SegmentedControl size="sm" label={t("period")} value={period} onChange={onChange} options={PERIODS.map((p) => ({ value: p, label: t(`periods.${p}`) }))} />;
 }
@@ -26,7 +28,7 @@ export function OwnerTiles({ d }: { d: Data }) {
   const vs = t(`vs.${d.period}`);
   const n = d.tiles.bookings.note as { app?: number; walkIn?: number; series?: number } | null;
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="owner-tiles">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4" data-testid="owner-tiles">
       <KpiTile
         testId="tile-revenue"
         label={t("tiles.revenue")}
@@ -110,9 +112,10 @@ function OwnerReliability() {
  */
 export function OwnerOverview({ showActions = true }: { showActions?: boolean }) {
   const t = useTranslations("dashboard");
+  const locale = useLocale();
   const { status } = useAuth();
   const [period, setPeriod] = useState<Period>("7w");
-  const d = useQuery({ queryKey: ["owner-dashboard", period], enabled: status === "signed_in", queryFn: () => dashboards.owner(period) });
+  const d = useQuery({ queryKey: ["owner-dashboard", period, locale], enabled: status === "signed_in", queryFn: () => dashboards.owner(period, locale) });
   // Same key as the vendor home's combined list, so the two never ask twice.
   const actions = useQuery({ queryKey: ["owner-actions", "ground_owner"], enabled: status === "signed_in" && showActions, queryFn: () => dashboards.ownerActions("ground_owner") });
   return (
@@ -130,7 +133,7 @@ export function OwnerOverview({ showActions = true }: { showActions?: boolean })
         </div>
       ) : null}
       <div className="flex flex-wrap items-center gap-3">
-        <ButtonLink href="/vendor/analytics" icon={<ChartLineUp size={18} aria-hidden />} data-testid="open-analytics">
+        <ButtonLink href={analyticsHref("ground_owner")} icon={<ChartLineUp size={18} aria-hidden />} data-testid="open-analytics">
           {t("openAnalytics")}
         </ButtonLink>
         {d.data?.asOf ? <span className="text-xs text-muted">{t("asOf", { time: new Date(d.data.asOf).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Dhaka" }) })}</span> : null}
@@ -139,62 +142,62 @@ export function OwnerOverview({ showActions = true }: { showActions?: boolean })
   );
 }
 
-/** /vendor/analytics: the four charts and the CSV exports (M19 §4.2, FR-06, FR-22). */
-export function OwnerAnalytics() {
+/** The venue part of /vendor/analytics: the four charts and the CSV exports (M19 §4.2, FR-06, FR-22). */
+export function VenueAnalytics({ d }: { d: Data }) {
   const t = useTranslations("dashboard");
   const locale = useLocale();
-  const { status } = useAuth();
-  const [period, setPeriod] = useState<Period>("7w");
-  const [exportError, setExportError] = useState(false);
-  const d = useQuery({ queryKey: ["owner-dashboard", period], enabled: status === "signed_in", queryFn: () => dashboards.owner(period) });
   const money = (n: number) => compactTaka(n, locale);
-  const csv = (dataset: string) => downloadCsv("api", "/me/dashboard/export", { dataset, period }).catch(() => setExportError(true));
+  const days = dayBars(d.charts.bookingsByDay, locale);
   return (
-    <section className="mx-auto max-w-[1200px] px-5 py-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold">{t("analytics")}</h1>
-          <p className="mt-1 max-w-2xl text-muted">{t("analyticsLead")}</p>
-        </div>
-        <PeriodSwitch period={period} onChange={setPeriod} />
+    <div className="space-y-6" data-testid="venue-analytics">
+      <OwnerTiles d={d} />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <ChartLine
+          title={d.charts.weeklyRevenue.lastYearShown ? t("charts.revenueVsLastYear") : t("charts.revenue")}
+          points={d.charts.weeklyRevenue.points}
+          compare={d.charts.weeklyRevenue.lastYearShown ? d.charts.weeklyRevenue.points.map((p) => p.lastYear) : null}
+          format={money}
+          labelOf={(k) => bucketLabel(k, locale)}
+        />
+        <ChartBars title={t("charts.bookingsByDay")} bars={days.bars} values={days.values} format={(n) => String(n)} />
+        <ChartRank title={t("charts.busiestHours")} items={d.charts.busiestHours.map((h) => ({ label: hourLabel(h.hour, locale), value: h.hours }))} format={(n) => t("hours", { n })} empty={t("empty")} />
+        <ChartSplit title={t("charts.revenueByGround")} parts={d.charts.revenueByGround.map((g) => ({ label: g.name, value: g.value }))} format={money} empty={t("empty")} />
       </div>
-      {d.isPending ? (
-        <div className="mt-6 h-96 animate-pulse bg-surface-2" />
-      ) : d.isError || !d.data ? (
-        <div className="mt-6">
-          <Notice tone="error">{t("loadFailed")}</Notice>
-        </div>
-      ) : (
-        <div className="mt-6 space-y-6">
-          <OwnerTiles d={d.data} />
-          <div className="grid gap-4 lg:grid-cols-2">
-            <ChartLine
-              title={d.data.charts.weeklyRevenue.lastYearShown ? t("charts.revenueVsLastYear") : t("charts.revenue")}
-              points={d.data.charts.weeklyRevenue.points}
-              compare={d.data.charts.weeklyRevenue.lastYearShown ? d.data.charts.weeklyRevenue.points.map((p) => p.lastYear) : null}
-              format={money}
-              labelOf={(k) => bucketLabel(k, locale)}
-            />
-            <ChartBars
-              title={t("charts.bookingsByDay")}
-              bars={d.data.charts.bookingsByDay.map((b) => ({ label: new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${b.day}T12:00:00Z`)), value: b.value }))}
-              format={(n) => String(n)}
-            />
-            <ChartRank title={t("charts.busiestHours")} items={d.data.charts.busiestHours.map((h) => ({ label: hourLabel(h.hour, locale), value: h.hours }))} format={(n) => t("hours", { n })} empty={t("empty")} />
-            <ChartSplit title={t("charts.revenueByGround")} parts={d.data.charts.revenueByGround.map((g) => ({ label: g.name, value: g.value }))} format={money} empty={t("empty")} />
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => csv("owner_bookings")} className="min-h-11 border-2 border-line px-4 font-semibold" data-testid="csv-bookings">
-              {t("csv.bookings")}
-            </button>
-            <button type="button" onClick={() => csv("owner_revenue")} className="min-h-11 border-2 border-line px-4 font-semibold">
-              {t("csv.revenue")}
-            </button>
-          </div>
-          {exportError ? <Notice tone="error">{t("csv.failed")}</Notice> : null}
-          <p className="text-xs text-muted">{t("revenueNote")}</p>
-        </div>
-      )}
-    </section>
+      <CsvButtons period={d.period} sets={[{ dataset: "owner_bookings", label: t("csv.bookings"), testId: "csv-bookings" }, { dataset: "owner_revenue", label: t("csv.revenue") }]} />
+      <p className="text-xs text-muted">{t("revenueNote")}</p>
+    </div>
+  );
+}
+
+type CsvSet = { dataset: string; label: string; testId?: string };
+
+/** The CSV exports of one dashboard (FR-22): one download at a time, and the reason when it fails. */
+export function CsvButtons({ period, sets }: { period: Period; sets: CsvSet[] }) {
+  const t = useTranslations("dashboard");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const run = async (dataset: string) => {
+    setBusy(dataset);
+    setError(null);
+    try {
+      await downloadCsv("api", "/me/dashboard/export", { dataset, period });
+    } catch (e) {
+      setError(t(csvErrorKey(problemOf(e)?.code)));
+    } finally {
+      setBusy(null);
+    }
+  };
+  return (
+    <div className="space-y-3" data-testid="csv-exports">
+      <div className="flex flex-wrap gap-3">
+        {sets.map((s) => (
+          <button key={s.dataset} type="button" disabled={busy !== null} onClick={() => void run(s.dataset)} className="inline-flex min-h-11 items-center gap-2 border-2 border-line px-4 font-semibold disabled:opacity-60" data-testid={s.testId ?? `csv-${s.dataset}`}>
+            <DownloadSimple size={18} aria-hidden />
+            {busy === s.dataset ? t("csv.preparing") : s.label}
+          </button>
+        ))}
+      </div>
+      {error ? <Notice tone="error">{error}</Notice> : null}
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 import { api } from "@kriraghor/api-client";
 import type { components } from "@kriraghor/api-client/schema";
+import { saveCsv } from "../dashboard";
 
 /**
  * The sports tournament console on vendor.kriraghor.com (M14 step 1, with M15 lite results) and the
@@ -43,6 +44,11 @@ export const sportsConsole = {
   extend: async (orgId: string, id: string, closesAt: string) => ok(await api().POST("/org/{orgId}/sports/tournaments/{id}/registration/extend", { ...t(orgId, id), body: { closesAt } })),
   unlock: async (orgId: string, id: string, reason: string) => ok(await api().POST("/org/{orgId}/sports/tournaments/{id}/rules/unlock", { ...t(orgId, id), body: { reason } })),
   registrations: async (orgId: string, id: string) => ok(await api().GET("/org/{orgId}/sports/tournaments/{id}/registrations", { params: { path: { orgId, id }, query: {} } })),
+  /** Round B2: the registrations as CSV (organisation admins; 404 otherwise), with a row per player when `roster`. */
+  registrationsCsv: async (orgId: string, id: string, roster: boolean) => {
+    const res = await api().GET("/org/{orgId}/sports/tournaments/{id}/registrations.csv", { params: { path: { orgId, id }, query: roster ? { include: "roster" } : {} }, parseAs: "blob" });
+    saveCsv(res as unknown as { data?: Blob; error?: unknown; response: Response }, registrationsCsvName(id, roster));
+  },
   approve: async (orgId: string, regId: string) => ok(await api().POST("/org/{orgId}/sports/registrations/{regId}/approve", r(orgId, regId))),
   reject: async (orgId: string, regId: string, reason: string) => ok(await api().POST("/org/{orgId}/sports/registrations/{regId}/reject", { ...r(orgId, regId), body: { reason } })),
   remove: async (orgId: string, regId: string, reason: string) => ok(await api().POST("/org/{orgId}/sports/registrations/{regId}/remove", { ...r(orgId, regId), body: { reason } })),
@@ -66,6 +72,14 @@ export const tournamentsAdmin = {
   get: async (id: string) => ok(await api("admin").GET("/admin/tournaments/{id}", { params: { path: { id } } })),
   cancel: async (id: string, reason: string, stepUpToken: string) => ok(await api("admin").POST("/admin/tournaments/{id}/cancel", { params: { path: { id }, header: { "x-step-up": stepUpToken } as never }, body: { reason } })),
 };
+
+/** The file name when the server gives none: registrations[-squads]-<first part of the id>.csv. */
+export function registrationsCsvName(id: string, roster: boolean): string {
+  return `registrations${roster ? "-squads" : ""}-${id.slice(0, 8)}.csv`;
+}
+
+/** Who may download the registrations CSV: organisation owners and admins (staff run matches only). */
+export const canExportRegistrations = (role: string | null | undefined) => role === "owner" || role === "admin";
 
 export type MatchAction = "move" | "postpone" | "walkover" | "cancel";
 

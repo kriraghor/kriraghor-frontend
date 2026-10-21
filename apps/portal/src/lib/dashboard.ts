@@ -1,5 +1,5 @@
 import { api } from "@kriraghor/api-client";
-import type { components } from "@kriraghor/api-client/schema";
+import type { components, paths } from "@kriraghor/api-client/schema";
 import { formatTaka, unwrap } from "./admin/finance";
 
 /**
@@ -7,18 +7,31 @@ import { formatTaka, unwrap } from "./admin/finance";
  * session) and the platform overview (admin host, staff session: master or view_analytics).
  */
 export type Period = "7w" | "qtr" | "yr";
-export type OwnerDashboard = components["schemas"]["OwnerDashboard"];
+/** Every answer of GET /me/dashboard, told apart by `role` (read from the path, not the schema names). */
+type DashboardAnswer = paths["/me/dashboard"]["get"]["responses"][200]["content"]["application/json"];
+export type OwnerDashboard = Extract<DashboardAnswer, { role: "ground_owner" }>;
+export type ShopDashboard = Extract<DashboardAnswer, { role: "shop_owner" }>;
+export type GymDashboard = Extract<DashboardAnswer, { role: "gym_owner" }>;
+export type OrganiserDashboard = Extract<DashboardAnswer, { role: "organiser" }>;
 export type PlatformOverview = components["schemas"]["PlatformOverview"];
 export type Actions = components["schemas"]["PendingActions"];
 export type Tile = components["schemas"]["KpiTile"];
 export type ActionItem = Actions["items"][number];
-/** The businesses "Needs your action" answers for (GET /me/dashboard/actions?role=). */
-export type ActionRole = "ground_owner" | "shop_owner" | "gym_owner";
-export const ACTION_ROLES: readonly string[] = ["ground_owner", "shop_owner", "gym_owner"];
+/** The businesses "Needs your action" answers for (GET /me/dashboard/actions?role=); organisers since Round B2. */
+export type ActionRole = "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
+export const ACTION_ROLES: readonly string[] = ["ground_owner", "shop_owner", "gym_owner", "organiser"];
+type Locale = "en" | "bn";
+const loc = (locale: string): Locale => (locale === "bn" ? "bn" : "en");
+const dash = async (query: { role: "ground_owner" | "shop_owner" | "gym_owner" | "organiser"; period: Period; locale: Locale; orgId?: string }) => unwrap(await api().GET("/me/dashboard", { params: { query } }));
 
 export const dashboards = {
-  owner: async (period: Period) => unwrap(await api().GET("/me/dashboard", { params: { query: { role: "ground_owner", period } } })) as OwnerDashboard,
-  /** M19-FR-11 for one business: venue (default), shop or gym. */
+  /** The tiles' definitions come back in the page's language (M19 §6, EN and BN). */
+  owner: async (period: Period, locale = "en") => (await dash({ role: "ground_owner", period, locale: loc(locale) })) as OwnerDashboard,
+  /** Round B2 (M19 §6.3): the shop owner's, the gym owner's and one sports organisation's dashboard. */
+  shop: async (period: Period, locale = "en") => (await dash({ role: "shop_owner", period, locale: loc(locale) })) as ShopDashboard,
+  gym: async (period: Period, locale = "en") => (await dash({ role: "gym_owner", period, locale: loc(locale) })) as GymDashboard,
+  organiser: async (orgId: string, period: Period, locale = "en") => (await dash({ role: "organiser", orgId, period, locale: loc(locale) })) as OrganiserDashboard,
+  /** M19-FR-11 for one business: venue (default), shop, gym or the sports organisations. */
   ownerActions: async (role: ActionRole = "ground_owner") => unwrap(await api().GET("/me/dashboard/actions", { params: { query: { role } } })),
   platform: async (period: Period) => unwrap(await api("admin").GET("/admin/analytics/overview", { params: { query: { period } } })),
   staffActions: async () => unwrap(await api("admin").GET("/admin/analytics/actions")),
@@ -27,13 +40,30 @@ export const dashboards = {
 /** Fetch a CSV through the API (with the session) and save it. */
 export async function downloadCsv(audience: "api" | "admin", path: "/me/dashboard/export" | "/admin/analytics/export", query: Record<string, string>) {
   const client = api(audience) as unknown as { GET: (p: string, o: unknown) => Promise<{ data?: Blob; error?: unknown; response: Response }> };
-  const { data, error, response } = await client.GET(path, { params: { query }, parseAs: "blob" });
+  saveCsv(await client.GET(path, { params: { query }, parseAs: "blob" }));
+}
+
+/** Save a CSV answer (fetched with `parseAs: "blob"`) under the server's file name; throws the problem on an error. */
+export function saveCsv({ data, error, response }: { data?: Blob; error?: unknown; response: Response }, fallback = "kriraghor.csv") {
   if (error || !data) throw error ?? new Error("export failed");
-  const name = /filename="([^"]+)"/.exec(response.headers.get("Content-Disposition") ?? "")?.[1] ?? "kriraghor.csv";
   const url = URL.createObjectURL(data);
-  const a = Object.assign(document.createElement("a"), { href: url, download: name });
+  const a = Object.assign(document.createElement("a"), { href: url, download: csvFilename(response.headers.get("Content-Disposition"), fallback) });
   a.click();
   URL.revokeObjectURL(url);
+}
+
+/** The file name a Content-Disposition header gives (attachment; filename="x.csv"), else the fallback. */
+export function csvFilename(contentDisposition: string | null | undefined, fallback = "kriraghor.csv"): string {
+  const cd = contentDisposition ?? "";
+  const name = /filename="([^"]+)"/.exec(cd)?.[1] ?? /filename=([^;\s"]+)/.exec(cd)?.[1];
+  // A plain file name only: never a folder path.
+  const clean = name?.split(/[\\/]/).pop()?.trim();
+  return clean || fallback;
+}
+
+/** The words for a failed export: this hour's limit, too many rows, or a plain failure. */
+export function csvErrorKey(code: string | null | undefined): "csv.limit" | "csv.tooLarge" | "csv.failed" {
+  return code === "EXPORT_LIMIT" ? "csv.limit" : code === "EXPORT_TOO_LARGE" ? "csv.tooLarge" : "csv.failed";
 }
 
 // ---------------- pure helpers (tested)

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bucketLabel, checklist, compactTaka, deskHref, hourLabel, mergeActions, pct } from "../dashboard";
+import { bucketLabel, checklist, compactTaka, csvErrorKey, csvFilename, deskHref, hourLabel, mergeActions, pct } from "../dashboard";
 
 describe("dashboard helpers (M19)", () => {
   it("taka in lakh and crore from ৳1 lakh up (FR-07)", () => {
@@ -60,6 +60,40 @@ describe("mergeActions: one Needs your action list across businesses (FR-11)", (
   it("maps old hrefs and keeps an empty list empty", () => {
     expect(mergeActions([{ role: "ground_owner", items: [a("ground_draft", "normal", null, "/vendor/grounds")] }])[0].href).toBe("/vendor/venues");
     expect(mergeActions([])).toEqual([]);
+  });
+
+  it("organisers' registrations join the list and land on the events console (Round B2)", () => {
+    const got = mergeActions([
+      { role: "shop_owner", items: [a("orders_to_ship", "normal", null)] },
+      { role: "organiser", items: [a("registrations_waiting", "high", "2026-10-25T12:00:00Z", "/vendor/tournaments/org1"), a("registrations_unpaid", "normal", null, "/vendor/tournaments/org1")] },
+    ]);
+    expect(got.map((x) => [x.key, x.role, x.href])).toEqual([
+      ["registrations_waiting", "organiser", "/vendor/events/org1"],
+      ["orders_to_ship", "shop_owner", "/vendor/orders_to_ship"],
+      ["registrations_unpaid", "organiser", "/vendor/events/org1"],
+    ]);
+  });
+});
+
+describe("CSV downloads (FR-22, Round B2)", () => {
+  it("saves under the server's file name, else the fallback", () => {
+    expect(csvFilename('attachment; filename="kriraghor-shop-orders-2026-10-22.csv"')).toBe("kriraghor-shop-orders-2026-10-22.csv");
+    expect(csvFilename("attachment; filename=registrations.csv")).toBe("registrations.csv");
+    expect(csvFilename(null)).toBe("kriraghor.csv");
+    expect(csvFilename("attachment", "registrations-ab12cd34.csv")).toBe("registrations-ab12cd34.csv");
+    expect(csvFilename('attachment; filename=""', "x.csv")).toBe("x.csv");
+  });
+
+  it("never a folder path from the header", () => {
+    expect(csvFilename('attachment; filename="../../etc/report.csv"')).toBe("report.csv");
+    expect(csvFilename('attachment; filename="a\\b.csv"')).toBe("b.csv");
+  });
+
+  it("explains the hour's limit and too many rows; anything else is a plain failure", () => {
+    expect(csvErrorKey("EXPORT_LIMIT")).toBe("csv.limit");
+    expect(csvErrorKey("EXPORT_TOO_LARGE")).toBe("csv.tooLarge");
+    expect(csvErrorKey("NOT_FOUND")).toBe("csv.failed");
+    expect(csvErrorKey(undefined)).toBe("csv.failed");
   });
 });
 
