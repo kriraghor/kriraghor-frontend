@@ -119,6 +119,17 @@ describe("boot splash script", () => {
   beforeEach(() => {
     sessionStorage.clear();
     delete document.documentElement.dataset.splash;
+    window.history.replaceState(null, "", "/");
+  });
+
+  it("plays only on the home page, and landing elsewhere does not use it up", () => {
+    window.history.replaceState(null, "", "/venues");
+    run();
+    expect(document.documentElement.dataset.splash).toBe("off");
+    expect(sessionStorage.getItem("kg.splash")).toBeNull();
+    window.history.replaceState(null, "", "/");
+    run();
+    expect(document.documentElement.dataset.splash).toBe("on");
   });
 
   it("plays once per session: the second load skips it", () => {
