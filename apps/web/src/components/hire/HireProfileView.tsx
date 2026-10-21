@@ -10,6 +10,7 @@ import { publicEnv } from "@kriraghor/session/env";
 import { busyByDay, hire, nextDays, type ProfilePage } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { TrainerPlans } from "../gym/TrainerPlans";
+import { SubjectReviews } from "../trust/SubjectReviews";
 import { RequestForm } from "./RequestForm";
 
 /**
@@ -66,6 +67,8 @@ export function HireProfileView({ slug }: { slug: string }) {
             <ShortlistButton profileId={p.id} on={p.shortlisted} slug={slug} />
             <ShareButton url={`${publicEnv().WEB_URL}/hiring/${encodeURIComponent(slug)}`} title={`${p.name} · ${name(p.role)}`} text={p.headline} testId="hire-share" />
           </div>
+          {/* M11-FR-06, M17-FR-35: what managers who hired this pro said, with the pro's replies. */}
+          <SubjectReviews subjectType="hire_profile" subjectId={p.id} testId="hire-reviews" />
         </div>
         <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
           {/* M20: a fitness trainer also sells monthly plans. */}

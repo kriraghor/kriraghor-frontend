@@ -5,9 +5,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { useAuth } from "@kriraghor/ui/auth";
 import { whenLabel } from "@/lib/bookings";
-import { reports, reviews } from "@/lib/trust";
+import { reports, reviews, subjectNameOf } from "@/lib/trust";
 import { Notice } from "@kriraghor/ui/primitives";
-import { Stars } from "./GroundReviews";
+import { ReviewableList } from "./RateDialog";
+import { Stars } from "./SubjectReviews";
 
 function Gate({ next, children }: { next: string; children: React.ReactNode }) {
   const t = useTranslations("trust");
@@ -55,7 +56,11 @@ export function MyReports() {
   );
 }
 
-/** /me/reviews (M17 FR-22): my ratings and whether each is shown. */
+/**
+ * /me/reviews (M17 FR-22, FR-30 to FR-34): first what is waiting for my rating (venues I played at,
+ * pros whose job was paid out, shop orders I received, gyms I visited), each with "Rate this"; then
+ * my reviews with what they rate, whether each is shown, and the owner's reply.
+ */
 export function MyReviews() {
   const t = useTranslations("trust");
   const locale = useLocale();
@@ -66,19 +71,36 @@ export function MyReviews() {
       <h1 className="text-3xl font-extrabold">{t("myReviews")}</h1>
       <div className="mt-6">
         <Gate next="/me/reviews">
-          {q.data && !q.data.items.length ? <p className="text-muted">{t("noReviews")}</p> : null}
-          <ul className="glass-card divide-y divide-[var(--glass-edge)] px-4">
-            {q.data?.items.map((r) => (
-              <li key={r.id} className="py-3">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Stars value={r.stars} label={t("reviews.starsOf", { stars: r.stars })} />
-                  <span className="text-sm text-muted">{whenLabel(r.createdAt, locale)}</span>
-                  <span className="border-2 border-line px-2 text-sm font-bold">{t(`reviewStatus.${r.status}`)}</span>
-                </div>
-                {r.text ? <p className="mt-1 max-w-[65ch]">{r.text}</p> : null}
-              </li>
-            ))}
-          </ul>
+          <h2 className="text-xl font-extrabold">{t("reviewable.title")}</h2>
+          <p className="mt-1 text-sm text-muted">{t("reviewable.lead")}</p>
+          <div className="mt-4">
+            <ReviewableList />
+          </div>
+          <h2 className="mt-10 text-xl font-extrabold">{t("yourReviews")}</h2>
+          {q.isPending && status === "signed_in" ? <div className="mt-3 h-24 animate-pulse bg-surface-2" /> : null}
+          {q.data && !q.data.items.length ? <p className="mt-2 text-muted">{t("noReviewsYet")}</p> : null}
+          {q.data?.items.length ? (
+            <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-reviews">
+              {q.data.items.map((r) => (
+                <li key={r.id} className="py-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted">{t(`subjects.${r.subjectType}`)}</p>
+                  <p className="font-extrabold">{subjectNameOf(r) ?? t(`subjects.${r.subjectType}`)}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <Stars value={r.stars} label={t("reviews.starsOf", { stars: r.stars })} />
+                    <span className="text-sm text-muted">{whenLabel(r.createdAt, locale)}</span>
+                    <span className="border-2 border-line px-2 text-sm font-bold">{t.has(`reviewStatus.${r.status}`) ? t(`reviewStatus.${r.status}`) : r.status}</span>
+                  </div>
+                  {r.text ? <p className="mt-2 max-w-[65ch] whitespace-pre-line">{r.text}</p> : null}
+                  {r.reply ? (
+                    <div className="mt-3 border-l-4 border-line pl-3 text-sm" data-testid="my-review-reply">
+                      <p className="font-semibold">{t(`reviews.replyFrom.${r.subjectType}`)}</p>
+                      <p className="mt-1 whitespace-pre-line text-muted">{r.reply.text}</p>
+                    </div>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </Gate>
       </div>
     </section>

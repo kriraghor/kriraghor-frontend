@@ -1955,7 +1955,48 @@
     "col": {
       "case": "Case",
       "status": "Status",
-      "opened": "Opened"
+      "opened": "Opened",
+      "review": "Review",
+      "subject": "For",
+      "member": "Member",
+      "reply": "Reply"
+    },
+    "reviewsIntroAll": "Members rate your venues after they play, your shop after their order arrives and your gym after a visit. A short, polite reply helps the next customer decide.",
+    "noReviewsBody": "Reviews show here as soon as members rate you.",
+    "filterKind": "Business",
+    "allKinds": "All",
+    "filterPlace": "Place",
+    "allPlaces": "All places",
+    "reviewTitle": "Review",
+    "pickReview": "Choose a review from the list.",
+    "member": "A member",
+    "noText": "Stars only, no words.",
+    "yourReply": "Your reply",
+    "saveReply": "Save reply",
+    "replyHint": "Shown under the review on your public page. 2 to 1,000 characters, no phone numbers or links.",
+    "replyPosted": "Reply posted.",
+    "replyChanged": "Reply changed.",
+    "replyErrors": {
+      "REPLY_HAS_CONTACT": "Replies can't include phone numbers or links. Remove them and try again.",
+      "NOT_OWNER": "Only the owner can reply to this review.",
+      "REVIEW_STATE": "This review is no longer shown, so it can't get a reply.",
+      "VALIDATION_FAILED": "Write between 2 and 1,000 characters.",
+      "failed": "Couldn't post your reply. Try again."
+    },
+    "replyState": {
+      "replied": "Replied",
+      "awaiting_reply": "Waiting for your reply"
+    },
+    "subject": {
+      "ground": "Venue",
+      "shop": "Shop",
+      "gym": "Gym",
+      "hire_profile": "Pro profile"
+    },
+    "subjectPlural": {
+      "ground": "Venues",
+      "shop": "Shop",
+      "gym": "Gyms"
     }
   },
   "riskDesk": {

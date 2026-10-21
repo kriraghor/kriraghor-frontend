@@ -56,6 +56,8 @@ export type Permission =
   | "manage_staff";
 
 export type NavEntry = { href: string; key: string; icon: Icon; match?: "exact" | "prefix" };
+/** A vendor item shared by some businesses only (shown when one of them is in view). */
+type VendorEntry = NavEntry & { roles?: BusinessRole[] };
 type AdminEntry = NavEntry & { any?: Permission[]; master?: boolean };
 export type NavSection<E> = { key: string; items: E[] };
 
@@ -134,11 +136,12 @@ export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner" | "organi
 export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "gym_owner", "organiser"];
 
 /**
- * The business sidebar. Analytics and Reviews are venue-owner desks (M19 owner analytics, M18 venue
- * reviews), so they sit with the venues. Since 21 Oct 2026 esports is run by Kriraghor only, so the
- * organiser section is sports events alone.
+ * The business sidebar. Analytics is a venue-owner desk (M19 owner analytics), so it sits with the
+ * venues. Reviews cover venues, shops and gyms since Round B1 (M17 FR-34), so they sit with the shared
+ * business tools for those three owners (not organisers). Since 21 Oct 2026 esports is run by
+ * Kriraghor only, so the organiser section is sports events alone.
  */
-export const VENDOR_SECTIONS: (NavSection<NavEntry> & { role?: BusinessRole })[] = [
+export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole })[] = [
   { key: "overview", items: [{ href: "/vendor", key: "home", icon: House, match: "exact" }] },
   {
     key: "grounds",
@@ -147,7 +150,6 @@ export const VENDOR_SECTIONS: (NavSection<NavEntry> & { role?: BusinessRole })[]
       { href: "/vendor/venues", key: "grounds", icon: SoccerBall },
       { href: "/vendor/bookings", key: "bookings", icon: CalendarCheck },
       { href: "/vendor/analytics", key: "analytics", icon: ChartLineUp },
-      { href: "/vendor/reviews", key: "vendorReviews", icon: Star },
     ],
   },
   {
@@ -168,6 +170,7 @@ export const VENDOR_SECTIONS: (NavSection<NavEntry> & { role?: BusinessRole })[]
     items: [
       { href: "/vendor/payouts", key: "vendorPayouts", icon: CurrencyCircleDollar },
       { href: "/vendor/disputes", key: "vendorDisputes", icon: Gavel },
+      { href: "/vendor/reviews", key: "vendorReviews", icon: Star, roles: ["ground_owner", "shop_owner", "gym_owner"] },
     ],
   },
 ];
@@ -190,5 +193,7 @@ export function businessView(me: { roles: readonly { role: string; status: strin
 export function vendorSections(active: BusinessRole[], view: BusinessRole | "all"): NavSection<NavEntry>[] {
   if (!active.length) return VENDOR_SECTIONS.filter((s) => s.key === "overview");
   const shown = view === "all" || !active.includes(view) ? active : [view];
-  return VENDOR_SECTIONS.filter((s) => !s.role || shown.includes(s.role));
+  return VENDOR_SECTIONS.filter((s) => !s.role || shown.includes(s.role))
+    .map((s) => ({ ...s, items: s.items.filter((e) => !e.roles || e.roles.some((r) => shown.includes(r))) }))
+    .filter((s) => s.items.length);
 }

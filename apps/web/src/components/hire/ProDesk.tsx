@@ -17,6 +17,7 @@ const TABS = [
   { href: "/pro/requests", key: "requests" },
   { href: "/pro/jobs", key: "jobs" },
   { href: "/pro/plans", key: "plans" },
+  { href: "/pro/reviews", key: "reviews" },
 ] as const;
 const OPEN_ROLE = ["applied", "documents_pending", "in_review", "active"];
 
@@ -59,9 +60,9 @@ export function ProShell({ children }: { children: ReactNode }) {
         </div>
       ) : (
         <>
-          <nav aria-label={t("desk.title")} className="mt-6 flex gap-2 border-b-2 border-line">
+          <nav aria-label={t("desk.title")} className="mt-6 flex gap-2 overflow-x-auto overflow-y-hidden border-b-2 border-line">
             {TABS.map((x) => (
-              <Link key={x.key} href={x.href} aria-current={pathname === x.href ? "page" : undefined} className={`-mb-0.5 min-h-11 border-b-4 px-4 py-2 font-bold ${pathname === x.href ? "border-brand" : "border-transparent text-muted"}`}>
+              <Link key={x.key} href={x.href} aria-current={pathname === x.href ? "page" : undefined} className={`-mb-0.5 min-h-11 shrink-0 whitespace-nowrap border-b-4 px-4 py-2 font-bold ${pathname === x.href ? "border-brand" : "border-transparent text-muted"}`}>
                 {t(`desk.${x.key}`)}
               </Link>
             ))}

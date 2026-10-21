@@ -55,6 +55,7 @@ export const DOMAINS = {
   dispute: { awaiting_response: "muted", under_review: "warn", escalated: "bad", resolved: "ok", withdrawn: "muted" },
   ownerDispute: { awaiting_response: "bad", under_review: "warn", escalated: "warn", resolved: "ok", withdrawn: "muted" },
   pass: { active: "ok", redeemed: "muted", expired: "muted", cancelled: "bad", refunded: "bad", pending_payment: "warn", void: "muted" },
+  review: { replied: "ok", awaiting_reply: "warn" },
   stock: { in_stock: "ok", low: "warn", out: "bad", out_hidden: "bad", mto: "muted", blocked: "bad" },
 } satisfies Record<string, Record<string, StatusTone>>;
 

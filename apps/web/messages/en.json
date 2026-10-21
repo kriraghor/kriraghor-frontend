@@ -872,9 +872,51 @@
       "text": "What was it like? (optional)",
       "hint": "Your name is shown with your review. Links and phone numbers are checked by our team first.",
       "submit": "Post my rating",
-      "thanks": "Thank you. Your rating is on the venue’s page.",
+      "thanks": "Thank you. Your rating is now on their page.",
       "held": "Thank you. Your rating will show once our team has checked it.",
-      "failed": "Couldn't post your rating. Try again."
+      "failed": "Couldn't post your rating. Try again.",
+      "updated": "Review updated. Thank you.",
+      "cta": "Rate this",
+      "updateCta": "Update your review",
+      "ctaRef": "Rate {ref}",
+      "cancel": "Cancel",
+      "update": "Update my review",
+      "updateTitle": "Update your review of this gym",
+      "updateHint": "You keep one review per gym. Posting now replaces your earlier stars and words.",
+      "titleFor": {
+        "ground": "Rate this venue",
+        "hire_profile": "Rate this pro",
+        "shop": "Rate this shop",
+        "gym": "Rate this gym"
+      },
+      "what": {
+        "ground": "the venue",
+        "hire_profile": "the pro",
+        "shop": "the shop",
+        "gym": "the gym"
+      },
+      "starsFor": "How many stars for {what}?",
+      "scale": {
+        "1": "Poor",
+        "2": "Not great",
+        "3": "Okay",
+        "4": "Good",
+        "5": "Excellent"
+      },
+      "errors": {
+        "NOT_YOUR_BOOKING": "Only the member who paid for this booking can rate it.",
+        "NOT_YOUR_JOB": "Only the manager who paid for this job can rate the pro.",
+        "NOT_YOUR_ORDER": "Only the buyer can rate this shop order.",
+        "NOT_YOUR_PASS": "Only the member who bought this pass can rate the gym.",
+        "NOT_PLAYED": "You can rate a venue after you have played there.",
+        "JOB_NOT_RELEASED": "You can rate the pro once the job is done and paid out.",
+        "ORDER_NOT_COMPLETED": "You can rate the shop once you have received the order.",
+        "PASS_NOT_REDEEMED": "You can rate the gym after you have used your pass there.",
+        "REVIEW_WINDOW_CLOSED": "The time to rate this has passed.",
+        "REVIEW_EXISTS": "You have already rated this.",
+        "REVIEW_HIDDEN": "Your earlier review was hidden by our team, so it can't be changed.",
+        "failed": "Couldn't post your rating. Try again."
+      }
     },
     "reviews": {
       "title": "Reviews",
@@ -887,7 +929,23 @@
       "ownerReply": "Reply from the venue",
       "none": "No reviews yet. Members can rate a venue after playing there.",
       "reportGround": "Report this venue",
-      "reportReview": "Report"
+      "reportReview": "Report",
+      "loadFailed": "Couldn't load the reviews.",
+      "retry": "Try again",
+      "noRatingYet": "No rating yet",
+      "more": "Show more reviews",
+      "replyFrom": {
+        "ground": "Reply from the venue",
+        "hire_profile": "Reply from the pro",
+        "shop": "Reply from the shop",
+        "gym": "Reply from the gym"
+      },
+      "empty": {
+        "ground": "No reviews yet. Members can rate a venue after playing there.",
+        "hire_profile": "No reviews yet. Managers can rate a pro once a job is done and paid out.",
+        "shop": "No reviews yet. Buyers can rate the shop once their order arrives.",
+        "gym": "No reviews yet. Members can rate the gym after a visit."
+      }
     },
     "report": {
       "open": "Report",
@@ -964,6 +1022,57 @@
       "shown": "Venues can see this ({n} bookings).",
       "hidden": "Venues see it from {min} bookings (you have {n}).",
       "how": "No-shows ({noShows}) and late cancels ({late}) lower it. A no-show you win in a dispute does not count."
+    },
+    "subjects": {
+      "ground": "Venue",
+      "hire_profile": "Pro",
+      "shop": "Shop",
+      "gym": "Gym"
+    },
+    "yourReviews": "Your reviews",
+    "noReviewsYet": "You have not rated anything yet.",
+    "reviewable": {
+      "title": "Waiting for your rating",
+      "lead": "Venues you played at, pros you hired, shops you bought from and gyms you visited. Your rating helps the next member choose.",
+      "loadFailed": "Couldn't load what is waiting for your rating.",
+      "none": "Nothing to rate right now. After a game, a job, an order or a gym visit, it shows up here.",
+      "source": {
+        "booking": "Booking {ref}",
+        "hire_job": "Job {ref}",
+        "sub_order": "Order {ref}",
+        "gym_pass": "Pass {ref}"
+      },
+      "done": "done {when}",
+      "closes": "Rate it by {when}"
+    },
+    "replyDialog": {
+      "title": "Reply to this review",
+      "editTitle": "Change your reply",
+      "lead": "Your reply shows under the review on your public page. Keep it short and polite.",
+      "label": "Your reply",
+      "hint": "2 to 1,000 characters. No phone numbers or links: keep the conversation on Kriraghor.",
+      "cancel": "Cancel",
+      "send": "Post reply",
+      "save": "Save reply",
+      "posted": "Reply posted.",
+      "changed": "Reply changed.",
+      "errors": {
+        "REPLY_HAS_CONTACT": "Replies can't include phone numbers or links. Remove them and try again.",
+        "NOT_OWNER": "Only the owner can reply to this review.",
+        "REVIEW_STATE": "This review is no longer shown, so it can't get a reply.",
+        "VALIDATION_FAILED": "Write between 2 and 1,000 characters.",
+        "failed": "Couldn't post your reply. Try again."
+      }
+    },
+    "owner": {
+      "loadFailed": "Couldn't load your reviews.",
+      "proLead": "What managers said after a job was paid out. A short, polite reply helps the next manager decide.",
+      "noneTitle": "No reviews yet",
+      "proNone": "Managers can rate you once a job is done and paid out. Their reviews show here and on your public profile.",
+      "noText": "Stars only, no words.",
+      "yourReply": "Your reply",
+      "reply": "Reply",
+      "changeReply": "Change reply"
     }
   },
   "market": {
@@ -1415,7 +1524,8 @@
       "travel": "Travel by zone (৳)",
       "maxPerDay": "Jobs a day at most",
       "ratesSaved": "Rates saved.",
-      "saveRates": "Save the rates"
+      "saveRates": "Save the rates",
+      "reviews": "Reviews"
     },
     "profileStatus": {
       "draft": "Draft",

@@ -4,11 +4,14 @@ import { Suspense, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Paperclip, Star } from "@phosphor-icons/react";
-import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { Button, Card, DataTable, DetailLayout, EmptyState, Field, Notice, PageTitle, Skeleton, Textarea, buttonClass, cn, type Column } from "@kriraghor/ui/kit";
+import { Button, DataTable, DetailLayout, FilterBar, Notice, PageTitle, Skeleton, Textarea, buttonClass, cn, useToast, type Column } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
-import { EVIDENCE_TYPES, ownerTrust } from "@/lib/vendor/trust";
+import { businessView } from "@/lib/panel-nav";
+import { vendor } from "@/lib/vendor/grounds";
+import { gymDesk } from "@/lib/vendor/gym";
+import { shopDesk } from "@/lib/vendor/market";
+import { EVIDENCE_TYPES, ownerTrust, replyErrorKey, replyOk, replyState, reviewSubjectsFor, subjectName, type BusinessSubject, type Review } from "@/lib/vendor/trust";
 import { useCursorList } from "@/lib/use-cursor-list";
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { StatusBadge } from "../StatusBadge";
@@ -199,58 +202,190 @@ function Stars({ n }: { n: number }) {
   );
 }
 
-/** /vendor/reviews (M17 FR-25): members' ratings of the owner's grounds; one reply each, editable. */
+type ReviewRow = Review & { subjectName?: string | null };
+const KINDS = ["ground", "shop", "gym"] as const;
+
+/**
+ * /vendor/reviews (M17 FR-25, FR-34; Round B1): members' ratings of everything the owner runs (venues,
+ * shops and gyms), newest first, filtered by kind and by place, with one reply each (editable) written
+ * in the side pane. The kinds offered follow the business roles held.
+ */
 export function OwnerReviews() {
+  // The filters and the open review live in the URL (useSearchParams), so the desk renders inside Suspense.
+  return (
+    <Suspense fallback={<Skeleton className="mx-auto mt-10 h-64 max-w-[1320px]" />}>
+      <Reviews />
+    </Suspense>
+  );
+}
+
+function Reviews() {
+  const t = useTranslations("vendorTrust");
+  const locale = useLocale();
+  const me = useQuery({ queryKey: ["vendor-me"], queryFn: () => vendor.me() });
+  const kinds = reviewSubjectsFor(businessView(me.data).active);
+  const { values, set, clear, params } = useUrlFilters({ type: { default: "", allowed: ["", ...KINDS] }, place: { default: "" } });
+  const grounds = useQuery({ queryKey: ["vendor-grounds"], queryFn: () => vendor.mine(), enabled: kinds.includes("ground"), retry: false });
+  const shop = useQuery({ queryKey: ["vendor-shop"], queryFn: () => shopDesk.profile(), enabled: kinds.includes("shop"), retry: false });
+  const gyms = useQuery({ queryKey: ["vendor-gyms"], queryFn: () => gymDesk.mine(), enabled: kinds.includes("gym"), retry: false });
+  const places: { id: string; name: string; type: BusinessSubject }[] = [
+    ...(grounds.data?.items ?? []).map((g) => ({ id: g.id, name: g.name, type: "ground" as const })),
+    ...(shop.data ? [{ id: shop.data.id, name: shop.data.name, type: "shop" as const }] : []),
+    ...(gyms.data?.items ?? []).map((g) => ({ id: g.id, name: g.name, type: "gym" as const })),
+  ];
+  const names = new Map(places.map((p) => [p.id, p.name] as const));
+  const type = (values.type || undefined) as BusinessSubject | undefined;
+  const choosable = places.filter((p) => !type || p.type === type);
+  const place = choosable.find((p) => p.id === values.place)?.id;
+  const list = useCursorList<ReviewRow>(["owner-reviews", type ?? "", place ?? ""], (cursor) => ownerTrust.reviews({ subjectType: type, subjectId: place, cursor }));
+  const open = params.get("id");
+  const picked = open ? list.items.find((r) => r.id === open) : undefined;
+  const kindLabel = (s: string) => (t.has(`subject.${s}`) ? t(`subject.${s}`) : s);
+
+  const columns: Column<ReviewRow>[] = [
+    {
+      id: "review",
+      header: t("col.review"),
+      primary: true,
+      sort: (r) => r.stars,
+      cell: (r) => (
+        <>
+          <Stars n={r.stars} />
+          {r.text ? <span className="mt-1 line-clamp-2 block max-w-[48ch] font-normal">{r.text}</span> : <span className="mt-1 block text-sm font-normal text-muted">{t("noText")}</span>}
+        </>
+      ),
+    },
+    {
+      id: "subject",
+      header: t("col.subject"),
+      sort: (r) => subjectName(r, names) ?? r.subjectType,
+      cell: (r) => (
+        <>
+          <span className="block font-semibold">{subjectName(r, names) ?? kindLabel(r.subjectType)}</span>
+          <span className="block text-xs text-muted">{kindLabel(r.subjectType)}</span>
+        </>
+      ),
+    },
+    {
+      id: "member",
+      header: t("col.member"),
+      hideBelow: "lg",
+      sort: (r) => r.createdAt,
+      cell: (r) => (
+        <>
+          <span className="block">{r.author.displayName ?? t("member")}</span>
+          <span className="block whitespace-nowrap text-xs text-muted">{formatDhaka(r.createdAt, locale)}</span>
+        </>
+      ),
+    },
+    {
+      id: "reply",
+      header: t("col.reply"),
+      sort: (r) => replyState(r),
+      cell: (r) => (
+        <StatusBadge status={replyState(r)} domain="review">
+          {t(`replyState.${replyState(r)}`)}
+        </StatusBadge>
+      ),
+    },
+  ];
+
+  return (
+    <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
+      <PageTitle title={t("reviewsTitle")} description={t("reviewsIntroAll")} />
+      <div className="mt-6 flex flex-col gap-4">
+        {kinds.length > 1 || choosable.length > 1 ? (
+          <FilterBar
+            chips={
+              kinds.length > 1
+                ? {
+                    value: values.type,
+                    onChange: (v) => set({ type: v, place: null, id: null }),
+                    label: t("filterKind"),
+                    options: [{ value: "", label: t("allKinds") }, ...kinds.map((k) => ({ value: k, label: t(`subjectPlural.${k}`) }))],
+                    testId: "review-kinds",
+                  }
+                : undefined
+            }
+            selects={
+              choosable.length > 1
+                ? [{ id: "place", label: t("filterPlace"), value: place ?? "", onChange: (v) => set({ place: v || null, id: null }), options: choosable.map((p) => ({ value: p.id, label: p.name })), anyLabel: t("allPlaces") }]
+                : []
+            }
+            onClear={() => clear()}
+          />
+        ) : null}
+        <DetailLayout open={Boolean(open)} onClose={() => set({ id: null })} title={t("reviewTitle")} pane={open ? picked ? <ReviewPane key={picked.id} review={picked} name={subjectName(picked, names) ?? kindLabel(picked.subjectType)} /> : <p className="text-muted">{t("pickReview")}</p> : null} width={480} testId="owner-review">
+          <DataTable
+            label={t("reviewsTitle")}
+            testId="owner-reviews"
+            columns={columns}
+            rows={list.rows}
+            rowId={(r) => r.id}
+            loading={list.loading}
+            error={list.error}
+            onRetry={list.retry}
+            empty={{ title: t("noReviews"), body: t("noReviewsBody") }}
+            hasMore={list.hasMore}
+            onMore={list.more}
+            busy={list.busy}
+            onRowClick={(r) => set({ id: r.id })}
+            selectedId={open}
+          />
+        </DetailLayout>
+      </div>
+    </div>
+  );
+}
+
+/** One review in full, and the owner's reply written in place (2 to 1,000 characters, no phone numbers or links). */
+function ReviewPane({ review: r, name }: { review: ReviewRow; name: string }) {
   const t = useTranslations("vendorTrust");
   const locale = useLocale();
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ["owner-reviews"], queryFn: () => ownerTrust.reviews() });
-  const [draft, setDraft] = useState<Record<string, string>>({});
-  const reply = useMutation({ mutationFn: (id: string) => ownerTrust.reply(id, (draft[id] ?? "").trim()), onSuccess: () => qc.invalidateQueries({ queryKey: ["owner-reviews"] }) });
-
+  const toast = useToast();
+  const [text, setText] = useState(r.reply?.text ?? "");
+  const reply = useMutation({
+    mutationFn: () => ownerTrust.reply(r.id, text.trim()),
+    onSuccess: () => {
+      toast.show(r.reply ? t("replyChanged") : t("replyPosted"));
+      void qc.invalidateQueries({ queryKey: ["owner-reviews"] });
+    },
+  });
+  const problem = reply.error ? problemOf(reply.error) : null;
   return (
-    <div className="mx-auto max-w-[960px] px-5 pb-16 pt-8">
-      <PageTitle title={t("reviewsTitle")} description={t("reviewsIntro")} />
-      {reply.error ? (
-        <Notice tone="error" className="mt-4">
-          {problemOf(reply.error)?.title}
-        </Notice>
-      ) : null}
-      <div className="mt-6 flex flex-col gap-3" data-testid="owner-reviews">
-        {q.isPending ? <Skeleton className="h-32" /> : null}
-        {(q.data?.items ?? []).map((r) => (
-          <Card key={r.id} className="flex flex-col gap-2">
-            <p className="flex flex-wrap items-center gap-2 text-sm">
-              <Stars n={r.stars} />
-              <span className="text-muted">
-                {r.author.displayName ?? "–"} · {formatDhaka(r.createdAt, locale)}
-              </span>
-            </p>
-            {r.text ? <p className="max-w-[65ch] whitespace-pre-line">{r.text}</p> : null}
-            {r.reply ? <p className="rounded-control border-l-4 border-line-strong/50 bg-surface-2/60 py-2 pl-3 text-sm text-muted">{r.reply.text}</p> : null}
-            <div className="flex flex-wrap items-end gap-2">
-              <Field
-                id={`reply-${r.id}`}
-                label={r.reply ? t("editReply") : t("writeReply")}
-                value={draft[r.id] ?? ""}
-                onChange={(e) => setDraft({ ...draft, [r.id]: e.target.value })}
-                placeholder={r.reply ? t("editReply") : t("writeReply")}
-                maxLength={1000}
-                className="min-w-0 flex-1"
-              />
-              <Button type="button" disabled={(draft[r.id] ?? "").trim().length < 2 || reply.isPending} busy={reply.isPending && reply.variables === r.id} onClick={() => reply.mutate(r.id)} data-testid="send-reply">
-                {t("reply")}
-              </Button>
-            </div>
-          </Card>
-        ))}
-        {!q.isPending && !q.data?.items.length ? <EmptyState title={t("noReviews")} /> : null}
+    <div className="flex flex-col gap-4" data-testid="owner-review-pane">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted">{name}</p>
+        <p className="mt-1 flex flex-wrap items-center gap-2 text-sm">
+          <Stars n={r.stars} />
+          <span className="text-muted">
+            {r.author.displayName ?? t("member")} · {formatDhaka(r.createdAt, locale)}
+          </span>
+        </p>
       </div>
-      <p className="mt-4 text-sm">
-        <Link href="/vendor/venues" className="font-semibold text-brand-text underline">
-          {t("toGrounds")}
-        </Link>
-      </p>
+      {r.text ? <p className="max-w-[65ch] whitespace-pre-line">{r.text}</p> : <p className="text-sm text-muted">{t("noText")}</p>}
+      {r.reply ? (
+        <div className="rounded-control border-l-4 border-line-strong/50 bg-surface-2/60 py-2 pl-3 text-sm">
+          <p className="font-semibold">{t("yourReply")}</p>
+          <p className="mt-1 whitespace-pre-line text-muted">{r.reply.text}</p>
+        </div>
+      ) : null}
+      <form
+        className="flex flex-col gap-3 border-t border-line pt-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (replyOk(text)) reply.mutate();
+        }}
+      >
+        <Textarea id={`reply-${r.id}`} label={r.reply ? t("editReply") : t("writeReply")} hint={t("replyHint")} value={text} onChange={(e) => setText(e.target.value)} rows={4} minLength={2} maxLength={1000} />
+        {reply.isError ? <Notice tone="error">{t(`replyErrors.${replyErrorKey(problem?.code)}`)}</Notice> : null}
+        <div>
+          <Button type="submit" disabled={!replyOk(text)} busy={reply.isPending} data-testid="send-reply">
+            {r.reply ? t("saveReply") : t("reply")}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { ShareButton } from "@kriraghor/ui/share";
 import { publicEnv } from "@kriraghor/session/env";
 import { gym, weekOf } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
+import { RatingLine, SubjectReviews } from "../trust/SubjectReviews";
 import { PassBuy } from "./PassBuy";
 
 /**
@@ -46,7 +47,8 @@ export function GymDetail({ slug }: { slug: string }) {
           <div>
             <p className="text-xs font-bold uppercase tracking-wide">
               <span className={g.openNow ? "text-brand" : "text-muted"}>{g.openNow ? t("openNow") : t("closedNow")}</span>
-              {g.ratingAvg !== null ? <span className="text-muted"> · ★ {g.ratingAvg.toFixed(1)} ({g.ratingCount})</span> : null}
+              <span className="text-muted"> · </span>
+              <RatingLine avg={g.ratingAvg} count={g.ratingCount} className="text-muted" />
             </p>
             <h1 className="mt-1 text-4xl font-extrabold md:text-5xl" data-testid="gym-name">
               {g.name}
@@ -126,6 +128,9 @@ export function GymDetail({ slug }: { slug: string }) {
               ))}
             </ul>
             <p className="mt-4 max-w-3xl text-sm text-muted">{t("refundRule")}</p>
+
+            {/* M20-FR-10, M17-FR-35: one review per member who visited, with the gym's replies. */}
+            <SubjectReviews subjectType="gym" subjectId={g.id} testId="gym-reviews" />
           </div>
 
           <aside className="h-fit glass-card p-5 lg:sticky lg:top-24">

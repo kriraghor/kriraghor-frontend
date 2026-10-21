@@ -8,6 +8,7 @@ import { useAuth } from "@kriraghor/ui/auth";
 import { hire, minutesLeft, requestTone, TONE, type RequestResult } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
+import { RateSourceButtons } from "../trust/RateDialog";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { JobCard } from "./JobCard";
 import { Thread } from "./Thread";
@@ -116,6 +117,12 @@ export function HireRequestView({ code }: { code: string }) {
       {err ? (
         <div className="mt-3">
           <Notice tone="error">{err.title ?? t("failed")}</Notice>
+        </div>
+      ) : null}
+      {hirer ? (
+        <div className="mt-4">
+          {/* M17-FR-30: the manager rates the pro once a job's money is released (shown while it waits). */}
+          <RateSourceButtons sourceType="hire_job" sourceIds={r.jobs.filter((j) => j.status === "released").map((j) => j.id)} />
         </div>
       ) : null}
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
