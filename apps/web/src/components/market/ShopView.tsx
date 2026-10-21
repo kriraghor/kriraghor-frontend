@@ -3,6 +3,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { market } from "@/lib/market";
 import { ReportButton } from "../trust/ReportButton";
 import { ProductCard } from "./ProductCard";
@@ -44,6 +46,7 @@ export function ShopView({ slug }: { slug: string }) {
         {s.area ? `, ${name(s.area)}` : ""}
       </p>
       <p className="mt-1 text-sm">{t("verifiedShop")}</p>
+      <ShareButton url={`${publicEnv().WEB_URL}/shop/s/${encodeURIComponent(slug)}`} title={s.name} className="mt-3" testId="shop-share" />
       {s.about ? <p className="mt-4 max-w-3xl whitespace-pre-line">{s.about}</p> : null}
       <h2 className="mt-8 text-2xl font-extrabold">{t("shopProducts", { n: s.total })}</h2>
       {items.length ? (

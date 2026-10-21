@@ -36,7 +36,10 @@
     "./brand/theme-script": "./src/brand/ThemeScript.tsx",
     "./brand/route-loading": "./src/brand/RouteLoading.tsx",
     "./payouts": "./src/payouts/index.ts",
-    "./payouts/client": "./src/payouts/client.ts"
+    "./payouts/client": "./src/payouts/client.ts",
+    "./share": "./src/share/ShareButton.tsx",
+    "./share/links": "./src/share/links.ts",
+    "./share/og": "./src/share/og.tsx"
   },
   "scripts": {
     "lint": "eslint .",

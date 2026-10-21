@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { gym, weekOf } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
 import { PassBuy } from "./PassBuy";
@@ -53,6 +55,7 @@ export function GymDetail({ slug }: { slug: string }) {
               {g.addressLine}
               {g.area ? `, ${name(g.area)}` : ""}
             </p>
+            <ShareButton url={`${publicEnv().WEB_URL}/gym/gyms/${encodeURIComponent(slug)}`} title={g.area ? `${g.name}, ${name(g.area)}` : g.name} className="mt-3" testId="gym-share" />
 
             {g.photos.length ? (
               <div className="mt-5">

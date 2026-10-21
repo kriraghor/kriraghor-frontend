@@ -5,6 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { busyByDay, hire, nextDays, type ProfilePage } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { TrainerPlans } from "../gym/TrainerPlans";
@@ -60,8 +62,9 @@ export function HireProfileView({ slug }: { slug: string }) {
 
           <Rates p={p} />
           <BusyStrip busy={p.busy} />
-          <div className="mt-8">
+          <div className="mt-8 flex flex-wrap items-start gap-3">
             <ShortlistButton profileId={p.id} on={p.shortlisted} slug={slug} />
+            <ShareButton url={`${publicEnv().WEB_URL}/hiring/${encodeURIComponent(slug)}`} title={`${p.name} · ${name(p.role)}`} text={p.headline} testId="hire-share" />
           </div>
         </div>
         <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">

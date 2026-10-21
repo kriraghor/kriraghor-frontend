@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { problemOf } from "@kriraghor/api-client";
 import { axisChoices, market, pickedVariant } from "@/lib/market";
 import { formatTaka } from "@/lib/payments";
@@ -149,7 +151,10 @@ export function ProductView({ slug }: { slug: string }) {
             <AddToCart variantId={variant?.purchasable ? variant.id : null} qty={qty} open={p.checkoutOpen} />
           </div>
           {p.checkoutOpen ? null : <p className="text-sm text-muted">{t("checkoutSoon")}</p>}
-          <SaveButton productId={p.id} />
+          <div className="flex flex-wrap items-center gap-3">
+            <SaveButton productId={p.id} />
+            <ShareButton url={`${publicEnv().WEB_URL}/shop/p/${encodeURIComponent(slug)}`} title={p.brand ? `${p.title} (${p.brand})` : p.title} text={price} testId="product-share" />
+          </div>
 
           <div className="border-2 border-line p-4" data-testid="seller">
             <p className="text-sm text-muted">{t("soldBy")}</p>

@@ -4,6 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { useAuth } from "@kriraghor/ui/auth";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { ctaFor, dhakaTime, esports, takaOf, useRoom } from "@/lib/esports";
 import { events } from "@/lib/events";
 import { Chip, Countdown, LinkButton, Prize, SlotsBar, StatusChip } from "./bits";
@@ -62,6 +64,13 @@ export function TournamentDetail({ slug }: { slug: string }) {
           <p className="mt-2 text-muted">
             {t("startsAt", { when: dhakaTime(d.startsAt, locale) })} · {t(`format.${d.format}`)} · {t(d.entryUnit === "squad" ? "perSquad" : "perPlayer")}
           </p>
+          <ShareButton
+            url={`${publicEnv().ESPORTS_URL}/events/${encodeURIComponent(d.slug)}`}
+            title={title}
+            text={[locale === "bn" ? d.game?.nameBn : d.game?.nameEn, d.prizePool.amount > 0 ? t("sharePrize", { amount: takaOf(d.prizePool, locale) }) : null].filter(Boolean).join(" · ")}
+            className="mt-4"
+            testId="tournament-share"
+          />
 
           <section className="mt-8" aria-labelledby="prizes-h">
             <h2 id="prizes-h" className="text-xl font-extrabold">

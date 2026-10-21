@@ -1,8 +1,14 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { TournamentDetail } from "@/components/esports/TournamentDetail";
+import { detailMetadata } from "@/lib/seo.server";
 
-export const metadata = { title: "Event" };
+/** The title with game, prize pool, entry and start day from the public read. */
+export async function generateMetadata({ params }: PageProps<"/[locale]/events/[slug]">): Promise<Metadata> {
+  const { locale, slug } = await params;
+  return detailMetadata("tournament", slug, locale, "Event");
+}
 
 async function Content({ params }: { params: PageProps<"/[locale]/events/[slug]">["params"] }) {
   const { locale, slug } = await params;

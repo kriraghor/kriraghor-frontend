@@ -9,6 +9,8 @@ import { ArrowLeft, CaretLeft, CaretRight, Check, Images, MapPin, ShieldCheck } 
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Button, Dialog, IconButton, Sheet, Skeleton } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { grounds, hourLabel, hoursLines, type GroundDetail as Ground } from "@/lib/grounds";
 import { formatTaka } from "@/lib/payments";
 import { PHOTOS } from "@/lib/photos";
@@ -121,12 +123,15 @@ export function GroundDetail({ slug }: { slug: string }) {
             {g.area ? `, ${name(g.area)}` : ""}
           </p>
         </div>
-        {reliability !== null ? (
-          <p className="inline-flex items-center gap-2 rounded-pill bg-brand-soft px-3 py-1.5 text-sm font-semibold text-brand-text" data-testid="owner-reliability" title={t("reliabilityHelp")}>
-            <ShieldCheck size={18} aria-hidden />
-            {tp("reliability", { score: reliability })}
-          </p>
-        ) : null}
+        <div className="flex flex-wrap items-center gap-3">
+          {reliability !== null ? (
+            <p className="inline-flex items-center gap-2 rounded-pill bg-brand-soft px-3 py-1.5 text-sm font-semibold text-brand-text" data-testid="owner-reliability" title={t("reliabilityHelp")}>
+              <ShieldCheck size={18} aria-hidden />
+              {tp("reliability", { score: reliability })}
+            </p>
+          ) : null}
+          <ShareButton url={`${publicEnv().WEB_URL}/venues/${encodeURIComponent(slug)}`} title={g.area ? `${g.name}, ${name(g.area)}` : g.name} testId="ground-share" />
+        </div>
       </header>
 
       <Mosaic g={g} onOpen={setGallery} />

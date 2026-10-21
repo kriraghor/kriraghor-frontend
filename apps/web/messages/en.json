@@ -2531,5 +2531,19 @@
     "confirmSubmissionBody": "\"{title}\" leaves the review queue. You can edit it and send it again later.",
     "roleWithdrawn": "Application withdrawn",
     "submissionWithdrawn": "Withdrawn from review"
+  },
+  "share": {
+    "og": {
+      "brandHire": "Kriraghor Hiring",
+      "brandPlayers": "Kriraghor Players",
+      "rating": "Rating",
+      "jobs": "Jobs done",
+      "years": "Years",
+      "player": "Player",
+      "sports": "Sports",
+      "teams": "Teams",
+      "fallbackTitle": "Kriraghor",
+      "fallbackSubtitle": "Esports, venues, gear and talent in Bangladesh"
+    }
   }
 }

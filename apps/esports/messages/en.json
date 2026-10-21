@@ -504,7 +504,8 @@
       "yourVote": "your vote",
       "votes": "{n, plural, one {# vote} other {# votes}}",
       "failed": "Something went wrong. Try again."
-    }
+    },
+    "sharePrize": "Prize pool {amount}"
   },
   "footer": {
     "homeLabel": "Kriraghor Esports home",
@@ -522,5 +523,32 @@
     "privacy": "Privacy",
     "kriraghor": "Kriraghor.com",
     "legal": "© 2026 Kriraghor, Dhaka."
+  },
+  "share": {
+    "meta": {
+      "player": "Player",
+      "event": "Event",
+      "showcase": "Showcase",
+      "rank": "Rank #{n} in {game}",
+      "unranked": "Not ranked yet",
+      "points": "{n} points",
+      "wins": "{n, plural, one {# win} other {# wins}}",
+      "kills": "{n, plural, one {# kill} other {# kills}}",
+      "prizePool": "Prize pool {amount}",
+      "entry": "Entry {amount}",
+      "freeEntry": "Free entry",
+      "starts": "Starts {date}",
+      "leaderboardsTitle": "Leaderboards",
+      "leaderboards": "The top PUBG Mobile and Free Fire players in Bangladesh, ranked from Kriraghor Esports results."
+    },
+    "og": {
+      "brand": "Kriraghor Esports",
+      "rank": "Rank",
+      "points": "Points",
+      "wins": "Wins",
+      "kills": "Kills",
+      "fallbackTitle": "Kriraghor Esports",
+      "fallbackSubtitle": "PUBG Mobile and Free Fire events with real prizes"
+    }
   }
 }
