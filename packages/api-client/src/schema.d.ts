@@ -2112,7 +2112,7 @@ export interface paths {
                     q?: string;
                     status?: "active" | "suspended" | "banned" | "closed";
                     role?: "member" | "player" | "pro" | "ground_owner" | "shop_owner" | "organiser" | "gym_owner" | "staff" | "master_admin";
-                    roleStatus?: "applied" | "in_review" | "active" | "changes_requested" | "rejected" | "suspended" | "documents_pending" | "withdrawn";
+                    roleStatus?: "applied" | "documents_pending" | "in_review" | "active" | "changes_requested" | "rejected" | "suspended" | "withdrawn";
                     limit?: number;
                     cursor?: string;
                 };
@@ -6079,7 +6079,7 @@ export interface paths {
                         prefs?: {
                             category: string;
                             /** @enum {string} */
-                            channel: "in_app" | "sms" | "email";
+                            channel: "in_app" | "sms" | "email" | "push";
                             enabled: boolean;
                         }[];
                         quietHours?: boolean;
@@ -6118,6 +6118,172 @@ export interface paths {
         };
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/push-subscriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Phones that get push notifications (tokens are never returned) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PushDeviceList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Register this phone's push token (the mobile app; idempotent per token: 201 new, 200 already registered) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description The Expo push token from expo-notifications, e.g. ExponentPushToken[…] */
+                        token: string;
+                        /** @enum {string} */
+                        platform: "expo";
+                        /** @description Shown in the device list, e.g. "Galaxy A54" */
+                        deviceLabel?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PushDevice"];
+                    };
+                };
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PushDevice"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/push-subscriptions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Stop push notifications to one phone (the app calls this before signing out) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
         options?: never;
         head?: never;
         patch?: never;
@@ -6286,6 +6452,12 @@ export interface paths {
                     "application/json": {
                         /** @enum {string} */
                         method: "bkash" | "nagad" | "card";
+                        /**
+                         * @description After the gateway, send the payer to the website's result page (web) or back to the mobile app at APP_RETURN_URL/{paymentId}/result (app)
+                         * @default web
+                         * @enum {string}
+                         */
+                        returnTo?: "web" | "app";
                     };
                 };
             };
@@ -20290,6 +20462,84 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["BookingTimeline"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/ground-bookings/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search my bookings at any venue and date: code, phone last 4 digits, team or contact name (newest start first) */
+        get: {
+            parameters: {
+                query: {
+                    /** @description A booking code (or part of it), the last 4+ digits of the contact phone, or a team or contact name */
+                    q: string;
+                    groundId?: string;
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OwnerBookingSearch"];
                     };
                 };
                 /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
@@ -36253,7 +36503,7 @@ export interface paths {
                         /** Format: email */
                         contactEmail?: string | null;
                         /**
-                         * @default esports
+                         * @default sports
                          * @enum {string}
                          */
                         kind?: "esports" | "sports";
@@ -36279,7 +36529,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ORG_ROLE_REQUIRED */
+                /** @description Error. Codes: ORG_ROLE_REQUIRED, ORG_KIND_CLOSED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -36469,7 +36719,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ORG_ROLE_REQUIRED */
+                /** @description Error. Codes: ORG_ROLE_REQUIRED, ORG_KIND_CLOSED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -39049,6 +39299,15 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
+                /** @description Error. Codes: ESPORTS_ORGANISERS_CLOSED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
                 /** @description Error. Codes: CONTRACT_FIELDS_INVALID, VALIDATION_FAILED */
                 422: {
                     headers: {
@@ -39333,7 +39592,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: CONTRACT_STATE, ORG_NOT_VERIFIED, CONTRACT_DOCUMENT_REQUIRED, CONTRACT_ACTIVE_EXISTS */
+                /** @description Error. Codes: ESPORTS_ORGANISERS_CLOSED, CONTRACT_STATE, ORG_NOT_VERIFIED, CONTRACT_DOCUMENT_REQUIRED, CONTRACT_ACTIVE_EXISTS */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -46876,7 +47135,7 @@ export interface components {
             /** @enum {string} */
             role: "member" | "player" | "pro" | "ground_owner" | "shop_owner" | "organiser" | "gym_owner" | "staff" | "master_admin";
             /** @enum {string} */
-            status: "applied" | "in_review" | "active" | "changes_requested" | "rejected" | "suspended" | "documents_pending" | "withdrawn";
+            status: "applied" | "documents_pending" | "in_review" | "active" | "changes_requested" | "rejected" | "suspended" | "withdrawn";
             meta: {
                 [key: string]: unknown;
             } | null;
@@ -47426,7 +47685,7 @@ export interface components {
                 category: string;
                 channels: {
                     /** @enum {string} */
-                    channel: "in_app" | "sms" | "email";
+                    channel: "in_app" | "sms" | "email" | "push";
                     enabled: boolean;
                     locked: boolean;
                     offered: boolean;
@@ -47439,6 +47698,24 @@ export interface components {
             };
             /** @enum {string} */
             locale: "en" | "bn";
+        };
+        PushDevice: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            platform: "expo" | "web";
+            deviceLabel: string | null;
+            /** @description The last 6 characters of the token; the token itself is never returned */
+            tokenTail: string;
+            /** @description Registered by the sign-in making this request */
+            current: boolean;
+            /** Format: date-time */
+            lastUsedAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        PushDeviceList: {
+            items: components["schemas"]["PushDevice"][];
         };
         NotificationDelivery: {
             /** Format: uuid */
@@ -49963,6 +50240,10 @@ export interface components {
             checkedInAt: string | null;
             moveCount: number;
             cancelActor: string | null;
+        };
+        OwnerBookingSearch: {
+            items: components["schemas"]["OwnerBooking"][];
+            nextCursor: string | null;
         };
         OwnerBookingDetail: {
             booking: components["schemas"]["OwnerBooking"];
