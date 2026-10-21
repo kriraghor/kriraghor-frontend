@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blockColumns, dhakaMinute, hhmm, ownerActions, timelineWindow } from "../vendor/bookings";
+import { blockColumns, dhakaDate, dhakaMinute, hhmm, ownerActions, searchable, shiftDay, timelineWindow } from "../vendor/bookings";
 
 const money = (dueAtVenue = 150000, balanceStatus: "due" | "collected" | "not_due" = "due") => ({ dueAtVenue, balanceStatus }) as never;
 
@@ -38,5 +38,18 @@ describe("timelineWindow", () => {
     expect(timelineWindow(late, "2026-10-18")).toEqual({ open: 0, close: 1440 });
     expect(timelineWindow([{ start: "2026-10-19T01:00:00Z", end: "2026-10-19T02:00:00Z" }], "2026-10-18")).toEqual({ open: 360, close: 1380 });
     expect(blockColumns(late[0].start, late[0].end, "2026-10-18", 0, 1440)).toEqual({ from: 1, span: 2 });
+  });
+
+  it("moves the desk's date and finds a booking's Dhaka day", () => {
+    expect(shiftDay("2026-10-21", 1)).toBe("2026-10-22");
+    expect(shiftDay("2026-10-21", -1)).toBe("2026-10-20");
+    expect(shiftDay("2026-10-31", 1)).toBe("2026-11-01");
+    expect(shiftDay("2026-03-01", -1)).toBe("2026-02-28");
+    expect(shiftDay("2026-12-31", 1)).toBe("2027-01-01");
+    // 23:30 Dhaka on the 20th is 17:30 UTC; 00:30 Dhaka on the 21st is 18:30 UTC on the 20th.
+    expect(dhakaDate("2026-10-20T17:30:00Z")).toBe("2026-10-20");
+    expect(dhakaDate("2026-10-20T18:30:00Z")).toBe("2026-10-21");
+    expect(searchable(" a ")).toBe(false);
+    expect(searchable("KG")).toBe(true);
   });
 });

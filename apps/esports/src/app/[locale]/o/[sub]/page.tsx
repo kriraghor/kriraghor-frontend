@@ -1,20 +1,11 @@
-import { Suspense } from "react";
-import { setRequestLocale } from "next-intl/server";
-import { OrganiserPage } from "@/components/esports/OrganiserPage";
+import { notFound } from "next/navigation";
 
-export const metadata = { title: "Organiser" };
+export const metadata = { title: "Not found" };
 
-async function Content({ params }: { params: PageProps<"/[locale]/o/[sub]">["params"] }) {
-  const { locale, sub } = await params;
-  setRequestLocale(locale);
-  return <OrganiserPage sub={decodeURIComponent(sub)} />;
-}
-
-// M22: an organiser's branded page; {sub}.esports.kriraghor.com/ is rewritten here (proxy.ts).
-export default function OrganiserRoute({ params }: PageProps<"/[locale]/o/[sub]">) {
-  return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1320px] animate-pulse bg-surface-2" />}>
-      <Content params={params} />
-    </Suspense>
-  );
+/**
+ * M22 organiser pages are switched off while esports is organised by Kriraghor only (21 Oct 2026):
+ * /o/{sub} answers 404, and the proxy no longer rewrites {sub}.esports.* here (lib/host.ts).
+ */
+export default function OrganiserRoute(): never {
+  notFound();
 }

@@ -10,7 +10,7 @@ import { useAuth } from "@kriraghor/ui/auth";
 import { Dropdown, Tooltip } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { vendor } from "@/lib/vendor/grounds";
-import { BUSINESS_ROLES, adminSections, vendorSections, type BusinessRole, type NavEntry, type NavSection } from "@/lib/panel-nav";
+import { adminSections, businessView, vendorSections, type NavEntry, type NavSection } from "@/lib/panel-nav";
 import type { Area } from "@/lib/area";
 
 /**
@@ -66,9 +66,8 @@ function VendorShell({ signedIn, children }: { signedIn: boolean; children: Reac
   const qc = useQueryClient();
   // Same key as the vendor home, which reads the same /me.
   const me = useQuery({ queryKey: ["vendor-me"], enabled: signedIn, queryFn: () => vendor.me() });
-  const active = BUSINESS_ROLES.filter((r) => me.data?.roles.some((x) => x.role === r && x.status === "active"));
-  const last = me.data?.lastPanelRole;
-  const view: BusinessRole | "all" = active.includes(last as BusinessRole) ? (last as BusinessRole) : "all";
+  // The vendor home follows the same view (businessView), so the menu and the home always agree.
+  const { active, view } = businessView(me.data);
   const save = useMutation({
     mutationFn: async (role: string) => {
       const { error } = await api().PATCH("/me", { body: { lastPanelRole: role as never } });

@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { ArrowLeft, ArrowsClockwise, CalendarX, DotsThree, Flag, PauseCircle, UsersThree } from "@phosphor-icons/react";
+import { Button, Dialog, Field as KitField, Menu, ReasonDialog, Select, Textarea, type MenuItem } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
 import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
-import { fromLocalInput, oversToBalls, presetValues, resultBody, sportsConsole as api, toLocalInput, type Match, type RuleField, type Seeding, type Tournament } from "@/lib/vendor/tournaments";
+import { fromLocalInput, matchActions, oversToBalls, presetValues, resultBody, sportsConsole as api, toLocalInput, type Match, type MatchAction, type RuleField, type Seeding, type Tournament } from "@/lib/vendor/tournaments";
 import { MePanel } from "../../MePanel";
+import { OrgMembers } from "../esports/OrganiserConsole";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { formatDhaka } from "../../admin/useAdminMe";
@@ -91,12 +94,15 @@ export function SportsTournaments({ orgId }: { orgId: string }) {
   if (q.isError) return <p className="mx-auto max-w-3xl px-5 py-16">{t("notFound")}</p>;
   return (
     <section className="mx-auto max-w-[1200px] px-5 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-        <button type="button" className={primary} onClick={() => setCreating((x) => !x)} data-testid="new-tournament">
-          {creating ? t("close") : t("new")}
-        </button>
-      </div>
+      <SportsOrgHeader
+        orgId={orgId}
+        current="events"
+        actions={
+          <button type="button" className={primary} onClick={() => setCreating((x) => !x)} data-testid="new-tournament">
+            {creating ? t("close") : t("new")}
+          </button>
+        }
+      />
       {creating ? <NewTournament orgId={orgId} /> : null}
       <ul className="mt-6 flex flex-col gap-2" data-testid="sports-tournaments">
         {q.isPending ? <li className="h-24 animate-pulse bg-surface-2" /> : null}
@@ -115,6 +121,63 @@ export function SportsTournaments({ orgId }: { orgId: string }) {
           </li>
         ))}
       </ul>
+    </section>
+  );
+}
+
+/**
+ * The sports organisation's frame: title, its name and the section links (events, members). Works
+ * from /me/organisations, not the esports dashboard (OrgShell), so it fits organisations of kind sports.
+ */
+function SportsOrgHeader({ orgId, current, actions }: { orgId: string; current: "events" | "members"; actions?: ReactNode }) {
+  const t = useTranslations("sportsConsole");
+  const { status } = useAuth();
+  const orgs = useQuery({ queryKey: ["my-orgs"], queryFn: () => api.mine(), enabled: status === "signed_in" });
+  const org = orgs.data?.items.find((o) => o.id === orgId);
+  const base = `/vendor/events/${orgId}`;
+  const links = [
+    { key: "events", href: base, icon: null },
+    { key: "members", href: `${base}/members`, icon: <UsersThree size={18} aria-hidden /> },
+  ] as const;
+  return (
+    <div>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="min-w-0">
+          {org ? <p className="text-sm font-semibold text-brand-text">{org.name}</p> : null}
+          <h1 className="text-3xl font-extrabold">{current === "members" ? t("membersTitle") : t("title")}</h1>
+        </div>
+        {actions}
+      </div>
+      <nav aria-label={org?.name ?? t("title")} className="mt-5 flex gap-1 border-b border-line" data-testid="sports-org-nav">
+        {links.map((l) => (
+          <Link
+            key={l.key}
+            href={l.href}
+            aria-current={current === l.key ? "page" : undefined}
+            className={`-mb-px inline-flex min-h-11 items-center gap-2 border-b-2 px-4 text-sm font-semibold ${current === l.key ? "border-brand text-ink" : "border-transparent text-muted hover:text-ink"}`}
+            data-testid={`sports-org-${l.key}`}
+          >
+            {l.icon}
+            {t(`nav.${l.key}`)}
+          </Link>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+/** /vendor/events/[orgId]/members: who can run this sports organisation (GET/POST /org/:orgId/members, remove). */
+export function SportsMembers({ orgId }: { orgId: string }) {
+  const t = useTranslations("sportsConsole");
+  const { status } = useAuth();
+  if (status === "signed_out") return <MePanel signInHref="/vendor/sign-in" />;
+  return (
+    <section className="mx-auto max-w-[1200px] px-5 py-10">
+      <SportsOrgHeader orgId={orgId} current="members" />
+      <p className="mt-6 max-w-2xl text-muted">{t("membersLead")}</p>
+      <div className="mt-6">
+        <OrgMembers orgId={orgId} />
+      </div>
     </section>
   );
 }
@@ -296,9 +359,16 @@ export function TournamentConsole({ orgId, id }: { orgId: string; id: string }) 
   const x = q.data;
   return (
     <section className="mx-auto max-w-[1200px] px-5 py-8">
-      <Link href={`/vendor/events/${orgId}`} className="text-sm font-semibold text-brand underline">
-        ← {t("title")}
-      </Link>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link href={`/vendor/events/${orgId}`} className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-text hover:underline">
+          <ArrowLeft size={16} aria-hidden />
+          {t("title")}
+        </Link>
+        <Link href={`/vendor/events/${orgId}/members`} className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-text hover:underline" data-testid="console-members">
+          <UsersThree size={18} aria-hidden />
+          {t("nav.members")}
+        </Link>
+      </div>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <h1 className="min-w-0 flex-1 text-3xl font-extrabold" data-testid="console-name">
           {x.name}
@@ -677,6 +747,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
   const [slots, setSlots] = useState("16:30, 18:00, 19:30");
   const [plan, setPlan] = useState<Awaited<ReturnType<typeof api.generate>> | null>(null);
   const [open, setOpen] = useState<string | null>(null);
+  const [pending, setPending] = useState<{ kind: MatchAction; m: Match } | null>(null);
   const act = useMutation({ mutationFn: async (fn: () => Promise<unknown>) => fn(), onSuccess: refresh });
   const schedule = { weekdays: days, slots: slots.split(",").map((s) => s.trim()).filter(Boolean) };
   const dry = useMutation({ mutationFn: () => api.generate(orgId, x.id, { dryRun: true, schedule }), onSuccess: setPlan });
@@ -745,18 +816,197 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
                 </span>
                 <span className="block text-sm text-muted">{m.scheduledStart ? formatDhaka(m.scheduledStart, locale) : t("timeTbc")}</span>
               </span>
-              <Chip tone={m.result ? "ok" : "muted"}>{t(`match.${m.status}`)}</Chip>
-              {m.published && m.teamA.team && m.teamB.team ? (
+              <Chip tone={m.result ? "ok" : m.status === "cancelled" ? "bad" : m.status === "postponed" ? "warn" : "muted"}>{t(`match.${m.status}`)}</Chip>
+              {m.published && m.teamA.team && m.teamB.team && !["cancelled", "postponed"].includes(m.status) ? (
                 <button type="button" className={btn} onClick={() => setOpen(open === m.id ? null : m.id)} data-testid="match-result-open">
                   {m.result ? t("amend") : t("enterResult")}
                 </button>
               ) : null}
+              <MatchMenu m={m} onPick={(kind) => setPending({ kind, m })} />
             </div>
+            {m.statusReason && ["postponed", "cancelled", "walkover"].includes(m.status) ? <p className="mt-1 pl-15 text-sm text-muted">{m.statusReason}</p> : null}
             {open === m.id ? <ResultForm orgId={orgId} m={m} engine={x.sport.engine ?? "clock"} amend={Boolean(m.result)} onDone={() => (setOpen(null), refresh())} /> : null}
           </li>
         ))}
         {!matches.length ? <li className="py-6 text-muted">{t("noMatches")}</li> : null}
       </ul>
+      <MatchActionDialogs orgId={orgId} pending={pending} onClose={() => setPending(null)} onDone={refresh} />
     </div>
+  );
+}
+
+const MATCH_ICON: Record<MatchAction, ReactNode> = {
+  move: <ArrowsClockwise aria-hidden />,
+  postpone: <PauseCircle aria-hidden />,
+  walkover: <Flag aria-hidden />,
+  cancel: <CalendarX aria-hidden />,
+};
+
+/** The match's menu (M14 §4 console: Edit date/time, Postpone, Mark walkover, Cancel), only what its state allows. */
+function MatchMenu({ m, onPick }: { m: Match; onPick: (kind: MatchAction) => void }) {
+  const t = useTranslations("sportsConsole");
+  const kinds = matchActions(m);
+  if (!kinds.length) return null;
+  const items: MenuItem[] = [];
+  for (const k of kinds) {
+    if (k === "cancel") items.push("separator");
+    items.push({ label: t(`mAct.${k}`), icon: MATCH_ICON[k], danger: k === "cancel", onSelect: () => onPick(k) });
+  }
+  return (
+    <Menu
+      trigger={
+        <button type="button" className="inline-flex size-11 items-center justify-center rounded-control text-muted hover:bg-surface-2 hover:text-ink" aria-label={t("matchActions", { n: m.matchNo })} data-testid="match-actions">
+          <DotsThree size={22} weight="bold" aria-hidden />
+        </button>
+      }
+      items={items}
+    />
+  );
+}
+
+/**
+ * The dialogs behind the match menu: move (date, time, court; the match's version guards against a
+ * stale list), postpone and cancel (a reason of 5 to 255 characters), walkover (the winner and a
+ * reason). The API answers 409 MATCH_STATE when the match moved on meanwhile.
+ */
+function MatchActionDialogs({ orgId, pending, onClose, onDone }: { orgId: string; pending: { kind: MatchAction; m: Match } | null; onClose: () => void; onDone: () => void }) {
+  const t = useTranslations("sportsConsole");
+  const err = useErr();
+  const act = useMutation({
+    mutationFn: async (fn: () => Promise<unknown>) => fn(),
+    onSuccess: () => {
+      onClose();
+      onDone();
+    },
+  });
+  const close = (o: boolean) => {
+    if (o) return;
+    act.reset();
+    onClose();
+  };
+  const m = pending?.m;
+  const kind = pending?.kind;
+  return (
+    <>
+      <ReasonDialog
+        key={`postpone-${m?.id}`}
+        open={kind === "postpone"}
+        onOpenChange={close}
+        title={t("postponeTitle", { n: m?.matchNo ?? 0 })}
+        description={t("postponeHelp")}
+        confirmLabel={t("mAct.postpone")}
+        minLength={5}
+        maxLength={255}
+        busy={act.isPending}
+        error={act.error ? err(act.error) : undefined}
+        onConfirm={(reason) => m && act.mutate(() => api.postpone(orgId, m.id, reason))}
+        testId="match-postpone"
+      />
+      <ReasonDialog
+        key={`cancel-${m?.id}`}
+        open={kind === "cancel"}
+        onOpenChange={close}
+        title={t("cancelMatchTitle", { n: m?.matchNo ?? 0 })}
+        description={t("cancelMatchHelp")}
+        confirmLabel={t("mAct.cancel")}
+        danger
+        minLength={5}
+        maxLength={255}
+        busy={act.isPending}
+        error={act.error ? err(act.error) : undefined}
+        onConfirm={(reason) => m && act.mutate(() => api.cancelMatch(orgId, m.id, reason))}
+        testId="match-cancel"
+      />
+      {m && kind === "move" ? <MoveDialog key={m.id} orgId={orgId} m={m} busy={act.isPending} error={act.error ? err(act.error) : null} onClose={close} onSave={(fn) => act.mutate(fn)} /> : null}
+      {m && kind === "walkover" ? <WalkoverDialog key={m.id} orgId={orgId} m={m} busy={act.isPending} error={act.error ? err(act.error) : null} onClose={close} onSave={(fn) => act.mutate(fn)} /> : null}
+    </>
+  );
+}
+
+type ActionDialogProps = { orgId: string; m: Match; busy: boolean; error: ReactNode; onClose: (open: boolean) => void; onSave: (fn: () => Promise<unknown>) => void };
+
+function MoveDialog({ orgId, m, busy, error, onClose, onSave }: ActionDialogProps) {
+  const t = useTranslations("sportsConsole");
+  const [start, setStart] = useState(() => toLocalInput(m.scheduledStart));
+  const [court, setCourt] = useState(m.court ?? "");
+  return (
+    <Dialog
+      open
+      onOpenChange={onClose}
+      title={t("moveTitle", { n: m.matchNo })}
+      description={t("moveHelp")}
+      footer={
+        <>
+          <Button type="button" variant="ghost" onClick={() => onClose(false)} disabled={busy}>
+            {t("close")}
+          </Button>
+          <Button type="submit" form="match-move-form" busy={busy} data-testid="match-move-save">
+            {t("moveSave")}
+          </Button>
+        </>
+      }
+    >
+      <form
+        id="match-move-form"
+        className="flex flex-col gap-4"
+        data-testid="match-move"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSave(() => api.move(orgId, m.id, { scheduledStart: fromLocalInput(start), court: court.trim() || null, version: m.version }));
+        }}
+      >
+        <KitField id="match-move-start" type="datetime-local" label={t("moveStart")} value={start} onChange={(e) => setStart(e.target.value)} />
+        <KitField id="match-move-court" label={t("moveCourt")} value={court} onChange={(e) => setCourt(e.target.value)} maxLength={60} placeholder={t("courtsHint")} />
+        {error ? <Notice tone="error">{error}</Notice> : null}
+      </form>
+    </Dialog>
+  );
+}
+
+function WalkoverDialog({ orgId, m, busy, error, onClose, onSave }: ActionDialogProps) {
+  const t = useTranslations("sportsConsole");
+  const teams = [m.teamA.team, m.teamB.team].filter((x): x is NonNullable<typeof x> => Boolean(x));
+  const [winner, setWinner] = useState(teams[0]?.id ?? "");
+  const [reason, setReason] = useState("");
+  const [tried, setTried] = useState(false);
+  const short = reason.trim().length < 5;
+  return (
+    <Dialog
+      open
+      onOpenChange={onClose}
+      title={t("walkoverTitle", { n: m.matchNo })}
+      description={t("walkoverHelp")}
+      footer={
+        <>
+          <Button type="button" variant="ghost" onClick={() => onClose(false)} disabled={busy}>
+            {t("close")}
+          </Button>
+          <Button type="submit" form="match-walkover-form" busy={busy} data-testid="match-walkover-save">
+            {t("mAct.walkover")}
+          </Button>
+        </>
+      }
+    >
+      <form
+        id="match-walkover-form"
+        className="flex flex-col gap-4"
+        data-testid="match-walkover"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setTried(true);
+          if (!short && winner) onSave(() => api.walkover(orgId, m.id, winner, reason.trim()));
+        }}
+      >
+        <Select id="match-walkover-winner" label={t("walkoverWinner")} value={winner} onChange={(e) => setWinner(e.target.value)}>
+          {teams.map((x) => (
+            <option key={x.id} value={x.id}>
+              {x.name ?? x.shortCode ?? x.id}
+            </option>
+          ))}
+        </Select>
+        <Textarea id="match-walkover-reason" label={t("reason")} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={255} error={tried && short ? t("reasonShort") : undefined} />
+        {error ? <Notice tone="error">{error}</Notice> : null}
+      </form>
+    </Dialog>
   );
 }

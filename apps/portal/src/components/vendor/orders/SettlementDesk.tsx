@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
+import { ArrowLeft } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { shopOrders } from "@/lib/vendor/orders";
@@ -23,8 +24,9 @@ export function SettlementDesk() {
   if (problem && ["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code)) return <Gate />;
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-10">
-      <Link href="/vendor/orders" className="text-sm font-semibold text-brand underline">
-        ← {t("title")}
+      <Link href="/vendor/orders" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-text hover:underline">
+        <ArrowLeft size={16} aria-hidden />
+        {t("title")}
       </Link>
       <h1 className="mt-3 text-3xl font-extrabold">{t("settlementTitle")}</h1>
       <p className="mt-1 max-w-3xl text-muted">{t("settlementLead")}</p>
@@ -54,7 +56,12 @@ export function SettlementDesk() {
           </div>
         </div>
       ) : null}
-      <p className="mt-6 text-sm text-muted">{t("payoutNote")}</p>
+      <p className="mt-6 text-sm text-muted">
+        {t("payoutNoteVendor")}{" "}
+        <Link href="/vendor/payouts" className="font-semibold text-brand-text underline" data-testid="settlement-payouts">
+          {t("payoutsLink")}
+        </Link>
+      </p>
     </section>
   );
 }

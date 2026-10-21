@@ -9,6 +9,7 @@ import { unwrap } from "../admin/finance";
  */
 export type Timeline = components["schemas"]["BookingTimeline"];
 export type OwnerBooking = components["schemas"]["OwnerBooking"];
+export type OwnerBookingSearch = components["schemas"]["OwnerBookingSearch"];
 export type Closure = components["schemas"]["Closure"];
 export type Series = components["schemas"]["BookingSeries"];
 export type SeriesPreview = components["schemas"]["SeriesPreview"];
@@ -21,6 +22,9 @@ export const newKey = () => (typeof crypto !== "undefined" && "randomUUID" in cr
 
 export const desk = {
   timeline: async (groundId: string, date: string) => unwrap(await api().GET("/me/ground-bookings", { params: { query: { groundId, date } } })),
+  /** Any of my bookings at any venue and date: code, last 4+ phone digits, team or contact name (newest first). */
+  search: async (q: string, groundId?: string, cursor?: string) =>
+    unwrap(await api().GET("/me/ground-bookings/search", { params: { query: { q, ...(groundId ? { groundId } : {}), ...(cursor ? { cursor } : {}), limit: 20 } } })),
   get: async (bid: string) => unwrap(await api().GET("/me/ground-bookings/{id}", { params: id(bid) })),
   checkIn: async (bid: string) => unwrap(await api().POST("/me/ground-bookings/{id}/check-in", { params: id(bid) })),
   noShow: async (bid: string) => unwrap(await api().POST("/me/ground-bookings/{id}/no-show", { params: id(bid) })),
@@ -108,3 +112,15 @@ export const hhmm = (iso: string) => {
   const m = dhakaMinute(iso);
   return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 };
+
+/** The Dhaka calendar date (YYYY-MM-DD) of an instant: the timeline day a booking sits on. */
+export const dhakaDate = (iso: string) => new Date(new Date(iso).getTime() + DHAKA_MS).toISOString().slice(0, 10);
+
+/** The calendar date `n` days from `day` (YYYY-MM-DD, no time zone involved). */
+export function shiftDay(day: string, n: number): string {
+  const [y, m, d] = day.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+}
+
+/** A search worth sending: at least 2 characters once trimmed. */
+export const searchable = (q: string) => q.trim().length >= 2;

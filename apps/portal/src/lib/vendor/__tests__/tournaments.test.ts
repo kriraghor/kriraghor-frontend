@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fromLocalInput, oversToBalls, presetValues, resultBody, toLocalInput, type SportRules } from "../tournaments";
+import { fromLocalInput, matchActions, oversToBalls, presetValues, resultBody, toLocalInput, type Match, type SportRules } from "../tournaments";
 
 const rules = {
   sport: { id: "s", key: "badminton", nameEn: "Badminton", nameBn: "ব্যাডমিন্টন", engine: "rally", defaultTiebreakers: [] },
@@ -37,5 +37,17 @@ describe("sports console helpers (M14)", () => {
     expect(toLocalInput(null)).toBe("");
     expect(fromLocalInput("2026-11-07T17:00")).toBe("2026-11-07T11:00:00.000Z");
     expect(fromLocalInput("")).toBeNull();
+  });
+
+  it("offers match actions by state (cancel from draft, scheduled or postponed; else none)", () => {
+    const team = (id: string) => ({ ref: { type: "team" }, team: { id, name: id } });
+    const tbc = { ref: { type: "winner_of" }, team: null };
+    const mk = (status: string, extra: Partial<Match> = {}) => ({ status, result: null, teamA: team("a"), teamB: team("b"), ...extra }) as unknown as Match;
+    expect(matchActions(mk("draft"))).toEqual(["move", "cancel"]);
+    expect(matchActions(mk("scheduled"))).toEqual(["move", "postpone", "walkover", "cancel"]);
+    expect(matchActions(mk("postponed"))).toEqual(["move", "walkover", "cancel"]);
+    expect(matchActions(mk("scheduled", { teamB: tbc } as never))).toEqual(["move", "postpone", "cancel"]);
+    expect(matchActions(mk("scheduled", { result: { outcome: "win" } } as never))).toEqual([]);
+    for (const s of ["completed", "walkover", "cancelled", "abandoned", "no_result"]) expect(matchActions(mk(s))).toEqual([]);
   });
 });

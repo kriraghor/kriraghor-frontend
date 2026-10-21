@@ -10,6 +10,8 @@ import {
   Briefcase,
   CalendarCheck,
   Flag,
+  GameController,
+  GearSix,
   HandCoins,
   Handshake,
   Heart,
@@ -30,6 +32,7 @@ import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
 import { listNotifications } from "@kriraghor/api-client/notifications";
 import { ShellUser, useMe } from "@kriraghor/ui/account";
+import { esportsHref } from "@/lib/links";
 
 const WORK_ROLES = ["player", "pro"];
 const OPEN = ["applied", "documents_pending", "in_review", "changes_requested", "active"];
@@ -56,6 +59,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
       label: t("groups.play"),
       items: [
         { href: "/me/events", label: t("items.events"), icon: Trophy, testId: "me-tournaments" },
+        { href: esportsHref("/me/matches"), label: t("items.esports"), icon: GameController, testId: "me-esports" },
         { href: "/me/teams", label: t("items.teams"), icon: UsersThree, testId: "me-teams" },
         { href: "/me/player", label: t("items.player"), icon: IdentificationCard, testId: "me-player" },
         { href: "/me/eligibility", label: u && !u.phoneVerified ? t("items.addPhone") : t("items.ready"), icon: ShieldCheck, testId: "me-eligibility" },
@@ -97,6 +101,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
     {
       label: t("groups.settings"),
       items: [
+        { href: "/account/settings", label: t("items.settings"), icon: GearSix, testId: "me-settings" },
         { href: "/me/notifications", label: t("items.notifications"), icon: Bell, badge: bell.data?.unreadCount },
         { href: "/account/verification", label: u?.kycStatus === "verified" ? t("items.verified") : t("items.verify"), icon: IdentificationCard, testId: "me-verification" },
         { href: "/account/roles", label: t("items.roles"), icon: UserGear },

@@ -49,7 +49,7 @@ export function fileProblem(file: File, maxBytes: number): "type" | "size" | nul
 
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 
-// ---------------- business roles (ground owners M09, shop owners M12, players and pros M11, gym owners M20, esports organisers M22; documents are kept per role)
+// ---------------- business roles (ground owners M09, shop owners M12, players and pros M11, gym owners M20, sports-event organisers M14; documents are kept per role)
 
 export type BusinessDocType = "trade_license" | "deed_or_lease" | "tin" | "bin" | "credential" | "police_clearance" | "org_registration";
 export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "pro" | "player";

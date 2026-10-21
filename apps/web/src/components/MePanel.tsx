@@ -69,7 +69,7 @@ function SetupChecklist({ phoneVerified, emailVerified, kycVerified }: { phoneVe
   const idPending = !idVerified && ids.some((p) => p.status === "pending" || p.status === "pending_review");
   const steps: Step[] = [
     { key: "phone", done: phoneVerified, label: phoneVerified ? t("phoneDone") : t("phone"), href: "/me/eligibility" },
-    { key: "email", done: emailVerified, label: emailVerified ? t("emailDone") : t("email"), href: "/me/notifications/settings" },
+    { key: "email", done: emailVerified, label: emailVerified ? t("emailDone") : t("email"), href: "/account/settings" },
     { key: "gameId", done: idVerified, pending: idPending, label: idVerified ? t("gameIdDone") : idPending ? t("gameIdPending") : t("gameId"), href: esportsHref("/me/esports") },
     { key: "nid", done: kycVerified, label: kycVerified ? t("nidDone") : t("nid"), hint: kycVerified ? undefined : t("nidWhy"), href: "/account/verification" },
   ];

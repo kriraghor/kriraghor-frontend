@@ -7,6 +7,8 @@ import { Link, useRouter } from "../i18n/navigation";
 import { useAuth } from "../auth";
 import { listNotifications, markRead, relativeTime } from "@kriraghor/api-client/notifications";
 import { Button, Notice } from "../primitives";
+import { publicEnv } from "@kriraghor/session/env";
+import { resolveNotificationLink, siteOfBell } from "./links";
 
 const CATEGORIES = ["security", "money", "bookings", "hire", "orders", "offers", "tournaments", "moderation", "disputes_reports", "reviews", "staff_ops"] as const;
 
@@ -111,7 +113,12 @@ export function NotificationCentre({ settingsHref, signInHref }: { settingsHref?
                       await markRead(audience, { ids: [n.id] });
                       await refresh();
                     }
-                    if (n.link) router.push(n.link);
+                    // Links that belong to another site (a member link on the business panel) open there.
+                    const env = publicEnv();
+                    const here = siteOfBell(signInHref, typeof window === "undefined" ? null : window.location.origin, env.ESPORTS_URL);
+                    const target = resolveNotificationLink(n.link, { here, webUrl: env.WEB_URL, vendorUrl: env.VENDOR_URL, adminUrl: env.ADMIN_URL, esportsUrl: env.ESPORTS_URL });
+                    if (target?.external) window.location.assign(target.href);
+                    else if (target) router.push(target.href);
                   }}
                 >
                   <span aria-hidden className={`mt-2 inline-block size-2 shrink-0 rounded-full ${n.readAt ? "bg-transparent" : "bg-brand"}`} />

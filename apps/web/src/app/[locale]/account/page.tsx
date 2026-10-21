@@ -1,7 +1,7 @@
 import { redirect } from "@kriraghor/ui/i18n/navigation";
 
-/** Older notification and gate links point here; the account area lives at /me. */
+/** /account itself (older links, and the backend's "account suspended" notices) opens the settings. */
 export default async function AccountPage({ params }: PageProps<"/[locale]/account">) {
   const { locale } = await params;
-  redirect({ href: "/me", locale });
+  redirect({ href: "/account/settings", locale });
 }

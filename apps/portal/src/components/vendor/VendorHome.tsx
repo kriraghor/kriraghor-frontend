@@ -1,166 +1,466 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
-import { Link } from "@kriraghor/ui/i18n/navigation";
+import type { ReactNode } from "react";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
+import { ArrowRight, Barbell, Check, Package, QrCode, Receipt, ShoppingBag, SoccerBall, Storefront, Ticket, Trophy, Wallet, Warehouse } from "@phosphor-icons/react";
+import { api } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { publicEnv } from "@kriraghor/session/env";
+import { Badge, ButtonLink, Card, EmptyState, PageTitle, Skeleton, Stat, buttonClass, cn } from "@kriraghor/ui/kit";
+import { formatTaka } from "@/lib/admin/finance";
+import { checklist, dashboards, mergeActions, type ActionRole } from "@/lib/dashboard";
+import { BUSINESS_ROLES, businessView, type BusinessRole } from "@/lib/panel-nav";
+import { gymDesk } from "@/lib/vendor/gym";
 import { vendor } from "@/lib/vendor/grounds";
+import { shopDesk } from "@/lib/vendor/market";
+import { shopOrders } from "@/lib/vendor/orders";
+import { sportsConsole } from "@/lib/vendor/tournaments";
 import { MePanel } from "../MePanel";
-import { OwnerOverview } from "./OwnerDashboard";
-
-const STEP_TONE: Record<string, string> = { done: "border-brand text-brand", now: "border-ink text-ink", later: "border-line text-muted" };
+import { ActionList, OwnerOverview } from "./OwnerDashboard";
 
 /**
- * vendor.kriraghor.com home (M09): where a ground owner stands. Verify the NID and send the business
- * documents on kriraghor.com (one account); once the ground_owner role is active, list grounds here,
- * and the home shows the owner's numbers (M19 Overview) and what needs doing. M12: a shop owner sees
- * their shop card (shop, products, inventory), or how far their shop owner application is.
+ * vendor.kriraghor.com home: a home for each business the person runs. It follows the panel switcher
+ * (`lastPanelRole`, as the sidebar does): one business, or "all" with a section per business and one
+ * combined "Needs your action" list (M19-FR-11). Each business shows a short setup checklist while it
+ * is new, always with the payout account; venue owners keep their Overview (M19 §6.2). Someone with
+ * no business yet sees the steps to start one and the four kinds of business (applied for on
+ * kriraghor.com with the same account). Esports is run by Kriraghor only (21 Oct 2026), so the
+ * organiser section is sports events.
  */
+const ICON: Record<BusinessRole, typeof SoccerBall> = { ground_owner: SoccerBall, shop_owner: Storefront, gym_owner: Barbell, organiser: Trophy };
+/** The `as` kriraghor.com's business page takes (the venue owner is its default). */
+const APPLY_AS: Record<BusinessRole, string> = { ground_owner: "", shop_owner: "?as=shop", gym_owner: "?as=gym", organiser: "?as=organiser" };
+const ACTIONS_FOR: Partial<Record<BusinessRole, ActionRole>> = { ground_owner: "ground_owner", shop_owner: "shop_owner", gym_owner: "gym_owner" };
+
+type Me = Awaited<ReturnType<typeof vendor.me>>;
+const roleStatus = (me: Me | undefined, role: string) => me?.roles.find((r) => r.role === role)?.status ?? null;
+
 export function VendorHome() {
-  const t = useTranslations("vendorGrounds");
+  const t = useTranslations("vendorHome");
   const { status } = useAuth();
-  const me = useQuery({ queryKey: ["vendor-me"], enabled: status === "signed_in", queryFn: () => vendor.me() });
-  const mine = useQuery({ queryKey: ["vendor-grounds"], enabled: status === "signed_in", queryFn: () => vendor.mine(), retry: false });
+  const signedIn = status === "signed_in";
+  const me = useQuery({ queryKey: ["vendor-me"], enabled: signedIn, queryFn: () => vendor.me() });
+  const { active, view, shown } = businessView(me.data);
+  const actionRoles = shown.map((r) => ACTIONS_FOR[r]).filter((r): r is ActionRole => Boolean(r));
+  const combined = shown.length > 1;
+  // One list for several businesses; the same keys as the sections' own lists.
+  const actions = useQueries({
+    queries: actionRoles.map((role) => ({ queryKey: ["owner-actions", role], enabled: signedIn && combined, queryFn: () => dashboards.ownerActions(role) })),
+  });
+
   if (status !== "signed_in") return <MePanel signInHref="/vendor/sign-in" />;
-  if (me.isPending) return <div className="mx-auto mt-10 h-48 max-w-3xl animate-pulse bg-surface-2" />;
-  const roles = me.data?.roles ?? [];
-  const member = roles.find((r) => r.role === "member")?.status ?? null;
-  const owner = roles.find((r) => r.role === "ground_owner")?.status ?? null;
-  const shopOwner = roles.find((r) => r.role === "shop_owner")?.status ?? null;
-  const gymOwner = roles.find((r) => r.role === "gym_owner")?.status ?? null;
-  const organiserRole = roles.find((r) => r.role === "organiser")?.status ?? null;
-  const web = publicEnv().WEB_URL;
-  const steps = [
-    { key: "nid", done: member === "active", href: `${web}/account/verification` },
-    { key: "docs", done: owner === "active", href: `${web}/account/business` },
-    { key: "list", done: (mine.data?.items.length ?? 0) > 0, href: "/vendor/venues" },
-  ];
-  const current = steps.findIndex((s) => !s.done);
+  if (me.isPending) return <Skeleton className="mx-auto mt-10 h-48 max-w-3xl rounded-card" />;
+  if (!active.length) return <Onboarding me={me.data} />;
+
+  const merged = mergeActions(actionRoles.map((role, i) => ({ role, items: actions[i]?.data?.items ?? [] })));
+  const actionsLoading = actions.some((q) => q.isPending);
+  const notHeld = BUSINESS_ROLES.filter((r) => !active.includes(r));
 
   return (
-    <section className={`mx-auto px-5 py-10 ${owner === "active" ? "max-w-[1200px]" : "max-w-3xl"}`}>
-      <h1 className="text-3xl font-extrabold">{t("home.title")}</h1>
-      <p className="mt-2 text-muted">{t("home.lead")}</p>
-      {owner === "active" ? (
-        <div className="mt-6 border-2 border-brand bg-surface p-5" data-testid="owner-active">
-          <p className="font-bold">{t("home.active")}</p>
-          <p className="mt-1 text-sm text-muted">{t("home.groundsCount", { n: mine.data?.items.length ?? 0 })}</p>
-          <Link href="/vendor/venues" className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
-            {t("home.open")}
-          </Link>
+    <section className="mx-auto max-w-[1200px] px-5 pb-16 pt-8" data-testid="vendor-home">
+      <PageTitle title={view === "all" ? t("title") : t(`sections.${view}`)} description={t("lead")} />
+      {combined && actionRoles.length ? (
+        <div className="mt-6" data-testid="combined-actions">
+          <h2 className="font-display text-xl font-bold">{t("actionsTitle")}</h2>
+          <div className="mt-3">{actionsLoading && !merged.length ? <Skeleton className="h-20 rounded-card" /> : <ActionList items={merged} />}</div>
         </div>
       ) : null}
-      {owner === "active" ? (
-        <OwnerOverview />
-      ) : (
-        <ol className="mt-6 space-y-3" data-testid="owner-steps">
-          {steps.map((s, i) => {
-            const tone = s.done ? "done" : i === current ? "now" : "later";
-            const external = s.href.startsWith("http");
-            return (
-              <li key={s.key} className={`flex flex-wrap items-center gap-4 border-2 bg-surface p-4 ${STEP_TONE[tone]}`}>
-                <span className="grid h-9 w-9 place-items-center border-2 border-current font-extrabold">{s.done ? "✓" : i + 1}</span>
-                <span className="flex-1">
-                  <span className="block font-bold text-ink">{t(`home.step.${s.key}`)}</span>
-                  <span className="block text-sm text-muted">{t(`home.stepHelp.${s.key}`, { status: owner ? t(`roleStatus.${owner}`) : t("roleStatus.none") })}</span>
-                </span>
-                {tone === "now" ? (
-                  external ? (
-                    <a href={s.href} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-                      {t(`home.go.${s.key}`)}
-                    </a>
-                  ) : (
-                    <Link href={s.href} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-                      {t(`home.go.${s.key}`)}
-                    </Link>
-                  )
-                ) : null}
-              </li>
-            );
-          })}
-        </ol>
-      )}
-      <ShopCard status={shopOwner} />
-      <GymCard status={gymOwner} />
-      <OrganiserCard status={organiserRole} />
+      {shown.map((role) => (
+        <BusinessSection key={role} role={role} heading={shown.length > 1 || view === "all"}>
+          {role === "ground_owner" ? <VenueHome me={me.data} showActions={!combined} /> : null}
+          {role === "shop_owner" ? <ShopHome showActions={!combined} /> : null}
+          {role === "gym_owner" ? <GymHome showActions={!combined} /> : null}
+          {role === "organiser" ? <OrganiserHome /> : null}
+        </BusinessSection>
+      ))}
+      {view === "all" && notHeld.length ? (
+        <div className="mt-12" data-testid="add-business">
+          <h2 className="font-display text-xl font-bold">{t("addMore")}</h2>
+          <p className="mt-1 text-sm text-muted">{t("addMoreLead")}</p>
+          <BusinessTypes me={me.data} roles={notHeld} />
+        </div>
+      ) : null}
     </section>
   );
 }
 
-/** M12: the shop owner's way in (or the application on kriraghor.com). */
-function ShopCard({ status }: { status: string | null }) {
-  const t = useTranslations("vendorMarket");
+function BusinessSection({ role, heading, children }: { role: BusinessRole; heading: boolean; children: ReactNode }) {
+  const t = useTranslations("vendorHome");
+  const Icon = ICON[role];
+  return (
+    <section className="mt-10" data-testid={`business-${role}`} aria-label={t(`sections.${role}`)}>
+      {heading ? (
+        <h2 className="mb-4 flex items-center gap-3 font-display text-2xl font-bold">
+          <span className="grid size-10 place-items-center rounded-control bg-brand-soft text-brand-text">
+            <Icon size={22} weight="fill" aria-hidden />
+          </span>
+          {t(`sections.${role}`)}
+        </h2>
+      ) : null}
+      <div className="flex flex-col gap-6">{children}</div>
+    </section>
+  );
+}
+
+// ---------------- setup checklist (always with the payout account)
+
+type Step = { key: string; done: boolean; href: string };
+
+/** M07: where the earnings go. `null` while unknown (loading or failed): the step is left out then. */
+function usePayoutStep(): Step | null {
+  const { status } = useAuth();
+  const q = useQuery({
+    queryKey: ["my-payout-summary"],
+    enabled: status === "signed_in",
+    retry: false,
+    queryFn: async () => {
+      const { data, error } = await api().GET("/me/payouts/summary");
+      if (error || !data) throw error ?? new Error("payout summary unavailable");
+      return data;
+    },
+  });
+  if (!q.data) return null;
+  return { key: "payout", done: Boolean(q.data.account), href: "/vendor/payout-account" };
+}
+
+function SetupChecklist({ steps, testId }: { steps: Step[]; testId: string }) {
+  const t = useTranslations("vendorHome");
+  const list = checklist(steps);
+  if (list.complete) return null;
+  return (
+    <Card data-testid={testId}>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 className="font-display text-lg font-bold">{t("setup.title")}</h3>
+        <span className="text-sm text-muted">{t("setup.progress", { done: list.doneCount, total: steps.length })}</span>
+      </div>
+      <ol className="mt-4 flex flex-col gap-2">
+        {steps.map((s, i) => {
+          const now = i === list.current;
+          return (
+            <li key={s.key} className={cn("flex flex-wrap items-center gap-3 rounded-control border px-3 py-3", now ? "border-brand/40 bg-brand-soft/40" : "border-line")} data-testid={`setup-${s.key}`} data-done={s.done || undefined}>
+              <span className={cn("grid size-8 shrink-0 place-items-center rounded-full text-sm font-bold", s.done ? "bg-brand text-on-brand" : now ? "border-2 border-brand text-brand-text" : "border border-line text-muted")}>
+                {s.done ? <Check size={16} weight="bold" aria-label={t("setup.done")} /> : i + 1}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className={cn("block font-semibold", s.done && "text-muted line-through decoration-1")}>{t(`setup.step.${s.key}`)}</span>
+                {!s.done ? <span className="block text-sm text-muted">{t(`setup.help.${s.key}`)}</span> : null}
+              </span>
+              {now ? (
+                <ButtonLink href={s.href} size="sm" iconEnd={<ArrowRight size={16} aria-hidden />}>
+                  {t(`setup.go.${s.key}`)}
+                </ButtonLink>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+    </Card>
+  );
+}
+
+/** A business's own "Needs your action" (when the home is not showing the combined list). */
+function OwnActions({ role }: { role: ActionRole }) {
+  const t = useTranslations("dashboard");
+  const { status } = useAuth();
+  const q = useQuery({ queryKey: ["owner-actions", role], enabled: status === "signed_in", queryFn: () => dashboards.ownerActions(role) });
+  return (
+    <div data-testid={`actions-${role}`}>
+      <h3 className="font-display text-lg font-bold">{t("actions.title")}</h3>
+      <div className="mt-2">{q.data ? <ActionList items={q.data.items} /> : q.isError ? <p className="text-sm text-muted">{t("loadFailed")}</p> : <Skeleton className="h-16 rounded-card" />}</div>
+    </div>
+  );
+}
+
+function ActiveCard({ testId, title, body, children }: { testId: string; title: ReactNode; body?: ReactNode; children?: ReactNode }) {
+  return (
+    <Card data-testid={testId} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="min-w-0">
+        <p className="font-semibold">{title}</p>
+        {body ? <p className="mt-1 text-sm text-muted">{body}</p> : null}
+      </div>
+      {children ? <div className="flex flex-wrap gap-2">{children}</div> : null}
+    </Card>
+  );
+}
+
+// ---------------- venue owner (M09, M19)
+
+function VenueHome({ me, showActions }: { me: Me | undefined; showActions: boolean }) {
   const tg = useTranslations("vendorGrounds");
+  const { status } = useAuth();
   const web = publicEnv().WEB_URL;
-  if (status === "active")
-    return (
-      <div className="mt-8 border-2 border-brand bg-surface p-5" data-testid="shop-owner-active">
-        <p className="font-bold">{t("home.active")}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {(["shop", "products", "inventory"] as const).map((k) => (
-            <Link key={k} href={`/vendor/${k}`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand">
-              {t(`nav.${k}`)}
-            </Link>
-          ))}
+  const mine = useQuery({ queryKey: ["vendor-grounds"], enabled: status === "signed_in", queryFn: () => vendor.mine(), retry: false });
+  const payout = usePayoutStep();
+  const steps: Step[] = [
+    { key: "nid", done: roleStatus(me, "member") === "active", href: `${web}/account/verification` },
+    { key: "docs", done: roleStatus(me, "ground_owner") === "active", href: `${web}/account/business` },
+    { key: "list", done: (mine.data?.items.length ?? 0) > 0, href: "/vendor/venues" },
+    ...(payout ? [payout] : []),
+  ];
+  return (
+    <>
+      <ActiveCard testId="owner-active" title={tg("home.active")} body={tg("home.groundsCount", { n: mine.data?.items.length ?? 0 })}>
+        <ButtonLink href="/vendor/venues" icon={<SoccerBall size={18} aria-hidden />}>
+          {tg("home.open")}
+        </ButtonLink>
+      </ActiveCard>
+      {mine.isSuccess ? <SetupChecklist steps={steps} testId="venue-setup" /> : null}
+      <OwnerOverview showActions={showActions} />
+    </>
+  );
+}
+
+// ---------------- shop owner (M12, M13)
+
+function ShopHome({ showActions }: { showActions: boolean }) {
+  const t = useTranslations("vendorHome");
+  const tm = useTranslations("vendorMarket");
+  const tn = useTranslations("nav");
+  const to = useTranslations("vendorOrders");
+  const locale = useLocale();
+  const shop = useQuery({ queryKey: ["vendor-shop"], queryFn: () => shopDesk.profile(), retry: false });
+  const products = useQuery({ queryKey: ["vendor-products"], queryFn: () => shopDesk.products(), retry: false, enabled: Boolean(shop.data) });
+  const settlement = useQuery({ queryKey: ["shop-settlement"], queryFn: () => shopOrders.settlement(), retry: false });
+  const payout = usePayoutStep();
+  const s = shop.data?.status;
+  const steps: Step[] = [
+    { key: "shopProfile", done: s === "pending_review" || s === "live" || s === "paused", href: "/vendor/shop" },
+    { key: "firstProduct", done: Boolean(products.data?.items.some((p) => p.status === "live")), href: "/vendor/products" },
+    ...(payout ? [payout] : []),
+  ];
+  const links = [
+    { href: "/vendor/shop", key: "shop", icon: Storefront },
+    { href: "/vendor/products", key: "products", icon: ShoppingBag },
+    { href: "/vendor/inventory", key: "inventory", icon: Warehouse },
+    { href: "/vendor/orders", key: "orders", icon: Package },
+  ] as const;
+  const money = (n: number) => formatTaka(n, locale);
+  return (
+    <>
+      <ActiveCard testId="shop-owner-active" title={tm("home.active")} body={shop.data ? shop.data.name : undefined}>
+        {links.map((l) => (
+          <ButtonLink key={l.key} href={l.href} variant="secondary" icon={<l.icon size={18} aria-hidden />}>
+            {tn(l.key)}
+          </ButtonLink>
+        ))}
+      </ActiveCard>
+      {!shop.isPending && (!shop.data || !products.isPending) ? <SetupChecklist steps={steps} testId="shop-setup" /> : null}
+      {showActions ? <OwnActions role="shop_owner" /> : null}
+      {settlement.data ? (
+        <div data-testid="shop-settlement">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className="font-display text-lg font-bold">{tn("settlement")}</h3>
+            <ButtonLink href="/vendor/settlement" variant="link" iconEnd={<ArrowRight size={16} aria-hidden />}>
+              {t("openSettlement")}
+            </ButtonLink>
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            <Stat label={to("completedTile", { n: settlement.data.completed.count })} value={money(settlement.data.completed.net)} tone="prize" icon={<Wallet aria-hidden />} hint={to("afterCommission", { amount: money(settlement.data.completed.commission) })} />
+            <Stat label={to("inEscrowTile", { n: settlement.data.inEscrow.count })} value={money(settlement.data.inEscrow.net)} hint={to("inEscrowNote")} />
+            <Stat label={to("refundedTile")} value={money(settlement.data.refunded)} icon={<Receipt aria-hidden />} />
+          </div>
         </div>
-      </div>
-    );
-  return (
-    <div className="mt-8 border-2 border-line bg-surface p-5" data-testid="shop-owner-card">
-      <p className="font-bold">{status ? t("home.applied", { status: tg(`roleStatus.${status}`) }) : t("home.sell")}</p>
-      <a href={`${web}/account/business?as=shop`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-        {status ? t("home.continue") : t("home.start")}
-      </a>
-    </div>
+      ) : settlement.isPending ? (
+        <Skeleton className="h-28 rounded-card" />
+      ) : null}
+    </>
   );
 }
 
-/** M20: the gym owner's way in (or the application on kriraghor.com). */
-function GymCard({ status }: { status: string | null }) {
-  const t = useTranslations("vendorGym");
+// ---------------- gym owner (M20)
+
+function GymHome({ showActions }: { showActions: boolean }) {
+  const t = useTranslations("vendorHome");
+  const tg = useTranslations("vendorGym");
+  const gyms = useQuery({ queryKey: ["vendor-gyms"], queryFn: () => gymDesk.mine(), retry: false });
+  const payout = usePayoutStep();
+  const items = gyms.data?.items ?? [];
+  const steps: Step[] = [
+    { key: "gymLive", done: items.some((g) => g.status === "live" || g.status === "paused"), href: "/vendor/gyms" },
+    { key: "packages", done: items.some((g) => g.packages.length > 0), href: items[0] ? `/vendor/gyms/${items[0].id}` : "/vendor/gyms" },
+    ...(payout ? [payout] : []),
+  ];
+  return (
+    <>
+      <ActiveCard testId="gym-owner-active" title={tg("home.active")}>
+        <ButtonLink href="/vendor/gyms" icon={<Barbell size={18} aria-hidden />}>
+          {tg("home.open")}
+        </ButtonLink>
+      </ActiveCard>
+      {gyms.isSuccess ? <SetupChecklist steps={steps} testId="gym-setup" /> : null}
+      {showActions ? <OwnActions role="gym_owner" /> : null}
+      <div data-testid="gym-quick">
+        <h3 className="font-display text-lg font-bold">{t("gymQuick")}</h3>
+        {gyms.isPending ? (
+          <Skeleton className="mt-2 h-20 rounded-card" />
+        ) : !items.length ? (
+          <EmptyState className="mt-2" icon={<Barbell aria-hidden />} title={tg("empty")} action={<ButtonLink href="/vendor/gyms">{tg("add")}</ButtonLink>} />
+        ) : (
+          <ul className="mt-2 flex flex-col gap-2">
+            {items.slice(0, 6).map((g) => (
+              <li key={g.id}>
+                <Card padded={false} className="flex flex-wrap items-center gap-3 px-4 py-3">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-semibold">{g.name}</span>
+                    <Badge tone={g.status === "live" ? "brand" : g.status === "changes_requested" ? "warning" : "neutral"}>{tg(`status.${g.status}`)}</Badge>
+                  </span>
+                  <ButtonLink href={`/vendor/gyms/${g.id}/desk`} size="sm" icon={<QrCode size={16} aria-hidden />}>
+                    {tg("desk.open")}
+                  </ButtonLink>
+                  <ButtonLink href={`/vendor/gyms/${g.id}/passes`} size="sm" variant="secondary" icon={<Ticket size={16} aria-hidden />}>
+                    {tg("sold.open")}
+                  </ButtonLink>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ---------------- sports-event organiser (M14)
+
+function OrganiserHome() {
+  const t = useTranslations("vendorHome");
+  const ts = useTranslations("sportsConsole");
+  const { status } = useAuth();
+  const web = publicEnv().WEB_URL;
+  const orgs = useQuery({ queryKey: ["my-orgs"], queryFn: () => sportsConsole.mine(), enabled: status === "signed_in" });
+  const payout = usePayoutStep();
+  const sports = (orgs.data?.items ?? []).filter((o) => o.kind === "sports");
+  const steps: Step[] = [
+    { key: "orgVerified", done: sports.some((o) => o.status === "verified"), href: `${web}/account/business?as=organiser` },
+    ...(payout ? [payout] : []),
+  ];
+  return (
+    <>
+      <ActiveCard testId="organiser-card" title={t("organiser.active")} body={t("organiser.lead")}>
+        <ButtonLink href="/vendor/events" icon={<Trophy size={18} aria-hidden />} data-testid="open-sports-console">
+          {t("organiser.open")}
+        </ButtonLink>
+      </ActiveCard>
+      {orgs.isSuccess ? <SetupChecklist steps={steps} testId="organiser-setup" /> : null}
+      <div data-testid="organiser-orgs">
+        <h3 className="font-display text-lg font-bold">{t("organiser.orgs")}</h3>
+        {orgs.isPending ? (
+          <Skeleton className="mt-2 h-20 rounded-card" />
+        ) : !sports.length ? (
+          <EmptyState
+            className="mt-2"
+            icon={<Trophy aria-hidden />}
+            title={ts("applyFirst")}
+            body={ts("applyHelp")}
+            action={<ButtonLink href={`${web}/account/business?as=organiser`}>{t("organiser.apply")}</ButtonLink>}
+          />
+        ) : (
+          <ul className="mt-2 flex flex-col gap-2">
+            {sports.map((o) => (
+              <li key={o.id}>
+                <Card padded={false} className="flex flex-wrap items-center gap-3 px-4 py-3">
+                  <span className="min-w-0 flex-1 truncate font-semibold">{o.name}</span>
+                  <Badge tone={o.status === "verified" ? "brand" : o.status === "suspended" || o.status === "rejected" ? "danger" : o.status === "changes_requested" ? "warning" : "neutral"}>{t(`orgStatus.${o.status}`)}</Badge>
+                  {o.status === "verified" ? (
+                    <ButtonLink href={`/vendor/events/${o.id}`} size="sm" variant="secondary" iconEnd={<ArrowRight size={16} aria-hidden />}>
+                      {t("organiser.openOrg")}
+                    </ButtonLink>
+                  ) : null}
+                </Card>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ---------------- no business yet, and adding another
+
+/** The four kinds of business, each applied for on kriraghor.com with the same account. */
+function BusinessTypes({ me, roles }: { me: Me | undefined; roles: BusinessRole[] }) {
+  const t = useTranslations("vendorHome");
   const tg = useTranslations("vendorGrounds");
   const web = publicEnv().WEB_URL;
-  if (status === "active")
-    return (
-      <div className="mt-8 border-2 border-brand bg-surface p-5" data-testid="gym-owner-active">
-        <p className="font-bold">{t("home.active")}</p>
-        <Link href="/vendor/gyms" className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-          {t("home.open")}
-        </Link>
-      </div>
-    );
   return (
-    <div className="mt-8 border-2 border-line bg-surface p-5" data-testid="gym-owner-card">
-      <p className="font-bold">{status ? t("home.applied", { status: tg(`roleStatus.${status}`) }) : t("home.sell")}</p>
-      <a href={`${web}/account/business?as=gym`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-        {status ? t("home.continue") : t("home.start")}
-      </a>
-    </div>
+    <ul className="mt-4 grid gap-3 sm:grid-cols-2" data-testid="business-types">
+      {roles.map((role) => {
+        const Icon = ICON[role];
+        const st = roleStatus(me, role);
+        return (
+          <li key={role}>
+            <Card className="flex h-full flex-col gap-3" data-testid={`business-type-${role}`}>
+              <div className="flex items-start gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-control bg-brand-soft text-brand-text">
+                  <Icon size={22} weight="fill" aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-display text-lg font-bold">{t(`types.${role}.title`)}</p>
+                  <p className="text-sm text-muted">{t(`types.${role}.body`)}</p>
+                </div>
+              </div>
+              <div className="mt-auto flex flex-wrap items-center gap-2">
+                {st ? <Badge tone={st === "rejected" || st === "suspended" ? "danger" : "info"}>{t("types.status", { status: tg(`roleStatus.${st}`) })}</Badge> : null}
+                <ButtonLink href={`${web}/account/business${APPLY_AS[role]}`} size="sm" variant={st ? "primary" : "secondary"} className="ml-auto" iconEnd={<ArrowRight size={16} aria-hidden />}>
+                  {st ? t("types.continue") : t("types.start")}
+                </ButtonLink>
+              </div>
+            </Card>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
-/** M22: the esports organiser's console (or the application on kriraghor.com). */
-function OrganiserCard({ status }: { status: string | null }) {
-  const t = useTranslations("organiser");
+/** Someone with no business yet: verify the NID, choose a business and send its papers, then set up here. */
+function Onboarding({ me }: { me: Me | undefined }) {
+  const t = useTranslations("vendorHome");
+  const tg = useTranslations("vendorGrounds");
   const web = publicEnv().WEB_URL;
+  const applied = BUSINESS_ROLES.map((r) => roleStatus(me, r)).find((s) => s && s !== "withdrawn") ?? null;
+  const steps: Step[] = [
+    { key: "nid", done: roleStatus(me, "member") === "active", href: `${web}/account/verification` },
+    { key: "business", done: false, href: "#business-types" },
+    { key: "setup", done: false, href: "#business-types" },
+  ];
+  const { current } = checklist(steps);
   return (
-    <div className={`mt-8 border-2 bg-surface p-5 ${status === "active" ? "border-brand" : "border-line"}`} data-testid="organiser-card">
-      <p className="font-bold">{status === "active" ? t("home.active") : t("home.sell")}</p>
-      {status === "active" ? (
-        <span className="mt-3 flex flex-wrap gap-2">
-          <Link href="/vendor/esports" className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-            {t("home.open")}
-          </Link>
-          <Link href="/vendor/events" className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand" data-testid="open-sports-console">
-            {t("home.openSports")}
-          </Link>
-        </span>
-      ) : (
-        <a href={`${web}/account/business?as=organiser`} className="mt-3 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
-          {status ? t("home.continue") : t("home.start")}
-        </a>
-      )}
-    </div>
+    <section className="mx-auto max-w-3xl px-5 pb-16 pt-8" data-testid="vendor-onboarding">
+      <PageTitle title={t("title")} description={t("leadNew")} />
+      <ol className="mt-6 flex flex-col gap-2" data-testid="owner-steps">
+        {steps.map((s, i) => {
+          const now = i === current;
+          return (
+            <li key={s.key} className={cn("flex flex-wrap items-center gap-3 rounded-card border bg-surface px-4 py-3", now ? "border-brand/40" : "border-line")}>
+              <span className={cn("grid size-9 shrink-0 place-items-center rounded-full font-bold", s.done ? "bg-brand text-on-brand" : now ? "border-2 border-brand text-brand-text" : "border border-line text-muted")}>
+                {s.done ? <Check size={18} weight="bold" aria-label={t("setup.done")} /> : i + 1}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold">{t(`onboard.step.${s.key}`)}</span>
+                <span className="block text-sm text-muted">{t(`onboard.help.${s.key}`, { status: applied ? tg(`roleStatus.${applied}`) : tg("roleStatus.none") })}</span>
+              </span>
+              {now ? (
+                s.href.startsWith("#") ? (
+                  <a href={s.href} className={buttonClass({ size: "sm" })}>
+                    {t(`onboard.go.${s.key}`)}
+                  </a>
+                ) : (
+                  <ButtonLink href={s.href} size="sm" iconEnd={<ArrowRight size={16} aria-hidden />}>
+                    {t(`onboard.go.${s.key}`)}
+                  </ButtonLink>
+                )
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+      <div id="business-types" className="mt-10 scroll-mt-24">
+        <h2 className="font-display text-xl font-bold">{t("types.title")}</h2>
+        <BusinessTypes me={me} roles={BUSINESS_ROLES} />
+      </div>
+    </section>
   );
 }
