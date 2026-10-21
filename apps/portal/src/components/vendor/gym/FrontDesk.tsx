@@ -4,8 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
+import { ArrowLeft, CalendarDots, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { Button, IconButton, controlClass } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { cleanCode, gymDesk, scanInput, type Admission } from "@/lib/vendor/gym";
+import { shiftDay } from "@/lib/vendor/bookings";
+import { nextDays } from "@/lib/vendor/grounds";
 import { Notice } from "@kriraghor/ui/primitives";
 import { inputCls } from "../../admin/finance/shared";
 
@@ -28,7 +32,15 @@ export function FrontDesk({ id }: { id: string }) {
   const locale = useLocale();
   const qc = useQueryClient();
   const gym = useQuery({ queryKey: ["vendor-gym", id], queryFn: () => gymDesk.get(id) });
-  const today = useQuery({ queryKey: ["gym-admissions", id], queryFn: () => gymDesk.admissions(id), refetchInterval: 30_000 });
+  // Admissions for any day (today by default, Dhaka); the server reads no date as today.
+  const [todayDate] = useState(() => nextDays(1)[0]);
+  const [listDate, setListDate] = useState(todayDate);
+  const isToday = listDate === todayDate;
+  const today = useQuery({
+    queryKey: ["gym-admissions", id, listDate],
+    queryFn: () => gymDesk.admissions(id, isToday ? undefined : listDate),
+    refetchInterval: isToday ? 30_000 : false,
+  });
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
@@ -45,6 +57,8 @@ export function FrontDesk({ id }: { id: string }) {
         const a = await gymDesk.redeem(id, input);
         setResult({ ok: true, a });
         setCode("");
+        setListDate(todayDate); // a new admission is today's: show that list
+        // Prefix match: refreshes today's list (and any other day already loaded).
         await qc.invalidateQueries({ queryKey: ["gym-admissions", id] });
       } catch (err) {
         // The API spreads the problem meta on the body: `at` (the earlier admission), validFrom and validTo.
@@ -54,7 +68,7 @@ export function FrontDesk({ id }: { id: string }) {
         setBusy(false);
       }
     },
-    [id, qc, t]
+    [id, qc, t, todayDate]
   );
 
   // The camera loop: read a QR every 300 ms; the same value is ignored for 5 s (one scan, one request).
@@ -96,8 +110,9 @@ export function FrontDesk({ id }: { id: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-8">
-      <Link href={`/vendor/gyms/${id}`} className="text-sm font-semibold text-brand underline">
-        ← {gym.data?.name ?? t("title")}
+      <Link href={`/vendor/gyms/${id}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-text hover:underline">
+        <ArrowLeft size={16} aria-hidden />
+        {gym.data?.name ?? t("title")}
       </Link>
       <h1 className="mt-3 text-3xl font-extrabold">{t("desk.title")}</h1>
       <p className="mt-1 max-w-2xl text-muted">{t("desk.lead")}</p>
@@ -182,9 +197,27 @@ export function FrontDesk({ id }: { id: string }) {
         </div>
       </div>
 
-      <h2 className="mt-10 text-2xl font-extrabold">{t("desk.today", { n: today.data?.items.length ?? 0 })}</h2>
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl font-extrabold">{isToday ? t("desk.today", { n: today.data?.items.length ?? 0 }) : t("desk.onDay", { date: day(listDate), n: today.data?.items.length ?? 0 })}</h2>
+        <div className="flex items-center gap-1.5" data-testid="desk-date">
+          <IconButton label={t("desk.prevDay")} variant="secondary" onClick={() => setListDate(shiftDay(listDate, -1))} data-testid="desk-prev-day">
+            <CaretLeft size={18} aria-hidden />
+          </IconButton>
+          <label className="relative">
+            <span className="sr-only">{t("desk.date")}</span>
+            <CalendarDots size={18} aria-hidden className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+            <input type="date" value={listDate} max={todayDate} onChange={(e) => e.target.value && setListDate(e.target.value)} className={`${controlClass} w-auto pl-10`} data-testid="desk-date-input" />
+          </label>
+          <IconButton label={t("desk.nextDay")} variant="secondary" onClick={() => setListDate(shiftDay(listDate, 1))} disabled={isToday} data-testid="desk-next-day">
+            <CaretRight size={18} aria-hidden />
+          </IconButton>
+          <Button type="button" variant="ghost" onClick={() => setListDate(todayDate)} disabled={isToday} data-testid="desk-to-today">
+            {t("desk.todayButton")}
+          </Button>
+        </div>
+      </div>
       {today.isError ? <Notice tone="error">{problemOf(today.error)?.title ?? t("failed")}</Notice> : null}
-      {today.data && !today.data.items.length ? <p className="mt-3 text-muted">{t("desk.noneToday")}</p> : null}
+      {today.data && !today.data.items.length ? <p className="mt-3 text-muted">{isToday ? t("desk.noneToday") : t("desk.noneOnDay")}</p> : null}
       <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="desk-today">
         {(today.data?.items ?? []).map((a) => (
           <li key={`${a.passCode}-${a.redeemedAt}`} className="flex flex-wrap items-center gap-3 py-2">

@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
+import { CalendarDots, CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
+import { Badge, Button, DataTable, FilterBar, IconButton, controlClass, type Column, type Tone } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, vendor } from "@/lib/vendor/grounds";
-import { blockColumns, desk, hhmm, ownerActions, timelineWindow, type OwnerBooking, type OwnerCancelReason } from "@/lib/vendor/bookings";
+import { blockColumns, desk, dhakaDate, hhmm, ownerActions, searchable, shiftDay, timelineWindow, type OwnerBooking, type OwnerCancelReason } from "@/lib/vendor/bookings";
 import { ownerTrust } from "@/lib/vendor/trust";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
@@ -20,6 +22,7 @@ const TONE: Record<string, string> = {
   completed: "bg-surface-2 border-line text-muted",
   no_show: "bg-red-100 border-danger text-danger dark:bg-red-950/40",
 };
+const BADGE: Record<string, Tone> = { pending_payment: "warning", confirmed: "info", checked_in: "brand", completed: "neutral", no_show: "danger" };
 const REASONS: OwnerCancelReason[] = ["weather", "waterlogged", "maintenance", "closure", "double_booked_offline", "other"];
 const clock = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 
@@ -37,10 +40,46 @@ export function BookingsDesk() {
   const [groundId, setGroundId] = useState<string | undefined>(undefined);
   const gid = groundId ?? live[0]?.id;
   const [days] = useState(() => nextDays(8, new Date(Date.now() - 86400000))); // yesterday … a week ahead
-  const [day, setDay] = useState(days[1]);
+  const today = days[1];
+  const [day, setDay] = useState(today);
   const [open, setOpen] = useState<string | null>(null);
   const [walkIn, setWalkIn] = useState(false);
   const tl = useQuery({ queryKey: ["vendor-timeline", gid, day], queryFn: () => desk.timeline(gid!, day), enabled: Boolean(gid), refetchInterval: 30_000 });
+  // Booking search (any venue, any date): a hit jumps the timeline to its venue and day and opens it.
+  const [q, setQ] = useState("");
+  const [pick, setPick] = useState<OwnerBooking | null>(null);
+  const found = useInfiniteQuery({
+    queryKey: ["vendor-booking-search", q],
+    enabled: status === "signed_in" && searchable(q),
+    initialPageParam: undefined as string | undefined,
+    queryFn: ({ pageParam }) => desk.search(q, undefined, pageParam),
+    getNextPageParam: (last) => last.nextCursor ?? undefined,
+  });
+  const dateFmt = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Asia/Dhaka" });
+  const groundName = new Map((grounds.data?.items ?? []).map((g) => [g.id, g.name] as const));
+  const openHit = (b: OwnerBooking) => {
+    if (live.some((g) => g.id === b.groundId)) setGroundId(b.groundId);
+    setDay(dhakaDate(b.start));
+    setPick(b);
+    setOpen(b.id);
+  };
+  const hitColumns: Column<OwnerBooking>[] = [
+    { id: "code", header: t("col.code"), primary: true, cell: (b) => <span className="font-mono font-semibold">{b.code}</span> },
+    {
+      id: "when",
+      header: t("col.when"),
+      cell: (b) => (
+        <span className="whitespace-nowrap">
+          {dateFmt.format(new Date(b.start))} · {hhmm(b.start)}–{hhmm(b.end)}
+        </span>
+      ),
+    },
+    { id: "who", header: t("col.who"), cell: (b) => b.teamName ?? b.contactName ?? t("member") },
+    { id: "venue", header: t("col.venue"), hideBelow: "lg", cell: (b) => groundName.get(b.groundId) ?? "–" },
+    { id: "phone", header: t("col.phone"), cell: (b) => (b.phoneLast4 ? <span className="font-mono">••••{b.phoneLast4}</span> : "–") },
+    { id: "status", header: t("col.status"), cell: (b) => <Badge tone={BADGE[b.status] ?? "neutral"}>{t(`status.${b.status}`)}</Badge> },
+    { id: "money", header: t("col.money"), align: "end", cell: (b) => formatTaka(b.money.total, locale) },
+  ];
 
   if (status === "signed_out")
     return (
@@ -85,7 +124,7 @@ export function BookingsDesk() {
   // 06:00–23:00, widened to any booking or closure outside it (grounds open late or round the clock).
   const win = timelineWindow([...(data?.bookings ?? []), ...(data?.closures ?? [])], day);
   const SLOTS = halfHours(clock(win.open), clock(win.close - 30));
-  const selected = data?.bookings.find((b) => b.id === open) ?? null;
+  const selected = data?.bookings.find((b) => b.id === open) ?? (pick && pick.id === open ? pick : null);
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -114,12 +153,65 @@ export function BookingsDesk() {
         </div>
       </div>
 
-      <div className="mt-5 flex gap-1 overflow-x-auto" role="tablist" aria-label={t("day")}>
-        {days.map((d) => (
-          <button key={d} type="button" role="tab" aria-selected={d === day} onClick={() => setDay(d)} className={`min-h-11 shrink-0 border-2 px-3 text-sm font-semibold ${d === day ? "border-brand bg-brand text-white" : "border-line"}`}>
-            {new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`))}
-          </button>
-        ))}
+      <FilterBar
+        className="mt-6"
+        search={{ value: q, onChange: setQ, label: t("search.label"), placeholder: t("search.placeholder"), testId: "booking-search" }}
+        onClear={() => setQ("")}
+      />
+      {q && !searchable(q) ? <p className="mt-2 text-sm text-muted">{t("search.hint")}</p> : null}
+      {searchable(q) ? (
+        <section className="mt-4" aria-label={t("search.title")}>
+          <DataTable
+            label={t("search.title")}
+            columns={hitColumns}
+            rows={found.data?.pages.flatMap((p) => p.items)}
+            rowId={(b) => b.id}
+            loading={found.isPending}
+            error={found.error}
+            onRetry={() => void found.refetch()}
+            empty={{ icon: <MagnifyingGlass aria-hidden />, title: t("search.empty", { q }) }}
+            onRowClick={openHit}
+            selectedId={open}
+            hasMore={found.hasNextPage}
+            onMore={() => void found.fetchNextPage()}
+            busy={found.isFetchingNextPage}
+            testId="booking-search-results"
+            rowTestId="booking-search-hit"
+          />
+        </section>
+      ) : null}
+
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]" role="tablist" aria-label={t("day")}>
+          {days.map((d) => (
+            <button
+              key={d}
+              type="button"
+              role="tab"
+              aria-selected={d === day}
+              onClick={() => setDay(d)}
+              className={`min-h-11 shrink-0 rounded-pill border px-4 text-sm font-semibold transition-colors ${d === day ? "border-brand bg-brand text-on-brand" : "border-line bg-surface hover:border-line-strong"}`}
+            >
+              {new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`))}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-1.5" data-testid="day-picker">
+          <IconButton label={t("prevDay")} variant="secondary" onClick={() => setDay(shiftDay(day, -1))} data-testid="day-prev">
+            <CaretLeft size={18} aria-hidden />
+          </IconButton>
+          <label className="relative">
+            <span className="sr-only">{t("pickDate")}</span>
+            <CalendarDots size={18} aria-hidden className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+            <input type="date" value={day} onChange={(e) => e.target.value && setDay(e.target.value)} className={`${controlClass} w-auto pl-10`} data-testid="day-input" />
+          </label>
+          <IconButton label={t("nextDay")} variant="secondary" onClick={() => setDay(shiftDay(day, 1))} data-testid="day-next">
+            <CaretRight size={18} aria-hidden />
+          </IconButton>
+          <Button type="button" variant="ghost" onClick={() => setDay(today)} disabled={day === today} data-testid="day-today">
+            {t("today")}
+          </Button>
+        </div>
       </div>
 
       {walkIn && gid && data ? <WalkIn groundId={gid} day={day} courts={data.courts} onClose={() => setWalkIn(false)} /> : null}
@@ -236,6 +328,7 @@ function BookingPanel({ b, groundId, day, onClose }: { b: OwnerBooking; groundId
     onSuccess: () => {
       setConfirming(null);
       void qc.invalidateQueries({ queryKey: ["vendor-timeline", groundId, day] });
+      void qc.invalidateQueries({ queryKey: ["vendor-booking-search"] });
     },
   });
   const money = (n: number) => formatTaka(n, locale);

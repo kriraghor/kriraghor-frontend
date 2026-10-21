@@ -1,7 +1,10 @@
-import { redirect } from "@kriraghor/ui/i18n/navigation";
+import { setRequestLocale } from "next-intl/server";
+import { MyRoles } from "@/components/account/MyRoles";
 
-/** Older notification and gate links point here; the account area lives at /me. */
+export const metadata = { title: "My roles" };
+
 export default async function AccountRolesPage({ params }: PageProps<"/[locale]/account/roles">) {
   const { locale } = await params;
-  redirect({ href: "/me", locale });
+  setRequestLocale(locale);
+  return <MyRoles />;
 }

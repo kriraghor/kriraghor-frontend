@@ -10,6 +10,7 @@ import {
   Gavel,
   Handshake,
   House,
+  IdentificationBadge,
   Key,
   Lightning,
   ListChecks,
@@ -27,7 +28,9 @@ import {
   Storefront,
   Tag,
   Trophy,
+  UserList,
   UsersThree,
+  Wallet,
   Warehouse,
 } from "@phosphor-icons/react";
 
@@ -65,6 +68,7 @@ export const ADMIN_SECTIONS: NavSection<AdminEntry>[] = [
       { href: "/admin/orders", key: "ordersAdmin", icon: Receipt, any: ["manage_users", "refund_small", "view_payouts"] },
       { href: "/admin/hire", key: "hireAdmin", icon: Handshake, any: ["manage_users", "approve_listings", "refund_small", "view_payouts"] },
       { href: "/admin/gym", key: "gymAdmin", icon: Barbell, any: ["manage_users", "approve_listings", "refund_small", "view_payouts"] },
+      { href: "/admin/users", key: "usersAdmin", icon: UserList, any: ["manage_users"] },
       { href: "/admin/teams", key: "teamsAdmin", icon: UsersThree, any: ["manage_users"] },
     ],
   },
@@ -115,6 +119,7 @@ export const ADMIN_SECTIONS: NavSection<AdminEntry>[] = [
     items: [
       { href: "/admin/audit", key: "audit", icon: Key, master: true },
       { href: "/admin/events", key: "events", icon: Pulse, master: true },
+      { href: "/admin/staff", key: "staffAdmin", icon: IdentificationBadge, master: true },
     ],
   },
 ];
@@ -128,6 +133,11 @@ export function adminSections(me: { isMaster: boolean; permissions: readonly str
 export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
 export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "gym_owner", "organiser"];
 
+/**
+ * The business sidebar. Analytics and Reviews are venue-owner desks (M19 owner analytics, M18 venue
+ * reviews), so they sit with the venues. Since 21 Oct 2026 esports is run by Kriraghor only, so the
+ * organiser section is sports events alone.
+ */
 export const VENDOR_SECTIONS: (NavSection<NavEntry> & { role?: BusinessRole })[] = [
   { key: "overview", items: [{ href: "/vendor", key: "home", icon: House, match: "exact" }] },
   {
@@ -136,6 +146,8 @@ export const VENDOR_SECTIONS: (NavSection<NavEntry> & { role?: BusinessRole })[]
     items: [
       { href: "/vendor/venues", key: "grounds", icon: SoccerBall },
       { href: "/vendor/bookings", key: "bookings", icon: CalendarCheck },
+      { href: "/vendor/analytics", key: "analytics", icon: ChartLineUp },
+      { href: "/vendor/reviews", key: "vendorReviews", icon: Star },
     ],
   },
   {
@@ -146,26 +158,30 @@ export const VENDOR_SECTIONS: (NavSection<NavEntry> & { role?: BusinessRole })[]
       { href: "/vendor/products", key: "products", icon: ShoppingBag },
       { href: "/vendor/inventory", key: "inventory", icon: Warehouse },
       { href: "/vendor/orders", key: "orders", icon: Package },
+      { href: "/vendor/settlement", key: "settlement", icon: Wallet },
     ],
   },
   { key: "gym", role: "gym_owner", items: [{ href: "/vendor/gyms", key: "gyms", icon: Barbell }] },
-  {
-    key: "events",
-    role: "organiser",
-    items: [
-      { href: "/vendor/esports", key: "esportsConsole", icon: GameController },
-      { href: "/vendor/events", key: "sportsConsole", icon: Trophy },
-    ],
-  },
+  { key: "events", role: "organiser", items: [{ href: "/vendor/events", key: "sportsConsole", icon: Trophy }] },
   {
     key: "business",
     items: [
-      { href: "/vendor/analytics", key: "analytics", icon: ChartLineUp },
+      { href: "/vendor/payouts", key: "vendorPayouts", icon: CurrencyCircleDollar },
       { href: "/vendor/disputes", key: "vendorDisputes", icon: Gavel },
-      { href: "/vendor/reviews", key: "vendorReviews", icon: Star },
     ],
   },
 ];
+
+/**
+ * The businesses a person runs (active roles, in sidebar order) and the one the switcher shows:
+ * `lastPanelRole` when it is one of them, otherwise "all" (saved as "member": every business).
+ */
+export function businessView(me: { roles: readonly { role: string; status: string }[]; lastPanelRole?: string | null } | undefined): { active: BusinessRole[]; view: BusinessRole | "all"; shown: BusinessRole[] } {
+  const active = BUSINESS_ROLES.filter((r) => me?.roles.some((x) => x.role === r && x.status === "active"));
+  const last = me?.lastPanelRole as BusinessRole | null | undefined;
+  const view: BusinessRole | "all" = last && active.includes(last) ? last : "all";
+  return { active, view, shown: view === "all" ? active : [view] };
+}
 
 /**
  * The vendor items for the roles held: "all" shows every business the person runs, a role shows

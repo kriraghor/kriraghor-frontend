@@ -1,10 +1,10 @@
-import { setRequestLocale } from "next-intl/server";
-import { OrganiserHome } from "@/components/vendor/esports/OrganiserConsole";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Organiser console" };
-
-export default async function Page({ params }: PageProps<"/[locale]/vendor/esports">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  return <OrganiserHome />;
+/**
+ * 21 Oct 2026: esports is organised by Kriraghor only, so the business panel has no esports console
+ * (outside organisers stay off while esports.external_organisers_enabled is false). Old links and
+ * bookmarks land on the sports events console.
+ */
+export default function Page(): never {
+  redirect("/vendor/events");
 }

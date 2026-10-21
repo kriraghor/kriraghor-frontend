@@ -9,13 +9,19 @@ import { SegmentedControl } from "../kit/Tabs";
 import { Skeleton } from "../kit/Display";
 import { useAuth } from "../auth";
 import { badgeText, listNotifications, markRead, realtimeSocket, relativeTime, type NotificationItem } from "@kriraghor/api-client/notifications";
+import { publicEnv } from "@kriraghor/session/env";
+import { resolveNotificationLink, siteOfBell, type Site } from "./links";
+
+export { resolveNotificationLink, siteOfBell, siteOfPath, type Site, type SiteUrls, type ResolvedLink } from "./links";
 
 /**
  * The bell "Updates" (M08 §4.1): unread badge from the server (99+ cap), a dropdown with the latest
  * 20 (All / Unread), mark-all-read, See all and Settings. Realtime: notification.created and
- * notification.read carry the unread count; the list re-reads when one arrives.
+ * notification.read carry the unread count; the list re-reads when one arrives. A link that belongs
+ * to another Kriraghor site (a /vendor link on kriraghor.com, a /me link on the business panel)
+ * opens on that site; `here` names the current one (inferred from `centreHref` when left out).
  */
-export function NotificationBell({ centreHref, settingsHref }: { centreHref: string; settingsHref?: string }) {
+export function NotificationBell({ centreHref, settingsHref, here }: { centreHref: string; settingsHref?: string; here?: Site }) {
   const t = useTranslations("notifications");
   const locale = useLocale();
   const router = useRouter();
@@ -70,7 +76,12 @@ export function NotificationBell({ centreHref, settingsHref }: { centreHref: str
       void qc.invalidateQueries({ queryKey: ["bell", audience] });
     }
     setOpen(false);
-    if (n.link) router.push(n.link);
+    const env = publicEnv();
+    const site = here ?? siteOfBell(centreHref, typeof window === "undefined" ? null : window.location.origin, env.ESPORTS_URL);
+    const target = resolveNotificationLink(n.link, { here: site, webUrl: env.WEB_URL, vendorUrl: env.VENDOR_URL, adminUrl: env.ADMIN_URL, esportsUrl: env.ESPORTS_URL });
+    if (!target) return;
+    if (target.external) window.location.assign(target.href);
+    else router.push(target.href);
   }
 
   async function readAll() {

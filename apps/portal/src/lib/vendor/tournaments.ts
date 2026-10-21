@@ -55,6 +55,7 @@ export const sportsConsole = {
   lots: async (orgId: string, id: string, body: { stageId: string; group: string | null; order: string[] }) => ok(await api().POST("/org/{orgId}/sports/tournaments/{id}/lots", { ...t(orgId, id), body })),
   move: async (orgId: string, matchId: string, body: { scheduledStart?: string | null; venueId?: string | null; court?: string | null; version?: number }) => ok(await api().PATCH("/org/{orgId}/sports/matches/{matchId}", { ...m(orgId, matchId), body })),
   postpone: async (orgId: string, matchId: string, reason: string) => ok(await api().POST("/org/{orgId}/sports/matches/{matchId}/postpone", { ...m(orgId, matchId), body: { reason } })),
+  cancelMatch: async (orgId: string, matchId: string, reason: string) => ok(await api().POST("/org/{orgId}/sports/matches/{matchId}/cancel", { ...m(orgId, matchId), body: { reason } })),
   walkover: async (orgId: string, matchId: string, winnerTeamId: string, reason: string) => ok(await api().POST("/org/{orgId}/sports/matches/{matchId}/walkover", { ...m(orgId, matchId), body: { winnerTeamId, reason } })),
   result: async (orgId: string, matchId: string, body: Record<string, unknown>) => ok(await api().PUT("/org/{orgId}/sports/matches/{matchId}/result", { ...m(orgId, matchId), body: body as never })),
   amend: async (orgId: string, matchId: string, body: Record<string, unknown>) => ok(await api().POST("/org/{orgId}/sports/matches/{matchId}/result/amend", { ...m(orgId, matchId), body: body as never })),
@@ -65,6 +66,24 @@ export const tournamentsAdmin = {
   get: async (id: string) => ok(await api("admin").GET("/admin/tournaments/{id}", { params: { path: { id } } })),
   cancel: async (id: string, reason: string, stepUpToken: string) => ok(await api("admin").POST("/admin/tournaments/{id}/cancel", { params: { path: { id }, header: { "x-step-up": stepUpToken } as never }, body: { reason } })),
 };
+
+export type MatchAction = "move" | "postpone" | "walkover" | "cancel";
+
+/**
+ * What the organiser can do with a match from the fixtures list (the API checks again and answers 409
+ * MATCH_STATE): move a match that has no result yet (draft, scheduled, postponed); postpone a
+ * scheduled one; give a walkover once both teams are known and it is scheduled or postponed; cancel a
+ * draft, scheduled or postponed match (it no longer counts).
+ */
+export function matchActions(x: Pick<Match, "status" | "result" | "teamA" | "teamB">): MatchAction[] {
+  const open = ["draft", "scheduled", "postponed"].includes(x.status) && !x.result;
+  if (!open) return [];
+  const out: MatchAction[] = ["move"];
+  if (x.status === "scheduled") out.push("postpone");
+  if (x.status !== "draft" && x.teamA.team && x.teamB.team) out.push("walkover");
+  out.push("cancel");
+  return out;
+}
 
 /** Initial rule values: the field defaults with a preset on top (the server validates again). */
 export function presetValues(rules: SportRules, presetKey: string | null): Record<string, RuleValue> {

@@ -11,10 +11,15 @@ export type OwnerDashboard = components["schemas"]["OwnerDashboard"];
 export type PlatformOverview = components["schemas"]["PlatformOverview"];
 export type Actions = components["schemas"]["PendingActions"];
 export type Tile = components["schemas"]["KpiTile"];
+export type ActionItem = Actions["items"][number];
+/** The businesses "Needs your action" answers for (GET /me/dashboard/actions?role=). */
+export type ActionRole = "ground_owner" | "shop_owner" | "gym_owner";
+export const ACTION_ROLES: readonly string[] = ["ground_owner", "shop_owner", "gym_owner"];
 
 export const dashboards = {
   owner: async (period: Period) => unwrap(await api().GET("/me/dashboard", { params: { query: { role: "ground_owner", period } } })) as OwnerDashboard,
-  ownerActions: async () => unwrap(await api().GET("/me/dashboard/actions", { params: { query: { role: "ground_owner" } } })),
+  /** M19-FR-11 for one business: venue (default), shop or gym. */
+  ownerActions: async (role: ActionRole = "ground_owner") => unwrap(await api().GET("/me/dashboard/actions", { params: { query: { role } } })),
   platform: async (period: Period) => unwrap(await api("admin").GET("/admin/analytics/overview", { params: { query: { period } } })),
   staffActions: async () => unwrap(await api("admin").GET("/admin/analytics/actions")),
 };
@@ -32,6 +37,41 @@ export async function downloadCsv(audience: "api" | "admin", path: "/me/dashboar
 }
 
 // ---------------- pure helpers (tested)
+
+/**
+ * Desk paths a module may still send in its old form (the 19 Oct 2026 renames, and esports leaving
+ * the business panel on 21 Oct 2026), mapped to where the desk lives now. Other paths pass through.
+ */
+const MOVED: [RegExp, string][] = [
+  [/^\/vendor\/grounds(?=[/?#]|$)/, "/vendor/venues"],
+  [/^\/vendor\/tournaments\/([^/?#]+)\/t\/([^/?#]+)/, "/vendor/events/$1/e/$2"],
+  [/^\/vendor\/tournaments(?=[/?#]|$)/, "/vendor/events"],
+  [/^\/vendor\/esports(?:\/[^?#]*)?(?:[?#].*)?$/, "/vendor/events"],
+];
+export function deskHref(href: string): string {
+  for (const [from, to] of MOVED) if (from.test(href)) return href.replace(from, to);
+  return href;
+}
+
+const SEVERITY: Record<string, number> = { high: 0, normal: 1, low: 2 };
+const dueTime = (a: { dueAt: string | null }) => (a.dueAt ? new Date(a.dueAt).getTime() : Number.POSITIVE_INFINITY);
+
+/**
+ * M19-FR-11 across businesses: the per-role lists as one, most urgent first (severity, then the
+ * earliest due time; items with no due time after those with one), each tagged with its business
+ * and its link moved to the current desk path.
+ */
+export function mergeActions<R extends string>(lists: { role: R; items: ActionItem[] }[]): (ActionItem & { role: R })[] {
+  return lists
+    .flatMap(({ role, items }) => items.map((a) => ({ ...a, href: deskHref(a.href), role })))
+    .sort((a, b) => (SEVERITY[a.severity] ?? 1) - (SEVERITY[b.severity] ?? 1) || dueTime(a) - dueTime(b));
+}
+
+/** A setup checklist: the next step (-1 once every step is done) and how many are done. */
+export function checklist<S extends { done: boolean }>(steps: S[]): { steps: S[]; current: number; complete: boolean; doneCount: number } {
+  const current = steps.findIndex((s) => !s.done);
+  return { steps, current, complete: current === -1, doneCount: steps.filter((s) => s.done).length };
+}
 
 const BN = "০১২৩৪৫৬৭৮৯";
 const bn = (s: string) => s.replace(/\d/g, (d) => BN[Number(d)]);

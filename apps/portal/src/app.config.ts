@@ -30,6 +30,7 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       homeHref: "/vendor",
       signInHref: "/vendor/sign-in",
       meHref: "/vendor",
+      bell: { centreHref: "/vendor/notifications", settingsHref: "/vendor/notifications/settings" },
       // The desks are in the sidebar (PortalShell); the header keeps the bell, theme and account.
       nav: [],
     },

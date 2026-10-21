@@ -2,9 +2,11 @@ import { api } from "@kriraghor/api-client";
 import type { components } from "@kriraghor/api-client/schema";
 
 /**
- * Payee side of M07: the payout account (bKash or Nagad in the NID name, confirmed with a code to
- * the registered phone, checked by Kriraghor) and my payouts with a CSV statement per payout.
- * Account numbers are only ever shown masked ("bKash ••• 4321").
+ * Payee side of M07, shared by kriraghor.com (/me/payouts) and the business panel
+ * (vendor.kriraghor.com/vendor/payouts): the payout account (bKash or Nagad in the NID name,
+ * confirmed with a code to the registered phone, checked by Kriraghor) and my payouts with a CSV
+ * statement per payout. The customer session (audience "api") in both apps. Account numbers are
+ * only ever shown masked ("bKash ••• 4321").
  */
 export type PayoutAccount = components["schemas"]["PayoutAccount"];
 export type PayoutSummary = components["schemas"]["PayoutSummary"];
@@ -36,6 +38,8 @@ export async function downloadStatement(id: string, code: string, locale: "en" |
   URL.revokeObjectURL(url);
 }
 
+// ---------------- pure helpers (tested)
+
 /** A Bangladeshi mobile wallet number (01XXXXXXXXX, +880 accepted): the same rule as the server. */
 export function isWalletNumber(input: string): boolean {
   const local = input.replace(/[\s-]/g, "").replace(/^\+?880/, "0");
@@ -49,4 +53,24 @@ export function toneOf(status: MyPayout["status"]): PayoutTone {
   if (status === "failed" || status === "on_hold") return "bad";
   if (status === "cancelled") return "muted";
   return "waiting";
+}
+
+/** Where the payee's account stands: none yet, one being checked, or a verified one (null). */
+export function accountGap(sum: { account: unknown; pendingAccount: unknown } | undefined): "missing" | "pending" | null {
+  if (!sum || sum.account) return null;
+  return sum.pendingAccount ? "pending" : "missing";
+}
+
+/** The next payout: what the next run will send plus what is already in a payout on its way. */
+export const nextPayoutAmount = (sum: Pick<PayoutSummary, "nextPayout" | "inPayouts">) => sum.nextPayout.projected + sum.inPayouts;
+
+const BN = "০১২৩৪৫৬৭৮৯";
+
+/** Poisha → "৳1,23,456.50" (Indian grouping), Bangla digits for bn. Same rule as the backend. */
+export function formatTaka(poisha: number, locale = "en"): string {
+  const abs = Math.abs(poisha);
+  const taka = Math.trunc(abs / 100).toLocaleString("en-IN");
+  const rest = abs % 100;
+  const text = `${poisha < 0 ? "−" : ""}৳${taka}${rest ? `.${String(rest).padStart(2, "0")}` : ""}`;
+  return locale === "bn" ? text.replace(/\d/g, (d) => BN[Number(d)]) : text;
 }

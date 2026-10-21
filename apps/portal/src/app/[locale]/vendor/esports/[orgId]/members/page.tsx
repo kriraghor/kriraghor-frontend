@@ -1,24 +1,10 @@
-import { Suspense } from "react";
-import { setRequestLocale } from "next-intl/server";
-import { OrgShell, OrgMembers } from "@/components/vendor/esports/OrganiserConsole";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Members" };
-
-async function Content({ params }: { params: PageProps<"/[locale]/vendor/esports/[orgId]/members">["params"] }) {
-  const { locale, orgId } = await params;
-  setRequestLocale(locale);
-  return (
-    <OrgShell orgId={orgId}>
-      <OrgMembers orgId={orgId} />
-    </OrgShell>
-  );
-}
-
-// Params are request data (cacheComponents): read them inside Suspense.
-export default function Route({ params }: PageProps<"/[locale]/vendor/esports/[orgId]/members">) {
-  return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1200px] animate-pulse bg-surface-2" />}>
-      <Content params={params} />
-    </Suspense>
-  );
+/**
+ * 21 Oct 2026: esports is organised by Kriraghor only, so the business panel has no esports console
+ * (outside organisers stay off while esports.external_organisers_enabled is false). Old links and
+ * bookmarks land on the sports events console.
+ */
+export default function Page(): never {
+  redirect("/vendor/events");
 }

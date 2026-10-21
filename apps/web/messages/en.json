@@ -591,10 +591,10 @@
         "active": "You are an approved gym owner"
       },
       "organiser": {
-        "tab": "Esports organiser",
-        "title": "Run esports events",
-        "intro": "Leagues, college clubs and cafés run PUBG Mobile and Free Fire events on Kriraghor under a contract. We check your NID and your organisation's registration once; then you register the organisation and Kriraghor reviews it.",
-        "applyTitle": "As an esports organiser you can:",
+        "tab": "Events organiser",
+        "title": "Run sports events",
+        "intro": "Clubs, leagues and venues run cricket, football, badminton and other sports events on Kriraghor. We check your NID and your organisation's registration once; then you register the organisation and Kriraghor reviews it. Esports events are run by Kriraghor itself.",
+        "applyTitle": "As an events organiser you can:",
         "apply": "Start my organiser application",
         "active": "Your organiser documents are approved"
       },
@@ -619,14 +619,14 @@
     "addCredential": "Add a credential",
     "org": {
       "title": "Your organisation",
-      "lead": "Register the organisation you run events for. Kriraghor reviews it, then sets up your contract.",
+      "lead": "Register the club, league or venue you run sports events for. Once Kriraghor approves it, you open the events console.",
       "name": "Organisation name",
       "about": "About (what you run, for whom)",
       "email": "Contact email (optional)",
       "create": "Save the organisation",
       "submit": "Send for review",
       "waitDocs": "You can send it once your organiser documents are approved.",
-      "openConsole": "Open the organiser console",
+      "openConsole": "Open the events console",
       "status": {
         "draft": "Draft",
         "pending_review": "In review",
@@ -638,8 +638,9 @@
       "kindLabel": "What will you run?",
       "kind": {
         "sports": "Sports events",
-        "esports": "Esports events"
-      }
+        "esports": "Esports events (closed)"
+      },
+      "esportsClosed": "Esports events are run by Kriraghor only now, so this organisation can't run events. Register a sports organisation instead."
     }
   },
   "bookings": {
@@ -1984,7 +1985,7 @@
     "openShop": "Open a shop",
     "getHired": "Get hired",
     "listGym": "List your gym",
-    "organisers": "Esports organisers",
+    "organisers": "Events organisers",
     "help": "Help",
     "helpCentre": "Help centre",
     "refunds": "Refund policy",
@@ -2194,9 +2195,9 @@
         "cta": "Get hired"
       },
       "organisers": {
-        "title": "Esports organisers",
-        "body": "Run your own events on Kriraghor, on contract.",
-        "cta": "Talk to us"
+        "title": "Events organisers",
+        "body": "Run your club, league or venue's sports events on Kriraghor.",
+        "cta": "Become an organiser"
       }
     },
     "trust": {
@@ -2337,5 +2338,198 @@
     "privacy": "Privacy policy",
     "contact": "Contact",
     "contactBody": "For a booking, order, job or event, open it in My account and report a problem: our staff reply there. [Support email and phone will be added before launch.]"
+  },
+  "accountSettings": {
+    "title": "Account settings",
+    "lead": "Your name, language, how you sign in and the devices you are signed in on.",
+    "loading": "Loading your account",
+    "getHelp": "Get help",
+    "accountStatus": {
+      "suspended": "Your account is suspended",
+      "banned": "Your account is blocked",
+      "closed": "Your account is closed"
+    },
+    "accountStatusBody": "You can still sign in and see your account, but bookings, orders and event entries are paused. Contact us if you think this is a mistake.",
+    "profile": {
+      "title": "Profile",
+      "name": "Display name",
+      "nameHint": "Shown on your bookings, teams and reviews.",
+      "nameLength": "Use {min} to {max} characters.",
+      "language": "Language",
+      "languageHint": "Used for this site, SMS, email and notifications.",
+      "username": "Username",
+      "noUsername": "No username yet",
+      "editUsername": "Change it on your player profile",
+      "addUsername": "Add one on your player profile",
+      "save": "Save changes",
+      "saved": "Profile saved"
+    },
+    "signIn": {
+      "title": "Ways to sign in",
+      "lead": "Keep at least two, so you can always get back in.",
+      "phone": "Mobile number",
+      "noPhone": "No mobile number yet",
+      "verified": "Verified",
+      "notVerified": "Not verified",
+      "verifyPhone": "Verify",
+      "addPhone": "Add a number",
+      "email": "Email",
+      "google": "Google",
+      "password": "Password"
+    },
+    "email": {
+      "none": "No email yet",
+      "add": "Add email",
+      "change": "Change",
+      "verify": "Verify",
+      "label": "Email address",
+      "hint": "We send a 6-digit code to this address.",
+      "invalid": "Enter an email address like name@example.com.",
+      "send": "Send code",
+      "cancel": "Cancel",
+      "codeLabel": "Code sent to {email}",
+      "confirm": "Confirm email",
+      "resend": "Send again",
+      "resendIn": "Send again in {seconds}s",
+      "otherEmail": "Use a different email",
+      "done": "Email verified"
+    },
+    "google": {
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "hint": "Sign in with one tap using your Google account.",
+      "linking": "Connecting your Google account",
+      "linked": "Google connected",
+      "unlinked": "Google disconnected",
+      "unlink": "Disconnect",
+      "unlinkTitle": "Disconnect Google?",
+      "unlinkBody": "You will sign in with your mobile number, email or password instead. You can connect Google again at any time.",
+      "lastMethod": "Google is your only way to sign in. Add a mobile number, a verified email or a password first.",
+      "keep": "Keep it"
+    },
+    "password": {
+      "isSet": "Set",
+      "notSet": "Not set. You sign in with a code instead.",
+      "change": "Change password",
+      "setAction": "Set a password",
+      "signsOut": "Saving a new password signs you out on every other device. This device stays signed in.",
+      "current": "Current password",
+      "new": "New password",
+      "hint": "At least {min} characters. A short sentence is easy to remember.",
+      "confirm": "Type the new password again",
+      "show": "Show password",
+      "hide": "Hide password",
+      "cancel": "Cancel",
+      "changed": "Password changed. Other devices are signed out.",
+      "set": "Password set. Other devices are signed out.",
+      "problems": {
+        "currentRequired": "Enter your current password.",
+        "tooShort": "Use at least {min} characters.",
+        "tooLong": "Use at most {max} characters.",
+        "mismatch": "The two passwords don't match."
+      }
+    },
+    "devices": {
+      "title": "Signed-in devices",
+      "lead": "Phones and browsers where your account is open.",
+      "loading": "Loading your devices",
+      "unknown": "Unknown device",
+      "thisDevice": "This device",
+      "lastSeen": "Last active {when}",
+      "signOut": "Sign out",
+      "signOutNamed": "Sign out {device}",
+      "ended": "Device signed out",
+      "note": "Don't recognise a device? Sign it out and change your password."
+    },
+    "errors": {
+      "emailInUse": "This email is used by another Kriraghor account.",
+      "emailAlreadyVerified": "This email is already verified on your account.",
+      "codeWrong": "That code is not right. Check it and try again.",
+      "codeExpired": "That code has expired. Send a new one.",
+      "tooMany": "Too many tries. Wait a few minutes, then try again.",
+      "googleLinkedElsewhere": "This Google account is connected to another Kriraghor account.",
+      "googleAlreadyConnected": "A Google account is already connected. Disconnect it first.",
+      "googleFailed": "Google could not confirm it's you. Try again.",
+      "lastSignIn": "Add a mobile number, a verified email or a password first, so you can still sign in.",
+      "passwordIncorrect": "Your current password is not right.",
+      "passwordWeak": "This password is too easy to guess. Choose a longer one.",
+      "passwordBreached": "This password has appeared in a data leak. Choose another one.",
+      "roleNotWithdrawable": "This application can't be withdrawn any more.",
+      "submissionNotWithdrawable": "Withdraw this one from its own page.",
+      "submissionClosed": "This has already been decided, so it can't be withdrawn."
+    }
+  },
+  "myRoles": {
+    "title": "My roles",
+    "lead": "The roles you applied for, where each one stands, and what you sent for review.",
+    "applyNew": "Apply for a role",
+    "rolesTitle": "Roles",
+    "noRoles": "No roles yet",
+    "noRolesBody": "Own a venue, a shop or a gym, run sports events, or get hired as a player or pro.",
+    "roleName": {
+      "ground_owner": "Venue owner",
+      "shop_owner": "Shop owner",
+      "gym_owner": "Gym owner",
+      "organiser": "Events organiser",
+      "pro": "Pro",
+      "player": "Player for hire"
+    },
+    "appliedOn": "Applied on {date}",
+    "activeSince": "Active since {date}",
+    "reason": "Reason: {reason}",
+    "hint": {
+      "verify": "Verify your NID first, then send this role's documents.",
+      "documents": "Send this role's documents so Kriraghor can review them.",
+      "fix": "Kriraghor asked for changes. Fix the documents and send them again.",
+      "wait": "Kriraghor is reviewing your documents. We'll let you know.",
+      "openProDesk": "You're approved. Manage your work on the pro desk.",
+      "openVendorDesk": "You're approved. Manage your business on the business desk.",
+      "applyAgain": "You can apply again at any time.",
+      "contact": "This role is paused. Contact us to sort it out."
+    },
+    "next": {
+      "verify": "Verify your NID",
+      "documents": "Send documents",
+      "fix": "Fix and resend",
+      "openProDesk": "Open the pro desk",
+      "openVendorDesk": "Open the business desk",
+      "applyAgain": "Apply again",
+      "contact": "Contact us"
+    },
+    "withdrawApplication": "Withdraw application",
+    "submissionsTitle": "Sent for review",
+    "submissionsLead": "Venues, shops, products, profiles and documents you sent to Kriraghor, with the decision.",
+    "loading": "Loading what you sent",
+    "noSubmissions": "Nothing sent for review yet.",
+    "kind": {
+      "ground": "Venue",
+      "gym": "Gym",
+      "shop": "Shop",
+      "product": "Product",
+      "hire_profile": "Hire profile",
+      "game_profile": "Game ID",
+      "document": "Document",
+      "organisation": "Organisation",
+      "tournament": "Event",
+      "esports_tournament": "Esports event"
+    },
+    "subStatus": {
+      "pending_review": "In review",
+      "changes_requested": "Changes needed",
+      "approved": "Approved",
+      "rejected": "Not approved",
+      "withdrawn": "Withdrawn",
+      "superseded": "Replaced by a newer version"
+    },
+    "sentOn": "Sent on {date}",
+    "decidedOn": "decided on {date}",
+    "withdraw": "Withdraw",
+    "keep": "Keep it",
+    "confirmRoleTitle": "Withdraw your {role} application?",
+    "confirmRoleBody": "Kriraghor stops reviewing it. The documents you sent are kept, and you can apply again later.",
+    "confirmSubmissionTitle": "Withdraw from review?",
+    "confirmSubmissionBody": "\"{title}\" leaves the review queue. You can edit it and send it again later.",
+    "roleWithdrawn": "Application withdrawn",
+    "submissionWithdrawn": "Withdrawn from review"
   }
 }

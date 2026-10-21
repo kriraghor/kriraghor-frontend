@@ -55,7 +55,11 @@
     "homeLabel": "Kriraghor home",
     "main": "Main",
     "closeMenu": "Close menu",
-    "menu": "Menu"
+    "menu": "Menu",
+    "usersAdmin": "Users",
+    "staffAdmin": "Staff",
+    "settlement": "Settlement",
+    "vendorPayouts": "Payouts"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -1482,7 +1486,27 @@
     "save": "Save",
     "walkInHelp": "The Kriraghor fee on walk-ins is taken from your next payout.",
     "signIn": "Sign in to see your bookings",
-    "retry": "Try again"
+    "retry": "Try again",
+    "prevDay": "Previous day",
+    "nextDay": "Next day",
+    "pickDate": "Pick a date",
+    "today": "Today",
+    "search": {
+      "label": "Find a booking",
+      "placeholder": "Code, last 4 phone digits or name",
+      "title": "Matching bookings",
+      "hint": "Type at least 2 characters.",
+      "empty": "No booking matches “{q}”."
+    },
+    "col": {
+      "code": "Booking",
+      "when": "Date and time",
+      "who": "Team or contact",
+      "venue": "Venue",
+      "phone": "Phone",
+      "status": "Status",
+      "money": "Total"
+    }
   },
   "vendorSchedule": {
     "loadFailed": "Couldn't load the venue.",
@@ -1647,7 +1671,18 @@
       "hold_to_pay": "A slot is on hold: pay to keep it",
       "verify_nid": "Verify your NID",
       "nid_in_review": "Your NID is in review",
-      "review_queue": "{n} waiting for review"
+      "review_queue": "{n} waiting for review",
+      "shop_changes_requested": "Staff asked for changes to your shop",
+      "products_changes_requested": "Staff asked for changes to {n, plural, one {# product} other {# products}}",
+      "stock_out": "{n, plural, one {# item is} other {# items are}} out of stock",
+      "stock_low": "{n, plural, one {# item is} other {# items are}} running low",
+      "stock_blocked": "{n, plural, one {# item is} other {# items are}} blocked from sale (expired)",
+      "orders_to_accept": "{n, plural, one {# order} other {# orders}} to accept",
+      "orders_to_ship": "{n, plural, one {# order} other {# orders}} to ship",
+      "gym_changes_requested": "Staff asked for changes to {n, plural, one {a gym} other {# gyms}}",
+      "other": "{n, plural, one {# thing} other {# things}} to look at",
+      "due": "Due {time}",
+      "urgent": "Urgent"
     },
     "loadFailed": "Couldn't load the numbers. Try again.",
     "openAnalytics": "Open analytics",
@@ -2501,7 +2536,9 @@
       "area": "Area",
       "due": "Due",
       "total": "Total"
-    }
+    },
+    "payoutNoteVendor": "Payouts go to your bKash or Nagad account each week.",
+    "payoutsLink": "See your payouts"
   },
   "ordersAdmin": {
     "title": "Orders",
@@ -2827,7 +2864,13 @@
       "method": {
         "qr": "QR",
         "code": "Code"
-      }
+      },
+      "onDay": "Admissions on {date} ({n})",
+      "noneOnDay": "No one came in on this day.",
+      "prevDay": "Previous day",
+      "nextDay": "Next day",
+      "date": "Pick a date",
+      "todayButton": "Today"
     },
     "sold": {
       "open": "Passes sold",
@@ -3179,7 +3222,8 @@
       "members": "Members",
       "docs": "The owner's NID and the organisation's registration were checked on the documents desk."
     },
-    "statusLabel": "Status"
+    "statusLabel": "Status",
+    "externalOff": "Outside esports organisers are switched off; Kriraghor runs every esports event. Contracts and invoices are hidden until they are switched back on."
   },
   "bigEvents": {
     "title": "Showcases",
@@ -3554,8 +3598,35 @@
       "KNOCKOUT_NEEDS_WINNER": "A knockout match needs a winner.",
       "AMEND_BLOCKED": "A later match already used this result.",
       "START_TOO_SOON": "The first match day is too soon.",
-      "REGISTRATION_CLOSES_TOO_LATE": "Registration must close a little before the first match day."
-    }
+      "REGISTRATION_CLOSES_TOO_LATE": "Registration must close a little before the first match day.",
+      "MATCH_STATE": "This match has moved on and can no longer change this way. Refresh the list."
+    },
+    "nav": {
+      "events": "Events",
+      "members": "Members"
+    },
+    "membersTitle": "Members",
+    "membersLead": "People who can run this organisation's events. Admins approve teams, give walkovers and cancel matches; staff draw fixtures, move and postpone matches and enter results.",
+    "matchActions": "Actions for match M{n}",
+    "mAct": {
+      "move": "Change date, time or court",
+      "postpone": "Postpone",
+      "walkover": "Give a walkover",
+      "cancel": "Cancel match"
+    },
+    "moveTitle": "Change M{n}",
+    "moveHelp": "Teams are told about the new time. Leave the time empty if it is not set yet.",
+    "moveStart": "Start (Dhaka time)",
+    "moveCourt": "Court or pitch",
+    "moveSave": "Save changes",
+    "postponeTitle": "Postpone M{n}?",
+    "postponeHelp": "Teams are told the match is postponed. Set the new time later with Change date, time or court.",
+    "cancelMatchTitle": "Cancel M{n}?",
+    "cancelMatchHelp": "The match is called off and no longer counts in the table. Teams are told. This cannot be undone.",
+    "walkoverTitle": "Walkover for M{n}",
+    "walkoverHelp": "The winner gets the match by walkover; the other team gets no points.",
+    "walkoverWinner": "Winner",
+    "reasonShort": "Write at least 5 characters."
   },
   "tournamentsAdmin": {
     "title": "Events",
@@ -3655,6 +3726,473 @@
       "shop_owner": "Shop",
       "gym_owner": "Gym",
       "organiser": "Organiser"
+    }
+  },
+  "vendorHome": {
+    "title": "Business desk",
+    "lead": "What your businesses need from you today, in one place.",
+    "leadNew": "Run a venue, a shop, a gym or sports events on Kriraghor. One account works for all of them.",
+    "actionsTitle": "Needs your action",
+    "addMore": "Add another business",
+    "addMoreLead": "Apply on kriraghor.com with the same account. It shows up here once staff approve it.",
+    "openSettlement": "See settlement",
+    "gymQuick": "Front desk and passes",
+    "sections": {
+      "ground_owner": "Your venues",
+      "shop_owner": "Your shop",
+      "gym_owner": "Your gyms",
+      "organiser": "Your sports events"
+    },
+    "setup": {
+      "title": "Get set up",
+      "progress": "{done} of {total} done",
+      "done": "Done",
+      "step": {
+        "nid": "Verify your NID",
+        "docs": "Send your trade licence and land documents",
+        "list": "List your first venue",
+        "payout": "Add a payout account",
+        "shopProfile": "Send your shop profile for review",
+        "firstProduct": "Get your first product live",
+        "gymLive": "Get your gym live",
+        "packages": "Set your passes",
+        "orgVerified": "Get your organisation verified"
+      },
+      "help": {
+        "nid": "On kriraghor.com, with the same account.",
+        "docs": "Staff check them within a working day.",
+        "list": "Photos, courts, opening hours and a price.",
+        "payout": "The bKash or Nagad account Kriraghor pays your earnings into.",
+        "shopProfile": "Name, area, address and the shop type. Staff answer within a working day.",
+        "firstProduct": "Photos, sizes and stock. Each product is checked before it goes on sale.",
+        "gymLive": "Photos, opening hours and a day pass, then send it for review.",
+        "packages": "A day pass, and month or 3-month passes if you sell them.",
+        "orgVerified": "Register your organisation on kriraghor.com and choose sports events."
+      },
+      "go": {
+        "nid": "Verify NID",
+        "docs": "Send documents",
+        "list": "Add a venue",
+        "payout": "Add account",
+        "shopProfile": "Open my shop",
+        "firstProduct": "Add a product",
+        "gymLive": "Open my gyms",
+        "packages": "Set passes",
+        "orgVerified": "Register"
+      }
+    },
+    "organiser": {
+      "active": "You can run sports events as an organiser.",
+      "lead": "Leagues and knockouts with online team registration and live results.",
+      "open": "Open sports events",
+      "orgs": "Your organisations",
+      "apply": "Register an organisation",
+      "openOrg": "Events"
+    },
+    "orgStatus": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes needed",
+      "verified": "Verified",
+      "rejected": "Not approved",
+      "suspended": "Suspended"
+    },
+    "types": {
+      "title": "What do you run?",
+      "status": "Application: {status}",
+      "start": "Start",
+      "continue": "Continue",
+      "ground_owner": {
+        "title": "A venue",
+        "body": "Turf or pitch slots booked with an advance, held safely until check-in."
+      },
+      "shop_owner": {
+        "title": "A shop",
+        "body": "Sports gear, gym equipment or supplements, paid online and protected for the buyer."
+      },
+      "gym_owner": {
+        "title": "A gym",
+        "body": "Day passes and memberships, admitted with a QR code at the front desk."
+      },
+      "organiser": {
+        "title": "Sports events",
+        "body": "Football, cricket and other sports events with online team registration."
+      }
+    },
+    "onboard": {
+      "step": {
+        "nid": "Verify your NID",
+        "business": "Choose your business and send its documents",
+        "setup": "Set up your desk here"
+      },
+      "help": {
+        "nid": "On kriraghor.com, with the same account.",
+        "business": "Staff check them within a working day. Status: {status}.",
+        "setup": "List a venue, add products, set up a gym or create an event."
+      },
+      "go": {
+        "nid": "Verify NID",
+        "business": "Choose a business",
+        "setup": "See the options"
+      }
+    }
+  },
+  "usersDesk": {
+    "title": "Users",
+    "intro": "Find any member by name, email or phone, see their roles and history, and suspend, restore or sign them out. Every search is logged.",
+    "noAccess": "You need the Manage members permission to use this desk.",
+    "account": "Account",
+    "search": "Search members",
+    "searchPlaceholder": "Name, email or phone",
+    "searchMin": "Type at least {n} characters to search.",
+    "statusFilter": "Account status",
+    "allStatuses": "All statuses",
+    "roleFilter": "Role",
+    "allRoles": "All roles",
+    "empty": "No members match these filters.",
+    "emptySearch": "No members match this search.",
+    "col": {
+      "name": "Name",
+      "contact": "Phone and email",
+      "roles": "Roles",
+      "status": "Status",
+      "kyc": "NID check",
+      "lastLogin": "Last sign-in"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "banned": "Banned",
+      "closed": "Closed"
+    },
+    "kyc": {
+      "unverified": "Not verified",
+      "pending": "Under review",
+      "verified": "Verified",
+      "rejected": "Rejected"
+    },
+    "role": {
+      "member": "Member",
+      "player": "Player",
+      "pro": "Pro",
+      "ground_owner": "Venue owner",
+      "shop_owner": "Shop owner",
+      "organiser": "Organiser",
+      "gym_owner": "Gym owner",
+      "staff": "Staff",
+      "master_admin": "Master admin"
+    },
+    "roleStatus": {
+      "applied": "Applied",
+      "documents_pending": "Documents due",
+      "in_review": "In review",
+      "active": "Active",
+      "changes_requested": "Changes asked",
+      "rejected": "Rejected",
+      "suspended": "Suspended",
+      "withdrawn": "Withdrawn"
+    },
+    "reasons": {
+      "fraud": "Fraud",
+      "abuse": "Abuse or harassment",
+      "fake_documents": "Fake documents",
+      "chargebacks": "Chargebacks",
+      "policy_breach": "Broke the rules",
+      "risk_flag": "Risk flag",
+      "other": "Other",
+      "reported": "Reported by members",
+      "offboarded": "Left the staff"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "third": "Third gender"
+    },
+    "genderSource": {
+      "self_declared": "Set by the member",
+      "staff_corrected": "Corrected by staff"
+    },
+    "sanctionKind": {
+      "suspension": "Suspension",
+      "ban": "Ban",
+      "role_suspension": "Role suspended"
+    },
+    "sanctionState": {
+      "active": "In force",
+      "lifted": "Lifted",
+      "ended": "Ended"
+    },
+    "facts": {
+      "phone": "Phone",
+      "email": "Email",
+      "kyc": "NID check",
+      "gender": "Gender",
+      "language": "Language",
+      "lastLogin": "Last sign-in",
+      "joined": "Joined"
+    },
+    "nidLast4": "NID ending {last4}",
+    "none": "None",
+    "notSet": "Not set",
+    "never": "Never",
+    "optional": "Optional",
+    "masterBadge": "Master admin",
+    "staffBadge": "Staff",
+    "selfNote": "This is your own account. Another staff member has to act on it.",
+    "staffNote": "This is a staff account. Only a master admin can act on it.",
+    "banMasterOnly": "This account is banned. Only a master admin can lift a ban.",
+    "actions": {
+      "suspend": "Suspend",
+      "restore": "Restore",
+      "signOut": "Sign out everywhere",
+      "gender": "Fix gender",
+      "ban": "Ban",
+      "unban": "Lift ban"
+    },
+    "rolesTitle": "Roles",
+    "noRoles": "No roles yet.",
+    "changeStatus": "Change status",
+    "changeRoleStatusFor": "Change the {role} role's status",
+    "sanctionsTitle": "Suspensions and bans",
+    "noSanctions": "No suspensions or bans.",
+    "liftedAt": "Lifted {when}",
+    "reasonCode": "Reason",
+    "pickReason": "Choose a reason",
+    "pickGender": "Choose",
+    "note": "Note",
+    "noteHint": "At least {n} characters. Staff see this note; the member does not.",
+    "reason": "Reason",
+    "until": "Suspended until",
+    "untilHint": "Leave empty to suspend until someone restores the account. At most one year.",
+    "newStatus": "New status",
+    "save": "Save",
+    "suspendTitle": "Suspend {name}?",
+    "suspendHelp": "They are signed out everywhere and can't sign in until the suspension ends or someone restores the account.",
+    "restoreTitle": "Restore {name}?",
+    "restoreHelp": "This lifts the suspension and the member can sign in again. A ban can only be lifted by a master admin.",
+    "signOutTitle": "Sign {name} out everywhere?",
+    "signOutHelp": "Every session on every device ends. They can sign in again straight away.",
+    "genderTitle": "Fix gender for {name}",
+    "genderHelp": "Use this only to correct a mistake. The change and your reason are logged; gender is never shown publicly.",
+    "roleTitle": "Change the {role} role",
+    "roleHelp": "The role is {status} now. Suspending, rejecting or asking for changes needs a reason.",
+    "banTitle": "Ban {name}?",
+    "banHelp": "A ban closes off the account until a master lifts it. They are signed out everywhere. Enter your authenticator code to confirm.",
+    "unbanTitle": "Lift the ban on {name}?",
+    "unbanHelp": "The member can sign in again. Say why, then enter your authenticator code.",
+    "form": {
+      "reasonNeeded": "Choose a reason.",
+      "noteShort": "Write at least {n} characters.",
+      "genderNeeded": "Choose the correct gender.",
+      "statusNeeded": "Choose the new status.",
+      "until": {
+        "invalid": "Pick a valid date.",
+        "past": "The end date must be in the future.",
+        "tooLong": "A suspension can last at most a year. Use a ban for longer."
+      }
+    },
+    "done": {
+      "suspended": "Account suspended. {n, plural, =0 {No sessions were open.} one {# session ended.} other {# sessions ended.}}",
+      "restored": "Account restored. The member can sign in again.",
+      "signedOut": "{n, plural, =0 {No sessions were open.} one {Signed out of # session.} other {Signed out of # sessions.}}",
+      "gender": "Gender corrected.",
+      "role": "{role} role is now {status}.",
+      "banned": "Account banned. {n, plural, =0 {No sessions were open.} one {# session ended.} other {# sessions ended.}}",
+      "unbanned": "Ban lifted. The member can sign in again."
+    },
+    "errors": {
+      "generic": "Something went wrong. Try again.",
+      "SELF_ACTION_FORBIDDEN": "You can't do this to your own account.",
+      "MASTER_REQUIRED": "Only a master admin can do this.",
+      "TARGET_PROTECTED": "This account is protected and can't be changed here.",
+      "ALREADY_SANCTIONED": "This account already has a suspension or ban in force.",
+      "USER_NOT_ACTIVE": "This account isn't active, so this can't be done.",
+      "USER_ALREADY_BANNED": "This account is already banned.",
+      "USER_ALREADY_ACTIVE": "This account is already active.",
+      "USER_CLOSED": "This account is closed and can't be restored.",
+      "NOT_SANCTIONED": "There is no suspension to lift.",
+      "UNTIL_IN_PAST": "The end date must be in the future.",
+      "SUSPENSION_TOO_LONG": "A suspension can last at most a year. Use a ban for longer.",
+      "ROLE_TRANSITION_INVALID": "The role can't move to that status from where it is now. Reload and try again.",
+      "ROLE_NOT_MANAGEABLE": "Staff roles are managed on the Staff desk.",
+      "MEMBER_NOT_ACTIVE": "Approve the member's NID verification first.",
+      "ALREADY_STAFF": "This person is already on the staff.",
+      "PERMISSION_NOT_GRANTABLE": "Some of these permissions can only be held by masters.",
+      "MASTER_PERMISSIONS_FIXED": "Master admins hold every permission; theirs can't be changed.",
+      "LAST_MASTER": "You can't offboard the last master admin.",
+      "STAFF_NOT_ACTIVE": "Only an active staff member who has set up two-factor can be promoted.",
+      "ALREADY_MASTER": "This person is already a master admin.",
+      "STEP_UP_REQUIRED": "Confirm with a fresh authenticator code and try again.",
+      "STEP_UP_FAILED": "We couldn't confirm your code. Try again.",
+      "TOTP_INVALID": "That code isn't right. Use the latest code from your authenticator app.",
+      "TOTP_REPLAYED": "That code was already used. Wait for the next one.",
+      "TWO_FACTOR_REQUIRED": "Set up two-factor sign-in first.",
+      "PERMISSION_REQUIRED": "You don't have permission for this.",
+      "VALIDATION_FAILED": "Some details aren't right. Check the form and try again.",
+      "NOT_FOUND": "We couldn't find this account. It may have changed; reload the list."
+    }
+  },
+  "staffDesk": {
+    "title": "Staff and permissions",
+    "intro": "Everyone who works on the admin desk: their team, two-factor and what they're allowed to do. Every change needs your authenticator code.",
+    "noAccess": "Only master admins can manage staff.",
+    "member": "Staff member",
+    "notFound": "This staff member isn't in the list any more.",
+    "search": "Find staff",
+    "searchPlaceholder": "Name, employee ID or team",
+    "statusFilter": "Status",
+    "allStatuses": "All statuses",
+    "empty": "No staff match these filters.",
+    "col": {
+      "name": "Name",
+      "employeeId": "Employee ID",
+      "team": "Team",
+      "status": "Status",
+      "twoFactor": "Two-factor",
+      "permissions": "Permissions"
+    },
+    "status": {
+      "invited": "Invited",
+      "active": "Active",
+      "suspended": "Suspended",
+      "offboarded": "Offboarded"
+    },
+    "master": "Master",
+    "on": "On",
+    "off": "Off",
+    "twoFactorOn": "Two-factor on",
+    "twoFactorOff": "Two-factor not set up",
+    "allPermissions": "All",
+    "permissionCount": "{n} of {total}",
+    "noTeam": "No team",
+    "none": "None",
+    "optional": "Optional",
+    "facts": {
+      "team": "Team",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "permissionsTitle": "Permissions",
+    "masterHoldsAll": "Master admins hold every permission.",
+    "offboardedNoPermissions": "Offboarded staff hold no permissions.",
+    "mastersOnly": "Masters only",
+    "savePermissions": "Save permissions",
+    "undoChanges": "Undo changes",
+    "pendingChanges": "{grant} to add, {revoke} to remove",
+    "willGrant": "Add: {permission}",
+    "willRevoke": "Remove: {permission}",
+    "reason": "Reason",
+    "reasonHint": "At least {n} characters. It goes in the audit log.",
+    "saveTitle": "Change permissions for {name}?",
+    "saveHelp": "They are signed out and get the new permissions when they sign in again. Enter your authenticator code to confirm.",
+    "accountTitle": "Account",
+    "promote": "Make master",
+    "reset2fa": "Reset two-factor",
+    "offboard": "Offboard",
+    "selfNote": "This is you. Another master has to offboard you.",
+    "lastMasterNote": "This is the only active master, so they can't be offboarded.",
+    "offboardTitle": "Offboard {name}?",
+    "offboardHelp": "They lose admin access and every permission straight away and are signed out everywhere. Their member account stays.",
+    "reset2faTitle": "Reset two-factor for {name}?",
+    "reset2faHelp": "Their authenticator is removed and they are signed out. They set up a new one at their next staff sign-in.",
+    "promoteTitle": "Make {name} a master admin?",
+    "promoteHelp": "Masters hold every permission, including fees and staff. Enter your authenticator code to confirm.",
+    "form": {
+      "reasonShort": "Write at least {n} characters."
+    },
+    "invite": {
+      "open": "Invite staff",
+      "title": "Invite a staff member",
+      "help": "Find the person's Kriraghor account, then give them an employee ID and their starting permissions.",
+      "find": "Find a member",
+      "findPlaceholder": "Name, email or phone",
+      "searchMin": "Type at least {n} characters.",
+      "searching": "Searching…",
+      "searchFailed": "The search didn't work. Try again.",
+      "noResults": "No members found.",
+      "results": "Members found",
+      "alreadyStaff": "Already staff",
+      "notActive": "Account not active",
+      "picked": "Selected: {name}",
+      "employeeId": "Employee ID",
+      "employeeIdHint": "2 to 32 characters, e.g. KG-014.",
+      "team": "Team",
+      "permissions": "Starting permissions",
+      "next": "Continue",
+      "confirmTitle": "Invite {name} as staff?",
+      "confirmHelp": "They set up two-factor at their next staff sign-in. Enter your authenticator code to send the invite.",
+      "summary": "Employee ID {employeeId}, {n, plural, =0 {no permissions yet} one {# permission} other {# permissions}}.",
+      "send": "Invite",
+      "problem": {
+        "user": "Pick the member to invite.",
+        "employeeId": "Enter an employee ID of 2 to 32 characters.",
+        "team": "The team name is too long (60 characters at most)."
+      }
+    },
+    "done": {
+      "saved": "{n, plural, =0 {Nothing changed.} one {# permission changed.} other {# permissions changed.}}",
+      "offboarded": "Offboarded. Their admin access has ended.",
+      "reset2fa": "Two-factor reset. They will set it up again at next sign-in.",
+      "promoted": "They are now a master admin.",
+      "invited": "{name} is invited. They set up two-factor at their next staff sign-in."
+    },
+    "perm": {
+      "approve_listings": {
+        "label": "Approve listings",
+        "desc": "Review and approve venues, shop items, used gear, gyms and hire profiles before they go live."
+      },
+      "approve_documents": {
+        "label": "Check documents",
+        "desc": "Review NID, trade licence and other documents people upload for verification."
+      },
+      "resolve_reports": {
+        "label": "Handle reports and disputes",
+        "desc": "Work through member reports, reviews and disputes, and decide the outcome."
+      },
+      "refund_small": {
+        "label": "Small refunds",
+        "desc": "Issue refunds up to the small-refund limit; larger ones go to a master."
+      },
+      "view_payouts": {
+        "label": "See payouts",
+        "desc": "See payouts, payout accounts and the money held for venues, shops and players."
+      },
+      "release_payouts": {
+        "label": "Release payouts",
+        "desc": "Approve and send payout batches to bKash and Nagad."
+      },
+      "manage_users": {
+        "label": "Manage members",
+        "desc": "Search members, suspend or restore accounts, sign people out and fix account details."
+      },
+      "manage_catalog": {
+        "label": "Manage catalogues",
+        "desc": "Edit sports, games, places, item categories and other shared lists."
+      },
+      "manage_esports": {
+        "label": "Run esports events",
+        "desc": "Create and run esports events, rooms and check-ins."
+      },
+      "enter_results": {
+        "label": "Enter results",
+        "desc": "Enter placements and kills, and handle result disputes."
+      },
+      "manage_organisers": {
+        "label": "Manage organisers",
+        "desc": "Approve and support event organisers and their teams."
+      },
+      "view_analytics": {
+        "label": "See reports and numbers",
+        "desc": "See dashboards, trends and platform figures."
+      },
+      "edit_fees": {
+        "label": "Change fees and rules",
+        "desc": "Change platform fees, limits and time windows. Masters only."
+      },
+      "manage_staff": {
+        "label": "Manage staff",
+        "desc": "Invite staff, change permissions and offboard people. Masters only."
+      }
     }
   }
 }

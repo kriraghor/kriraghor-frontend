@@ -35,8 +35,8 @@ const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = {
   suspended: "bad",
   ended: "muted",
 };
-const TABS = ["", "/tournaments", "/billing", "/branding", "/members"] as const;
-const tabKey = (t: string) => (t ? t.slice(1) : "dashboard");
+const TABS = ["", "/events", "/billing", "/branding", "/members"] as const;
+const tabKey = (t: string) => (t === "/events" ? "tournaments" : t ? t.slice(1) : "dashboard");
 
 /** /vendor/esports: pick one of my verified organisations (one goes straight in). */
 export function OrganiserHome() {

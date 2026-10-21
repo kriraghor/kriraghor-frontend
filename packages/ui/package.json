@@ -25,6 +25,7 @@
     "./sign-up": "./src/auth/SignUpWizard.tsx",
     "./auth-layout": "./src/auth/AuthLayout.tsx",
     "./auth-flow": "./src/auth/flow.ts",
+    "./auth/google-button": "./src/auth/GoogleButton.tsx",
     "./account": "./src/account/parts.tsx",
     "./brand/logo-mark": "./src/brand/LogoMark.tsx",
     "./brand/boot-splash": "./src/brand/BootSplash.tsx",
@@ -33,7 +34,9 @@
     "./motion": "./src/motion/index.tsx",
     "./theme-toggle": "./src/ThemeToggle.tsx",
     "./brand/theme-script": "./src/brand/ThemeScript.tsx",
-    "./brand/route-loading": "./src/brand/RouteLoading.tsx"
+    "./brand/route-loading": "./src/brand/RouteLoading.tsx",
+    "./payouts": "./src/payouts/index.ts",
+    "./payouts/client": "./src/payouts/client.ts"
   },
   "scripts": {
     "lint": "eslint .",
