@@ -1,4 +1,5 @@
 import { api } from "@kriraghor/api-client";
+import { DISTANCES, PRICE_BANDS, TIMES_OF_DAY, type PriceBand, type TimeOfDay } from "./venue-board";
 import type { components } from "@kriraghor/api-client/schema";
 
 /**
@@ -8,7 +9,25 @@ import type { components } from "@kriraghor/api-client/schema";
 export type GroundCard = components["schemas"]["GroundCard"];
 export type GroundList = components["schemas"]["GroundList"];
 export type GroundDetail = components["schemas"]["GroundDetail"];
-export type Filters = { sport?: string; areaId?: string; surface?: string[]; facilities?: string[]; indoor?: boolean; sort?: "cheapest" | "nearest" | "newest" | "most_open"; cursor?: string };
+export type Filters = {
+  sport?: string;
+  areaId?: string;
+  surface?: string[];
+  facilities?: string[];
+  indoor?: boolean;
+  sort?: "cheapest" | "nearest" | "newest" | "most_open";
+  cursor?: string;
+  /** The /venues page (Claude Design "Grounds"): price band, distance, its origin, day, time of day, view. */
+  price?: PriceBand;
+  km?: number;
+  /** "Distance from" this area (an id); a visitor's own location never goes in the URL. */
+  near?: string;
+  date?: string;
+  time?: TimeOfDay;
+  view?: "board" | "cards";
+};
+/** Where distance is measured from: an area's centre or the visitor's location (kept in the page). */
+export type Origin = { lat: number; lng: number } | null;
 
 async function ok<T>(res: { data?: T; error?: unknown }): Promise<T> {
   if (res.error || res.data === undefined) throw res.error;
@@ -16,7 +35,7 @@ async function ok<T>(res: { data?: T; error?: unknown }): Promise<T> {
 }
 
 export const grounds = {
-  list: async (f: Filters) =>
+  list: async (f: Filters, origin: Origin = null) =>
     ok(
       await api().GET("/grounds", {
         params: {
@@ -28,6 +47,10 @@ export const grounds = {
             ...(f.indoor !== undefined ? { indoor: String(f.indoor) as unknown as boolean } : {}),
             ...(f.sort ? { sort: f.sort } : {}),
             ...(f.cursor ? { cursor: f.cursor } : {}),
+            ...(f.price && PRICE_BANDS[f.price][0] !== null ? { priceMin: PRICE_BANDS[f.price][0] } : {}),
+            ...(f.price && PRICE_BANDS[f.price][1] !== null ? { priceMax: PRICE_BANDS[f.price][1] } : {}),
+            ...(origin ? { lat: origin.lat, lng: origin.lng } : {}),
+            ...(origin && f.km ? { radiusKm: f.km } : {}),
             limit: 12,
           },
         },
@@ -48,6 +71,12 @@ export function filtersFromParams(p: URLSearchParams): Filters {
     facilities: list("facilities"),
     indoor: p.get("indoor") === "true" ? true : p.get("indoor") === "false" ? false : undefined,
     sort: sort === "cheapest" || sort === "nearest" || sort === "newest" || sort === "most_open" ? sort : undefined,
+    price: (Object.keys(PRICE_BANDS) as PriceBand[]).find((b) => b === p.get("price")),
+    km: DISTANCES.find((d) => String(d) === p.get("km")),
+    near: p.get("near") ?? undefined,
+    date: /^\d{4}-\d{2}-\d{2}$/.test(p.get("date") ?? "") ? p.get("date")! : undefined,
+    time: TIMES_OF_DAY.find((x) => x !== "all" && x === p.get("time")),
+    view: p.get("view") === "cards" ? "cards" : p.get("view") === "board" ? "board" : undefined,
   };
 }
 
@@ -59,6 +88,12 @@ export function paramsFromFilters(f: Filters): string {
   if (f.facilities?.length) p.set("facilities", f.facilities.join(","));
   if (f.indoor !== undefined) p.set("indoor", String(f.indoor));
   if (f.sort) p.set("sort", f.sort);
+  if (f.price) p.set("price", f.price);
+  if (f.km) p.set("km", String(f.km));
+  if (f.near) p.set("near", f.near);
+  if (f.date) p.set("date", f.date);
+  if (f.time && f.time !== "all") p.set("time", f.time);
+  if (f.view) p.set("view", f.view);
   const s = p.toString();
   return s ? `?${s}` : "";
 }

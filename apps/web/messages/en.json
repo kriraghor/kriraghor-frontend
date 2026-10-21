@@ -429,7 +429,78 @@
     "owner": "Run by {name}",
     "openToday": "{n} h free today",
     "reliability": "Owner reliability {score}%",
-    "reliabilityHelp": "How often the owner keeps confirmed bookings and settles disputes fairly, over the last six months."
+    "reliabilityHelp": "How often the owner keeps confirmed bookings and settles disputes fairly, over the last six months.",
+    "browse": {
+      "titleToday": "Venues open today",
+      "titleOn": "Venues open on {day}",
+      "lead": "Tap open hours to build a booking, then pay the advance or the full amount online.",
+      "today": "Today",
+      "day": "Day",
+      "time": {
+        "label": "Time of day",
+        "all": "All day",
+        "morning": "Morning",
+        "afternoon": "Afternoon",
+        "evening": "Evening"
+      },
+      "distanceFrom": "Distance from",
+      "anywhere": "Anywhere",
+      "useLocation": "Use my location",
+      "myLocation": "My location",
+      "locating": "Finding you…",
+      "locationDenied": "Location is off. Pick an area instead.",
+      "all": "All",
+      "price": "Price per hour",
+      "anyPrice": "Any price",
+      "under": "Under {a}",
+      "between": "{a} to {b}",
+      "over": "Over {a}",
+      "distance": "Distance",
+      "anyDistance": "Any distance",
+      "within": "Within {n} km",
+      "needsOrigin": "Choose “Distance from” or use your location first.",
+      "view": {
+        "label": "View",
+        "board": "Slot board",
+        "cards": "Cards"
+      },
+      "nearest": "Nearest",
+      "legend": {
+        "open": "Open",
+        "selected": "Selected",
+        "booked": "Booked",
+        "yours": "Your booking"
+      },
+      "filters": "Filters",
+      "filtersCount": "Filters ({n})",
+      "show": "{n, plural, =0 {No venues} one {Show # venue} other {Show # venues}}",
+      "noHours": "No open hours in this time.",
+      "picked": "{from}–{to} · about {amount}",
+      "continue": "Continue",
+      "clear": "Clear",
+      "hoursOf": "Open hours at {name}"
+    },
+    "page": {
+      "all": "All venues",
+      "spec": {
+        "sports": "Sports",
+        "surface": "Surface",
+        "size": "Size",
+        "price": "Price"
+      },
+      "sportsCourts": "{sports}, {n, plural, one {# court} other {# courts}}",
+      "perHour": "{price} per hour",
+      "perHourShort": "{price}/hr",
+      "fromAdvance": "from {amount} advance",
+      "gallery": "Photos of {name}",
+      "morePhotos": "+{n} photos",
+      "nearby": "Other {sport} venues nearby",
+      "nearbyLine": "{area} · {price}/hr",
+      "book": "Book a slot",
+      "reliability": "Reliability {score}%",
+      "prev": "Previous photo",
+      "next": "Next photo"
+    }
   },
   "business": {
     "title": "Become a venue owner",

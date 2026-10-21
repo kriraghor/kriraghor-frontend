@@ -3,29 +3,30 @@
 import { useCallback, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { bookings, canStartAt, coveredIndexes, dayLabel, daysBetween, newKey, timeLabel, useGroundLive, type PaymentChoice } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { dhakaDateOf } from "@/lib/home";
 import { Notice } from "@kriraghor/ui/primitives";
+import { Button, ButtonLink, Dropdown } from "@kriraghor/ui/kit";
+import { cn } from "@kriraghor/ui/cn";
 
 const CELL: Record<string, string> = {
-  open: "border-line bg-surface hover:border-brand",
-  booked: "border-transparent bg-surface-2 text-muted line-through",
-  yours: "border-brand bg-brand/10 text-brand",
-  closed: "border-transparent bg-surface-2 text-muted",
-  past: "border-transparent bg-transparent text-muted/60",
+  open: "border-line-strong/50 bg-surface hover:border-brand hover:text-brand-text",
+  booked: "border-transparent bg-surface-2 text-muted/70 line-through",
+  yours: "border-prize bg-prize text-prize-ink",
+  closed: "border-transparent bg-surface-2/60 text-muted/50",
+  past: "border-transparent bg-transparent text-muted/50",
 };
 
 /**
  * The booking aside of /grounds/[slug] (M10 FR-01 to FR-06, v3): a 7-day strip, court and length, the
  * half-hour grid (live through the ground's socket room), then both payment options from the shared
  * calculator. "Hold and pay" holds the slot for 10 minutes and opens the M06 payment page.
- * `initial` pre-selects a slot picked on the home page (?court=&at=); any later pick replaces it.
+ * `initial` pre-selects a slot picked on /venues or the home page (?court=&at=&len=); any later pick replaces it.
  */
-export function BookingWidget({ groundId, slug, initial }: { groundId: string; slug: string; initial?: { courtId?: string; start?: string } }) {
+export function BookingWidget({ groundId, slug, initial }: { groundId: string; slug: string; initial?: { courtId?: string; start?: string; minutes?: number } }) {
   const t = useTranslations("bookings");
   const locale = useLocale();
   const { status } = useAuth();
@@ -43,7 +44,8 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
 
   const a = grid.data;
   const court = a?.courts.find((k) => k.id === courtId) ?? a?.courts[0];
-  const length = minutes ?? a?.lengths[0] ?? 60;
+  const wanted = minutes ?? initial?.minutes;
+  const length = wanted && a?.lengths.includes(wanted) ? wanted : (a?.lengths[0] ?? 60);
   const cells = useMemo(() => court?.cells ?? [], [court]);
   const preset = initialStart ? cells.findIndex((c) => c.start === initialStart) : -1;
   const at = startIndex ?? (preset >= 0 ? preset : null);
@@ -72,7 +74,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
     holdIt.reset();
   };
 
-  if (grid.isPending) return <div className="h-72 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />;
+  if (grid.isPending) return <div className="h-72 animate-pulse rounded-card bg-surface-2" role="status" aria-label={t("loading")} />;
   if (grid.isError || !a) return <Notice tone="error">{t("gridFailed")}</Notice>;
   if (!a.bookable) return <p className="font-bold">{t("notTaking")}</p>;
 
@@ -80,7 +82,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
   return (
     <div data-testid="booking-widget">
       <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("pickDay")}</p>
-      <div className="mt-2 flex gap-1 overflow-x-auto" role="tablist" aria-label={t("pickDay")}>
+      <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]" role="tablist" aria-label={t("pickDay")}>
         {daysBetween(a.window.from, a.window.to).map((d) => (
           <button
             key={d}
@@ -88,7 +90,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
             role="tab"
             aria-selected={d === a.date}
             onClick={() => pick(() => setDate(d))}
-            className={`min-h-11 shrink-0 border-2 px-2 text-sm font-semibold ${d === a.date ? "border-brand bg-brand text-white" : "border-line bg-surface"}`}
+            className={cn("min-h-11 shrink-0 rounded-control border px-3 text-sm font-semibold transition-colors", d === a.date ? "border-brand bg-brand text-on-brand" : "border-line bg-surface hover:border-brand")}
           >
             {dayLabel(d, locale)}
           </button>
@@ -96,31 +98,14 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
-        <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-          {t("court")}
-          <select className="min-h-11 field px-2 text-ink" value={court?.id} onChange={(e) => pick(() => setCourtId(e.target.value))}>
-            {a.courts.map((k) => (
-              <option key={k.id} value={k.id}>
-                {k.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-          {t("length")}
-          <select className="min-h-11 field px-2 text-ink" value={length} onChange={(e) => pick(() => setMinutes(Number(e.target.value)))}>
-            {a.lengths.map((m) => (
-              <option key={m} value={m}>
-                {t("minutes", { n: m })}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Dropdown id="bw-court" label={t("court")} value={court?.id ?? ""} onChange={(v) => v && pick(() => setCourtId(v))} options={a.courts.map((k) => ({ value: k.id, label: k.name }))} testId="bw-court" />
+        <Dropdown id="bw-length" label={t("length")} value={String(length)} onChange={(v) => v && pick(() => setMinutes(Number(v)))} options={a.lengths.map((m) => ({ value: String(m), label: t("minutes", { n: m }) }))} testId="bw-length" />
       </div>
 
       <p className="mt-4 text-xs font-bold uppercase tracking-wide text-muted">{t("pickStart")}</p>
-      <div className="mt-2 grid max-h-64 grid-cols-4 gap-1 overflow-y-auto pr-1" data-testid="slot-grid">
+      <div className="mt-2 grid max-h-64 grid-cols-4 gap-1.5 overflow-y-auto pr-1" data-testid="slot-grid">
         {cells.map((c, i) => {
+          if (c.state === "past") return null; // only what is still to come
           const startable = canStartAt(cells, i, length);
           const on = covered.has(i);
           return (
@@ -135,7 +120,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
                 setStartIndex(i);
                 holdIt.reset();
               }}
-              className={`min-h-11 border-2 text-xs font-semibold tabular-nums disabled:cursor-not-allowed ${on ? "border-brand bg-brand text-white" : CELL[c.state]}`}
+              className={cn("min-h-11 rounded-[10px] border text-xs font-semibold tabular transition-colors disabled:cursor-not-allowed", on ? "border-brand bg-brand text-on-brand" : CELL[c.state])}
               data-state={c.state}
             >
               {timeLabel(c.start, locale)}
@@ -145,20 +130,20 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
       </div>
 
       {selected ? (
-        <div className="mt-4 border-t-2 border-line pt-4" aria-live="polite">
+        <div className="mt-4 border-t border-line pt-4" aria-live="polite">
           <p className="font-bold">
             {timeLabel(selected.start, locale)} · {t("minutes", { n: length })} · {court?.name}
           </p>
           {quote.isPending ? (
-            <div className="mt-2 h-24 animate-pulse bg-surface-2" />
+            <div className="mt-2 h-24 animate-pulse rounded-control bg-surface-2" />
           ) : quote.isError ? (
             <Notice tone="error">{problemOf(quote.error)?.title ?? t("quoteFailed")}</Notice>
           ) : (
             <fieldset className="mt-3 space-y-2">
               <legend className="sr-only">{t("howToPay")}</legend>
               {options.map((o) => (
-                <label key={o.kind} className={`flex cursor-pointer items-start gap-3 border-2 p-3 ${choice === o.kind ? "border-brand" : "border-line"}`}>
-                  <input type="radio" name="pay" className="mt-1" checked={choice === o.kind} onChange={() => setChoice(o.kind)} />
+                <label key={o.kind} className={cn("flex cursor-pointer items-start gap-3 rounded-control border p-3 transition-colors", choice === o.kind ? "border-brand bg-brand-soft" : "border-line hover:border-brand/60")}>
+                  <input type="radio" name="pay" className="mt-1 size-4 accent-[var(--kg-brand)]" checked={choice === o.kind} onChange={() => setChoice(o.kind)} />
                   <span>
                     <span className="block font-bold">{o.kind === "advance" ? t("payAdvanceNow", { amount: money(o.payNow) }) : t("payFullNow", { amount: money(o.payNow) })}</span>
                     <span className="block text-sm text-muted">{o.atVenue > 0 ? t("atVenue", { amount: money(o.atVenue) }) : t("nothingAtVenue")}</span>
@@ -175,20 +160,13 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
             </div>
           ) : null}
           {status === "signed_in" ? (
-            <button
-              type="button"
-              onClick={() => holdIt.mutate()}
-              disabled={holdIt.isPending || !options.length}
-              aria-busy={holdIt.isPending || undefined}
-              className="mt-4 inline-flex min-h-12 w-full items-center justify-center bg-brand px-5 font-bold text-white hover:bg-brand-hover disabled:opacity-50"
-              data-testid="hold-and-pay"
-            >
+            <Button type="button" block size="lg" className="mt-4" onClick={() => holdIt.mutate()} disabled={!options.length} busy={holdIt.isPending} data-testid="hold-and-pay">
               {holdIt.isPending ? t("holding") : t("holdAndPay")}
-            </button>
+            </Button>
           ) : (
-            <Link href={`/sign-in?next=/venues/${slug}`} className="mt-4 inline-flex min-h-12 w-full items-center justify-center bg-brand px-5 font-bold text-white">
+            <ButtonLink href={`/sign-in?next=/venues/${slug}`} block size="lg" className="mt-4">
               {t("signInToBook")}
-            </Link>
+            </ButtonLink>
           )}
           <p className="mt-2 text-xs text-muted">{t("holdNote")}</p>
         </div>

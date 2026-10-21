@@ -429,7 +429,78 @@
     "owner": "পরিচালনায় {name}",
     "openToday": "আজ {n} ঘণ্টা খালি",
     "reliability": "মালিকের নির্ভরযোগ্যতা {score}%",
-    "reliabilityHelp": "গত ছয় মাসে মালিক কতটা নিশ্চিত বুকিং রাখেন এবং বিরোধ ন্যায্যভাবে মেটান।"
+    "reliabilityHelp": "গত ছয় মাসে মালিক কতটা নিশ্চিত বুকিং রাখেন এবং বিরোধ ন্যায্যভাবে মেটান।",
+    "browse": {
+      "titleToday": "আজ খোলা ভেন্যু",
+      "titleOn": "{day} খোলা ভেন্যু",
+      "lead": "খোলা ঘণ্টায় ট্যাপ করে বুকিং সাজান, তারপর অগ্রিম বা পুরো টাকা অনলাইনে দিন।",
+      "today": "আজ",
+      "day": "দিন",
+      "time": {
+        "label": "দিনের সময়",
+        "all": "সারাদিন",
+        "morning": "সকাল",
+        "afternoon": "দুপুর",
+        "evening": "সন্ধ্যা"
+      },
+      "distanceFrom": "দূরত্ব যেখান থেকে",
+      "anywhere": "যেকোনো জায়গা",
+      "useLocation": "আমার লোকেশন",
+      "myLocation": "আমার লোকেশন",
+      "locating": "খোঁজা হচ্ছে…",
+      "locationDenied": "লোকেশন বন্ধ। বরং একটি এলাকা বেছে নিন।",
+      "all": "সব",
+      "price": "প্রতি ঘণ্টার দাম",
+      "anyPrice": "যেকোনো দাম",
+      "under": "{a}-এর কম",
+      "between": "{a} থেকে {b}",
+      "over": "{a}-এর বেশি",
+      "distance": "দূরত্ব",
+      "anyDistance": "যেকোনো দূরত্ব",
+      "within": "{n} কিমির মধ্যে",
+      "needsOrigin": "আগে “দূরত্ব যেখান থেকে” বেছে নিন বা লোকেশন দিন।",
+      "view": {
+        "label": "দেখার ধরন",
+        "board": "স্লট বোর্ড",
+        "cards": "কার্ড"
+      },
+      "nearest": "কাছেরগুলো আগে",
+      "legend": {
+        "open": "খোলা",
+        "selected": "বাছাই করা",
+        "booked": "বুক হয়ে গেছে",
+        "yours": "আপনার বুকিং"
+      },
+      "filters": "ফিল্টার",
+      "filtersCount": "ফিল্টার ({n})",
+      "show": "{n, number}টি ভেন্যু দেখান",
+      "noHours": "এই সময়ে খোলা ঘণ্টা নেই।",
+      "picked": "{from}–{to} · প্রায় {amount}",
+      "continue": "এগিয়ে যান",
+      "clear": "মুছুন",
+      "hoursOf": "{name}-এর খোলা ঘণ্টা"
+    },
+    "page": {
+      "all": "সব ভেন্যু",
+      "spec": {
+        "sports": "খেলা",
+        "surface": "মেঝে",
+        "size": "আকার",
+        "price": "দাম"
+      },
+      "sportsCourts": "{sports}, {n, number}টি কোর্ট",
+      "perHour": "প্রতি ঘণ্টা {price}",
+      "perHourShort": "{price}/ঘণ্টা",
+      "fromAdvance": "{amount} অগ্রিম থেকে",
+      "gallery": "{name}-এর ছবি",
+      "morePhotos": "আরও {n, number}টি ছবি",
+      "nearby": "কাছের অন্য {sport} ভেন্যু",
+      "nearbyLine": "{area} · {price}/ঘণ্টা",
+      "book": "স্লট বুক করুন",
+      "reliability": "নির্ভরযোগ্যতা {score}%",
+      "prev": "আগের ছবি",
+      "next": "পরের ছবি"
+    }
   },
   "business": {
     "title": "ভেন্যু মালিক হোন",
