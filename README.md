@@ -2,6 +2,7 @@
 
 The Kriraghor web apps in one repository. The mobile app has its own repository, [kriraghor-mobile-app](https://github.com/kriraghor/kriraghor-mobile-app) (since 20 Oct 2026). The repo is an npm workspace: install once at the root, then run each app from its folder.
 
+
 | Folder | App | Domain | Stack |
 |---|---|---|---|
 | `apps/web` | Public site: venues, shop, hire, gym, events, account | kriraghor.com | Next.js (App Router, TypeScript) |
