@@ -18,8 +18,8 @@ const a = () => api("admin");
 
 export const riskAdmin = {
   overview: async () => unwrap(await a().GET("/admin/risk/overview")),
-  flags: async (query: { status?: string; severity?: Severity }) =>
-    unwrap(await a().GET("/admin/risk/flags", { params: { query: { status: (query.status || "active") as never, ...(query.severity ? { severity: query.severity } : {}), limit: 100 } } })),
+  flags: async (query: { status?: string; severity?: Severity; cursor?: string }) =>
+    unwrap(await a().GET("/admin/risk/flags", { params: { query: { status: (query.status || "active") as never, ...(query.severity ? { severity: query.severity } : {}), ...(query.cursor ? { cursor: query.cursor } : {}), limit: 100 } } })),
   account: async (userId: string) => unwrap(await a().GET("/admin/risk/accounts/{userId}", { params: { path: { userId } } })),
   act: async (userId: string, body: { action: RiskActionName; flagId?: string; reason: string; params?: { days?: number; docType?: "nid" | "trade_license" | "deed_or_lease" | "tin" } }, stepUpToken?: string) =>
     unwrap(await a().POST("/admin/risk/accounts/{userId}/actions", { params: { path: { userId }, header: stepUpToken ? { "x-step-up": stepUpToken } : {} }, body })),

@@ -49,9 +49,10 @@ export const payouts = {
   cancel: async (id: string, reason: string) => unwrap(await api("admin").POST("/admin/payouts/{id}/cancel", { params: path(id), body: { reason } })),
   hold: async (id: string, body: { reason: string; scope: "payout" | "payee" }) => unwrap(await api("admin").POST("/admin/payouts/{id}/hold", { params: path(id), body })),
   liftHold: async (id: string, body: { holdId: string; reason: string }) => unwrap(await api("admin").POST("/admin/payouts/{id}/lift-hold", { params: path(id), body })),
-  batches: async () => unwrap(await api("admin").GET("/admin/payout-batches")),
+  batches: async (cursor?: string) => unwrap(await api("admin").GET("/admin/payout-batches", { params: { query: { cursor } } })),
   runNow: async (schedule: "daily" | "ground_weekly" | "shop_weekly") => unwrap(await api("admin").POST("/admin/payout-batches/run", { body: { schedule } })),
-  accounts: async (status: ReviewRow["status"] = "pending_verification") => unwrap(await api("admin").GET("/admin/payout-accounts", { params: { query: { status } } })),
+  accounts: async (status: ReviewRow["status"] = "pending_verification", cursor?: string) =>
+    unwrap(await api("admin").GET("/admin/payout-accounts", { params: { query: { status, cursor } } })),
   verify: async (id: string, note?: string) => unwrap(await api("admin").POST("/admin/payout-accounts/{id}/verify", { params: path(id), body: { note } })),
   reject: async (id: string, note: string) => unwrap(await api("admin").POST("/admin/payout-accounts/{id}/reject", { params: path(id), body: { note } })),
 };

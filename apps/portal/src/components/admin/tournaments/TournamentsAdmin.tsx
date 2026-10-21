@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { Button, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, Skeleton, type Column } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
 import { stepUp } from "@/lib/admin/stepUp";
 import { problemOf } from "@kriraghor/api-client";
 import { tournamentsAdmin } from "@/lib/vendor/tournaments";
-import { Notice } from "@kriraghor/ui/primitives";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
-import { Chip, inputCls } from "../finance/shared";
 import { useAdminMe } from "../useAdminMe";
 
-const STATUSES = ["", "pending_review", "registration_open", "registration_closed", "live", "completed", "cancelled"] as const;
-const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { registration_open: "ok", live: "ok", pending_review: "warn", registration_closed: "warn", completed: "muted", cancelled: "bad", rejected: "bad" };
+type Row = Awaited<ReturnType<typeof tournamentsAdmin.list>>["items"][number];
+const STATUSES = ["pending_review", "registration_open", "registration_closed", "live", "completed", "cancelled"] as const;
 
 /**
  * /admin/tournaments (M14, approve_listings or manage_organisers): physical-sport tournaments with
@@ -21,134 +22,147 @@ const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { registration_ope
  * the Moderation desk (kind tournament).
  */
 export function TournamentsAdmin() {
+  // The filters and the open event live in the URL (useSearchParams), so the desk renders inside Suspense.
+  return (
+    <Suspense fallback={<Skeleton className="mx-auto mt-10 h-64 max-w-[1320px]" />}>
+      <Desk />
+    </Suspense>
+  );
+}
+
+function Desk() {
+  const t = useTranslations("tournamentsAdmin");
+  const locale = useLocale();
+  const { ready } = useAdminMe();
+  const { values, set, clear, params } = useUrlFilters({ status: { default: "", allowed: ["", ...STATUSES] }, q: { default: "" } });
+  const status = values.status as (typeof STATUSES)[number] | "";
+  const search = values.q;
+  const open = params.get("id");
+  const list = useQuery({ queryKey: ["admin-tournaments", status, search], queryFn: () => tournamentsAdmin.list({ status: status || undefined, q: search || undefined }), enabled: ready });
+  const openName = list.data?.items.find((x) => x.id === open)?.name;
+
+  const columns: Column<Row>[] = [
+    {
+      id: "name",
+      header: t("name"),
+      primary: true,
+      sort: (x) => x.name,
+      cell: (x) => (
+        <>
+          <span className="block font-semibold">{x.name}</span>
+          <span className="block text-xs font-normal text-muted">
+            {x.organisation?.name ?? "–"} · {locale === "bn" ? x.sport.nameBn : x.sport.nameEn}
+          </span>
+        </>
+      ),
+    },
+    { id: "teams", header: t("teams"), align: "end", sort: (x) => x.approved, cell: (x) => `${x.approved}/${x.maxTeams}` },
+    {
+      id: "status",
+      header: t("status"),
+      sort: (x) => x.status,
+      cell: (x) => (
+        <StatusBadge status={x.status} domain="tournament">
+          {t(`st.${x.status}`)}
+        </StatusBadge>
+      ),
+    },
+  ];
+
+  return (
+    <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
+      <PageTitle title={t("title")} description={t("intro")} />
+      <DetailLayout className="mt-6" open={Boolean(open)} onClose={() => set({ id: null })} title={openName ?? t("title")} pane={open ? <TournamentPane key={open} id={open} /> : null} testId="admin-tournament">
+        <div className="flex flex-col gap-4">
+          <FilterBar
+            search={{ value: search, onChange: (v) => set({ q: v }), label: t("name") }}
+            selects={[{ id: "status", label: t("status"), value: status, onChange: (v) => set({ status: v }), anyLabel: t("all"), options: STATUSES.map((s) => ({ value: s, label: t(`st.${s}`) })) }]}
+            onClear={clear}
+          />
+          <DataTable
+            label={t("title")}
+            testId="admin-tournaments"
+            columns={columns}
+            rows={list.data?.items}
+            rowId={(x) => x.id}
+            loading={list.isPending}
+            error={list.error}
+            onRetry={() => void list.refetch()}
+            empty={{ title: t("none") }}
+            onRowClick={(x) => set({ id: x.id })}
+            selectedId={open}
+          />
+        </div>
+      </DetailLayout>
+    </div>
+  );
+}
+
+function TournamentPane({ id }: { id: string }) {
   const t = useTranslations("tournamentsAdmin");
   const locale = useLocale();
   const qc = useQueryClient();
   const { ready, me } = useAdminMe();
-  const [status, setStatus] = useState<(typeof STATUSES)[number]>("");
-  const [text, setText] = useState("");
-  const [search, setSearch] = useState("");
-  const [open, setOpen] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [reason, setReason] = useState("");
-  const list = useQuery({ queryKey: ["admin-tournaments", status, search], queryFn: () => tournamentsAdmin.list({ status: status || undefined, q: search || undefined }), enabled: ready });
-  const one = useQuery({ queryKey: ["admin-tournament", open], queryFn: () => tournamentsAdmin.get(open!), enabled: ready && Boolean(open) });
+  const one = useQuery({ queryKey: ["admin-tournament", id], queryFn: () => tournamentsAdmin.get(id), enabled: ready });
   const money = (p: number) => formatTaka(p, locale);
+  if (one.isError) return <Notice tone="error">{problemOf(one.error)?.title ?? t("failed")}</Notice>;
+  if (!one.data) return <Skeleton className="h-64" />;
+  const d = one.data;
   return (
-    <>
-      <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-8">
-        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-        <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
-        <form
-          className="mt-6 flex flex-wrap items-end gap-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setSearch(text.trim());
-          }}
-        >
-          <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-            {t("name")}
-            <input value={text} onChange={(e) => setText(e.target.value)} className={inputCls} />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-            {t("status")}
-            <select value={status} onChange={(e) => setStatus(e.target.value as (typeof STATUSES)[number])} className={inputCls}>
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s ? t(`st.${s}`) : t("all")}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button type="submit" className="min-h-11 border-2 border-brand bg-brand px-4 font-bold text-white">
-            {t("find")}
-          </button>
-        </form>
-        <div className="mt-6 grid gap-8 lg:grid-cols-2">
-          <ul className="flex flex-col gap-2" data-testid="admin-tournaments">
-            {list.isPending ? <li className="h-32 animate-pulse bg-surface-2" /> : null}
-            {list.data && !list.data.items.length ? <li className="text-muted">{t("none")}</li> : null}
-            {(list.data?.items ?? []).map((x) => (
-              <li key={x.id}>
-                <button type="button" aria-pressed={open === x.id} onClick={() => (setOpen(x.id), setCancelling(false))} className={`flex w-full flex-wrap items-center gap-3 border-2 p-3 text-left ${open === x.id ? "border-brand" : "border-line hover:border-brand"}`}>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-bold">{x.name}</span>
-                    <span className="block text-sm text-muted">
-                      {x.organisation?.name ?? "–"} · {locale === "bn" ? x.sport.nameBn : x.sport.nameEn} · {x.approved}/{x.maxTeams}
-                    </span>
-                  </span>
-                  <Chip tone={TONE[x.status] ?? "muted"}>{t(`st.${x.status}`)}</Chip>
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div>
-            {!open ? (
-              <p className="border-2 border-dashed border-line p-8 text-center text-muted">{t("pick")}</p>
-            ) : !one.data ? (
-              <div className="h-64 animate-pulse bg-surface-2" />
-            ) : (
-              <div className="border-2 border-line p-4" data-testid="admin-tournament">
-                <h2 className="text-xl font-extrabold">{one.data.name}</h2>
-                <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <dt className="text-muted">{t("collected")}</dt>
-                    <dd className="font-bold tabular-nums">{money(one.data.money.collected)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted">{t("held")}</dt>
-                    <dd className="font-bold tabular-nums">{money(one.data.money.held)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted">{t("released")}</dt>
-                    <dd className="font-bold tabular-nums">{money(one.data.money.released)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted">{t("refunded")}</dt>
-                    <dd className="font-bold tabular-nums">{money(one.data.money.refunded)}</dd>
-                  </div>
-                </dl>
-                <h3 className="mt-4 font-bold">{t("registrations", { n: one.data.registrationList.length })}</h3>
-                <ul className="mt-2 divide-y divide-line text-sm">
-                  {one.data.registrationList.map((r) => (
-                    <li key={r.id} className="flex flex-wrap gap-2 py-2">
-                      <span className="min-w-0 flex-1 font-semibold">{r.team}</span>
-                      <span className="text-muted">{t(`reg.${r.status}`)}</span>
-                      <span className="tabular-nums">{r.feeWaived ? t("waived") : money(r.feePoisha)}</span>
-                    </li>
-                  ))}
-                </ul>
-                {me?.isMaster && !["completed", "cancelled", "rejected"].includes(one.data.status) ? (
-                  <div className="mt-4 flex flex-col gap-2">
-                    <input className={inputCls} placeholder={t("reason")} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={255} />
-                    <button type="button" disabled={reason.trim().length < 5} onClick={() => setCancelling(true)} className="min-h-11 border-2 border-danger px-3 text-sm font-bold text-danger disabled:opacity-50">
-                      {t("cancel")}
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-            )}
+    <div className="flex flex-col gap-4">
+      <StatusBadge status={d.status} domain="tournament" className="self-start">
+        {t(`st.${d.status}`)}
+      </StatusBadge>
+      <dl className="grid grid-cols-2 gap-3 text-sm">
+        {(
+          [
+            ["collected", d.money.collected],
+            ["held", d.money.held],
+            ["released", d.money.released],
+            ["refunded", d.money.refunded],
+          ] as const
+        ).map(([k, v]) => (
+          <div key={k} className="rounded-control bg-surface-2 px-3 py-2">
+            <dt className="text-muted">{t(k)}</dt>
+            <dd className="font-semibold tabular">{money(v)}</dd>
           </div>
+        ))}
+      </dl>
+      <section>
+        <h3 className="font-semibold">{t("registrations", { n: d.registrationList.length })}</h3>
+        <ul className="mt-2 divide-y divide-line rounded-card border border-line text-sm">
+          {d.registrationList.map((r) => (
+            <li key={r.id} className="flex flex-wrap gap-2 px-3 py-2">
+              <span className="min-w-0 flex-1 font-semibold">{r.team}</span>
+              <span className="text-muted">{t(`reg.${r.status}`)}</span>
+              <span className="tabular">{r.feeWaived ? t("waived") : money(r.feePoisha)}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+      {me?.isMaster && !["completed", "cancelled", "rejected"].includes(d.status) ? (
+        <div className="flex flex-col gap-2">
+          <Field id="tournament-cancel-reason" label={t("reason")} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={255} />
+          <Button type="button" variant="danger" disabled={reason.trim().length < 5} onClick={() => setCancelling(true)} className="self-start">
+            {t("cancel")}
+          </Button>
         </div>
-        {cancelling && open ? (
-          <CodeDialog
-            title={t("cancelTitle")}
-            help={t("cancelHelp")}
-            onClose={() => setCancelling(false)}
-            onConfirm={async (code) => {
-              await tournamentsAdmin.cancel(open, reason.trim(), await stepUp(code, "escrow.manage"));
-              setCancelling(false);
-              setReason("");
-              await Promise.all([qc.invalidateQueries({ queryKey: ["admin-tournaments"] }), qc.invalidateQueries({ queryKey: ["admin-tournament", open] })]);
-            }}
-          />
-        ) : null}
-        {list.isError ? (
-          <div className="mt-4">
-            <Notice tone="error">{problemOf(list.error)?.title ?? t("failed")}</Notice>
-          </div>
-        ) : null}
-      </div>
-    </>
+      ) : null}
+      {cancelling ? (
+        <CodeDialog
+          title={t("cancelTitle")}
+          help={t("cancelHelp")}
+          onClose={() => setCancelling(false)}
+          onConfirm={async (code) => {
+            await tournamentsAdmin.cancel(id, reason.trim(), await stepUp(code, "escrow.manage"));
+            setCancelling(false);
+            setReason("");
+            await Promise.all([qc.invalidateQueries({ queryKey: ["admin-tournaments"] }), qc.invalidateQueries({ queryKey: ["admin-tournament", id] })]);
+          }}
+        />
+      ) : null}
+    </div>
   );
 }

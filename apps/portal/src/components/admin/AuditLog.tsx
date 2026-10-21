@@ -1,54 +1,107 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { Suspense, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { DownloadSimple } from "@phosphor-icons/react";
 import { api, problemOf } from "@kriraghor/api-client";
+import { Badge, Button, Checkbox, DataTable, DetailLayout, Dialog, Field, FilterBar, Notice, Skeleton, type Column } from "@kriraghor/ui/kit";
 import { stepUp } from "@/lib/admin/stepUp";
 import { diffRows, toApiFilters, type AuditEntry, type AuditFilters } from "@/lib/admin/audit";
-import { Button, Notice } from "@kriraghor/ui/primitives";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../StatusBadge";
 import { CodeDialog } from "./CodeDialog";
 import { formatDhaka, useAdminMe } from "./useAdminMe";
 
-const SEVERITY_TONE = { info: "bg-surface-2 text-ink", notice: "bg-amber-100 text-amber-900", critical: "bg-danger text-white" } as const;
+const MODULES = ["M01", "M03", "M04"] as const;
+const SEVERITIES = ["info", "notice", "critical"] as const;
 
-/** M04 §4 Audit log (master): filters, newest-first table with cursor paging, entry drawer, CSV export. */
+/** Filters kept in the URL; empty dates mean the API default (the last 7 days; no clock reads during prerender). */
+const SPEC = {
+  from: { default: "" },
+  to: { default: "" },
+  action: { default: "" },
+  module: { default: "", allowed: ["", ...MODULES] },
+  severity: { default: "", allowed: ["", ...SEVERITIES] },
+  entityType: { default: "" },
+  entityId: { default: "" },
+  actorId: { default: "" },
+  stepUp: { default: "", allowed: ["", "1"] },
+};
+
+/** M04 §4 Audit log (master): filters, newest-first table with cursor paging, entry pane, CSV export. */
 export function AuditLog() {
+  // The filters and the open entry live in the URL (useSearchParams), so the desk renders inside Suspense.
+  return (
+    <Suspense fallback={<div className="mx-auto mt-8 h-40 max-w-[1320px] animate-pulse rounded-card bg-surface-2" />}>
+      <AuditDesk />
+    </Suspense>
+  );
+}
+
+function AuditDesk() {
   const t = useTranslations("audit");
   const locale = useLocale();
   const { ready } = useAdminMe();
-  // Empty dates mean the API default: the last 7 days (no clock reads during prerender).
-  const initial: AuditFilters = {};
-  const [draft, setDraft] = useState<AuditFilters>(initial);
-  const [filters, setFilters] = useState<AuditFilters>(initial);
-  const [openId, setOpenId] = useState<string | null>(null);
+  const { values: v, set, clear, params } = useUrlFilters(SPEC);
+  const openId = params.get("id");
   const [exporting, setExporting] = useState(false);
+  const filters: AuditFilters = {
+    from: v.from || undefined,
+    to: v.to || undefined,
+    action: v.action || undefined,
+    module: v.module || undefined,
+    severity: (v.severity || undefined) as AuditFilters["severity"],
+    entityType: v.entityType || undefined,
+    entityId: v.entityId || undefined,
+    actorId: v.actorId || undefined,
+    stepUp: v.stepUp === "1" || undefined,
+  };
+  const anything = Object.keys(SPEC).some((k) => v[k as keyof typeof SPEC] !== "");
 
-  const q = useInfiniteQuery({
-    queryKey: ["audit-logs", filters],
-    enabled: ready,
-    initialPageParam: undefined as string | undefined,
-    queryFn: async ({ pageParam }) => {
-      const query = { ...toApiFilters(filters), limit: 50, ...(pageParam ? { cursor: pageParam } : {}) };
+  const list = useCursorList<AuditEntry>(
+    ["audit-logs", filters],
+    async (cursor) => {
+      const query = { ...toApiFilters(filters), limit: 50, ...(cursor ? { cursor } : {}) };
       const { data, error } = await api("admin").GET("/admin/audit-logs", { params: { query: query as never } });
       if (error) throw error;
       return data;
     },
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
-  });
-  const rows = q.data?.pages.flatMap((p) => p.items) ?? [];
-
-  const field = (name: keyof AuditFilters, label: string, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
-    <label className="flex flex-col text-xs font-semibold text-muted">
-      {label}
-      <input
-        {...props}
-        value={String(draft[name] ?? "")}
-        onChange={(e) => setDraft((d) => ({ ...d, [name]: e.target.value }))}
-        className="min-h-11 border-2 border-line bg-surface px-3 text-sm text-ink"
-      />
-    </label>
+    { enabled: ready },
   );
+
+  const columns: Column<AuditEntry>[] = [
+    { id: "when", header: t("when"), sort: (r) => r.occurredAt, cell: (r) => <span className="whitespace-nowrap">{formatDhaka(r.occurredAt, locale)}</span> },
+    {
+      id: "actor",
+      header: t("actor"),
+      sort: (r) => r.actor.name,
+      cell: (r) => (
+        <span className="flex flex-wrap items-center gap-2">
+          {r.actor.name ?? t("system")}
+          {r.actor.role ? <Badge>{r.actor.role}</Badge> : null}
+        </span>
+      ),
+    },
+    {
+      id: "summary",
+      header: t("summary"),
+      primary: true,
+      cell: (r) => (
+        <>
+          <span className="inline-flex flex-wrap items-center gap-2">
+            {locale === "bn" ? r.summary.bn : r.summary.en}
+            {r.stepUp ? <Badge tone="brand">{t("stepUpBadge")}</Badge> : null}
+          </span>
+          <span className="block font-mono text-xs font-normal text-muted">{r.action}</span>
+        </>
+      ),
+    },
+    { id: "entity", header: t("entity"), hideBelow: "lg", cell: (r) => <span className="font-mono text-xs">{[r.entity.type, r.entity.code ?? r.entity.id].filter(Boolean).join(" · ")}</span> },
+    { id: "severity", header: t("severity"), sort: (r) => SEVERITIES.indexOf(r.severity), cell: (r) => <StatusBadge status={r.severity} domain="severity">{t(`severities.${r.severity}`)}</StatusBadge> },
+    { id: "ip", header: t("ip"), hideBelow: "xl", cell: (r) => <span className="font-mono text-xs">{r.ip ?? ""}</span> },
+  ];
 
   return (
     <>
@@ -59,139 +112,95 @@ export function AuditLog() {
             <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
           </div>
           <div className="ml-auto">
-            <Button type="button" onClick={() => setExporting(true)}>
+            <Button type="button" icon={<DownloadSimple size={18} aria-hidden />} onClick={() => setExporting(true)}>
               {t("export")}
             </Button>
           </div>
         </div>
 
-        <form
-          className="mt-6 grid gap-3 border-2 border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-5"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setFilters(draft);
-          }}
-          aria-label={t("title")}
-        >
-          {field("from", t("from"), { type: "date" })}
-          {field("to", t("to"), { type: "date" })}
-          {field("action", t("action"), { placeholder: "setting.changed", title: t("actionHint") })}
-          <label className="flex flex-col text-xs font-semibold text-muted">
-            {t("module")}
-            <select value={draft.module ?? ""} onChange={(e) => setDraft((d) => ({ ...d, module: e.target.value }))} className="min-h-11 border-2 border-line bg-surface px-3 text-sm text-ink">
-              <option value="">{t("any")}</option>
-              {["M01", "M03", "M04"].map((m) => (
-                <option key={m}>{m}</option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col text-xs font-semibold text-muted">
-            {t("severity")}
-            <select value={draft.severity ?? ""} onChange={(e) => setDraft((d) => ({ ...d, severity: (e.target.value || undefined) as AuditFilters["severity"] }))} className="min-h-11 border-2 border-line bg-surface px-3 text-sm text-ink">
-              <option value="">{t("any")}</option>
-              {(["info", "notice", "critical"] as const).map((s) => (
-                <option key={s} value={s}>
-                  {t(`severities.${s}`)}
-                </option>
-              ))}
-            </select>
-          </label>
-          {field("entityType", t("entityType"), { placeholder: "platform_setting" })}
-          {field("entityId", t("entityId"))}
-          {field("actorId", t("actorId"))}
-          <label className="flex min-h-11 items-center gap-2 self-end text-sm font-semibold">
-            <input type="checkbox" checked={Boolean(draft.stepUp)} onChange={(e) => setDraft((d) => ({ ...d, stepUp: e.target.checked }))} className="size-5 accent-brand" />
-            {t("stepUpOnly")}
-          </label>
-          <div className="flex items-end gap-2">
-            <Button type="submit">{t("apply")}</Button>
-            <button
-              type="button"
-              className="min-h-12 border-2 border-line px-4 font-semibold"
-              onClick={() => {
-                setDraft(initial);
-                setFilters(initial);
-              }}
-            >
-              {t("reset")}
-            </button>
-          </div>
-        </form>
+        <FilterBar
+          className="mt-6"
+          search={{ value: v.action, onChange: (x) => set({ action: x }), label: t("action"), placeholder: "setting.changed" }}
+          selects={[
+            { id: "module", label: t("module"), value: v.module, onChange: (x) => set({ module: x }), anyLabel: t("any"), options: MODULES.map((m) => ({ value: m, label: m })) },
+            { id: "severity", label: t("severity"), value: v.severity, onChange: (x) => set({ severity: x }), anyLabel: t("any"), options: SEVERITIES.map((s) => ({ value: s, label: t(`severities.${s}`) })) },
+          ]}
+          extra={
+            <>
+              <Field id="audit-from" type="date" className="w-full sm:w-44" label={t("from")} value={v.from} onChange={(e) => set({ from: e.target.value })} />
+              <Field id="audit-to" type="date" className="w-full sm:w-44" label={t("to")} value={v.to} onChange={(e) => set({ to: e.target.value })} />
+              <TextFilter id="audit-entity-type" label={t("entityType")} placeholder="platform_setting" value={v.entityType} onCommit={(x) => set({ entityType: x })} />
+              <TextFilter id="audit-entity-id" label={t("entityId")} value={v.entityId} onCommit={(x) => set({ entityId: x })} />
+              <TextFilter id="audit-actor-id" label={t("actorId")} value={v.actorId} onCommit={(x) => set({ actorId: x })} />
+              <Checkbox id="audit-step-up" label={t("stepUpOnly")} checked={v.stepUp === "1"} onChange={(e) => set({ stepUp: e.target.checked ? "1" : "" })} />
+              {anything ? (
+                <Button type="button" variant="ghost" onClick={clear}>
+                  {t("reset")}
+                </Button>
+              ) : null}
+            </>
+          }
+        />
+        <p className="mt-2 text-xs text-muted">{t("actionHint")}</p>
 
-        <div className="mt-4 overflow-x-auto border-2 border-line bg-surface">
-          {q.isPending ? (
-            <p className="p-5 text-muted" role="status">
-              {t("loading")}
-            </p>
-          ) : q.isError ? (
-            <div className="p-5">
-              <Notice tone="error">{problemOf(q.error)?.title ?? "Error"}</Notice>
-            </div>
-          ) : rows.length === 0 ? (
-            <p className="p-5 text-muted">{t("empty")}</p>
-          ) : (
-            <table className="w-full min-w-[860px] text-left text-sm">
-              <thead className="border-b-2 border-line">
-                <tr>
-                  {[t("when"), t("actor"), t("summary"), t("entity"), t("severity"), t("ip")].map((h) => (
-                    <th key={h} scope="col" className="px-4 py-2">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                {rows.map((r) => (
-                  <Row key={r.id} row={r} locale={locale} onOpen={() => setOpenId(r.id)} />
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-        {q.hasNextPage ? (
-          <div className="mt-4">
-            <button type="button" className="min-h-11 border-2 border-line px-4 text-sm font-semibold" onClick={() => void q.fetchNextPage()} disabled={q.isFetchingNextPage}>
-              {t("more")}
-            </button>
-          </div>
-        ) : null}
+        <DetailLayout className="mt-4" open={Boolean(openId)} onClose={() => set({ id: null })} title={t("detailTitle")} width={520} testId="audit-entry" pane={openId ? <EntryDetail id={openId} /> : null}>
+          <DataTable
+            label={t("title")}
+            testId="audit-table"
+            columns={columns}
+            rows={list.rows}
+            rowId={(r) => r.id}
+            rowTestId="audit-row"
+            loading={!ready || list.loading}
+            error={list.error}
+            onRetry={list.retry}
+            empty={{ title: t("empty") }}
+            hasMore={list.hasMore}
+            onMore={list.more}
+            busy={list.busy}
+            selectedId={openId}
+            onRowClick={(r) => set({ id: r.id })}
+          />
+        </DetailLayout>
       </div>
 
-      {openId ? <EntryDrawer id={openId} onClose={() => setOpenId(null)} /> : null}
       {exporting ? <ExportDialog filters={filters} onClose={() => setExporting(false)} /> : null}
     </>
   );
 }
 
-function Row({ row: r, locale, onOpen }: { row: AuditEntry; locale: string; onOpen: () => void }) {
-  const t = useTranslations("audit");
+/** A text filter that applies on Enter or when the field loses focus (not on every key). */
+function TextFilter({ id, label, value, placeholder, onCommit }: { id: string; label: string; value: string; placeholder?: string; onCommit: (v: string) => void }) {
+  const [draft, setDraft] = useState(value);
+  const [seen, setSeen] = useState(value);
+  // A change from outside (Reset, the back button) replaces what is typed.
+  if (value !== seen) {
+    setSeen(value);
+    setDraft(value);
+  }
+  const commit = () => {
+    if (draft.trim() !== value) onCommit(draft.trim());
+  };
   return (
-    <tr className="cursor-pointer hover:bg-surface-2" onClick={onOpen} data-testid="audit-row">
-      <td className="whitespace-nowrap px-4 py-2">{formatDhaka(r.occurredAt, locale)}</td>
-      <td className="px-4 py-2">
-        {r.actor.name ?? t("system")}
-        {r.actor.role ? <span className="ml-2 rounded-full border border-line px-2 py-0.5 text-xs">{r.actor.role}</span> : null}
-      </td>
-      <td className="px-4 py-2">
-        <button type="button" className="text-left underline-offset-2 hover:underline" onClick={onOpen}>
-          {locale === "bn" ? r.summary.bn : r.summary.en}
-        </button>
-        {r.stepUp ? <span className="ml-2 rounded-full bg-brand-soft px-2 py-0.5 text-xs text-brand-text">{t("stepUpBadge")}</span> : null}
-        <div className="font-mono text-xs text-muted">{r.action}</div>
-      </td>
-      <td className="px-4 py-2 font-mono text-xs">{[r.entity.type, r.entity.code ?? r.entity.id].filter(Boolean).join(" · ")}</td>
-      <td className="px-4 py-2">
-        <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${SEVERITY_TONE[r.severity]}`}>{t(`severities.${r.severity}`)}</span>
-      </td>
-      <td className="px-4 py-2 font-mono text-xs">{r.ip ?? ""}</td>
-    </tr>
+    <Field
+      id={id}
+      className="w-full sm:w-48"
+      label={label}
+      value={draft}
+      placeholder={placeholder}
+      inputClassName="font-mono text-sm"
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") commit();
+      }}
+    />
   );
 }
 
-function EntryDrawer({ id, onClose }: { id: string; onClose: () => void }) {
+function EntryDetail({ id }: { id: string }) {
   const t = useTranslations("audit");
   const locale = useLocale();
-  const closeRef = useRef<HTMLButtonElement>(null);
   const q = useQuery({
     queryKey: ["audit-entry", id],
     queryFn: async () => {
@@ -200,73 +209,71 @@ function EntryDrawer({ id, onClose }: { id: string; onClose: () => void }) {
       return data;
     },
   });
-  useEffect(() => {
-    closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
 
   const e = q.data;
-  const chainText = !e ? "" : !e.chain.sealed ? t("chainPending") : e.chain.intact ? t("chainIntact", { seq: e.chain.seq ?? 0 }) : t("chainBroken", { seq: e.chain.seq ?? 0 });
+  if (q.isError) return <Notice tone="error">{problemOf(q.error)?.title ?? "Error"}</Notice>;
+  if (!e)
+    return (
+      <div role="status" aria-label={t("loading")} className="flex flex-col gap-2">
+        <Skeleton className="h-6" />
+        <Skeleton className="h-32" />
+        <Skeleton className="h-24" />
+      </div>
+    );
+  const chainText = !e.chain.sealed ? t("chainPending") : e.chain.intact ? t("chainIntact", { seq: e.chain.seq ?? 0 }) : t("chainBroken", { seq: e.chain.seq ?? 0 });
+  const broken = e.chain.sealed && !e.chain.intact;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40" onClick={(ev) => ev.target === ev.currentTarget && onClose()}>
-      <aside role="dialog" aria-modal="true" aria-labelledby="audit-entry-title" className="h-full w-full max-w-xl overflow-y-auto border-l-2 border-line-strong bg-surface p-6">
-        <div className="flex items-start gap-3">
-          <h2 id="audit-entry-title" className="text-lg font-extrabold">
-            {t("detailTitle")}
-          </h2>
-          <button ref={closeRef} type="button" className="ml-auto min-h-11 border-2 border-line px-3 text-sm font-semibold" onClick={onClose}>
-            {t("close")}
-          </button>
-        </div>
-        {!e ? (
-          <p className="mt-4 text-sm text-muted" role="status">
-            {t("loading")}
-          </p>
-        ) : (
-          <>
-            <p className="mt-3 font-semibold">{locale === "bn" ? e.summary.bn : e.summary.en}</p>
-            <p className="text-sm text-muted">
-              {formatDhaka(e.occurredAt, locale)} · {e.actor.name ?? t("system")} · <span className="font-mono">{e.action}</span>
-            </p>
-            <table className="mt-4 w-full text-left text-sm">
-              <thead className="border-b-2 border-line">
-                <tr>
-                  <th scope="col" className="py-2 pr-3">{t("field")}</th>
-                  <th scope="col" className="py-2 pr-3">{t("before")}</th>
-                  <th scope="col" className="py-2">{t("after")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {diffRows(e.before, e.after).map((d) => (
-                  <tr key={d.field} className={`border-b border-line ${d.changed ? "font-semibold" : "text-muted"}`}>
-                    <th scope="row" className="py-1 pr-3 font-mono text-xs">{d.field}</th>
-                    <td className="break-all py-1 pr-3">{d.before}</td>
-                    <td className="break-all py-1">{d.after}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-              {[
-                [t("reason"), e.reason],
-                [t("ip"), e.ip],
-                [t("requestId"), e.requestId],
-                [t("sessionId"), e.sessionId],
-                [t("userAgent"), e.userAgent],
-                [t("chain"), chainText],
-              ].map(([k, v]) => (
-                <div key={k} className="contents">
-                  <dt className="font-semibold text-muted">{k}</dt>
-                  <dd className={`break-all ${k === t("chain") && e.chain.sealed && !e.chain.intact ? "font-bold text-danger" : ""}`}>{v || "–"}</dd>
-                </div>
-              ))}
-            </dl>
-          </>
-        )}
-      </aside>
+    <div className="flex flex-col gap-4">
+      <div>
+        <p className="font-semibold">{locale === "bn" ? e.summary.bn : e.summary.en}</p>
+        <p className="text-sm text-muted">
+          {formatDhaka(e.occurredAt, locale)} · {e.actor.name ?? t("system")} · <span className="font-mono">{e.action}</span>
+        </p>
+      </div>
+      <div className="overflow-hidden rounded-card border border-line">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-surface-2 text-xs uppercase tracking-wide text-muted">
+            <tr>
+              <th scope="col" className="px-3 py-2 font-semibold">
+                {t("field")}
+              </th>
+              <th scope="col" className="px-3 py-2 font-semibold">
+                {t("before")}
+              </th>
+              <th scope="col" className="px-3 py-2 font-semibold">
+                {t("after")}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {diffRows(e.before, e.after).map((d) => (
+              <tr key={d.field} className={`border-t border-line ${d.changed ? "font-semibold" : "text-muted"}`}>
+                <th scope="row" className="px-3 py-1.5 font-mono text-xs font-normal">
+                  {d.field}
+                </th>
+                <td className="break-all px-3 py-1.5">{d.before}</td>
+                <td className="break-all px-3 py-1.5">{d.after}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 text-sm">
+        {[
+          [t("reason"), e.reason, false],
+          [t("ip"), e.ip, false],
+          [t("requestId"), e.requestId, false],
+          [t("sessionId"), e.sessionId, false],
+          [t("userAgent"), e.userAgent, false],
+          [t("chain"), chainText, broken],
+        ].map(([k, val, bad]) => (
+          <div key={String(k)} className="contents">
+            <dt className="font-semibold text-muted">{k}</dt>
+            <dd className={`break-all ${bad ? "font-bold text-danger" : ""}`}>{val || "–"}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }
@@ -318,25 +325,26 @@ function ExportDialog({ filters, onClose }: { filters: AuditFilters; onClose: ()
 
   const s = status.data;
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center">
-      <div role="dialog" aria-modal="true" aria-labelledby="export-title" className="w-full max-w-md border-2 border-line-strong bg-surface p-6">
-        <h2 id="export-title" className="text-xl font-extrabold">
-          {t("exportTitle")}
-        </h2>
-        <p className="mt-3" role="status" data-testid="export-status">
-          {s?.status === "ready" ? t("exportReady", { count: s.rowCount ?? 0 }) : s?.status === "failed" ? t("exportFailed") : t("exportPreparing")}
-        </p>
-        <div className="mt-6 flex justify-end gap-2">
-          <button type="button" className="min-h-12 border-2 border-line px-4 font-semibold" onClick={onClose}>
+    <Dialog
+      open
+      onOpenChange={(o) => (o ? undefined : onClose())}
+      title={t("exportTitle")}
+      footer={
+        <>
+          <Button type="button" variant="ghost" onClick={onClose}>
             {t("close")}
-          </button>
+          </Button>
           {s?.status === "ready" ? (
-            <Button type="button" onClick={() => void download()}>
+            <Button type="button" icon={<DownloadSimple size={18} aria-hidden />} onClick={() => void download()}>
               {t("download")}
             </Button>
           ) : null}
-        </div>
-      </div>
-    </div>
+        </>
+      }
+    >
+      <p role="status" data-testid="export-status">
+        {s?.status === "ready" ? t("exportReady", { count: s.rowCount ?? 0 }) : s?.status === "failed" ? t("exportFailed") : t("exportPreparing")}
+      </p>
+    </Dialog>
   );
 }

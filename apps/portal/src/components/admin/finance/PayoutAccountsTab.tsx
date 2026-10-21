@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { payouts, type ReviewRow } from "@/lib/admin/payouts";
+import { CheckCircle, XCircle } from "@phosphor-icons/react";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Notice } from "@kriraghor/ui/primitives";
+import { Badge, Button, DataTable, Dialog, Field, FilterBar, Notice, ReasonDialog, type Column } from "@kriraghor/ui/kit";
+import { payouts, type ReviewRow } from "@/lib/admin/payouts";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { useUrlFilters } from "@/lib/use-url-filters";
 import { formatDhaka } from "../useAdminMe";
 import type { DeskMe } from "./FinanceDesk";
-import { Chip, DataTable, Field, inputCls } from "./shared";
 
 const STATUSES = ["pending_verification", "active", "rejected"] as const;
 
@@ -18,128 +20,160 @@ const STATUSES = ["pending_verification", "active", "rejected"] as const;
  */
 export function PayoutAccountsTab({ me }: { me: DeskMe }) {
   const t = useTranslations("payouts");
+  const tf = useTranslations("finance");
   const locale = useLocale();
   const qc = useQueryClient();
-  const [status, setStatus] = useState<(typeof STATUSES)[number]>("pending_verification");
+  const { values, set } = useUrlFilters({ status: { default: "pending_verification", allowed: STATUSES } });
+  const status = values.status as (typeof STATUSES)[number];
   const [deciding, setDeciding] = useState<{ row: ReviewRow; action: "verify" | "reject" } | null>(null);
-  const q = useQuery({ queryKey: ["payout-accounts", status], queryFn: () => payouts.accounts(status) });
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState<Problem | null>(null);
+  const list = useCursorList<ReviewRow>(["payout-accounts", status], (cursor) => payouts.accounts(status, cursor));
   const canDecide = me.isMaster || me.permissions.includes("release_payouts");
-  const items = q.data?.items ?? [];
+
+  const close = () => {
+    setDeciding(null);
+    setProblem(null);
+  };
+  const decide = async (note: string) => {
+    if (!deciding) return;
+    setBusy(true);
+    setProblem(null);
+    try {
+      if (deciding.action === "verify") await payouts.verify(deciding.row.id, note.trim() || undefined);
+      else await payouts.reject(deciding.row.id, note.trim());
+      setDeciding(null);
+      await qc.invalidateQueries({ queryKey: ["payout-accounts"] });
+    } catch (err) {
+      setProblem(problemOf(err) ?? { code: "UNKNOWN", title: "Something went wrong", status: 0 });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const columns: Column<ReviewRow>[] = [
+    {
+      id: "account",
+      header: t("account"),
+      primary: true,
+      sort: (a) => a.masked,
+      cell: (a) => (
+        <>
+          <span className="font-mono">{a.masked}</span>
+          <span className="block text-xs font-normal text-muted">{a.user.displayName ?? "–"}</span>
+        </>
+      ),
+    },
+    { id: "name", header: t("nameOnAccount"), sort: (a) => a.accountName, cell: (a) => <span className="font-semibold">{a.accountName}</span> },
+    { id: "nid", header: t("nidName"), cell: (a) => a.user.legalName ?? <span className="text-muted">{t("noNid")}</span> },
+    {
+      id: "checks",
+      header: t("checks"),
+      cell: (a) => {
+        const legal = a.user.legalName;
+        const match = legal ? legal.trim().toLowerCase() === a.accountName.trim().toLowerCase() : null;
+        return (
+          <>
+            <span className="flex flex-wrap gap-1">
+              {match === true ? <Badge tone="brand">{t("namesMatch")}</Badge> : match === false ? <Badge tone="warning">{t("namesDiffer")}</Badge> : null}
+              {a.sameWalletUsers > 0 ? <Badge tone="danger">{t("sharedWallet", { n: a.sameWalletUsers })}</Badge> : null}
+              {a.user.kycStatus !== "verified" ? <Badge>{t("kycNot", { status: a.user.kycStatus ?? "–" })}</Badge> : null}
+            </span>
+            {a.reviewNote && !(canDecide && a.status === "pending_verification") ? <span className="mt-1 block text-xs text-muted">{a.reviewNote}</span> : null}
+          </>
+        );
+      },
+    },
+    { id: "created", header: t("created"), hideBelow: "lg", sort: (a) => a.createdAt, cell: (a) => <span className="whitespace-nowrap">{formatDhaka(a.createdAt, locale)}</span> },
+  ];
 
   return (
-    <div className="mt-6">
-      <Field label={t("statusLabel")}>
-        <select value={status} onChange={(e) => setStatus(e.target.value as typeof status)} className={`${inputCls} w-64`}>
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {t(`accountStatus.${s}`)}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <DataTable head={[t("account"), t("nameOnAccount"), t("nidName"), t("checks"), t("created"), ""]} loading={q.isPending} error={q.isError} empty={!items.length} testId="payout-accounts">
-        {items.map((a) => {
-          const legal = a.user.legalName;
-          const match = legal ? legal.trim().toLowerCase() === a.accountName.trim().toLowerCase() : null;
-          return (
-            <tr key={a.id}>
-              <td className="px-3 py-2 font-mono">
-                {a.masked}
-                <span className="block font-sans text-xs text-muted">{a.user.displayName ?? "–"}</span>
-              </td>
-              <td className="px-3 py-2 font-semibold">{a.accountName}</td>
-              <td className="px-3 py-2">{legal ?? <span className="text-muted">{t("noNid")}</span>}</td>
-              <td className="px-3 py-2">
-                <span className="flex flex-wrap gap-1">
-                  {match === true ? <Chip tone="ok">{t("namesMatch")}</Chip> : match === false ? <Chip tone="warn">{t("namesDiffer")}</Chip> : null}
-                  {a.sameWalletUsers > 0 ? <Chip tone="bad">{t("sharedWallet", { n: a.sameWalletUsers })}</Chip> : null}
-                  {a.user.kycStatus !== "verified" ? <Chip tone="muted">{t("kycNot", { status: a.user.kycStatus ?? "–" })}</Chip> : null}
-                </span>
-              </td>
-              <td className="px-3 py-2 whitespace-nowrap">{formatDhaka(a.createdAt, locale)}</td>
-              <td className="px-3 py-2 whitespace-nowrap">
-                {canDecide && a.status === "pending_verification" ? (
-                  <span className="flex gap-2">
-                    <button type="button" className="min-h-9 border-2 border-brand px-3 font-semibold" onClick={() => setDeciding({ row: a, action: "verify" })} data-testid="verify-account">
-                      {t("verify")}
-                    </button>
-                    <button type="button" className="min-h-9 border-2 border-line px-3 font-semibold" onClick={() => setDeciding({ row: a, action: "reject" })}>
-                      {t("reject")}
-                    </button>
-                  </span>
-                ) : a.reviewNote ? (
-                  <span className="text-xs text-muted">{a.reviewNote}</span>
-                ) : null}
-              </td>
-            </tr>
-          );
-        })}
-      </DataTable>
-      {deciding ? (
-        <Decide
-          row={deciding.row}
-          action={deciding.action}
-          onClose={() => setDeciding(null)}
-          onDone={async () => {
-            setDeciding(null);
-            await qc.invalidateQueries({ queryKey: ["payout-accounts"] });
-          }}
+    <div className="mt-6 flex flex-col gap-4">
+      <FilterBar
+        chips={{
+          label: t("statusLabel"),
+          value: status,
+          onChange: (v) => set({ status: v }),
+          options: STATUSES.map((s) => ({ value: s, label: t(`accountStatus.${s}`) })),
+        }}
+      />
+      <DataTable
+        label={tf("tabs.accounts")}
+        testId="payout-accounts"
+        columns={columns}
+        rows={list.rows}
+        rowId={(a) => a.id}
+        loading={list.loading}
+        error={list.error}
+        onRetry={list.retry}
+        empty={{ title: tf("empty") }}
+        hasMore={list.hasMore}
+        onMore={list.more}
+        busy={list.busy}
+        rowActions={(a) =>
+          canDecide && a.status === "pending_verification"
+            ? [
+                { label: <span data-testid="verify-account">{t("verify")}</span>, icon: <CheckCircle />, onSelect: () => setDeciding({ row: a, action: "verify" }) },
+                { label: t("reject"), icon: <XCircle />, danger: true, onSelect: () => setDeciding({ row: a, action: "reject" }) },
+              ]
+            : []
+        }
+      />
+
+      {deciding?.action === "verify" ? (
+        <VerifyDialog row={deciding.row} busy={busy} problem={problem} onClose={close} onConfirm={(note) => void decide(note)} />
+      ) : null}
+      {deciding?.action === "reject" ? (
+        <ReasonDialog
+          open
+          onOpenChange={(o) => (o || busy ? undefined : close())}
+          title={t("rejectTitle", { account: deciding.row.masked })}
+          description={t("rejectHelp")}
+          label={t("noteRequired")}
+          confirmLabel={t("reject")}
+          danger
+          maxLength={300}
+          busy={busy}
+          error={problem?.title}
+          onConfirm={(note) => void decide(note)}
         />
       ) : null}
     </div>
   );
 }
 
-function Decide({ row, action, onClose, onDone }: { row: ReviewRow; action: "verify" | "reject"; onClose: () => void; onDone: () => Promise<void> }) {
+/** Verify with an optional note (the payee sees it). */
+function VerifyDialog({ row, busy, problem, onClose, onConfirm }: { row: ReviewRow; busy: boolean; problem: Problem | null; onClose: () => void; onConfirm: (note: string) => void }) {
   const t = useTranslations("payouts");
   const [note, setNote] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [problem, setProblem] = useState<Problem | null>(null);
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={(e) => e.target === e.currentTarget && !busy && onClose()}>
+    <Dialog
+      open
+      onOpenChange={(o) => (o || busy ? undefined : onClose())}
+      title={t("verifyTitle", { account: row.masked })}
+      description={t("verifyHelp")}
+      footer={
+        <>
+          <Button type="button" variant="ghost" onClick={onClose} disabled={busy}>
+            {t("cancelForm")}
+          </Button>
+          <Button type="submit" form="verify-account-form" busy={busy}>
+            {t("verify")}
+          </Button>
+        </>
+      }
+    >
       <form
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="decide-title"
-        className="w-full max-w-md border-2 border-line-strong bg-surface p-6"
-        onSubmit={async (e) => {
+        id="verify-account-form"
+        className="flex flex-col gap-3"
+        onSubmit={(e) => {
           e.preventDefault();
-          setBusy(true);
-          setProblem(null);
-          try {
-            if (action === "verify") await payouts.verify(row.id, note.trim() || undefined);
-            else await payouts.reject(row.id, note.trim());
-            await onDone();
-          } catch (err) {
-            setProblem(problemOf(err) ?? { code: "UNKNOWN", title: "Something went wrong", status: 0 });
-          } finally {
-            setBusy(false);
-          }
+          onConfirm(note);
         }}
       >
-        <h2 id="decide-title" className="text-xl font-extrabold">
-          {t(action === "verify" ? "verifyTitle" : "rejectTitle", { account: row.masked })}
-        </h2>
-        <p className="mt-2 text-sm text-muted">{t(action === "verify" ? "verifyHelp" : "rejectHelp")}</p>
-        <div className="mt-4">
-          <Field label={t(action === "verify" ? "noteOptional" : "noteRequired")}>
-            <input value={note} onChange={(e) => setNote(e.target.value)} required={action === "reject"} minLength={action === "reject" ? 3 : 0} maxLength={300} className={inputCls} />
-          </Field>
-        </div>
-        {problem ? (
-          <div className="mt-3">
-            <Notice tone="error">{problem.title}</Notice>
-          </div>
-        ) : null}
-        <div className="mt-5 flex justify-end gap-2">
-          <button type="button" className="min-h-11 border-2 border-line px-4 font-semibold" onClick={onClose} disabled={busy}>
-            {t("cancelForm")}
-          </button>
-          <button type="submit" className="min-h-11 border-2 border-brand px-4 font-semibold disabled:opacity-50" disabled={busy}>
-            {t(action === "verify" ? "verify" : "reject")}
-          </button>
-        </div>
+        <Field id="verify-note" label={t("noteOptional")} value={note} onChange={(e) => setNote(e.target.value)} maxLength={300} autoFocus />
+        {problem ? <Notice tone="error">{problem.title}</Notice> : null}
       </form>
-    </div>
+    </Dialog>
   );
 }

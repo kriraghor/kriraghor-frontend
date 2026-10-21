@@ -1827,7 +1827,11 @@
       "user_suspended": "Suspend the account",
       "converted_to_dispute": "Ask for a dispute"
     },
-    "escalate": "Escalate"
+    "escalate": "Escalate",
+    "col": {
+      "subject": "Reported item",
+      "due": "Due"
+    }
   },
   "reviewsDesk": {
     "title": "Reviews",
@@ -1847,7 +1851,12 @@
     "restore": "Restore",
     "hide": "Hide",
     "reason": "Reason",
-    "empty": "Nothing here."
+    "empty": "Nothing here.",
+    "col": {
+      "review": "Review",
+      "author": "Author",
+      "when": "When"
+    }
   },
   "vendorTrust": {
     "disputesTitle": "Disputes",
@@ -1907,7 +1916,12 @@
     "reliabilityShown": "Members see this on your venues ({n} bookings).",
     "reliabilityHidden": "Members see it from {min} bookings (you have {n}).",
     "reliabilityHow": "Lowered by cancelling confirmed bookings ({cancels}) and disputes you lost ({disputes}). Weather cancels do not count.",
-    "bookerReliability": "Reliability {score}%"
+    "bookerReliability": "Reliability {score}%",
+    "col": {
+      "case": "Case",
+      "status": "Status",
+      "opened": "Opened"
+    }
   },
   "riskDesk": {
     "title": "Risk",
@@ -2391,7 +2405,10 @@
       "restore": "Restored.",
       "remove": "Removed."
     },
-    "failed": "That didn't work."
+    "failed": "That didn't work.",
+    "col": {
+      "status": "Status"
+    }
   },
   "vendorOrders": {
     "title": "Orders",
@@ -2477,7 +2494,14 @@
     "inEscrowTile": "{n, plural, one {# open order} other {# open orders}}",
     "inEscrowNote": "Held until the buyer confirms",
     "refundedTile": "Refunded to buyers",
-    "payoutNote": "Payouts go to your bKash or Nagad account each week (see Payouts on kriraghor.com)."
+    "payoutNote": "Payouts go to your bKash or Nagad account each week (see Payouts on kriraghor.com).",
+    "col": {
+      "order": "Order",
+      "status": "Status",
+      "area": "Area",
+      "due": "Due",
+      "total": "Total"
+    }
   },
   "ordersAdmin": {
     "title": "Orders",
@@ -2526,7 +2550,10 @@
       "deliveredAt": "Delivered",
       "completedAt": "Completed",
       "cancelledAt": "Cancelled"
-    }
+    },
+    "order": "Order",
+    "parts": "Shop parts",
+    "created": "Created"
   },
   "hireAdmin": {
     "title": "Hire",
@@ -2658,7 +2685,13 @@
     "formatPriced": "Priced per match format",
     "formats": "Formats",
     "tiers": "Credential tiers, one per line: level|English|Bangla ({levels})",
-    "save": "Save"
+    "save": "Save",
+    "col": {
+      "request": "Request",
+      "jobs": "Jobs",
+      "total": "Total",
+      "created": "Created"
+    }
   },
   "vendorGym": {
     "gate": "Gyms are for approved gym owners. Apply as a gym owner on kriraghor.com first.",
@@ -3145,7 +3178,8 @@
       "contact": "Contact",
       "members": "Members",
       "docs": "The owner's NID and the organisation's registration were checked on the documents desk."
-    }
+    },
+    "statusLabel": "Status"
   },
   "bigEvents": {
     "title": "Showcases",

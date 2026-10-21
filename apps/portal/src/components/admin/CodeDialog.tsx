@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Button, Notice } from "@kriraghor/ui/primitives";
+import { Button, Dialog, Field, Notice } from "@kriraghor/ui/kit";
 
 /**
  * Asks for a fresh authenticator code, then runs `onConfirm(code)` (which does the step-up and the
  * protected request). Shows the API's problem title on failure and clears the code for a retry.
+ * Built on the kit Dialog (Radix), so it layers and traps focus correctly when opened from a
+ * detail pane, whether that pane is beside the list (xl) or a drawer (below xl).
  */
 export function CodeDialog({ title, help, confirmLabel, onConfirm, onClose, children }: {
   title: string;
@@ -21,14 +23,6 @@ export function CodeDialog({ title, help, confirmLabel, onConfirm, onClose, chil
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<Problem | null>(null);
-  const ref = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    ref.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && !busy && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [busy, onClose]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,29 +39,36 @@ export function CodeDialog({ title, help, confirmLabel, onConfirm, onClose, chil
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={(e) => e.target === e.currentTarget && !busy && onClose()}>
-      <form role="dialog" aria-modal="true" aria-labelledby="code-dialog-title" onSubmit={submit} className="w-full max-w-md border-2 border-line-strong bg-surface p-6">
-        <h2 id="code-dialog-title" className="text-xl font-extrabold">
-          {title}
-        </h2>
-        {help ? <p className="mt-2 text-sm text-muted">{help}</p> : null}
+    <Dialog
+      open
+      onOpenChange={(o) => (o || busy ? undefined : onClose())}
+      title={title}
+      description={help}
+      footer={
+        <>
+          <Button type="button" variant="ghost" onClick={onClose} disabled={busy}>
+            {t("cancel")}
+          </Button>
+          <Button type="submit" form="code-dialog-form" busy={busy} disabled={!/^\d{6}$/.test(code)} data-testid="code-dialog-confirm">
+            {confirmLabel ?? t("confirm")}
+          </Button>
+        </>
+      }
+    >
+      <form id="code-dialog-form" onSubmit={submit} className="px-6 pb-4" data-testid="code-dialog">
         {children}
-        <label htmlFor="code-dialog-code" className="mt-5 block text-sm font-semibold text-muted">
-          {t("code")}
-        </label>
-        <input
+        <Field
           id="code-dialog-code"
-          ref={ref}
+          className="mt-5 w-44"
+          inputClassName="font-mono text-lg tracking-widest"
+          label={t("code")}
+          hint={t("codeHint")}
           value={code}
           onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
           inputMode="numeric"
           autoComplete="one-time-code"
-          aria-describedby="code-dialog-hint"
-          className="mt-1 min-h-12 w-40 border-2 border-line bg-surface px-3 font-mono text-lg tracking-widest"
+          autoFocus
         />
-        <p id="code-dialog-hint" className="text-xs text-muted">
-          {t("codeHint")}
-        </p>
         {problem ? (
           <div className="mt-4">
             <Notice tone="error">
@@ -76,15 +77,7 @@ export function CodeDialog({ title, help, confirmLabel, onConfirm, onClose, chil
             </Notice>
           </div>
         ) : null}
-        <div className="mt-6 flex justify-end gap-2">
-          <button type="button" className="min-h-12 border-2 border-line px-4 font-semibold" onClick={onClose} disabled={busy}>
-            {t("cancel")}
-          </button>
-          <Button type="submit" busy={busy} disabled={!/^\d{6}$/.test(code)}>
-            {confirmLabel ?? t("confirm")}
-          </Button>
-        </div>
       </form>
-    </div>
+    </Dialog>
   );
 }

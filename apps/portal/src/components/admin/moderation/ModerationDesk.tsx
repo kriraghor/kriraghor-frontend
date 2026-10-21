@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
 import { decisionProblem, hardFailures, HEARTBEAT_MS, moderation, QUEUE_POLL_MS, QUEUE_STATUSES, type Claimed, type Decision, type Detail, type Status } from "@/lib/admin/moderation";
 import { stepUp } from "@/lib/admin/stepUp";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Notice } from "@kriraghor/ui/primitives";
+import { Badge, Button, Checkbox, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, Select, Skeleton, cn, type Column } from "@kriraghor/ui/kit";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
 import { DocumentPanel } from "../kyc/DocumentPanel";
 import { GameProfilePanel, TournamentPanel } from "../esports/EsportsPanels";
@@ -18,135 +19,152 @@ import { GymPanel } from "../gym/GymPanel";
 import { OrganisationPanel } from "../esports/OrganisationPanel";
 import { TournamentPanel as SportsTournamentPanel } from "../tournaments/TournamentPanel";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
-import { Chip, DataTable, Field, inputCls } from "../finance/shared";
 
-const STATUS_TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { pending_review: "warn", approved: "ok", changes_requested: "bad", rejected: "bad", withdrawn: "muted", superseded: "muted" };
-const SLA_TONE = { ok: "ok", warn: "warn", overdue: "bad" } as const;
 const REVIEW_PERMISSIONS = ["approve_documents", "approve_listings"];
+const KINDS = ["document", "game_profile", "esports_tournament", "ground", "shop", "product", "hire_profile", "gym", "organisation", "tournament"] as const;
+const LOCKS = ["none", "me", "others"] as const;
+const LOCK_LABEL = { none: "lockNone", me: "lockMe", others: "lockOthers" } as const;
+type Row = Awaited<ReturnType<typeof moderation.queue>>["items"][number];
 
 /**
  * /admin/moderation (M05 lite): one queue for every kind the reviewer may see (documents first),
  * oldest deadline first. Claim an item to review it: the lock is kept by a heartbeat while the pane
  * is open, rubric ticks are stored on the server, and the decision needs a reason for anything but
- * approve. Masters may approve over a failing check (step-up, Q46) and reopen a decision.
+ * approve. Masters may approve over a failing check (step-up, Q46) and reopen a decision. Filters
+ * and the open item live in the URL (?status= ?kind= ?claimed= ?overdue= ?q= ?id=); /admin/kyc
+ * lands on ?kind=document.
  */
 export function ModerationDesk() {
   const t = useTranslations("moderation");
   const locale = useLocale();
-  const params = useSearchParams();
   const { ready, me } = useAdminMe();
   const qc = useQueryClient();
-  const [status, setStatus] = useState<Status>("pending_review");
-  const [kind, setKind] = useState(params.get("kind") ?? "");
-  const [claimed, setClaimed] = useState<Claimed | "">("");
-  const [overdue, setOverdue] = useState(false);
-  const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<string | null>(params.get("id"));
+  const { values, set, clear, params } = useUrlFilters({
+    status: { default: "pending_review", allowed: QUEUE_STATUSES },
+    kind: { default: "", allowed: ["", ...KINDS] },
+    claimed: { default: "", allowed: ["", ...LOCKS] },
+    overdue: { default: "", allowed: ["", "true"] },
+    q: { default: "" },
+  });
+  const status = values.status as Status;
+  const { kind, q: search } = values;
+  const claimed = values.claimed as Claimed | "";
+  const overdue = values.overdue === "true";
+  const selected = params.get("id");
   const canReview = Boolean(me && (me.isMaster || me.permissions.some((p) => REVIEW_PERMISSIONS.includes(p))));
 
   const query = { status, ...(kind ? { kind } : {}), ...(claimed ? { claimed } : {}), ...(overdue ? { overdue: "true" as const } : {}), ...(search.trim() ? { q: search.trim() } : {}) };
+  // The queue endpoint has no cursor: one page, polled.
   const q = useQuery({ queryKey: ["mod-queue", query], enabled: canReview, refetchInterval: QUEUE_POLL_MS, queryFn: () => moderation.queue(query) });
   const stats = useQuery({ queryKey: ["mod-stats"], enabled: canReview, refetchInterval: QUEUE_POLL_MS, queryFn: () => moderation.stats() });
-  const items = q.data?.items ?? [];
+  // Shares the pane's query (same key), for the pane's title.
+  const open = useQuery({ queryKey: ["mod-detail", selected], enabled: canReview && Boolean(selected), queryFn: () => moderation.get(selected!) });
   const refresh = () => void qc.invalidateQueries({ predicate: (x) => String(x.queryKey[0]).startsWith("mod-") });
+  const pending = status === "pending_review";
+  const filtered = Boolean(kind || claimed || overdue || search || !pending);
+  const openKind = open.data?.kind ?? q.data?.items.find((s) => s.id === selected)?.kind;
+
+  const columns: Column<Row>[] = [
+    {
+      id: "item",
+      header: t("item"),
+      primary: true,
+      sort: (s) => s.title,
+      cell: (s) => (
+        <>
+          <span className="block font-semibold">{s.title}</span>
+          <span className="block text-xs font-normal text-muted">
+            {t(`kind.${s.kind}`)} · v{s.version}
+          </span>
+        </>
+      ),
+    },
+    { id: "by", header: t("submittedBy"), hideBelow: "lg", sort: (s) => s.submittedBy.name, cell: (s) => s.submittedBy.name ?? "–" },
+    {
+      id: "when",
+      header: pending ? t("deadline") : t("decided"),
+      label: pending ? t("deadline") : t("decided"),
+      sort: (s) => (s.sla ? s.slaDueAt : s.decidedAt),
+      cell: (s) =>
+        s.sla ? (
+          <span className="whitespace-nowrap">
+            <StatusBadge status={s.sla} domain="sla">
+              {t(`sla.${s.sla}`)}
+            </StatusBadge>
+            <span className="block text-xs text-muted">{formatDhaka(s.slaDueAt, locale)}</span>
+          </span>
+        ) : (
+          <span className="whitespace-nowrap">{formatDhaka(s.decidedAt, locale)}</span>
+        ),
+    },
+    {
+      id: "lock",
+      header: t("lock"),
+      cell: (s) => (s.claim ? <Badge tone={s.claim.mine ? "brand" : "neutral"}>{s.claim.mine ? t("lockedByYou") : (s.claim.name ?? t("someone"))}</Badge> : <span className="text-muted">–</span>),
+    },
+  ];
 
   return (
-    <>
-      <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
-        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-        <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
-        {ready && !canReview ? (
-          <div className="mt-6 max-w-3xl">
-            <Notice tone="error">{t("noAccess")}</Notice>
-          </div>
-        ) : (
-          <>
-            <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" data-testid="mod-stats">
-              {(["inQueue", "overdue", "claimedByYou", "decidedToday"] as const).map((k) => (
-                <div key={k} className="border-2 border-line bg-surface px-4 py-3">
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-muted">{t(`kpi.${k}`)}</dt>
-                  <dd className={`mt-1 text-2xl font-extrabold tabular-nums ${k === "overdue" && (stats.data?.overdue ?? 0) > 0 ? "text-danger" : ""}`}>{stats.data ? stats.data[k] : "–"}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
-              <div>
-                <div role="tablist" aria-label={t("queue")} className="flex flex-wrap gap-2">
-                  {QUEUE_STATUSES.map((s) => (
-                    <button key={s} type="button" role="tab" aria-selected={status === s} onClick={() => setStatus(s)} className={`min-h-11 border-2 px-3 text-sm font-bold ${status === s ? "border-brand text-ink" : "border-line text-muted"}`}>
-                      {t(`status.${s}`)}
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-3 flex flex-wrap items-end gap-3">
-                  <Field label={t("kindLabel")}>
-                    <select value={kind} onChange={(e) => setKind(e.target.value)} className={inputCls}>
-                      <option value="">{t("allKinds")}</option>
-                      <option value="document">{t("kind.document")}</option>
-                      <option value="game_profile">{t("kind.game_profile")}</option>
-                      <option value="esports_tournament">{t("kind.esports_tournament")}</option>
-                      <option value="ground">{t("kind.ground")}</option>
-                      <option value="shop">{t("kind.shop")}</option>
-                      <option value="product">{t("kind.product")}</option>
-                      <option value="hire_profile">{t("kind.hire_profile")}</option>
-                      <option value="gym">{t("kind.gym")}</option>
-                      <option value="organisation">{t("kind.organisation")}</option>
-                      <option value="tournament">{t("kind.tournament")}</option>
-                    </select>
-                  </Field>
-                  {status === "pending_review" ? (
-                    <>
-                      <Field label={t("lockLabel")}>
-                        <select value={claimed} onChange={(e) => setClaimed(e.target.value as Claimed | "")} className={inputCls}>
-                          <option value="">{t("lockAny")}</option>
-                          <option value="none">{t("lockNone")}</option>
-                          <option value="me">{t("lockMe")}</option>
-                          <option value="others">{t("lockOthers")}</option>
-                        </select>
-                      </Field>
-                      <label className="flex min-h-11 items-center gap-2 text-sm font-semibold">
-                        <input type="checkbox" className="h-5 w-5" checked={overdue} onChange={(e) => setOverdue(e.target.checked)} />
-                        {t("overdueOnly")}
-                      </label>
-                    </>
-                  ) : null}
-                  <Field label={t("search")}>
-                    <input value={search} onChange={(e) => setSearch(e.target.value)} maxLength={80} className={inputCls} />
-                  </Field>
-                </div>
-                <DataTable head={[t("item"), t("submittedBy"), status === "pending_review" ? t("deadline") : t("decided"), t("lock")]} loading={q.isPending} error={q.isError} empty={!items.length} testId="mod-queue">
-                  {items.map((s) => (
-                    <tr key={s.id} className={`cursor-pointer hover:bg-surface-2 ${selected === s.id ? "bg-surface-2" : ""}`} onClick={() => setSelected(s.id)}>
-                      <td className="px-3 py-2">
-                        <button type="button" className="text-left font-semibold underline" onClick={() => setSelected(s.id)}>
-                          {s.title}
-                        </button>
-                        <span className="block text-xs text-muted">
-                          {t(`kind.${s.kind}`)} · v{s.version}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2">{s.submittedBy.name ?? "–"}</td>
-                      <td className="px-3 py-2 whitespace-nowrap">
-                        {s.sla ? (
-                          <>
-                            <Chip tone={SLA_TONE[s.sla]}>{t(`sla.${s.sla}`)}</Chip>
-                            <span className="block text-xs text-muted">{formatDhaka(s.slaDueAt, locale)}</span>
-                          </>
-                        ) : (
-                          <span>{formatDhaka(s.decidedAt, locale)}</span>
-                        )}
-                      </td>
-                      <td className="px-3 py-2">{s.claim ? <Chip tone={s.claim.mine ? "ok" : "muted"}>{s.claim.mine ? t("lockedByYou") : (s.claim.name ?? t("someone"))}</Chip> : <span className="text-muted">–</span>}</td>
-                    </tr>
-                  ))}
-                </DataTable>
+    <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
+      <PageTitle title={t("title")} description={t("intro")} />
+      {ready && !canReview ? (
+        <Notice tone="error" className="mt-6 max-w-3xl">
+          {t("noAccess")}
+        </Notice>
+      ) : (
+        <>
+          <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" data-testid="mod-stats">
+            {(["inQueue", "overdue", "claimedByYou", "decidedToday"] as const).map((k) => (
+              <div key={k} className="rounded-card border border-line bg-surface px-4 py-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-muted">{t(`kpi.${k}`)}</dt>
+                <dd className={cn("mt-1 font-display text-2xl font-bold tabular", k === "overdue" && (stats.data?.overdue ?? 0) > 0 && "text-danger")}>{stats.data ? stats.data[k] : "–"}</dd>
               </div>
-              <div>{selected ? <ReviewPane key={selected} id={selected} isMaster={Boolean(me?.isMaster)} onChanged={refresh} /> : <p className="text-muted">{t("pick")}</p>}</div>
+            ))}
+          </dl>
+          <DetailLayout
+            className="mt-6"
+            open={Boolean(selected)}
+            onClose={() => set({ id: null })}
+            title={openKind ? t(`kind.${openKind}`) : t("queue")}
+            pane={selected ? <ReviewPane key={selected} id={selected} isMaster={Boolean(me?.isMaster)} onChanged={refresh} /> : null}
+            width={560}
+            testId="mod-pane"
+          >
+            <div className="flex flex-col gap-4">
+              <FilterBar
+                chips={{
+                  value: status,
+                  onChange: (v) => set({ status: v, ...(v !== "pending_review" ? { claimed: null, overdue: null } : {}) }),
+                  label: t("queue"),
+                  options: QUEUE_STATUSES.map((s) => ({ value: s, label: t(`status.${s}`), count: s === "pending_review" ? stats.data?.inQueue : undefined })),
+                  testId: "mod-status",
+                }}
+                search={{ value: search, onChange: (v) => set({ q: v.slice(0, 80) }), label: t("search"), testId: "mod-search" }}
+                selects={[
+                  { id: "kind", label: t("kindLabel"), value: kind, onChange: (v) => set({ kind: v }), anyLabel: t("allKinds"), options: KINDS.map((k) => ({ value: k, label: t(`kind.${k}`) })) },
+                  ...(pending ? [{ id: "claimed", label: t("lockLabel"), value: claimed, onChange: (v: string) => set({ claimed: v }), anyLabel: t("lockAny"), options: LOCKS.map((l) => ({ value: l, label: t(LOCK_LABEL[l]) })) }] : []),
+                ]}
+                extra={pending ? <Checkbox id="mod-overdue" label={t("overdueOnly")} checked={overdue} onChange={(e) => set({ overdue: e.target.checked ? "true" : null })} className="sm:pb-0.5" /> : null}
+                onClear={filtered ? clear : undefined}
+              />
+              <DataTable
+                label={t("queue")}
+                testId="mod-queue"
+                columns={columns}
+                rows={q.data?.items}
+                rowId={(s) => s.id}
+                loading={q.isPending}
+                error={q.error}
+                onRetry={() => void q.refetch()}
+                onRowClick={(s) => set({ id: s.id })}
+                selectedId={selected}
+                rowTestId="mod-row"
+              />
             </div>
-          </>
-        )}
-      </div>
-    </>
+          </DetailLayout>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -177,7 +195,7 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
     return () => window.clearInterval(beat);
   }, [mine, id, qc, t]);
 
-  if (d.isPending) return <div className="h-60 animate-pulse bg-surface-2" />;
+  if (d.isPending) return <Skeleton className="h-60" />;
   if (d.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const s = d.data;
   const open = s.status === "pending_review";
@@ -225,50 +243,58 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
     void run(() => moderation.decide(id, decision === "approve" ? { decision } : { decision, reasonCode, reasonText: reasonText.trim() || undefined }));
   }
 
+  const problemNotice = problem ? (
+    <Notice tone="error" className="mt-3">
+      {problem.title}
+    </Notice>
+  ) : null;
+
   return (
-    <section className="border-2 border-line bg-surface p-5" aria-labelledby="mod-review-title" data-testid="mod-review">
-      <div className="flex flex-wrap items-center gap-3">
-        <h2 id="mod-review-title" className="text-xl font-extrabold">
-          {s.title}
-        </h2>
-        <Chip tone={STATUS_TONE[s.status] ?? "muted"}>{t(`status.${s.status}`)}</Chip>
-        <span className="text-sm text-muted">
+    <section aria-labelledby="mod-review-title" data-testid="mod-review">
+      <h3 id="mod-review-title" className="text-lg font-bold">
+        {s.title}
+      </h3>
+      <div className="mt-1 flex flex-wrap items-center gap-2 text-sm">
+        <StatusBadge status={s.status} domain="moderation">
+          {t(`status.${s.status}`)}
+        </StatusBadge>
+        <span className="text-muted">
           {t(`kind.${s.kind}`)} · v{s.version} · {s.submittedBy.name ?? "–"}
         </span>
       </div>
 
       {open ? (
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
           {mine ? (
             <>
-              <Chip tone="ok">{t("lockedByYou")}</Chip>
+              <Badge tone="brand">{t("lockedByYou")}</Badge>
               <span className="text-muted">{t("lockUntil", { time: formatDhaka(s.claim?.expiresAt, locale) })}</span>
-              <button type="button" disabled={busy} onClick={() => void run(() => moderation.release(id))} className="min-h-11 border-2 border-line px-3 font-semibold disabled:opacity-50">
+              <Button type="button" variant="secondary" size="sm" disabled={busy} onClick={() => void run(() => moderation.release(id))}>
                 {t("release")}
-              </button>
+              </Button>
             </>
           ) : s.claim ? (
             <>
-              <Chip tone="muted">{t("lockedBy", { name: s.claim.name ?? t("someone") })}</Chip>
+              <Badge>{t("lockedBy", { name: s.claim.name ?? t("someone") })}</Badge>
               {isMaster ? (
-                <button type="button" disabled={busy} onClick={() => void run(() => moderation.release(id, true))} className="min-h-11 border-2 border-danger px-3 font-semibold text-danger disabled:opacity-50">
+                <Button type="button" variant="danger" size="sm" disabled={busy} onClick={() => void run(() => moderation.release(id, true))}>
                   {t("forceRelease")}
-                </button>
+                </Button>
               ) : null}
             </>
           ) : (
-            <button type="button" disabled={busy} onClick={() => void run(() => moderation.claim(id))} className="min-h-11 border-2 border-brand px-4 font-semibold disabled:opacity-50" data-testid="mod-claim">
+            <Button type="button" busy={busy} onClick={() => void run(() => moderation.claim(id))} data-testid="mod-claim">
               {t("claim")}
-            </button>
+            </Button>
           )}
         </div>
       ) : null}
 
-      <h3 className="mt-5 font-bold">{t("checks")}</h3>
-      <ul className="mt-2 space-y-1 text-sm">
+      <h4 className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted">{t("checks")}</h4>
+      <ul className="mt-2 space-y-1.5 text-sm">
         {s.checks.map((c) => (
-          <li key={c.key} className="flex flex-wrap gap-2">
-            <Chip tone={c.result === "pass" ? "ok" : c.result === "fail" ? "bad" : "warn"}>{t(`result.${c.result}`)}</Chip>
+          <li key={c.key} className="flex flex-wrap items-center gap-2">
+            <Badge tone={c.result === "pass" ? "brand" : c.result === "fail" ? "danger" : "warning"}>{t(`result.${c.result}`)}</Badge>
             <span>{checkLabel(c.key)}</span>
             {c.severity === "hard" && c.result === "fail" ? <span className="font-semibold text-danger">{t("blocksApproval")}</span> : null}
             {c.detail ? <span className="text-muted">({c.detail})</span> : null}
@@ -288,63 +314,41 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
       {s.kind === "tournament" ? <SportsTournamentPanel payload={s.payload} /> : null}
 
       {open && mine ? (
-        <div className="mt-6 border-t-2 border-line pt-4">
+        <div className="mt-6 border-t border-line pt-4">
           <fieldset>
-            <legend className="font-bold">{t("rubric")}</legend>
+            <legend className="font-semibold">{t("rubric")}</legend>
             {(s.rubric?.items ?? []).map((i) => (
-              <label key={i.key} className="mt-2 flex min-h-11 items-center gap-2">
-                <input type="checkbox" className="h-5 w-5" checked={s.ticks.includes(i.key)} onChange={(e) => void tick(i.key, e.target.checked)} />
-                <span>{label(i)}</span>
-              </label>
+              <Checkbox key={i.key} id={`rubric-${i.key}`} className="mt-1" label={label(i)} checked={s.ticks.includes(i.key)} onChange={(e) => void tick(i.key, e.target.checked)} />
             ))}
           </fieldset>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Field label={t("reasonLabel")}>
-              <select value={reasonCode} onChange={(e) => setReasonCode(e.target.value)} className={inputCls}>
-                <option value="">{t("chooseReason")}</option>
-                {s.reasons.map((r) => (
-                  <option key={r.code} value={r.code}>
-                    {label(r)}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field label={reason?.requiresText ? t("noteRequired") : t("note")}>
-              <input value={reasonText} onChange={(e) => setReasonText(e.target.value)} maxLength={500} className={inputCls} />
-            </Field>
+            <Select id="mod-reason" label={t("reasonLabel")} value={reasonCode} onChange={(e) => setReasonCode(e.target.value)}>
+              <option value="">{t("chooseReason")}</option>
+              {s.reasons.map((r) => (
+                <option key={r.code} value={r.code}>
+                  {label(r)}
+                </option>
+              ))}
+            </Select>
+            <Field id="mod-note" label={reason?.requiresText ? t("noteRequired") : t("note")} value={reasonText} onChange={(e) => setReasonText(e.target.value)} maxLength={500} />
           </div>
-          {failing.length && isMaster ? (
-            <div className="mt-4">
-              <Field label={t("overrideLabel")}>
-                <input value={override} onChange={(e) => setOverride(e.target.value)} maxLength={500} className={inputCls} />
-              </Field>
-              <p className="mt-1 text-xs text-muted">{t("overrideHelp")}</p>
-            </div>
-          ) : null}
-          {problem ? (
-            <div className="mt-3">
-              <Notice tone="error">{problem.title}</Notice>
-            </div>
-          ) : null}
+          {failing.length && isMaster ? <Field id="mod-override" className="mt-4" label={t("overrideLabel")} hint={t("overrideHelp")} value={override} onChange={(e) => setOverride(e.target.value)} maxLength={500} /> : null}
+          {problemNotice}
           <div className="mt-4 flex flex-wrap gap-2">
-            <button type="button" disabled={busy} onClick={() => decide("approve")} className="min-h-11 border-2 border-brand px-4 font-semibold disabled:opacity-50" data-testid="mod-approve">
+            <Button type="button" disabled={busy} onClick={() => decide("approve")} data-testid="mod-approve">
               {failing.length && isMaster ? t("approveOverride") : t("approve")}
-            </button>
-            <button type="button" disabled={busy} onClick={() => decide("request_changes")} className="min-h-11 border-2 border-line px-4 font-semibold disabled:opacity-50">
+            </Button>
+            <Button type="button" variant="secondary" disabled={busy} onClick={() => decide("request_changes")}>
               {t("askChanges")}
-            </button>
-            <button type="button" disabled={busy} onClick={() => decide("reject")} className="min-h-11 border-2 border-danger px-4 font-semibold text-danger disabled:opacity-50">
+            </Button>
+            <Button type="button" variant="danger" disabled={busy} onClick={() => decide("reject")}>
               {t("reject")}
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
         <>
-          {problem ? (
-            <div className="mt-3">
-              <Notice tone="error">{problem.title}</Notice>
-            </div>
-          ) : null}
+          {problemNotice}
           {!open ? (
             <div className="mt-5 text-sm">
               {s.decidedBy ? <p>{t("decidedBy", { name: s.decidedBy.name ?? "–", time: formatDhaka(s.decidedAt, locale) })}</p> : null}
@@ -357,16 +361,16 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
               {s.override ? <p className="mt-1 font-semibold text-danger">{t("overridden", { name: s.override.by ?? "–", reason: s.override.reason ?? "" })}</p> : null}
               {s.status === "approved" ? <p className="mt-1 text-muted">{s.appliedAt ? t("applied") : t("notApplied")}</p> : null}
               {isMaster && (s.status === "approved" || s.status === "rejected") ? (
-                <button type="button" onClick={() => setDialog("reopen")} className="mt-3 min-h-11 border-2 border-line px-4 font-semibold">
+                <Button type="button" variant="secondary" className="mt-3" onClick={() => setDialog("reopen")}>
                   {t("reopen")}
-                </button>
+                </Button>
               ) : null}
             </div>
           ) : null}
         </>
       )}
 
-      <h3 className="mt-6 font-bold">{t("history")}</h3>
+      <h4 className="mt-6 text-xs font-semibold uppercase tracking-wide text-muted">{t("history")}</h4>
       <ol className="mt-2 space-y-1 text-sm">
         {s.history.map((h) => (
           <li key={h.id}>
@@ -405,10 +409,7 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
             onChanged();
           }}
         >
-          <label htmlFor="reopen-reason" className="mt-4 block text-sm font-semibold text-muted">
-            {t("reopenReason")}
-          </label>
-          <input id="reopen-reason" value={reopenReason} onChange={(e) => setReopenReason(e.target.value)} maxLength={500} className={`${inputCls} mt-1 w-full`} />
+          <Field id="reopen-reason" className="mt-4" label={t("reopenReason")} value={reopenReason} onChange={(e) => setReopenReason(e.target.value)} maxLength={500} />
         </CodeDialog>
       ) : null}
     </section>

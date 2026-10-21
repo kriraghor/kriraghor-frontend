@@ -1,31 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { formatTaka } from "@/lib/admin/finance";
-import { payouts } from "@/lib/admin/payouts";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Notice } from "@kriraghor/ui/primitives";
+import { Button, DataTable, Notice, Select, type Column } from "@kriraghor/ui/kit";
+import { formatTaka } from "@/lib/admin/finance";
+import { payouts, type Batch } from "@/lib/admin/payouts";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { StatusBadge } from "../../StatusBadge";
 import { formatDhaka } from "../useAdminMe";
 import type { DeskMe } from "./FinanceDesk";
-import { DataTable, Field, inputCls } from "./shared";
 
 const SCHEDULES = ["daily", "ground_weekly", "shop_weekly"] as const;
+type Totals = { payouts?: number; amount?: number; needsApproval?: number };
+const totalsOf = (b: Batch) => (b.totals ?? {}) as Totals;
 
 /** Payout runs (M07 §4.3 Batches): totals per run; masters can build a run now (catch-up, or in dev). */
 export function PayoutBatchesTab({ me }: { me: DeskMe }) {
   const t = useTranslations("payouts");
+  const tf = useTranslations("finance");
   const locale = useLocale();
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ["payout-batches"], queryFn: payouts.batches });
+  const list = useCursorList<Batch>(["payout-batches"], (cursor) => payouts.batches(cursor));
   const [schedule, setSchedule] = useState<(typeof SCHEDULES)[number]>("daily");
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<Problem | null>(null);
-  const items = q.data?.items ?? [];
+
+  const columns: Column<Batch>[] = [
+    { id: "schedule", header: t("schedule"), primary: true, sort: (b) => b.schedule, cell: (b) => (t.has(`schedules.${b.schedule}`) ? t(`schedules.${b.schedule}`) : b.schedule) },
+    { id: "windowEnd", header: t("windowEnd"), sort: (b) => b.windowEnd, cell: (b) => <span className="whitespace-nowrap">{formatDhaka(b.windowEnd, locale)}</span> },
+    { id: "payouts", header: t("payoutsCount"), align: "end", sort: (b) => totalsOf(b).payouts ?? 0, cell: (b) => totalsOf(b).payouts ?? 0 },
+    { id: "amount", header: t("amount"), align: "end", sort: (b) => totalsOf(b).amount ?? 0, cell: (b) => formatTaka(totalsOf(b).amount ?? 0, locale) },
+    { id: "needsApproval", header: t("needsApprovalCount"), align: "end", hideBelow: "lg", sort: (b) => totalsOf(b).needsApproval ?? 0, cell: (b) => totalsOf(b).needsApproval ?? 0 },
+    { id: "status", header: t("statusLabel"), sort: (b) => b.status, cell: (b) => <StatusBadge status={b.status}>{b.status}</StatusBadge> },
+  ];
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 flex flex-col gap-4">
       {me.isMaster ? (
         <form
           className="flex flex-wrap items-end gap-3"
@@ -44,40 +56,37 @@ export function PayoutBatchesTab({ me }: { me: DeskMe }) {
             }
           }}
         >
-          <Field label={t("schedule")}>
-            <select value={schedule} onChange={(e) => setSchedule(e.target.value as typeof schedule)} className={`${inputCls} w-56`}>
-              {SCHEDULES.map((s) => (
-                <option key={s} value={s}>
-                  {t(`schedules.${s}`)}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <button type="submit" disabled={busy} className="min-h-11 border-2 border-brand px-4 font-semibold disabled:opacity-50" data-testid="run-batch">
+          <Select id="batch-schedule" className="w-full sm:w-56" label={t("schedule")} value={schedule} onChange={(e) => setSchedule(e.target.value as typeof schedule)}>
+            {SCHEDULES.map((s) => (
+              <option key={s} value={s}>
+                {t(`schedules.${s}`)}
+              </option>
+            ))}
+          </Select>
+          <Button type="submit" busy={busy} data-testid="run-batch">
             {t("runNow")}
-          </button>
+          </Button>
         </form>
       ) : null}
       {problem ? (
-        <div className="mt-3 max-w-xl">
+        <div className="max-w-xl">
           <Notice tone="error">{problem.title}</Notice>
         </div>
       ) : null}
-      <DataTable head={[t("schedule"), t("windowEnd"), t("payoutsCount"), t("amount"), t("needsApprovalCount"), t("statusLabel")]} loading={q.isPending} error={q.isError} empty={!items.length} testId="payout-batches">
-        {items.map((b) => {
-          const totals = (b.totals ?? {}) as { payouts?: number; amount?: number; needsApproval?: number };
-          return (
-            <tr key={b.id}>
-              <td className="px-3 py-2">{t.has(`schedules.${b.schedule}`) ? t(`schedules.${b.schedule}`) : b.schedule}</td>
-              <td className="px-3 py-2 whitespace-nowrap">{formatDhaka(b.windowEnd, locale)}</td>
-              <td className="px-3 py-2 tabular-nums">{totals.payouts ?? 0}</td>
-              <td className="px-3 py-2 tabular-nums">{formatTaka(totals.amount ?? 0, locale)}</td>
-              <td className="px-3 py-2 tabular-nums">{totals.needsApproval ?? 0}</td>
-              <td className="px-3 py-2">{b.status}</td>
-            </tr>
-          );
-        })}
-      </DataTable>
+      <DataTable
+        label={tf("tabs.batches")}
+        testId="payout-batches"
+        columns={columns}
+        rows={list.rows}
+        rowId={(b) => b.id}
+        loading={list.loading}
+        error={list.error}
+        onRetry={list.retry}
+        empty={{ title: tf("empty") }}
+        hasMore={list.hasMore}
+        onMore={list.more}
+        busy={list.busy}
+      />
     </div>
   );
 }

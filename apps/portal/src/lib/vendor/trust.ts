@@ -10,7 +10,7 @@ export type PartyCase = components["schemas"]["PartyDispute"];
 export type Review = components["schemas"]["Review"];
 
 export const ownerTrust = {
-  cases: async () => unwrap(await api().GET("/me/disputes", { params: { query: { role: "respondent" } } })),
+  cases: async (cursor?: string) => unwrap(await api().GET("/me/disputes", { params: { query: { role: "respondent", ...(cursor ? { cursor } : {}) } } })),
   get: async (code: string) => unwrap(await api().GET("/me/disputes/{code}", { params: { path: { code } } })),
   respond: async (code: string, text: string) => unwrap(await api().POST("/me/disputes/{code}/respond", { params: { path: { code } }, body: { text } })),
   statement: async (code: string, text: string) => unwrap(await api().POST("/me/disputes/{code}/statement", { params: { path: { code } }, body: { text } })),

@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { ArrowLeft, PencilSimple } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
+import { Badge, Button, Card, DataTable, Field, Notice, PageTitle, Select, Skeleton, Textarea, cn, type Column } from "@kriraghor/ui/kit";
 import { stepUp } from "@/lib/admin/stepUp";
 import { MASTER_ACTIONS, SEVERITY_ORDER, riskAdmin, stepUpScope, type RiskActionName, type Severity } from "@/lib/admin/risk";
-import { Notice } from "@kriraghor/ui/primitives";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
-import { Chip, inputCls } from "../finance/shared";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 
-const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { critical: "bad", high: "bad", medium: "warn", info: "muted" };
+type Row = Awaited<ReturnType<typeof riskAdmin.flags>>["items"][number];
 
 function useAccess() {
   const { ready, me } = useAdminMe();
@@ -27,120 +30,148 @@ function useAccess() {
  * account and decides.
  */
 export function RiskDesk() {
+  // The severity filter lives in the URL (useSearchParams), so the desk renders inside Suspense.
+  return (
+    <Suspense fallback={<Skeleton className="mx-auto mt-8 h-40 max-w-[1320px]" />}>
+      <Desk />
+    </Suspense>
+  );
+}
+
+function Desk() {
   const t = useTranslations("riskDesk");
   const locale = useLocale();
   const { ready, allowed, isMaster } = useAccess();
-  const [severity, setSeverity] = useState<Severity | "">("");
+  const { values, set } = useUrlFilters({ severity: { default: "", allowed: ["", ...SEVERITY_ORDER] } });
+  const severity = values.severity as Severity | "";
   const [editing, setEditing] = useState<{ key: string; value: string } | null>(null);
   const [reason, setReason] = useState("");
   const [sent, setSent] = useState(false);
   const ov = useQuery({ queryKey: ["risk-overview"], enabled: ready && allowed, queryFn: () => riskAdmin.overview() });
-  const fl = useQuery({ queryKey: ["risk-flags", severity], enabled: ready && allowed, queryFn: () => riskAdmin.flags({ severity: severity || undefined }) });
+  const fl = useCursorList<Row>(["risk-flags", severity], (cursor) => riskAdmin.flags({ severity: severity || undefined, cursor }), { enabled: ready && allowed });
+
+  const columns: Column<Row>[] = [
+    {
+      id: "account",
+      header: t("col.account"),
+      primary: true,
+      cell: (f) => (
+        <Link href={`/admin/risk/accounts/${f.userId}`} className="font-semibold text-brand-text underline underline-offset-2" data-testid="risk-account-link">
+          {(f as { user?: { displayName?: string | null } }).user?.displayName ?? f.userId.slice(0, 8)}
+        </Link>
+      ),
+    },
+    {
+      id: "rule",
+      header: t("col.rule"),
+      cell: (f) => (
+        <>
+          <span className="block font-semibold">{t(`rule.${f.ruleKey}`)}</span>
+          <span className="block text-xs text-muted">{f.reasonText}</span>
+        </>
+      ),
+    },
+    {
+      id: "severity",
+      header: t("col.severity"),
+      sort: (f) => SEVERITY_ORDER.indexOf(f.severity),
+      cell: (f) => (
+        <StatusBadge status={f.severity} domain="risk">
+          {t(`severity.${f.severity}`)}
+        </StatusBadge>
+      ),
+    },
+    { id: "status", header: t("col.status"), hideBelow: "lg", cell: (f) => t(`status.${f.status}`) },
+    { id: "seen", header: t("col.seen"), sort: (f) => f.lastSeenAt, cell: (f) => <span className="whitespace-nowrap">{formatDhaka(f.lastSeenAt, locale)}</span> },
+  ];
 
   return (
-    <>
-      <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
-        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-        <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
-        {ready && !allowed ? (
-          <div className="mt-6 max-w-3xl">
-            <Notice tone="error">{t("noAccess")}</Notice>
+    <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
+      <PageTitle title={t("title")} description={t("intro")} />
+      {ready && !allowed ? (
+        <Notice tone="error" className="mt-6 max-w-3xl">
+          {t("noAccess")}
+        </Notice>
+      ) : (
+        <>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" data-testid="risk-counts">
+            {SEVERITY_ORDER.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => set({ severity: severity === s ? "" : s })}
+                aria-pressed={severity === s}
+                className={cn("rounded-card border p-4 text-left transition-colors", severity === s ? "border-brand bg-brand-soft" : "border-line bg-surface hover:border-line-strong")}
+                data-testid={`severity-${s}`}
+              >
+                <span className="block text-xs font-semibold uppercase tracking-wide text-muted">{t(`severity.${s}`)}</span>
+                <span className={cn("mt-1 block font-display text-3xl font-bold tabular", s === "critical" && (ov.data?.counts[s] ?? 0) > 0 && "text-danger")}>{ov.data?.counts[s] ?? "–"}</span>
+              </button>
+            ))}
           </div>
-        ) : (
-          <>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" data-testid="risk-counts">
-              {SEVERITY_ORDER.map((s) => (
-                <button key={s} type="button" onClick={() => setSeverity(severity === s ? "" : s)} aria-pressed={severity === s} className={`border-2 p-4 text-left ${severity === s ? "border-brand" : "border-line"}`}>
-                  <span className="block text-xs font-bold uppercase tracking-wide text-muted">{t(`severity.${s}`)}</span>
-                  <span className="block text-3xl font-extrabold tabular-nums">{ov.data?.counts[s] ?? "–"}</span>
-                </button>
-              ))}
-            </div>
-            <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
-              <div className="overflow-x-auto border-2 border-line">
-                <table className="w-full min-w-[720px] text-sm" data-testid="risk-flags">
-                  <thead className="bg-surface-2 text-left text-xs uppercase tracking-wide text-muted">
-                    <tr>
-                      <th className="px-3 py-2">{t("col.account")}</th>
-                      <th className="px-3 py-2">{t("col.rule")}</th>
-                      <th className="px-3 py-2">{t("col.severity")}</th>
-                      <th className="px-3 py-2">{t("col.status")}</th>
-                      <th className="px-3 py-2">{t("col.seen")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(fl.data?.items ?? []).map((f) => (
-                      <tr key={f.id} className="border-t border-line hover:bg-surface-2">
-                        <td className="px-3 py-2">
-                          <Link href={`/admin/risk/accounts/${f.userId}`} className="font-semibold text-brand underline" data-testid="risk-account-link">
-                            {(f as { user?: { displayName?: string | null } }).user?.displayName ?? f.userId.slice(0, 8)}
-                          </Link>
-                        </td>
-                        <td className="px-3 py-2">
-                          <span className="block font-semibold">{t(`rule.${f.ruleKey}`)}</span>
-                          <span className="block text-xs text-muted">{f.reasonText}</span>
-                        </td>
-                        <td className="px-3 py-2">
-                          <Chip tone={TONE[f.severity] ?? "muted"}>{t(`severity.${f.severity}`)}</Chip>
-                        </td>
-                        <td className="px-3 py-2">{t(`status.${f.status}`)}</td>
-                        <td className="px-3 py-2">{formatDhaka(f.lastSeenAt, locale)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {!fl.isPending && !fl.data?.items.length ? <p className="p-4 text-muted">{t("empty")}</p> : null}
-              </div>
-              <div className="border-2 border-line p-4">
-                <h2 className="font-extrabold">{t("rules")}</h2>
-                <ul className="mt-2 divide-y divide-line text-sm" data-testid="risk-rules">
-                  {(ov.data?.rules ?? []).map((r) => (
-                    <li key={r.key} className="flex flex-wrap items-center justify-between gap-2 py-2">
-                      <span>
-                        <span className="block font-semibold">{t(`rule.${r.key}`)}</span>
-                        <span className="block text-xs text-muted">
-                          {t(`severity.${r.severity}`)} · {r.settingKey ? t("threshold", { value: r.threshold }) : t("presence")} · {t("openCount", { n: r.open })}
-                        </span>
+          <div className="mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+            <DataTable
+              label={t("title")}
+              testId="risk-flags"
+              columns={columns}
+              rows={fl.rows}
+              rowId={(f) => f.id}
+              loading={fl.loading}
+              error={fl.error}
+              onRetry={fl.retry}
+              empty={{ title: t("empty") }}
+              hasMore={fl.hasMore}
+              onMore={fl.more}
+              busy={fl.busy}
+              rowTestId="risk-flag"
+            />
+            <Card>
+              <h2 className="font-display text-lg font-bold">{t("rules")}</h2>
+              <ul className="mt-2 divide-y divide-line text-sm" data-testid="risk-rules">
+                {(ov.data?.rules ?? []).map((r) => (
+                  <li key={r.key} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
+                    <span>
+                      <span className="block font-semibold">{t(`rule.${r.key}`)}</span>
+                      <span className="block text-xs text-muted">
+                        {t(`severity.${r.severity}`)} · {r.settingKey ? t("threshold", { value: r.threshold }) : t("presence")} · {t("openCount", { n: r.open })}
                       </span>
-                      {isMaster && r.settingKey ? (
-                        <button type="button" onClick={() => (setEditing({ key: r.settingKey!, value: String(r.threshold) }), setSent(false))} className="min-h-11 border-2 border-line px-3 text-xs font-semibold">
-                          {t("change")}
-                        </button>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-                {sent ? <Notice>{t("proposed")}</Notice> : null}
-              </div>
-            </div>
-          </>
-        )}
-        {editing ? (
-          <CodeDialog
-            title={t("changeTitle", { key: editing.key })}
-            help={t("changeHelp")}
-            onClose={() => setEditing(null)}
-            onConfirm={async (c) => {
-              const value = Number(editing.value);
-              if (!Number.isFinite(value) || reason.trim().length < 5) throw { code: "VALIDATION_FAILED", title: t("changeInvalid"), status: 422 };
-              const token = await stepUp(c, "settings.write");
-              await riskAdmin.thresholds([{ key: editing.key, to: value }], reason.trim(), token);
-              setEditing(null);
-              setSent(true);
-            }}
-          >
-            <label htmlFor="risk-threshold" className="mt-4 block text-sm font-semibold text-muted">
-              {t("newValue")}
-            </label>
-            <input id="risk-threshold" inputMode="decimal" value={editing.value} onChange={(e) => setEditing({ ...editing, value: e.target.value })} className={`${inputCls} mt-1 w-full`} />
-            <label htmlFor="risk-threshold-reason" className="mt-3 block text-sm font-semibold text-muted">
-              {t("reason")}
-            </label>
-            <input id="risk-threshold-reason" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={500} className={`${inputCls} mt-1 w-full`} />
-          </CodeDialog>
-        ) : null}
-      </div>
-    </>
+                    </span>
+                    {isMaster && r.settingKey ? (
+                      <Button type="button" variant="secondary" size="sm" icon={<PencilSimple size={16} aria-hidden />} onClick={() => (setEditing({ key: r.settingKey!, value: String(r.threshold) }), setSent(false))}>
+                        {t("change")}
+                      </Button>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+              {sent ? (
+                <Notice tone="success" className="mt-3">
+                  {t("proposed")}
+                </Notice>
+              ) : null}
+            </Card>
+          </div>
+        </>
+      )}
+      {editing ? (
+        <CodeDialog
+          title={t("changeTitle", { key: editing.key })}
+          help={t("changeHelp")}
+          onClose={() => setEditing(null)}
+          onConfirm={async (c) => {
+            const value = Number(editing.value);
+            if (!Number.isFinite(value) || reason.trim().length < 5) throw { code: "VALIDATION_FAILED", title: t("changeInvalid"), status: 422 };
+            const token = await stepUp(c, "settings.write");
+            await riskAdmin.thresholds([{ key: editing.key, to: value }], reason.trim(), token);
+            setEditing(null);
+            setSent(true);
+          }}
+        >
+          <Field id="risk-threshold" className="mt-4" label={t("newValue")} inputMode="decimal" value={editing.value} onChange={(e) => setEditing({ ...editing, value: e.target.value })} />
+          <Field id="risk-threshold-reason" className="mt-3" label={t("reason")} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={500} />
+        </CodeDialog>
+      ) : null}
+    </div>
   );
 }
 
@@ -169,7 +200,7 @@ export function RiskAccountView({ userId }: { userId: string }) {
   const problem = problemOf(take.error) ?? problemOf(undo.error);
 
   if (ready && !allowed) return <Notice tone="error">{t("noAccess")}</Notice>;
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <Skeleton className="mx-auto mt-10 h-96 max-w-[1320px]" />;
   if (!q.data) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const acc = q.data;
   const choices: RiskActionName[] = ["request_documents", "clear", "suspend", ...(isMaster ? (["freeze_payouts", "ban"] as RiskActionName[]) : [])];
@@ -179,31 +210,40 @@ export function RiskAccountView({ userId }: { userId: string }) {
   return (
     <>
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
-        <Link href="/admin/risk" className="text-sm font-semibold text-brand underline">
-          ← {t("title")}
+        <Link href="/admin/risk" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-text hover:underline">
+          <ArrowLeft size={16} aria-hidden />
+          {t("title")}
         </Link>
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-extrabold">{acc.user.displayName ?? userId.slice(0, 8)}</h1>
-          <Chip tone={TONE[acc.riskLevel] ?? "ok"}>{t(`level.${acc.riskLevel}`)}</Chip>
+          <h1 className="text-3xl font-bold sm:text-4xl">{acc.user.displayName ?? userId.slice(0, 8)}</h1>
+          {acc.riskLevel === "none" ? (
+            <Badge tone="brand">{t(`level.${acc.riskLevel}`)}</Badge>
+          ) : (
+            <StatusBadge status={acc.riskLevel} domain="risk">
+              {t(`level.${acc.riskLevel}`)}
+            </StatusBadge>
+          )}
           <span className="text-sm text-muted">
             {t("accountStatus", { status: acc.user.status })} · {t("kyc", { status: acc.user.kycStatus ?? "–" })}
           </span>
         </div>
-        <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_440px]">
+        <div className="mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_440px]">
           <div className="space-y-6">
             <section>
-              <h2 className="text-lg font-extrabold">{t("flags")}</h2>
+              <h2 className="font-display text-lg font-bold">{t("flags")}</h2>
               <ul className="mt-2 space-y-2" data-testid="account-flags">
                 {acc.flags.map((f) => (
-                  <li key={f.id} className={`border-2 p-3 text-sm ${flagId === f.id ? "border-brand" : "border-line"}`}>
+                  <li key={f.id} className={cn("rounded-card border p-3 text-sm transition-colors", flagId === f.id ? "border-brand bg-brand-soft" : "border-line bg-surface")}>
                     <label className="flex cursor-pointer items-start gap-3">
-                      <input type="radio" name="flag" checked={flagId === f.id} onChange={() => setFlagId(f.id)} className="mt-1" />
+                      <input type="radio" name="flag" checked={flagId === f.id} onChange={() => setFlagId(f.id)} className="mt-1 size-4 accent-[var(--kg-brand)]" />
                       <span className="flex-1">
                         <span className="flex flex-wrap items-center gap-2">
-                          <span className="font-bold">{t(`rule.${f.ruleKey}`)}</span>
-                          <Chip tone={TONE[f.severity] ?? "muted"}>{t(`severity.${f.severity}`)}</Chip>
+                          <span className="font-semibold">{t(`rule.${f.ruleKey}`)}</span>
+                          <StatusBadge status={f.severity} domain="risk">
+                            {t(`severity.${f.severity}`)}
+                          </StatusBadge>
                           <span className="text-muted">{t(`status.${f.status}`)}</span>
-                          {f.escalated ? <span className="text-xs font-bold text-danger">{t("escalated")}</span> : null}
+                          {f.escalated ? <span className="text-xs font-semibold text-danger">{t("escalated")}</span> : null}
                         </span>
                         <span className="block text-muted">{f.reasonText}</span>
                         <span className="block text-xs text-muted">{t("seen", { first: formatDhaka(f.firstSeenAt, locale), last: formatDhaka(f.lastSeenAt, locale) })}</span>
@@ -215,10 +255,10 @@ export function RiskAccountView({ userId }: { userId: string }) {
               </ul>
             </section>
             <section>
-              <h2 className="text-lg font-extrabold">{t("timeline")}</h2>
-              <ol className="mt-2 divide-y divide-line border-y-2 border-line text-sm" data-testid="account-actions">
+              <h2 className="font-display text-lg font-bold">{t("timeline")}</h2>
+              <ol className="mt-2 divide-y divide-line rounded-card border border-line bg-surface px-4 text-sm" data-testid="account-actions">
                 {acc.actions.map((x) => (
-                  <li key={x.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                  <li key={x.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
                     <span>
                       <span className="font-semibold">{t(`action.${x.action}`)}</span> · {t(`role.${x.actorRole}`)} · {formatDhaka(x.createdAt, locale)}
                       <span className="block text-muted">{x.reason}</span>
@@ -226,100 +266,84 @@ export function RiskAccountView({ userId }: { userId: string }) {
                     {x.undone ? (
                       <span className="text-xs text-muted">{t("undone")}</span>
                     ) : x.undoable ? (
-                      <button
+                      <Button
                         type="button"
+                        variant="secondary"
+                        size="sm"
                         disabled={undoReason.trim().length < 10 || ((x.action === "freeze_payouts" || x.action === "ban") && !isMaster)}
                         onClick={() => {
                           const s = stepUpScope(x.action);
                           if (s) setCodeFor({ kind: "undo", id: x.id, scope: s });
                           else undo.mutate(x.id);
                         }}
-                        className="min-h-11 border-2 border-line px-3 text-xs font-semibold disabled:opacity-50"
                         data-testid="undo-action"
                       >
                         {t("undo")}
-                      </button>
+                      </Button>
                     ) : null}
                   </li>
                 ))}
-                {!acc.actions.length ? <li className="py-2 text-muted">{t("noActions")}</li> : null}
+                {!acc.actions.length ? <li className="py-2.5 text-muted">{t("noActions")}</li> : null}
               </ol>
-              {acc.actions.some((x) => x.undoable && !x.undone) ? (
-                <input value={undoReason} onChange={(e) => setUndoReason(e.target.value)} placeholder={t("undoReason")} aria-label={t("undoReason")} maxLength={500} className={`${inputCls} mt-2 w-full`} />
-              ) : null}
+              {acc.actions.some((x) => x.undoable && !x.undone) ? <Field id="risk-undo-reason" className="mt-3" label={t("undoReason")} value={undoReason} onChange={(e) => setUndoReason(e.target.value)} maxLength={500} /> : null}
             </section>
           </div>
           <aside className="space-y-4">
-            <div className="border-2 border-line-strong p-4">
-              <h2 className="font-extrabold">{t("takeAction")}</h2>
-              <label htmlFor="risk-action" className="mt-3 block text-sm font-semibold text-muted">
-                {t("actionLabel")}
-              </label>
-              <select id="risk-action" value={action} onChange={(e) => setAction(e.target.value as RiskActionName)} className={`${inputCls} mt-1 w-full`} data-testid="risk-action">
+            <Card className="flex flex-col gap-3">
+              <h2 className="font-display text-lg font-bold">{t("takeAction")}</h2>
+              <Select id="risk-action" label={t("actionLabel")} value={action} onChange={(e) => setAction(e.target.value as RiskActionName)} data-testid="risk-action">
                 {choices.map((c) => (
                   <option key={c} value={c}>
                     {t(`action.${c}`)}
                     {MASTER_ACTIONS.has(c) ? ` (${t("masterOnly")})` : ""}
                   </option>
                 ))}
-              </select>
-              {action === "suspend" ? (
-                <>
-                  <label htmlFor="risk-days" className="mt-3 block text-sm font-semibold text-muted">
-                    {t("days")}
-                  </label>
-                  <input id="risk-days" inputMode="numeric" value={days} onChange={(e) => setDays(e.target.value)} className={`${inputCls} mt-1 w-full`} />
-                </>
-              ) : null}
+              </Select>
+              {action === "suspend" ? <Field id="risk-days" label={t("days")} inputMode="numeric" value={days} onChange={(e) => setDays(e.target.value)} /> : null}
               {action === "request_documents" ? (
-                <>
-                  <label htmlFor="risk-doc" className="mt-3 block text-sm font-semibold text-muted">
-                    {t("docType")}
-                  </label>
-                  <select id="risk-doc" value={docType} onChange={(e) => setDocType(e.target.value as typeof docType)} className={`${inputCls} mt-1 w-full`}>
-                    {(["nid", "trade_license", "deed_or_lease", "tin"] as const).map((d) => (
-                      <option key={d} value={d}>
-                        {t(`doc.${d}`)}
-                      </option>
-                    ))}
-                  </select>
-                </>
+                <Select id="risk-doc" label={t("docType")} value={docType} onChange={(e) => setDocType(e.target.value as typeof docType)}>
+                  {(["nid", "trade_license", "deed_or_lease", "tin"] as const).map((d) => (
+                    <option key={d} value={d}>
+                      {t(`doc.${d}`)}
+                    </option>
+                  ))}
+                </Select>
               ) : null}
-              <label htmlFor="risk-reason" className="mt-3 block text-sm font-semibold text-muted">
-                {t("reasonLong")}
-              </label>
-              <textarea id="risk-reason" value={reason} onChange={(e) => setReason(e.target.value)} rows={3} maxLength={500} className="mt-1 w-full border-2 border-line bg-surface px-3 py-2" />
-              {action === "clear" && !flagId ? <p className="mt-1 text-sm text-muted">{t("pickFlag")}</p> : null}
+              <Textarea id="risk-reason" label={t("reasonLong")} value={reason} onChange={(e) => setReason(e.target.value)} rows={3} maxLength={500} hint={action === "clear" && !flagId ? t("pickFlag") : undefined} />
               {problem ? <Notice tone="error">{t.has(`errors.${problem.code}`) ? t(`errors.${problem.code}`) : problem.title}</Notice> : null}
-              <button
+              <Button
                 type="button"
-                disabled={!ready2 || take.isPending}
+                block
+                variant={action === "ban" || action === "freeze_payouts" ? "danger" : "primary"}
+                disabled={!ready2}
+                busy={take.isPending}
                 onClick={() => (scope ? setCodeFor({ kind: "act" }) : take.mutate())}
-                className={`mt-3 min-h-11 w-full px-4 font-bold text-white disabled:opacity-50 ${action === "ban" || action === "freeze_payouts" ? "bg-danger" : "bg-brand"}`}
                 data-testid="take-action"
               >
                 {t(`do.${action}`)}
-              </button>
-            </div>
-            <div className="border-2 border-line p-4 text-sm">
-              <h2 className="font-extrabold">{t("reliability")}</h2>
+              </Button>
+            </Card>
+            <Card className="text-sm">
+              <h2 className="font-display text-base font-bold">{t("reliability")}</h2>
               <ul className="mt-2 space-y-1">
                 {acc.trust.map((s) => (
-                  <li key={s.kind} className="flex justify-between">
+                  <li key={s.kind} className="flex justify-between gap-3">
                     <span>{t(`trustKind.${s.kind}`)}</span>
-                    <span className="tabular-nums">{s.score === null ? "–" : `${s.score}%`} · {t("sample", { n: s.sample })}</span>
+                    <span className="tabular">
+                      {s.score === null ? "–" : `${s.score}%`} · {t("sample", { n: s.sample })}
+                    </span>
                   </li>
                 ))}
                 {!acc.trust.length ? <li className="text-muted">{t("noScores")}</li> : null}
               </ul>
-              <h2 className="mt-4 font-extrabold">{t("holds")}</h2>
+              <h2 className="mt-4 font-display text-base font-bold">{t("holds")}</h2>
               <ul className="mt-1">
                 {acc.holds.map((h) => (
                   <li key={h.id}>{t(`hold.${h.type}`)}</li>
                 ))}
                 {!acc.holds.length ? <li className="text-muted">{t("noHolds")}</li> : null}
               </ul>
-              <h2 className="mt-4 font-extrabold">{t("documents")}</h2>
+              <h2 className="mt-4 font-display text-base font-bold">{t("documents")}</h2>
               <ul className="mt-1">
                 {acc.documentRequests.map((r) => (
                   <li key={r.id}>
@@ -328,16 +352,16 @@ export function RiskAccountView({ userId }: { userId: string }) {
                 ))}
                 {!acc.documentRequests.length ? <li className="text-muted">{t("noDocuments")}</li> : null}
               </ul>
-              <h2 className="mt-4 font-extrabold">{t("metrics")}</h2>
+              <h2 className="mt-4 font-display text-base font-bold">{t("metrics")}</h2>
               <ul className="mt-1">
                 {acc.metrics.map((m) => (
-                  <li key={m.metric} className="flex justify-between">
+                  <li key={m.metric} className="flex justify-between gap-3">
                     <span>{t(`metric.${m.metric}`)}</span>
-                    <span className="tabular-nums">{m.value}</span>
+                    <span className="tabular">{m.value}</span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </Card>
           </aside>
         </div>
         {codeFor ? (

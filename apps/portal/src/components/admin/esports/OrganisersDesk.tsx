@@ -1,20 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { ArrowCounterClockwise, FilePdf, Prohibit } from "@phosphor-icons/react";
+import { problemOf } from "@kriraghor/api-client";
+import { Button, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, ReasonDialog, Select, Skeleton, Textarea, buttonClass, cn, type Column } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
 import { contractBody, organisersAdmin, type Contract, type Invoice, type OrgStatus } from "@/lib/admin/organisers";
 import { stepUp } from "@/lib/admin/stepUp";
-import { problemOf } from "@kriraghor/api-client";
-import { Notice } from "@kriraghor/ui/primitives";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
-import { Chip, Field, inputCls } from "../finance/shared";
 
-const STATUSES = ["", "pending_review", "verified", "suspended", "changes_requested", "rejected"] as const;
-const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { verified: "ok", pending_review: "warn", suspended: "bad", rejected: "bad", changes_requested: "bad", draft: "muted", active: "ok", ended: "muted", issued: "warn", overdue: "bad", paid: "ok", voided: "muted" };
-const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
+type Row = Awaited<ReturnType<typeof organisersAdmin.list>>["items"][number];
+const STATUSES = ["pending_review", "verified", "suspended", "changes_requested", "rejected"] as const;
 
 /**
  * /admin/esports/organisers (M22): organisations (their review is on the Moderation desk), each with
@@ -22,42 +23,66 @@ const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
  * invoices (void with step-up). Suspending an organisation needs manage_organisers; restoring, a master.
  */
 export function OrganisersDesk() {
+  // The status and the open organisation live in the URL (useSearchParams), so the desk renders inside Suspense.
+  return (
+    <Suspense fallback={<Skeleton className="mx-auto mt-10 h-64 max-w-[1320px]" />}>
+      <Desk />
+    </Suspense>
+  );
+}
+
+function Desk() {
   const t = useTranslations("organisersDesk");
   const { ready } = useAdminMe();
-  const [status, setStatus] = useState<(typeof STATUSES)[number]>("");
-  const [open, setOpen] = useState<string | null>(null);
-  const list = useQuery({ queryKey: ["admin-orgs", status], queryFn: () => organisersAdmin.list({ status: (status || undefined) as OrgStatus | undefined }), enabled: ready });
+  const { values, set, params } = useUrlFilters({ status: { default: "", allowed: ["", ...STATUSES] } });
+  const status = values.status as OrgStatus | "";
+  const open = params.get("id");
+  const list = useQuery({ queryKey: ["admin-orgs", status], queryFn: () => organisersAdmin.list({ status: status || undefined }), enabled: ready });
+  const openName = list.data?.items.find((o) => o.id === open)?.name;
+
+  const columns: Column<Row>[] = [
+    { id: "name", header: t("panel.name"), primary: true, sort: (o) => o.name, cell: (o) => <span className="font-semibold">{o.name}</span> },
+    {
+      id: "status",
+      header: t("statusLabel"),
+      sort: (o) => o.status,
+      cell: (o) => (
+        <StatusBadge status={o.status} domain="organiser">
+          {t(`status.${o.status}`)}
+        </StatusBadge>
+      ),
+    },
+  ];
+
   return (
-    <>
-      <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-8">
-        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-        <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
-        <div className="mt-6 flex flex-wrap gap-2" role="tablist">
-          {STATUSES.map((s) => (
-            <button key={s || "all"} type="button" role="tab" aria-selected={status === s} onClick={() => setStatus(s)} className={`${btn} ${status === s ? "border-brand" : "border-line text-muted"}`}>
-              {s ? t(`status.${s}`) : t("all")}
-            </button>
-          ))}
+    <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
+      <PageTitle title={t("title")} description={t("intro")} />
+      <DetailLayout className="mt-6" open={Boolean(open)} onClose={() => set({ id: null })} title={openName ?? t("title")} pane={open ? <OrgDetail key={open} id={open} /> : null} width={600} testId="admin-org">
+        <div className="flex flex-col gap-4">
+          <FilterBar
+            chips={{
+              value: status,
+              onChange: (v) => set({ status: v }),
+              label: t("title"),
+              options: [{ value: "", label: t("all") }, ...STATUSES.map((s) => ({ value: s, label: t(`status.${s}`) }))],
+            }}
+          />
+          <DataTable
+            label={t("title")}
+            testId="admin-orgs"
+            columns={columns}
+            rows={list.data?.items}
+            rowId={(o) => o.id}
+            loading={list.isPending}
+            error={list.error}
+            onRetry={() => void list.refetch()}
+            empty={{ title: t("none") }}
+            onRowClick={(o) => set({ id: o.id })}
+            selectedId={open}
+          />
         </div>
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
-          <ul className="flex flex-col gap-2" data-testid="admin-orgs">
-            {list.isPending ? <li className="h-32 animate-pulse bg-surface-2" /> : null}
-            {list.data && !list.data.items.length ? <li className="text-muted">{t("none")}</li> : null}
-            {(list.data?.items ?? []).map((o) => (
-              <li key={o.id}>
-                <button type="button" onClick={() => setOpen(o.id)} className={`block w-full border-2 p-3 text-left ${open === o.id ? "border-brand" : "border-line hover:border-brand"}`}>
-                  <span className="flex items-center justify-between gap-2">
-                    <span className="font-bold">{o.name}</span>
-                    <Chip tone={TONE[o.status] ?? "muted"}>{t(`status.${o.status}`)}</Chip>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          {open ? <OrgDetail key={open} id={open} /> : <p className="text-muted">{t("pick")}</p>}
-        </div>
-      </div>
-    </>
+      </DetailLayout>
+    </div>
   );
 }
 
@@ -73,6 +98,9 @@ function OrgDetail({ id }: { id: string }) {
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
   const [dialog, setDialog] = useState<{ title: string; reason?: boolean; run: (token: string, reason: string) => Promise<unknown> } | null>(null);
   const [reason, setReason] = useState("");
+  const [orgAction, setOrgAction] = useState<"suspend" | "restore" | null>(null);
+  const [orgBusy, setOrgBusy] = useState(false);
+  const [orgError, setOrgError] = useState<string | null>(null);
   const canManage = Boolean(me && (me.isMaster || me.permissions.includes("manage_organisers" as never)));
   const refresh = async () => {
     for (const k of ["admin-org", "admin-org-contracts", "admin-org-invoices", "admin-orgs"]) await qc.invalidateQueries({ queryKey: [k] });
@@ -87,70 +115,73 @@ function OrgDetail({ id }: { id: string }) {
       setMsg({ text: problemOf(err)?.title ?? t("failed"), tone: "error" });
     }
   };
-  if (org.isPending) return <div className="h-64 animate-pulse bg-surface-2" />;
+  async function actOnOrg(why: string) {
+    if (!orgAction) return;
+    setOrgError(null);
+    setOrgBusy(true);
+    try {
+      await (orgAction === "suspend" ? organisersAdmin.suspend(id, why) : organisersAdmin.restore(id, why));
+      setMsg({ text: t(orgAction === "suspend" ? "suspended" : "restored"), tone: "info" });
+      setOrgAction(null);
+      await refresh();
+    } catch (err) {
+      setOrgError(problemOf(err)?.title ?? t("failed"));
+    } finally {
+      setOrgBusy(false);
+    }
+  }
+  if (org.isPending) return <Skeleton className="h-64" />;
   if (org.isError) return <Notice tone="error">{t("failed")}</Notice>;
   const o = org.data;
   const body = contractBody(form);
 
   return (
-    <div className="space-y-6" data-testid="admin-org">
+    <div className="flex flex-col gap-6">
       <div>
-        <div className="flex flex-wrap items-center gap-3">
-          <h2 className="text-2xl font-extrabold">{o.name}</h2>
-          <Chip tone={TONE[o.status] ?? "muted"}>{t(`status.${o.status}`)}</Chip>
-        </div>
+        <StatusBadge status={o.status} domain="organiser">
+          {t(`status.${o.status}`)}
+        </StatusBadge>
         {o.about ? <p className="mt-2 text-sm">{o.about}</p> : null}
         <p className="mt-2 text-sm text-muted">{t("members", { list: o.members.map((m) => `${m.name ?? "–"} (${m.role})`).join(", ") })}</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {canManage && o.status === "verified" ? (
-            <button
-              type="button"
-              className={`${btn} border-danger text-danger`}
-              onClick={() => {
-                const why = window.prompt(t("reason"));
-                if (why && why.trim().length >= 5) void run(() => organisersAdmin.suspend(id, why.trim()), t("suspended"));
-              }}
-            >
+            <Button type="button" variant="secondary" size="sm" className="text-danger" icon={<Prohibit size={16} aria-hidden />} onClick={() => setOrgAction("suspend")}>
               {t("suspend")}
-            </button>
+            </Button>
           ) : null}
           {me?.isMaster && o.status === "suspended" ? (
-            <button
-              type="button"
-              className={`${btn} border-brand`}
-              onClick={() => {
-                const why = window.prompt(t("reason"));
-                if (why && why.trim().length >= 5) void run(() => organisersAdmin.restore(id, why.trim()), t("restored"));
-              }}
-            >
+            <Button type="button" variant="secondary" size="sm" icon={<ArrowCounterClockwise size={16} aria-hidden />} onClick={() => setOrgAction("restore")}>
               {t("restore")}
-            </button>
+            </Button>
           ) : null}
         </div>
       </div>
 
-      <div>
-        <h3 className="text-xl font-extrabold">{t("contracts")}</h3>
+      <section>
+        <h3 className="font-display text-lg font-bold">{t("contracts")}</h3>
         <ul className="mt-2 flex flex-col gap-2" data-testid="admin-contracts">
           {((contracts.data?.items ?? []) as Contract[]).map((k) => (
-            <li key={k.id} className="border-2 border-line p-3">
+            <li key={k.id} className="rounded-card border border-line p-3">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="min-w-0 flex-1 font-semibold">{k.model === "percentage" ? t("pct", { pct: k.effectivePct ?? 0 }) : t("flat", { fee: formatTaka(k.flatFee ?? 0, locale), cycle: t(`cycle.${k.billingCycle}`) })}</span>
                 <span className="text-sm text-muted">
                   {k.startsOn}
                   {k.endsOn ? ` – ${k.endsOn}` : ""}
                 </span>
-                <Chip tone={TONE[k.status] ?? "muted"}>{t(`contractStatus.${k.status}`)}</Chip>
+                <StatusBadge status={k.status} domain="organiser">
+                  {t(`contractStatus.${k.status}`)}
+                </StatusBadge>
               </div>
               {canManage ? (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="mt-3 flex flex-wrap items-center gap-2">
                   {k.status !== "ended" ? (
-                    <label className="text-sm">
-                      <span className="font-semibold text-muted">{k.hasSignedDocument ? t("replacePdf") : t("attachPdf")}</span>
+                    <label className={cn(buttonClass({ variant: "secondary", size: "sm" }), "cursor-pointer")}>
+                      <FilePdf size={16} aria-hidden />
+                      {k.hasSignedDocument ? t("replacePdf") : t("attachPdf")}
                       <input
                         type="file"
                         accept="application/pdf"
-                        className="ml-2 text-sm"
+                        className="sr-only"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           e.target.value = "";
@@ -160,19 +191,19 @@ function OrgDetail({ id }: { id: string }) {
                     </label>
                   ) : null}
                   {["draft", "suspended"].includes(k.status) ? (
-                    <button type="button" className={`${btn} border-brand`} disabled={!k.hasSignedDocument} onClick={() => setDialog({ title: t("activateTitle"), run: (token) => organisersAdmin.activate(k.id, token) })} data-testid="contract-activate">
+                    <Button type="button" size="sm" disabled={!k.hasSignedDocument} onClick={() => setDialog({ title: t("activateTitle"), run: (token) => organisersAdmin.activate(k.id, token) })} data-testid="contract-activate">
                       {k.status === "draft" ? t("activate") : t("reinstate")}
-                    </button>
+                    </Button>
                   ) : null}
                   {k.status === "active" ? (
-                    <button type="button" className={`${btn} border-danger text-danger`} onClick={() => setDialog({ title: t("suspendContract"), reason: true, run: (token, why) => organisersAdmin.stop(k.id, "suspend", why, token) })}>
+                    <Button type="button" variant="secondary" size="sm" className="text-danger" onClick={() => setDialog({ title: t("suspendContract"), reason: true, run: (token, why) => organisersAdmin.stop(k.id, "suspend", why, token) })}>
                       {t("suspendContract")}
-                    </button>
+                    </Button>
                   ) : null}
                   {k.status !== "ended" ? (
-                    <button type="button" className={`${btn} border-line`} onClick={() => setDialog({ title: t("endContract"), reason: true, run: (token, why) => organisersAdmin.stop(k.id, "end", why, token) })}>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => setDialog({ title: t("endContract"), reason: true, run: (token, why) => organisersAdmin.stop(k.id, "end", why, token) })}>
                       {t("endContract")}
-                    </button>
+                    </Button>
                   ) : null}
                 </div>
               ) : null}
@@ -181,74 +212,84 @@ function OrgDetail({ id }: { id: string }) {
         </ul>
         {canManage && o.status === "verified" ? (
           <form
-            className="mt-4 grid gap-3 border-2 border-line p-4 sm:grid-cols-3"
+            className="mt-4 grid gap-3 rounded-card border border-line bg-surface-2/40 p-4 sm:grid-cols-2"
             onSubmit={(e) => {
               e.preventDefault();
               if (body) void run(() => organisersAdmin.createContract(id, body), t("contractCreated"));
             }}
             data-testid="contract-form"
           >
-            <Field label={t("model")}>
-              <select value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value as "percentage" | "flat" })} className={inputCls}>
-                <option value="percentage">{t("model_percentage")}</option>
-                <option value="flat">{t("model_flat")}</option>
-              </select>
-            </Field>
+            <Select id="contract-model" label={t("model")} value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value as "percentage" | "flat" })}>
+              <option value="percentage">{t("model_percentage")}</option>
+              <option value="flat">{t("model_flat")}</option>
+            </Select>
             {form.model === "percentage" ? (
-              <Field label={t("pctLabel")}>
-                <input value={form.pct} onChange={(e) => setForm({ ...form, pct: e.target.value })} inputMode="decimal" placeholder={t("pctDefault")} className={inputCls} />
-              </Field>
+              <Field id="contract-pct" label={t("pctLabel")} value={form.pct} onChange={(e) => setForm({ ...form, pct: e.target.value })} inputMode="decimal" placeholder={t("pctDefault")} />
             ) : (
               <>
-                <Field label={t("feeLabel")}>
-                  <input value={form.flatFee} onChange={(e) => setForm({ ...form, flatFee: e.target.value })} inputMode="decimal" className={inputCls} required />
-                </Field>
-                <Field label={t("cycleLabel")}>
-                  <select value={form.billingCycle} onChange={(e) => setForm({ ...form, billingCycle: e.target.value as "monthly" | "quarterly" })} className={inputCls}>
-                    <option value="monthly">{t("cycle.monthly")}</option>
-                    <option value="quarterly">{t("cycle.quarterly")}</option>
-                  </select>
-                </Field>
+                <Field id="contract-fee" label={t("feeLabel")} value={form.flatFee} onChange={(e) => setForm({ ...form, flatFee: e.target.value })} inputMode="decimal" required />
+                <Select id="contract-cycle" label={t("cycleLabel")} value={form.billingCycle} onChange={(e) => setForm({ ...form, billingCycle: e.target.value as "monthly" | "quarterly" })}>
+                  <option value="monthly">{t("cycle.monthly")}</option>
+                  <option value="quarterly">{t("cycle.quarterly")}</option>
+                </Select>
               </>
             )}
-            <Field label={t("startsOn")}>
-              <input type="date" value={form.startsOn} onChange={(e) => setForm({ ...form, startsOn: e.target.value })} className={inputCls} required />
-            </Field>
-            <Field label={t("endsOn")}>
-              <input type="date" value={form.endsOn} onChange={(e) => setForm({ ...form, endsOn: e.target.value })} className={inputCls} />
-            </Field>
-            <div className="flex items-end">
-              <button type="submit" className={`${btn} border-brand`} disabled={!body}>
+            <Field id="contract-starts" type="date" label={t("startsOn")} value={form.startsOn} onChange={(e) => setForm({ ...form, startsOn: e.target.value })} required />
+            <Field id="contract-ends" type="date" label={t("endsOn")} value={form.endsOn} onChange={(e) => setForm({ ...form, endsOn: e.target.value })} />
+            <div className="flex items-end sm:col-span-2">
+              <Button type="submit" disabled={!body}>
                 {t("createContract")}
-              </button>
+              </Button>
             </div>
           </form>
         ) : null}
-      </div>
+      </section>
 
-      <div>
-        <h3 className="text-xl font-extrabold">{t("invoices")}</h3>
-        {invoices.data && !invoices.data.items.length ? <p className="mt-2 text-muted">{t("noInvoices")}</p> : null}
-        <ul className="mt-2 divide-y-2 divide-line border-y-2 border-line">
-          {((invoices.data?.items ?? []) as Invoice[]).map((i) => (
-            <li key={i.id} className="flex flex-wrap items-center gap-3 py-2 text-sm">
-              <span className="font-mono font-semibold">{i.number}</span>
-              <span className="min-w-0 flex-1 text-muted">
-                {i.periodStart} – {i.periodEnd}
-                {i.dueAt ? ` · ${t("due", { at: formatDhaka(i.dueAt, locale) })}` : ""}
-              </span>
-              <span className="font-bold tabular-nums">{formatTaka(i.total, locale)}</span>
-              <Chip tone={TONE[i.status] ?? "muted"}>{t(`invoiceStatus.${i.status}`)}</Chip>
-              {canManage && ["issued", "overdue"].includes(i.status) ? (
-                <button type="button" className="font-semibold text-danger underline" onClick={() => setDialog({ title: t("voidTitle", { number: i.number }), reason: true, run: (token, why) => organisersAdmin.voidInvoice(i.id, why, token) })}>
-                  {t("void")}
-                </button>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <section>
+        <h3 className="font-display text-lg font-bold">{t("invoices")}</h3>
+        {invoices.data && !invoices.data.items.length ? <p className="mt-2 text-sm text-muted">{t("noInvoices")}</p> : null}
+        {invoices.data?.items.length ? (
+          <ul className="mt-2 divide-y divide-line rounded-card border border-line">
+            {((invoices.data?.items ?? []) as Invoice[]).map((i) => (
+              <li key={i.id} className="flex flex-wrap items-center gap-3 px-3 py-2 text-sm">
+                <span className="font-mono font-semibold">{i.number}</span>
+                <span className="min-w-0 flex-1 text-muted">
+                  {i.periodStart} – {i.periodEnd}
+                  {i.dueAt ? ` · ${t("due", { at: formatDhaka(i.dueAt, locale) })}` : ""}
+                </span>
+                <span className="font-semibold tabular">{formatTaka(i.total, locale)}</span>
+                <StatusBadge status={i.status} domain="organiser">
+                  {t(`invoiceStatus.${i.status}`)}
+                </StatusBadge>
+                {canManage && ["issued", "overdue"].includes(i.status) ? (
+                  <Button type="button" variant="link" className="text-danger" onClick={() => setDialog({ title: t("voidTitle", { number: i.number }), reason: true, run: (token, why) => organisersAdmin.voidInvoice(i.id, why, token) })}>
+                    {t("void")}
+                  </Button>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </section>
       {msg ? <Notice tone={msg.tone}>{msg.text}</Notice> : null}
+      <ReasonDialog
+        open={Boolean(orgAction)}
+        onOpenChange={(v) => {
+          if (!v) {
+            setOrgAction(null);
+            setOrgError(null);
+          }
+        }}
+        title={orgAction ? `${t(orgAction)}: ${o.name}` : ""}
+        label={t("reason")}
+        confirmLabel={orgAction ? t(orgAction) : ""}
+        danger={orgAction === "suspend"}
+        minLength={5}
+        maxLength={300}
+        busy={orgBusy}
+        error={orgError}
+        onConfirm={(why) => void actOnOrg(why)}
+      />
       {dialog ? (
         <CodeDialog
           title={dialog.title}
@@ -263,14 +304,7 @@ function OrgDetail({ id }: { id: string }) {
             await refresh();
           }}
         >
-          {dialog.reason ? (
-            <>
-              <label htmlFor="org-dialog-reason" className="mt-4 block text-sm font-semibold text-muted">
-                {t("reason")}
-              </label>
-              <textarea id="org-dialog-reason" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={300} className={`${inputCls} mt-1 min-h-20 w-full py-2`} />
-            </>
-          ) : null}
+          {dialog.reason ? <Textarea id="org-dialog-reason" className="mt-4" label={t("reason")} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={300} /> : null}
         </CodeDialog>
       ) : null}
     </div>

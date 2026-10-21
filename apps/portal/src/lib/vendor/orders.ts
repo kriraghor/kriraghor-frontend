@@ -18,7 +18,7 @@ export type RejectReason = (typeof REJECT_REASONS)[number];
 const g = (id: string) => ({ path: { id } });
 
 export const shopOrders = {
-  list: async (tab: Tab) => unwrap(await api().GET("/shop/sub-orders", { params: { query: { tab, limit: 50 } } })),
+  list: async (tab: Tab, cursor?: string) => unwrap(await api().GET("/shop/sub-orders", { params: { query: { tab, ...(cursor ? { cursor } : {}), limit: 50 } } })),
   get: async (id: string) => unwrap(await api().GET("/shop/sub-orders/{id}", { params: g(id) })),
   accept: async (id: string) => unwrap(await api().POST("/shop/sub-orders/{id}/accept", { params: g(id) })),
   reject: async (id: string, reason: RejectReason, note?: string) => unwrap(await api().POST("/shop/sub-orders/{id}/reject", { params: g(id), body: { reason, ...(note ? { note } : {}) } })),

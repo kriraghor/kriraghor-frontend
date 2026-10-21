@@ -16,8 +16,8 @@ export type RequestStatus = StaffRequest["status"];
 export type ProfileStatus = "pending_review" | "live" | "paused" | "suspended" | "rejected" | "changes_requested";
 
 export const hireAdmin = {
-  requests: async (q: { code?: string; status?: RequestStatus }) =>
-    unwrap(await api("admin").GET("/admin/hire/requests", { params: { query: { ...(q.code ? { code: q.code } : {}), ...(q.status ? { status: q.status } : {}), limit: 50 } } })),
+  requests: async (q: { code?: string; status?: RequestStatus; cursor?: string }) =>
+    unwrap(await api("admin").GET("/admin/hire/requests", { params: { query: { ...(q.code ? { code: q.code } : {}), ...(q.status ? { status: q.status } : {}), ...(q.cursor ? { cursor: q.cursor } : {}), limit: 50 } } })),
   request: async (code: string) => unwrap(await api("admin").GET("/admin/hire/requests/{code}", { params: { path: { code } } })),
   profiles: async (q: { status?: ProfileStatus; q?: string }) => unwrap(await api("admin").GET("/admin/hire/profiles", { params: { query: { ...(q.status ? { status: q.status } : {}), ...(q.q ? { q: q.q } : {}) } } })),
   profile: async (id: string) => unwrap(await api("admin").GET("/admin/hire/profiles/{id}", { params: { path: { id } } })),

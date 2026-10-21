@@ -1,144 +1,182 @@
 "use client";
 
-import { useState } from "react";
-import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, type ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
+import { Button, Checkbox, DataTable, DetailLayout, Field, FilterBar, Notice, Select, Skeleton, type Column } from "@kriraghor/ui/kit";
 import { stepUp } from "@/lib/admin/stepUp";
 import { finance, formatTaka, parseTaka, type AdminPayment } from "@/lib/admin/finance";
-import { Button, Notice } from "@kriraghor/ui/primitives";
+import { useCursorList } from "@/lib/use-cursor-list";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka } from "../useAdminMe";
 import type { DeskMe } from "./FinanceDesk";
-import { Chip, DataTable, Field, inputCls, MoreButton, TONE } from "./shared";
+
+type Row = Awaited<ReturnType<typeof finance.payments>>["items"][number];
 
 const STATUSES = ["succeeded", "pending", "failed", "partially_refunded", "refunded", "expired", "initiated"] as const;
 
-/** Payments list with a detail panel: attempts, escrow hold, refunds and ledger postings, plus "Refund". */
+/** Payments list with a detail pane (?id=): attempts, escrow hold, refunds and ledger postings, plus "Refund". */
 export function PaymentsTab({ me }: { me: DeskMe }) {
   const t = useTranslations("finance");
   const locale = useLocale();
-  const [status, setStatus] = useState<(typeof STATUSES)[number] | "">("");
-  const [code, setCode] = useState("");
-  const [open, setOpen] = useState<string | null>(null);
+  const { values, set, clear, params } = useUrlFilters({ status: { default: "", allowed: ["", ...STATUSES] }, code: { default: "" } });
+  const status = values.status as AdminPayment["status"] | "";
+  const code = values.code;
+  const open = params.get("id");
+  const list = useCursorList<Row>(["finance-payments", status, code], (cursor) => finance.payments({ status: status || undefined, code: code.trim() || undefined, cursor }));
+  const detail = useQuery({ queryKey: ["finance-payment", open], enabled: Boolean(open), queryFn: () => finance.payment(open as string) });
 
-  const q = useInfiniteQuery({
-    queryKey: ["finance-payments", status, code],
-    initialPageParam: undefined as string | undefined,
-    queryFn: ({ pageParam }) => finance.payments({ status: status || undefined, code: code.trim() || undefined, cursor: pageParam }),
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
-  });
-  const items = q.data?.pages.flatMap((p) => p.items) ?? [];
+  const columns: Column<Row>[] = [
+    { id: "code", header: t("code"), primary: true, sort: (p) => p.code, cell: (p) => <span className="font-mono">{p.code}</span> },
+    { id: "what", header: t("what"), cell: (p) => p.title },
+    { id: "payer", header: t("payer"), hideBelow: "lg", sort: (p) => p.payer?.name, cell: (p) => p.payer?.name ?? "–" },
+    { id: "amount", header: t("amount"), align: "end", sort: (p) => p.amount, cell: (p) => formatTaka(p.amount, locale) },
+    { id: "status", header: t("status"), sort: (p) => p.status, cell: (p) => <StatusBadge status={p.status}>{t(`paymentStatus.${p.status}`)}</StatusBadge> },
+    { id: "method", header: t("method"), hideBelow: "xl", cell: (p) => p.methodDisplay ?? "–" },
+    { id: "when", header: t("when"), sort: (p) => p.createdAt, cell: (p) => <span className="whitespace-nowrap">{formatDhaka(p.createdAt, locale)}</span> },
+  ];
+
+  const p = detail.data && detail.data.id === open ? detail.data : null;
 
   return (
-    <div className="mt-6">
-      <div className="flex flex-wrap items-end gap-3">
-        <Field label={t("status")}>
-          <select value={status} onChange={(e) => setStatus(e.target.value as typeof status)} className={inputCls}>
-            <option value="">{t("all")}</option>
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {t(`paymentStatus.${s}`)}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label={t("code")}>
-          <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="PAY-26-000001" className={`${inputCls} font-mono`} />
-        </Field>
-      </div>
-      <DataTable head={[t("code"), t("what"), t("payer"), t("amount"), t("status"), t("method"), t("when")]} loading={q.isPending} error={q.isError} empty={!items.length} testId="finance-payments">
-        {items.map((p) => (
-          <tr key={p.id} className={open === p.id ? "bg-surface-2" : undefined}>
-            <td className="px-3 py-2 font-mono">
-              <button type="button" className="underline" onClick={() => setOpen(open === p.id ? null : p.id)} aria-expanded={open === p.id}>
-                {p.code}
-              </button>
-            </td>
-            <td className="px-3 py-2">{p.title}</td>
-            <td className="px-3 py-2">{p.payer?.name ?? "–"}</td>
-            <td className="px-3 py-2 tabular-nums">{formatTaka(p.amount, locale)}</td>
-            <td className="px-3 py-2">
-              <Chip tone={TONE[p.status] ?? "muted"}>{t(`paymentStatus.${p.status}`)}</Chip>
-            </td>
-            <td className="px-3 py-2">{p.methodDisplay ?? "–"}</td>
-            <td className="px-3 py-2 whitespace-nowrap">{formatDhaka(p.createdAt, locale)}</td>
-          </tr>
-        ))}
-      </DataTable>
-      <MoreButton show={Boolean(q.hasNextPage)} busy={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} />
-      {open ? <PaymentDetail id={open} me={me} /> : null}
+    <div className="mt-6 flex flex-col gap-4">
+      <FilterBar
+        search={{ value: code, onChange: (v) => set({ code: v }), label: t("code"), placeholder: "PAY-26-000001" }}
+        selects={[
+          {
+            id: "status",
+            label: t("status"),
+            value: status,
+            onChange: (v) => set({ status: v }),
+            anyLabel: t("all"),
+            options: STATUSES.map((s) => ({ value: s, label: t(`paymentStatus.${s}`) })),
+          },
+        ]}
+        onClear={clear}
+      />
+      <DetailLayout
+        open={Boolean(open)}
+        onClose={() => set({ id: null })}
+        title={p ? `${p.code} · ${formatTaka(p.amount, locale)}` : t("loading")}
+        testId="payment-detail"
+        pane={
+          detail.isError ? (
+            <Notice tone="error">{t("loadFailed")}</Notice>
+          ) : p ? (
+            <PaymentDetail payment={p} me={me} />
+          ) : (
+            <div role="status" aria-label={t("loading")} className="flex flex-col gap-2">
+              <Skeleton className="h-6" />
+              <Skeleton className="h-24" />
+              <Skeleton className="h-24" />
+            </div>
+          )
+        }
+      >
+        <DataTable
+          label={t("tabs.payments")}
+          testId="finance-payments"
+          columns={columns}
+          rows={list.rows}
+          rowId={(r) => r.id}
+          loading={list.loading}
+          error={list.error}
+          onRetry={list.retry}
+          empty={{ title: t("empty") }}
+          hasMore={list.hasMore}
+          onMore={list.more}
+          busy={list.busy}
+          selectedId={open}
+          onRowClick={(r) => set({ id: open === r.id ? null : r.id })}
+        />
+      </DetailLayout>
     </div>
   );
 }
 
-function PaymentDetail({ id, me }: { id: string; me: DeskMe }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="border-t border-line pt-4">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">{title}</h3>
+      <div className="mt-2 text-sm">{children}</div>
+    </section>
+  );
+}
+
+function PaymentDetail({ payment: p, me }: { payment: AdminPayment; me: DeskMe }) {
   const t = useTranslations("finance");
   const locale = useLocale();
-  const q = useQuery({ queryKey: ["finance-payment", id], queryFn: () => finance.payment(id) });
-  if (q.isPending) return <div className="mt-6 h-40 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />;
-  if (q.isError || !q.data) return <Notice tone="error">{t("loadFailed")}</Notice>;
-  const p = q.data;
   return (
-    <section className="mt-6 border-2 border-line-strong bg-surface p-5" aria-labelledby="payment-detail">
-      <h2 id="payment-detail" className="text-xl font-extrabold">
-        {p.code} · {formatTaka(p.amount, locale)}
-      </h2>
-      <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-wrap items-center gap-2">
+        <StatusBadge status={p.status}>{t(`paymentStatus.${p.status}`)}</StatusBadge>
+        <span className="text-sm text-muted">{p.title}</span>
+      </div>
+      <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-6 gap-y-1.5 text-sm">
         <dt className="text-muted">{t("payer")}</dt>
         <dd>{p.payer?.name ?? "–"}</dd>
         <dt className="text-muted">{t("payee")}</dt>
         <dd>{p.payee?.name ?? "–"}</dd>
         <dt className="text-muted">{t("captured")}</dt>
-        <dd className="tabular-nums">{formatTaka(p.captured, locale)}</dd>
+        <dd className="tabular">{formatTaka(p.captured, locale)}</dd>
         <dt className="text-muted">{t("refunded")}</dt>
-        <dd className="tabular-nums">{formatTaka(p.refunded, locale)}</dd>
+        <dd className="tabular">{formatTaka(p.refunded, locale)}</dd>
         <dt className="text-muted">{t("gatewayRef")}</dt>
-        <dd className="font-mono">{p.providerTrxId ?? "–"}</dd>
+        <dd className="break-all font-mono">{p.providerTrxId ?? "–"}</dd>
       </dl>
 
-      <h3 className="mt-5 font-bold">{t("attempts")}</h3>
-      <ul className="mt-1 text-sm">
-        {p.attempts.map((a) => (
-          <li key={a.id}>
-            {formatDhaka(a.startedAt, locale)} · {a.method ?? "–"} · <Chip tone={TONE[a.status] ?? "muted"}>{a.status}</Chip> {a.failureCode ? `(${a.failureCode})` : ""}
-          </li>
-        ))}
-      </ul>
+      <Section title={t("attempts")}>
+        <ul className="flex flex-col gap-1.5">
+          {p.attempts.map((a) => (
+            <li key={a.id} className="flex flex-wrap items-center gap-2">
+              <span>{formatDhaka(a.startedAt, locale)}</span>
+              <span className="text-muted">{a.method ?? "–"}</span>
+              <StatusBadge status={a.status}>{a.status}</StatusBadge>
+              {a.failureCode ? <span className="font-mono text-xs text-danger">{a.failureCode}</span> : null}
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       {p.hold ? (
-        <>
-          <h3 className="mt-5 font-bold">{t("hold")}</h3>
-          <p className="text-sm">
-            <Chip tone={TONE[p.hold.status] ?? "muted"}>{t(`holdStatus.${p.hold.status}`)}</Chip> {t("holdLine", { held: formatTaka(p.hold.held, locale), available: formatTaka(p.hold.available, locale), bps: p.hold.fee.bps / 100 })}
+        <Section title={t("hold")}>
+          <p className="flex flex-wrap items-center gap-2">
+            <StatusBadge status={p.hold.status}>{t(`holdStatus.${p.hold.status}`)}</StatusBadge>
+            <span>{t("holdLine", { held: formatTaka(p.hold.held, locale), available: formatTaka(p.hold.available, locale), bps: p.hold.fee.bps / 100 })}</span>
           </p>
-        </>
+        </Section>
       ) : null}
 
-      <h3 className="mt-5 font-bold">{t("ledger")}</h3>
-      <ul className="mt-1 text-sm">
-        {p.ledger.map((l) => (
-          <li key={l.id} className="font-mono">
-            {l.kind} · {formatTaka(l.total, locale)}
-          </li>
-        ))}
-      </ul>
+      <Section title={t("ledger")}>
+        <ul className="flex flex-col gap-1">
+          {p.ledger.map((l) => (
+            <li key={l.id} className="flex justify-between gap-3">
+              <span className="font-mono">{l.kind}</span>
+              <span className="tabular">{formatTaka(l.total, locale)}</span>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       {p.refunds.length ? (
-        <>
-          <h3 className="mt-5 font-bold">{t("tabs.refunds")}</h3>
-          <ul className="mt-1 text-sm">
+        <Section title={t("tabs.refunds")}>
+          <ul className="flex flex-col gap-1.5">
             {p.refunds.map((r) => (
-              <li key={r.id}>
-                {formatTaka(r.amount, locale)} · <Chip tone={TONE[r.status] ?? "muted"}>{t(`refundStatus.${r.status}`)}</Chip> · {r.reasonCode}
+              <li key={r.id} className="flex flex-wrap items-center gap-2">
+                <span className="tabular">{formatTaka(r.amount, locale)}</span>
+                <StatusBadge status={r.status}>{t(`refundStatus.${r.status}`)}</StatusBadge>
+                <span className="text-muted">{t.has(`reasons.${r.reasonCode}`) ? t(`reasons.${r.reasonCode}`) : r.reasonCode}</span>
               </li>
             ))}
           </ul>
-        </>
+        </Section>
       ) : null}
 
       {["succeeded", "partially_refunded"].includes(p.status) && (me.isMaster || me.permissions.includes("refund_small")) ? <RefundForm payment={p} me={me} /> : null}
-    </section>
+    </div>
   );
 }
 
@@ -180,39 +218,34 @@ function RefundForm({ payment, me }: { payment: AdminPayment; me: DeskMe }) {
   }
 
   return (
-    <form onSubmit={submit} className="mt-6 border-t-2 border-line pt-4">
-      <h3 className="font-bold">{t("refund")}</h3>
-      <div className="mt-2 flex flex-wrap items-end gap-3">
-        <Field label={t("amountTaka")}>
-          <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" className={`${inputCls} w-36 tabular-nums`} aria-invalid={amount !== "" && !poisha} />
-        </Field>
-        <Field label={t("reason")}>
-          <select value={reason} onChange={(e) => setReason(e.target.value as typeof reason)} className={inputCls}>
-            {REASONS.map((r) => (
-              <option key={r} value={r}>
-                {t(`reasons.${r}`)}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label={t("note")}>
-          <input value={text} onChange={(e) => setText(e.target.value)} maxLength={500} className={`${inputCls} w-64`} />
-        </Field>
-        {me.isMaster ? (
-          <label className="flex min-h-11 items-center gap-2 text-sm font-semibold">
-            <input type="checkbox" checked={goodwill} onChange={(e) => setGoodwill(e.target.checked)} className="size-5 accent-brand" />
-            {t("goodwill")}
-          </label>
-        ) : null}
-        <Button type="submit" busy={busy} disabled={!body}>
-          {t("refund")}
-        </Button>
-      </div>
-      {msg ? (
-        <div className="mt-3">
-          <Notice tone={msg.tone}>{msg.text}</Notice>
+    <>
+      <form onSubmit={submit} className="flex flex-col gap-4 border-t border-line pt-4">
+        <h3 className="font-display text-lg font-bold">{t("refund")}</h3>
+        <Field
+          id="refund-amount"
+          label={t("amountTaka")}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          inputMode="decimal"
+          inputClassName="tabular"
+          aria-invalid={amount !== "" && !poisha}
+        />
+        <Select id="refund-reason" label={t("reason")} value={reason} onChange={(e) => setReason(e.target.value as typeof reason)}>
+          {REASONS.map((r) => (
+            <option key={r} value={r}>
+              {t(`reasons.${r}`)}
+            </option>
+          ))}
+        </Select>
+        <Field id="refund-text" label={t("note")} value={text} onChange={(e) => setText(e.target.value)} maxLength={500} />
+        {me.isMaster ? <Checkbox id="refund-goodwill" label={t("goodwill")} checked={goodwill} onChange={(e) => setGoodwill(e.target.checked)} /> : null}
+        <div>
+          <Button type="submit" busy={busy} disabled={!body}>
+            {t("refund")}
+          </Button>
         </div>
-      ) : null}
+        {msg ? <Notice tone={msg.tone}>{msg.text}</Notice> : null}
+      </form>
       {needCode && body ? (
         <CodeDialog
           title={t("refundCodeTitle")}
@@ -226,6 +259,7 @@ function RefundForm({ payment, me }: { payment: AdminPayment; me: DeskMe }) {
           }}
         />
       ) : null}
-    </form>
+    </>
   );
 }
+
