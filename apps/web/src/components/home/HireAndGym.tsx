@@ -134,33 +134,53 @@ function HireColumn({ category, title, delay }: { category: "officials" | "playe
   );
 }
 
-/** Gym (home-v3 §8, M20 is live): the sub-brand band with three gyms and the way in. */
+/**
+ * Gym (home-v3 §8, M20 is live): the sub-brand band's gym list. Three gyms at a time out of up to
+ * nine, turning over sideways like cards every 5.6 s (FlipTicker "turn", deliberately not the hire
+ * section's scoreboard flip), with pause and up/down. The band sets data-theme="gym" around it.
+ */
 export function HomeGym() {
   const t = useTranslations("home.gym");
   const locale = useLocale();
-  const gyms = useQuery({ queryKey: ["home-gyms"], queryFn: () => items<Gym>(api().GET("/gym/gyms", { params: { query: { sort: "rating", limit: 3 } as never } })) });
-  const list = (gyms.data ?? []).slice(0, 3);
+  const gyms = useQuery({ queryKey: ["home-gyms"], queryFn: () => items<Gym>(api().GET("/gym/gyms", { params: { query: { sort: "rating", limit: 9 } as never } })) });
+  const list = gyms.data ?? [];
   const money = (n: number) => formatTaka(n, locale);
 
+  if (gyms.isPending) return <SkeletonList rows={3} />;
+  if (!list.length) return <p className="rounded-card border border-white/20 p-5 text-white/75">{t("none")}</p>;
   return (
-    <div className="flex flex-col gap-3">
-      {gyms.isPending ? [0, 1, 2].map((i) => <div key={i} className="h-20 animate-pulse bg-white/5" />) : null}
-      {!gyms.isPending && !list.length ? <p className="border border-white/20 p-5 text-white/75">{t("none")}</p> : null}
-      {list.map((g) => (
-        <Link key={g.id} href={`/gym/gyms/${g.slug}`} className="rv glass-band flex items-center gap-4 rounded-[18px] p-4 hover:border-gym-accent" data-testid="home-gym">
-          <span className="min-w-0 flex-1">
-            <b className="block text-lg">{g.name}</b>
-            <span className="block text-sm text-white/70">
-              {nameOf(g.area, locale)}
-              {g.openNow ? <span className="ml-2 font-semibold text-gym-accent">{t("openNow")}</span> : null}
+    <FlipTicker
+      items={list}
+      perPage={3}
+      interval={5600}
+      delay={900}
+      effect="turn"
+      keyOf={(g) => g.id}
+      labels={{ prev: t("prev"), next: t("next"), pause: t("pause"), play: t("play") }}
+      title={
+        <h3 className="flex items-baseline gap-2 text-lg text-white">
+          {t("listTitle")}
+          <span className="text-sm font-medium text-white/60">{t("count", { n: list.length })}</span>
+        </h3>
+      }
+      className="[&_li]:border-0"
+      render={(g) => (
+        <div className="py-1.5">
+          <Link href={`/gym/gyms/${g.slug}`} className="glass-band flex min-h-[84px] items-center gap-4 rounded-[18px] p-4 no-underline transition-colors hover:border-gym-accent" data-testid="home-gym">
+            <span className="min-w-0 flex-1">
+              <b className="block truncate text-lg">{g.name}</b>
+              <span className="block text-sm text-white/70">
+                {nameOf(g.area, locale)}
+                {g.openNow ? <span className="ml-2 font-semibold text-gym-accent">{t("openNow")}</span> : null}
+              </span>
             </span>
-          </span>
-          <span className="shrink-0 text-right text-sm tabular-nums">
-            {g.dayPrice != null ? <span className="block">{t("day", { price: money(g.dayPrice) })}</span> : null}
-            {g.monthPrice != null ? <span className="block text-white/70">{t("month", { price: money(g.monthPrice) })}</span> : null}
-          </span>
-        </Link>
-      ))}
-    </div>
+            <span className="shrink-0 text-right text-sm tabular-nums">
+              {g.dayPrice != null ? <span className="block">{t("day", { price: money(g.dayPrice) })}</span> : null}
+              {g.monthPrice != null ? <span className="block text-white/70">{t("month", { price: money(g.monthPrice) })}</span> : null}
+            </span>
+          </Link>
+        </div>
+      )}
+    />
   );
 }

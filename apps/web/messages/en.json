@@ -2046,7 +2046,9 @@
       "full": "No free hours left tonight.",
       "otherDays": "See other days",
       "picked": "{name}, tonight at {time} for 1 hour.",
-      "continue": "Continue to booking"
+      "continue": "Continue to booking",
+      "prev": "Previous venues",
+      "next": "More venues"
     },
     "shop": {
       "title": "Gear, supplements and used kit",
@@ -2094,7 +2096,13 @@
       "none": "Gyms appear here once they are approved.",
       "openNow": "Open now",
       "day": "{price} a day",
-      "month": "{price} a month"
+      "month": "{price} a month",
+      "listTitle": "Gyms on Kriraghor",
+      "count": "{n, number} open to book",
+      "prev": "Previous gyms",
+      "next": "More gyms",
+      "pause": "Pause the list",
+      "play": "Play the list"
     },
     "business": {
       "title": "Run your sports business on Kriraghor",

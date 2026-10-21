@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowRight, NavigationArrow } from "@phosphor-icons/react";
+import { ArrowRight, CaretLeft, CaretRight, NavigationArrow } from "@phosphor-icons/react";
+import { IconButton, Skeleton } from "@kriraghor/ui/kit";
+import { cn } from "@kriraghor/ui/cn";
+import { useCarouselRow } from "@kriraghor/ui/motion";
 import Image from "next/image";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { PHOTOS } from "@/lib/photos";
@@ -17,7 +20,8 @@ type Ground = { id: string; slug: string; name: string; area: { nameEn: string; 
 type Here = { lat: number; lng: number };
 
 /**
- * Grounds (home-v3 §5, M09/M10): three grounds with the free hours left tonight, one tap from the
+ * Grounds (home-v3 §5, M09/M10) as a carousel: up to nine venues with the free hours left tonight
+ * (one card on phones, three on desktop, arrows, moves on every 5 s while on screen), one tap from the
  * booking widget. "Use my location" sorts by distance; the position stays in the browser and goes to
  * the API only as the list query (never stored).
  */
@@ -27,14 +31,15 @@ export function HomeGrounds() {
   const [here, setHere] = useState<Here | null>(null);
   const [locating, setLocating] = useState<"idle" | "asking" | "denied">("idle");
   const [picked, setPicked] = useState<{ ground: Ground; slot: FreeSlot } | null>(null);
+  const { ref: row, move, handlers } = useCarouselRow<HTMLUListElement>({ interval: 5000, gap: 16 });
 
   const list = useQuery({
     queryKey: ["home-grounds", here?.lat, here?.lng],
     queryFn: async () => {
-      const query = here ? { lat: here.lat, lng: here.lng, sort: "nearest" as const, limit: 3 } : { sort: "cheapest" as const, limit: 3 };
+      const query = here ? { lat: here.lat, lng: here.lng, sort: "nearest" as const, limit: 9 } : { sort: "cheapest" as const, limit: 9 };
       const r = await api().GET("/grounds", { params: { query: query as never } });
       if (r.error || !r.data) throw r.error ?? new Error("unavailable");
-      return (r.data as unknown as { items: Ground[] }).items.slice(0, 3);
+      return (r.data as unknown as { items: Ground[] }).items.slice(0, 9);
     },
   });
   const items = list.data ?? [];
@@ -69,22 +74,31 @@ export function HomeGrounds() {
             <NavigationArrow size={18} aria-hidden />
             {locating === "asking" ? t("locating") : t("locate")}
           </button>
-          <Link href="/venues" className="inline-flex min-h-11 items-center gap-1 font-bold text-brand-text underline">
+          <Link href="/venues" className="inline-flex min-h-11 items-center gap-1 font-bold text-brand-text underline-offset-4 hover:underline">
             {t("all")} <ArrowRight size={16} aria-hidden />
           </Link>
+          <span className="hidden gap-2 sm:flex">
+            <IconButton label={t("prev")} variant="secondary" onClick={() => move(-1)}>
+              <CaretLeft size={20} aria-hidden />
+            </IconButton>
+            <IconButton label={t("next")} variant="secondary" onClick={() => move(1)}>
+              <CaretRight size={20} aria-hidden />
+            </IconButton>
+          </span>
         </div>
       </div>
       <p className="mt-2 text-sm text-muted" role="status">
         {locating === "denied" ? t("locationDenied") : here ? t("locationNote") : ""}
       </p>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {list.isPending ? [0, 1, 2].map((i) => <div key={i} className="h-80 animate-pulse rounded-[20px] bg-surface-2" />) : null}
-        {!list.isPending && !items.length ? <p className="border-2 border-dashed border-line p-6 text-muted md:col-span-3">{t("none")}</p> : null}
+      {!list.isPending && !items.length ? <p className="mt-4 rounded-card border border-dashed border-line-strong/50 p-6 text-muted">{t("none")}</p> : null}
+      <ul ref={row} {...handlers} className="-mx-5 mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-px-5 px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-testid="home-grounds-row">
+        {list.isPending ? [0, 1, 2].map((i) => <li key={i} className="w-[86%] shrink-0 sm:w-[calc((100%-16px)/2)] md:w-[calc((100%-32px)/3)]"><Skeleton className="h-96 rounded-card" /></li>) : null}
         {items.map((g, i) => {
           const grid = grids[i];
           const slots = freeHours(grid?.data);
           return (
-            <article key={g.id} className="rv glass-card flex flex-col overflow-hidden" data-testid="home-ground">
+            <li key={g.id} className="w-[86%] shrink-0 snap-start sm:w-[calc((100%-16px)/2)] md:w-[calc((100%-32px)/3)]">
+            <article className="glass-card flex h-full flex-col overflow-hidden" data-testid="home-ground">
               <div className="aspect-[4/3] overflow-hidden bg-brand-soft">
                 {g.coverUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -97,7 +111,7 @@ export function HomeGrounds() {
               </div>
               <div className="flex flex-1 flex-col gap-2 p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <Link href={`/venues/${g.slug}`} className="text-lg font-extrabold hover:underline">
+                  <Link href={`/venues/${g.slug}`} className="font-display text-lg font-bold no-underline hover:text-brand-text">
                     {g.name}
                   </Link>
                   <b className="shrink-0 tabular-nums">{t("perHour", { price: formatTaka(g.priceFromPoisha, locale) })}</b>
@@ -107,13 +121,13 @@ export function HomeGrounds() {
                   {g.distanceM != null ? <span className="shrink-0">{km(g.distanceM)}</span> : null}
                 </p>
                 <div className="mt-auto pt-2">
-                  {grid?.isPending ? <div className="h-11 animate-pulse bg-surface-2" /> : null}
+                  {grid?.isPending ? <Skeleton className="h-11" /> : null}
                   {grid && !grid.isPending && slots.length ? (
                     <div className="flex flex-wrap gap-2" role="group" aria-label={t("timesAt", { name: g.name })}>
                       {slots.map((s) => {
                         const on = picked?.ground.id === g.id && picked.slot.start === s.start;
                         return (
-                          <button key={s.start} type="button" aria-pressed={on} onClick={() => setPicked(on ? null : { ground: g, slot: s })} className={`min-h-11 min-w-16 border-2 px-3 text-sm font-bold tabular-nums ${on ? "border-brand bg-brand text-white" : "border-line hover:border-brand"}`}>
+                          <button key={s.start} type="button" aria-pressed={on} onClick={() => setPicked(on ? null : { ground: g, slot: s })} className={cn("min-h-11 min-w-16 rounded-control border px-3 text-sm font-bold tabular-nums transition-colors", on ? "border-brand bg-brand text-on-brand" : "border-line-strong/50 bg-surface hover:border-brand hover:text-brand-text")}>
                             {hourOf(s.time, locale)}
                           </button>
                         );
@@ -131,13 +145,14 @@ export function HomeGrounds() {
                 </div>
               </div>
             </article>
+            </li>
           );
         })}
-      </div>
+      </ul>
       {picked ? (
         <div className="glass-strong sticky bottom-[calc(80px+env(safe-area-inset-bottom))] z-30 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[20px] p-4 md:bottom-4" aria-live="polite" data-testid="booking-bar">
           <span className="font-semibold">{t("picked", { name: picked.ground.name, time: hourOf(picked.slot.time, locale) })}</span>
-          <Link href={bookingHref(picked.ground.slug, picked.slot)} className="inline-flex min-h-11 items-center bg-brand px-4 text-sm font-bold text-white hover:bg-brand-hover">
+          <Link href={bookingHref(picked.ground.slug, picked.slot)} className="inline-flex min-h-11 items-center rounded-control bg-brand px-4 text-sm font-bold text-on-brand no-underline hover:bg-brand-hover">
             {t("continue")}
           </Link>
         </div>

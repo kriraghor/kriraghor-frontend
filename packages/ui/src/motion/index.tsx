@@ -35,7 +35,15 @@ export type FlipTickerLabels = { prev: string; next: string; pause: string; play
  * one after another (rotateX, 280 ms, 90 ms apart) and the next set rotates in (420 ms, spring).
  * It advances every `interval` ms, pauses while hovered, focused, off-screen or in a hidden tab,
  * and has up/down buttons and a Pause/Play button (WCAG 2.2.2).
+ * `effect`: "flip" is the scoreboard (rows rotate on the X axis, the hire section); "turn" turns each
+ * row over sideways like a card (Y axis, sliding out to one side and in from the other, 120 ms apart:
+ * the gym list), so the two sections never move the same way.
  */
+const EFFECTS = {
+  flip: { gap: 90, out: 280, in: 420, perspective: "[perspective:900px]", frames: (deg: number) => `rotateX(${deg}deg)` },
+  turn: { gap: 120, out: 320, in: 520, perspective: "[perspective:1200px]", frames: (deg: number) => `translateX(${deg / 6}%) rotateY(${deg}deg)` },
+} as const;
+
 export function FlipTicker<T>({
   items,
   perPage = 3,
@@ -46,6 +54,7 @@ export function FlipTicker<T>({
   title,
   labels,
   className,
+  effect = "flip",
 }: {
   items: T[];
   perPage?: number;
@@ -57,7 +66,9 @@ export function FlipTicker<T>({
   title: ReactNode;
   labels: FlipTickerLabels;
   className?: string;
+  effect?: keyof typeof EFFECTS;
 }) {
+  const fx = EFFECTS[effect];
   const motionOk = useMotionOk();
   const n = items.length;
   const step = n > perPage ? perPage : 1;
@@ -81,8 +92,8 @@ export function FlipTicker<T>({
     }
     busy.current = true;
     const out = dir > 0 ? -90 : 90;
-    const OUT = 280, GAP = 90;
-    rows.forEach((r, i) => (r as HTMLElement).animate([{ transform: "rotateX(0)", opacity: 1 }, { transform: `rotateX(${out}deg)`, opacity: 0.2 }], { duration: OUT, delay: i * GAP, easing: "cubic-bezier(.55,0,1,.45)", fill: "forwards" }));
+    const OUT = fx.out, GAP = fx.gap;
+    rows.forEach((r, i) => (r as HTMLElement).animate([{ transform: fx.frames(0), opacity: 1 }, { transform: fx.frames(out), opacity: 0.2 }], { duration: OUT, delay: i * GAP, easing: "cubic-bezier(.55,0,1,.45)", fill: "forwards" }));
     window.setTimeout(() => {
       setOffset(next);
       requestAnimationFrame(() => {
@@ -90,9 +101,9 @@ export function FlipTicker<T>({
         fresh.forEach((r, i) => {
           if (!canAnimate(r)) return;
           r.getAnimations().forEach((a) => a.cancel());
-          r.animate([{ transform: `rotateX(${-out}deg)`, opacity: 0.2 }, { transform: "rotateX(0)", opacity: 1 }], { duration: 420, delay: i * GAP, easing: "cubic-bezier(.16,1,.3,1)", fill: "backwards" });
+          r.animate([{ transform: fx.frames(-out), opacity: 0.2 }, { transform: fx.frames(0), opacity: 1 }], { duration: fx.in, delay: i * GAP, easing: "cubic-bezier(.16,1,.3,1)", fill: "backwards" });
         });
-        window.setTimeout(() => (busy.current = false), 420 + fresh.length * GAP);
+        window.setTimeout(() => (busy.current = false), fx.in + fresh.length * GAP);
       });
     }, OUT + (rows.length - 1) * GAP);
   };
@@ -164,7 +175,7 @@ export function FlipTicker<T>({
         ) : null}
       </div>
       {/* The rows are the content: announced politely when they change by a button. */}
-      <ul ref={list} className="flex flex-col [perspective:900px]" aria-live={paused ? "polite" : "off"}>
+      <ul ref={list} className={cn("flex flex-col", fx.perspective)} aria-live={paused ? "polite" : "off"}>
         {shown.map((it, i) => (
           <li key={`${keyOf(it)}-${i}`} className="border-b border-line [backface-visibility:hidden] [transform-origin:50%_50%] last:border-b-0">
             {render(it)}
@@ -231,4 +242,63 @@ export function CountUp({ value, format = (n) => String(Math.round(n)), classNam
       {format(shown ?? value)}
     </span>
   );
+}
+
+/**
+ * A row of cards that scrolls sideways (the sport cards, the venues open tonight): `move(±1)` goes
+ * one card on, wrapping to the start at the end, and every `interval` ms it moves on by itself while
+ * it is on screen and nobody is hovering, touching or focusing it. Reduced motion: arrows only.
+ * Spread `handlers` on the row element and give it `ref`.
+ */
+export function useCarouselRow<T extends HTMLElement>({ interval = 4200, gap = 20 }: { interval?: number; gap?: number } = {}) {
+  const ref = useRef<T>(null);
+  const motionOk = useMotionOk();
+  const hold = useRef({ touch: false, hover: false, focus: false, offscreen: true });
+
+  const move = (dir: 1 | -1) => {
+    const el = ref.current;
+    if (!el) return;
+    const card = el.firstElementChild as HTMLElement | null;
+    const stepPx = (card?.getBoundingClientRect().width ?? 300) + gap;
+    const behavior: ScrollBehavior = motionOk ? "smooth" : "auto";
+    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
+    const atStart = el.scrollLeft <= 8;
+    if (dir > 0 && atEnd) el.scrollTo({ left: 0, behavior });
+    else if (dir < 0 && atStart) el.scrollTo({ left: el.scrollWidth, behavior });
+    else el.scrollBy({ left: dir * stepPx, behavior });
+  };
+  const moveRef = useRef(move);
+  useEffect(() => {
+    moveRef.current = move;
+  });
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let io: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver(([e]) => (hold.current.offscreen = !e.isIntersecting));
+      io.observe(el);
+    } else hold.current.offscreen = false;
+    if (!motionOk) return () => io?.disconnect();
+    const id = window.setInterval(() => {
+      const h = hold.current;
+      if (!h.touch && !h.hover && !h.focus && !h.offscreen && !document.hidden) moveRef.current(1);
+    }, interval);
+    return () => {
+      window.clearInterval(id);
+      io?.disconnect();
+    };
+  }, [motionOk, interval]);
+
+  const handlers = {
+    onMouseEnter: () => (hold.current.hover = true),
+    onMouseLeave: () => (hold.current.hover = false),
+    onTouchStart: () => (hold.current.touch = true),
+    // A swipe holds it a little longer, so it doesn't move away under the finger.
+    onTouchEnd: () => window.setTimeout(() => (hold.current.touch = false), 2500),
+    onFocus: () => (hold.current.focus = true),
+    onBlur: () => (hold.current.focus = false),
+  };
+  return { ref, move, handlers };
 }

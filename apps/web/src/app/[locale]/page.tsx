@@ -130,7 +130,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
       <HomeHire />
 
-      <section className="mx-auto mt-[72px] max-w-[1320px] overflow-hidden bg-gym text-white md:rounded-[32px]" id="gym" aria-labelledby="gym-title" data-testid="home-gym-band">
+      <section className="mx-auto mt-[72px] max-w-[1320px] overflow-hidden bg-gym text-white md:rounded-[32px]" data-theme="gym" id="gym" aria-labelledby="gym-title" data-testid="home-gym-band">
         <div className="grid md:grid-cols-[2fr_3fr]">
           <div className="relative min-h-64">
             <Image src={PHOTOS.gym} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" />
