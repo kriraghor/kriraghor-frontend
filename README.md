@@ -12,7 +12,6 @@ The Kriraghor web apps in one repository. The mobile app has its own repository,
 npm ci                       # once,at the repo root
 cd apps/web && npm run dev   # or apps/esports, apps/portal
 ```
-
 Shared packages (TypeScript source; the apps compile them with `transpilePackages`):
 
 | Package | What it holds |
