@@ -55,7 +55,7 @@ export function Dialog({ open, onOpenChange, trigger, title, description, childr
 }
 
 /** A panel that slides in from the left (navigation) or the bottom (actions on phones). */
-export function Sheet({ open, onOpenChange, trigger, title, description, children, side = "left", className }: DialogProps & { side?: "left" | "bottom" }) {
+export function Sheet({ open, onOpenChange, trigger, title, description, children, side = "left", className, testId }: DialogProps & { side?: "left" | "right" | "bottom"; testId?: string }) {
   const t = useTranslations("kit");
   return (
     <RDialog.Root open={open} onOpenChange={onOpenChange}>
@@ -66,9 +66,11 @@ export function Sheet({ open, onOpenChange, trigger, title, description, childre
           className={cn(
             "fixed z-50 flex flex-col bg-surface shadow-lg focus:outline-none",
             side === "left" && "inset-y-0 left-0 w-[min(320px,86vw)] rounded-r-card border-r border-line data-[state=open]:animate-[kg-slide-in-left_260ms_var(--ease-kg)] data-[state=closed]:animate-[kg-slide-out-left_180ms_ease-in]",
+            side === "right" && "inset-y-0 right-0 w-[min(560px,100vw)] rounded-l-card border-l border-line data-[state=open]:animate-[kg-slide-in-right_260ms_var(--ease-kg)] data-[state=closed]:animate-[kg-slide-out-right_180ms_ease-in]",
             side === "bottom" && "inset-x-0 bottom-0 max-h-[88dvh] rounded-t-card border-t border-line pb-[env(safe-area-inset-bottom)] data-[state=open]:animate-[kg-slide-in-up_260ms_var(--ease-kg)] data-[state=closed]:animate-[kg-slide-out-down_180ms_ease-in]",
             className,
           )}
+          data-testid={testId}
         >
           <div className="flex items-center justify-between gap-4 px-5 py-4">
             <RDialog.Title className="font-display text-lg font-bold">{title}</RDialog.Title>

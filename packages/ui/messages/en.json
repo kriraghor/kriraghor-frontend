@@ -13,6 +13,28 @@
       "toggle": "Switch between light and dark",
       "light": "Light",
       "dark": "Dark"
+    },
+    "table": {
+      "loading": "Loading rows",
+      "empty": "Nothing here yet",
+      "actions": "Row actions",
+      "loadMore": "Load more",
+      "showing": "Showing {n} of {total}",
+      "loaded": "{n} loaded, more to load",
+      "showingAll": "{n, plural, one {# row} other {All # rows}}",
+      "sortHint": "Load every row to sort by this column",
+      "refreshFailed": "Could not refresh. These rows may be out of date."
+    },
+    "filters": {
+      "any": "Any",
+      "clear": "Clear filters",
+      "remove": "Remove {label}"
+    },
+    "reason": {
+      "label": "Reason",
+      "cancel": "Cancel",
+      "tooShort": "Write at least {n} characters.",
+      "count": "{n}/{max}"
     }
   },
   "auth": {

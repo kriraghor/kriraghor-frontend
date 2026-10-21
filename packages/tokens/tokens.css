@@ -312,6 +312,16 @@
     transform: translateX(-100%);
   }
 }
+@keyframes kg-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes kg-slide-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
 @keyframes kg-slide-in-up {
   from {
     opacity: 0;
