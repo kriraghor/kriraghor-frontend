@@ -1308,6 +1308,114 @@ export interface paths {
         };
         trace?: never;
     };
+    "/me/avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload my photo (raw JPEG, PNG or WebP; public bucket) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description The photo itself (at most kyc.max_file_bytes) */
+            requestBody?: {
+                content: {
+                    "image/jpeg": string;
+                    "image/png": string;
+                    "image/webp": string;
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Me"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_TOO_LARGE */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_TYPE_NOT_ALLOWED, FILE_TYPE_MISMATCH */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_EMPTY */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        /** Remove my photo */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Me"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/gate": {
         parameters: {
             query?: never;
@@ -24276,9 +24384,43 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Published reviews of a venue, pro profile, shop or gym, with the owner reply and the summary (the average from reviews.min_count_display reviews) (FR-35) */
+        get: {
+            parameters: {
+                query: {
+                    subjectType: "ground" | "hire_profile" | "shop" | "gym";
+                    subjectId: string;
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicReviews"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
         put?: never;
-        /** Rate a ground after playing (once per booking; held while a dispute is open) (FR-20, FR-21) */
+        /** Rate what I paid for, once per source, within reviews.window_days: a played booking (the venue), a released hire job (the pro), a completed sub-order (the shop) or a used gym pass (the gym). Held while the source has an open dispute or when the text has contact details. One review per gym: a newer pass updates it (200) (FR-30 to FR-33). v1 body { bookingId, stars, text } still works */
         post: {
             parameters: {
                 query?: never;
@@ -24289,14 +24431,35 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
+                        /**
+                         * @description booking → the venue, hire_job → the pro, sub_order → the shop, gym_pass → the gym (one review per gym: a newer pass updates it). Default booking
+                         * @enum {string}
+                         */
+                        sourceType?: "booking" | "hire_job" | "sub_order" | "gym_pass";
                         /** Format: uuid */
-                        bookingId: string;
-                        stars: number;
+                        sourceId?: string;
+                        /**
+                         * Format: uuid
+                         * @description v1: the same as sourceType booking with sourceId
+                         */
+                        bookingId?: string;
+                        stars?: number;
+                        /** @description Another name for stars */
+                        rating?: number;
                         text?: string;
                     };
                 };
             };
             responses: {
+                /** @description Updated: my gym review, from a newer pass */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ReviewResult"];
+                    };
+                };
                 /** @description Created */
                 201: {
                     headers: {
@@ -24315,7 +24478,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: NOT_YOUR_BOOKING */
+                /** @description Error. Codes: NOT_YOUR_BOOKING, NOT_YOUR_JOB, NOT_YOUR_ORDER, NOT_YOUR_PASS */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -24333,7 +24496,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: NOT_PLAYED, REVIEW_WINDOW_CLOSED, REVIEW_EXISTS */
+                /** @description Error. Codes: NOT_PLAYED, JOB_NOT_RELEASED, ORDER_NOT_COMPLETED, PASS_NOT_REDEEMED, REVIEW_WINDOW_CLOSED, REVIEW_EXISTS, REVIEW_HIDDEN */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -24447,7 +24610,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** My played bookings still waiting for a rating */
+        /** Waiting to review, newest first: played bookings, released hire jobs, completed sub-orders and used gym passes (one per gym until it is reviewed) */
         get: {
             parameters: {
                 query?: never;
@@ -24492,10 +24655,17 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** My reviews */
+        /** My reviews; with role=owner (or a subjectType or subjectId) the published reviews of my venues, pro profiles, shops and gyms, to reply to */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    /** @description author: the reviews I wrote (the default); owner: the published reviews of my venues, pro profiles, shops and gyms (implied by subjectType or subjectId) */
+                    role?: "author" | "owner";
+                    subjectType?: "ground" | "hire_profile" | "shop" | "gym";
+                    subjectId?: string;
+                    cursor?: string;
+                    limit?: number;
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -24520,10 +24690,108 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
             };
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/reviews/{id}/reply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reply to (or edit my reply to) a published review of something I own; contact details are refused; the author is told about the first reply (FR-34) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        text: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ReviewResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_OWNER */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: REVIEW_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, REPLY_HAS_CONTACT */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -24537,7 +24805,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Reviews of my grounds (gate list_ground) */
+        /** Reviews of my venues (gate list_ground; alias of GET /me/reviews?subjectType=ground) */
         get: {
             parameters: {
                 query?: {
@@ -24606,7 +24874,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Reply to a review of my ground (FR-25) */
+        /** Reply to a review of my venue (alias of POST /me/reviews/{id}/reply) (FR-34) */
         post: {
             parameters: {
                 query?: never;
@@ -24669,7 +24937,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: VALIDATION_FAILED */
+                /** @description Error. Codes: VALIDATION_FAILED, REPLY_HAS_CONTACT */
                 422: {
                     headers: {
                         [name: string]: unknown;
@@ -24698,6 +24966,8 @@ export interface paths {
             parameters: {
                 query?: {
                     status?: "held" | "hidden" | "published";
+                    subjectType?: "ground" | "hire_profile" | "shop" | "gym";
+                    subjectId?: string;
                     groundId?: string;
                     cursor?: string;
                     limit?: number;
@@ -30780,7 +31050,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: PROFILE_NOT_AVAILABLE, DUPLICATE_REQUEST */
+                /** @description Error. Codes: PROFILE_NOT_AVAILABLE, DUPLICATE_REQUEST, PRO_UNAVAILABLE */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -30800,6 +31070,65 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/hire/profiles/{id}/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Busy spans of a profile (blocked time and jobs merged; no reasons, no job details), from today up to hire.availability_horizon_days (FR-05) */
+        get: {
+            parameters: {
+                query?: {
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireBusy"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -33489,6 +33818,211 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Earnings and performance (M19 §6.3 Pro): earned per Dhaka week or month from the ledger (net), releasing soon, jobs, acceptance, reply time, rating, who hires you */
+        get: {
+            parameters: {
+                query?: {
+                    period?: "7w" | "qtr" | "yr";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireInsights"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My availability calendar: blocks, weekly repeats, the blocked spans in the range (repeats expanded) and booked jobs (locked) */
+        get: {
+            parameters: {
+                query?: {
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireAvailability"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pro/availability/blocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Replace the one-off blocks starting in [from, to) (and every weekly repeat when repeats is sent); up to hire.availability_horizon_days ahead, never over a booked job; audited, not moderated (FR-14) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: date-time */
+                        from: string;
+                        /** Format: date-time */
+                        to: string;
+                        blocks: {
+                            /** Format: date-time */
+                            start: string;
+                            /** Format: date-time */
+                            end: string;
+                            reason?: string;
+                        }[];
+                        /** @description When sent, the full set of weekly repeats (missing ones are removed) */
+                        repeats?: {
+                            /** @description 0 = Sunday … 6 = Saturday (Dhaka calendar) */
+                            weekdays: number[];
+                            from: string;
+                            to: string;
+                            /**
+                             * Format: date
+                             * @description The last day the repeat applies (Dhaka); open without it
+                             */
+                            until?: string;
+                            reason?: string;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HireAvailability"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: BLOCK_OVER_JOB */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -47108,6 +47642,8 @@ export interface components {
              */
             gender: "male" | "female" | "third" | null;
             username: string | null;
+            /** @description M01 avatar (public bucket); null without a photo */
+            avatarUrl: string | null;
             /** @enum {string} */
             locale: "en" | "bn";
             /** @enum {string} */
@@ -50628,11 +51164,19 @@ export interface components {
         Review: {
             /** Format: uuid */
             id: string;
-            subjectType: string;
+            /** @enum {string} */
+            subjectType: "ground" | "hire_profile" | "shop" | "gym";
             /** Format: uuid */
             subjectId: string;
+            /** @enum {string} */
+            sourceType?: "booking" | "hire_job" | "sub_order" | "gym_pass";
             /** Format: uuid */
-            bookingId: string;
+            sourceId?: string;
+            /** @description In the member and owner lists */
+            subjectName?: string | null;
+            subjectSlug?: string | null;
+            /** Format: uuid */
+            bookingId: string | null;
             stars: number;
             text: string | null;
             status: string;
@@ -50654,14 +51198,35 @@ export interface components {
         };
         Reviewable: {
             items: {
+                /** @enum {string} */
+                sourceType: "booking" | "hire_job" | "sub_order" | "gym_pass";
                 /** Format: uuid */
-                bookingId: string;
-                code: string;
+                sourceId: string;
+                ref: string;
+                /** @enum {string} */
+                subjectType: "ground" | "hire_profile" | "shop" | "gym";
                 /** Format: uuid */
-                groundId: string;
-                groundName: string | null;
-                groundSlug: string | null;
-                end: string;
+                subjectId: string;
+                subjectName: string | null;
+                subjectSlug: string | null;
+                doneAt: string;
+                closesAt: string;
+                /**
+                 * Format: uuid
+                 * @description Gyms (one review per member and gym): the review a post from this pass updates
+                 */
+                existingReviewId: string | null;
+                /**
+                 * Format: uuid
+                 * @description v1 booking fields (sourceType booking only): bookingId, code, groundId, groundName, groundSlug, end
+                 */
+                bookingId?: string;
+                code?: string;
+                /** Format: uuid */
+                groundId?: string;
+                groundName?: string | null;
+                groundSlug?: string | null;
+                end?: string;
             }[];
         };
         ReviewList: {
@@ -51787,6 +52352,12 @@ export interface components {
             ratingAvg: number | null;
             ratingCount: number;
             jobsDone: number;
+            /** @description % of requests accepted over hire.acceptance_window_days (FR-52) */
+            acceptanceRate: number | null;
+            medianReplyMinutes: number | null;
+            /** @description Some time left today (Dhaka) that is neither blocked nor booked (FR-05) */
+            availableToday: boolean;
+            avatarUrl: string | null;
             shortlisted: boolean;
         };
         HireProfilePage: {
@@ -51824,6 +52395,12 @@ export interface components {
             ratingAvg: number | null;
             ratingCount: number;
             jobsDone: number;
+            /** @description % of requests accepted over hire.acceptance_window_days (FR-52) */
+            acceptanceRate: number | null;
+            medianReplyMinutes: number | null;
+            /** @description Some time left today (Dhaka) that is neither blocked nor booked (FR-05) */
+            availableToday: boolean;
+            avatarUrl: string | null;
             shortlisted: boolean;
             bio: string | null;
             sportKeys: string[];
@@ -51899,7 +52476,7 @@ export interface components {
             } | null;
             checks?: {
                 /** @enum {string} */
-                key: "credential" | "police_clearance" | "free" | "daily_limit" | "in_future";
+                key: "credential" | "police_clearance" | "free" | "daily_limit" | "in_future" | "available";
                 ok: boolean;
             }[] | null;
         };
@@ -52020,6 +52597,19 @@ export interface components {
             complete?: boolean;
             withdraw?: boolean;
         };
+        /** @description Busy spans only: no reasons, no jobs */
+        HireBusy: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
+            busy: {
+                /** Format: date-time */
+                start: string;
+                /** Format: date-time */
+                end: string;
+            }[];
+        };
         HireRequestList: {
             items: components["schemas"]["HireRequestResult"][];
         };
@@ -52098,6 +52688,14 @@ export interface components {
                 text: string | null;
             } | null;
             rateCard: components["schemas"]["HireRateCard"];
+            stats: {
+                jobsDone: number;
+                acceptanceRate: number | null;
+                medianReplyMinutes: number | null;
+                ratingAvg: number | null;
+                ratingCount: number;
+            };
+            completeness: components["schemas"]["Completeness"];
             /** @description unit:format → the allowed rate range (Q74) */
             limits: {
                 [key: string]: {
@@ -52107,6 +52705,14 @@ export interface components {
                     [key: string]: unknown;
                 };
             };
+        };
+        /** @description Steps left to a complete profile; score = % of steps done */
+        Completeness: {
+            score: number;
+            steps: {
+                key: string;
+                done: boolean;
+            }[];
         };
         HireJobList: {
             items: components["schemas"]["HireJob"][];
@@ -52266,6 +52872,14 @@ export interface components {
                 text: string | null;
             } | null;
             rateCard: components["schemas"]["HireRateCard"];
+            stats: {
+                jobsDone: number;
+                acceptanceRate: number | null;
+                medianReplyMinutes: number | null;
+                ratingAvg: number | null;
+                ratingCount: number;
+            };
+            completeness: components["schemas"]["Completeness"];
             /** @description unit:format → the allowed rate range (Q74) */
             limits: {
                 [key: string]: {
@@ -52294,6 +52908,99 @@ export interface components {
             } | null;
             /** Format: date-time */
             updatedAt: string | null;
+        };
+        HireInsights: {
+            /** @enum {string} */
+            period: "7w" | "qtr" | "yr";
+            /** Format: date-time */
+            asOf: string;
+            /** @description First Dhaka day of the period */
+            from: string;
+            /** @description Earned (net) per Dhaka week or month, oldest first */
+            buckets: {
+                key: string;
+                from: string;
+                amount: number;
+            }[];
+            earned: {
+                total: number;
+                previous: number;
+                /** @description % change against the same days one period earlier */
+                delta: number | null;
+            };
+            releasingSoon: {
+                net: number;
+                count: number;
+                /** Format: date-time */
+                nextAt: string | null;
+            };
+            jobs: {
+                done: number;
+                upcoming: number;
+            };
+            acceptanceRate: number | null;
+            medianReplyMinutes: number | null;
+            rating: {
+                avg: number | null;
+                count: number;
+            };
+            whoHiresYou: {
+                key: string;
+                label: string;
+                jobs: number;
+            }[];
+        };
+        HireAvailability: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
+            horizonDays: number;
+            /** Format: date-time */
+            horizonEnd: string;
+            blocks: {
+                /** Format: date-time */
+                start: string;
+                /** Format: date-time */
+                end: string;
+                /** Format: uuid */
+                id: string;
+                reason: string | null;
+            }[];
+            repeats: {
+                /** Format: uuid */
+                id: string;
+                weekdays: number[];
+                from: string;
+                to: string;
+                until?: string;
+                /** Format: date-time */
+                validFrom: string;
+                reason: string | null;
+            }[];
+            /** @description Blocked time in the range, repeats expanded */
+            spans: {
+                /** Format: date-time */
+                start: string;
+                /** Format: date-time */
+                end: string;
+                reason: string | null;
+                /** Format: uuid */
+                blockId: string;
+                repeat: boolean;
+            }[];
+            booked: {
+                /** Format: date-time */
+                start: string;
+                /** Format: date-time */
+                end: string;
+                /** Format: uuid */
+                jobId: string;
+                code: string;
+                status: string;
+                /** @enum {boolean} */
+                locked: true;
+            }[];
         };
         GymList: {
             items: components["schemas"]["GymCard"][];
@@ -52424,6 +53131,12 @@ export interface components {
             ratingAvg: number | null;
             ratingCount: number;
             jobsDone: number;
+            /** @description % of requests accepted over hire.acceptance_window_days (FR-52) */
+            acceptanceRate: number | null;
+            medianReplyMinutes: number | null;
+            /** @description Some time left today (Dhaka) that is neither blocked nor booked (FR-05) */
+            availableToday: boolean;
+            avatarUrl: string | null;
             shortlisted: boolean;
             planFrom: number | null;
             plans: number;
@@ -53562,11 +54275,21 @@ export interface components {
             /** Format: date-time */
             updatedAt: string | null;
             username: string | null;
+            /** @description Round B1: steps left to a complete player profile */
+            completeness: {
+                score: number;
+                steps: {
+                    /** @enum {string} */
+                    key: "sports" | "bio" | "team" | "esportsUid" | "nid";
+                    done: boolean;
+                }[];
+            };
         };
         /** @description Never DOB, age, gender or phone */
         PublicPlayer: {
             handle: string;
             displayName: string;
+            avatarUrl: string | null;
             bio: string | null;
             sports: {
                 sportKey: string;
