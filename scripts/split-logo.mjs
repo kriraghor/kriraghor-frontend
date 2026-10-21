@@ -1,9 +1,9 @@
-// Splits the Kriraghor logo into its three pieces (cricket ball, shuttlecock, football) as
+// Splits the Kriraghor logo into its three pieces (cricket ball, game controller, football) as
 // same-size transparent PNGs, so the loader can fly them in and they line up exactly
 // (kriraghor-docs 09 §8, logo loader).
 //
 // The logo's white is transparent, so each piece is a set of colour islands. Amber is the
-// football; a green island goes to the cricket ball or the shuttlecock, whichever is nearer
+// football; a green island goes to the cricket ball or the controller, whichever is nearer
 // (seeded inside each piece, both halves of the ball either side of its seam).
 //
 // Usage: node scripts/split-logo.mjs apps/web/public/logo.png <out dir> [<out dir> …]
@@ -29,8 +29,8 @@ for (let i = 0; i < N; i++) {
 }
 
 const at = (x, y) => Math.round((y * H) / 512) * W + Math.round((x * W) / 512);
-const PIECES = ["cricket", "shuttle", "football"];
-const SEEDS = { cricket: [at(200, 192), at(48, 160)], shuttle: [at(40, 324), at(300, 352)] };
+const PIECES = ["cricket", "esports", "football"];
+const SEEDS = { cricket: [at(200, 192), at(48, 160)], esports: [at(40, 324), at(300, 352)] };
 
 // Flood each seed through its own colour.
 const owner = new Int32Array(N).fill(-1);

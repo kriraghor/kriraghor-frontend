@@ -24,14 +24,14 @@
   -webkit-user-drag: none;
 }
 
-/* Join: the cricket ball comes from the top left, the shuttlecock from the bottom left and the
+/* Join: the cricket ball comes from the top left, the controller from the bottom left and the
    football from the right, each turning as it flies, 90 ms apart; then the mark pulses once and a
    ring ripples out. Transforms only (no layout). */
 .kg-join > .kg-c {
   animation: kg-in-c 780ms var(--kg-spring) both;
 }
-.kg-join > .kg-s {
-  animation: kg-in-s 780ms var(--kg-spring) 90ms both;
+.kg-join > .kg-e {
+  animation: kg-in-e 780ms var(--kg-spring) 90ms both;
 }
 .kg-join > .kg-f {
   animation: kg-in-f 780ms var(--kg-spring) 180ms both;
@@ -56,7 +56,7 @@
     opacity: 1;
   }
 }
-@keyframes kg-in-s {
+@keyframes kg-in-e {
   from {
     opacity: 0;
     transform: translate(-70%, 75%) rotate(45deg) scale(0.55);
@@ -94,8 +94,8 @@
 .kg-loop > .kg-c {
   animation: kg-loop-c 1.6s var(--ease-kg) infinite;
 }
-.kg-loop > .kg-s {
-  animation: kg-loop-s 1.6s var(--ease-kg) infinite;
+.kg-loop > .kg-e {
+  animation: kg-loop-e 1.6s var(--ease-kg) infinite;
 }
 .kg-loop > .kg-f {
   animation: kg-loop-f 1.6s var(--ease-kg) infinite;
@@ -110,7 +110,7 @@
     transform: translate(-9%, -9%) rotate(-14deg);
   }
 }
-@keyframes kg-loop-s {
+@keyframes kg-loop-e {
   0%,
   100% {
     transform: none;
