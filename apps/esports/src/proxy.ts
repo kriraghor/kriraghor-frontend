@@ -23,5 +23,7 @@ export default function proxy(request: NextRequest) {
 
 export const config = {
   // Skip API routes, the /go/ redirects, /env.js, Next internals and files with an extension.
-  matcher: ["/((?!api|go/|env\.js|_next|_vercel|.*\..*).*)"],
+  // The dot is escaped for the regex ("\\." in a JS string): "\." would match any character and
+  // skip every page but "/" (the Round A outage, lib/__tests__/proxy-matcher.test.ts).
+  matcher: ["/((?!api|go/|env\\.js|_next|_vercel|.*\\..*).*)"],
 };
