@@ -186,6 +186,26 @@ describe("FilterBar", () => {
   });
 });
 
+describe("FilterBar on phones", () => {
+  it("folds the dropdowns into a Filters sheet that counts the active ones; search stays inline", () => {
+    wide = false;
+    render(
+      <FilterBar
+        search={{ value: "", onChange: () => undefined, label: "Search", testId: "search" }}
+        selects={[
+          { id: "area", label: "Area", value: "mirpur", onChange: () => undefined, options: [{ value: "mirpur", label: "Mirpur" }] },
+          { id: "status", label: "Status", value: "", onChange: () => undefined, options: [{ value: "live", label: "Live" }] },
+        ]}
+      />,
+    );
+    expect(q('[data-testid="search"]')).not.toBeNull();
+    expect(q('[data-testid="filter-area"]')).toBeNull();
+    expect(q('[data-testid="filters-open"]').textContent).toBe("Filters (1)");
+    click(q('[data-testid="filters-open"]'));
+    expect(q('[data-testid="filters-sheet"] [data-testid="filter-area"]')).not.toBeNull();
+  });
+});
+
 describe("ReasonDialog", () => {
   it("needs a reason of the minimum length before it confirms, trimmed", () => {
     const confirm = vi.fn();

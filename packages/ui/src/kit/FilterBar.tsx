@@ -2,11 +2,14 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { Faders, MagnifyingGlass, X } from "@phosphor-icons/react";
 import { cn } from "../cn";
+import { Button } from "./Button";
 import { Chip } from "./Display";
 import { Dropdown, type DropdownOption } from "./Dropdown";
 import { controlClass } from "./Form";
+import { Sheet } from "./Overlay";
+import { MD, useMinWidth } from "./media";
 
 export type FilterSelect = {
   id: string;
@@ -38,11 +41,25 @@ export const SEARCH_DEBOUNCE_MS = 300;
 /**
  * The desk filter bar (09 §8): status chips with counts, a debounced search, dropdown filters, the
  * active filters as removable chips and "Clear filters". Values live with the caller (the URL).
+ * On phones the dropdowns and extra fields fold into a "Filters (n)" sheet, so the rows come first.
  */
 export function FilterBar({ search, chips, selects = [], extra, onClear, actions, className }: FilterBarProps) {
   const t = useTranslations("kit.filters");
   const active = selects.filter((s) => s.value);
   const anything = Boolean(search?.value) || active.length > 0 || Boolean(chips?.value);
+  const wide = useMinWidth(MD);
+  const [sheet, setSheet] = useState(false);
+  const fold = !wide && (selects.length > 0 || Boolean(extra));
+  const fields = (
+    <>
+      {selects.map((s) => (
+        <div key={s.id} className="w-full min-w-40 sm:w-48">
+          <Dropdown id={`filter-${s.id}`} label={s.label} value={s.value} onChange={s.onChange} options={s.options} anyLabel={s.anyLabel ?? t("any")} testId={`filter-${s.id}`} />
+        </div>
+      ))}
+      {extra}
+    </>
+  );
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       {chips ? (
@@ -57,12 +74,13 @@ export function FilterBar({ search, chips, selects = [], extra, onClear, actions
       {search || selects.length || extra || actions ? (
         <div className="flex flex-wrap items-end gap-2">
           {search ? <SearchBox {...search} /> : null}
-          {selects.map((s) => (
-            <div key={s.id} className="w-full min-w-40 sm:w-48">
-              <Dropdown id={`filter-${s.id}`} label={s.label} value={s.value} onChange={s.onChange} options={s.options} anyLabel={s.anyLabel ?? t("any")} testId={`filter-${s.id}`} />
-            </div>
-          ))}
-          {extra}
+          {fold ? (
+            <Button type="button" variant="secondary" icon={<Faders size={18} aria-hidden />} onClick={() => setSheet(true)} data-testid="filters-open">
+              {active.length ? t("moreCount", { n: active.length }) : t("more")}
+            </Button>
+          ) : (
+            fields
+          )}
           {actions ? <div className="ml-auto flex flex-wrap items-center gap-2">{actions}</div> : null}
         </div>
       ) : null}
@@ -76,6 +94,16 @@ export function FilterBar({ search, chips, selects = [], extra, onClear, actions
             {t("clear")}
           </button>
         </div>
+      ) : null}
+      {fold ? (
+        <Sheet open={sheet} onOpenChange={setSheet} side="bottom" title={t("more")} testId="filters-sheet">
+          <div className="flex flex-col gap-4 px-5 pb-4">{fields}</div>
+          <div className="sticky bottom-0 border-t border-line bg-surface px-5 py-3">
+            <Button type="button" block onClick={() => setSheet(false)} data-testid="filters-done">
+              {t("done")}
+            </Button>
+          </div>
+        </Sheet>
       ) : null}
     </div>
   );

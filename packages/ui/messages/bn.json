@@ -28,7 +28,10 @@
     "filters": {
       "any": "যেকোনো",
       "clear": "ফিল্টার মুছুন",
-      "remove": "{label} সরান"
+      "remove": "{label} সরান",
+      "more": "ফিল্টার",
+      "moreCount": "ফিল্টার ({n})",
+      "done": "ফলাফল দেখুন"
     },
     "reason": {
       "label": "কারণ",

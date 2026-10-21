@@ -28,7 +28,10 @@
     "filters": {
       "any": "Any",
       "clear": "Clear filters",
-      "remove": "Remove {label}"
+      "remove": "Remove {label}",
+      "more": "Filters",
+      "moreCount": "Filters ({n})",
+      "done": "Show results"
     },
     "reason": {
       "label": "Reason",
