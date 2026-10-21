@@ -48,6 +48,12 @@
       "facebook": "ফেসবুক",
       "messenger": "মেসেঞ্জার",
       "x": "এক্স (টুইটার)"
+    },
+    "checklist": {
+      "progress": "{total}টির মধ্যে {done}টি শেষ",
+      "score": "{score}% সম্পূর্ণ",
+      "done": "শেষ",
+      "todo": "বাকি"
     }
   },
   "auth": {

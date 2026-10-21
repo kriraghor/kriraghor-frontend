@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { publicEnv } from "@kriraghor/session/env";
 import { ShareButton } from "@kriraghor/ui/share";
+import { Avatar } from "@kriraghor/ui/kit";
 import { teams } from "@/lib/teams";
 
 /** /players/[handle] (M16-FR-05): the public player page. Never gender, DOB, age or phone. */
@@ -26,11 +27,14 @@ export function PublicPlayerView({ handle }: { handle: string }) {
   return (
     <section className="mx-auto max-w-[900px] px-5 py-10" data-testid="public-player">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="font-mono text-sm text-muted">@{p.handle}</p>
-          <h1 className="break-words text-4xl font-extrabold" data-testid="player-name">
-            {p.displayName}
-          </h1>
+        <div className="flex min-w-0 items-center gap-4">
+          <Avatar name={p.displayName} src={p.avatarUrl} size={72} />
+          <div className="min-w-0">
+            <p className="font-mono text-sm text-muted">@{p.handle}</p>
+            <h1 className="break-words text-4xl font-extrabold" data-testid="player-name">
+              {p.displayName}
+            </h1>
+          </div>
         </div>
         <ShareButton url={`${publicEnv().WEB_URL}/players/${encodeURIComponent(p.handle)}`} title={p.displayName} text={p.bio} testId="player-share" />
       </div>

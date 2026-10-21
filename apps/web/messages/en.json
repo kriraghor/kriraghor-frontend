@@ -1525,7 +1525,9 @@
       "maxPerDay": "Jobs a day at most",
       "ratesSaved": "Rates saved.",
       "saveRates": "Save the rates",
-      "reviews": "Reviews"
+      "reviews": "Reviews",
+      "availability": "Availability",
+      "earnings": "Earnings"
     },
     "profileStatus": {
       "draft": "Draft",
@@ -1537,6 +1539,129 @@
       "withdrawn": "Withdrawn",
       "suspended": "Suspended",
       "removed": "Removed"
+    },
+    "availableToday": "Available today",
+    "repliesIn": {
+      "min": "Replies in ~{n} min",
+      "hours": "Replies in ~{n} h",
+      "days": "Replies in ~{n} {n, plural, one {day} other {days}}"
+    },
+    "accepts": "Accepts {pct}",
+    "busyAllDay": "Busy all day",
+    "busyAt": "Busy:",
+    "checklist": {
+      "title": "Finish your profile",
+      "lead": "Complete profiles get hired more. Each step takes a minute or two.",
+      "pro": {
+        "photo": "Add a profile photo",
+        "headline": "Write a headline",
+        "bio": "Tell managers about yourself",
+        "rateCard": "Set your rates",
+        "credential": "Get your credential approved",
+        "policeClearance": "Send a police clearance",
+        "availability": "Mark the hours you are not free",
+        "payoutAccount": "Add a payout account"
+      },
+      "proHint": {
+        "photo": "A clear photo of your face builds trust.",
+        "bio": "A few lines on your experience and how you work.",
+        "credential": "Its level sets the work you can take.",
+        "policeClearance": "Needed to work with under-16 players.",
+        "availability": "Managers see when you are busy before they ask.",
+        "payoutAccount": "Where your earnings are sent."
+      },
+      "photoTitle": "Profile photo",
+      "photoLead": "Shown on your account, your hire cards and your player page."
+    },
+    "earn": {
+      "period": "Period",
+      "periods": {
+        "7w": "7 weeks",
+        "qtr": "Quarter",
+        "yr": "Year"
+      },
+      "payouts": "Payouts",
+      "loading": "Loading your numbers",
+      "earned": {
+        "7w": "Earned in 7 weeks",
+        "qtr": "Earned in 13 weeks",
+        "yr": "Earned in 12 months"
+      },
+      "vsPrevious": "vs the period before",
+      "afterFirstJob": "Shows after your first released job",
+      "releasing": "Releasing soon",
+      "releasingNote": "{n, plural, one {# job} other {# jobs}} · next {when}",
+      "nothingReleasing": "Nothing waiting to be released",
+      "jobsDone": "Jobs done",
+      "upcoming": "{n} coming up",
+      "acceptance": "Acceptance rate",
+      "acceptanceNote": "Of your recent requests",
+      "afterFirstRequest": "Shows after your first request",
+      "reply": "Typical reply time",
+      "replyIn": {
+        "min": "~{n} min",
+        "hours": "~{n} h",
+        "days": "~{n} {n, plural, one {day} other {days}}"
+      },
+      "replyNote": "Middle value over your recent requests",
+      "afterFirstReply": "Shows after your first reply",
+      "rating": "Rating",
+      "reviews": "{n, plural, one {# review} other {# reviews}}",
+      "afterFirstReview": "Shows after your first review",
+      "byWeek": "Earned by week",
+      "byMonth": "Earned by month",
+      "noEarnings": "No released jobs in this period yet. Earnings show here after your first released job.",
+      "whoHires": "Who hires you",
+      "individual": "Individual managers",
+      "jobsN": "{n, plural, one {# job} other {# jobs}}",
+      "noHirers": "No recent jobs yet."
+    },
+    "cal": {
+      "title": "Your availability",
+      "lead": "Block the hours you cannot work. Managers only see that you are busy, never why. Times are Dhaka time.",
+      "prevWeek": "Previous week",
+      "nextWeek": "Next week",
+      "thisWeek": "Back to this week",
+      "saveFirst": "Save or undo your changes to move to another week.",
+      "gridLabel": "Hours this week. Space or Enter blocks or frees an hour, the arrow keys move, Shift with an arrow paints as you move.",
+      "hour": "Hour",
+      "pickDay": "Pick a day",
+      "legend": "What the colours mean",
+      "kind": {
+        "free": "Free",
+        "blocked": "Blocked",
+        "repeat": "Weekly repeat",
+        "booked": "Booked job",
+        "bookedCode": "Booked · {code}",
+        "outside": "Blocked (set on another week)",
+        "past": "Past",
+        "horizon": "Too far ahead"
+      },
+      "blockedCount": "{n, plural, =0 {No hours blocked this week} one {# hour blocked this week} other {# hours blocked this week}}",
+      "reason": "Reason",
+      "optional": "Optional",
+      "reasonHint": "Only you see this. It is saved with the hours you add now.",
+      "repeat": "Repeat the hours I added every week",
+      "until": "Until",
+      "untilHint": "Leave it empty to keep repeating.",
+      "save": "Save the week",
+      "undo": "Undo changes",
+      "saved": "Availability saved",
+      "repeats": "Weekly repeats",
+      "repeatLine": "Every {days}, {from}–{to}",
+      "repeatUntil": "until {date}",
+      "removeRepeat": "Remove",
+      "keepRepeat": "Keep",
+      "removeNote": "Removed repeats go when you save the week.",
+      "errors": {
+        "overJob": "You have a booked job in that time ({jobs}). Free those hours, or keep the job.",
+        "horizon": "You can block hours up to {days} days ahead.",
+        "past": "Past days cannot be changed.",
+        "overlap": "Two blocked times overlap. Reload the week and try again.",
+        "blocks": "Some hours fall outside this week. Reload the week and try again.",
+        "repeats": "A weekly repeat must end after it starts, and stay within the days you can block.",
+        "invalid": "We could not save this week. Check the hours and try again."
+      }
     }
   },
   "gym": {
@@ -1880,6 +2005,24 @@
       "FILE_TOO_LARGE": "The logo must be 2 MB or smaller.",
       "FILE_TYPE_MISMATCH": "That file is not the image type it claims to be.",
       "RATE_LIMITED": "Too many invites today. Try again tomorrow."
+    },
+    "checklist": {
+      "title": "Finish your player profile",
+      "lead": "Captains and managers find complete profiles first.",
+      "steps": {
+        "sports": "Pick your sports and positions",
+        "bio": "Write a short bio",
+        "team": "Join or create a team",
+        "esportsUid": "Verify a game UID",
+        "nid": "Verify your NID"
+      },
+      "hints": {
+        "sports": "Each sport needs at least one position.",
+        "bio": "A line or two about how you play.",
+        "team": "The teams you play for show on your page.",
+        "esportsUid": "On Kriraghor Esports, for PUBG Mobile or Free Fire.",
+        "nid": "A verified NID lets you join events and get paid."
+      }
     }
   },
   "tournaments": {
@@ -2567,6 +2710,28 @@
       "roleNotWithdrawable": "This application can't be withdrawn any more.",
       "submissionNotWithdrawable": "Withdraw this one from its own page.",
       "submissionClosed": "This has already been decided, so it can't be withdrawn."
+    },
+    "photo": {
+      "title": "Profile photo",
+      "lead": "Shown on your account, your hire profile and your player page.",
+      "hint": "JPEG, PNG or WebP, up to {mb} MB. A clear photo of your face works best.",
+      "hintNoSize": "JPEG, PNG or WebP. A clear photo of your face works best.",
+      "choose": "Choose a photo",
+      "change": "Change photo",
+      "save": "Save photo",
+      "cancel": "Cancel",
+      "remove": "Remove photo",
+      "previewNote": "This is a preview. Save it to use it.",
+      "saved": "Photo saved",
+      "removed": "Photo removed",
+      "errors": {
+        "empty": "That file is empty. Choose another photo.",
+        "type": "Use a JPEG, PNG or WebP image.",
+        "tooLarge": "That photo is too large. Use one up to {mb} MB.",
+        "tooLargeNoSize": "That photo is too large. Choose a smaller one.",
+        "mismatch": "That file is not the kind of image it says it is. Save it again as JPEG or PNG and try again.",
+        "generic": "We could not save the photo. Try again."
+      }
     }
   },
   "myRoles": {

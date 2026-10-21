@@ -44,7 +44,7 @@ export function AccountHeader({ user }: { user: Me }) {
   const t = useTranslations("account");
   return (
     <header className="flex flex-wrap items-center gap-4">
-      <Avatar name={user.displayName} size={60} />
+      <Avatar name={user.displayName} src={user.avatarUrl} size={60} />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-muted">{t(`greeting.${greetingKey()}`)}</p>
         <h1 className="truncate text-3xl sm:text-4xl" data-testid="me-name">
@@ -153,7 +153,7 @@ export function ShellUser({ collapsed, user }: { collapsed: boolean; user?: Me }
   const handle = user.username ? `@${user.username}` : (user.phone ?? user.email ?? undefined);
   return (
     <div className={collapsed ? "flex justify-center" : "flex items-center gap-3 rounded-control px-2"}>
-      <Avatar name={user.displayName} size={collapsed ? 40 : 44} />
+      <Avatar name={user.displayName} src={user.avatarUrl} size={collapsed ? 40 : 44} />
       {collapsed ? null : (
         <div className="min-w-0">
           <p className="truncate font-semibold">{user.displayName}</p>

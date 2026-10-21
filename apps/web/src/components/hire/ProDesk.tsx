@@ -10,12 +10,18 @@ import { DECLINE_REASONS, hire, minutesLeft, profileTone, requestTone, TONE, typ
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { ChecklistCard, Dialog } from "@kriraghor/ui/kit";
+import { useMe } from "@kriraghor/ui/account";
+import { incomplete, proStepHref } from "@/lib/completeness";
+import { AvatarControl } from "../account/AvatarControl";
 import { JobCard } from "./JobCard";
 
 const TABS = [
   { href: "/pro", key: "profiles" },
   { href: "/pro/requests", key: "requests" },
   { href: "/pro/jobs", key: "jobs" },
+  { href: "/pro/availability", key: "availability" },
+  { href: "/pro/earnings", key: "earnings" },
   { href: "/pro/plans", key: "plans" },
   { href: "/pro/reviews", key: "reviews" },
 ] as const;
@@ -83,6 +89,10 @@ export function ProProfiles() {
   const pause = useMutation({ mutationFn: ({ id, on }: { id: string; on: boolean }) => hire.setPaused(id, on), onSuccess: () => qc.invalidateQueries({ queryKey: ["pro-profiles"] }) });
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const money = (n: number) => formatTaka(n, locale);
+  const { me } = useMe();
+  const [photo, setPhoto] = useState(false);
+  // Credentials and the police clearance are sent under the business role the person holds.
+  const as = (me.data?.roles ?? []).some((r) => r.role === "pro" && OPEN_ROLE.includes(r.status)) ? "pro" : "player";
   if (q.isPending) return <div className="h-40 animate-pulse bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("error")}</Notice>;
   return (
@@ -106,6 +116,23 @@ export function ProProfiles() {
             </div>
             {p.rateCard ? <p className="mt-2 text-sm text-muted">{p.rateCard.items.map((i) => `${i.unit === "match" ? i.format ?? t("perMatch") : t("perHour")} ${money(i.rate)}`).join(" · ")}</p> : <p className="mt-2 text-sm text-danger">{t("desk.noRates")}</p>}
             {p.reviewReason ? <p className="mt-1 text-sm text-danger">{p.reviewReason.text ?? p.reviewReason.code}</p> : null}
+            {/* Round B1: what is left to a complete profile, each step linking to where it is fixed (hidden at 100%). */}
+            {incomplete(p.completeness) ? (
+              <ChecklistCard
+                className="mt-4"
+                testId={`pro-checklist-${p.id}`}
+                title={t("checklist.title")}
+                description={t("checklist.lead")}
+                score={p.completeness.score}
+                steps={p.completeness.steps.map((s) => ({
+                  key: s.key,
+                  done: s.done,
+                  label: t.has(`checklist.pro.${s.key}`) ? t(`checklist.pro.${s.key}`) : s.key,
+                  hint: t.has(`checklist.proHint.${s.key}`) ? t(`checklist.proHint.${s.key}`) : undefined,
+                  ...(s.key === "photo" && me.data ? { onSelect: () => setPhoto(true) } : { href: proStepHref(s.key, p.id, as) }),
+                }))}
+              />
+            ) : null}
             <div className="mt-3 flex flex-wrap gap-3">
               <Link href={`/pro/profiles/${p.id}`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand">
                 {t("desk.edit")}
@@ -124,6 +151,11 @@ export function ProProfiles() {
           </li>
         ))}
       </ul>
+      {me.data ? (
+        <Dialog open={photo} onOpenChange={setPhoto} title={t("checklist.photoTitle")} description={t("checklist.photoLead")}>
+          <AvatarControl me={me.data} onDone={() => setPhoto(false)} />
+        </Dialog>
+      ) : null}
     </div>
   );
 }

@@ -7,7 +7,9 @@ import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { ShareButton } from "@kriraghor/ui/share";
 import { publicEnv } from "@kriraghor/session/env";
-import { busyByDay, hire, nextDays, type ProfilePage } from "@/lib/hire";
+import { Avatar } from "@kriraghor/ui/kit";
+import { hire, nextDays, type ProfilePage } from "@/lib/hire";
+import { clock, dayBusy } from "@/lib/availability";
 import { formatTaka } from "@/lib/payments";
 import { TrainerPlans } from "../gym/TrainerPlans";
 import { SubjectReviews } from "../trust/SubjectReviews";
@@ -43,8 +45,13 @@ export function HireProfileView({ slug }: { slug: string }) {
       </Link>
       <div className="mt-4 grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-muted">{name(p.role)}</p>
-          <h1 className="mt-1 text-4xl font-extrabold">{p.name}</h1>
+          <div className="flex items-center gap-4">
+            <Avatar name={p.name} src={p.avatarUrl} size={72} />
+            <div className="min-w-0">
+              <p className="text-sm font-bold uppercase tracking-wide text-muted">{name(p.role)}</p>
+              <h1 className="mt-1 break-words text-4xl font-extrabold">{p.name}</h1>
+            </div>
+          </div>
           <p className="mt-2 text-lg">{p.headline}</p>
           <div className="mt-3 flex flex-wrap gap-2 text-sm font-semibold">
             <span className="bg-surface-2 px-2 py-1">{t(`level.${p.experienceLevel}`)}</span>
@@ -115,23 +122,39 @@ function Rates({ p }: { p: ProfilePage }) {
   );
 }
 
-/** The next 14 Dhaka days, each marked free or with its busy times (no details of the other jobs). */
+/**
+ * The next 14 Dhaka days (FR-05), each free or with its busy times: booked jobs and the pro's blocked
+ * hours merged, times only (never a reason or a job). A day with no free time says so.
+ */
 function BusyStrip({ busy }: { busy: { start: string; end: string }[] }) {
   const t = useTranslations("hire");
   const locale = useLocale();
-  const byDay = busyByDay(busy);
-  const fmt = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "short", day: "numeric", timeZone: "UTC" });
-  const time = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Dhaka" });
+  const tag = locale === "bn" ? "bn-BD" : "en-GB";
+  const fmt = new Intl.DateTimeFormat(tag, { weekday: "short", day: "numeric", timeZone: "UTC" });
+  const digits = new Intl.NumberFormat(tag, { minimumIntegerDigits: 2, useGrouping: false });
+  const time = (m: number) => clock(m).replace(/\d+/g, (n) => digits.format(Number(n)));
   return (
     <div className="mt-8">
       <h2 className="text-xl font-extrabold">{t("availability")}</h2>
-      <ol className="mt-3 grid grid-cols-7 gap-1" data-testid="hire-busy">
+      <ol className="mt-3 grid grid-cols-4 gap-1 sm:grid-cols-7" data-testid="hire-busy">
         {nextDays(14).map((d) => {
-          const b = byDay.get(d) ?? [];
+          const b = dayBusy(busy, d);
+          const allDay = b.length === 1 && b[0].from === 0 && b[0].to === 1440;
           return (
-            <li key={d} className={`min-h-16 border-2 p-1 text-xs ${b.length ? "border-amber-500" : "border-line"}`}>
+            <li key={d} className={`min-h-16 border-2 p-1 text-xs ${b.length ? "border-amber-500" : "border-line"}`} data-busy={b.length ? "true" : "false"}>
               <span className="block font-bold">{fmt.format(new Date(`${d}T00:00:00Z`))}</span>
-              {b.length ? b.map((x) => <span key={x.start} className="block tabular-nums">{`${time.format(new Date(x.start))}–${time.format(new Date(x.end))}`}</span>) : <span className="text-muted">{t("free")}</span>}
+              {allDay ? (
+                <span className="block font-semibold">{t("busyAllDay")}</span>
+              ) : b.length ? (
+                <>
+                  <span className="sr-only">{t("busyAt")}</span>
+                  {b.map((x) => (
+                    <span key={x.from} className="block tabular-nums">{`${time(x.from)}–${time(x.to)}`}</span>
+                  ))}
+                </>
+              ) : (
+                <span className="text-muted">{t("free")}</span>
+              )}
             </li>
           );
         })}

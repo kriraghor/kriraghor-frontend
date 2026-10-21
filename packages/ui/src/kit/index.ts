@@ -11,4 +11,5 @@ export { DataTable, sortRows, type Column, type DataTableProps, type MenuItem } 
 export { FilterBar, SEARCH_DEBOUNCE_MS, type FilterBarProps, type FilterSelect } from "./FilterBar";
 export { DetailLayout } from "./DetailPane";
 export { ReasonDialog } from "./ReasonDialog";
+export { ChecklistCard, type ChecklistStep } from "./ChecklistCard";
 export { useMinWidth, MD, XL } from "./media";

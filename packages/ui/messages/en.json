@@ -48,6 +48,12 @@
       "facebook": "Facebook",
       "messenger": "Messenger",
       "x": "X (Twitter)"
+    },
+    "checklist": {
+      "progress": "{done} of {total} done",
+      "score": "{score}% complete",
+      "done": "Done",
+      "todo": "To do"
     }
   },
   "auth": {

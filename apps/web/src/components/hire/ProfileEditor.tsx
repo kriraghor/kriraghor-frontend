@@ -98,7 +98,7 @@ function ProfileFields({ values, onChange }: { values: Omit<ProfileBody, "roleKe
     <>
       <label className={label}>
         {t("desk.headline")}
-        <input value={values.headline} onChange={(e) => set({ headline: e.target.value })} minLength={5} maxLength={80} required className={input} data-testid="pro-headline" />
+        <input id="pro-headline" value={values.headline} onChange={(e) => set({ headline: e.target.value })} minLength={5} maxLength={80} required className={`${input} scroll-mt-28`} data-testid="pro-headline" />
       </label>
       <div className="grid gap-4 sm:grid-cols-3">
         <label className={label}>
@@ -129,7 +129,7 @@ function ProfileFields({ values, onChange }: { values: Omit<ProfileBody, "roleKe
       </div>
       <label className={label}>
         {t("desk.bio")}
-        <textarea value={values.bio ?? ""} onChange={(e) => set({ bio: e.target.value || undefined })} maxLength={2000} rows={4} className="glass-card p-3 text-base text-ink" />
+        <textarea id="pro-bio" value={values.bio ?? ""} onChange={(e) => set({ bio: e.target.value || undefined })} maxLength={2000} rows={4} className="glass-card scroll-mt-28 p-3 text-base text-ink" />
       </label>
       <label className="flex min-h-11 items-center gap-3 font-semibold">
         <input type="checkbox" checked={values.worksWithU16} onChange={(e) => set({ worksWithU16: e.target.checked })} className="h-5 w-5" />
@@ -241,7 +241,8 @@ function RateCardEditor({ p, disabled, onSaved }: { p: OwnerProfile; disabled: b
 
   return (
     <form
-      className="flex flex-col gap-4 border-2 border-line p-4"
+      id="pro-rates"
+      className="flex scroll-mt-28 flex-col gap-4 border-2 border-line p-4"
       onSubmit={(e) => {
         e.preventDefault();
         save.mutate();

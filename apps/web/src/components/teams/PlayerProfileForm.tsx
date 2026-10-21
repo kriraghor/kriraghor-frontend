@@ -9,6 +9,8 @@ import { useAuth } from "@kriraghor/ui/auth";
 import { setUsername, teams, teamSports, togglePosition, type PlayerProfile } from "@/lib/teams";
 import { MePanel } from "../MePanel";
 import { Button, Field, Notice } from "@kriraghor/ui/primitives";
+import { ChecklistCard } from "@kriraghor/ui/kit";
+import { incomplete, playerStepHref } from "@/lib/completeness";
 
 type Pick = { sportKey: string; positions: string[] };
 
@@ -63,6 +65,18 @@ function Editor({ initial }: { initial: PlayerProfile }) {
       <h1 className="mt-4 text-3xl font-extrabold">{t("playerProfile")}</h1>
       <p className="mt-1 text-muted">{t("profilePrivacy")}</p>
 
+      {/* Round B1: what is left to a complete player profile (hidden at 100%). */}
+      {incomplete(initial.completeness) ? (
+        <ChecklistCard
+          className="mt-6"
+          testId="player-checklist"
+          title={t("checklist.title")}
+          description={t("checklist.lead")}
+          score={initial.completeness.score}
+          steps={initial.completeness.steps.map((s) => ({ key: s.key, done: s.done, label: t(`checklist.steps.${s.key}`), hint: t(`checklist.hints.${s.key}`), href: playerStepHref(s.key) }))}
+        />
+      ) : null}
+
       <div className="mt-6 border-2 border-line p-4">
         {username ? (
           <p>
@@ -95,7 +109,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
           save.mutate();
         }}
       >
-        <fieldset className="border-2 border-line p-4">
+        <fieldset id="player-sports" className="scroll-mt-28 border-2 border-line p-4">
           <legend className="px-1 font-extrabold">{t("sportsAndPositions")}</legend>
           <ul className="flex flex-col gap-4">
             {all.map((s) => {
@@ -133,7 +147,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
           <label htmlFor="player-bio" className="text-sm font-semibold text-muted">
             {t("bio")}
           </label>
-          <textarea id="player-bio" rows={3} maxLength={500} value={bio} onChange={(e) => setBio(e.target.value)} className="glass-card p-3" />
+          <textarea id="player-bio" rows={3} maxLength={500} value={bio} onChange={(e) => setBio(e.target.value)} className="glass-card scroll-mt-28 p-3" />
         </div>
 
         <fieldset className="flex flex-col gap-2">
