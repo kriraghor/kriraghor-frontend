@@ -50,7 +50,12 @@
     "bigEvents": "Showcases",
     "teamsAdmin": "Teams",
     "sportsConsole": "Sports events",
-    "tournamentsAdmin": "Sports events"
+    "tournamentsAdmin": "Sports events",
+    "skip": "Skip to content",
+    "homeLabel": "Kriraghor home",
+    "main": "Main",
+    "closeMenu": "Close menu",
+    "menu": "Menu"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -3585,5 +3590,37 @@
     "cancel": "Cancel the event",
     "cancelTitle": "Cancel the event",
     "cancelHelp": "Every team gets back what is still held. Enter your authenticator code."
+  },
+  "panel": {
+    "title": "Desks",
+    "viewing": "Viewing panel",
+    "adminDesk": "Admin desk",
+    "business": "Business",
+    "all": "All my businesses",
+    "master": "Master admin",
+    "staff": "Staff",
+    "member": "Member",
+    "signOut": "Sign out",
+    "sections": {
+      "operations": "Operations",
+      "esports": "Esports",
+      "venues": "Venues and events",
+      "market": "Market",
+      "money": "Money",
+      "trust": "Trust and safety",
+      "system": "System",
+      "overview": "Overview",
+      "shop": "Shop",
+      "gym": "Gym",
+      "events": "Events",
+      "business": "Business",
+      "grounds": "Venues"
+    },
+    "roles": {
+      "ground_owner": "Venue owner",
+      "shop_owner": "Shop",
+      "gym_owner": "Gym",
+      "organiser": "Organiser"
+    }
   }
 }

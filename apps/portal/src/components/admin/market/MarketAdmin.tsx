@@ -7,7 +7,6 @@ import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { marketAdmin, type Action } from "@/lib/admin/market";
 import { Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "../AdminSubnav";
 import { Chip, Field, inputCls } from "../finance/shared";
 
 const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { live: "ok", pending_review: "warn", changes_requested: "bad", suspended: "bad", rejected: "bad", removed: "muted", paused: "muted", draft: "muted", withdrawn: "muted" };
@@ -42,7 +41,6 @@ export function MarketAdmin() {
   };
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1100px] px-5 pb-16 pt-8">
         <h1 className="text-3xl font-extrabold">{t("deskTitle")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("deskIntro")}</p>

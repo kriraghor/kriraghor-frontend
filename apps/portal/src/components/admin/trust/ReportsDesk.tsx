@@ -6,7 +6,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
 import { reportsAdmin, reviewsAdmin, type ReportAction, type ReportRow } from "@/lib/admin/trust";
 import { Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "../AdminSubnav";
 import { Chip, inputCls } from "../finance/shared";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 
@@ -29,7 +28,6 @@ export function ReportsDesk() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("intro", { n: q.data?.threshold ?? 3 })}</p>
@@ -145,7 +143,6 @@ export function ReviewsDesk() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>

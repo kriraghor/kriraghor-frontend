@@ -8,7 +8,6 @@ import { problemOf } from "@kriraghor/api-client";
 import { stepUp } from "@/lib/admin/stepUp";
 import { MASTER_ACTIONS, SEVERITY_ORDER, riskAdmin, stepUpScope, type RiskActionName, type Severity } from "@/lib/admin/risk";
 import { Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "../AdminSubnav";
 import { CodeDialog } from "../CodeDialog";
 import { Chip, inputCls } from "../finance/shared";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
@@ -40,7 +39,6 @@ export function RiskDesk() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
@@ -180,7 +178,6 @@ export function RiskAccountView({ userId }: { userId: string }) {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
         <Link href="/admin/risk" className="text-sm font-semibold text-brand underline">
           ← {t("title")}

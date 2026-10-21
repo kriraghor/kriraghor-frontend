@@ -9,7 +9,7 @@ export default async function VendorSignIn({ params }: PageProps<"/[locale]/vend
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <AuthLayout brand="vendor">
+    <AuthLayout brand="vendor" image="/images/grounds-floodlit.jpg">
       <SignInForm next="/vendor" signUpHref={null} />
     </AuthLayout>
   );

@@ -6,7 +6,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { api, problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "../AdminSubnav";
 import { Chip, Field, inputCls } from "../finance/shared";
 import { useAdminMe } from "../useAdminMe";
 
@@ -90,7 +89,6 @@ export function HireCatalog() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-8">
         <h1 className="text-3xl font-extrabold">{t("catalogTitle")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("catalogIntro")}</p>

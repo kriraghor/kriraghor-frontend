@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { finance, isTab, TABS, type Tab } from "@/lib/admin/finance";
 import { Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "../AdminSubnav";
 import { useAdminMe } from "../useAdminMe";
 import { PaymentsTab } from "./PaymentsTab";
 import { RefundsTab } from "./RefundsTab";
@@ -40,7 +39,6 @@ export function FinanceDesk() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
         <div className="flex flex-wrap items-baseline gap-3">
           <h1 className="text-3xl font-extrabold">{t("title")}</h1>

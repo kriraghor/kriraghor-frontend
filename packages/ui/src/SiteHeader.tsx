@@ -23,6 +23,8 @@ export type HeaderConfig = {
   bell?: { centreHref: string; settingsHref?: string };
   /** Extra signed-in actions before the bell (kriraghor.com: the cart, M13). */
   actions?: ReactNode;
+  /** Full width, for desks whose sidebar runs from the left edge (the portal). */
+  full?: boolean;
 };
 
 /** A nav link: in-app routes through next-intl, the /go/ redirects and other sites as plain links. */
@@ -43,7 +45,7 @@ function NavLink({ href, className, current, children, onClick }: { href: string
 
 const iconBtn = "inline-flex size-11 shrink-0 items-center justify-center rounded-control text-ink transition-colors hover:bg-surface-2";
 
-export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, actions }: HeaderConfig) {
+export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, actions, full }: HeaderConfig) {
   const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();
@@ -65,7 +67,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
         <span className="flex-1 bg-amber-500" />
       </div>
       {/* Desktop: logo left, the links centred, actions right (three columns). */}
-      <div className="mx-auto grid h-16 max-w-wide grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:px-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6">
+      <div className={cn("mx-auto grid h-16 grid-cols-[minmax(0,1fr)_auto]", full ? "max-w-none" : "max-w-wide", "items-center gap-2 px-3 sm:px-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6")}>
         <a href="#main" className="sr-only focus:not-sr-only">
           {t("nav.skip")}
         </a>

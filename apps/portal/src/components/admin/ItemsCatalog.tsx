@@ -7,7 +7,6 @@ import { api, problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { parseOptions } from "@/lib/admin/market";
 import { Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "./AdminSubnav";
 import { Chip, Field, inputCls } from "./finance/shared";
 
 type Table = "item-categories" | "item-types" | "item-type-fields";
@@ -80,7 +79,6 @@ export function ItemsCatalog() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1200px] px-5 pb-16 pt-8">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>

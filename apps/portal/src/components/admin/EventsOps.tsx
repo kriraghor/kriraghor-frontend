@@ -6,7 +6,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { api, problemOf } from "@kriraghor/api-client";
 import { stepUp } from "@/lib/admin/stepUp";
 import { Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "./AdminSubnav";
 import { CodeDialog } from "./CodeDialog";
 import { formatDhaka, useAdminMe } from "./useAdminMe";
 
@@ -37,7 +36,6 @@ export function EventsOps() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>

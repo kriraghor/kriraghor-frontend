@@ -1,5 +1,5 @@
 import type { Audience } from "@kriraghor/session/auth";
-import type { HeaderConfig } from "@/components/SiteHeader";
+import type { HeaderConfig } from "@kriraghor/ui/site-header";
 
 /**
  * One app, two areas, routed by host (proxy.ts):
@@ -19,29 +19,8 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       signInHref: "/admin/sign-in",
       meHref: "/admin",
       bell: { centreHref: "/admin/notifications" },
-      nav: [
-        { href: "/admin/fees", key: "fees" },
-        { href: "/admin/catalog/esports", key: "esportsCatalog" },
-        { href: "/admin/esports", key: "esportsDesk" },
-        { href: "/admin/esports/organisers", key: "organisersAdmin" },
-        { href: "/admin/esports/showcases", key: "bigEvents" },
-        { href: "/admin/venues", key: "groundsAdmin" },
-        { href: "/admin/sports-events", key: "tournamentsAdmin" },
-        { href: "/admin/bookings", key: "bookingsAdmin" },
-        { href: "/admin/catalog/places", key: "places" },
-        { href: "/admin/catalog/items", key: "items" },
-        { href: "/admin/market", key: "market" },
-        { href: "/admin/orders", key: "ordersAdmin" },
-        { href: "/admin/gym", key: "gymAdmin" },
-        { href: "/admin/finance", key: "finance" },
-        { href: "/admin/moderation", key: "moderation" },
-        { href: "/admin/disputes", key: "disputes" },
-        { href: "/admin/reports", key: "reports" },
-        { href: "/admin/reviews", key: "reviews" },
-        { href: "/admin/risk", key: "risk" },
-        { href: "/admin/audit", key: "audit" },
-        { href: "/admin/events", key: "events" },
-      ],
+      // The desks are in the sidebar (PortalShell); the header keeps the bell, theme and account.
+      nav: [],
     },
   },
   vendor: {
@@ -51,20 +30,8 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       homeHref: "/vendor",
       signInHref: "/vendor/sign-in",
       meHref: "/vendor",
-      nav: [
-        { href: "/vendor/venues", key: "grounds" },
-        { href: "/vendor/bookings", key: "bookings" },
-        { href: "/vendor/gyms", key: "gyms" },
-        { href: "/vendor/esports", key: "esportsConsole" },
-        { href: "/vendor/events", key: "sportsConsole" },
-        { href: "/vendor/shop", key: "shop" },
-        { href: "/vendor/products", key: "products" },
-        { href: "/vendor/inventory", key: "inventory" },
-        { href: "/vendor/orders", key: "orders" },
-        { href: "/vendor/analytics", key: "analytics" },
-        { href: "/vendor/disputes", key: "vendorDisputes" },
-        { href: "/vendor/reviews", key: "vendorReviews" },
-      ],
+      // The desks are in the sidebar (PortalShell); the header keeps the bell, theme and account.
+      nav: [],
     },
   },
 };

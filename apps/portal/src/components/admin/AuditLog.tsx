@@ -7,7 +7,6 @@ import { api, problemOf } from "@kriraghor/api-client";
 import { stepUp } from "@/lib/admin/stepUp";
 import { diffRows, toApiFilters, type AuditEntry, type AuditFilters } from "@/lib/admin/audit";
 import { Button, Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "./AdminSubnav";
 import { CodeDialog } from "./CodeDialog";
 import { formatDhaka, useAdminMe } from "./useAdminMe";
 
@@ -53,7 +52,6 @@ export function AuditLog() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1320px] px-5 pb-16 pt-8">
         <div className="flex flex-wrap items-start gap-4">
           <div>

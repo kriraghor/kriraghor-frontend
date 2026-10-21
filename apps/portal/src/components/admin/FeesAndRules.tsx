@@ -18,7 +18,6 @@ import {
   type SettingValue,
 } from "@/lib/admin/settings";
 import { Button, Notice } from "@kriraghor/ui/primitives";
-import { AdminSubnav } from "./AdminSubnav";
 import { EntityHistory } from "./EntityHistory";
 import { formatDhaka, useAdminMe } from "./useAdminMe";
 
@@ -105,7 +104,6 @@ export function FeesAndRules() {
 
   return (
     <>
-      <AdminSubnav />
       <div className="mx-auto max-w-[1320px] px-5 pb-32 pt-8">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <div className="mt-3 max-w-3xl">

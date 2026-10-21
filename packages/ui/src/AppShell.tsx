@@ -48,36 +48,60 @@ const HEADER = "68px";
 
 /**
  * The desk layout for /me, /pro, /account, the esports account and the portal: a grouped icon
- * sidebar that collapses to a 76px rail (remembered per browser), and a slide-in sheet on phones.
+ * sidebar that collapses to a 76px rail in one click (remembered per browser), and a slide-in sheet
+ * on phones. `variant="dark"` is the portal's full-height dark panel (Claude Design "Panels"), with
+ * `foot` for the signed-in person's card at the bottom.
  */
-export function AppShell({ groups, title, top, children }: { groups: ShellGroup[]; title: string; top?: (collapsed: boolean) => ReactNode; children: ReactNode }) {
+export function AppShell({
+  groups,
+  title,
+  top,
+  foot,
+  variant = "light",
+  children,
+}: {
+  groups: ShellGroup[];
+  title: string;
+  top?: (collapsed: boolean) => ReactNode;
+  foot?: (collapsed: boolean) => ReactNode;
+  variant?: "light" | "dark";
+  children: ReactNode;
+}) {
   const t = useTranslations("kit");
   const collapsed = useSyncExternalStore(subscribe, readCollapsed, () => false);
+  const dark = variant === "dark";
 
   return (
     <div
       className={cn(
-        "mx-auto grid w-full max-w-wide md:gap-8 md:px-5 md:transition-[grid-template-columns] md:duration-[220ms] md:ease-[var(--ease-kg)]",
-        collapsed ? "md:grid-cols-[76px_minmax(0,1fr)]" : "md:grid-cols-[256px_minmax(0,1fr)]",
+        "grid w-full md:transition-[grid-template-columns] md:duration-[220ms] md:ease-[var(--ease-kg)]",
+        dark ? "flex-1" : "mx-auto max-w-wide md:gap-8 md:px-5",
+        collapsed ? "md:grid-cols-[76px_minmax(0,1fr)]" : dark ? "md:grid-cols-[264px_minmax(0,1fr)]" : "md:grid-cols-[256px_minmax(0,1fr)]",
       )}
       data-testid="app-shell"
+      data-variant={variant}
       data-collapsed={collapsed || undefined}
     >
-      <aside className="hidden md:block">
-        <div className="sticky flex flex-col overflow-y-auto overflow-x-hidden py-6" style={{ top: HEADER, maxHeight: `calc(100dvh - ${HEADER})` }}>
+      <aside className={cn("hidden md:block", dark && "border-r border-band-line bg-band text-band-text")}>
+        <div className={cn("sticky flex flex-col overflow-y-auto overflow-x-hidden py-6", dark && "px-3 py-5")} style={{ top: HEADER, [dark ? "height" : "maxHeight"]: `calc(100dvh - ${HEADER})` }}>
           {top ? <div className="mb-5">{top(collapsed)}</div> : null}
           {/* The path is request data (Cache Components): only the highlight waits for it. */}
-          <Suspense fallback={<NavList groups={groups} title={title} rail={collapsed} active={null} />}>
-            <ActiveNav groups={groups} title={title} rail={collapsed} />
+          <Suspense fallback={<NavList groups={groups} title={title} rail={collapsed} active={null} dark={dark} />}>
+            <ActiveNav groups={groups} title={title} rail={collapsed} dark={dark} />
           </Suspense>
-          <div className="mt-6 border-t border-line pt-3">
+          {foot ? <div className="mt-auto pt-6">{foot(collapsed)}</div> : null}
+          <div className={cn("border-t pt-3", foot ? "mt-3" : "mt-6", dark ? "border-band-line" : "border-line")}>
             <Tooltip content={collapsed ? t("expand") : t("collapse")} side="right">
               <button
                 type="button"
                 onClick={() => setCollapsed(!collapsed)}
                 aria-expanded={!collapsed}
                 aria-label={collapsed ? t("expand") : t("collapse")}
-                className={cn("flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-ink", collapsed && "justify-center px-0")}
+                className={cn(
+                  "flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-sm font-semibold",
+                  dark ? "text-band-muted hover:bg-band-text/10 hover:text-band-text" : "text-muted hover:bg-surface-2 hover:text-ink",
+                  collapsed && "justify-center px-0",
+                )}
                 data-testid="sidebar-toggle"
               >
                 <SidebarSimple size={22} aria-hidden className={cn("shrink-0 transition-transform duration-200", collapsed && "rotate-180")} />
@@ -107,25 +131,25 @@ function activeItem(groups: ShellGroup[], pathname: string) {
   return groups.flatMap((g) => g.items).filter(on).sort((a, b) => b.href.length - a.href.length)[0] ?? null;
 }
 
-function ActiveNav(props: { groups: ShellGroup[]; title: string; rail: boolean }) {
+function ActiveNav(props: { groups: ShellGroup[]; title: string; rail: boolean; dark?: boolean }) {
   const pathname = usePathname();
   return <NavList {...props} active={activeItem(props.groups, pathname)} />;
 }
 
-function NavList({ groups, title, rail, active, onNavigate }: { groups: ShellGroup[]; title: string; rail: boolean; active: ShellItem | null; onNavigate?: () => void }) {
+function NavList({ groups, title, rail, active, onNavigate, dark }: { groups: ShellGroup[]; title: string; rail: boolean; active: ShellItem | null; onNavigate?: () => void; dark?: boolean }) {
   return (
     <nav aria-label={title} className="flex flex-col gap-5">
       {groups.map((g, gi) => (
         <div key={gi} className="flex flex-col gap-0.5">
           {g.label ? (
             rail ? (
-              gi > 0 ? <hr className="mx-3 mb-2 border-line" /> : null
+              gi > 0 ? <hr className={cn("mx-3 mb-2", dark ? "border-band-line" : "border-line")} /> : null
             ) : (
-              <p className="px-3 pb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">{g.label}</p>
+              <p className={cn("px-3 pb-1.5 text-xs font-semibold uppercase tracking-wider", dark ? "text-band-muted" : "text-muted")}>{g.label}</p>
             )
           ) : null}
           {g.items.map((it) => (
-            <ShellLink key={it.href} item={it} active={active !== null && it.href === active.href} rail={rail} onNavigate={onNavigate} />
+            <ShellLink key={it.href} item={it} active={active !== null && it.href === active.href} rail={rail} onNavigate={onNavigate} dark={dark} />
           ))}
         </div>
       ))}
@@ -159,21 +183,27 @@ function PhoneMenu({ groups, title, top }: { groups: ShellGroup[]; title: string
   );
 }
 
-function ShellLink({ item, active, rail, onNavigate }: { item: ShellItem; active: boolean; rail: boolean; onNavigate?: () => void }) {
+function ShellLink({ item, active, rail, onNavigate, dark }: { item: ShellItem; active: boolean; rail: boolean; onNavigate?: () => void; dark?: boolean }) {
   const Icon = item.icon;
   const badge = item.badge && item.badge > 0 ? (item.badge > 99 ? "99+" : String(item.badge)) : null;
   const cls = cn(
     "group relative flex min-h-11 items-center gap-3 rounded-control px-3 text-[15px] font-medium no-underline transition-colors duration-150",
-    active ? "bg-brand-soft font-semibold text-brand-text" : "text-ink/80 hover:bg-surface-2 hover:text-ink",
+    dark
+      ? active
+        ? "bg-band-text/12 font-semibold text-band-text"
+        : "text-band-text/75 hover:bg-band-text/8 hover:text-band-text"
+      : active
+        ? "bg-brand-soft font-semibold text-brand-text"
+        : "text-ink/80 hover:bg-surface-2 hover:text-ink",
     rail && "justify-center px-0",
   );
   const inner = (
     <>
-      {active ? <span className="absolute inset-y-2 left-0 w-[3px] rounded-r-pill bg-brand" aria-hidden /> : null}
+      {active ? <span className={cn("absolute inset-y-2 left-0 w-[3px] rounded-r-pill", dark ? "bg-prize" : "bg-brand")} aria-hidden /> : null}
       <Icon size={22} weight={active ? "fill" : "regular"} aria-hidden className="shrink-0" />
       <span className={cn("min-w-0 flex-1 truncate", rail && "sr-only")}>{item.label}</span>
       {badge ? (
-        <span className={cn("tabular rounded-pill bg-brand px-1.5 text-xs font-bold leading-5 text-on-brand", rail && "absolute right-2 top-1.5 min-w-5 text-center text-[10px] leading-4")}>{badge}</span>
+        <span className={cn("tabular rounded-pill px-1.5 text-xs font-bold leading-5", dark ? "bg-prize text-prize-ink" : "bg-brand text-on-brand", rail && "absolute right-2 top-1.5 min-w-5 text-center text-[10px] leading-4")}>{badge}</span>
       ) : null}
     </>
   );

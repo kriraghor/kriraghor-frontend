@@ -8,7 +8,7 @@ export default async function AdminSignInPage({ params }: PageProps<"/[locale]/a
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <AuthLayout brand="admin">
+    <AuthLayout brand="admin" image="/images/esports-mobile.jpg">
       <AdminSignIn />
     </AuthLayout>
   );

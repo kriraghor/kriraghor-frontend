@@ -50,7 +50,12 @@
     "bigEvents": "শোকেস",
     "teamsAdmin": "দল",
     "sportsConsole": "খেলার ইভেন্ট",
-    "tournamentsAdmin": "খেলার ইভেন্ট"
+    "tournamentsAdmin": "খেলার ইভেন্ট",
+    "skip": "মূল অংশে যান",
+    "homeLabel": "ক্রীড়াঘর হোম",
+    "main": "প্রধান",
+    "closeMenu": "মেনু বন্ধ করুন",
+    "menu": "মেনু"
   },
   "signIn": {
     "title": "ক্রীড়াঘরে সাইন ইন করুন",
@@ -3585,5 +3590,37 @@
     "cancel": "ইভেন্ট বাতিল",
     "cancelTitle": "ইভেন্ট বাতিল",
     "cancelHelp": "প্রতিটি দল যা জমা আছে তা ফেরত পাবে। আপনার অথেনটিকেটর কোড দিন।"
+  },
+  "panel": {
+    "title": "ডেস্ক",
+    "viewing": "যে প্যানেল দেখছেন",
+    "adminDesk": "অ্যাডমিন ডেস্ক",
+    "business": "ব্যবসা",
+    "all": "আমার সব ব্যবসা",
+    "master": "মাস্টার অ্যাডমিন",
+    "staff": "স্টাফ",
+    "member": "সদস্য",
+    "signOut": "সাইন আউট",
+    "sections": {
+      "operations": "পরিচালনা",
+      "esports": "ইস্পোর্টস",
+      "venues": "ভেন্যু ও ইভেন্ট",
+      "market": "মার্কেট",
+      "money": "টাকা",
+      "trust": "আস্থা ও নিরাপত্তা",
+      "system": "সিস্টেম",
+      "overview": "সারসংক্ষেপ",
+      "shop": "দোকান",
+      "gym": "জিম",
+      "events": "ইভেন্ট",
+      "business": "ব্যবসা",
+      "grounds": "ভেন্যু"
+    },
+    "roles": {
+      "ground_owner": "ভেন্যু মালিক",
+      "shop_owner": "দোকান",
+      "gym_owner": "জিম",
+      "organiser": "আয়োজক"
+    }
   }
 }
