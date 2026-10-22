@@ -2666,7 +2666,8 @@
     "payoutNoteVendor": "Payouts go to your bKash or Nagad account each week.",
     "payoutsLink": "See your payouts",
     "contactHidden": "The buyer's phone and address are hidden. They show only to staff who can ship, once the order is accepted. Area: {area}",
-    "staffNoAction": "The owner hasn't given you a button for this step. Ask them if you need it."
+    "staffNoAction": "The owner hasn't given you a button for this step. Ask them if you need it.",
+    "leadStaff": "Accept each order within 24 hours and ship within 48 (or the made-to-order time). If you ship orders, the buyer’s phone and address show once the order is accepted."
   },
   "ordersAdmin": {
     "title": "Orders",

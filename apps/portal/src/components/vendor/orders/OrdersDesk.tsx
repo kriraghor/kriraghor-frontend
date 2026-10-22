@@ -73,7 +73,7 @@ export function OrdersDesk() {
     <section className="mx-auto max-w-[1320px] px-5 py-10">
       <PageTitle
         title={t("title")}
-        description={t("lead")}
+        description={t(shop.perms === null ? "lead" : "leadStaff")}
         actions={
           shop.perms === null ? (
             <Link href="/vendor/settlement" className="font-semibold text-brand-text underline">
