@@ -8,6 +8,7 @@ import { api, problemOf } from "@kriraghor/api-client";
 import { useAuth } from "../auth";
 import type { components } from "@kriraghor/api-client/schema";
 import { Button, Notice } from "../primitives";
+import { SoundToggle } from "./SoundToggle";
 
 type Prefs = components["schemas"]["NotificationPrefs"];
 const CHANNELS = ["in_app", "sms", "email"] as const;
@@ -15,6 +16,7 @@ const CHANNELS = ["in_app", "sms", "email"] as const;
 /**
  * Notification preferences (M08 §4.3): rows = kinds of update, columns = In-app · SMS · Email.
  * Mandatory cells are locked ("Required for your security and payments"); quiet hours toggle.
+ * The bell's chime switch is per browser (saved here at once, not with the Save button).
  */
 export function NotificationSettings({ signInHref }: { signInHref: string }) {
   const t = useTranslations("notifications");
@@ -155,6 +157,9 @@ export function NotificationSettings({ signInHref }: { signInHref: string }) {
           <span className="block text-sm text-muted">{t("prefs.quietHoursHelp")}</span>
         </span>
       </label>
+      <div className="mt-4">
+        <SoundToggle help={t("sound.help")} />
+      </div>
       <p className="mt-4 text-sm">
         <span className="font-semibold">{t("prefs.language")}:</span> {current.locale === "bn" ? "বাংলা" : "English"} <span className="text-muted">({t("prefs.languageHelp")})</span>
       </p>
