@@ -1437,7 +1437,7 @@ export interface paths {
             };
         };
         put?: never;
-        /** Add a staff member to one of my businesses by their verified phone (no NID needed, Q169; scope is that business only, Q170). Leave out permissions for the defaults. Refused: unknown numbers, myself, Kriraghor staff accounts, unverified phones, someone already on the team and a full team */
+        /** Add a staff member to one of my businesses by their verified phone (no NID needed, Q169; scope is that business only, Q170). Leave out permissions for the defaults. Refused: unknown numbers, myself, Kriraghor staff accounts, unverified phones, someone already on the team and a full team (the refusals never carry the person’s name or details). At most business.team_adds_per_hour adds per owner per hour (Q180; 429 RATE_LIMITED with retryAfter) */
         post: {
             parameters: {
                 query?: never;
@@ -1513,6 +1513,15 @@ export interface paths {
                 };
                 /** @description Error. Codes: VALIDATION_FAILED, MEMBER_IS_OWNER, MEMBER_IS_STAFF, PHONE_NOT_VERIFIED, PERMISSIONS_INVALID */
                 422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: RATE_LIMITED */
+                429: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -22100,7 +22109,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Needs your action, from the owning modules (FR-11); role organiser: registrations waiting for approval (admins) and unpaid entry fees in your sports organisations; role business_staff (Round B3): check-ins and balances at your venues, orders to accept or ship and stock at your shops, by your permissions */
+        /** Needs your action, from the owning modules (FR-11); role organiser: registrations waiting for approval (admins) and unpaid entry fees in your sports organisations; role business_staff (Round B3): check-ins and balances at your venues, orders to accept or ship and stock at your shops, by your permissions (nothing while your phone is not verified) */
         get: {
             parameters: {
                 query?: {
@@ -25029,7 +25038,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** My reviews; with role=owner (or a subjectType or subjectId) the published reviews of my venues, pro profiles, shops and gyms, to reply to. Round B3: venue staff with reviews.reply see that venue’s reviews (subjectType=ground&subjectId=) */
+        /** My reviews; with role=owner (or a subjectType or subjectId) the published reviews of my venues, pro profiles, shops and gyms, to reply to. Round B3: venue staff with reviews.reply see that venue’s reviews (subjectType=ground&subjectId=), with a verified phone (403 PHONE_REQUIRED otherwise) */
         get: {
             parameters: {
                 query?: {
@@ -25057,6 +25066,15 @@ export interface paths {
                 };
                 /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
                 401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED */
+                403: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -51218,9 +51236,12 @@ export interface components {
             paymentChoice: "advance" | "full" | "venue";
             paidOnline: number;
             dueAtVenue: number;
-            fee: number;
-            released: number;
-            retained: number;
+            /** @description Absent for business staff (Round B3); always present for the owner */
+            fee?: number;
+            /** @description Absent for business staff (Round B3); always present for the owner */
+            released?: number;
+            /** @description Absent for business staff (Round B3); always present for the owner */
+            retained?: number;
             refund: number;
             /** @enum {string} */
             balanceStatus: "not_due" | "due" | "collected" | "unrecorded" | "waived";
@@ -51605,6 +51626,16 @@ export interface components {
                 severity: "high" | "normal" | "low";
                 dueAt: string | null;
                 href: string;
+                /**
+                 * @description role business_staff only (Round B3): the workplace the item belongs to
+                 * @enum {string}
+                 */
+                businessType?: "venue" | "gym" | "shop";
+                /**
+                 * Format: uuid
+                 * @description role business_staff only (Round B3): the workplace the item belongs to
+                 */
+                businessId?: string;
             }[];
             total: number;
         };
@@ -52457,7 +52488,8 @@ export interface components {
         };
         InventoryOverview: {
             kpis: {
-                stockValuePoisha: number;
+                /** @description Absent for business staff (Round B3); always present for the owner */
+                stockValuePoisha?: number;
                 outOfStock: number;
                 runningLow: number;
                 heldForOrders: number;
@@ -52794,10 +52826,14 @@ export interface components {
                 delivery: number;
                 total: number;
                 refunded: number;
-                commissionBps: number;
-                commission: number;
-                net: number;
-                released: number;
+                /** @description Absent for business staff (Round B3); always present for the owner */
+                commissionBps?: number;
+                /** @description Absent for business staff (Round B3); always present for the owner */
+                commission?: number;
+                /** @description Absent for business staff (Round B3); always present for the owner */
+                net?: number;
+                /** @description Absent for business staff (Round B3); always present for the owner */
+                released?: number;
             };
             courier: {
                 name: string;
@@ -52826,13 +52862,15 @@ export interface components {
                 nameBn: string;
                 isDhakaMetro: boolean;
             } | null;
-            /** @description Shown once the shop accepts (FR-10) */
+            /** @description Shown once the shop accepts (FR-10). Round B3: null for business staff in lists, in action answers and without orders.ship (then contactHidden is true) */
             shipTo: {
                 name: string;
                 phone: string;
                 line: string;
                 note: string | null;
             } | null;
+            /** @description Round B3, business staff only: true when the order has a shipping contact that is withheld from this staff member; absent for the owner */
+            contactHidden?: boolean;
         };
         ShopSettlement: {
             completed: {
@@ -54058,7 +54096,8 @@ export interface components {
             };
             /** Format: date-time */
             redeemedAt: string;
-            released: number;
+            /** @description Absent for business staff (Round B3); always present for the owner */
+            released?: number;
         };
         GymAdmissionList: {
             /** Format: date */
@@ -54090,7 +54129,8 @@ export interface components {
                 /** Format: date */
                 validTo: string;
                 holder: string | null;
-                money: {
+                /** @description Absent for business staff (Round B3); always present for the owner */
+                money?: {
                     price: number;
                     fee: number;
                     net: number;
