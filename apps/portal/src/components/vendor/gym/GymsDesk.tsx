@@ -10,14 +10,33 @@ import { gymDesk } from "@/lib/vendor/gym";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
+import { worksWith } from "@/lib/vendor/team";
+import { useWorkplaces } from "../StaffAccess";
+import { WorkplaceCards } from "../Workplaces";
 
-/** /vendor/gyms (M20): my gyms with their review state and day price, and "Add a gym" (the first draft). */
+/**
+ * /vendor/gyms (M20): my gyms with their review state and day price, and "Add a gym" (the first draft).
+ * Round B3: the gyms the person works at as staff follow (front desk and passes, by permission); a
+ * gym's staff who own no gym see only those.
+ */
 export function GymsDesk() {
   const t = useTranslations("vendorGym");
   const locale = useLocale();
   const [adding, setAdding] = useState(false);
-  const q = useQuery({ queryKey: ["vendor-gyms"], queryFn: () => gymDesk.mine(), retry: false });
+  const wp = useWorkplaces();
+  const staffOnly = !wp.active.includes("gym_owner") && worksWith(wp.refs, "gym");
+  const q = useQuery({ queryKey: ["vendor-gyms"], queryFn: () => gymDesk.mine(), retry: false, enabled: !wp.me.isPending && !staffOnly });
   const problem = problemOf(q.error);
+  if (staffOnly)
+    return (
+      <section className="mx-auto max-w-[1100px] px-5 py-10" data-testid="staff-gyms">
+        <h1 className="text-3xl font-extrabold">{t("staffTitle")}</h1>
+        <p className="mt-1 max-w-2xl text-muted">{t("staffLead")}</p>
+        <div className="mt-6">
+          <WorkplaceCards type="gym" />
+        </div>
+      </section>
+    );
   if (problem?.code === "ROLE_REQUIRED" || problem?.code === "KYC_REQUIRED") {
     return (
       <section className="mx-auto max-w-3xl px-5 py-10">
@@ -78,6 +97,14 @@ export function GymsDesk() {
           );
         })}
       </ul>
+      {worksWith(wp.refs, "gym") ? (
+        <div className="mt-10">
+          <h2 className="text-2xl font-extrabold">{t("staffTitle")}</h2>
+          <div className="mt-4">
+            <WorkplaceCards type="gym" testId="staff-gyms" />
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

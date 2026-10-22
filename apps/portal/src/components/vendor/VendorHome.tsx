@@ -20,6 +20,7 @@ import { MePanel } from "../MePanel";
 import { isSportsOrg } from "@/lib/vendor/analytics";
 import { BusinessOverview } from "./BusinessDashboards";
 import { ActionList, OwnerOverview } from "./OwnerDashboard";
+import { StaffHome } from "./Workplaces";
 
 /**
  * vendor.kriraghor.com home: a home for each business the person runs. It follows the panel switcher
@@ -29,7 +30,9 @@ import { ActionList, OwnerOverview } from "./OwnerDashboard";
  * no business yet sees the steps to start one and the four kinds of business (applied for on
  * kriraghor.com with the same account). Esports is run by Kriraghor only (21 Oct 2026), so the
  * organiser section is sports events. Since Round B2 shops, gyms and each sports organisation show
- * their tiles too (M19 §6.3), and organisers' to-do items join the list.
+ * their tiles too (M19 §6.3), and organisers' to-do items join the list. Since Round B3 the places
+ * the person works at as staff follow ("You work at", with their to-do); someone who only works for
+ * others gets that alone, without the owner's onboarding.
  */
 const ICON: Record<BusinessRole, typeof SoccerBall> = { ground_owner: SoccerBall, shop_owner: Storefront, gym_owner: Barbell, organiser: Trophy };
 /** The `as` kriraghor.com's business page takes (the venue owner is its default). */
@@ -54,6 +57,8 @@ export function VendorHome() {
 
   if (status !== "signed_in") return <MePanel signInHref="/vendor/sign-in" />;
   if (me.isPending) return <Skeleton className="mx-auto mt-10 h-48 max-w-3xl rounded-card" />;
+  const working = (me.data?.workplaces.length ?? 0) > 0;
+  if (!active.length && working) return <StaffOnlyHome />;
   if (!active.length) return <Onboarding me={me.data} />;
 
   const merged = mergeActions(actionRoles.map((role, i) => ({ role, items: actions[i]?.data?.items ?? [] })));
@@ -77,6 +82,7 @@ export function VendorHome() {
           {role === "organiser" ? <OrganiserHome showActions={!combined} /> : null}
         </BusinessSection>
       ))}
+      {working ? <StaffHome own /> : null}
       {view === "all" && notHeld.length ? (
         <div className="mt-12" data-testid="add-business">
           <h2 className="font-display text-xl font-bold">{t("addMore")}</h2>
@@ -383,6 +389,26 @@ function OrganiserHome({ showActions }: { showActions: boolean }) {
         )}
       </div>
     </>
+  );
+}
+
+// ---------------- staff only (Round B3)
+
+/** Someone who runs no business but works at one or more: their desks and to-do, and how to start their own. */
+function StaffOnlyHome() {
+  const t = useTranslations("vendorHome");
+  const web = publicEnv().WEB_URL;
+  return (
+    <section className="mx-auto max-w-[1200px] px-5 pb-16 pt-8" data-testid="vendor-home-staff">
+      <PageTitle title={t("staffTitle")} description={t("staffLead")} />
+      <StaffHome own={false} />
+      <p className="mt-10 text-sm text-muted">
+        {t("staffOwn")}{" "}
+        <a href={`${web}/account/business`} className="font-semibold text-brand-text underline">
+          {t("staffOwnLink")}
+        </a>
+      </p>
+    </section>
   );
 }
 

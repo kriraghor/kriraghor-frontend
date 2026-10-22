@@ -11,6 +11,8 @@ import { shopDesk, type InventoryRow, type ReasonCode } from "@/lib/vendor/marke
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { StatusBadge } from "../../StatusBadge";
 import { Gate } from "./ShopDesk";
+import { deskAccessKey, deskCan } from "@/lib/vendor/team";
+import { DeskAccessNotice, ShopSwitch, useDeskErrorText, useShopChoice } from "../StaffAccess";
 
 const FILTERS = ["low", "out", "mto", "blocked"] as const;
 const REASONS: ReasonCode[] = ["received", "count_correction", "damaged", "lost", "other"];
@@ -20,18 +22,23 @@ type AdjustBody = Parameters<typeof shopDesk.adjust>[1];
  * /vendor/inventory (M12 §4 "Inventory"): stock value at selling price, out of stock, running low,
  * held for orders and blocked (near expiry); every variant with −1 / +1 / +10 and "Set count…" (a
  * reason is required: an append-only ledger, FR-13) and its history. The stock rules live on /vendor/shop.
+ * Round B3: a shop's staff with stock.view see the same list without the stock value (the API leaves
+ * it out), and change counts only with stock.adjust; a switcher (?shopId=) when there are several shops.
  */
 export function InventoryDesk() {
   const t = useTranslations("vendorMarket");
   const tk = useTranslations("kit.table");
   const locale = useLocale();
   const qc = useQueryClient();
-  const { values, set, clear } = useUrlFilters({ status: { default: "", allowed: ["", ...FILTERS] } });
+  const { values, set, clear } = useUrlFilters({ status: { default: "", allowed: ["", ...FILTERS] }, shopId: { default: "" } });
+  const shop = useShopChoice("stock.view", values.shopId);
+  const canAdjust = deskCan(shop.perms, "stock.adjust");
+  const errorText = useDeskErrorText();
   const filter = values.status as (typeof FILTERS)[number] | "";
   const [open, setOpen] = useState<{ id: string; kind: "set" | "history" } | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ id: string; text: string } | null>(null);
-  const q = useQuery({ queryKey: ["vendor-inventory", filter || "all"], queryFn: () => shopDesk.inventory(filter || undefined), retry: false });
+  const q = useQuery({ queryKey: ["vendor-inventory", filter || "all", shop.shopId ?? ""], queryFn: () => shopDesk.inventory(filter || undefined, shop.shopId), retry: false, enabled: shop.ready });
   const problem = problemOf(q.error);
 
   const toggle = (id: string, kind: "set" | "history") => setOpen((o) => (o?.id === id && o.kind === kind ? null : { id, kind }));
@@ -45,13 +52,13 @@ export function InventoryDesk() {
       setOpen(null);
     } catch (err) {
       const p = problemOf(err);
-      setMsg({ id: r.id, text: p?.errors?.length ? p.errors.map((e) => e.message).join(" · ") : (p?.title ?? t("failed")) });
+      setMsg({ id: r.id, text: p?.errors?.length ? p.errors.map((e) => e.message).join(" · ") : (errorText(err, t("failed")) ?? t("failed")) });
     } finally {
       setBusyId(null);
     }
   }
 
-  if (problem && ["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code)) return <Gate />;
+  if (problem && ["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code) && !shop.choices.some((c) => c.staff)) return <Gate />;
   if (problem?.code === "SHOP_REQUIRED")
     return (
       <section className="mx-auto max-w-3xl px-5 py-10">
@@ -69,11 +76,15 @@ export function InventoryDesk() {
       header: t("inventory.col.product"),
       primary: true,
       sort: (r) => r.product.title,
-      cell: (r) => (
-        <Link href={`/vendor/products/${r.product.id}`} className="font-semibold hover:underline">
-          {r.product.title}
-        </Link>
-      ),
+      // The product editor is the owner's: staff see the title only.
+      cell: (r) =>
+        shop.perms === null ? (
+          <Link href={`/vendor/products/${r.product.id}`} className="font-semibold hover:underline">
+            {r.product.title}
+          </Link>
+        ) : (
+          <span className="font-semibold">{r.product.title}</span>
+        ),
     },
     { id: "variant", header: t("inventory.col.variant"), sort: (r) => r.label, cell: (r) => r.label },
     { id: "onHand", header: t("inventory.col.onHand"), align: "end", sort: (r) => (r.stock.code === "mto" ? null : r.onHand), cell: (r) => (r.stock.code === "mto" ? "–" : r.onHand) },
@@ -98,7 +109,7 @@ export function InventoryDesk() {
         const busy = busyId === r.id;
         return (
           <span className="inline-flex flex-wrap justify-end gap-1">
-            {r.stock.code === "mto" ? null : (
+            {r.stock.code === "mto" || !canAdjust ? null : (
               <>
                 <Button type="button" variant="secondary" size="sm" disabled={busy || r.available <= 0} aria-label={t("inventory.minus")} onClick={() => void adjust(r, { delta: -1, reasonCode: "count_correction" })} data-testid="minus-one">
                   −1
@@ -134,8 +145,10 @@ export function InventoryDesk() {
     ) : null;
   };
 
+  // Staff answers carry no stock value (B3): the tile is left out.
+  const value = (k as { stockValuePoisha?: number } | undefined)?.stockValuePoisha;
   const kpis: [string, string | number][] = [
-    ["value", k ? formatTaka(k.stockValuePoisha, locale) : "–"],
+    ...(shop.perms === null && (!k || typeof value === "number") ? [["value", typeof value === "number" ? formatTaka(value, locale) : "–"] as [string, string]] : []),
     ["out", k?.outOfStock ?? "–"],
     ["low", k?.runningLow ?? "–"],
     ["held", k?.heldForOrders ?? "–"],
@@ -145,7 +158,13 @@ export function InventoryDesk() {
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
       <PageTitle title={t("inventory.title")} description={t("inventory.lead")} />
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5" data-testid="inventory-kpis">
+      {shop.choices.length > 1 || deskAccessKey(problem?.code) ? (
+        <div className="mt-6 flex flex-col gap-4">
+          <ShopSwitch choices={shop.choices} value={shop.current?.value} onChange={(v) => set({ shopId: v })} />
+          {deskAccessKey(problem?.code) ? <DeskAccessNotice error={q.error} /> : null}
+        </div>
+      ) : null}
+      <div className={`mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 ${kpis.length === 5 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`} data-testid="inventory-kpis">
         {kpis.map(([key, value]) => (
           <Stat key={key} label={t(`inventory.kpi.${key}`)} value={value} className="p-4 sm:p-4 [&>p]:text-2xl" />
         ))}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowRight, ClipboardText, Storefront, UserGear } from "@phosphor-icons/react";
+import { ArrowRight, Briefcase, ClipboardText, Storefront, UserGear } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
 import { SignedOutCard, useMe } from "@kriraghor/ui/account";
@@ -14,6 +14,8 @@ import {
   errorKey,
   isSelfServiceRole,
   listSubmissions,
+  listWorkplaces,
+  workplaceDesk,
   roleNext,
   sortSubmissions,
   withdrawRole,
@@ -55,7 +57,8 @@ const humanise = (code: string) => {
 /**
  * /account/roles (M01 roles, M05 submissions): every role the member applied for, where it stands and
  * what to do next, with withdraw while it is still open; and the listings and applications they sent
- * for review, with the decision and reason.
+ * for review, with the decision and reason. Round B3: the venues, gyms and shops the member works at
+ * as staff, each linking to its desk on vendor.kriraghor.com.
  */
 export function MyRoles() {
   const t = useTranslations("myRoles");
@@ -66,6 +69,9 @@ export function MyRoles() {
   const qc = useQueryClient();
   const { status, me } = useMe();
   const subs = useQuery({ queryKey: ["my-submissions"], enabled: status === "signed_in", queryFn: listSubmissions });
+  const working = (me.data?.workplaces?.length ?? 0) > 0;
+  const workplaces = useQuery({ queryKey: ["my-workplaces"], enabled: status === "signed_in" && working, queryFn: listWorkplaces });
+  const vendorUrl = publicEnv().VENDOR_URL;
   const [confirm, setConfirm] = useState<Confirm>(null);
   const date = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Dhaka" });
   const fmt = (iso: string | null) => (iso ? date.format(new Date(iso)) : null);
@@ -125,6 +131,44 @@ export function MyRoles() {
           </ul>
         )}
       </Card>
+
+      {working ? (
+        <Card className="flex flex-col gap-4" data-testid="my-workplaces">
+          <div>
+            <h2 className="flex items-center gap-2 text-xl font-bold">
+              <Briefcase size={22} aria-hidden className="text-brand-text" />
+              {t("workTitle")}
+            </h2>
+            <p className="mt-0.5 text-sm text-muted">{t("workLead")}</p>
+          </div>
+          {workplaces.isPending ? (
+            <SkeletonList rows={1} label={t("loading")} />
+          ) : workplaces.isError ? (
+            <ErrorState onRetry={() => void workplaces.refetch()} />
+          ) : (
+            <ul className="flex flex-col gap-3">
+              {workplaces.data.map((w) => (
+                <li key={w.id} className="flex flex-wrap items-center gap-3 border-t border-line pt-3 first:border-t-0 first:pt-0" data-testid="my-workplace">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold">
+                      <span className="break-words">{w.business.name ?? t(`workType.${w.businessType}`)}</span>
+                      <span className="ml-2 text-sm font-normal text-muted">{t(`workType.${w.businessType}`)}</span>
+                    </p>
+                    <p className="text-sm text-muted">
+                      {w.owner.displayName ? t("workOwner", { name: w.owner.displayName }) : null}
+                      {w.owner.displayName ? " · " : null}
+                      {t("workSince", { date: fmt(w.since) ?? "" })}
+                    </p>
+                  </div>
+                  <ButtonLink href={`${vendorUrl}${workplaceDesk(w)}`} size="sm" variant="secondary" iconEnd={<ArrowRight size={16} aria-hidden />} data-testid="open-workplace">
+                    {t("workOpen")}
+                  </ButtonLink>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      ) : null}
 
       <Card className="flex flex-col gap-4">
         <div>

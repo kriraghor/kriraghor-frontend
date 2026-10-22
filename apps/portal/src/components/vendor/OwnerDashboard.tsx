@@ -53,7 +53,8 @@ export function OwnerTiles({ d }: { d: Data }) {
   );
 }
 
-type ActionRow = { key: string; count: number; href: string; severity: string; dueAt?: string | null; role?: string };
+/** `tag` names the business a line belongs to (Round B3: a staff member working at several places). */
+type ActionRow = { key: string; count: number; href: string; severity: string; dueAt?: string | null; role?: string; tag?: string };
 
 /**
  * "Needs your action" (FR-11): most urgent first, each line a link to the desk that clears it. Old
@@ -68,14 +69,15 @@ export function ActionList({ items }: { items: ActionRow[] }) {
   return (
     <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface" data-testid="actions">
       {items.map((a) => (
-        <li key={`${a.role ?? ""}-${a.key}-${a.href}`}>
+        <li key={`${a.role ?? ""}-${a.tag ?? ""}-${a.key}-${a.href}`}>
           <Link href={deskHref(a.href)} className="flex min-h-14 items-center gap-3 px-4 py-2.5 no-underline transition-colors hover:bg-surface-2" data-testid="action-item">
             <span className={`size-2.5 shrink-0 rounded-full ${a.severity === "high" ? "bg-danger" : a.severity === "low" ? "bg-line-strong" : "bg-brand"}`} aria-hidden />
             <span className="min-w-0 flex-1">
               <span className="block font-semibold text-ink">{t.has(`actions.${a.key}`) ? t(`actions.${a.key}`, { n: a.count }) : t("actions.other", { n: a.count })}</span>
-              {a.dueAt || a.role ? (
+              {a.dueAt || a.role || a.tag ? (
                 <span className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted">
                   {a.role && tp.has(`roles.${a.role}`) ? <Badge>{tp(`roles.${a.role}`)}</Badge> : null}
+                  {a.tag ? <Badge>{a.tag}</Badge> : null}
                   {a.dueAt ? <span>{t("actions.due", { time: due(a.dueAt) })}</span> : null}
                 </span>
               ) : null}

@@ -16,6 +16,7 @@ import { useCursorList } from "@/lib/use-cursor-list";
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { StatusBadge } from "../StatusBadge";
 import { formatDhaka } from "../admin/useAdminMe";
+import { useWorkplaces } from "./StaffAccess";
 
 type CaseRow = Awaited<ReturnType<typeof ownerTrust.cases>>["items"][number];
 
@@ -223,21 +224,27 @@ function Reviews() {
   const t = useTranslations("vendorTrust");
   const locale = useLocale();
   const me = useQuery({ queryKey: ["vendor-me"], queryFn: () => vendor.me() });
-  const kinds = reviewSubjectsFor(businessView(me.data).active);
+  const owned = reviewSubjectsFor(businessView(me.data).active);
+  // Round B3 (Q170): venue staff with the optional reviews.reply permission answer that venue's reviews.
+  const wp = useWorkplaces();
+  const staffVenues = wp.named.filter((w) => w.businessType === "venue" && w.permissions.includes("reviews.reply"));
+  const kinds = staffVenues.length && !owned.includes("ground") ? (["ground", ...owned] as BusinessSubject[]) : owned;
   const { values, set, clear, params } = useUrlFilters({ type: { default: "", allowed: ["", ...KINDS] }, place: { default: "" } });
-  const grounds = useQuery({ queryKey: ["vendor-grounds"], queryFn: () => vendor.mine(), enabled: kinds.includes("ground"), retry: false });
+  const grounds = useQuery({ queryKey: ["vendor-grounds"], queryFn: () => vendor.mine(), enabled: owned.includes("ground"), retry: false });
   const shop = useQuery({ queryKey: ["vendor-shop"], queryFn: () => shopDesk.profile(), enabled: kinds.includes("shop"), retry: false });
   const gyms = useQuery({ queryKey: ["vendor-gyms"], queryFn: () => gymDesk.mine(), enabled: kinds.includes("gym"), retry: false });
   const places: { id: string; name: string; type: BusinessSubject }[] = [
     ...(grounds.data?.items ?? []).map((g) => ({ id: g.id, name: g.name, type: "ground" as const })),
     ...(shop.data ? [{ id: shop.data.id, name: shop.data.name, type: "shop" as const }] : []),
     ...(gyms.data?.items ?? []).map((g) => ({ id: g.id, name: g.name, type: "gym" as const })),
+    ...staffVenues.filter((w) => !(grounds.data?.items ?? []).some((g) => g.id === w.businessId)).map((w) => ({ id: w.businessId, name: w.business.name ?? "–", type: "ground" as const })),
   ];
   const names = new Map(places.map((p) => [p.id, p.name] as const));
   const type = (values.type || undefined) as BusinessSubject | undefined;
   const choosable = places.filter((p) => !type || p.type === type);
-  const place = choosable.find((p) => p.id === values.place)?.id;
-  const list = useCursorList<ReviewRow>(["owner-reviews", type ?? "", place ?? ""], (cursor) => ownerTrust.reviews({ subjectType: type, subjectId: place, cursor }));
+  // Someone who owns nothing reviewable sees the reviews of a venue they work at (the API needs it named).
+  const place = choosable.find((p) => p.id === values.place)?.id ?? (!owned.length ? choosable[0]?.id : undefined);
+  const list = useCursorList<ReviewRow>(["owner-reviews", type ?? "", place ?? ""], (cursor) => ownerTrust.reviews({ subjectType: type, subjectId: place, cursor }), { enabled: !wp.pending });
   const open = params.get("id");
   const picked = open ? list.items.find((r) => r.id === open) : undefined;
   const kindLabel = (s: string) => (t.has(`subject.${s}`) ? t(`subject.${s}`) : s);

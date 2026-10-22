@@ -18,6 +18,7 @@ import {
   Megaphone,
   Package,
   Pulse,
+  QrCode,
   Receipt,
   ShieldWarning,
   ShoppingBag,
@@ -27,6 +28,7 @@ import {
   Star,
   Storefront,
   Tag,
+  Ticket,
   Trophy,
   UserList,
   UsersThree,
@@ -172,9 +174,54 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
       { href: "/vendor/payouts", key: "vendorPayouts", icon: CurrencyCircleDollar },
       { href: "/vendor/disputes", key: "vendorDisputes", icon: Gavel },
       { href: "/vendor/reviews", key: "vendorReviews", icon: Star, roles: ["ground_owner", "shop_owner", "gym_owner"] },
+      // Round B3: venue, gym and shop owners add staff (organisers have organisation members already).
+      { href: "/vendor/team", key: "team", icon: UsersThree, roles: ["ground_owner", "shop_owner", "gym_owner"] },
     ],
   },
 ];
+
+/** What /me says about a place the person works at as staff (Round B3): its type, id and permissions. */
+export type WorkplaceNav = { businessType: "venue" | "gym" | "shop"; businessId: string; permissions: readonly string[] };
+
+/** One gym desk: straight to it when only one gym grants it, else the gyms list (which lists workplaces). */
+function gymHref(workplaces: readonly WorkplaceNav[], kind: "desk" | "passes", any: string[]): string {
+  const gyms = workplaces.filter((w) => w.businessType === "gym" && w.permissions.some((p) => any.includes(p)));
+  return gyms.length === 1 ? `/vendor/gyms/${gyms[0].businessId}/${kind}` : "/vendor/gyms";
+}
+
+/**
+ * Round B3: the desks a staff member may use, one section per kind of business, by the permissions
+ * held at any workplace of that kind. Owner-only pages (listing, pricing, products, settlement,
+ * analytics, payouts, team, disputes) never appear here; reviews only with reviews.reply.
+ */
+export function staffSections(workplaces: readonly WorkplaceNav[] | undefined): NavSection<NavEntry>[] {
+  const list = workplaces ?? [];
+  const holds = (type: WorkplaceNav["businessType"], ...any: string[]) => list.some((w) => w.businessType === type && w.permissions.some((p) => any.includes(p)));
+  const sections: NavSection<NavEntry>[] = [
+    {
+      key: "workVenue",
+      items: [
+        ...(holds("venue", "bookings.view") ? [{ href: "/vendor/bookings", key: "bookings", icon: CalendarCheck }] : []),
+        ...(holds("venue", "reviews.reply") ? [{ href: "/vendor/reviews", key: "vendorReviews", icon: Star }] : []),
+      ],
+    },
+    {
+      key: "workGym",
+      items: [
+        ...(holds("gym", "desk.admit", "desk.admissions") ? [{ href: gymHref(list, "desk", ["desk.admit", "desk.admissions"]), key: "frontDesk", icon: QrCode }] : []),
+        ...(holds("gym", "passes.view") ? [{ href: gymHref(list, "passes", ["passes.view"]), key: "gymPasses", icon: Ticket }] : []),
+      ],
+    },
+    {
+      key: "workShop",
+      items: [
+        ...(holds("shop", "orders.view") ? [{ href: "/vendor/orders", key: "orders", icon: Package }] : []),
+        ...(holds("shop", "stock.view") ? [{ href: "/vendor/inventory", key: "inventory", icon: Warehouse }] : []),
+      ],
+    },
+  ];
+  return sections.filter((s) => s.items.length);
+}
 
 /**
  * The businesses a person runs (active roles, in sidebar order) and the one the switcher shows:
@@ -190,11 +237,21 @@ export function businessView(me: { roles: readonly { role: string; status: strin
 /**
  * The vendor items for the roles held: "all" shows every business the person runs, a role shows
  * only that business. Someone with no business role yet sees the overview (the steps to get one).
+ * Round B3: the desks of the places the person works at as staff follow, whatever the switcher
+ * shows; a desk the owner sections already link to is not repeated.
  */
-export function vendorSections(active: BusinessRole[], view: BusinessRole | "all"): NavSection<NavEntry>[] {
-  if (!active.length) return VENDOR_SECTIONS.filter((s) => s.key === "overview");
-  const shown = view === "all" || !active.includes(view) ? active : [view];
-  return VENDOR_SECTIONS.filter((s) => !s.role || shown.includes(s.role))
-    .map((s) => ({ ...s, items: s.items.filter((e) => !e.roles || e.roles.some((r) => shown.includes(r))) }))
+export function vendorSections(active: BusinessRole[], view: BusinessRole | "all", workplaces: readonly WorkplaceNav[] = []): NavSection<NavEntry>[] {
+  const owner: NavSection<NavEntry>[] = !active.length
+    ? VENDOR_SECTIONS.filter((s) => s.key === "overview")
+    : (() => {
+        const shown = view === "all" || !active.includes(view) ? active : [view];
+        return VENDOR_SECTIONS.filter((s) => !s.role || shown.includes(s.role))
+          .map((s) => ({ ...s, items: s.items.filter((e) => !e.roles || e.roles.some((r) => shown.includes(r))) }))
+          .filter((s) => s.items.length);
+      })();
+  const linked = new Set(owner.flatMap((s) => s.items.map((i) => i.href)));
+  const staff = staffSections(workplaces)
+    .map((s) => ({ ...s, items: s.items.filter((i) => !linked.has(i.href)) }))
     .filter((s) => s.items.length);
+  return [...owner, ...staff];
 }

@@ -2805,7 +2805,17 @@
     "confirmSubmissionTitle": "যাচাই থেকে প্রত্যাহার করবেন?",
     "confirmSubmissionBody": "\"{title}\" যাচাইয়ের তালিকা থেকে সরে যাবে। পরে সম্পাদনা করে আবার পাঠাতে পারবেন।",
     "roleWithdrawn": "আবেদন প্রত্যাহার করা হয়েছে",
-    "submissionWithdrawn": "যাচাই থেকে প্রত্যাহার করা হয়েছে"
+    "submissionWithdrawn": "যাচাই থেকে প্রত্যাহার করা হয়েছে",
+    "workTitle": "যেখানে কাজ করেন",
+    "workLead": "যেসব ব্যবসা আপনাকে তাদের টিমে যোগ করেছে। এই অ্যাকাউন্ট দিয়েই vendor.kriraghor.com-এ তাদের ডেস্ক খোলে।",
+    "workType": {
+      "venue": "ভেন্যু",
+      "gym": "জিম",
+      "shop": "দোকান"
+    },
+    "workOwner": "মালিক: {name}",
+    "workSince": "{date} থেকে",
+    "workOpen": "ডেস্ক খুলুন"
   },
   "share": {
     "og": {

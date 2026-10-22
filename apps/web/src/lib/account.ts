@@ -158,3 +158,26 @@ export const canWithdrawSubmission = (s: Pick<MySubmission, "kind" | "status">) 
 /** Open submissions first (newest first), then decided ones. */
 export const sortSubmissions = (items: MySubmission[]) =>
   [...items].sort((a, b) => Number(OPEN_SUBMISSION.includes(b.status)) - Number(OPEN_SUBMISSION.includes(a.status)) || Date.parse(b.submittedAt) - Date.parse(a.submittedAt));
+
+// ---------------- Round B3: where the member works as staff
+
+export type Workplace = components["schemas"]["BusinessWorkplace"];
+
+/** GET /me/workplaces: the venues, gyms and shops the member works at as staff (live owners only). */
+export async function listWorkplaces(): Promise<Workplace[]> {
+  return (await ok(await api().GET("/me/workplaces"))).items;
+}
+
+/**
+ * The vendor.kriraghor.com page a workplace opens on (its first desk by the permissions held), or the
+ * vendor home when none of its desks is open to the member. Relative to the vendor site.
+ */
+export function workplaceDesk(w: Pick<Workplace, "businessType" | "businessId" | "permissions">): string {
+  const has = (p: string) => w.permissions.includes(p);
+  if (w.businessType === "venue" && has("bookings.view")) return "/vendor/bookings?groundId=" + w.businessId;
+  if (w.businessType === "gym" && (has("desk.admit") || has("desk.admissions"))) return "/vendor/gyms/" + w.businessId + "/desk";
+  if (w.businessType === "gym" && has("passes.view")) return "/vendor/gyms/" + w.businessId + "/passes";
+  if (w.businessType === "shop" && has("orders.view")) return "/vendor/orders?shopId=" + w.businessId;
+  if (w.businessType === "shop" && has("stock.view")) return "/vendor/inventory?shopId=" + w.businessId;
+  return "/vendor";
+}

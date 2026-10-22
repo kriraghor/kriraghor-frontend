@@ -12,6 +12,8 @@ import { useCursorList } from "@/lib/use-cursor-list";
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { StatusBadge } from "../../StatusBadge";
 import { Gate } from "../market/ShopDesk";
+import { allowedOrderActions, deskAccessKey } from "@/lib/vendor/team";
+import { DeskAccessNotice, ShopSwitch, useDeskErrorText, useShopChoice } from "../StaffAccess";
 
 type Row = Awaited<ReturnType<typeof shopOrders.list>>["items"][number];
 
@@ -20,19 +22,23 @@ type Row = Awaited<ReturnType<typeof shopOrders.list>>["items"][number];
  * cancelled) with the time left on each deadline; a sub-order panel to accept (the buyer's phone and
  * address show only then), reject with a reason (the buyer is refunded in full), ship with the courier
  * and tracking number, and mark delivered with an optional photo.
+ * Round B3: a shop's staff work this desk too, at the shops where they hold orders.view (a switcher
+ * when there are several, ?shopId=). They see no commission, net or settlement (the API leaves them
+ * out), only the buttons the owner allowed, and the buyer's contact only with orders.ship.
  */
 export function OrdersDesk() {
   const t = useTranslations("vendorOrders");
   const locale = useLocale();
-  const { values, set, params } = useUrlFilters({ tab: { default: "to_accept", allowed: TABS } });
+  const { values, set, params } = useUrlFilters({ tab: { default: "to_accept", allowed: TABS }, shopId: { default: "" } });
   const tab = values.tab as Tab;
   const open = params.get("id");
+  const shop = useShopChoice("orders.view", values.shopId);
   // No retry, as before: a missing role or KYC answers at once and shows its gate.
-  const list = useCursorList<Row>(["shop-orders", tab], (cursor) => shopOrders.list(tab, cursor), { retry: false });
+  const list = useCursorList<Row>(["shop-orders", tab, shop.shopId ?? ""], (cursor) => shopOrders.list(tab, cursor, shop.shopId), { retry: false, enabled: shop.ready });
   const problem = problemOf(list.error);
-  const money = (n: number) => formatTaka(n, locale);
+  const money = (n: number | null | undefined) => (typeof n === "number" ? formatTaka(n, locale) : "–");
   const area = (s: Row) => (s.area ? (locale === "bn" ? s.area.nameBn : s.area.nameEn) : "");
-  if (problem && ["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code)) return <Gate />;
+  if (problem && ["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code) && !shop.choices.some((c) => c.staff)) return <Gate />;
   const openCode = list.rows?.find((s) => s.id === open)?.code;
 
   const columns: Column<Row>[] = [
@@ -69,9 +75,11 @@ export function OrdersDesk() {
         title={t("title")}
         description={t("lead")}
         actions={
-          <Link href="/vendor/settlement" className="font-semibold text-brand-text underline">
-            {t("settlementLink")}
-          </Link>
+          shop.perms === null ? (
+            <Link href="/vendor/settlement" className="font-semibold text-brand-text underline">
+              {t("settlementLink")}
+            </Link>
+          ) : undefined
         }
       />
       <DetailLayout
@@ -79,11 +87,13 @@ export function OrdersDesk() {
         open={Boolean(open)}
         onClose={() => set({ id: null })}
         title={<span className="font-mono">{openCode ?? t("title")}</span>}
-        pane={open ? <OrderPanel key={open} id={open} /> : null}
+        pane={open ? <OrderPanel key={open} id={open} perms={shop.perms} /> : null}
         width={460}
         testId="order-panel"
       >
         <div className="flex flex-col gap-4">
+          <ShopSwitch choices={shop.choices} value={shop.current?.value} onChange={(v) => set({ shopId: v, id: null })} />
+          {deskAccessKey(problem?.code) ? <DeskAccessNotice error={list.error} /> : null}
           <div role="group" aria-label={t("title")} className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
             {TABS.map((k) => (
               <Chip key={k} active={tab === k} count={list.counts?.[k] || undefined} onClick={() => set({ tab: k, id: null })} className="min-h-10 shrink-0" data-testid={`tab-${k}`}>
@@ -94,7 +104,7 @@ export function OrdersDesk() {
           <DataTable
             label={t(`tab.${tab}`)}
             columns={columns}
-            rows={list.rows}
+            rows={deskAccessKey(problem?.code) ? [] : list.rows}
             rowId={(s) => s.id}
             loading={list.loading}
             error={list.error}
@@ -121,8 +131,10 @@ function Deadline({ s }: { s: ShopSub }) {
   return <span className={h < 4 ? "font-semibold text-danger" : "text-muted"}>{h < 0 ? t("late") : t(s.status === "placed" ? "acceptIn" : "shipIn", { h })}</span>;
 }
 
-function OrderPanel({ id }: { id: string }) {
+/** perms: the staff member's permissions at this shop (Round B3), or null for the owner. */
+function OrderPanel({ id, perms }: { id: string; perms: readonly string[] | null }) {
   const t = useTranslations("vendorOrders");
+  const errorText = useDeskErrorText();
   const locale = useLocale();
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["shop-order", id], queryFn: () => shopOrders.get(id), retry: false });
@@ -133,25 +145,32 @@ function OrderPanel({ id }: { id: string }) {
   const [courier, setCourier] = useState("");
   const [tracking, setTracking] = useState("");
   const [proof, setProof] = useState<File | null>(null);
-  const money = (n: number) => formatTaka(n, locale);
+  // Staff answers carry no commission or net (B3): a missing amount shows a dash.
+  const money = (n: number | null | undefined) => (typeof n === "number" ? formatTaka(n, locale) : "–");
   const run = async (fn: () => Promise<ShopSub>, done: string) => {
     setMsg(null);
     setBusy(true);
     try {
       const s = await fn();
-      qc.setQueryData(["shop-order", id], s);
+      // An action's answer never carries the buyer's contact for staff: read the order again instead.
+      if (perms) await qc.invalidateQueries({ queryKey: ["shop-order", id] });
+      else qc.setQueryData(["shop-order", id], s);
       await qc.invalidateQueries({ queryKey: ["shop-orders"] });
       setMsg({ text: done, tone: "info" });
     } catch (err) {
       const p = problemOf(err);
-      setMsg({ text: p?.errors?.length ? p.errors.map((e) => e.message).join(" · ") : (p?.title ?? t("failed")), tone: "error" });
+      setMsg({ text: p?.errors?.length ? p.errors.map((e) => e.message).join(" · ") : (errorText(err, t("failed")) ?? t("failed")), tone: "error" });
     } finally {
       setBusy(false);
     }
   };
   if (q.isPending) return <Skeleton className="h-64" />;
-  if (!q.data) return <Notice tone="error">{t("failed")}</Notice>;
+  if (!q.data) return <Notice tone="error">{errorText(q.error, t("failed")) ?? t("failed")}</Notice>;
   const s = q.data;
+  const can = allowedOrderActions(s.status, perms);
+  // Read defensively: the staff view leaves the money keys out and may add contactHidden (Q168).
+  const m = s.money as Partial<ShopSub["money"]> & Pick<ShopSub["money"], "items" | "delivery">;
+  const contactHidden = Boolean((s as { contactHidden?: boolean }).contactHidden);
   const when = (iso: string | null) => (iso ? new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Dhaka" }).format(new Date(iso)) : "–");
   const areaName = s.area ? (locale === "bn" ? s.area.nameBn : s.area.nameEn) : "";
 
@@ -176,12 +195,20 @@ function OrderPanel({ id }: { id: string }) {
         <dd className="text-right tabular">{money(s.money.items)}</dd>
         <dt className="text-muted">{t("delivery")}</dt>
         <dd className="text-right tabular">{money(s.money.delivery)}</dd>
-        <dt className="text-muted">{t("commission", { pct: s.money.commissionBps / 100 })}</dt>
-        <dd className="text-right tabular">−{money(s.money.commission)}</dd>
-        <dt className="font-semibold">{t("youGet")}</dt>
-        <dd className="text-right font-semibold tabular" data-testid="order-net">
-          {money(s.money.net)}
-        </dd>
+        {typeof m.commission === "number" && typeof m.commissionBps === "number" ? (
+          <>
+            <dt className="text-muted">{t("commission", { pct: m.commissionBps / 100 })}</dt>
+            <dd className="text-right tabular">−{money(m.commission)}</dd>
+          </>
+        ) : null}
+        {typeof m.net === "number" ? (
+          <>
+            <dt className="font-semibold">{t("youGet")}</dt>
+            <dd className="text-right font-semibold tabular" data-testid="order-net">
+              {money(m.net)}
+            </dd>
+          </>
+        ) : null}
         <dt className="text-muted">{t("acceptBy")}</dt>
         <dd className="text-right">{when(s.acceptBy)}</dd>
         <dt className="text-muted">{t("shipBy")}</dt>
@@ -213,22 +240,30 @@ function OrderPanel({ id }: { id: string }) {
               </>
             ) : null}
           </p>
+        ) : contactHidden ? (
+          <p className="text-muted" data-testid="contact-hidden">
+            {t("contactHidden", { area: areaName })}
+          </p>
         ) : (
           <p className="text-muted">{t("addressAfterAccept", { area: areaName })}</p>
         )}
       </div>
       <div className="flex flex-col gap-3 border-t border-line pt-4">
-        {s.status === "placed" && !rejecting ? (
+        {s.status === "placed" && !rejecting && (can.includes("accept") || can.includes("reject")) ? (
           <div className="flex flex-wrap gap-2">
-            <Button type="button" busy={busy} onClick={() => run(() => shopOrders.accept(id), t("accepted"))} data-testid="accept-order">
-              {t("accept")}
-            </Button>
-            <Button type="button" variant="secondary" className="text-danger" disabled={busy} onClick={() => setRejecting(true)}>
-              {t("reject")}
-            </Button>
+            {can.includes("accept") ? (
+              <Button type="button" busy={busy} onClick={() => run(() => shopOrders.accept(id), t("accepted"))} data-testid="accept-order">
+                {t("accept")}
+              </Button>
+            ) : null}
+            {can.includes("reject") ? (
+              <Button type="button" variant="secondary" className="text-danger" disabled={busy} onClick={() => setRejecting(true)}>
+                {t("reject")}
+              </Button>
+            ) : null}
           </div>
         ) : null}
-        {rejecting && s.status === "placed" ? (
+        {rejecting && s.status === "placed" && can.includes("reject") ? (
           <div className="flex flex-col gap-3">
             <Select id="reject-reason" label={t("rejectWhy")} hint={t("rejectNote")} value={reason} onChange={(e) => setReason(e.target.value as RejectReason)}>
               {REJECT_REASONS.map((r) => (
@@ -247,7 +282,7 @@ function OrderPanel({ id }: { id: string }) {
             </div>
           </div>
         ) : null}
-        {s.status === "accepted" ? (
+        {s.status === "accepted" && can.includes("ship") ? (
           <form
             className="flex flex-col gap-3"
             onSubmit={(e) => {
@@ -262,7 +297,7 @@ function OrderPanel({ id }: { id: string }) {
             </Button>
           </form>
         ) : null}
-        {s.status === "shipped" ? (
+        {s.status === "shipped" && can.includes("deliver") ? (
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold" htmlFor="proof">
@@ -276,12 +311,13 @@ function OrderPanel({ id }: { id: string }) {
           </div>
         ) : null}
         {s.status === "delivered" ? <p className="text-sm">{t("waitingBuyer", { time: when(s.completeBy) })}</p> : null}
-        {s.status === "disputed" ? (
+        {s.status === "disputed" && perms === null ? (
           <Link href="/vendor/disputes" className="text-sm font-semibold text-brand-text underline">
             {t("disputed")}
           </Link>
         ) : null}
-        {s.status === "completed" ? <p className="text-sm">{t("completedNote", { amount: money(s.money.net) })}</p> : null}
+        {s.status === "completed" && typeof m.net === "number" ? <p className="text-sm">{t("completedNote", { amount: money(m.net) })}</p> : null}
+        {perms && ["placed", "accepted", "shipped"].includes(s.status) && !can.length ? <p className="text-sm text-muted">{t("staffNoAction")}</p> : null}
         {s.cancelReason ? <p className="text-sm text-muted">{t("cancelReason", { reason: t.has(`rejectReason.${s.cancelReason}`) ? t(`rejectReason.${s.cancelReason}`) : s.cancelReason })}</p> : null}
         {msg ? <Notice tone={msg.tone}>{msg.text}</Notice> : null}
       </div>
