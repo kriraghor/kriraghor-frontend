@@ -117,7 +117,7 @@ describe("the add form", () => {
 
 describe("error mapping", () => {
   it("names every B3 code and falls back to failed", () => {
-    for (const code of ["MEMBER_NOT_FOUND", "MEMBER_IS_OWNER", "MEMBER_IS_STAFF", "PHONE_NOT_VERIFIED", "TEAM_FULL", "ALREADY_MEMBER", "PERMISSIONS_INVALID", "PERMISSION_REQUIRED", "BUSINESS_REQUIRED", "PHONE_REQUIRED"]) {
+    for (const code of ["MEMBER_NOT_FOUND", "MEMBER_IS_OWNER", "MEMBER_IS_STAFF", "PHONE_NOT_VERIFIED", "TEAM_FULL", "ALREADY_MEMBER", "PERMISSIONS_INVALID", "PERMISSION_REQUIRED", "BUSINESS_REQUIRED", "PHONE_REQUIRED", "RATE_LIMITED"]) {
       expect(staffErrorKey(code)).toBe(code);
     }
     expect(staffErrorKey("SOMETHING_ELSE")).toBe("failed");

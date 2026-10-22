@@ -133,6 +133,7 @@ export const STAFF_ERRORS = [
   "ROLE_REQUIRED",
   "NOT_FOUND",
   "VALIDATION_FAILED",
+  "RATE_LIMITED",
 ] as const;
 export type StaffErrorCode = (typeof STAFF_ERRORS)[number];
 
