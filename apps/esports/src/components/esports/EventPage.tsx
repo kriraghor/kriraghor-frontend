@@ -5,6 +5,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { useAuth } from "@kriraghor/ui/auth";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { problemOf } from "@kriraghor/api-client";
 import { dhakaTime, esports, takaOf, useRoom } from "@/lib/esports";
 import { byFinal, events, jitter, type EventBundle, type EventPoll, type FeedItem } from "@/lib/events";
@@ -80,6 +82,7 @@ export function EventPage({ slug }: { slug: string }) {
                 {t("startsIn")} <Countdown to={e.startsAt} />
               </p>
             ) : null}
+            <ShareButton url={`${publicEnv().ESPORTS_URL}/showcases/${encodeURIComponent(e.slug)}`} title={title} text={tagline} testId="event-share" />
             {e.status === "published" ? <FollowButton id={e.id} slug={slug} signedIn={signedIn} following={Boolean(me.data?.following)} followers={e.followers} /> : null}
           </div>
         </div>

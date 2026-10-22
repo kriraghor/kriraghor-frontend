@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { DeviceMobile, Envelope, GoogleLogo, Key, Monitor, SignOut, UserCircle } from "@phosphor-icons/react";
+import { Camera, DeviceMobile, Envelope, GoogleLogo, Key, Monitor, SignOut, UserCircle } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { GoogleButton } from "@kriraghor/ui/auth/google-button";
@@ -30,6 +30,7 @@ import {
   updateProfile,
   verifyEmailCode,
 } from "@/lib/account";
+import { AvatarControl } from "./AvatarControl";
 
 /** A problem from the API in plain words: our own message for known codes, else the server's title. */
 function useProblemText() {
@@ -70,6 +71,7 @@ export function AccountSettings() {
               {t("accountStatusBody")}
             </Notice>
           ) : null}
+          <PhotoCard me={me.data} />
           <ProfileCard me={me.data} />
           <SignInCard me={me.data} />
           <DevicesCard />
@@ -112,6 +114,19 @@ function Row({ icon, label, value, badge, action, children, testId }: { icon: Re
         {action}
       </div>
       {children}
+    </div>
+  );
+}
+
+// ---------------- photo (M01 avatar, Round B1)
+
+function PhotoCard({ me }: { me: Me }) {
+  const t = useTranslations("accountSettings.photo");
+  return (
+    <div id="photo" className="scroll-mt-24">
+      <Section icon={<Camera size={22} />} title={t("title")} lead={t("lead")} testId="settings-photo">
+        <AvatarControl me={me} />
+      </Section>
     </div>
   );
 }

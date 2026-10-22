@@ -40,15 +40,23 @@ describe("vendorSections, the business sidebar", () => {
     expect(vendorSections(["ground_owner"], "gym_owner").map((s) => s.key)).toEqual(["overview", "grounds", "business"]);
   });
 
-  it("analytics and reviews belong to venue owners only; settlement to shops", () => {
+  it("analytics belongs to venue owners only; settlement to shops", () => {
     const shop = hrefs(vendorSections(["shop_owner"], "all"));
     expect(shop).toContain("/vendor/settlement");
     expect(shop).not.toContain("/vendor/analytics");
-    expect(shop).not.toContain("/vendor/reviews");
     expect(shop).toContain("/vendor/disputes");
     const venue = hrefs(vendorSections(["ground_owner"], "all"));
     expect(venue).toEqual(expect.arrayContaining(["/vendor/venues", "/vendor/bookings", "/vendor/analytics", "/vendor/reviews"]));
     expect(venue).not.toContain("/vendor/settlement");
+  });
+
+  it("reviews show once for venue, shop and gym owners, not for organisers (Round B1)", () => {
+    for (const role of ["ground_owner", "shop_owner", "gym_owner"] as const) expect(hrefs(vendorSections([role], "all")).filter((h) => h === "/vendor/reviews")).toHaveLength(1);
+    expect(hrefs(vendorSections(["ground_owner", "shop_owner", "gym_owner"], "all")).filter((h) => h === "/vendor/reviews")).toHaveLength(1);
+    expect(hrefs(vendorSections(["organiser"], "all"))).not.toContain("/vendor/reviews");
+    // The switcher on the organiser business hides it; on the shop it shows.
+    expect(hrefs(vendorSections(["organiser", "shop_owner"], "organiser"))).not.toContain("/vendor/reviews");
+    expect(hrefs(vendorSections(["organiser", "shop_owner"], "shop_owner"))).toContain("/vendor/reviews");
   });
 
   it("organisers get sports events only: no esports console (21 Oct 2026)", () => {

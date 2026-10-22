@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@kriraghor/api-client";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { List, SignOut, Translate, UserCircle, X } from "@phosphor-icons/react";
@@ -11,6 +13,7 @@ import { NotificationBell } from "./notifications/NotificationBell";
 import { ButtonLink } from "./kit/Button";
 import { Menu } from "./kit/Overlay";
 import { ThemeToggle } from "./ThemeToggle";
+import { Avatar } from "./kit/Display";
 import { cn } from "./cn";
 
 export type HeaderConfig = {
@@ -41,6 +44,24 @@ function NavLink({ href, className, current, children, onClick }: { href: string
       {children}
     </Link>
   );
+}
+
+/** The signed-in person in the account menu: their photo when they have one (M01 avatar), else the person icon. */
+function AccountGlyph({ size }: { size: number }) {
+  const { audience, status } = useAuth();
+  // The member's GET /me (the shared "me" cache entry); staff desks (admin audience) keep the icon.
+  const me = useQuery({
+    queryKey: ["me"],
+    enabled: status === "signed_in" && audience === "api",
+    queryFn: async () => {
+      const { data, error } = await api().GET("/me");
+      if (error) throw error;
+      return data;
+    },
+  });
+  const user = me.data;
+  if (user?.avatarUrl) return <Avatar name={user.displayName} src={user.avatarUrl} size={size} />;
+  return <UserCircle size={size} weight="fill" aria-hidden className="text-brand" />;
 }
 
 const iconBtn = "inline-flex size-11 shrink-0 items-center justify-center rounded-control text-ink transition-colors hover:bg-surface-2";
@@ -101,7 +122,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
                 <Menu
                   trigger={
                     <button type="button" className={cn(iconBtn, "w-auto gap-2 border border-line bg-surface pl-1.5 pr-3 text-sm font-semibold")} data-testid="account-menu">
-                      <UserCircle size={26} weight="fill" aria-hidden className="text-brand" />
+                      <AccountGlyph size={26} />
                       {t("nav.me")}
                     </button>
                   }
@@ -136,7 +157,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
               <>
                 <hr className="my-2 border-line" />
                 <Link href={meHref} onClick={closeMenu} className="flex min-h-12 items-center gap-3 rounded-control px-3 text-[17px] font-semibold no-underline hover:bg-surface-2">
-                  <UserCircle size={22} aria-hidden />
+                  <AccountGlyph size={22} />
                   {t("nav.me")}
                 </Link>
                 <button type="button" onClick={() => (closeMenu(), void signOut())} className="flex min-h-12 items-center gap-3 rounded-control px-3 text-left text-[17px] font-semibold hover:bg-surface-2">

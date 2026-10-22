@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { dayLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { bracket, byDay, refLabel, scoreLine, statusTone, TONE, tournaments, type Hub, type Match, type Ref } from "@/lib/tournaments";
@@ -104,6 +106,7 @@ export function TournamentHub({ slug }: { slug: string }) {
               <p className="font-semibold">{t("opensOn", { date: dayLabel(h.registrationOpensAt.slice(0, 10), locale) })}</p>
             ) : null}
             <p className="text-sm text-muted">{t("placesTaken", { n: h.approved, max: h.maxTeams })}</p>
+            <ShareButton url={`${publicEnv().WEB_URL}/events/${encodeURIComponent(h.slug)}`} title={h.name} text={sport} testId="hub-share" />
           </div>
         </div>
         <dl className="mx-auto grid max-w-[1320px] grid-cols-2 gap-4 px-5 pb-8 sm:grid-cols-4 lg:grid-cols-6">

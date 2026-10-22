@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import type { GymCard } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
+import { RatingLine } from "../trust/SubjectReviews";
 
 /** A gym card: cover, name, area, facilities, day and monthly prices, open now, women-only hours. */
 export function GymCardItem({ card }: { card: GymCard }) {
@@ -27,6 +28,7 @@ export function GymCardItem({ card }: { card: GymCard }) {
           </span>
           <span className="mt-1 text-xl font-extrabold leading-snug">{card.name}</span>
           {card.area ? <span className="text-sm text-muted">{name(card.area)}</span> : null}
+          <RatingLine avg={card.ratingAvg} count={card.ratingCount} className="text-sm text-muted" />
           {card.facilities.length ? (
             <span className="mt-3 flex flex-wrap gap-1">
               {card.facilities.slice(0, 4).map((f) => (

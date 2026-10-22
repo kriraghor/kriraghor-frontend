@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { ShareButton } from "@kriraghor/ui/share";
+import { publicEnv } from "@kriraghor/session/env";
 import { esports } from "@/lib/esports";
 import { Empty } from "./bits";
 
@@ -98,8 +100,18 @@ export function PlayerProfile({ handle }: { handle: string }) {
   const p = q.data as unknown as { username: string | null; userId: string; displayName: string | null; tournaments: number; wins: number; kills: number; games: { game: { key: string; nameEn: string; nameBn: string } | null; ign: string; uidMasked: string; rank: number | null; tournaments: number; wins: number; kills: number }[] };
   return (
     <section className="mx-auto max-w-3xl px-5 py-10">
-      <h1 className="text-3xl font-extrabold">{p.games[0]?.ign ?? p.username ?? "—"}</h1>
-      {p.username ? <p className="text-muted">@{p.username}</p> : null}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="break-words text-3xl font-extrabold">{p.games[0]?.ign ?? p.username ?? "—"}</h1>
+          {p.username ? <p className="text-muted">@{p.username}</p> : null}
+        </div>
+        <ShareButton
+          url={`${publicEnv().ESPORTS_URL}/p/${encodeURIComponent(p.username ?? handle)}`}
+          title={p.games[0]?.ign ?? p.username ?? handle}
+          text={p.games[0]?.game ? (locale === "bn" ? p.games[0].game.nameBn : p.games[0].game.nameEn) : null}
+          testId="player-share"
+        />
+      </div>
       <dl className="glass-card mt-6 grid grid-cols-3 gap-4 p-4 text-center">
         {(["tournaments", "wins", "kills"] as const).map((k) => (
           <div key={k}>

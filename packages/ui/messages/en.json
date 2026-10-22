@@ -38,6 +38,22 @@
       "cancel": "Cancel",
       "tooShort": "Write at least {n} characters.",
       "count": "{n}/{max}"
+    },
+    "share": {
+      "label": "Share",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "copyFailed": "Could not copy the link",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "messenger": "Messenger",
+      "x": "X (Twitter)"
+    },
+    "checklist": {
+      "progress": "{done} of {total} done",
+      "score": "{score}% complete",
+      "done": "Done",
+      "todo": "To do"
     }
   },
   "auth": {

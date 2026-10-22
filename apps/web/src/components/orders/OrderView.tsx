@@ -10,6 +10,7 @@ import { newKey } from "@/lib/bookings";
 import { orders, STEPS, stepIndex, statusTone, type OrderResult, type SubOrder } from "@/lib/orders";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
+import { RateSourceButtons } from "../trust/RateDialog";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { TONE } from "./MyOrders";
 
@@ -185,6 +186,8 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
             {t("seeCase")}
           </Link>
         ) : null}
+        {/* M17-FR-30: rate the shop once this part is completed (shown while it waits for a rating). */}
+        {s.status === "completed" ? <RateSourceButtons sourceType="sub_order" sourceIds={[s.id]} /> : null}
       </div>
       {reporting ? (
         <form

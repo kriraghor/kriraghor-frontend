@@ -61,10 +61,8 @@ export const teams = {
   verifyPhone: async (phone: string, code: string) => ok(await api().POST("/me/phone/verify", { body: { phone, code } })),
 };
 
-/** A WhatsApp share of the invite link (the captain sends it; Kriraghor sends no SMS to unknown numbers). */
-export function whatsappUrl(text: string): string {
-  return `https://wa.me/?text=${encodeURIComponent(text)}`;
-}
+/** A WhatsApp share of the invite link (the captain sends it; Kriraghor sends no SMS to unknown numbers). The kit's share helper. */
+export { whatsappUrl } from "@kriraghor/ui/share/links";
 
 /** Where each readiness fix is done. */
 export function fixHref(fix: string | null): string | null {

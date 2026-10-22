@@ -7,7 +7,9 @@ import { PublicPlayerView } from "@/components/teams/PublicPlayerView";
 /** Title, description and share image from the public read; an unknown handle is a 404 (seo.server). */
 export async function generateMetadata({ params }: PageProps<"/[locale]/players/[handle]">): Promise<Metadata> {
   const { locale, handle } = await params;
-  return detailMetadata("player", handle, locale, "Player", `/players/${handle}`);
+  const meta = await detailMetadata("player", handle, locale, "Player", `/players/${handle}`);
+  // The share card (opengraph-image.tsx) is a wide image.
+  return { ...meta, twitter: { ...meta.twitter, card: "summary_large_image" } };
 }
 
 async function Content({ params }: { params: PageProps<"/[locale]/players/[handle]">["params"] }) {

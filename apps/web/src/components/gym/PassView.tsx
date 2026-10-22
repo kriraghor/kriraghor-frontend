@@ -11,6 +11,7 @@ import { dayLabel } from "@/lib/bookings";
 import { gym, passTone, TONE } from "@/lib/gym";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
+import { RatePassButton } from "../trust/RateDialog";
 import { Notice } from "@kriraghor/ui/primitives";
 
 /** The QR, drawn on the device from the signed token (never fetched as an image, so it stays private). */
@@ -147,6 +148,9 @@ export function PassView({ code }: { code: string }) {
             </div>
           ) : null}
         </dl>
+
+        {/* M20-FR-10: rate the gym after a visit, or update my one review of it from this newer pass. */}
+        <RatePassButton pass={p} className="mt-6" />
 
         {p.can.cancel ? (
           <div className="mt-6">

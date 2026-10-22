@@ -872,9 +872,51 @@
       "text": "What was it like? (optional)",
       "hint": "Your name is shown with your review. Links and phone numbers are checked by our team first.",
       "submit": "Post my rating",
-      "thanks": "Thank you. Your rating is on the venue’s page.",
+      "thanks": "Thank you. Your rating is now on their page.",
       "held": "Thank you. Your rating will show once our team has checked it.",
-      "failed": "Couldn't post your rating. Try again."
+      "failed": "Couldn't post your rating. Try again.",
+      "updated": "Review updated. Thank you.",
+      "cta": "Rate this",
+      "updateCta": "Update your review",
+      "ctaRef": "Rate {ref}",
+      "cancel": "Cancel",
+      "update": "Update my review",
+      "updateTitle": "Update your review of this gym",
+      "updateHint": "You keep one review per gym. Posting now replaces your earlier stars and words.",
+      "titleFor": {
+        "ground": "Rate this venue",
+        "hire_profile": "Rate this pro",
+        "shop": "Rate this shop",
+        "gym": "Rate this gym"
+      },
+      "what": {
+        "ground": "the venue",
+        "hire_profile": "the pro",
+        "shop": "the shop",
+        "gym": "the gym"
+      },
+      "starsFor": "How many stars for {what}?",
+      "scale": {
+        "1": "Poor",
+        "2": "Not great",
+        "3": "Okay",
+        "4": "Good",
+        "5": "Excellent"
+      },
+      "errors": {
+        "NOT_YOUR_BOOKING": "Only the member who paid for this booking can rate it.",
+        "NOT_YOUR_JOB": "Only the manager who paid for this job can rate the pro.",
+        "NOT_YOUR_ORDER": "Only the buyer can rate this shop order.",
+        "NOT_YOUR_PASS": "Only the member who bought this pass can rate the gym.",
+        "NOT_PLAYED": "You can rate a venue after you have played there.",
+        "JOB_NOT_RELEASED": "You can rate the pro once the job is done and paid out.",
+        "ORDER_NOT_COMPLETED": "You can rate the shop once you have received the order.",
+        "PASS_NOT_REDEEMED": "You can rate the gym after you have used your pass there.",
+        "REVIEW_WINDOW_CLOSED": "The time to rate this has passed.",
+        "REVIEW_EXISTS": "You have already rated this.",
+        "REVIEW_HIDDEN": "Your earlier review was hidden by our team, so it can't be changed.",
+        "failed": "Couldn't post your rating. Try again."
+      }
     },
     "reviews": {
       "title": "Reviews",
@@ -887,7 +929,23 @@
       "ownerReply": "Reply from the venue",
       "none": "No reviews yet. Members can rate a venue after playing there.",
       "reportGround": "Report this venue",
-      "reportReview": "Report"
+      "reportReview": "Report",
+      "loadFailed": "Couldn't load the reviews.",
+      "retry": "Try again",
+      "noRatingYet": "No rating yet",
+      "more": "Show more reviews",
+      "replyFrom": {
+        "ground": "Reply from the venue",
+        "hire_profile": "Reply from the pro",
+        "shop": "Reply from the shop",
+        "gym": "Reply from the gym"
+      },
+      "empty": {
+        "ground": "No reviews yet. Members can rate a venue after playing there.",
+        "hire_profile": "No reviews yet. Managers can rate a pro once a job is done and paid out.",
+        "shop": "No reviews yet. Buyers can rate the shop once their order arrives.",
+        "gym": "No reviews yet. Members can rate the gym after a visit."
+      }
     },
     "report": {
       "open": "Report",
@@ -964,6 +1022,57 @@
       "shown": "Venues can see this ({n} bookings).",
       "hidden": "Venues see it from {min} bookings (you have {n}).",
       "how": "No-shows ({noShows}) and late cancels ({late}) lower it. A no-show you win in a dispute does not count."
+    },
+    "subjects": {
+      "ground": "Venue",
+      "hire_profile": "Pro",
+      "shop": "Shop",
+      "gym": "Gym"
+    },
+    "yourReviews": "Your reviews",
+    "noReviewsYet": "You have not rated anything yet.",
+    "reviewable": {
+      "title": "Waiting for your rating",
+      "lead": "Venues you played at, pros you hired, shops you bought from and gyms you visited. Your rating helps the next member choose.",
+      "loadFailed": "Couldn't load what is waiting for your rating.",
+      "none": "Nothing to rate right now. After a game, a job, an order or a gym visit, it shows up here.",
+      "source": {
+        "booking": "Booking {ref}",
+        "hire_job": "Job {ref}",
+        "sub_order": "Order {ref}",
+        "gym_pass": "Pass {ref}"
+      },
+      "done": "done {when}",
+      "closes": "Rate it by {when}"
+    },
+    "replyDialog": {
+      "title": "Reply to this review",
+      "editTitle": "Change your reply",
+      "lead": "Your reply shows under the review on your public page. Keep it short and polite.",
+      "label": "Your reply",
+      "hint": "2 to 1,000 characters. No phone numbers or links: keep the conversation on Kriraghor.",
+      "cancel": "Cancel",
+      "send": "Post reply",
+      "save": "Save reply",
+      "posted": "Reply posted.",
+      "changed": "Reply changed.",
+      "errors": {
+        "REPLY_HAS_CONTACT": "Replies can't include phone numbers or links. Remove them and try again.",
+        "NOT_OWNER": "Only the owner can reply to this review.",
+        "REVIEW_STATE": "This review is no longer shown, so it can't get a reply.",
+        "VALIDATION_FAILED": "Write between 2 and 1,000 characters.",
+        "failed": "Couldn't post your reply. Try again."
+      }
+    },
+    "owner": {
+      "loadFailed": "Couldn't load your reviews.",
+      "proLead": "What managers said after a job was paid out. A short, polite reply helps the next manager decide.",
+      "noneTitle": "No reviews yet",
+      "proNone": "Managers can rate you once a job is done and paid out. Their reviews show here and on your public profile.",
+      "noText": "Stars only, no words.",
+      "yourReply": "Your reply",
+      "reply": "Reply",
+      "changeReply": "Change reply"
     }
   },
   "market": {
@@ -1415,7 +1524,10 @@
       "travel": "Travel by zone (৳)",
       "maxPerDay": "Jobs a day at most",
       "ratesSaved": "Rates saved.",
-      "saveRates": "Save the rates"
+      "saveRates": "Save the rates",
+      "reviews": "Reviews",
+      "availability": "Availability",
+      "earnings": "Earnings"
     },
     "profileStatus": {
       "draft": "Draft",
@@ -1427,6 +1539,129 @@
       "withdrawn": "Withdrawn",
       "suspended": "Suspended",
       "removed": "Removed"
+    },
+    "availableToday": "Available today",
+    "repliesIn": {
+      "min": "Replies in ~{n} min",
+      "hours": "Replies in ~{n} h",
+      "days": "Replies in ~{n} {n, plural, one {day} other {days}}"
+    },
+    "accepts": "Accepts {pct}",
+    "busyAllDay": "Busy all day",
+    "busyAt": "Busy:",
+    "checklist": {
+      "title": "Finish your profile",
+      "lead": "Complete profiles get hired more. Each step takes a minute or two.",
+      "pro": {
+        "photo": "Add a profile photo",
+        "headline": "Write a headline",
+        "bio": "Tell managers about yourself",
+        "rateCard": "Set your rates",
+        "credential": "Get your credential approved",
+        "policeClearance": "Send a police clearance",
+        "availability": "Mark the hours you are not free",
+        "payoutAccount": "Add a payout account"
+      },
+      "proHint": {
+        "photo": "A clear photo of your face builds trust.",
+        "bio": "A few lines on your experience and how you work.",
+        "credential": "Its level sets the work you can take.",
+        "policeClearance": "Needed to work with under-16 players.",
+        "availability": "Managers see when you are busy before they ask.",
+        "payoutAccount": "Where your earnings are sent."
+      },
+      "photoTitle": "Profile photo",
+      "photoLead": "Shown on your account, your hire cards and your player page."
+    },
+    "earn": {
+      "period": "Period",
+      "periods": {
+        "7w": "7 weeks",
+        "qtr": "Quarter",
+        "yr": "Year"
+      },
+      "payouts": "Payouts",
+      "loading": "Loading your numbers",
+      "earned": {
+        "7w": "Earned in 7 weeks",
+        "qtr": "Earned in 13 weeks",
+        "yr": "Earned in 12 months"
+      },
+      "vsPrevious": "vs the period before",
+      "afterFirstJob": "Shows after your first released job",
+      "releasing": "Releasing soon",
+      "releasingNote": "{n, plural, one {# job} other {# jobs}} · next {when}",
+      "nothingReleasing": "Nothing waiting to be released",
+      "jobsDone": "Jobs done",
+      "upcoming": "{n} coming up",
+      "acceptance": "Acceptance rate",
+      "acceptanceNote": "Of your recent requests",
+      "afterFirstRequest": "Shows after your first request",
+      "reply": "Typical reply time",
+      "replyIn": {
+        "min": "~{n} min",
+        "hours": "~{n} h",
+        "days": "~{n} {n, plural, one {day} other {days}}"
+      },
+      "replyNote": "Middle value over your recent requests",
+      "afterFirstReply": "Shows after your first reply",
+      "rating": "Rating",
+      "reviews": "{n, plural, one {# review} other {# reviews}}",
+      "afterFirstReview": "Shows after your first review",
+      "byWeek": "Earned by week",
+      "byMonth": "Earned by month",
+      "noEarnings": "No released jobs in this period yet. Earnings show here after your first released job.",
+      "whoHires": "Who hires you",
+      "individual": "Individual managers",
+      "jobsN": "{n, plural, one {# job} other {# jobs}}",
+      "noHirers": "No recent jobs yet."
+    },
+    "cal": {
+      "title": "Your availability",
+      "lead": "Block the hours you cannot work. Managers only see that you are busy, never why. Times are Dhaka time.",
+      "prevWeek": "Previous week",
+      "nextWeek": "Next week",
+      "thisWeek": "Back to this week",
+      "saveFirst": "Save or undo your changes to move to another week.",
+      "gridLabel": "Hours this week. Space or Enter blocks or frees an hour, the arrow keys move, Shift with an arrow paints as you move.",
+      "hour": "Hour",
+      "pickDay": "Pick a day",
+      "legend": "What the colours mean",
+      "kind": {
+        "free": "Free",
+        "blocked": "Blocked",
+        "repeat": "Weekly repeat",
+        "booked": "Booked job",
+        "bookedCode": "Booked · {code}",
+        "outside": "Blocked (set on another week)",
+        "past": "Past",
+        "horizon": "Too far ahead"
+      },
+      "blockedCount": "{n, plural, =0 {No hours blocked this week} one {# hour blocked this week} other {# hours blocked this week}}",
+      "reason": "Reason",
+      "optional": "Optional",
+      "reasonHint": "Only you see this. It is saved with the hours you add now.",
+      "repeat": "Repeat the hours I added every week",
+      "until": "Until",
+      "untilHint": "Leave it empty to keep repeating.",
+      "save": "Save the week",
+      "undo": "Undo changes",
+      "saved": "Availability saved",
+      "repeats": "Weekly repeats",
+      "repeatLine": "Every {days}, {from}–{to}",
+      "repeatUntil": "until {date}",
+      "removeRepeat": "Remove",
+      "keepRepeat": "Keep",
+      "removeNote": "Removed repeats go when you save the week.",
+      "errors": {
+        "overJob": "You have a booked job in that time ({jobs}). Free those hours, or keep the job.",
+        "horizon": "You can block hours up to {days} days ahead.",
+        "past": "Past days cannot be changed.",
+        "overlap": "Two blocked times overlap. Reload the week and try again.",
+        "blocks": "Some hours fall outside this week. Reload the week and try again.",
+        "repeats": "A weekly repeat must end after it starts, and stay within the days you can block.",
+        "invalid": "We could not save this week. Check the hours and try again."
+      }
     }
   },
   "gym": {
@@ -1770,6 +2005,24 @@
       "FILE_TOO_LARGE": "The logo must be 2 MB or smaller.",
       "FILE_TYPE_MISMATCH": "That file is not the image type it claims to be.",
       "RATE_LIMITED": "Too many invites today. Try again tomorrow."
+    },
+    "checklist": {
+      "title": "Finish your player profile",
+      "lead": "Captains and managers find complete profiles first.",
+      "steps": {
+        "sports": "Pick your sports and positions",
+        "bio": "Write a short bio",
+        "team": "Join or create a team",
+        "esportsUid": "Verify a game UID",
+        "nid": "Verify your NID"
+      },
+      "hints": {
+        "sports": "Each sport needs at least one position.",
+        "bio": "A line or two about how you play.",
+        "team": "The teams you play for show on your page.",
+        "esportsUid": "On Kriraghor Esports, for PUBG Mobile or Free Fire.",
+        "nid": "A verified NID lets you join events and get paid."
+      }
     }
   },
   "tournaments": {
@@ -2457,6 +2710,28 @@
       "roleNotWithdrawable": "This application can't be withdrawn any more.",
       "submissionNotWithdrawable": "Withdraw this one from its own page.",
       "submissionClosed": "This has already been decided, so it can't be withdrawn."
+    },
+    "photo": {
+      "title": "Profile photo",
+      "lead": "Shown on your account, your hire profile and your player page.",
+      "hint": "JPEG, PNG or WebP, up to {mb} MB. A clear photo of your face works best.",
+      "hintNoSize": "JPEG, PNG or WebP. A clear photo of your face works best.",
+      "choose": "Choose a photo",
+      "change": "Change photo",
+      "save": "Save photo",
+      "cancel": "Cancel",
+      "remove": "Remove photo",
+      "previewNote": "This is a preview. Save it to use it.",
+      "saved": "Photo saved",
+      "removed": "Photo removed",
+      "errors": {
+        "empty": "That file is empty. Choose another photo.",
+        "type": "Use a JPEG, PNG or WebP image.",
+        "tooLarge": "That photo is too large. Use one up to {mb} MB.",
+        "tooLargeNoSize": "That photo is too large. Choose a smaller one.",
+        "mismatch": "That file is not the kind of image it says it is. Save it again as JPEG or PNG and try again.",
+        "generic": "We could not save the photo. Try again."
+      }
     }
   },
   "myRoles": {
@@ -2531,5 +2806,19 @@
     "confirmSubmissionBody": "\"{title}\" leaves the review queue. You can edit it and send it again later.",
     "roleWithdrawn": "Application withdrawn",
     "submissionWithdrawn": "Withdrawn from review"
+  },
+  "share": {
+    "og": {
+      "brandHire": "Kriraghor Hiring",
+      "brandPlayers": "Kriraghor Players",
+      "rating": "Rating",
+      "jobs": "Jobs done",
+      "years": "Years",
+      "player": "Player",
+      "sports": "Sports",
+      "teams": "Teams",
+      "fallbackTitle": "Kriraghor",
+      "fallbackSubtitle": "Esports, venues, gear and talent in Bangladesh"
+    }
   }
 }
