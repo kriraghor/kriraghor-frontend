@@ -26,6 +26,7 @@ git diff --quiet HEAD^ HEAD -- . ../../packages ../../package.json ../../package
 
 Vercel runs it inside the Root Directory, so `.` is the app's folder: a commit that only touches `apps/web` skips the esports and portal builds, while a change to a shared package or the root manifests rebuilds all three. (It exits 0, meaning skip, when nothing in those paths changed.)
 
+
 ## Environment variables (Production)
 
 The apps read these at request time through `/env.js` (see `packages/session/src/env.ts`). A missing value falls back to `localhost`, which breaks the live site, so set every one. Values change only with a **redeploy** (Deployments → ⋯ → Redeploy).
