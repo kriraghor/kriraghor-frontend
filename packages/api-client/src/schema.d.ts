@@ -1308,6 +1308,368 @@ export interface paths {
         };
         trace?: never;
     };
+    "/me/workplaces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Where I work as staff: each venue, gym or shop (live owners only), its owner and my permissions (Q169: a verified phone is enough) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["BusinessWorkplace"][];
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/team": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My staff at my venues, gyms and shops (names and the last 4 digits of their phones), my businesses, the permission catalogue with defaults, and business.team_max_members */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description venue (a ground), gym or shop */
+                    businessType?: "venue" | "gym" | "shop";
+                    businessId?: string;
+                    status?: "active" | "removed" | "all";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["BusinessTeamMember"][];
+                            businesses: {
+                                /**
+                                 * @description venue (a ground), gym or shop
+                                 * @enum {string}
+                                 */
+                                businessType: "venue" | "gym" | "shop";
+                                /** Format: uuid */
+                                id: string;
+                                name: string | null;
+                                status: string | null;
+                            }[];
+                            permissionCatalogue: {
+                                [key: string]: {
+                                    key: string;
+                                    default: boolean;
+                                    needs: string | null;
+                                }[];
+                            };
+                            maxMembers: number;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Add a staff member to one of my businesses by their verified phone (no NID needed, Q169; scope is that business only, Q170). Leave out permissions for the defaults. Refused: unknown numbers, myself, Kriraghor staff accounts, unverified phones, someone already on the team and a full team */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /**
+                         * @description venue (a ground), gym or shop
+                         * @enum {string}
+                         */
+                        businessType: "venue" | "gym" | "shop";
+                        /** Format: uuid */
+                        businessId: string;
+                        /** @description The staff member’s verified phone number (they must already have a Kriraghor account) */
+                        phone: string;
+                        /** @description Leave out for the defaults of the business type */
+                        permissions?: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            member: components["schemas"]["BusinessTeamMember"];
+                            unchanged?: boolean;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND, MEMBER_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ALREADY_MEMBER, TEAM_FULL */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, MEMBER_IS_OWNER, MEMBER_IS_STAFF, PHONE_NOT_VERIFIED, PERMISSIONS_INVALID */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/team/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Change what a staff member may do (from the allow-list of the business type); their access token goes stale at once */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        permissions: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            member: components["schemas"]["BusinessTeamMember"];
+                            unchanged?: boolean;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, PERMISSIONS_INVALID */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/me/team/{id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove a staff member: they lose access on their next request (the row is kept as removed) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            member: components["schemas"]["BusinessTeamMember"];
+                            unchanged?: boolean;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/avatar": {
         parameters: {
             query?: never;
@@ -20550,7 +20912,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** The owner's day at a ground: courts, hours, bookings, closures (FR-35) */
+        /** The owner's day at a ground: courts, hours, bookings, closures (FR-35). Round B3: also the venue’s staff with the permission (bookings.view); staff never see the fee, released or retained amounts */
         get: {
             parameters: {
                 query: {
@@ -20581,7 +20943,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -20625,7 +20987,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Search my bookings at any venue and date: code, phone last 4 digits, team or contact name (newest start first) */
+        /** Search my bookings at any venue and date: code, phone last 4 digits, team or contact name (newest start first). Round B3: also the venue’s staff with the permission (bookings.view; without groundId, every venue where they hold it); staff never see the fee, released or retained amounts */
         get: {
             parameters: {
                 query: {
@@ -20659,7 +21021,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -20703,7 +21065,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** A booking at my ground */
+        /** A booking at my ground. Round B3: also the venue’s staff with the permission (bookings.view); staff never see the fee, released or retained amounts */
         get: {
             parameters: {
                 query?: never;
@@ -20733,7 +21095,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -20770,7 +21132,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Check in from start − 30 min to the end; releases the online money minus the fee on the full value (FR-13, v3) */
+        /** Check in from start − 30 min to the end; releases the online money minus the fee on the full value (FR-13, v3). Round B3: also the venue’s staff with the permission (bookings.check_in); staff never see the fee, released or retained amounts */
         post: {
             parameters: {
                 query?: never;
@@ -20800,7 +21162,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -20844,7 +21206,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Mark a no-show once late, until auto-complete; the advance is retained (FR-15, Q68) */
+        /** Mark a no-show once late, until auto-complete; the advance is retained (FR-15, Q68). Round B3: also the venue’s staff with the permission (bookings.no_show); staff never see the fee, released or retained amounts */
         post: {
             parameters: {
                 query?: never;
@@ -20874,7 +21236,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -20918,7 +21280,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Extend by 30 minutes, paid at the venue; the fee is owed (FR-16) */
+        /** Extend by 30 minutes, paid at the venue; the fee is owed (FR-16). Round B3: also the venue’s staff with the permission (bookings.extend); staff never see the fee, released or retained amounts */
         post: {
             parameters: {
                 query?: never;
@@ -20948,7 +21310,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -21001,7 +21363,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Record the balance paid at the venue (cash or bKash), the full amount due (FR-17) */
+        /** Record the balance paid at the venue (cash or bKash), the full amount due (FR-17). Round B3: also the venue’s staff with the permission (bookings.collect_balance); staff never see the fee, released or retained amounts */
         post: {
             parameters: {
                 query?: never;
@@ -21039,7 +21401,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -21092,7 +21454,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Cancel as the owner before the start: 100% back to the member (FR-19, v3; weather not penalised, Q22) */
+        /** Cancel as the owner before the start: 100% back to the member (FR-19, v3; weather not penalised, Q22). Round B3: also the venue’s staff with the permission (bookings.cancel, optional and off by default, Q170); staff never see the fee, released or retained amounts */
         post: {
             parameters: {
                 query?: never;
@@ -21130,7 +21492,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -21181,7 +21543,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Free courts at my grounds for the same time (M09 §6.4) */
+        /** Free courts at my grounds for the same time (M09 §6.4). Round B3: also the venue’s staff with the permission (bookings.move; staff see that venue’s courts only); staff never see the fee, released or retained amounts */
         get: {
             parameters: {
                 query?: never;
@@ -21211,7 +21573,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -21248,7 +21610,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Move to another court, same time and price; a new ground lets the member cancel free (FR-20) */
+        /** Move to another court, same time and price; a new ground lets the member cancel free (FR-20). Round B3: also the venue’s staff with the permission (bookings.move, optional; within that venue only); staff never see the fee, released or retained amounts */
         post: {
             parameters: {
                 query?: never;
@@ -21285,7 +21647,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -21338,7 +21700,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Record a walk-in paid in full at the counter; checked in at once when starting soon (FR-18) */
+        /** Record a walk-in paid in full at the counter; checked in at once when starting soon (FR-18). Round B3: also the venue’s staff with the permission (bookings.walk_in); staff never see the fee, released or retained amounts */
         post: {
             parameters: {
                 query?: never;
@@ -21382,7 +21744,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, KYC_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -21738,11 +22100,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Needs your action, from the owning modules (FR-11); role organiser: registrations waiting for approval (admins) and unpaid entry fees in your sports organisations */
+        /** Needs your action, from the owning modules (FR-11); role organiser: registrations waiting for approval (admins) and unpaid entry fees in your sports organisations; role business_staff (Round B3): check-ins and balances at your venues, orders to accept or ship and stock at your shops, by your permissions */
         get: {
             parameters: {
                 query?: {
-                    role?: "member" | "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
+                    /** @description business_staff (Round B3): the to-do of every venue, gym or shop the caller works at */
+                    role?: "member" | "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "business_staff";
                 };
                 header?: never;
                 path?: never;
@@ -24666,7 +25029,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** My reviews; with role=owner (or a subjectType or subjectId) the published reviews of my venues, pro profiles, shops and gyms, to reply to */
+        /** My reviews; with role=owner (or a subjectType or subjectId) the published reviews of my venues, pro profiles, shops and gyms, to reply to. Round B3: venue staff with reviews.reply see that venue’s reviews (subjectType=ground&subjectId=) */
         get: {
             parameters: {
                 query?: {
@@ -24729,7 +25092,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Reply to (or edit my reply to) a published review of something I own; contact details are refused; the author is told about the first reply (FR-34) */
+        /** Reply to (or edit my reply to) a published review of something I own; contact details are refused; the author is told about the first reply (FR-34). Round B3: also a venue’s staff with reviews.reply (optional, off by default, Q170); staff of another venue get 404 */
         post: {
             parameters: {
                 query?: never;
@@ -24765,7 +25128,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: NOT_OWNER */
+                /** @description Error. Codes: NOT_OWNER, PERMISSION_REQUIRED, PHONE_REQUIRED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -28173,7 +28536,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Change the count on the shelf with a reason (received, count correction, damaged, lost, other) (FR-13) */
+        /** Change the count on the shelf with a reason (received, count correction, damaged, lost, other) (FR-13). Round B3: also the shop’s staff with stock.adjust */
         post: {
             parameters: {
                 query?: never;
@@ -28213,7 +28576,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -28264,7 +28627,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** The stock ledger of a variant, newest first (FR-11) */
+        /** The stock ledger of a variant, newest first (FR-11). Round B3: also the shop’s staff with stock.view */
         get: {
             parameters: {
                 query?: {
@@ -28297,7 +28660,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -28308,6 +28671,15 @@ export interface paths {
                 };
                 /** @description Error. Codes: NOT_FOUND */
                 404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, BUSINESS_REQUIRED */
+                422: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -28332,11 +28704,13 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Inventory desk: stock value, out, low, held, blocked; every active variant (§4) */
+        /** Inventory desk: stock value, out, low, held, blocked; every active variant (§4). Round B3: also the shop’s staff with stock.view (shopId names the shop; never the stock value) */
         get: {
             parameters: {
                 query?: {
                     status?: "low" | "out" | "mto" | "blocked";
+                    /** @description Round B3: the shop (staff working at several shops name one; the owner may leave it out) */
+                    shopId?: string;
                 };
                 header?: never;
                 path?: never;
@@ -28362,7 +28736,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -28382,6 +28756,15 @@ export interface paths {
                 };
                 /** @description Error. Codes: SHOP_REQUIRED */
                 409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, BUSINESS_REQUIRED */
+                422: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -29974,13 +30357,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** My shop orders by tab (to accept, to ship, shipped, done, cancelled) with counts */
+        /** My shop orders by tab (to accept, to ship, shipped, done, cancelled) with counts. Round B3: also the shop’s staff (orders.view; shopId names the shop; never the buyer’s contact in lists); staff never see the commission, net or released amounts */
         get: {
             parameters: {
                 query?: {
                     tab?: "to_accept" | "to_ship" | "shipped" | "done" | "cancelled";
                     cursor?: string;
                     limit?: number;
+                    /** @description Round B3: the shop (staff working at several shops name one; the owner may leave it out) */
+                    shopId?: string;
                 };
                 header?: never;
                 path?: never;
@@ -30006,7 +30391,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -30050,7 +30435,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** A shop order; the buyer’s phone and address show once accepted (FR-10) */
+        /** A shop order; the buyer’s phone and address show once accepted (FR-10). Round B3: also the shop’s staff (orders.view; the buyer’s contact only with orders.ship, each view audited (Q168)); staff never see the commission, net or released amounts */
         get: {
             parameters: {
                 query?: never;
@@ -30080,7 +30465,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -30126,7 +30511,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Accept within market.shop_accept_hours (FR-08) */
+        /** Accept within market.shop_accept_hours (FR-08). Round B3: also the shop’s staff (orders.accept); staff never see the commission, net or released amounts */
         post: {
             parameters: {
                 query?: never;
@@ -30156,7 +30541,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -30200,7 +30585,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Reject the whole sub-order with a reason (Q82): 100% refund, stock released */
+        /** Reject the whole sub-order with a reason (Q82): 100% refund, stock released. Round B3: also the shop’s staff (orders.reject, optional and off by default); staff never see the commission, net or released amounts */
         post: {
             parameters: {
                 query?: never;
@@ -30238,7 +30623,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -30291,7 +30676,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Ship with the courier and tracking number; the held stock is committed */
+        /** Ship with the courier and tracking number; the held stock is committed. Round B3: also the shop’s staff (orders.ship); staff never see the commission, net or released amounts */
         post: {
             parameters: {
                 query?: never;
@@ -30328,7 +30713,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -30381,7 +30766,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Mark delivered (optional photo proof, private storage); auto-completes after market.auto_complete_days */
+        /** Mark delivered (optional photo proof, private storage); auto-completes after market.auto_complete_days. Round B3: also the shop’s staff (orders.deliver); staff never see the commission, net or released amounts */
         post: {
             parameters: {
                 query?: never;
@@ -30418,7 +30803,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP */
+                /** @description Error. Codes: ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PHONE_REQUIRED, NOT_OWNER, NOT_YOUR_SHOP, PERMISSION_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -30487,7 +30872,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Completed (released to my payable), in escrow and refunded totals */
+        /** Completed (released to my payable), in escrow and refunded totals (the owner only; never for staff, Round B3) */
         get: {
             parameters: {
                 query?: never;
@@ -35977,7 +36362,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** The day’s admissions (default today, Dhaka) */
+        /** The day’s admissions (default today, Dhaka). Round B3: also the gym’s staff with desk.admissions */
         get: {
             parameters: {
                 query?: {
@@ -36009,7 +36394,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: NOT_OWNER, ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED */
+                /** @description Error. Codes: NOT_OWNER, ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -36039,7 +36424,7 @@ export interface paths {
             };
         };
         put?: never;
-        /** The front desk: admit a pass by its QR token or 6-character code (FR-05) */
+        /** The front desk: admit a pass by its QR token or 6-character code (FR-05). Round B3: also the gym’s staff with desk.admit (never the amount released) */
         post: {
             parameters: {
                 query?: never;
@@ -36076,7 +36461,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: NOT_OWNER, ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED */
+                /** @description Error. Codes: NOT_OWNER, ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -36127,7 +36512,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Passes sold (the buyer’s name only) */
+        /** Passes sold (the buyer’s name only). Round B3: also the gym’s staff with passes.view (optional), without any money */
         get: {
             parameters: {
                 query?: {
@@ -36159,7 +36544,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: NOT_OWNER, ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED */
+                /** @description Error. Codes: NOT_OWNER, ROLE_REQUIRED, ROLE_PENDING, KYC_REQUIRED, PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -47755,6 +48140,16 @@ export interface components {
                 required: boolean;
                 enabled: boolean;
             };
+            /** @description Round B3: the venues, gyms and shops this member works at as staff (live owners only) */
+            workplaces: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                businessType: "venue" | "gym" | "shop";
+                /** Format: uuid */
+                businessId: string;
+                permissions: string[];
+            }[];
         };
         UserRole: {
             /** @enum {string} */
@@ -47805,6 +48200,68 @@ export interface components {
             challengeToken: string;
             /** Format: date-time */
             challengeExpiresAt: string;
+        };
+        BusinessWorkplace: {
+            /** Format: uuid */
+            id: string;
+            /**
+             * @description venue (a ground), gym or shop
+             * @enum {string}
+             */
+            businessType: "venue" | "gym" | "shop";
+            /** Format: uuid */
+            businessId: string;
+            business: {
+                /**
+                 * @description venue (a ground), gym or shop
+                 * @enum {string}
+                 */
+                businessType: "venue" | "gym" | "shop";
+                /** Format: uuid */
+                id: string;
+                name: string | null;
+                status: string | null;
+            };
+            owner: {
+                /** Format: uuid */
+                id: string;
+                displayName: string | null;
+            };
+            permissions: string[];
+            since: string;
+        };
+        BusinessTeamMember: {
+            /** Format: uuid */
+            id: string;
+            /**
+             * @description venue (a ground), gym or shop
+             * @enum {string}
+             */
+            businessType: "venue" | "gym" | "shop";
+            /** Format: uuid */
+            businessId: string;
+            business: {
+                /**
+                 * @description venue (a ground), gym or shop
+                 * @enum {string}
+                 */
+                businessType: "venue" | "gym" | "shop";
+                /** Format: uuid */
+                id: string;
+                name: string | null;
+                status: string | null;
+            } | null;
+            member: {
+                /** Format: uuid */
+                id: string;
+                displayName: string | null;
+                phoneLast4: string | null;
+            };
+            permissions: string[];
+            /** @enum {string} */
+            status: "active" | "removed";
+            addedAt: string;
+            removedAt: string | null;
         };
         GateResult: {
             action: string;
