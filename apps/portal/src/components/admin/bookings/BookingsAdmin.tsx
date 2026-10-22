@@ -85,7 +85,8 @@ function Desk() {
         {(["total", "paidOnline", "dueAtVenue", "fee", "released", "retained", "refund"] as const).map((k) => (
           <div key={k} className="contents">
             <dt className="text-muted">{t(`money.${k}`)}</dt>
-            <dd className="tabular text-right">{money(b.money[k])}</dd>
+            {/* The shared BookingMoney schema marks fee, released and retained optional (absent for business staff); the admin desk always gets them. */}
+            <dd className="tabular text-right">{b.money[k] === undefined ? "—" : money(b.money[k])}</dd>
           </div>
         ))}
       </dl>

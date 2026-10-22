@@ -12,6 +12,8 @@ import { shiftDay } from "@/lib/vendor/bookings";
 import { nextDays } from "@/lib/vendor/grounds";
 import { Notice } from "@kriraghor/ui/primitives";
 import { inputCls } from "../../admin/finance/shared";
+import { deskCan, staffPermissionsAt } from "@/lib/vendor/team";
+import { DeskAccessNotice, useDeskErrorText, useWorkplaces } from "../StaffAccess";
 
 type Result = { ok: true; a: Admission } | { ok: false; code: string; title: string; at?: string; validFrom?: string; validTo?: string };
 type Detector = { detect: (src: HTMLVideoElement) => Promise<{ rawValue: string }[]> };
@@ -31,7 +33,15 @@ export function FrontDesk({ id }: { id: string }) {
   const t = useTranslations("vendorGym");
   const locale = useLocale();
   const qc = useQueryClient();
-  const gym = useQuery({ queryKey: ["vendor-gym", id], queryFn: () => gymDesk.get(id) });
+  // Round B3: the gym's staff work the desk too, by permission (desk.admit, desk.admissions). The
+  // gym itself (owner-only) is read for its owner; staff take its name from their workplaces.
+  const wp = useWorkplaces();
+  const perms = staffPermissionsAt(wp.refs, "gym", id);
+  const errorText = useDeskErrorText();
+  const gym = useQuery({ queryKey: ["vendor-gym", id], queryFn: () => gymDesk.get(id), enabled: !wp.me.isPending && perms === null });
+  const gymName = perms ? wp.named.find((w) => w.businessType === "gym" && w.businessId === id)?.business.name : gym.data?.name;
+  const canAdmit = deskCan(perms, "desk.admit");
+  const canList = deskCan(perms, "desk.admissions");
   // Admissions for any day (today by default, Dhaka); the server reads no date as today.
   const [todayDate] = useState(() => nextDays(1)[0]);
   const [listDate, setListDate] = useState(todayDate);
@@ -40,6 +50,7 @@ export function FrontDesk({ id }: { id: string }) {
     queryKey: ["gym-admissions", id, listDate],
     queryFn: () => gymDesk.admissions(id, isToday ? undefined : listDate),
     refetchInterval: isToday ? 30_000 : false,
+    enabled: !wp.me.isPending && canList,
   });
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
@@ -63,12 +74,12 @@ export function FrontDesk({ id }: { id: string }) {
       } catch (err) {
         // The API spreads the problem meta on the body: `at` (the earlier admission), validFrom and validTo.
         const p = problemOf(err) as (ReturnType<typeof problemOf> & { at?: string; validFrom?: string; validTo?: string }) | null;
-        setResult({ ok: false, code: p?.code ?? "UNKNOWN", title: p?.title ?? t("failed"), at: p?.at, validFrom: p?.validFrom, validTo: p?.validTo });
+        setResult({ ok: false, code: p?.code ?? "UNKNOWN", title: errorText(err, t("failed")) ?? t("failed"), at: p?.at, validFrom: p?.validFrom, validTo: p?.validTo });
       } finally {
         setBusy(false);
       }
     },
-    [id, qc, t, todayDate]
+    [id, qc, t, todayDate, errorText]
   );
 
   // The camera loop: read a QR every 300 ms; the same value is ignored for 5 s (one scan, one request).
@@ -110,13 +121,15 @@ export function FrontDesk({ id }: { id: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-8">
-      <Link href={`/vendor/gyms/${id}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-text hover:underline">
+      <Link href={perms ? "/vendor" : `/vendor/gyms/${id}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-text hover:underline">
         <ArrowLeft size={16} aria-hidden />
-        {gym.data?.name ?? t("title")}
+        {gymName ?? t("title")}
       </Link>
       <h1 className="mt-3 text-3xl font-extrabold">{t("desk.title")}</h1>
       <p className="mt-1 max-w-2xl text-muted">{t("desk.lead")}</p>
 
+      {!canAdmit ? <DeskAccessNotice code="PERMISSION_REQUIRED" className="mt-6" /> : null}
+      {canAdmit ? (
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-4">
           <form
@@ -197,6 +210,10 @@ export function FrontDesk({ id }: { id: string }) {
         </div>
       </div>
 
+      ) : null}
+
+      {canList ? (
+      <>
       <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-extrabold">{isToday ? t("desk.today", { n: today.data?.items.length ?? 0 }) : t("desk.onDay", { date: day(listDate), n: today.data?.items.length ?? 0 })}</h2>
         <div className="flex items-center gap-1.5" data-testid="desk-date">
@@ -216,7 +233,7 @@ export function FrontDesk({ id }: { id: string }) {
           </Button>
         </div>
       </div>
-      {today.isError ? <Notice tone="error">{problemOf(today.error)?.title ?? t("failed")}</Notice> : null}
+      {today.isError ? <Notice tone="error">{errorText(today.error, t("failed"))}</Notice> : null}
       {today.data && !today.data.items.length ? <p className="mt-3 text-muted">{isToday ? t("desk.noneToday") : t("desk.noneOnDay")}</p> : null}
       <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="desk-today">
         {(today.data?.items ?? []).map((a) => (
@@ -233,6 +250,8 @@ export function FrontDesk({ id }: { id: string }) {
           </li>
         ))}
       </ul>
+      </>
+      ) : null}
     </section>
   );
 }

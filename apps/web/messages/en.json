@@ -2805,7 +2805,17 @@
     "confirmSubmissionTitle": "Withdraw from review?",
     "confirmSubmissionBody": "\"{title}\" leaves the review queue. You can edit it and send it again later.",
     "roleWithdrawn": "Application withdrawn",
-    "submissionWithdrawn": "Withdrawn from review"
+    "submissionWithdrawn": "Withdrawn from review",
+    "workTitle": "Where you work",
+    "workLead": "Businesses that added you to their team. Their desks open on vendor.kriraghor.com with this account.",
+    "workType": {
+      "venue": "Venue",
+      "gym": "Gym",
+      "shop": "Shop"
+    },
+    "workOwner": "Owner: {name}",
+    "workSince": "Since {date}",
+    "workOpen": "Open desk"
   },
   "share": {
     "og": {

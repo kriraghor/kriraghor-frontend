@@ -75,8 +75,11 @@ function VendorShell({ signedIn, children }: { signedIn: boolean; children: Reac
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["vendor-me"] }),
   });
-  const groups = useGroups(vendorSections(active, view));
-  const roleLabel = view === "all" ? (active.length ? active.map((r) => t(`roles.${r}`)).join(" · ") : t("member")) : t(`roles.${view}`);
+  // Round B3: the desks of the places the person works at as staff join the menu (by permission).
+  const workplaces = me.data?.workplaces ?? [];
+  const groups = useGroups(vendorSections(active, view, workplaces));
+  const staffOnly = !active.length && workplaces.length > 0;
+  const roleLabel = view === "all" ? (active.length ? active.map((r) => t(`roles.${r}`)).join(" · ") : staffOnly ? t("work") : t("member")) : t(`roles.${view}`);
 
   return (
     <AppShell
@@ -97,7 +100,7 @@ function VendorShell({ signedIn, children }: { signedIn: boolean; children: Reac
             />
           </div>
         ) : (
-          <PanelCard rail={rail} icon={<Briefcase size={22} weight="fill" aria-hidden />} label={view === "all" ? t("business") : t(`roles.${view}`)} />
+          <PanelCard rail={rail} icon={<Briefcase size={22} weight="fill" aria-hidden />} label={view === "all" ? (staffOnly ? t("work") : t("business")) : t(`roles.${view}`)} />
         )
       }
       foot={(rail) => (me.data ? <PersonCard rail={rail} name={me.data.displayName} role={roleLabel} /> : null)}

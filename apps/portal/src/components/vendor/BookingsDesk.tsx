@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
@@ -12,6 +13,8 @@ import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, vendor } from "@/lib/vendor/grounds";
 import { blockColumns, desk, dhakaDate, hhmm, ownerActions, searchable, shiftDay, timelineWindow, type OwnerBooking, type OwnerCancelReason } from "@/lib/vendor/bookings";
 import { ownerTrust } from "@/lib/vendor/trust";
+import { allowedBookingActions, deskAccessKey, deskCan, deskChoices, staffPermissionsAt, worksWith } from "@/lib/vendor/team";
+import { DeskAccessNotice, useDeskErrorText, useWorkplaces } from "./StaffAccess";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 
@@ -35,10 +38,20 @@ export function BookingsDesk() {
   const t = useTranslations("vendorBookings");
   const locale = useLocale();
   const { status } = useAuth();
-  const grounds = useQuery({ queryKey: ["vendor-grounds"], enabled: status === "signed_in", queryFn: () => vendor.mine(), retry: false });
+  // Round B3: venue staff work this desk too, at the venues where they hold bookings.view. The
+  // owner's own venues are only asked for when the person is a venue owner or works at no venue.
+  const wp = useWorkplaces();
+  const staffAtVenue = worksWith(wp.refs, "venue");
+  const ownerQuery = status === "signed_in" && !wp.me.isPending && (wp.active.includes("ground_owner") || !staffAtVenue);
+  const grounds = useQuery({ queryKey: ["vendor-grounds"], enabled: ownerQuery, queryFn: () => vendor.mine(), retry: false });
   const live = (grounds.data?.items ?? []).filter((g) => g.status === "live" || g.status === "paused");
-  const [groundId, setGroundId] = useState<string | undefined>(undefined);
-  const gid = groundId ?? live[0]?.id;
+  const choices = deskChoices("venue", "bookings.view", live, wp.named);
+  // A to-do line or a "You work at" button opens a venue (?groundId=).
+  const linked = useSearchParams().get("groundId");
+  const [groundId, setGroundId] = useState<string | undefined>(() => linked ?? undefined);
+  const gid = choices.some((c) => c.value === groundId) ? groundId : choices[0]?.value;
+  // Staff permissions at the venue in view (null: the owner, who can do everything here).
+  const perms = staffPermissionsAt(wp.refs, "venue", gid);
   const [days] = useState(() => nextDays(8, new Date(Date.now() - 86400000))); // yesterday … a week ahead
   const today = days[1];
   const [day, setDay] = useState(today);
@@ -49,16 +62,18 @@ export function BookingsDesk() {
   const [q, setQ] = useState("");
   const [pick, setPick] = useState<OwnerBooking | null>(null);
   const found = useInfiniteQuery({
-    queryKey: ["vendor-booking-search", q],
+    // An owner who also works at other venues searches a staff venue by name (the API searches the
+    // owner's own venues when none is named, and every staff venue for staff who own none).
+    queryKey: ["vendor-booking-search", q, perms && live.length ? gid : null],
     enabled: status === "signed_in" && searchable(q),
     initialPageParam: undefined as string | undefined,
-    queryFn: ({ pageParam }) => desk.search(q, undefined, pageParam),
+    queryFn: ({ pageParam }) => desk.search(q, perms && live.length ? gid : undefined, pageParam),
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   });
   const dateFmt = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Asia/Dhaka" });
-  const groundName = new Map((grounds.data?.items ?? []).map((g) => [g.id, g.name] as const));
+  const groundName = new Map([...(grounds.data?.items ?? []).map((g) => [g.id, g.name] as const), ...choices.map((c) => [c.value, c.label] as const)]);
   const openHit = (b: OwnerBooking) => {
-    if (live.some((g) => g.id === b.groundId)) setGroundId(b.groundId);
+    if (choices.some((c) => c.value === b.groundId)) setGroundId(b.groundId);
     setDay(dhakaDate(b.start));
     setPick(b);
     setOpen(b.id);
@@ -89,8 +104,15 @@ export function BookingsDesk() {
         </Link>
       </section>
     );
-  if (grounds.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1200px] animate-pulse bg-surface-2" />;
-  const problem = problemOf(grounds.error);
+  if (wp.pending || (ownerQuery && grounds.isPending)) return <div className="mx-auto mt-10 h-64 max-w-[1200px] animate-pulse bg-surface-2" />;
+  // Staff with a venue to work at never see the owner's gate.
+  const problem = choices.length ? null : problemOf(grounds.error);
+  if (!choices.length && staffAtVenue && !live.length)
+    return (
+      <section className="mx-auto max-w-3xl px-5 py-10">
+        <DeskAccessNotice code="PERMISSION_REQUIRED" />
+      </section>
+    );
   if (problem && !["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code))
     return (
       <section className="mx-auto max-w-3xl px-5 py-10">
@@ -109,7 +131,7 @@ export function BookingsDesk() {
         </Link>
       </section>
     );
-  if (!live.length)
+  if (!choices.length)
     return (
       <section className="mx-auto max-w-3xl px-5 py-10">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
@@ -134,18 +156,20 @@ export function BookingsDesk() {
         </div>
         <div className="flex flex-wrap items-end gap-3">
           <Field label={t("ground")}>
-            <select className={inputCls} value={gid} onChange={(e) => setGroundId(e.target.value)}>
-              {live.map((g) => (
-                <option key={g.id} value={g.id}>
-                  {g.name}
+            <select className={inputCls} value={gid} onChange={(e) => setGroundId(e.target.value)} data-testid="venue-switch">
+              {choices.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.staff && c.owner ? t("staffVenue", { name: c.label, owner: c.owner }) : c.label}
                 </option>
               ))}
             </select>
           </Field>
-          <button type="button" onClick={() => setWalkIn(true)} className="min-h-11 bg-brand px-4 font-bold text-white" data-testid="add-walk-in">
-            {t("walkIn")}
-          </button>
-          {gid ? (
+          {deskCan(perms, "bookings.walk_in") ? (
+            <button type="button" onClick={() => setWalkIn(true)} className="min-h-11 bg-brand px-4 font-bold text-white" data-testid="add-walk-in">
+              {t("walkIn")}
+            </button>
+          ) : null}
+          {gid && perms === null ? (
             <Link href={`/vendor/venues/${gid}/schedule`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-semibold">
               {t("schedule")}
             </Link>
@@ -220,7 +244,7 @@ export function BookingsDesk() {
         <div className="mt-6 h-64 animate-pulse bg-surface-2" />
       ) : tl.isError || !data ? (
         <div className="mt-6">
-          <Notice tone="error">{problemOf(tl.error)?.title ?? t("loadFailed")}</Notice>
+          {deskAccessKey(problemOf(tl.error)?.code) ? <DeskAccessNotice error={tl.error} /> : <Notice tone="error">{problemOf(tl.error)?.title ?? t("loadFailed")}</Notice>}
         </div>
       ) : (
         <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
@@ -275,7 +299,7 @@ export function BookingsDesk() {
             </div>
           </div>
           <div>
-            {selected ? <BookingPanel b={selected} groundId={gid!} day={day} onClose={() => setOpen(null)} /> : <p className="text-muted">{t("pickBooking")}</p>}
+            {selected ? <BookingPanel b={selected} groundId={gid!} day={day} perms={staffPermissionsAt(wp.refs, "venue", selected.groundId)} onClose={() => setOpen(null)} /> : <p className="text-muted">{t("pickBooking")}</p>}
             <h2 className="mt-8 text-lg font-extrabold">{t("list")}</h2>
             <ul className="mt-2 divide-y-2 divide-line border-y-2 border-line text-sm">
               {data.bookings.length ? (
@@ -297,7 +321,7 @@ export function BookingsDesk() {
           </div>
         </div>
       )}
-      <p className="mt-6 text-sm text-muted">{t("moneyNote")}</p>
+      {perms === null ? <p className="mt-6 text-sm text-muted">{t("moneyNote")}</p> : null}
     </section>
   );
 }
@@ -315,8 +339,10 @@ function BookerReliability({ userId }: { userId: string }) {
   );
 }
 
-function BookingPanel({ b, groundId, day, onClose }: { b: OwnerBooking; groundId: string; day: string; onClose: () => void }) {
+/** perms: the staff member's permissions at this venue (Round B3), or null for the owner. */
+function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; groundId: string; day: string; perms: readonly string[] | null; onClose: () => void }) {
   const t = useTranslations("vendorBookings");
+  const errorText = useDeskErrorText();
   const locale = useLocale();
   const qc = useQueryClient();
   const [reason, setReason] = useState<OwnerCancelReason>("weather");
@@ -332,8 +358,9 @@ function BookingPanel({ b, groundId, day, onClose }: { b: OwnerBooking; groundId
     },
   });
   const money = (n: number) => formatTaka(n, locale);
-  const actions = ownerActions(b);
-  const problem = act.error ? problemOf(act.error) : null;
+  // Staff see only the buttons the owner allowed (cancel and move are off by default, Q170).
+  const actions = allowedBookingActions(ownerActions(b), perms);
+  const problem = act.error ? errorText(act.error, t("loadFailed")) : null;
 
   return (
     <div className="border-2 border-line-strong p-4" data-testid="booking-panel">
@@ -364,12 +391,17 @@ function BookingPanel({ b, groundId, day, onClose }: { b: OwnerBooking; groundId
         <dd className="text-right font-bold tabular-nums" data-testid="panel-due">
           {money(b.money.dueAtVenue)} {b.money.balanceStatus === "collected" ? `(${t("collected")})` : ""}
         </dd>
-        <dt className="text-muted">{t("fee")}</dt>
-        <dd className="text-right tabular-nums">{money(b.money.fee)}</dd>
+        {/* Staff answers carry no fee (B3): the row is left out. */}
+        {typeof b.money.fee === "number" ? (
+          <>
+            <dt className="text-muted">{t("fee")}</dt>
+            <dd className="text-right tabular-nums">{money(b.money.fee)}</dd>
+          </>
+        ) : null}
       </dl>
       {problem ? (
         <div className="mt-3">
-          <Notice tone="error">{problem.title}</Notice>
+          <Notice tone="error">{problem}</Notice>
         </div>
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2">
@@ -478,7 +510,8 @@ function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: str
       onClose();
     },
   });
-  const problem = save.error ? problemOf(save.error) : null;
+  const errorText = useDeskErrorText();
+  const problem = save.error ? errorText(save.error, t("loadFailed")) : null;
   return (
     <form
       className="mt-5 grid gap-3 border-2 border-line-strong p-4 md:grid-cols-6"
@@ -530,7 +563,7 @@ function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: str
       <p className="text-sm text-muted md:col-span-6">{t("walkInHelp")}</p>
       {problem ? (
         <div className="md:col-span-6">
-          <Notice tone="error">{problem.title}</Notice>
+          <Notice tone="error">{problem}</Notice>
         </div>
       ) : null}
     </form>

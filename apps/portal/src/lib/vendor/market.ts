@@ -73,7 +73,8 @@ export const shopDesk = {
   removePhoto: async (id: string, photoId: string) => unwrap(await api().POST("/shop/products/{id}/photos/{photoId}/remove", { params: { path: { id, photoId } } })),
   adjust: async (variantId: string, body: { delta?: number; setTo?: number; reasonCode: ReasonCode; reasonText?: string }) => unwrap(await api().POST("/shop/variants/{id}/adjust", { params: g(variantId), body })),
   movements: async (variantId: string) => unwrap(await api().GET("/shop/variants/{id}/movements", { params: { ...g(variantId), query: { limit: 50 } } })),
-  inventory: async (status?: "low" | "out" | "mto" | "blocked") => unwrap(await api().GET("/shop/inventory", { params: { query: status ? { status } : {} } })),
+  /** shopId (Round B3): a shop the caller works at as staff; the owner leaves it out for their own shop. */
+  inventory: async (status?: "low" | "out" | "mto" | "blocked", shopId?: string) => unwrap(await api().GET("/shop/inventory", { params: { query: { ...(status ? { status } : {}), ...(shopId ? { shopId } : {}) } } })),
   categories: async () => unwrap(await api().GET("/market/categories")),
   areas: async () => unwrap(await api().GET("/catalog/areas")),
 };

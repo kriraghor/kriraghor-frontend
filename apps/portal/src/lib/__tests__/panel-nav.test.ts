@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ADMIN_SECTIONS, VENDOR_SECTIONS, adminSections, businessView, vendorSections } from "../panel-nav";
+import { ADMIN_SECTIONS, VENDOR_SECTIONS, adminSections, businessView, staffSections, vendorSections } from "../panel-nav";
 
 const hrefs = (sections: { items: { href: string }[] }[]) => sections.flatMap((s) => s.items.map((i) => i.href));
 
@@ -98,5 +98,78 @@ describe("businessView, what the vendor home and sidebar follow", () => {
     expect(businessView({ roles, lastPanelRole: "member" }).view).toBe("all");
     expect(businessView({ roles, lastPanelRole: "gym_owner" }).view).toBe("all");
     expect(businessView(undefined)).toEqual({ active: [], view: "all", shown: [] });
+  });
+});
+
+describe("Round B3: the team page and staff desks", () => {
+  type W = { businessType: "venue" | "gym" | "shop"; businessId: string; permissions: string[] };
+  const venueDefaults: W = { businessType: "venue", businessId: "g1", permissions: ["bookings.check_in", "bookings.collect_balance", "bookings.extend", "bookings.no_show", "bookings.view", "bookings.walk_in"] };
+  const OWNER_ONLY = ["/vendor/venues", "/vendor/shop", "/vendor/products", "/vendor/settlement", "/vendor/analytics", "/vendor/payouts", "/vendor/team", "/vendor/disputes", "/vendor/events"];
+
+  it("Team shows once for venue, shop and gym owners, not for organisers", () => {
+    for (const role of ["ground_owner", "shop_owner", "gym_owner"] as const) expect(hrefs(vendorSections([role], "all")).filter((h) => h === "/vendor/team")).toHaveLength(1);
+    expect(hrefs(vendorSections(["ground_owner", "shop_owner", "gym_owner"], "all")).filter((h) => h === "/vendor/team")).toHaveLength(1);
+    expect(hrefs(vendorSections(["organiser"], "all"))).not.toContain("/vendor/team");
+    expect(vendorSections(["gym_owner"], "all").find((s) => s.items.some((i) => i.href === "/vendor/team"))?.key).toBe("business");
+  });
+
+  it("owners without workplaces see exactly what they saw before", () => {
+    for (const roles of [["ground_owner"], ["shop_owner", "gym_owner"], ["organiser"], []] as const) {
+      expect(vendorSections([...roles], "all", [])).toEqual(vendorSections([...roles], "all"));
+    }
+  });
+
+  it("venue staff with the defaults get the bookings desk only, never an owner-only page", () => {
+    const got = hrefs(vendorSections([], "all", [venueDefaults]));
+    expect(got).toEqual(["/vendor", "/vendor/bookings"]);
+    for (const h of OWNER_ONLY) expect(got).not.toContain(h);
+    expect(got).not.toContain("/vendor/reviews");
+  });
+
+  it("reviews show to venue staff only with reviews.reply", () => {
+    const got = hrefs(vendorSections([], "all", [{ ...venueDefaults, permissions: [...venueDefaults.permissions, "reviews.reply"] }]));
+    expect(got).toContain("/vendor/reviews");
+  });
+
+  it("gym staff get the front desk (straight to their gym) and passes only with passes.view", () => {
+    const one = hrefs(vendorSections([], "all", [{ businessType: "gym", businessId: "y1", permissions: ["desk.admissions", "desk.admit"] }]));
+    expect(one).toEqual(["/vendor", "/vendor/gyms/y1/desk"]);
+    const passes = hrefs(vendorSections([], "all", [{ businessType: "gym", businessId: "y1", permissions: ["passes.view"] }]));
+    expect(passes).toEqual(["/vendor", "/vendor/gyms/y1/passes"]);
+    const two = hrefs(
+      vendorSections([], "all", [
+        { businessType: "gym", businessId: "y1", permissions: ["desk.admit"] },
+        { businessType: "gym", businessId: "y2", permissions: ["desk.admissions"] },
+      ]),
+    );
+    expect(two).toEqual(["/vendor", "/vendor/gyms"]);
+  });
+
+  it("shop staff get orders and inventory by permission", () => {
+    expect(hrefs(vendorSections([], "all", [{ businessType: "shop", businessId: "s1", permissions: ["orders.view", "orders.accept"] }]))).toEqual(["/vendor", "/vendor/orders"]);
+    expect(hrefs(vendorSections([], "all", [{ businessType: "shop", businessId: "s1", permissions: ["stock.view"] }]))).toEqual(["/vendor", "/vendor/inventory"]);
+    expect(hrefs(vendorSections([], "all", [{ businessType: "shop", businessId: "s1", permissions: [] }]))).toEqual(["/vendor"]);
+  });
+
+  it("no staff desk ever links to an owner-only page, whatever the permissions", () => {
+    const all: W[] = [
+      { businessType: "venue", businessId: "g", permissions: ["bookings.view", "bookings.check_in", "bookings.no_show", "bookings.extend", "bookings.collect_balance", "bookings.walk_in", "bookings.move", "bookings.cancel", "reviews.reply"] },
+      { businessType: "gym", businessId: "y", permissions: ["desk.admit", "desk.admissions", "passes.view"] },
+      { businessType: "shop", businessId: "s", permissions: ["orders.view", "orders.accept", "orders.ship", "orders.deliver", "orders.reject", "stock.view", "stock.adjust"] },
+    ];
+    const got = hrefs(staffSections(all));
+    for (const h of OWNER_ONLY) expect(got).not.toContain(h);
+    expect(staffSections(all).map((s) => s.key)).toEqual(["workVenue", "workGym", "workShop"]);
+    expect(staffSections(undefined)).toEqual([]);
+  });
+
+  it("an owner who also works elsewhere keeps the owner menu and gains the other desks once", () => {
+    const shopStaff: W = { businessType: "shop", businessId: "s9", permissions: ["orders.view", "stock.view"] };
+    const venueOwner = vendorSections(["ground_owner"], "all", [shopStaff]);
+    expect(hrefs(venueOwner)).toEqual([...hrefs(vendorSections(["ground_owner"], "all")), "/vendor/orders", "/vendor/inventory"]);
+    // A shop owner already has orders and inventory: nothing repeats.
+    const shopOwner = hrefs(vendorSections(["shop_owner"], "all", [shopStaff]));
+    expect(shopOwner.filter((h) => h === "/vendor/orders")).toHaveLength(1);
+    expect(vendorSections(["shop_owner"], "all", [shopStaff]).some((s) => s.key === "workShop")).toBe(false);
   });
 });

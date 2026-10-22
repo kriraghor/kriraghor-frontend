@@ -59,7 +59,10 @@
     "usersAdmin": "Users",
     "staffAdmin": "Staff",
     "settlement": "Settlement",
-    "vendorPayouts": "Payouts"
+    "vendorPayouts": "Payouts",
+    "team": "Team",
+    "frontDesk": "Front desk",
+    "gymPasses": "Passes sold"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -1506,7 +1509,8 @@
       "phone": "Phone",
       "status": "Status",
       "money": "Total"
-    }
+    },
+    "staffVenue": "{name} ({owner})"
   },
   "vendorSchedule": {
     "loadFailed": "Couldn't load the venue.",
@@ -2660,7 +2664,10 @@
       "total": "Total"
     },
     "payoutNoteVendor": "Payouts go to your bKash or Nagad account each week.",
-    "payoutsLink": "See your payouts"
+    "payoutsLink": "See your payouts",
+    "contactHidden": "The buyer's phone and address are hidden. They show only to staff who can ship, once the order is accepted. Area: {area}",
+    "staffNoAction": "The owner hasn't given you a button for this step. Ask them if you need it.",
+    "leadStaff": "Accept each order within 24 hours and ship within 48 (or the made-to-order time). If you ship orders, the buyer’s phone and address show once the order is accepted."
   },
   "ordersAdmin": {
     "title": "Orders",
@@ -3009,7 +3016,8 @@
       "status": "Status",
       "paidOut": "Paid out {amount}",
       "refunded": "Refunded {amount}",
-      "held": "Held until use"
+      "held": "Held until use",
+      "leadStaff": "Passes sold at this gym, with the member and dates. Money stays with the owner."
     },
     "passStatus": {
       "pending_payment": "Waiting for payment",
@@ -3027,7 +3035,9 @@
       "sell": "Run a gym? Sell day passes and memberships on Kriraghor.",
       "continue": "Continue the application",
       "start": "Apply as a gym owner"
-    }
+    },
+    "staffTitle": "Gyms you work at",
+    "staffLead": "Open the front desk to admit members, or see the passes sold, as the owner allows."
   },
   "gymAdmin": {
     "title": "Gyms",
@@ -3845,14 +3855,18 @@
       "gym": "Gym",
       "events": "Events",
       "business": "Business",
-      "grounds": "Venues"
+      "grounds": "Venues",
+      "workVenue": "Venue desk",
+      "workGym": "Gym desk",
+      "workShop": "Shop desk"
     },
     "roles": {
       "ground_owner": "Venue owner",
       "shop_owner": "Shop",
       "gym_owner": "Gym",
       "organiser": "Organiser"
-    }
+    },
+    "work": "Business staff"
   },
   "vendorHome": {
     "title": "Business desk",
@@ -3962,7 +3976,11 @@
         "business": "Choose a business",
         "setup": "See the options"
       }
-    }
+    },
+    "staffTitle": "Your work",
+    "staffLead": "The businesses you work at, and the desks their owners opened to you.",
+    "staffOwn": "Want to run your own venue, shop or gym?",
+    "staffOwnLink": "Start a business on kriraghor.com"
   },
   "usersDesk": {
     "title": "Users",
@@ -4320,6 +4338,183 @@
         "label": "Manage staff",
         "desc": "Invite staff, change permissions and offboard people. Masters only."
       }
+    }
+  },
+  "team": {
+    "title": "Team",
+    "lead": "Add people who work at your venues, gyms and shops. Each person works at one business and does only what you tick.",
+    "add": "Add staff",
+    "member": "Member",
+    "col": {
+      "member": "Staff member",
+      "business": "Business",
+      "permissions": "What they can do",
+      "added": "Added",
+      "actions": "Actions"
+    },
+    "type": {
+      "venue": "Venue",
+      "gym": "Gym",
+      "shop": "Shop"
+    },
+    "edit": "Edit",
+    "remove": "Remove",
+    "noBusiness": "No business to add staff to yet",
+    "noBusinessBody": "Once your venue, gym or shop is set up, you can add the people who work there.",
+    "toHome": "Back to your businesses",
+    "cap": "{n} of {max} staff",
+    "full": "Full",
+    "filter": "Show staff of",
+    "all": "All businesses",
+    "empty": "No staff yet",
+    "emptyBody": "Add the people who check teams in, admit members at the desk or pack orders.",
+    "note": "Staff never see your earnings, fees, settlement or payouts, and money always goes to you. Removing someone takes their access away straight away.",
+    "permCount": "{n} of {total}",
+    "none": "Nothing yet",
+    "permissions": "What they can do",
+    "permissionsHelp": "The usual desk work is ticked. Optional items are off until you turn them on.",
+    "optional": "Optional",
+    "neededBy": "Needed by another ticked item",
+    "alsoTicks": "Also ticks: {what}",
+    "neverNote": "Prices, listings, products, settlement, analytics and payouts always stay with you.",
+    "perm": {
+      "bookings": {
+        "view": "See bookings",
+        "check_in": "Check teams in",
+        "no_show": "Mark no-shows",
+        "extend": "Extend a game by 30 minutes",
+        "collect_balance": "Record the balance paid at the venue",
+        "walk_in": "Add walk-ins",
+        "move": "Move a booking to another court",
+        "cancel": "Cancel bookings (the member gets a full refund)"
+      },
+      "reviews": {
+        "reply": "Reply to reviews"
+      },
+      "desk": {
+        "admit": "Admit members at the front desk",
+        "admissions": "See the day's admissions"
+      },
+      "passes": {
+        "view": "See the passes sold (no money)"
+      },
+      "orders": {
+        "view": "See orders",
+        "accept": "Accept orders",
+        "ship": "Ship orders (sees the buyer's phone and address)",
+        "deliver": "Mark orders delivered",
+        "reject": "Reject orders (the buyer gets a full refund)"
+      },
+      "stock": {
+        "view": "See stock",
+        "adjust": "Change stock counts"
+      }
+    },
+    "permHelp": {
+      "bookings": {
+        "view": "The day's timeline and booking search. Every other venue item needs this.",
+        "check_in": "Check-in releases the online payment to you.",
+        "no_show": "After the grace time, when the team doesn't come.",
+        "extend": "Extra time is paid at the venue.",
+        "collect_balance": "Cash or bKash taken at the venue.",
+        "walk_in": "Book a free slot for someone at the gate.",
+        "move": "Only to courts at this venue.",
+        "cancel": "Off by default: a cancellation refunds the member in full."
+      },
+      "reviews": {
+        "reply": "Off by default: the reply shows publicly under your venue."
+      },
+      "desk": {
+        "admit": "Scan the member's QR or type their code.",
+        "admissions": "Who came in and when."
+      },
+      "passes": {
+        "view": "Pass codes, members and dates, never the money."
+      },
+      "orders": {
+        "view": "Every other order item needs this.",
+        "accept": "Accept before the deadline so the order isn't cancelled.",
+        "ship": "Courier and tracking number. The buyer's contact shows only with this.",
+        "deliver": "With an optional photo.",
+        "reject": "Off by default: rejecting refunds the buyer in full."
+      },
+      "stock": {
+        "view": "Stock on hand, held and running low.",
+        "adjust": "Received stock, corrections and damage, with a reason."
+      }
+    },
+    "addTitle": "Add staff",
+    "addLead": "They need a Kriraghor account with a verified phone number. Their access starts straight away.",
+    "addConfirm": "Add to team",
+    "added": "{name} now works at {business}",
+    "phone": "Their phone number",
+    "phoneHint": "The number they sign in with, like 01712345678",
+    "phoneInvalid": "Enter a Bangladesh mobile number, like 01712345678",
+    "business": "Business",
+    "pickOne": "Tick at least one thing they can do.",
+    "cancel": "Cancel",
+    "editTitle": "What {name} can do",
+    "editLead": "At {business}. Changes apply on their next action.",
+    "save": "Save",
+    "saved": "Saved",
+    "removeTitle": "Remove {name}?",
+    "removeLead": "They will no longer work at {business}.",
+    "removeNote": "They lose access to your desks at once. What they did stays in the history, and you can add them again later.",
+    "keep": "Keep",
+    "removeConfirm": "Remove",
+    "removed": "{name} was removed from the team",
+    "errors": {
+      "MEMBER_NOT_FOUND": "No Kriraghor account has this phone number. Ask them to sign up first.",
+      "MEMBER_IS_OWNER": "That's your own number. Add someone else.",
+      "MEMBER_IS_STAFF": "Kriraghor team accounts can't work for a business.",
+      "PHONE_NOT_VERIFIED": "This person hasn't verified their phone number yet. Ask them to verify it in their account.",
+      "TEAM_FULL": "This business already has {max} staff. Remove someone first.",
+      "ALREADY_MEMBER": "This person is already on the team at this business.",
+      "PERMISSIONS_INVALID": "Some of the ticked items aren't available for this business. Check them and try again.",
+      "PERMISSION_REQUIRED": "The owner hasn't given you this permission.",
+      "BUSINESS_REQUIRED": "Choose which business to open.",
+      "PHONE_REQUIRED": "Verify your phone number to work at this business.",
+      "ROLE_SUSPENDED": "Your business role is suspended, so you can't change your team right now. You can still remove staff.",
+      "ROLE_REQUIRED": "Your business needs to be approved before you can add staff.",
+      "NOT_FOUND": "We couldn't find that. It may have been removed already.",
+      "VALIDATION_FAILED": "Check the phone number and try again.",
+      "failed": "Something went wrong. Please try again.",
+      "RATE_LIMITED": "You've tried to add a lot of people in the last hour. Please wait a while and try again."
+    },
+    "access": {
+      "PERMISSION_REQUIRED": {
+        "title": "Not open to you",
+        "body": "The owner hasn't given you this permission. Ask them to add it on their Team page."
+      },
+      "PHONE_REQUIRED": {
+        "title": "Verify your phone number",
+        "body": "Staff need a verified phone number to work at a business.",
+        "action": "Verify it"
+      },
+      "BUSINESS_REQUIRED": {
+        "title": "Choose a business",
+        "body": "You work at more than one. Choose which one to open."
+      }
+    },
+    "work": {
+      "title": "You work at",
+      "owner": "Owner: {name}",
+      "since": "Since {date}",
+      "youCan": "You can:",
+      "noDesk": "No desk is open to you here yet. Ask the owner.",
+      "desk": {
+        "bookings": "Bookings",
+        "reviews": "Reviews",
+        "frontDesk": "Front desk",
+        "passes": "Passes sold",
+        "orders": "Orders",
+        "inventory": "Inventory"
+      },
+      "verifyPhone": "Verify your phone number",
+      "verifyPhoneBody": "Staff need a verified phone number. Until then the desks below stay closed.",
+      "verifyPhoneGo": "Verify on kriraghor.com",
+      "shop": "Shop",
+      "atOwner": "{name} ({owner})"
     }
   }
 }
