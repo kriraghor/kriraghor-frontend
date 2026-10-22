@@ -1650,7 +1650,18 @@
       "esportsEntries": "Esports entries",
       "prizesPaid": "Prizes paid",
       "verifiedMembers": "Verified members",
-      "waiting": "Waiting for review"
+      "waiting": "Waiting for review",
+      "sales": "Sales",
+      "orders": "Orders",
+      "averageOrder": "Average order",
+      "repeatBuyers": "Repeat buyers",
+      "passSales": "Pass sales",
+      "passesSold": "Passes sold",
+      "admissions": "Admissions",
+      "unusedShare": "Unused passes",
+      "teams": "Teams",
+      "entryFees": "Entry fees",
+      "matchesPlayed": "Matches played"
     },
     "notes": {
       "bookedAhead": "{amount} booked ahead",
@@ -1658,7 +1669,12 @@
       "last90": "Last 90 days",
       "online": "{amount} online",
       "businesses": "{n} businesses",
-      "overdue": "{n} overdue"
+      "overdue": "{n} overdue",
+      "items": "{n, plural, one {# item} other {# items}}",
+      "passKinds": "{day} day · {month} monthly · {quarter} quarterly",
+      "teams": "{waiting} waiting · {unpaid} unpaid · {reserve} reserve",
+      "fees": "Held {held} · released {released} · refunded {refunded}",
+      "matches": "Of matches not cancelled"
     },
     "actions": {
       "title": "Needs your action",
@@ -1682,7 +1698,9 @@
       "gym_changes_requested": "Staff asked for changes to {n, plural, one {a gym} other {# gyms}}",
       "other": "{n, plural, one {# thing} other {# things}} to look at",
       "due": "Due {time}",
-      "urgent": "Urgent"
+      "urgent": "Urgent",
+      "registrations_waiting": "{n, plural, one {# team registration is} other {# team registrations are}} waiting for your approval",
+      "registrations_unpaid": "{n, plural, one {# team hasn't} other {# teams haven't}} paid the entry fee yet"
     },
     "loadFailed": "Couldn't load the numbers. Try again.",
     "openAnalytics": "Open analytics",
@@ -1695,7 +1713,18 @@
       "revenueByGround": "Revenue by venue (this period)",
       "volume": "Volume (GTV)",
       "byVertical": "Volume by vertical (this period)",
-      "topAreas": "Top areas (bookings this period)"
+      "topAreas": "Top areas (bookings this period)",
+      "sales": "Sales",
+      "ordersByDay": "Orders by day (this period)",
+      "salesByCategory": "Sales by category (this period)",
+      "noCategory": "No category",
+      "bestSellers": "Best sellers (last 30 days, items sold)",
+      "passSales": "Pass sales",
+      "admissionsByDay": "Admissions by day (this period)",
+      "busiestHoursDhaka": "Busiest hours (admissions, Dhaka time)",
+      "salesByPackage": "Sales by package (this period)",
+      "registrations": "Team registrations",
+      "feesByEvent": "Entry fees by event"
     },
     "hours": "{n} h",
     "empty": "Nothing yet.",
@@ -1703,7 +1732,14 @@
       "bookings": "Download bookings (CSV)",
       "revenue": "Download revenue (CSV)",
       "platform": "Download the day table (CSV)",
-      "failed": "Couldn't export. You may have reached this hour's limit."
+      "failed": "Couldn't export. You may have reached this hour's limit.",
+      "shopOrders": "Download orders (CSV)",
+      "shopProducts": "Download sales by product (CSV)",
+      "gymPasses": "Download passes (CSV)",
+      "gymAdmissions": "Download admissions (CSV)",
+      "preparing": "Preparing the file…",
+      "limit": "You've reached this hour's export limit. Try again later.",
+      "tooLarge": "That's too many rows for one file. Choose a shorter period."
     },
     "revenueNote": "Revenue is before the Kriraghor fee. Your payouts show what you receive.",
     "verticals": {
@@ -1715,7 +1751,52 @@
       "gym": "Gym",
       "tournaments": "Events",
       "other": "Other"
-    }
+    },
+    "ofTotal": "{n} of {total}",
+    "legend": {
+      "thisPeriod": "This year",
+      "lastYear": "Last year",
+      "registered": "Registered",
+      "approved": "Approved"
+    },
+    "units": "{n} sold",
+    "admissionsN": "{n, plural, one {# admission} other {# admissions}}",
+    "passKind": {
+      "day": "Day pass",
+      "month": "Monthly",
+      "quarter": "Quarterly"
+    },
+    "comingLater": {
+      "title": "Coming later",
+      "conversion": "Conversion",
+      "shopperFunnel": "Shopper funnel",
+      "body": "These need product-view counts, which Kriraghor does not collect yet."
+    },
+    "shopNote": "Sales are before the Kriraghor commission and leave out delivery. Settlement shows what you receive.",
+    "gymNote": "Pass sales are before the Kriraghor fee. Your payouts show what you receive.",
+    "organiserNote": "Entry fees stay with Kriraghor until each event's fees are released to you.",
+    "organiserCsv": "Each event's registrations, with squad lists, download from its Teams tab.",
+    "openEvents": "Open your events",
+    "errors": {
+      "roleRequired": "These numbers are for active owners of this business.",
+      "orgNotFound": "We couldn't find this organisation among yours."
+    },
+    "leads": {
+      "shop": "Your shop week by week: what sold, how many orders, and who comes back.",
+      "gym": "Your gyms week by week: passes sold, front-desk admissions, and the busy hours.",
+      "organiser": "{name}: teams, entry fees and matches across your events.",
+      "none": "Numbers for your venues, shop, gym and sports events show here once you run one."
+    },
+    "business": {
+      "label": "Business",
+      "ground_owner": "Venues",
+      "shop_owner": "Shop",
+      "gym_owner": "Gym",
+      "organiser": "Sports organisation"
+    },
+    "noBusiness": "No business yet",
+    "noBusinessBody": "Start a venue, shop, gym or sports organisation from your business home.",
+    "toHome": "Go to your business home"
   },
   "disputesDesk": {
     "title": "Disputes",
@@ -3667,7 +3748,11 @@
     "walkoverTitle": "Walkover for M{n}",
     "walkoverHelp": "The winner gets the match by walkover; the other team gets no points.",
     "walkoverWinner": "Winner",
-    "reasonShort": "Write at least 5 characters."
+    "reasonShort": "Write at least 5 characters.",
+    "export": {
+      "withSquads": "With squad lists",
+      "csv": "Export CSV"
+    }
   },
   "tournamentsAdmin": {
     "title": "Events",
@@ -3828,7 +3913,8 @@
       "open": "Open sports events",
       "orgs": "Your organisations",
       "apply": "Register an organisation",
-      "openOrg": "Events"
+      "openOrg": "Events",
+      "numbers": "Numbers for {name}"
     },
     "orgStatus": {
       "draft": "Draft",

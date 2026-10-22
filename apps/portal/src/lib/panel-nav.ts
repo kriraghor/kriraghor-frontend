@@ -136,8 +136,9 @@ export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner" | "organi
 export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "gym_owner", "organiser"];
 
 /**
- * The business sidebar. Analytics is a venue-owner desk (M19 owner analytics), so it sits with the
- * venues. Reviews cover venues, shops and gyms since Round B1 (M17 FR-34), so they sit with the shared
+ * The business sidebar. Analytics covers every business since Round B2 (venue, shop, gym and sports
+ * organisations, one page with a business switcher), so it is one shared link with the business tools
+ * rather than a copy in each section. Reviews cover venues, shops and gyms since Round B1 (M17 FR-34), so they sit with the shared
  * business tools for those three owners (not organisers). Since 21 Oct 2026 esports is run by
  * Kriraghor only, so the organiser section is sports events alone.
  */
@@ -149,7 +150,6 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
     items: [
       { href: "/vendor/venues", key: "grounds", icon: SoccerBall },
       { href: "/vendor/bookings", key: "bookings", icon: CalendarCheck },
-      { href: "/vendor/analytics", key: "analytics", icon: ChartLineUp },
     ],
   },
   {
@@ -168,6 +168,7 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
   {
     key: "business",
     items: [
+      { href: "/vendor/analytics", key: "analytics", icon: ChartLineUp },
       { href: "/vendor/payouts", key: "vendorPayouts", icon: CurrencyCircleDollar },
       { href: "/vendor/disputes", key: "vendorDisputes", icon: Gavel },
       { href: "/vendor/reviews", key: "vendorReviews", icon: Star, roles: ["ground_owner", "shop_owner", "gym_owner"] },

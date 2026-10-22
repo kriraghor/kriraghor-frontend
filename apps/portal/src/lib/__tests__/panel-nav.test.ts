@@ -40,14 +40,25 @@ describe("vendorSections, the business sidebar", () => {
     expect(vendorSections(["ground_owner"], "gym_owner").map((s) => s.key)).toEqual(["overview", "grounds", "business"]);
   });
 
-  it("analytics belongs to venue owners only; settlement to shops", () => {
+  it("settlement belongs to shops; venues keep venues and bookings", () => {
     const shop = hrefs(vendorSections(["shop_owner"], "all"));
     expect(shop).toContain("/vendor/settlement");
-    expect(shop).not.toContain("/vendor/analytics");
     expect(shop).toContain("/vendor/disputes");
     const venue = hrefs(vendorSections(["ground_owner"], "all"));
     expect(venue).toEqual(expect.arrayContaining(["/vendor/venues", "/vendor/bookings", "/vendor/analytics", "/vendor/reviews"]));
     expect(venue).not.toContain("/vendor/settlement");
+  });
+
+  it("analytics shows once for every business, organisers included (Round B2)", () => {
+    for (const role of ["ground_owner", "shop_owner", "gym_owner", "organiser"] as const) {
+      expect(hrefs(vendorSections([role], "all")).filter((h) => h === "/vendor/analytics")).toHaveLength(1);
+    }
+    expect(hrefs(vendorSections(["ground_owner", "shop_owner", "gym_owner", "organiser"], "all")).filter((h) => h === "/vendor/analytics")).toHaveLength(1);
+    // It sits with the shared business tools, so narrowing to one business keeps it.
+    expect(hrefs(vendorSections(["ground_owner", "organiser"], "organiser"))).toContain("/vendor/analytics");
+    expect(vendorSections(["gym_owner"], "all").find((s) => s.items.some((i) => i.href === "/vendor/analytics"))?.key).toBe("business");
+    // Someone with no business yet has no analytics.
+    expect(hrefs(vendorSections([], "all"))).not.toContain("/vendor/analytics");
   });
 
   it("reviews show once for venue, shop and gym owners, not for organisers (Round B1)", () => {

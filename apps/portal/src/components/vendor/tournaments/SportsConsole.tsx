@@ -4,13 +4,14 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
-import { ArrowLeft, ArrowsClockwise, CalendarX, DotsThree, Flag, PauseCircle, UsersThree } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowsClockwise, CalendarX, DotsThree, DownloadSimple, Flag, PauseCircle, UsersThree } from "@phosphor-icons/react";
 import { Button, Dialog, Field as KitField, Menu, ReasonDialog, Select, Textarea, type MenuItem } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
 import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
-import { fromLocalInput, matchActions, oversToBalls, presetValues, resultBody, sportsConsole as api, toLocalInput, type Match, type MatchAction, type RuleField, type Seeding, type Tournament } from "@/lib/vendor/tournaments";
+import { csvErrorKey } from "@/lib/dashboard";
+import { canExportRegistrations, fromLocalInput, matchActions, oversToBalls, presetValues, resultBody, sportsConsole as api, toLocalInput, type Match, type MatchAction, type RuleField, type Seeding, type Tournament } from "@/lib/vendor/tournaments";
 import { MePanel } from "../../MePanel";
 import { OrgMembers } from "../esports/OrganiserConsole";
 import { Notice } from "@kriraghor/ui/primitives";
@@ -598,7 +599,10 @@ function TeamsTab({ orgId, x }: { orgId: string; x: Tournament }) {
   const act = useMutation({ mutationFn: async (fn: () => Promise<unknown>) => fn(), onSuccess: () => (setReason(""), refresh()) });
   return (
     <div className="mt-6">
-      <p className="text-muted">{t("teamsLead", { min: x.squadMin })}</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <p className="min-w-0 flex-1 text-muted">{t("teamsLead", { min: x.squadMin })}</p>
+        <RegistrationsExport orgId={orgId} x={x} />
+      </div>
       <div className="mt-3 flex max-w-md flex-col gap-1">
         <label htmlFor="reg-reason" className="text-sm font-semibold text-muted">
           {t("decisionReason")}
@@ -659,6 +663,48 @@ function TeamsTab({ orgId, x }: { orgId: string; x: Tournament }) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/**
+ * Round B2: the registrations as a CSV for organisation owners and admins (the API answers 404 to
+ * anyone else, so staff do not see the button). "With squad lists" adds a row per player: display
+ * name and NID verified yes or no, never phones or ids.
+ */
+function RegistrationsExport({ orgId, x }: { orgId: string; x: Tournament }) {
+  const t = useTranslations("sportsConsole");
+  const td = useTranslations("dashboard");
+  const { status } = useAuth();
+  const orgs = useQuery({ queryKey: ["my-orgs"], queryFn: () => api.mine(), enabled: status === "signed_in" });
+  const [roster, setRoster] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  if (!canExportRegistrations(orgs.data?.items.find((o) => o.id === orgId)?.role)) return null;
+  const run = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      await api.registrationsCsv(orgId, x.id, roster);
+    } catch (e) {
+      setError(td(csvErrorKey(problemOf(e)?.code)));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="flex flex-col items-start gap-2 sm:items-end" data-testid="registrations-export">
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="flex min-h-11 items-center gap-2 text-sm font-semibold">
+          <input type="checkbox" className="size-5" checked={roster} onChange={(e) => setRoster(e.target.checked)} data-testid="registrations-export-roster" />
+          {t("export.withSquads")}
+        </label>
+        <button type="button" className={`${btn} inline-flex items-center gap-2 border-line`} disabled={busy} onClick={() => void run()} data-testid="registrations-export-csv">
+          <DownloadSimple size={18} aria-hidden />
+          {busy ? td("csv.preparing") : t("export.csv")}
+        </button>
+      </div>
+      {error ? <Notice tone="error">{error}</Notice> : null}
     </div>
   );
 }

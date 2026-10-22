@@ -1325,7 +1325,7 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            /** @description The photo itself (at most kyc.max_file_bytes) */
+            /** @description The photo itself (at most users.avatar_max_bytes) */
             requestBody?: {
                 content: {
                     "image/jpeg": string;
@@ -21659,13 +21659,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** My dashboard: member (spent, bookings, where it went) or ground owner (revenue, occupancy, bookings, repeat teams, charts) (FR-01 to FR-07) */
+        /** My dashboard by role (FR-01 to FR-07, §6.3): member (spent, bookings, where it went); ground owner (revenue, occupancy, bookings, repeat teams); shop owner (sales, orders, average order, repeat buyers, sales by category, best sellers; conversion comes later); gym owner (pass sales, passes by kind, admissions, unused share, busiest hours, sales by package); sports organiser with orgId (teams of places, entry fees from escrow, matches played, registrations over time, fees by event; members of the organisation only, anyone else 404) */
         get: {
             parameters: {
                 query?: {
-                    role?: "member" | "ground_owner";
+                    role?: "member" | "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
                     period?: "7w" | "qtr" | "yr";
                     groundId?: string;
+                    /** @description The sports organisation (role organiser only; you must be a member) */
+                    orgId?: string;
                     locale?: "en" | "bn";
                 };
                 header?: never;
@@ -21680,7 +21682,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["MemberDashboard"] | components["schemas"]["OwnerDashboard"];
+                        "application/json": components["schemas"]["MemberDashboard"] | components["schemas"]["OwnerDashboard"] | components["schemas"]["ShopDashboard"] | components["schemas"]["GymDashboard"] | components["schemas"]["SportsOrganiserDashboard"];
                     };
                 };
                 /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
@@ -21694,6 +21696,15 @@ export interface paths {
                 };
                 /** @description Error. Codes: ROLE_REQUIRED */
                 403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -21727,11 +21738,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Needs your action, from the owning modules (FR-11) */
+        /** Needs your action, from the owning modules (FR-11); role organiser: registrations waiting for approval (admins) and unpaid entry fees in your sports organisations */
         get: {
             parameters: {
                 query?: {
-                    role?: "member" | "ground_owner" | "shop_owner" | "gym_owner";
+                    role?: "member" | "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
                 };
                 header?: never;
                 path?: never;
@@ -21792,11 +21803,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** CSV of my bookings, revenue by week or payments (FR-22, FR-23; audited; per-hour limit) */
+        /** CSV of my bookings, revenue by week or payments; shop orders and sales by product; gym passes and admissions (FR-22, FR-23; no buyer or holder data; at most analytics.export_sync_max_rows; audited; analytics.exports_per_hour) */
         get: {
             parameters: {
                 query: {
-                    dataset: "owner_bookings" | "owner_revenue" | "member_payments";
+                    dataset: "owner_bookings" | "owner_revenue" | "member_payments" | "shop_orders" | "shop_sales_by_product" | "gym_passes" | "gym_admissions";
                     period?: "7w" | "qtr" | "yr";
                 };
                 header?: never;
@@ -33972,7 +33983,8 @@ export interface paths {
                             /** @description 0 = Sunday … 6 = Saturday (Dhaka calendar) */
                             weekdays: number[];
                             from: string;
-                            to: string;
+                            /** @description HH:MM, or 24:00 for the end of the day */
+                            to: string | "24:00";
                             /**
                              * Format: date
                              * @description The last day the repeat applies (Dhaka); open without it
@@ -45513,6 +45525,83 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/org/{orgId}/sports/tournaments/{id}/registrations.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Registrations as CSV for organisation admins (Round B2): team, status, fee, refund, dates, squad and eligibility counts; include=roster adds one row per player with the display name and NID verified yes/no. Never phones, emails or ids. At most analytics.export_sync_max_rows rows, counted against analytics.exports_per_hour, audited */
+        get: {
+            parameters: {
+                query?: {
+                    include?: "roster";
+                };
+                header?: never;
+                path: {
+                    orgId: string;
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description CSV (UTF-8 with a byte-order mark; taka with two decimals; +06:00 times) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/csv": string;
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, EXPORT_TOO_LARGE */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: EXPORT_LIMIT */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/org/{orgId}/sports/registrations/{regId}/approve": {
         parameters: {
             query?: never;
@@ -50892,6 +50981,151 @@ export interface components {
                     groundId: string;
                     name: string;
                     value: number;
+                }[];
+            };
+            /** @enum {string} */
+            period: "7w" | "qtr" | "yr";
+            buckets: {
+                key: string;
+                from: string;
+                to: string;
+            }[];
+            asOf: string | null;
+            definitions: {
+                [key: string]: string;
+            };
+        };
+        ShopDashboard: {
+            /** @enum {string} */
+            role: "shop_owner";
+            tiles: {
+                sales: components["schemas"]["KpiTile"];
+                orders: components["schemas"]["KpiTile"];
+                averageOrder: components["schemas"]["KpiTile"];
+                repeatBuyers: components["schemas"]["KpiTile"];
+            };
+            charts: {
+                weeklySales: {
+                    points: {
+                        key: string;
+                        from: string;
+                        value: number;
+                        lastYear: number;
+                    }[];
+                    lastYearShown: boolean;
+                };
+                ordersByDay: {
+                    day: string;
+                    value: number;
+                }[];
+                salesByCategory: {
+                    /** Format: uuid */
+                    categoryId: string | null;
+                    name: string;
+                    units: number;
+                    value: number;
+                }[];
+                /** @description Top 10 by units over the last 30 days */
+                bestSellers: {
+                    /** Format: uuid */
+                    productId: string;
+                    title: string;
+                    units: number;
+                    value: number;
+                }[];
+            };
+            /** @description Tiles that need product-view counts (conversion, shopper funnel) */
+            comingLater: string[];
+            /** @enum {string} */
+            period: "7w" | "qtr" | "yr";
+            buckets: {
+                key: string;
+                from: string;
+                to: string;
+            }[];
+            asOf: string | null;
+            definitions: {
+                [key: string]: string;
+            };
+        };
+        GymDashboard: {
+            /** @enum {string} */
+            role: "gym_owner";
+            tiles: {
+                passSales: components["schemas"]["KpiTile"];
+                passesSold: components["schemas"]["KpiTile"];
+                admissions: components["schemas"]["KpiTile"];
+                unusedShare: components["schemas"]["KpiTile"];
+            };
+            charts: {
+                sales: {
+                    points: {
+                        key: string;
+                        from: string;
+                        value: number;
+                        lastYear: number;
+                    }[];
+                    lastYearShown: boolean;
+                };
+                admissionsByDay: {
+                    day: string;
+                    value: number;
+                }[];
+                busiestHours: {
+                    hour: number;
+                    admissions: number;
+                }[];
+                salesByPackage: {
+                    /** Format: uuid */
+                    packageId: string;
+                    /** @enum {string} */
+                    kind: "day" | "month" | "quarter";
+                    title: string;
+                    passes: number;
+                    value: number;
+                }[];
+            };
+            /** @enum {string} */
+            period: "7w" | "qtr" | "yr";
+            buckets: {
+                key: string;
+                from: string;
+                to: string;
+            }[];
+            asOf: string | null;
+            definitions: {
+                [key: string]: string;
+            };
+        };
+        SportsOrganiserDashboard: {
+            /** @enum {string} */
+            role: "organiser";
+            organisation: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+            };
+            tiles: {
+                teams: components["schemas"]["KpiTile"];
+                entryFees: components["schemas"]["KpiTile"];
+                matchesPlayed: components["schemas"]["KpiTile"];
+            };
+            charts: {
+                registrationsOverTime: {
+                    key: string;
+                    from: string;
+                    registered: number;
+                    approved: number;
+                }[];
+                feesByEvent: {
+                    /** Format: uuid */
+                    tournamentId: string;
+                    name: string;
+                    status: string;
+                    collected: number;
+                    held: number;
+                    released: number;
+                    refunded: number;
                 }[];
             };
             /** @enum {string} */

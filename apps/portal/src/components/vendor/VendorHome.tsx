@@ -17,6 +17,8 @@ import { shopDesk } from "@/lib/vendor/market";
 import { shopOrders } from "@/lib/vendor/orders";
 import { sportsConsole } from "@/lib/vendor/tournaments";
 import { MePanel } from "../MePanel";
+import { isSportsOrg } from "@/lib/vendor/analytics";
+import { BusinessOverview } from "./BusinessDashboards";
 import { ActionList, OwnerOverview } from "./OwnerDashboard";
 
 /**
@@ -26,12 +28,13 @@ import { ActionList, OwnerOverview } from "./OwnerDashboard";
  * is new, always with the payout account; venue owners keep their Overview (M19 §6.2). Someone with
  * no business yet sees the steps to start one and the four kinds of business (applied for on
  * kriraghor.com with the same account). Esports is run by Kriraghor only (21 Oct 2026), so the
- * organiser section is sports events.
+ * organiser section is sports events. Since Round B2 shops, gyms and each sports organisation show
+ * their tiles too (M19 §6.3), and organisers' to-do items join the list.
  */
 const ICON: Record<BusinessRole, typeof SoccerBall> = { ground_owner: SoccerBall, shop_owner: Storefront, gym_owner: Barbell, organiser: Trophy };
 /** The `as` kriraghor.com's business page takes (the venue owner is its default). */
 const APPLY_AS: Record<BusinessRole, string> = { ground_owner: "", shop_owner: "?as=shop", gym_owner: "?as=gym", organiser: "?as=organiser" };
-const ACTIONS_FOR: Partial<Record<BusinessRole, ActionRole>> = { ground_owner: "ground_owner", shop_owner: "shop_owner", gym_owner: "gym_owner" };
+const ACTIONS_FOR: Record<BusinessRole, ActionRole> = { ground_owner: "ground_owner", shop_owner: "shop_owner", gym_owner: "gym_owner", organiser: "organiser" };
 
 type Me = Awaited<ReturnType<typeof vendor.me>>;
 const roleStatus = (me: Me | undefined, role: string) => me?.roles.find((r) => r.role === role)?.status ?? null;
@@ -71,7 +74,7 @@ export function VendorHome() {
           {role === "ground_owner" ? <VenueHome me={me.data} showActions={!combined} /> : null}
           {role === "shop_owner" ? <ShopHome showActions={!combined} /> : null}
           {role === "gym_owner" ? <GymHome showActions={!combined} /> : null}
-          {role === "organiser" ? <OrganiserHome /> : null}
+          {role === "organiser" ? <OrganiserHome showActions={!combined} /> : null}
         </BusinessSection>
       ))}
       {view === "all" && notHeld.length ? (
@@ -247,6 +250,7 @@ function ShopHome({ showActions }: { showActions: boolean }) {
       </ActiveCard>
       {!shop.isPending && (!shop.data || !products.isPending) ? <SetupChecklist steps={steps} testId="shop-setup" /> : null}
       {showActions ? <OwnActions role="shop_owner" /> : null}
+      <BusinessOverview role="shop_owner" />
       {settlement.data ? (
         <div data-testid="shop-settlement">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -290,6 +294,7 @@ function GymHome({ showActions }: { showActions: boolean }) {
       </ActiveCard>
       {gyms.isSuccess ? <SetupChecklist steps={steps} testId="gym-setup" /> : null}
       {showActions ? <OwnActions role="gym_owner" /> : null}
+      <BusinessOverview role="gym_owner" />
       <div data-testid="gym-quick">
         <h3 className="font-display text-lg font-bold">{t("gymQuick")}</h3>
         {gyms.isPending ? (
@@ -323,7 +328,7 @@ function GymHome({ showActions }: { showActions: boolean }) {
 
 // ---------------- sports-event organiser (M14)
 
-function OrganiserHome() {
+function OrganiserHome({ showActions }: { showActions: boolean }) {
   const t = useTranslations("vendorHome");
   const ts = useTranslations("sportsConsole");
   const { status } = useAuth();
@@ -343,6 +348,10 @@ function OrganiserHome() {
         </ButtonLink>
       </ActiveCard>
       {orgs.isSuccess ? <SetupChecklist steps={steps} testId="organiser-setup" /> : null}
+      {showActions ? <OwnActions role="organiser" /> : null}
+      {sports.filter(isSportsOrg).map((o) => (
+        <BusinessOverview key={o.id} role="organiser" orgId={o.id} title={t("organiser.numbers", { name: o.name })} />
+      ))}
       <div data-testid="organiser-orgs">
         <h3 className="font-display text-lg font-bold">{t("organiser.orgs")}</h3>
         {orgs.isPending ? (
