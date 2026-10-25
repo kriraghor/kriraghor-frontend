@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Bell, Checks } from "@phosphor-icons/react";
@@ -11,15 +11,62 @@ import { useAuth } from "../auth";
 import { badgeText, listNotifications, markRead, realtimeSocket, relativeTime, type NotificationItem } from "@kriraghor/api-client/notifications";
 import { publicEnv } from "@kriraghor/session/env";
 import { resolveNotificationLink, siteOfBell, type Site } from "./links";
+import { newestUnreadTitle, pollPlan, shouldChime, titleWithUnread, titleWithoutUnread } from "./notice";
+import { armAudioOnGesture, playChime, readSoundSetting } from "./sound";
+import { SoundToggle } from "./SoundToggle";
 
 export { resolveNotificationLink, siteOfBell, siteOfPath, type Site, type SiteUrls, type ResolvedLink } from "./links";
+
+/** What the realtime events carry (notify.service: the count, and maybe a title some day). */
+type CountEvent = { unreadCount?: number | null; title?: string | null } | undefined;
+
+/** The bell's shake: rotate about the top, transform only, 600 ms. */
+const RING: Keyframe[] = [
+  { transform: "rotate(0deg) scale(1)" },
+  { transform: "rotate(16deg) scale(1.08)", offset: 0.15 },
+  { transform: "rotate(-14deg) scale(1.08)", offset: 0.35 },
+  { transform: "rotate(9deg) scale(1.04)", offset: 0.55 },
+  { transform: "rotate(-5deg) scale(1.02)", offset: 0.75 },
+  { transform: "rotate(0deg) scale(1)" },
+];
+
+const reducedMotion = () => typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** Whether the shared realtime socket is connected (false while signed out: no socket is opened). */
+function useSocketConnected(enabled: boolean, audience: Parameters<typeof realtimeSocket>[0]): boolean {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      if (!enabled) return () => undefined;
+      const socket = realtimeSocket(audience);
+      socket.on("connect", onChange);
+      socket.on("disconnect", onChange);
+      socket.on("connect_error", onChange);
+      return () => {
+        socket.off("connect", onChange);
+        socket.off("disconnect", onChange);
+        socket.off("connect_error", onChange);
+      };
+    },
+    [enabled, audience]
+  );
+  return useSyncExternalStore(
+    subscribe,
+    () => enabled && realtimeSocket(audience).connected,
+    () => false
+  );
+}
 
 /**
  * The bell "Updates" (M08 §4.1): unread badge from the server (99+ cap), a dropdown with the latest
  * 20 (All / Unread), mark-all-read, See all and Settings. Realtime: notification.created and
- * notification.read carry the unread count; the list re-reads when one arrives. A link that belongs
- * to another Kriraghor site (a /vendor link on kriraghor.com, a /me link on the business panel)
- * opens on that site; `here` names the current one (inferred from `centreHref` when left out).
+ * notification.read carry the unread count; the list re-reads when one arrives. While the socket is
+ * not connected the bell polls instead (every 30 s, and on focus). A link that belongs to another
+ * Kriraghor site (a /vendor link on kriraghor.com, a /me link on the business panel) opens on that
+ * site; `here` names the current one (inferred from `centreHref` when left out).
+ *
+ * A new unread notification (a realtime event, or a re-read showing the count went up) is noticed:
+ * a soft chime (per-browser switch, on by default), a short shake of the icon (not under reduced
+ * motion), a polite screen-reader announcement and, in a hidden tab, "(3) " in front of the title.
  */
 export function NotificationBell({ centreHref, settingsHref, here }: { centreHref: string; settingsHref?: string; here?: Site }) {
   const t = useTranslations("notifications");
@@ -27,33 +74,138 @@ export function NotificationBell({ centreHref, settingsHref, here }: { centreHre
   const router = useRouter();
   const qc = useQueryClient();
   const { status, audience } = useAuth();
+  const signedIn = status === "signed_in";
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"all" | "unread">("all");
+  const [announcement, setAnnouncement] = useState<{ id: number; text: string } | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const iconRef = useRef<HTMLSpanElement>(null);
+  /** The last unread count seen (null before the first load): a rise over it is news. */
+  const seen = useRef<number | null>(null);
+  /** A realtime event chimed before the list had the new item: announce it when the list arrives. */
+  const announcePending = useRef(false);
+  /** The document title carries "(n) " because news came while the tab was hidden. */
+  const titled = useRef(false);
+
+  const connected = useSocketConnected(signedIn, audience);
+  const plan = pollPlan(signedIn, connected);
+
+  const announce = (title: string | undefined) =>
+    setAnnouncement((a) => ({ id: (a?.id ?? 0) + 1, text: title ? t("newOne", { title }) : t("newGeneric") }));
+
+  /** Records a server count; on a rise: chime, shake and (hidden tab) the title count. Returns the rise. */
+  const observe = (count: number | null | undefined): boolean => {
+    if (typeof count !== "number" || !Number.isFinite(count)) return false;
+    const rise = shouldChime(seen.current, count);
+    seen.current = count;
+    if (!rise) return false;
+    if (readSoundSetting()) playChime();
+    const icon = iconRef.current;
+    if (icon && typeof icon.animate === "function" && !reducedMotion()) icon.animate(RING, { duration: 600, easing: "ease-out" });
+    if (typeof document !== "undefined" && document.hidden) {
+      titled.current = true;
+      document.title = titleWithUnread(document.title, count);
+    }
+    return true;
+  };
 
   const q = useQuery({
     queryKey: ["bell", audience, tab],
-    enabled: status === "signed_in",
-    queryFn: () => listNotifications(audience, { limit: 20, unread: tab === "unread" }),
+    enabled: signedIn,
+    queryFn: async () => {
+      const page = await listNotifications(audience, { limit: 20, unread: tab === "unread" });
+      const rise = observe(page.unreadCount);
+      if (rise || announcePending.current) {
+        announcePending.current = false;
+        announce(newestUnreadTitle(page.items));
+      }
+      return page;
+    },
+    // Fallback while realtime is down (FR-04 keeps the server count as the truth either way).
+    refetchInterval: plan.intervalMs,
+    refetchIntervalInBackground: true,
   });
-  // The server count is the truth; realtime events and actions refetch it (FR-04).
+  // The server count is the truth; realtime events, polling and actions refetch it (FR-04).
   const unread = q.data?.unreadCount ?? 0;
 
   useEffect(() => {
-    if (status !== "signed_in") return;
+    if (signedIn) armAudioOnGesture();
+  }, [signedIn]);
+
+  const refetchBell = () => qc.invalidateQueries({ queryKey: ["bell", audience] });
+  const onCreatedEvent = useEffectEvent(async (e: CountEvent) => {
+    // The event's count chimes at once; the re-read that follows sees the same count and stays quiet.
+    if (observe(e?.unreadCount)) {
+      if (e?.title) announce(e.title);
+      else announcePending.current = true;
+    }
+    await refetchBell().catch(() => undefined);
+    if (announcePending.current) {
+      // The list could not be re-read: announce without a title.
+      announcePending.current = false;
+      announce(undefined);
+    }
+  });
+  const onReadEvent = useEffectEvent((e: CountEvent) => {
+    observe(e?.unreadCount);
+    void refetchBell();
+  });
+
+  useEffect(() => {
+    if (!signedIn) return;
     const socket = realtimeSocket(audience);
-    const onCount = () => void qc.invalidateQueries({ queryKey: ["bell", audience] });
+    const onCreated = (e: CountEvent) => void onCreatedEvent(e);
+    const onRead = (e: CountEvent) => onReadEvent(e);
     // Re-read on (re)connect so the badge is right even if an emit was missed.
     const onConnect = () => void qc.invalidateQueries({ queryKey: ["bell", audience] });
-    socket.on("notification.created", onCount);
-    socket.on("notification.read", onCount);
+    socket.on("notification.created", onCreated);
+    socket.on("notification.read", onRead);
     socket.on("connect", onConnect);
     return () => {
-      socket.off("notification.created", onCount);
-      socket.off("notification.read", onCount);
+      socket.off("notification.created", onCreated);
+      socket.off("notification.read", onRead);
       socket.off("connect", onConnect);
     };
-  }, [status, audience, qc]);
+  }, [signedIn, audience, qc]);
+
+  // Polling also re-reads when the window regains focus or the tab becomes visible.
+  useEffect(() => {
+    if (!plan.onFocus) return;
+    const refetch = () => {
+      if (document.visibilityState === "visible") void qc.invalidateQueries({ queryKey: ["bell", audience] });
+    };
+    window.addEventListener("focus", refetch);
+    document.addEventListener("visibilitychange", refetch);
+    return () => {
+      window.removeEventListener("focus", refetch);
+      document.removeEventListener("visibilitychange", refetch);
+    };
+  }, [plan.onFocus, audience, qc]);
+
+  // The "(n) " title count: kept current while hidden, removed when the tab is visible or all is read.
+  useEffect(() => {
+    if (!titled.current) return;
+    if (document.hidden && unread > 0) document.title = titleWithUnread(document.title, unread);
+    else {
+      titled.current = false;
+      document.title = titleWithoutUnread(document.title);
+    }
+  }, [unread]);
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== "visible" || !titled.current) return;
+      titled.current = false;
+      document.title = titleWithoutUnread(document.title);
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+      if (titled.current) {
+        titled.current = false;
+        document.title = titleWithoutUnread(document.title);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -100,13 +252,18 @@ export function NotificationBell({ centreHref, settingsHref, here }: { centreHre
         className="relative inline-flex size-11 items-center justify-center rounded-control text-ink transition-colors hover:bg-surface-2"
         data-testid="notification-bell"
       >
-        <Bell size={22} weight={open ? "fill" : "regular"} aria-hidden />
+        <span ref={iconRef} className="inline-flex origin-[50%_15%]">
+          <Bell size={22} weight={open ? "fill" : "regular"} aria-hidden />
+        </span>
         {badge ? (
           <span className="absolute right-0.5 top-0.5 min-w-5 rounded-pill bg-live px-1 text-center text-[11px] font-bold leading-5 text-white tabular-nums ring-2 ring-surface" data-testid="notification-badge">
             {badge}
           </span>
         ) : null}
       </button>
+      <div className="sr-only" aria-live="polite" aria-atomic="true" data-testid="notification-announcer">
+        {announcement ? <span key={announcement.id}>{announcement.text}</span> : null}
+      </div>
 
       {open ? (
         <div role="dialog" aria-label={t("title")} className="absolute -right-12 z-50 mt-2 w-[380px] max-w-[calc(100vw-1.5rem)] overflow-hidden popover-surface sm:right-0">
@@ -167,6 +324,9 @@ export function NotificationBell({ centreHref, settingsHref, here }: { centreHre
                 {t("settings")}
               </Link>
             ) : null}
+            <div className="basis-full border-t border-line pt-1">
+              <SoundToggle compact />
+            </div>
           </div>
         </div>
       ) : null}

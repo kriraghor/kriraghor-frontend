@@ -137,7 +137,13 @@
       "languageHelp": "Change it in your account settings.",
       "saved": "Saved.",
       "save": "Save"
-    }
+    },
+    "sound": {
+      "label": "Play a sound for new notifications",
+      "help": "Saved on this browser only."
+    },
+    "newOne": "New notification: {title}",
+    "newGeneric": "You have a new notification."
   },
   "esports": {
     "slots": "{taken}/{max} slots",
