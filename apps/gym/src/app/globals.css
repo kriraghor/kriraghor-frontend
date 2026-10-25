@@ -1,0 +1,33 @@
+@import "tailwindcss";
+/* Design tokens (one source for every app, the gym theme included) and the shared surfaces. */
+@import "@kriraghor/tokens/tokens.css";
+@import "@kriraghor/ui/styles/glass.css";
+@import "@kriraghor/ui/styles/motion.css";
+@source "../../../../packages/ui/src";
+
+/* Surface styles the shared components (packages/ui) ask for. */
+@utility btn-primary-finish {
+  @apply shadow-[0_6px_18px_-10px_rgb(200_245_60/0.55)];
+}
+@utility notice-surface {
+  @apply rounded-control bg-surface;
+}
+@utility popover-surface {
+  @apply rounded-card border border-line bg-surface shadow-lg;
+}
+
+/* The whole site is the gym theme (dark with the lime accent, packages/tokens): <body data-theme="gym">, so
+   dialogs and menus (portalled into body) match. The floating chrome's glass is dark too. */
+[data-theme="gym"] {
+  --glass-bg: rgb(26 27 24 / 0.6);
+  --glass-strong-bg: rgb(26 27 24 / 0.86);
+  --glass-edge: rgb(255 255 255 / 0.08);
+  --glass-highlight: rgb(255 255 255 / 0.05);
+  --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
+}
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+}

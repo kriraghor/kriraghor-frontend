@@ -50,6 +50,8 @@ describe("seo (launch polish)", () => {
     expect(e.some((x) => PRIVATE_PATHS.some((p) => x.url.startsWith(`${SITE}${p}`)))).toBe(false);
     // When the API is down there are no slugs: the static pages alone.
     expect(sitemapEntries(SITE, {})).toHaveLength(STATIC_PATHS.length);
+    // The gym pages moved to gym.kriraghor.com (its own sitemap), 25 Oct 2026.
+    expect(sitemapEntries(SITE, { gyms: ["iron-house"] } as never).some((x) => x.url.includes("/gym"))).toBe(false);
     const many = Array.from({ length: SITEMAP_MAX + 10 }, (_, i) => `g${i}`);
     expect(sitemapEntries(SITE, { grounds: many })).toHaveLength(SITEMAP_MAX);
   });

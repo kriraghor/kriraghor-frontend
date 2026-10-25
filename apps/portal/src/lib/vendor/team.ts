@@ -2,6 +2,8 @@ import { api } from "@kriraghor/api-client";
 import type { components, paths } from "@kriraghor/api-client/schema";
 import { normalizePhone } from "@kriraghor/ui/auth-flow";
 import { unwrap } from "../admin/finance";
+import { gymHref } from "../links";
+import { deskCan, type BusinessType, type WorkplaceRef } from "@kriraghor/ui/desk/access";
 
 /**
  * Round B3 staff accounts for businesses (Q69, Q169, Q170; vendor.kriraghor.com).
@@ -12,15 +14,14 @@ import { unwrap } from "../admin/finance";
  *    (GET /me/dashboard/actions?role=business_staff).
  * The API enforces every rule (business-members actFor); these helpers only shape the screens.
  */
-export type BusinessType = "venue" | "gym" | "shop";
+// The staff-access rules every desk follows are shared with gym.kriraghor.com/manage (@kriraghor/ui/desk).
+export { deskAccessKey, deskCan, staffPermissionsAt, worksWith, type BusinessType, type WorkplaceRef } from "@kriraghor/ui/desk/access";
 export const BUSINESS_TYPES: readonly BusinessType[] = ["venue", "gym", "shop"];
 export type TeamMember = components["schemas"]["BusinessTeamMember"];
 export type Workplace = components["schemas"]["BusinessWorkplace"];
 export type TeamList = paths["/me/team"]["get"]["responses"][200]["content"]["application/json"];
 export type TeamBusiness = TeamList["businesses"][number];
 export type CatalogueEntry = { key: string; default: boolean; needs: string | null };
-/** What /me says about a workplace (ids and permissions; names come from /me/workplaces). */
-export type WorkplaceRef = { businessType: BusinessType; businessId: string; permissions: readonly string[] };
 /** A staff to-do line (M19 actions) with the workplace it belongs to. */
 export type StaffAction = components["schemas"]["PendingActions"]["items"][number] & { businessType?: BusinessType; businessId?: string };
 
@@ -142,25 +143,7 @@ export function staffErrorKey(code: string | null | undefined): StaffErrorCode |
   return code && (STAFF_ERRORS as readonly string[]).includes(code) ? (code as StaffErrorCode) : "failed";
 }
 
-/** The access answers a desk shows as a clear message instead of its own error (B3). */
-export function deskAccessKey(code: string | null | undefined): "PERMISSION_REQUIRED" | "PHONE_REQUIRED" | "BUSINESS_REQUIRED" | null {
-  return code === "PERMISSION_REQUIRED" || code === "PHONE_REQUIRED" || code === "BUSINESS_REQUIRED" ? code : null;
-}
-
 // ---------------- workplaces (pure, tested)
-
-/** The permissions held at one business as staff, or null when the person does not work there (the owner). */
-export function staffPermissionsAt(workplaces: readonly WorkplaceRef[] | undefined, type: BusinessType, businessId: string | null | undefined): readonly string[] | null {
-  if (!businessId) return null;
-  return (workplaces ?? []).find((w) => w.businessType === type && w.businessId === businessId)?.permissions ?? null;
-}
-
-/** Can the person do this here? The owner (null permissions) can do everything on a staff-capable desk. */
-export const deskCan = (permissions: readonly string[] | null, permission: string) => permissions === null || permissions.includes(permission);
-
-/** Does the person hold a permission at any workplace of a type? */
-export const worksWith = (workplaces: readonly WorkplaceRef[] | undefined, type: BusinessType, permission?: string) =>
-  (workplaces ?? []).some((w) => w.businessType === type && (!permission || w.permissions.includes(permission)));
 
 export type DeskChoice = { value: string; label: string; staff: boolean; owner: string | null };
 
@@ -180,7 +163,10 @@ export function deskChoices(type: BusinessType, permission: string, own: readonl
   return out;
 }
 
-/** The desks one workplace opens on vendor.kriraghor.com, by its permissions (the vendor home's buttons). */
+/**
+ * The desks one workplace opens, by its permissions (the vendor home's buttons): venue and shop desks on
+ * vendor.kriraghor.com, a gym's front desk and passes on gym.kriraghor.com/manage (through /go/gym).
+ */
 export function workplaceDesks(w: WorkplaceRef): { key: "bookings" | "reviews" | "frontDesk" | "passes" | "orders" | "inventory"; href: string }[] {
   const has = (p: string) => w.permissions.includes(p);
   const id = w.businessId;
@@ -191,8 +177,8 @@ export function workplaceDesks(w: WorkplaceRef): { key: "bookings" | "reviews" |
     ];
   if (w.businessType === "gym")
     return [
-      ...(has("desk.admit") || has("desk.admissions") ? [{ key: "frontDesk" as const, href: `/vendor/gyms/${id}/desk` }] : []),
-      ...(has("passes.view") ? [{ key: "passes" as const, href: `/vendor/gyms/${id}/passes` }] : []),
+      ...(has("desk.admit") || has("desk.admissions") ? [{ key: "frontDesk" as const, href: gymHref(`/manage/${id}/desk`) }] : []),
+      ...(has("passes.view") ? [{ key: "passes" as const, href: gymHref(`/manage/${id}/passes`) }] : []),
     ];
   return [
     ...(has("orders.view") ? [{ key: "orders" as const, href: `/vendor/orders?shopId=${id}` }] : []),

@@ -4,7 +4,7 @@ import { ArrowRight, ArrowsClockwise, ArrowUUpLeft, Barbell, HandCoins, Identifi
 import Image from "next/image";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { PHOTOS } from "@/lib/photos";
-import { esportsHref } from "@/lib/links";
+import { esportsHref, gymHref } from "@/lib/links";
 import { EsportsHero } from "@/components/home/HeroShell";
 import { FeaturedEvent } from "@/components/home/EsportsHero";
 import { Finder } from "@/components/home/Finder";
@@ -144,9 +144,9 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
               <em className="not-italic text-gym-accent">Gym</em>
             </h2>
             <p className="mt-4 max-w-[46ch] text-lg text-white/80">{t("gym.body")}</p>
-            <Link href="/gym" className="mt-6 inline-flex min-h-12 items-center gap-2 bg-gym-accent px-5 font-bold text-gym">
+            <a href={gymHref()} className="mt-6 inline-flex min-h-12 items-center gap-2 bg-gym-accent px-5 font-bold text-gym">
               {t("gym.cta")} <ArrowRight size={18} aria-hidden />
-            </Link>
+            </a>
           </div>
           <HomeGym />
         </div>

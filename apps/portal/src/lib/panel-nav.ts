@@ -1,4 +1,6 @@
 import type { Icon } from "@phosphor-icons/react";
+import { BUSINESS_ROLES, type BusinessRole } from "@kriraghor/ui/desk/access";
+import { gymHref } from "./links";
 import {
   Barbell,
   CalendarCheck,
@@ -18,7 +20,6 @@ import {
   Megaphone,
   Package,
   Pulse,
-  QrCode,
   Receipt,
   ShieldWarning,
   ShoppingBag,
@@ -28,7 +29,6 @@ import {
   Star,
   Storefront,
   Tag,
-  Ticket,
   Trophy,
   UserList,
   UsersThree,
@@ -134,15 +134,20 @@ export function adminSections(me: { isMaster: boolean; permissions: readonly str
   return ADMIN_SECTIONS.map((s) => ({ ...s, items: s.items.filter(can) })).filter((s) => s.items.length);
 }
 
-export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
-export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "gym_owner", "organiser"];
+// The business roles are shared with gym.kriraghor.com/manage (@kriraghor/ui/desk).
+export { BUSINESS_ROLES, type BusinessRole };
+
+/** Gyms (owners and their staff) are managed on gym.kriraghor.com/manage, reached through /go/gym. */
+export const GYMS_HREF = gymHref("/manage");
 
 /**
  * The business sidebar. Analytics covers every business since Round B2 (venue, shop, gym and sports
  * organisations, one page with a business switcher), so it is one shared link with the business tools
  * rather than a copy in each section. Reviews cover venues, shops and gyms since Round B1 (M17 FR-34), so they sit with the shared
  * business tools for those three owners (not organisers). Since 21 Oct 2026 esports is run by
- * Kriraghor only, so the organiser section is sports events alone.
+ * Kriraghor only, so the organiser section is sports events alone. Since 25 Oct 2026 gyms are managed
+ * on gym.kriraghor.com (M24 §4.3): gym owners get a "Gyms" link there (through /go/gym) with the
+ * shared business tools instead of a gym section.
  */
 export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole })[] = [
   { key: "overview", items: [{ href: "/vendor", key: "home", icon: House, match: "exact" }] },
@@ -165,7 +170,6 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
       { href: "/vendor/settlement", key: "settlement", icon: Wallet },
     ],
   },
-  { key: "gym", role: "gym_owner", items: [{ href: "/vendor/gyms", key: "gyms", icon: Barbell }] },
   { key: "events", role: "organiser", items: [{ href: "/vendor/events", key: "sportsConsole", icon: Trophy }] },
   {
     key: "business",
@@ -176,6 +180,7 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
       { href: "/vendor/reviews", key: "vendorReviews", icon: Star, roles: ["ground_owner", "shop_owner", "gym_owner"] },
       // Round B3: venue, gym and shop owners add staff (organisers have organisation members already).
       { href: "/vendor/team", key: "team", icon: UsersThree, roles: ["ground_owner", "shop_owner", "gym_owner"] },
+      { href: GYMS_HREF, key: "gyms", icon: Barbell, roles: ["gym_owner"] },
     ],
   },
 ];
@@ -183,16 +188,11 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
 /** What /me says about a place the person works at as staff (Round B3): its type, id and permissions. */
 export type WorkplaceNav = { businessType: "venue" | "gym" | "shop"; businessId: string; permissions: readonly string[] };
 
-/** One gym desk: straight to it when only one gym grants it, else the gyms list (which lists workplaces). */
-function gymHref(workplaces: readonly WorkplaceNav[], kind: "desk" | "passes", any: string[]): string {
-  const gyms = workplaces.filter((w) => w.businessType === "gym" && w.permissions.some((p) => any.includes(p)));
-  return gyms.length === 1 ? `/vendor/gyms/${gyms[0].businessId}/${kind}` : "/vendor/gyms";
-}
-
 /**
  * Round B3: the desks a staff member may use, one section per kind of business, by the permissions
  * held at any workplace of that kind. Owner-only pages (listing, pricing, products, settlement,
- * analytics, payouts, team, disputes) never appear here; reviews only with reviews.reply.
+ * analytics, payouts, team, disputes) never appear here; reviews only with reviews.reply. Gym staff
+ * get one "Gyms" link to gym.kriraghor.com/manage, which shows only their gyms and desks there.
  */
 export function staffSections(workplaces: readonly WorkplaceNav[] | undefined): NavSection<NavEntry>[] {
   const list = workplaces ?? [];
@@ -205,13 +205,7 @@ export function staffSections(workplaces: readonly WorkplaceNav[] | undefined): 
         ...(holds("venue", "reviews.reply") ? [{ href: "/vendor/reviews", key: "vendorReviews", icon: Star }] : []),
       ],
     },
-    {
-      key: "workGym",
-      items: [
-        ...(holds("gym", "desk.admit", "desk.admissions") ? [{ href: gymHref(list, "desk", ["desk.admit", "desk.admissions"]), key: "frontDesk", icon: QrCode }] : []),
-        ...(holds("gym", "passes.view") ? [{ href: gymHref(list, "passes", ["passes.view"]), key: "gymPasses", icon: Ticket }] : []),
-      ],
-    },
+    { key: "workGym", items: holds("gym", "desk.admit", "desk.admissions", "passes.view") ? [{ href: GYMS_HREF, key: "gyms", icon: Barbell }] : [] },
     {
       key: "workShop",
       items: [

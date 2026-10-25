@@ -8,7 +8,7 @@ import { Button, EmptyState, Notice } from "@kriraghor/ui/kit";
 import { hire } from "@/lib/hire";
 import { reviews, subjectNameOf, type Review } from "@/lib/trust";
 import { ReplyDialog } from "../trust/ReplyDialog";
-import { localNumber, reviewDate, Stars } from "../trust/SubjectReviews";
+import { localNumber, reviewDate, Stars } from "@kriraghor/ui/trust";
 
 /**
  * /pro/reviews (M11-FR-06, M17-FR-34): what managers said about my hire profiles after a job was

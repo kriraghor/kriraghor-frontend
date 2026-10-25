@@ -6,8 +6,7 @@ import { Link } from "@kriraghor/ui/i18n/navigation";
 import { ShareButton } from "@kriraghor/ui/share";
 import { publicEnv } from "@kriraghor/session/env";
 import { market } from "@/lib/market";
-import { ReportButton } from "../trust/ReportButton";
-import { RatingLine, SubjectReviews } from "../trust/SubjectReviews";
+import { RatingLine, ReportButton, SubjectReviews } from "@kriraghor/ui/trust";
 import { ProductCard } from "./ProductCard";
 
 /** /shop/s/[slug]: a verified shop, its area and about text, and its products. */

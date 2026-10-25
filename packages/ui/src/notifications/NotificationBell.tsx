@@ -229,8 +229,8 @@ export function NotificationBell({ centreHref, settingsHref, here }: { centreHre
     }
     setOpen(false);
     const env = publicEnv();
-    const site = here ?? siteOfBell(centreHref, typeof window === "undefined" ? null : window.location.origin, env.ESPORTS_URL);
-    const target = resolveNotificationLink(n.link, { here: site, webUrl: env.WEB_URL, vendorUrl: env.VENDOR_URL, adminUrl: env.ADMIN_URL, esportsUrl: env.ESPORTS_URL });
+    const site = here ?? siteOfBell(centreHref, typeof window === "undefined" ? null : window.location.origin, env.ESPORTS_URL, env.GYM_URL);
+    const target = resolveNotificationLink(n.link, { here: site, webUrl: env.WEB_URL, vendorUrl: env.VENDOR_URL, adminUrl: env.ADMIN_URL, esportsUrl: env.ESPORTS_URL, gymUrl: env.GYM_URL });
     if (!target) return;
     if (target.external) window.location.assign(target.href);
     else router.push(target.href);

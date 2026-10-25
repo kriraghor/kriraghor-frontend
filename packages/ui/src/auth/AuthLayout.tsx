@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { getTranslations } from "next-intl/server";
 
-export type AuthBrand = "web" | "esports" | "vendor" | "admin";
+export type AuthBrand = "web" | "esports" | "vendor" | "admin" | "gym";
 
 /**
  * Sign-in, sign-up and reset pages: a brand panel (photo, promise, three reasons) beside the form

@@ -43,12 +43,8 @@ export function daysBetween(from: string, to: string): string[] {
   return out;
 }
 
-/** "Sat 18" / "শনি ১৮" for the day strip. */
-export function dayLabel(date: string, locale: string) {
-  const d = new Date(`${date}T12:00:00Z`);
-  const f = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "short", day: "numeric", timeZone: "UTC" });
-  return f.format(d);
-}
+/** "Sat 18" / "শনি ১৮" for the day strip, and a new Idempotency-Key per click (M06 §9): shared with the gym app. */
+export { dayLabel, newKey } from "@kriraghor/ui/format";
 
 /** "6:30 pm" / "৬:৩০ PM" for a cell or a booking time, on the Dhaka clock. */
 export function timeLabel(iso: string, locale: string) {
@@ -79,8 +75,6 @@ export function coveredIndexes(index: number | null, minutes: number): Set<numbe
 /** Statuses a member sees as "upcoming and active". */
 export const ACTIVE = new Set(["pending_payment", "confirmed", "checked_in"]);
 
-/** A new Idempotency-Key per click (M06 §9). */
-export const newKey = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
 /** Re-read the grid when the ground's availability changes (M10 FR-02, Socket.IO room ground:{id}). */
 export function useGroundLive(groundId: string | undefined, onChange: () => void) {

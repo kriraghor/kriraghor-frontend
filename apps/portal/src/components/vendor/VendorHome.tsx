@@ -12,6 +12,7 @@ import { formatTaka } from "@/lib/admin/finance";
 import { checklist, dashboards, mergeActions, type ActionRole } from "@/lib/dashboard";
 import { BUSINESS_ROLES, businessView, type BusinessRole } from "@/lib/panel-nav";
 import { gymDesk } from "@/lib/vendor/gym";
+import { gymHref } from "@/lib/links";
 import { vendor } from "@/lib/vendor/grounds";
 import { shopDesk } from "@/lib/vendor/market";
 import { shopOrders } from "@/lib/vendor/orders";
@@ -278,7 +279,7 @@ function ShopHome({ showActions }: { showActions: boolean }) {
   );
 }
 
-// ---------------- gym owner (M20)
+// ---------------- gym owner (M20): the gyms are managed on gym.kriraghor.com/manage (through /go/gym)
 
 function GymHome({ showActions }: { showActions: boolean }) {
   const t = useTranslations("vendorHome");
@@ -287,14 +288,14 @@ function GymHome({ showActions }: { showActions: boolean }) {
   const payout = usePayoutStep();
   const items = gyms.data?.items ?? [];
   const steps: Step[] = [
-    { key: "gymLive", done: items.some((g) => g.status === "live" || g.status === "paused"), href: "/vendor/gyms" },
-    { key: "packages", done: items.some((g) => g.packages.length > 0), href: items[0] ? `/vendor/gyms/${items[0].id}` : "/vendor/gyms" },
+    { key: "gymLive", done: items.some((g) => g.status === "live" || g.status === "paused"), href: gymHref("/manage") },
+    { key: "packages", done: items.some((g) => g.packages.length > 0), href: items[0] ? gymHref(`/manage/${items[0].id}/edit`) : gymHref("/manage") },
     ...(payout ? [payout] : []),
   ];
   return (
     <>
       <ActiveCard testId="gym-owner-active" title={tg("home.active")}>
-        <ButtonLink href="/vendor/gyms" icon={<Barbell size={18} aria-hidden />}>
+        <ButtonLink href={gymHref("/manage")} icon={<Barbell size={18} aria-hidden />}>
           {tg("home.open")}
         </ButtonLink>
       </ActiveCard>
@@ -306,7 +307,7 @@ function GymHome({ showActions }: { showActions: boolean }) {
         {gyms.isPending ? (
           <Skeleton className="mt-2 h-20 rounded-card" />
         ) : !items.length ? (
-          <EmptyState className="mt-2" icon={<Barbell aria-hidden />} title={tg("empty")} action={<ButtonLink href="/vendor/gyms">{tg("add")}</ButtonLink>} />
+          <EmptyState className="mt-2" icon={<Barbell aria-hidden />} title={tg("empty")} action={<ButtonLink href={gymHref("/manage")}>{tg("add")}</ButtonLink>} />
         ) : (
           <ul className="mt-2 flex flex-col gap-2">
             {items.slice(0, 6).map((g) => (
@@ -316,10 +317,10 @@ function GymHome({ showActions }: { showActions: boolean }) {
                     <span className="block truncate font-semibold">{g.name}</span>
                     <Badge tone={g.status === "live" ? "brand" : g.status === "changes_requested" ? "warning" : "neutral"}>{tg(`status.${g.status}`)}</Badge>
                   </span>
-                  <ButtonLink href={`/vendor/gyms/${g.id}/desk`} size="sm" icon={<QrCode size={16} aria-hidden />}>
+                  <ButtonLink href={gymHref(`/manage/${g.id}/desk`)} size="sm" icon={<QrCode size={16} aria-hidden />}>
                     {tg("desk.open")}
                   </ButtonLink>
-                  <ButtonLink href={`/vendor/gyms/${g.id}/passes`} size="sm" variant="secondary" icon={<Ticket size={16} aria-hidden />}>
+                  <ButtonLink href={gymHref(`/manage/${g.id}/passes`)} size="sm" variant="secondary" icon={<Ticket size={16} aria-hidden />}>
                     {tg("sold.open")}
                   </ButtonLink>
                 </Card>

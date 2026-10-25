@@ -1,10 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ReportButton } from "./ReportButton";
-import { SubjectReviews } from "./SubjectReviews";
+import { ReportButton, SubjectReviews } from "@kriraghor/ui/trust";
 
-export { Stars } from "./SubjectReviews";
+export { Stars } from "@kriraghor/ui/trust";
 
 /**
  * Reviews on /venues/[slug] (M17 FR-23): the shared reviews block for a venue, plus "Report this

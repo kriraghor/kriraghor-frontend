@@ -1,4 +1,5 @@
 import type { Tone } from "@kriraghor/ui/kit";
+import { KIT_TONE, type StatusTone } from "@kriraghor/ui/desk/access";
 
 /**
  * Status colours for every desk, in one place (they were 20 local maps). A status can mean
@@ -7,7 +8,8 @@ import type { Tone } from "@kriraghor/ui/kit";
  * falls back to the shared money statuses, then to neutral. Colour is never the only signal: the
  * badge always carries the status text.
  */
-export type StatusTone = "ok" | "warn" | "bad" | "muted";
+// The colour names and their kit tones are shared with gym.kriraghor.com (@kriraghor/ui/desk).
+export { KIT_TONE, type StatusTone };
 
 const BASE: Record<string, StatusTone> = {
   succeeded: "ok",
@@ -66,6 +68,4 @@ export function toneOf(status: string | null | undefined, domain: StatusDomain =
   return (DOMAINS[domain] as Record<string, StatusTone>)[status] ?? BASE[status] ?? "muted";
 }
 
-/** The kit Badge tone for a desk status. */
-export const KIT_TONE: Record<StatusTone, Tone> = { ok: "brand", warn: "warning", bad: "danger", muted: "neutral" };
 export const badgeTone = (status: string | null | undefined, domain?: StatusDomain): Tone => KIT_TONE[toneOf(status, domain)];

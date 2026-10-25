@@ -1,6 +1,7 @@
 import { api } from "@kriraghor/api-client";
 import type { components } from "@kriraghor/api-client/schema";
 import { asOfRole, BUSINESS_ROLES, type BusinessRole } from "./kyc";
+import { gymHref, isExternal } from "./links";
 
 /**
  * The member's account settings and roles on kriraghor.com (M01 profile, sign-in methods and
@@ -169,15 +170,23 @@ export async function listWorkplaces(): Promise<Workplace[]> {
 }
 
 /**
- * The vendor.kriraghor.com page a workplace opens on (its first desk by the permissions held), or the
- * vendor home when none of its desks is open to the member. Relative to the vendor site.
+ * The page a workplace opens on (its first desk by the permissions held): venue and shop desks on
+ * vendor.kriraghor.com (a path relative to that site, or the vendor home when none of its desks is
+ * open to the member), a gym's on gym.kriraghor.com/manage (through /go/gym, since 25 Oct 2026).
  */
 export function workplaceDesk(w: Pick<Workplace, "businessType" | "businessId" | "permissions">): string {
   const has = (p: string) => w.permissions.includes(p);
   if (w.businessType === "venue" && has("bookings.view")) return "/vendor/bookings?groundId=" + w.businessId;
-  if (w.businessType === "gym" && (has("desk.admit") || has("desk.admissions"))) return "/vendor/gyms/" + w.businessId + "/desk";
-  if (w.businessType === "gym" && has("passes.view")) return "/vendor/gyms/" + w.businessId + "/passes";
+  if (w.businessType === "gym" && (has("desk.admit") || has("desk.admissions"))) return gymHref("/manage/" + w.businessId + "/desk");
+  if (w.businessType === "gym" && has("passes.view")) return gymHref("/manage/" + w.businessId + "/passes");
+  if (w.businessType === "gym") return gymHref("/manage");
   if (w.businessType === "shop" && has("orders.view")) return "/vendor/orders?shopId=" + w.businessId;
   if (w.businessType === "shop" && has("stock.view")) return "/vendor/inventory?shopId=" + w.businessId;
   return "/vendor";
 }
+
+/** The workplace's link: a gym's /go/gym link as it is, a vendor path on the vendor site. */
+export const workplaceHref = (w: Pick<Workplace, "businessType" | "businessId" | "permissions">, vendorUrl: string) => {
+  const desk = workplaceDesk(w);
+  return isExternal(desk) ? desk : vendorUrl + desk;
+};

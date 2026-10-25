@@ -181,8 +181,8 @@ describe("workplaces", () => {
       { key: "reviews", href: "/vendor/reviews?type=ground&place=g1" },
     ]);
     expect(workplaceDesks({ businessType: "venue", businessId: "g1", permissions: [] })).toEqual([]);
-    expect(workplaceDesks({ businessType: "gym", businessId: "y1", permissions: ["desk.admissions"] })).toEqual([{ key: "frontDesk", href: "/vendor/gyms/y1/desk" }]);
-    expect(workplaceDesks({ businessType: "gym", businessId: "y1", permissions: ["passes.view"] })).toEqual([{ key: "passes", href: "/vendor/gyms/y1/passes" }]);
+    expect(workplaceDesks({ businessType: "gym", businessId: "y1", permissions: ["desk.admissions"] })).toEqual([{ key: "frontDesk", href: "/go/gym/manage/y1/desk" }]);
+    expect(workplaceDesks({ businessType: "gym", businessId: "y1", permissions: ["passes.view"] })).toEqual([{ key: "passes", href: "/go/gym/manage/y1/passes" }]);
     expect(workplaceDesks({ businessType: "shop", businessId: "s1", permissions: ["orders.view", "stock.view"] })).toEqual([
       { key: "orders", href: "/vendor/orders?shopId=s1" },
       { key: "inventory", href: "/vendor/inventory?shopId=s1" },

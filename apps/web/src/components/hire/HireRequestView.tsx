@@ -8,7 +8,7 @@ import { useAuth } from "@kriraghor/ui/auth";
 import { hire, minutesLeft, requestTone, TONE, type RequestResult } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { RateSourceButtons } from "../trust/RateDialog";
+import { RateSourceButtons } from "@kriraghor/ui/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { JobCard } from "./JobCard";
 import { Thread } from "./Thread";

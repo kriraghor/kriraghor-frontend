@@ -17,7 +17,7 @@ import { Avatar } from "./kit/Display";
 import { cn } from "./cn";
 
 export type HeaderConfig = {
-  titleKey: "web" | "esports" | "admin" | "vendor";
+  titleKey: "web" | "esports" | "admin" | "vendor" | "gym";
   homeHref: string;
   signInHref: string;
   meHref: string;

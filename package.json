@@ -1,7 +1,7 @@
 {
   "name": "kriraghor-frontend",
   "private": true,
-  "description": "Kriraghor web apps (web, esports, portal) and their shared packages. npm workspaces; install once at the root.",
+  "description": "Kriraghor web apps (web, esports, portal, gym) and their shared packages. npm workspaces; install once at the root.",
   "workspaces": [
     "apps/*",
     "packages/*"

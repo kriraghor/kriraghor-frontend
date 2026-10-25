@@ -9,7 +9,7 @@ import { publicEnv } from "@kriraghor/session/env";
 import { problemOf } from "@kriraghor/api-client";
 import { axisChoices, market, pickedVariant } from "@/lib/market";
 import { formatTaka } from "@/lib/payments";
-import { ReportButton } from "../trust/ReportButton";
+import { ReportButton } from "@kriraghor/ui/trust";
 import { SaveButton } from "./SaveButton";
 import { AddToCart } from "../orders/AddToCart";
 

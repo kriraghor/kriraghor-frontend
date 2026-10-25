@@ -10,7 +10,7 @@ import { newKey } from "@/lib/bookings";
 import { orders, STEPS, stepIndex, statusTone, type OrderResult, type SubOrder } from "@/lib/orders";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
-import { RateSourceButtons } from "../trust/RateDialog";
+import { RateSourceButtons } from "@kriraghor/ui/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { TONE } from "./MyOrders";
 

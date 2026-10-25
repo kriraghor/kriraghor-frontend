@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { PHOTOS } from "@/lib/photos";
 import { ButtonLink, Skeleton, SkeletonList } from "@kriraghor/ui/kit";
+import { gymHref } from "@/lib/links";
 import { FlipTicker } from "@kriraghor/ui/motion";
 import { api } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/payments";
@@ -166,7 +167,7 @@ export function HomeGym() {
       className="[&_li]:border-0"
       render={(g) => (
         <div className="py-1.5">
-          <Link href={`/gym/gyms/${g.slug}`} className="glass-band flex min-h-[84px] items-center gap-4 rounded-[18px] p-4 no-underline transition-colors hover:border-gym-accent" data-testid="home-gym">
+          <a href={gymHref(`/gyms/${encodeURIComponent(g.slug)}`)} className="glass-band flex min-h-[84px] items-center gap-4 rounded-[18px] p-4 no-underline transition-colors hover:border-gym-accent" data-testid="home-gym">
             <span className="min-w-0 flex-1">
               <b className="block truncate text-lg">{g.name}</b>
               <span className="block text-sm text-white/70">
@@ -178,7 +179,7 @@ export function HomeGym() {
               {g.dayPrice != null ? <span className="block">{t("day", { price: money(g.dayPrice) })}</span> : null}
               {g.monthPrice != null ? <span className="block text-white/70">{t("month", { price: money(g.monthPrice) })}</span> : null}
             </span>
-          </Link>
+          </a>
         </div>
       )}
     />

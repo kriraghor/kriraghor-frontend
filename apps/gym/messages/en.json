@@ -1,0 +1,576 @@
+{
+  "app": {
+    "web": "Kriraghor",
+    "esports": "Kriraghor Esports",
+    "gym": "Kriraghor Gym",
+    "admin": "Kriraghor Admin",
+    "vendor": "Kriraghor for Business"
+  },
+  "nav": {
+    "home": "Home",
+    "signIn": "Sign in",
+    "me": "My account",
+    "signOut": "Sign out",
+    "gyms": "Gyms",
+    "trainers": "Trainers",
+    "myPasses": "My passes",
+    "language": "বাংলা",
+    "skip": "Skip to content",
+    "homeLabel": "Kriraghor Gym home",
+    "main": "Main",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "quick": "Quick links"
+  },
+  "errors": {
+    "generic": "Something went wrong. Try again.",
+    "network": "Can't reach Kriraghor. Check your connection."
+  },
+  "notifications": {
+    "bell": "Updates",
+    "bellUnread": "Updates, {count} unread",
+    "title": "Updates",
+    "all": "All",
+    "unread": "Unread",
+    "unreadLabel": "unread",
+    "loading": "Loading updates",
+    "error": "Couldn't load updates.",
+    "retry": "Retry",
+    "empty": "No updates yet.",
+    "markAllRead": "Mark all read",
+    "seeAll": "See all",
+    "settings": "Settings",
+    "category": "Category",
+    "allCategories": "All categories",
+    "unreadOnly": "Unread only",
+    "more": "Load more",
+    "signedOut": "Sign in to see your updates.",
+    "signIn": "Sign in",
+    "categories": {
+      "security": "Account & security",
+      "money": "Money",
+      "bookings": "Bookings",
+      "hire": "Hire",
+      "orders": "Orders",
+      "offers": "Offers",
+      "tournaments": "Events",
+      "moderation": "Reviews & approvals",
+      "disputes_reports": "Disputes & reports",
+      "reviews": "Reviews",
+      "staff_ops": "Staff operations"
+    },
+    "prefs": {
+      "title": "Notification settings",
+      "intro": "Choose how we reach you for each kind of update.",
+      "category": "Kind of update",
+      "channels": {
+        "in_app": "In-app",
+        "sms": "SMS",
+        "email": "Email"
+      },
+      "locked": "Required for your security and payments",
+      "notOffered": "Not used for this kind of update",
+      "quietHours": "Quiet hours ({start}–{end})",
+      "quietHoursHelp": "Non-urgent texts and emails wait until morning.",
+      "language": "Message language",
+      "languageHelp": "Change it in your account settings.",
+      "saved": "Saved.",
+      "save": "Save"
+    },
+    "sound": {
+      "label": "Play a sound for new notifications",
+      "help": "Saved on this browser only."
+    },
+    "newOne": "New notification: {title}",
+    "newGeneric": "You have a new notification."
+  },
+  "footer": {
+    "homeLabel": "Kriraghor Gym home",
+    "brand": "Kriraghor Gym",
+    "tagline": "Passes from verified gyms, monthly plans with trainers, and the tools to run your own gym.",
+    "train": "Train",
+    "gyms": "Gyms",
+    "trainers": "Trainers",
+    "myPasses": "My passes",
+    "myPlans": "My trainer plans",
+    "business": "Run a gym",
+    "start": "Start free",
+    "manage": "Manage my gym",
+    "help": "Help",
+    "gear": "Gym gear in the shop",
+    "helpCentre": "Help centre",
+    "refunds": "Refund policy",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "kriraghor": "Kriraghor.com",
+    "legal": "© 2026 Kriraghor, Dhaka."
+  },
+  "landing": {
+    "kicker": "For gym owners in Bangladesh",
+    "title": "Run your gym <em>without the paperwork</em>",
+    "lead": "Members, monthly fees, attendance, reminders, staff and workout plans in one place, on your phone. Members find you, buy passes online and show a QR code at the front desk.",
+    "startFree": "Start free",
+    "findGym": "Find a gym",
+    "findTrainer": "Find a trainer",
+    "featuresTitle": "Everything a gym runs on",
+    "featuresLead": "Built with gym owners in Dhaka: simple enough for the front desk, clear enough for the owner.",
+    "features": {
+      "members": {
+        "title": "Members",
+        "body": "Every member with their package, start date and phone, searchable in seconds."
+      },
+      "fees": {
+        "title": "Monthly fees",
+        "body": "See who has paid and who is due. Online payments go through Kriraghor and reach you as payouts."
+      },
+      "attendance": {
+        "title": "Attendance",
+        "body": "Admit members at the front desk by QR code or a 6-character code, and see the day's visits."
+      },
+      "reminders": {
+        "title": "Reminders",
+        "body": "Members get a reminder before their package ends, so renewals don't slip."
+      },
+      "staff": {
+        "title": "Staff",
+        "body": "Give your front desk staff only the desks they need: admissions, passes sold, nothing else."
+      },
+      "plans": {
+        "title": "Workout plans",
+        "body": "Trainers sell monthly plans; members follow them and pay each month on Kriraghor."
+      }
+    },
+    "pricing": {
+      "title": "Pricing",
+      "earlyAccess": "Free during early access",
+      "earlyAccessBody": "Set up your gym and use every tool at no cost while we build the system with the first gyms. Kriraghor's fee on online pass sales still applies.",
+      "cta": "Start free",
+      "perMonth": "{price} / month",
+      "free": "Free",
+      "tiers": {}
+    },
+    "membersTitle": "Looking for a gym?",
+    "membersLead": "Browse verified gyms by area, see women-only hours, and buy a day, monthly or quarterly pass online."
+  },
+  "start": {
+    "kicker": "Start free",
+    "title": "Set up your gym on Kriraghor",
+    "lead": "One Kriraghor account works everywhere. Apply as a gym owner, send your documents, then create your gym and open the front desk.",
+    "comingSoon": "Coming soon",
+    "public": {
+      "title": "A gym members can find",
+      "body": "A public gym page with photos, hours and passes members buy online."
+    },
+    "private": {
+      "title": "Private gym",
+      "body": "Manage your members, fees and attendance without a public listing. Coming soon."
+    },
+    "signIn": {
+      "body": "Sign in or create your account first. You'll come straight back here.",
+      "cta": "Sign in to start"
+    },
+    "apply": {
+      "body": "Apply for the gym owner role. Next, send your documents for review on kriraghor.com.",
+      "cta": "Apply as a gym owner"
+    },
+    "documents": {
+      "applied": "You've applied as a gym owner.",
+      "body": "Send your documents for review on kriraghor.com. We'll tell you when the role is active.",
+      "cta": "Send documents"
+    },
+    "review": {
+      "body": "Your documents are with our team. We'll tell you as soon as your gym owner role is active."
+    },
+    "suspended": {
+      "body": "Your gym owner role is suspended. Contact Kriraghor support from the help centre on kriraghor.com."
+    },
+    "create": {
+      "title": "Create your gym",
+      "toManage": "Manage my gyms"
+    }
+  },
+  "manage": {
+    "menu": "Gym menu",
+    "gym": "Gym",
+    "business": "Business panel",
+    "nav": {
+      "gyms": "My gyms",
+      "edit": "Gym page",
+      "desk": "Front desk",
+      "passes": "Passes sold",
+      "team": "Team",
+      "reviews": "Reviews",
+      "payouts": "Payouts",
+      "analytics": "Analytics"
+    }
+  },
+  "gym": {
+    "kicker": "Gym",
+    "title": "Train with <em>verified</em> coaches",
+    "lead": "Day passes and monthly memberships at checked gyms, monthly plans with fitness trainers, and gear for your training. Pay online; the gym or trainer is paid once you have trained.",
+    "bookTrainer": "Book a trainer",
+    "myPasses": "My passes",
+    "sections": "Gym sections",
+    "tab": {
+      "trainers": "Trainers",
+      "gyms": "Gyms",
+      "gear": "Gear"
+    },
+    "area": "Area",
+    "anyArea": "Any area",
+    "sortBy": "Sort by",
+    "sort": {
+      "price": "Lowest price",
+      "rating": "Best rated",
+      "newest": "Newest"
+    },
+    "error": "Couldn't load this. Try again.",
+    "noGyms": "No gyms here yet. Try another area.",
+    "noTrainers": "No fitness trainers are listed yet.",
+    "noGear": "No gym gear is listed yet.",
+    "allGear": "See all gym gear in the shop",
+    "verifiedCoach": "Verified coach",
+    "years": "{n, plural, one {# year} other {# years}}",
+    "planFrom": "From {price} a month",
+    "sessionFrom": "From {price} a session",
+    "openNow": "Open now",
+    "closedNow": "Closed now",
+    "womenOnly": "Women-only hours",
+    "dayPass": "Day pass",
+    "monthly": "Monthly",
+    "notFound": "This gym is not listed.",
+    "back": "Back to gyms",
+    "photoOf": "Photo {n} of {name}",
+    "days": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "facilities": "Facilities",
+    "hours": "Opening hours",
+    "closed": "Closed",
+    "packages": "Passes",
+    "kind": {
+      "day": "Day pass",
+      "month": "Month pass",
+      "quarter": "3-month pass"
+    },
+    "oneVisit": "One visit on the day you choose",
+    "forDays": "Unlimited visits for {n} days, one a day",
+    "refundRule": "A day pass can be cancelled for a full refund until the day starts; an unused day pass is not refunded. A month or 3-month pass can be cancelled for a full refund until you first use it.",
+    "notSelling": "This gym is not selling passes right now.",
+    "buyTitle": "Buy a pass",
+    "signInToBuy": "Sign in to buy a pass. You need a verified phone number.",
+    "signIn": "Sign in",
+    "pickPackage": "Pass",
+    "pickDay": "Day",
+    "pickStart": "Starts on",
+    "today": "Today",
+    "noOpenDays": "The gym is not open in the coming days.",
+    "validUntil": "Valid until {date}",
+    "total": "Total",
+    "dayRefund": "Full refund if you cancel before the day starts.",
+    "periodRefund": "Full refund if you cancel before your first visit.",
+    "verifyPhone": "Verify your phone",
+    "payNow": "Pay {price}",
+    "findGym": "Find a gym",
+    "group": {
+      "active": "Active",
+      "used": "Used",
+      "expired": "Ended"
+    },
+    "noPasses": {
+      "active": "You have no active passes.",
+      "used": "No used passes yet.",
+      "expired": "No ended passes."
+    },
+    "passStatus": {
+      "pending_payment": "Waiting for payment",
+      "active": "Active",
+      "redeemed": "Used",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded",
+      "void": "Not paid"
+    },
+    "passNotFound": "This pass was not found.",
+    "qrOf": "QR code of pass {code}",
+    "showAtDesk": "Show at the front desk",
+    "close": "Close",
+    "backupCode": "Backup code (if the desk cannot scan)",
+    "deskHint": "The desk scans the QR or types the code. Turn your screen brightness up.",
+    "awaitingPayment": "This pass is waiting for payment.",
+    "validDates": "Valid",
+    "paid": "Paid",
+    "lastUsed": "Last used",
+    "refunded": "Refunded",
+    "cancelPass": "Cancel this pass",
+    "cancelConfirm": "Cancel the pass and get {price} back?",
+    "cancelYes": "Yes, cancel",
+    "keepPass": "Keep the pass",
+    "plansTitle": "Monthly plans",
+    "perMonth": "{price} a month",
+    "sessions": "{n, plural, one {# session} other {# sessions}} a month",
+    "sessionsAgreed": "Sessions as agreed",
+    "where": {
+      "gym": "At a gym",
+      "home": "At your home",
+      "online": "Online"
+    },
+    "signInToSubscribe": "Sign in to subscribe",
+    "startOn": "Start on",
+    "subscribeRule": "You pay one month at a time. The trainer is paid at the end of the month. Cancel in the first {n, plural, one {day} other {# days}} of a month for a full refund.",
+    "subscribeFor": "Subscribe for {price}",
+    "mySubscriptions": "My trainer subscriptions",
+    "findTrainer": "Find a trainer",
+    "noSubscriptions": "You have no trainer subscriptions.",
+    "phase": {
+      "pending_payment": "Waiting for payment",
+      "active": "Active",
+      "renewal_due": "Renewal due",
+      "grace": "Payment overdue",
+      "lapsed": "Lapsed",
+      "cancelled": "Cancelled",
+      "ended": "Ended",
+      "void": "Not paid"
+    },
+    "thisMonth": "This month: {from} – {to}",
+    "paidThrough": "Paid until {date}",
+    "endsAtMonthEnd": "Ends at the month end",
+    "payBy": "Pay {price} by {when}",
+    "payMonth": "Pay next month ({price})",
+    "cancelSubscription": "Cancel",
+    "reportProblem": "Report a problem",
+    "inDispute": "Under review",
+    "cancelRefund": "Cancel and get {price} back?",
+    "cancelAtEnd": "Cancel? The subscription runs to the end of this month and is not renewed.",
+    "keepSubscription": "Keep it",
+    "problemLabel": "What went wrong?",
+    "problemHint": "The trainer is not paid for this month while staff review it.",
+    "sendProblem": "Send",
+    "err": {
+      "DATE_OUT_OF_RANGE": "Choose one of the dates offered.",
+      "GYM_CLOSED_ON_DATE": "The gym is closed on that day. Choose another day.",
+      "PASS_CAPACITY_FULL": "The gym has sold every pass for that day. Choose another day.",
+      "GYM_NOT_AVAILABLE": "This gym is not selling passes right now.",
+      "PACKAGE_UNKNOWN": "This pass is no longer sold. Reload the page.",
+      "PASS_NOT_REFUNDABLE": "This pass can no longer be cancelled.",
+      "PLAN_NOT_AVAILABLE": "This plan is not open for new members.",
+      "OWN_PLAN": "You cannot subscribe to your own plan.",
+      "ALREADY_SUBSCRIBED": "You already have this plan. See My trainer subscriptions.",
+      "SUBSCRIPTION_STATE": "This cannot be done now. Reload the page.",
+      "RENEWAL_NOT_OPEN": "Renewal opens closer to the end of the month."
+    },
+    "planStatus": {
+      "active": "Open",
+      "retired": "Closed"
+    },
+    "desk": {
+      "trainerOnly": "Monthly plans are for fitness trainers. Create a fitness trainer profile first.",
+      "plans": "My monthly plans",
+      "noPlans": "No plans yet.",
+      "retire": "Close to new members",
+      "profileNotLive": "Your fitness trainer profile must be live before you add plans.",
+      "subscribers": "Subscribers",
+      "noSubscribers": "No subscribers yet.",
+      "newPlan": "New monthly plan",
+      "profile": "Profile",
+      "planTitle": "Plan name",
+      "planDescription": "What is included (optional)",
+      "planPrice": "Price a month (৳)",
+      "planPriceHint": "The Kriraghor fee is taken when you are paid at the month end.",
+      "planSessions": "Sessions a month",
+      "planSessionsHint": "Leave empty for \"as agreed\".",
+      "planWhere": "Where you train",
+      "planGym": "Gym",
+      "planArea": "Area you cover",
+      "savePlan": "Add the plan"
+    },
+    "gearTitle": "Gym gear",
+    "gearLead": "Dumbbells, supplements and gym wear from verified shops, in the Kriraghor shop."
+  },
+  "vendorGym": {
+    "gate": "Gyms are for approved gym owners. Apply as a gym owner first.",
+    "gateLink": "Apply as a gym owner",
+    "title": "My gyms",
+    "lead": "List your gym, set the week and the passes, and admit members at the front desk. Members pay online; you are paid when they use the pass.",
+    "add": "Add a gym",
+    "empty": "No gyms yet.",
+    "noPhoto": "No photo",
+    "status": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes requested",
+      "live": "Live",
+      "paused": "Paused",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn",
+      "suspended": "Suspended",
+      "removed": "Removed"
+    },
+    "edit": {
+      "draft": "Edit not sent",
+      "pending_review": "Edit in review",
+      "changes_requested": "Edit needs changes",
+      "rejected": "Edit rejected"
+    },
+    "dayFrom": "Day pass {price}",
+    "noPackages": "No passes yet",
+    "form": {
+      "name": "Gym name",
+      "area": "Area",
+      "chooseArea": "Choose an area",
+      "address": "Address",
+      "create": "Create the draft",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "about": "About the gym",
+      "capacity": "Day passes a day (most)",
+      "noLimit": "No limit",
+      "facilities": "Facilities"
+    },
+    "cancel": "Cancel",
+    "failed": "Couldn't do that. Try again.",
+    "loadFailed": "Couldn't load this gym.",
+    "reviewNote": "Staff asked for changes: {reason}",
+    "editNote": "Your changes are not public yet. Send them for review when you are done.",
+    "submit": "Send for review",
+    "submitEdit": "Send the changes for review",
+    "sent": "Sent. Staff usually answer within a day.",
+    "pause": "Pause sales",
+    "paused": "Sales paused. Passes already sold still work.",
+    "resume": "Resume sales",
+    "resumed": "Selling again.",
+    "viewPublic": "See the public page",
+    "basics": "Basics",
+    "saved": "Saved.",
+    "save": "Save",
+    "photos": "Photos",
+    "photosHelp": "{n} photos. At least {min}, at most {max}. The first is the cover.",
+    "cover": "Cover",
+    "photoN": "Photo {n}",
+    "moveLeft": "Move left",
+    "moveRight": "Move right",
+    "remove": "Remove",
+    "addPhotos": "Add photos (JPEG, PNG or WebP)",
+    "days": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "hours": "Opening hours",
+    "hoursHelp": "Up to four windows a day. Mark a window women-only; a day without windows is closed.",
+    "hoursSaved": "Hours saved.",
+    "closed": "Closed",
+    "addWindow": "Add a window",
+    "copyToAll": "Copy to every day",
+    "opens": "Opens",
+    "closes": "Closes",
+    "womenOnly": "Women only",
+    "hoursProblem": {
+      "order": "Closes before it opens",
+      "overlap": "Overlaps the window before"
+    },
+    "saveHours": "Save the hours",
+    "kind": {
+      "day": "Day pass",
+      "month": "Month pass",
+      "quarter": "3-month pass"
+    },
+    "packages": "Passes",
+    "packagesHelp": "A day pass is required ({min} to {max}). Month and 3-month passes are optional.",
+    "packageTitle": "Name",
+    "packagePrice": "Price (৳)",
+    "packageProblem": {
+      "day_required": "Add a day pass.",
+      "bad_price": "Enter a whole taka price for each pass.",
+      "bad_title": "Give each pass a name."
+    },
+    "packagesSaved": "Passes saved.",
+    "savePackages": "Save the passes",
+    "desk": {
+      "open": "Front desk",
+      "title": "Front desk",
+      "lead": "Scan the member's QR code or type the 6-character code. One admission a day per pass.",
+      "codeLabel": "Backup code",
+      "admit": "Admit",
+      "scan": "Scan with the camera",
+      "stopCamera": "Stop the camera",
+      "noCamera": "This browser cannot read QR codes. Type the backup code instead.",
+      "cameraDenied": "The camera is blocked. Allow it in the browser, or type the code.",
+      "admitted": "Admitted",
+      "member": "Member",
+      "at": "At {time}",
+      "refused": "Not admitted",
+      "usedAt": "Already used at {time}",
+      "validOn": "Valid {from} – {to}, not today",
+      "err": {
+        "PASS_WRONG_GYM": "This pass is for another gym.",
+        "PASS_NOT_ACTIVE": "This pass cannot be used (not paid, cancelled or ended).",
+        "GYM_CLOSED_NOW": "The gym is closed now (or this is a women-only window).",
+        "INVALID_PASS_TOKEN": "Not a Kriraghor pass. Check the code.",
+        "PASS_ALREADY_REDEEMED": "Already used today.",
+        "PASS_NOT_VALID_TODAY": "Not valid today.",
+        "NOT_OWNER": "This gym belongs to another owner."
+      },
+      "waiting": "Scan a pass or type a code.",
+      "today": "Today's admissions ({n})",
+      "noneToday": "No one yet today.",
+      "method": {
+        "qr": "QR",
+        "code": "Code"
+      },
+      "onDay": "Admissions on {date} ({n})",
+      "noneOnDay": "No one came in on this day.",
+      "prevDay": "Previous day",
+      "nextDay": "Next day",
+      "date": "Pick a date",
+      "todayButton": "Today"
+    },
+    "sold": {
+      "open": "Passes sold",
+      "title": "Passes sold",
+      "lead": "What each pass paid, the Kriraghor fee and what you receive. A day pass is paid out when it is used or its day ends; a month pass at its first visit.",
+      "all": "All",
+      "empty": "No passes sold yet.",
+      "pass": "Pass",
+      "member": "Member",
+      "valid": "Valid",
+      "price": "Price",
+      "fee": "Fee",
+      "net": "You receive",
+      "status": "Status",
+      "paidOut": "Paid out {amount}",
+      "refunded": "Refunded {amount}",
+      "held": "Held until use",
+      "leadStaff": "Passes sold at this gym, with the member and dates. Money stays with the owner."
+    },
+    "passStatus": {
+      "pending_payment": "Waiting for payment",
+      "active": "Active",
+      "redeemed": "Used",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded",
+      "void": "Not paid"
+    },
+    "home": {
+      "active": "You are an approved gym owner.",
+      "open": "Open my gyms",
+      "applied": "Gym owner application: {status}",
+      "sell": "Run a gym? Sell day passes and memberships on Kriraghor.",
+      "continue": "Continue the application",
+      "start": "Apply as a gym owner"
+    },
+    "staffTitle": "Gyms you work at",
+    "staffLead": "Open the front desk to admit members, or see the passes sold, as the owner allows."
+  }
+}

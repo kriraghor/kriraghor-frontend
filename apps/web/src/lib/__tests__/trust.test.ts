@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import en from "../../../messages/en.json";
-import bn from "../../../messages/bn.json";
+import { withSharedMessages } from "@kriraghor/ui/i18n/messages";
+import enWeb from "../../../messages/en.json";
+import bnWeb from "../../../messages/bn.json";
 import {
   ACTIVE_CASE,
   REPORT_REASONS,
@@ -16,6 +17,10 @@ import {
   subjectHref,
   subjectNameOf,
 } from "../trust";
+
+// The reviews, rating and report texts are shared with gym.kriraghor.com (packages/ui messages), merged as each app does.
+const en = withSharedMessages("en", enWeb);
+const bn = withSharedMessages("bn", bnWeb);
 
 const file = (type: string) => new File(["x"], "f", { type });
 
@@ -70,7 +75,7 @@ describe("reviews for venues, pros, shops and gyms (M17 FR-30 to FR-35, Round B1
     expect(subjectHref("ground", "dhanmondi-turf")).toBe("/venues/dhanmondi-turf");
     expect(subjectHref("hire_profile", "rafi-coach")).toBe("/hiring/rafi-coach");
     expect(subjectHref("shop", "gear hub")).toBe("/shop/s/gear%20hub");
-    expect(subjectHref("gym", "iron-house")).toBe("/gym/gyms/iron-house");
+    expect(subjectHref("gym", "iron-house")).toBe("/go/gym/gyms/iron-house");
     expect(subjectHref("gym", null)).toBeNull();
   });
 
@@ -81,7 +86,7 @@ describe("reviews for venues, pros, shops and gyms (M17 FR-30 to FR-35, Round B1
     expect(sourceHref({ sourceType: "hire_job", sourceId: "j", ref: "HR-4K9P-2" })).toBe("/me/hire/HR-4K9P");
     expect(sourceHref({ sourceType: "sub_order", sourceId: "s", ref: "KG-88AB-B" })).toBe("/me/orders/KG-88AB");
     expect(sourceHref({ sourceType: "sub_order", sourceId: "s", ref: "PLAIN" })).toBe("/me/orders/PLAIN");
-    expect(sourceHref({ sourceType: "gym_pass", sourceId: "p", ref: "GP-31XZ" })).toBe("/me/passes/GP-31XZ");
+    expect(sourceHref({ sourceType: "gym_pass", sourceId: "p", ref: "GP-31XZ" })).toBe("/go/gym/me/passes/GP-31XZ");
   });
 
   it("names the subject from subjectName, then the v1 groundName, else nothing", () => {

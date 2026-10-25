@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { esportsHref } from "@/lib/links";
+import { esportsHref, gymHref } from "@/lib/links";
 
 type Col = { title: string; links: { href: string; label: string }[] };
 
@@ -27,7 +27,7 @@ export async function SiteFooter() {
         { href: "/venues", label: t("grounds") },
         { href: "/shop", label: t("shop") },
         { href: "/hiring", label: t("hire") },
-        { href: "/gym", label: t("gym") },
+        { href: gymHref(), label: t("gym") },
         { href: "/events", label: t("sportsTournaments") },
       ],
     },
