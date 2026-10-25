@@ -2,7 +2,7 @@
   "name": "@kriraghor/ui",
   "version": "0.1.0",
   "private": true,
-  "description": "Shared React UI for the Kriraghor web apps: the component kit (kit/), the desk layout (AppShell), fonts, the auth provider, notifications, charts, sign-in, the header, next-intl navigation and the glass stylesheet. Tokens come from @kriraghor/tokens.",
+  "description": "Shared React UI for the Kriraghor web apps: the component kit (kit/), the desk layout (AppShell), fonts, the auth provider, notifications, charts, sign-in, the header, the page header, reviews (trust), the business desk helpers (desk), shared formatting, next-intl navigation and the glass stylesheet. Tokens come from @kriraghor/tokens.",
   "exports": {
     "./primitives": "./src/primitives.tsx",
     "./auth": "./src/auth.tsx",
@@ -39,7 +39,14 @@
     "./payouts/client": "./src/payouts/client.ts",
     "./share": "./src/share/ShareButton.tsx",
     "./share/links": "./src/share/links.ts",
-    "./share/og": "./src/share/og.tsx"
+    "./share/og": "./src/share/og.tsx",
+    "./format": "./src/format.ts",
+    "./page-header": "./src/PageHeader.tsx",
+    "./trust": "./src/trust/index.ts",
+    "./trust/reviews": "./src/trust/reviews.ts",
+    "./desk": "./src/desk/index.ts",
+    "./desk/access": "./src/desk/access.ts",
+    "./url-filters": "./src/url-filters.ts"
   },
   "scripts": {
     "lint": "eslint .",

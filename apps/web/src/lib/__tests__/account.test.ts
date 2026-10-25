@@ -14,6 +14,7 @@ import {
   sortSessions,
   sortSubmissions,
   workplaceDesk,
+  workplaceHref,
   type MySubmission,
   type SessionItem,
 } from "../account";
@@ -143,8 +144,12 @@ describe("where I work as staff (Round B3)", () => {
   it("opens each workplace on its first desk the permissions allow, else the vendor home", () => {
     expect(workplaceDesk({ businessType: "venue", businessId: "g1", permissions: ["bookings.view", "bookings.check_in"] })).toBe("/vendor/bookings?groundId=g1");
     expect(workplaceDesk({ businessType: "venue", businessId: "g1", permissions: ["reviews.reply"] })).toBe("/vendor");
-    expect(workplaceDesk({ businessType: "gym", businessId: "y1", permissions: ["desk.admissions"] })).toBe("/vendor/gyms/y1/desk");
-    expect(workplaceDesk({ businessType: "gym", businessId: "y1", permissions: ["passes.view"] })).toBe("/vendor/gyms/y1/passes");
+    expect(workplaceDesk({ businessType: "gym", businessId: "y1", permissions: ["desk.admissions"] })).toBe("/go/gym/manage/y1/desk");
+    expect(workplaceDesk({ businessType: "gym", businessId: "y1", permissions: ["passes.view"] })).toBe("/go/gym/manage/y1/passes");
+    expect(workplaceDesk({ businessType: "gym", businessId: "y1", permissions: [] })).toBe("/go/gym/manage");
+    // Gyms open on gym.kriraghor.com (through /go/gym), venues and shops on the vendor site.
+    expect(workplaceHref({ businessType: "gym", businessId: "y1", permissions: ["desk.admit"] }, "https://vendor.kriraghor.com")).toBe("/go/gym/manage/y1/desk");
+    expect(workplaceHref({ businessType: "shop", businessId: "s1", permissions: ["orders.view"] }, "https://vendor.kriraghor.com")).toBe("https://vendor.kriraghor.com/vendor/orders?shopId=s1");
     expect(workplaceDesk({ businessType: "shop", businessId: "s1", permissions: ["orders.view"] })).toBe("/vendor/orders?shopId=s1");
     expect(workplaceDesk({ businessType: "shop", businessId: "s1", permissions: ["stock.view"] })).toBe("/vendor/inventory?shopId=s1");
     expect(workplaceDesk({ businessType: "shop", businessId: "s1", permissions: [] })).toBe("/vendor");

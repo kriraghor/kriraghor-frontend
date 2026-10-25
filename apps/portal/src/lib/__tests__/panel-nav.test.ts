@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ADMIN_SECTIONS, VENDOR_SECTIONS, adminSections, businessView, staffSections, vendorSections } from "../panel-nav";
+import { ADMIN_SECTIONS, GYMS_HREF, VENDOR_SECTIONS, adminSections, businessView, staffSections, vendorSections } from "../panel-nav";
 
 const hrefs = (sections: { items: { href: string }[] }[]) => sections.flatMap((s) => s.items.map((i) => i.href));
 
@@ -131,18 +131,30 @@ describe("Round B3: the team page and staff desks", () => {
     expect(got).toContain("/vendor/reviews");
   });
 
-  it("gym staff get the front desk (straight to their gym) and passes only with passes.view", () => {
-    const one = hrefs(vendorSections([], "all", [{ businessType: "gym", businessId: "y1", permissions: ["desk.admissions", "desk.admit"] }]));
-    expect(one).toEqual(["/vendor", "/vendor/gyms/y1/desk"]);
-    const passes = hrefs(vendorSections([], "all", [{ businessType: "gym", businessId: "y1", permissions: ["passes.view"] }]));
-    expect(passes).toEqual(["/vendor", "/vendor/gyms/y1/passes"]);
-    const two = hrefs(
-      vendorSections([], "all", [
-        { businessType: "gym", businessId: "y1", permissions: ["desk.admit"] },
-        { businessType: "gym", businessId: "y2", permissions: ["desk.admissions"] },
-      ]),
-    );
-    expect(two).toEqual(["/vendor", "/vendor/gyms"]);
+  it("gym staff get one Gyms link to gym.kriraghor.com/manage by any gym desk permission (M24 §4.3)", () => {
+    for (const permissions of [["desk.admissions", "desk.admit"], ["desk.admit"], ["desk.admissions"], ["passes.view"]]) {
+      expect(hrefs(vendorSections([], "all", [{ businessType: "gym", businessId: "y1", permissions }]))).toEqual(["/vendor", "/go/gym/manage"]);
+    }
+    const two = vendorSections([], "all", [
+      { businessType: "gym", businessId: "y1", permissions: ["desk.admit"] },
+      { businessType: "gym", businessId: "y2", permissions: ["passes.view"] },
+    ]);
+    expect(hrefs(two)).toEqual(["/vendor", "/go/gym/manage"]);
+    expect(two.find((s) => s.key === "workGym")?.items.map((i) => i.key)).toEqual(["gyms"]);
+    // No gym permission at all: no gym link.
+    expect(hrefs(vendorSections([], "all", [{ businessType: "gym", businessId: "y1", permissions: [] }]))).toEqual(["/vendor"]);
+    // No page of the business panel links to the old gym desks.
+    expect(hrefs(staffSections([{ businessType: "gym", businessId: "y1", permissions: ["desk.admit", "desk.admissions", "passes.view"] }])).some((h) => h.startsWith("/vendor/gyms"))).toBe(false);
+  });
+
+  it("gym owners get Gyms on gym.kriraghor.com with the shared business tools, once (no gym section)", () => {
+    const owner = vendorSections(["gym_owner"], "all");
+    expect(owner.map((s) => s.key)).toEqual(["overview", "business"]);
+    expect(hrefs(owner).filter((h) => h === GYMS_HREF)).toEqual(["/go/gym/manage"]);
+    expect(hrefs(vendorSections(["ground_owner", "shop_owner"], "all"))).not.toContain(GYMS_HREF);
+    // An owner who is also staff at another gym sees the link once.
+    expect(hrefs(vendorSections(["gym_owner"], "all", [{ businessType: "gym", businessId: "y9", permissions: ["desk.admit"] }])).filter((h) => h === GYMS_HREF)).toHaveLength(1);
+    expect(hrefs(VENDOR_SECTIONS).some((h) => h.startsWith("/vendor/gyms"))).toBe(false);
   });
 
   it("shop staff get orders and inventory by permission", () => {

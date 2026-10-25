@@ -2,7 +2,7 @@
   "name": "@kriraghor/tokens",
   "version": "0.1.0",
   "private": true,
-  "description": "Design tokens, the one source for the three web apps (tokens.css: CSS variables and the Tailwind v4 theme) and the mobile app (src/tokens.ts, copied with tokens:copy).",
+  "description": "Design tokens, the one source for the four web apps (tokens.css: CSS variables and the Tailwind v4 theme) and the mobile app (src/tokens.ts, copied with tokens:copy).",
   "exports": {
     "./tokens.css": "./tokens.css",
     ".": "./src/tokens.ts"

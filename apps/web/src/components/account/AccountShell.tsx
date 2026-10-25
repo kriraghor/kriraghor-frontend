@@ -32,7 +32,7 @@ import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
 import { listNotifications } from "@kriraghor/api-client/notifications";
 import { ShellUser, useMe } from "@kriraghor/ui/account";
-import { esportsHref } from "@/lib/links";
+import { esportsHref, gymHref } from "@/lib/links";
 
 const WORK_ROLES = ["player", "pro"];
 const OPEN = ["applied", "documents_pending", "in_review", "changes_requested", "active"];
@@ -70,8 +70,9 @@ export function AccountShell({ children }: { children: ReactNode }) {
       label: t("groups.bookings"),
       items: [
         { href: "/me/bookings", label: t("items.bookings"), icon: CalendarCheck, testId: "me-bookings" },
-        { href: "/me/passes", label: t("items.passes"), icon: Barbell, testId: "me-passes" },
-        { href: "/me/subscriptions", label: t("items.subscriptions"), icon: Repeat, testId: "me-subscriptions" },
+        // Gym passes and trainer plans live on gym.kriraghor.com since 25 Oct 2026 (through /go/gym).
+        { href: gymHref("/me/passes"), label: t("items.passes"), icon: Barbell, testId: "me-passes" },
+        { href: gymHref("/me/subscriptions"), label: t("items.subscriptions"), icon: Repeat, testId: "me-subscriptions" },
       ],
     },
     {

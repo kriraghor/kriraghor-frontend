@@ -15,7 +15,7 @@ import {
   isSelfServiceRole,
   listSubmissions,
   listWorkplaces,
-  workplaceDesk,
+  workplaceHref,
   roleNext,
   sortSubmissions,
   withdrawRole,
@@ -160,7 +160,7 @@ export function MyRoles() {
                       {t("workSince", { date: fmt(w.since) ?? "" })}
                     </p>
                   </div>
-                  <ButtonLink href={`${vendorUrl}${workplaceDesk(w)}`} size="sm" variant="secondary" iconEnd={<ArrowRight size={16} aria-hidden />} data-testid="open-workplace">
+                  <ButtonLink href={workplaceHref(w, vendorUrl)} size="sm" variant="secondary" iconEnd={<ArrowRight size={16} aria-hidden />} data-testid="open-workplace">
                     {t("workOpen")}
                   </ButtonLink>
                 </li>

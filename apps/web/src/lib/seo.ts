@@ -108,13 +108,12 @@ export function metaFor(kind: MetaKind, data: unknown, locale: Locale, site = DE
 
 export type SitemapEntry = { url: string; changeFrequency?: "daily" | "weekly" | "monthly"; priority?: number };
 
-/** Public pages that always exist. Account, payment and join pages are never listed. */
+/** Public pages that always exist. Account, payment and join pages are never listed (the gym pages are in gym.kriraghor.com's sitemap). */
 export const STATIC_PATHS: { path: string; changeFrequency: SitemapEntry["changeFrequency"]; priority: number }[] = [
   { path: "", changeFrequency: "daily", priority: 1 },
   { path: "/venues", changeFrequency: "daily", priority: 0.9 },
   { path: "/shop", changeFrequency: "daily", priority: 0.9 },
   { path: "/hiring", changeFrequency: "daily", priority: 0.8 },
-  { path: "/gym", changeFrequency: "weekly", priority: 0.8 },
   { path: "/events", changeFrequency: "daily", priority: 0.8 },
   { path: "/help", changeFrequency: "monthly", priority: 0.4 },
   { path: "/fair-play", changeFrequency: "monthly", priority: 0.3 },
@@ -129,7 +128,6 @@ export const SITEMAP_SOURCES = [
   { key: "grounds", path: "/grounds?limit=50", page: (slug: string) => `/venues/${slug}`, paging: "cursor" },
   { key: "products", path: "/market/items?limit=48", page: (slug: string) => `/shop/p/${slug}`, paging: "cursor" },
   { key: "hire", path: "/hire/profiles?limit=50", page: (slug: string) => `/hiring/${slug}`, paging: "cursor" },
-  { key: "gyms", path: "/gym/gyms?limit=48", page: (slug: string) => `/gym/gyms/${slug}`, paging: "cursor" },
   { key: "tournaments", path: "/tournaments?limit=48", page: (slug: string) => `/events/${slug}`, paging: "offset" },
 ] as const;
 

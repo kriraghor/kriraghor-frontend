@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { resolveNotificationLink, siteOfBell, siteOfPath } from "../notifications/links";
 
-const urls = { webUrl: "https://kriraghor.com", vendorUrl: "https://vendor.kriraghor.com/", adminUrl: "https://admin.kriraghor.com", esportsUrl: "https://esports.kriraghor.com" };
+const urls = { webUrl: "https://kriraghor.com", vendorUrl: "https://vendor.kriraghor.com/", adminUrl: "https://admin.kriraghor.com", esportsUrl: "https://esports.kriraghor.com", gymUrl: "https://gym.kriraghor.com" };
 
 describe("resolveNotificationLink (M08 bell links across sites)", () => {
   it("on the business panel: /vendor stays in the app, member and staff links go to their sites", () => {
@@ -28,6 +28,28 @@ describe("resolveNotificationLink (M08 bell links across sites)", () => {
     expect(resolveNotificationLink("/me/winnings", { here: "esports", ...urls })).toEqual({ href: "/me/winnings", external: false });
     expect(resolveNotificationLink("/events/pubg-weekly", { here: "esports", ...urls })).toEqual({ href: "/events/pubg-weekly", external: false });
     expect(resolveNotificationLink("/me/payout-account", { here: "esports", ...urls })).toEqual({ href: "https://kriraghor.com/me/payout-account", external: true });
+  });
+
+  it("gym pages open on gym.kriraghor.com from every other site (M24 §4.3)", () => {
+    for (const here of ["web", "vendor", "admin", "esports"] as const) {
+      expect(resolveNotificationLink("/manage/g1/edit", { here, ...urls })).toEqual({ href: "https://gym.kriraghor.com/manage/g1/edit", external: true });
+      expect(resolveNotificationLink("/me/passes/GP-31XZ", { here, ...urls })).toEqual({ href: "https://gym.kriraghor.com/me/passes/GP-31XZ", external: true });
+      expect(resolveNotificationLink("/me/subscriptions", { here, ...urls })).toEqual({ href: "https://gym.kriraghor.com/me/subscriptions", external: true });
+      expect(resolveNotificationLink("/gyms/iron-house?x=1", { here, ...urls })).toEqual({ href: "https://gym.kriraghor.com/gyms/iron-house?x=1", external: true });
+    }
+    // Trainer-side links stay on kriraghor.com (Hire).
+    expect(resolveNotificationLink("/pro/subscriptions", { here: "web", ...urls })).toEqual({ href: "/pro/subscriptions", external: false });
+  });
+
+  it("on gym: its own pages stay, everything else leaves for its site", () => {
+    for (const p of ["/manage", "/manage/g1/desk", "/gyms", "/me/passes", "/me/subscriptions", "/start", "/me/notifications"]) expect(resolveNotificationLink(p, { here: "gym", ...urls })).toEqual({ href: p, external: false });
+    expect(resolveNotificationLink("/me/payouts", { here: "gym", ...urls })).toEqual({ href: "https://kriraghor.com/me/payouts", external: true });
+    expect(resolveNotificationLink("/pro/subscriptions", { here: "gym", ...urls })).toEqual({ href: "https://kriraghor.com/pro/subscriptions", external: true });
+    expect(resolveNotificationLink("/vendor/reviews", { here: "gym", ...urls })).toEqual({ href: "https://vendor.kriraghor.com/vendor/reviews", external: true });
+    expect(resolveNotificationLink("/leaderboards", { here: "gym", ...urls })).toEqual({ href: "https://esports.kriraghor.com/leaderboards", external: true });
+    expect(resolveNotificationLink("https://gym.kriraghor.com/me/passes/GP-1", { here: "gym", ...urls })).toEqual({ href: "https://gym.kriraghor.com/me/passes/GP-1", external: true });
+    expect(siteOfPath("/gymnastics", "web")).toBe("web");
+    expect(siteOfPath("/managers", "gym")).toBe("web");
   });
 
   it("leaves a link relative when the other site's URL is not configured", () => {
@@ -57,5 +79,8 @@ describe("siteOfBell", () => {
     expect(siteOfBell("/me/notifications", "https://esports.kriraghor.com", urls.esportsUrl)).toBe("esports");
     expect(siteOfBell("/me/notifications", "https://kriraghor.com", urls.esportsUrl)).toBe("web");
     expect(siteOfBell("/me/notifications", "https://kriraghor.com", "::bad::")).toBe("web");
+    expect(siteOfBell("/me/notifications", "https://gym.kriraghor.com", urls.esportsUrl, urls.gymUrl)).toBe("gym");
+    expect(siteOfBell("/me/notifications", "https://kriraghor.com", urls.esportsUrl, urls.gymUrl)).toBe("web");
+    expect(siteOfBell("/me/notifications", "https://gym.kriraghor.com", urls.esportsUrl, "::bad::")).toBe("web");
   });
 });

@@ -64,13 +64,5 @@ export function accountGap(sum: { account: unknown; pendingAccount: unknown } | 
 /** The next payout: what the next run will send plus what is already in a payout on its way. */
 export const nextPayoutAmount = (sum: Pick<PayoutSummary, "nextPayout" | "inPayouts">) => sum.nextPayout.projected + sum.inPayouts;
 
-const BN = "০১২৩৪৫৬৭৮৯";
-
 /** Poisha → "৳1,23,456.50" (Indian grouping), Bangla digits for bn. Same rule as the backend. */
-export function formatTaka(poisha: number, locale = "en"): string {
-  const abs = Math.abs(poisha);
-  const taka = Math.trunc(abs / 100).toLocaleString("en-IN");
-  const rest = abs % 100;
-  const text = `${poisha < 0 ? "−" : ""}৳${taka}${rest ? `.${String(rest).padStart(2, "0")}` : ""}`;
-  return locale === "bn" ? text.replace(/\d/g, (d) => BN[Number(d)]) : text;
-}
+export { formatTaka } from "../format";

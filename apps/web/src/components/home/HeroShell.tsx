@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { PHOTOS } from "@/lib/photos";
-import { esportsHref } from "@/lib/links";
+import { esportsHref, gymHref } from "@/lib/links";
 import { NextUp, OpenCount } from "./EsportsHero";
 import { HeroCarousel, type HeroSlide } from "./HeroCarousel";
 
@@ -35,7 +35,7 @@ export async function EsportsHero() {
       title: t(`${s(k)}.title`),
       sub: t(`${s(k)}.sub`),
       cta: t(`${s(k)}.cta`),
-      href: { venues: "/venues", hire: "/hiring", shop: "/shop", gym: "/gym" }[k],
+      href: { venues: "/venues", hire: "/hiring", shop: "/shop", gym: gymHref() }[k],
       photo: { venues: PHOTOS.groundsFloodlit, hire: PHOTOS.hire, shop: PHOTOS.shopGear, gym: PHOTOS.gym }[k],
     })),
   ];

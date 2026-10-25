@@ -10,16 +10,9 @@ import { toPoisha, vendor } from "@/lib/vendor/grounds";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 
-export const STATUS_TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = {
-  draft: "muted",
-  pending_review: "warn",
-  changes_requested: "bad",
-  live: "ok",
-  paused: "muted",
-  rejected: "bad",
-  withdrawn: "muted",
-  suspended: "bad",
-};
+// A listing's review state as a desk colour, shared with the gym editor on gym.kriraghor.com.
+import { STATUS_TONE } from "@kriraghor/ui/desk/access";
+export { STATUS_TONE };
 const TABS = ["all", "live", "pending_review", "changes_requested", "draft", "paused", "rejected"] as const;
 
 /** /vendor/grounds (M09 §4.4): my grounds by status, and "Add a venue" (the first draft). */

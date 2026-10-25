@@ -11,8 +11,8 @@ import { Avatar } from "@kriraghor/ui/kit";
 import { hire, nextDays, type ProfilePage } from "@/lib/hire";
 import { clock, dayBusy } from "@/lib/availability";
 import { formatTaka } from "@/lib/payments";
-import { TrainerPlans } from "../gym/TrainerPlans";
-import { SubjectReviews } from "../trust/SubjectReviews";
+import { TrainerPlans } from "../trainer/TrainerPlans";
+import { SubjectReviews } from "@kriraghor/ui/trust";
 import { RequestForm } from "./RequestForm";
 
 /**

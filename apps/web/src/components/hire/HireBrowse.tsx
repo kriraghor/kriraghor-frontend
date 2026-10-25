@@ -7,7 +7,8 @@ import { useSearchParams } from "next/navigation";
 import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { filtersFromParams, hire, LEVELS, paramsFromFilters, SORTS, type Filters, type Level } from "@/lib/hire";
 import { HireCard } from "./HireCard";
-import { PageHeader } from "../PageHeader";
+import { PageHeader } from "@kriraghor/ui/page-header";
+import { PHOTOS } from "@/lib/photos";
 
 /**
  * /hiring (M11 FR-01 to FR-07): players, umpires, scorers, coaches, physios and crew by category and
@@ -41,7 +42,7 @@ export function HireBrowse() {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
-      <PageHeader photo="hire">
+      <PageHeader photo={PHOTOS.hire}>
         <div className="flex flex-wrap items-end gap-4">
           <div className="mr-auto">
             <h1 className="text-4xl font-extrabold" data-testid="hire-title">

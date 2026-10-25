@@ -9,7 +9,8 @@ import { teams as teamsApi, teamSports } from "@/lib/teams";
 import { tournaments, type Status } from "@/lib/tournaments";
 import { Notice } from "@kriraghor/ui/primitives";
 import { TournamentCard } from "./TournamentCard";
-import { PageHeader } from "../PageHeader";
+import { PageHeader } from "@kriraghor/ui/page-header";
+import { PHOTOS } from "@/lib/photos";
 
 const STATUSES: Status[] = ["open", "live", "completed"];
 
@@ -36,7 +37,7 @@ export function TournamentsBrowse() {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
-      <PageHeader photo="tournaments">
+      <PageHeader photo={PHOTOS.tournaments}>
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand">{t("kicker")}</p>
         <h1 className="mt-2 text-4xl font-extrabold">{t("title")}</h1>
         <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>

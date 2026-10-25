@@ -344,3 +344,31 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * The gym theme (M20, M24): dark with a lime accent (Index.html GYM). gym.kriraghor.com wraps the whole
+ * page in data-theme="gym"; kriraghor.com uses it for the home page gym band. Shared here so both match.
+ */
+[data-theme="gym"] {
+  --kg-bg: #111210;
+  --kg-surface: #1a1b18;
+  --kg-surface-2: #24261f;
+  --kg-ink: #f1f3ea;
+  --kg-muted: #a9ae9e;
+  --kg-line: #34372d;
+  --kg-line-strong: #6f7464;
+  --kg-on-brand: #111210;
+  --kg-brand: #c8f53c;
+  --kg-brand-hover: #d7fa6e;
+  --kg-brand-soft: #2a3311;
+  --kg-brand-text: #c8f53c;
+  --kg-danger: #ff8a80;
+  --kg-info: #9cc2ff;
+  background: var(--kg-bg);
+  color: var(--kg-ink);
+}
+/* Lime needs dark text (contrast); brand buttons elsewhere use white text. */
+[data-theme="gym"] .bg-brand.text-white,
+[data-theme="gym"] .bg-brand {
+  color: #111210;
+}

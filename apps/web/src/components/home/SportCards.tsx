@@ -11,7 +11,7 @@ import { cn } from "@kriraghor/ui/cn";
 import { useCarouselRow } from "@kriraghor/ui/motion";
 import { api } from "@kriraghor/api-client";
 import { PHOTOS } from "@/lib/photos";
-import { esportsHref } from "@/lib/links";
+import { esportsHref, gymHref } from "@/lib/links";
 import { useOpenEsports } from "./queries";
 
 type Facet = { key: string; count: number };
@@ -64,7 +64,7 @@ export function SportCards() {
     { key: "cricket", href: "/venues?sport=cricket", photo: PHOTOS.cricket, count: venues("cricket") != null ? t("venues", { n: venues("cricket")! }) : null },
     { key: "football", href: "/venues?sport=football", photo: PHOTOS.groundsFloodlit, count: venues("football") != null ? t("venues", { n: venues("football")! }) : null },
     { key: "badminton", href: "/venues?sport=badminton", photo: PHOTOS.badminton, count: venues("badminton") != null ? t("venues", { n: venues("badminton")! }) : null },
-    { key: "gym", href: "/gym", photo: PHOTOS.gym, count: gyms.data != null ? t("gyms", { n: gyms.data }) : null },
+    { key: "gym", href: gymHref(), photo: PHOTOS.gym, count: gyms.data != null ? t("gyms", { n: gyms.data }) : null },
   ];
 
   // Phones: which card is in the middle.

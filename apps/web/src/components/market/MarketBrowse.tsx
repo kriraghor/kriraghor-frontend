@@ -7,7 +7,8 @@ import { useSearchParams } from "next/navigation";
 import { Link, useRouter, usePathname } from "@kriraghor/ui/i18n/navigation";
 import { PRICE_BANDS, bandOf, filtersFromParams, market, paramsFromFilters, type Filters } from "@/lib/market";
 import { ProductCard } from "./ProductCard";
-import { PageHeader } from "../PageHeader";
+import { PageHeader } from "@kriraghor/ui/page-header";
+import { PHOTOS } from "@/lib/photos";
 
 /**
  * /shop (M12 §4, FR-30 to FR-32): new gear from verified shops, sports gear, gym equipment and
@@ -41,7 +42,7 @@ export function MarketBrowse() {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
-      <PageHeader photo="shopGear">
+      <PageHeader photo={PHOTOS.shopGear}>
         <div className="flex flex-wrap items-end gap-4">
           <div className="mr-auto">
             <h1 className="text-4xl font-extrabold" data-testid="market-title">

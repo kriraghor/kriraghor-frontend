@@ -1,6 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { ProShell } from "@/components/hire/ProDesk";
-import { ProPlans } from "@/components/gym/ProPlans";
+import { ProPlans } from "@/components/trainer/ProPlans";
 
 export const metadata = { title: "Monthly plans" };
 

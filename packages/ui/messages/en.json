@@ -112,6 +112,12 @@
         "p1": "Every action is audited",
         "p2": "Sensitive changes ask for your second factor",
         "p3": "Customer data stays masked"
+      },
+      "gym": {
+        "title": "Train. Track. Keep going.",
+        "p1": "Day, monthly and quarterly passes from verified gyms",
+        "p2": "Your pass as a QR code at the front desk",
+        "p3": "Run your own gym: members, fees and the front desk"
       }
     },
     "signup": {
@@ -183,7 +189,9 @@
       "venues": "Find a venue to book",
       "hireProfile": "Build your hire profile",
       "business": "Send your documents for review",
-      "nid": "Verify your NID to withdraw winnings and sell used gear"
+      "nid": "Verify your NID to withdraw winnings and sell used gear",
+      "gyms": "Find a gym near you",
+      "runGym": "Run your gym on Kriraghor"
     }
   },
   "account": {
@@ -364,5 +372,221 @@
       "account": "Sent to",
       "amount": "Amount"
     }
+  },
+  "trust": {
+    "reviews": {
+      "title": "Reviews",
+      "tooFew": "Not enough reviews for an average yet.",
+      "count": "{count, plural, =0 {No reviews} one {# review} other {# reviews}}",
+      "spread": "How members rated it",
+      "starsShort": "{stars} ★",
+      "starsOf": "{stars} out of 5 stars",
+      "member": "A member",
+      "ownerReply": "Reply from the venue",
+      "none": "No reviews yet. Members can rate a venue after playing there.",
+      "reportGround": "Report this venue",
+      "reportReview": "Report",
+      "loadFailed": "Couldn't load the reviews.",
+      "retry": "Try again",
+      "noRatingYet": "No rating yet",
+      "more": "Show more reviews",
+      "replyFrom": {
+        "ground": "Reply from the venue",
+        "hire_profile": "Reply from the pro",
+        "shop": "Reply from the shop",
+        "gym": "Reply from the gym"
+      },
+      "empty": {
+        "ground": "No reviews yet. Members can rate a venue after playing there.",
+        "hire_profile": "No reviews yet. Managers can rate a pro once a job is done and paid out.",
+        "shop": "No reviews yet. Buyers can rate the shop once their order arrives.",
+        "gym": "No reviews yet. Members can rate the gym after a visit."
+      }
+    },
+    "rate": {
+      "title": "Rate this venue",
+      "stars": "Stars",
+      "starN": "{n} stars",
+      "text": "What was it like? (optional)",
+      "hint": "Your name is shown with your review. Links and phone numbers are checked by our team first.",
+      "submit": "Post my rating",
+      "thanks": "Thank you. Your rating is now on their page.",
+      "held": "Thank you. Your rating will show once our team has checked it.",
+      "failed": "Couldn't post your rating. Try again.",
+      "updated": "Review updated. Thank you.",
+      "cta": "Rate this",
+      "updateCta": "Update your review",
+      "ctaRef": "Rate {ref}",
+      "cancel": "Cancel",
+      "update": "Update my review",
+      "updateTitle": "Update your review of this gym",
+      "updateHint": "You keep one review per gym. Posting now replaces your earlier stars and words.",
+      "titleFor": {
+        "ground": "Rate this venue",
+        "hire_profile": "Rate this pro",
+        "shop": "Rate this shop",
+        "gym": "Rate this gym"
+      },
+      "what": {
+        "ground": "the venue",
+        "hire_profile": "the pro",
+        "shop": "the shop",
+        "gym": "the gym"
+      },
+      "starsFor": "How many stars for {what}?",
+      "scale": {
+        "1": "Poor",
+        "2": "Not great",
+        "3": "Okay",
+        "4": "Good",
+        "5": "Excellent"
+      },
+      "errors": {
+        "NOT_YOUR_BOOKING": "Only the member who paid for this booking can rate it.",
+        "NOT_YOUR_JOB": "Only the manager who paid for this job can rate the pro.",
+        "NOT_YOUR_ORDER": "Only the buyer can rate this shop order.",
+        "NOT_YOUR_PASS": "Only the member who bought this pass can rate the gym.",
+        "NOT_PLAYED": "You can rate a venue after you have played there.",
+        "JOB_NOT_RELEASED": "You can rate the pro once the job is done and paid out.",
+        "ORDER_NOT_COMPLETED": "You can rate the shop once you have received the order.",
+        "PASS_NOT_REDEEMED": "You can rate the gym after you have used your pass there.",
+        "REVIEW_WINDOW_CLOSED": "The time to rate this has passed.",
+        "REVIEW_EXISTS": "You have already rated this.",
+        "REVIEW_HIDDEN": "Your earlier review was hidden by our team, so it can't be changed.",
+        "failed": "Couldn't post your rating. Try again."
+      }
+    },
+    "report": {
+      "open": "Report",
+      "title": {
+        "ground": "Report this venue",
+        "booking": "Report this booking",
+        "user": "Report this member",
+        "review": "Report this review",
+        "esports_tournament": "Report this event",
+        "shop": "Report this shop",
+        "product": "Report this item"
+      },
+      "reason": "What is wrong?",
+      "note": "Anything else? (optional)",
+      "send": "Send the report",
+      "cancel": "Cancel",
+      "thanks": "Thank you. Our team will look at it.",
+      "signIn": "Sign in to report.",
+      "signInLink": "Sign in",
+      "self": "You cannot report yourself or your own listing.",
+      "limit": "You have sent many reports today. Try again tomorrow.",
+      "failed": "Couldn't send the report. Try again.",
+      "reasons": {
+        "fake_listing": "Fake or misleading listing",
+        "wrong_info": "Wrong information",
+        "unsafe": "Unsafe place",
+        "harassment": "Harassment or threats",
+        "fraud": "Fraud or asking to pay outside Kriraghor",
+        "spam": "Spam",
+        "offensive": "Offensive words",
+        "cheating": "Cheating",
+        "other": "Something else"
+      },
+      "subject": {
+        "ground": "A venue",
+        "booking": "A booking",
+        "user": "A member",
+        "review": "A review",
+        "esports_tournament": "An event",
+        "shop": "A shop",
+        "product": "A shop item"
+      },
+      "status": {
+        "open": "Our team is looking",
+        "escalated": "With a senior reviewer",
+        "resolved": "Done",
+        "dismissed": "Closed"
+      },
+      "outcome": {
+        "no_violation": "Nothing against our rules",
+        "content_removed": "Removed",
+        "owner_warned": "The owner was warned",
+        "user_suspended": "The account was suspended",
+        "converted_to_dispute": "Open a dispute from the booking",
+        "dismissed": "Closed"
+      }
+    }
+  },
+  "team": {
+    "access": {
+      "PERMISSION_REQUIRED": {
+        "title": "Not open to you",
+        "body": "The owner hasn't given you this permission. Ask them to add it on their Team page."
+      },
+      "PHONE_REQUIRED": {
+        "title": "Verify your phone number",
+        "body": "Staff need a verified phone number to work at a business.",
+        "action": "Verify it"
+      },
+      "BUSINESS_REQUIRED": {
+        "title": "Choose a business",
+        "body": "You work at more than one. Choose which one to open."
+      }
+    },
+    "work": {
+      "title": "You work at",
+      "owner": "Owner: {name}",
+      "since": "Since {date}",
+      "youCan": "You can:",
+      "noDesk": "No desk is open to you here yet. Ask the owner.",
+      "desk": {
+        "bookings": "Bookings",
+        "reviews": "Reviews",
+        "frontDesk": "Front desk",
+        "passes": "Passes sold",
+        "orders": "Orders",
+        "inventory": "Inventory"
+      },
+      "verifyPhone": "Verify your phone number",
+      "verifyPhoneBody": "Staff need a verified phone number. Until then the desks below stay closed.",
+      "verifyPhoneGo": "Verify on kriraghor.com",
+      "shop": "Shop",
+      "atOwner": "{name} ({owner})"
+    },
+    "type": {
+      "venue": "Venue",
+      "gym": "Gym",
+      "shop": "Shop"
+    },
+    "perm": {
+      "bookings": {
+        "view": "See bookings",
+        "check_in": "Check teams in",
+        "no_show": "Mark no-shows",
+        "extend": "Extend a game by 30 minutes",
+        "collect_balance": "Record the balance paid at the venue",
+        "walk_in": "Add walk-ins",
+        "move": "Move a booking to another court",
+        "cancel": "Cancel bookings (the member gets a full refund)"
+      },
+      "reviews": {
+        "reply": "Reply to reviews"
+      },
+      "desk": {
+        "admit": "Admit members at the front desk",
+        "admissions": "See the day's admissions"
+      },
+      "passes": {
+        "view": "See the passes sold (no money)"
+      },
+      "orders": {
+        "view": "See orders",
+        "accept": "Accept orders",
+        "ship": "Ship orders (sees the buyer's phone and address)",
+        "deliver": "Mark orders delivered",
+        "reject": "Reject orders (the buyer gets a full refund)"
+      },
+      "stock": {
+        "view": "See stock",
+        "adjust": "Change stock counts"
+      }
+    },
+    "none": "Nothing yet"
   }
 }

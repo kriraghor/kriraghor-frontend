@@ -35,16 +35,8 @@ export async function listMyPayments(cursor?: string) {
   return res.data;
 }
 
-const BN = "০১২৩৪৫৬৭৮৯";
-
-/** Poisha → "৳1,23,456.50" (Indian grouping), Bangla digits for bn. Same rule as the backend. */
-export function formatTaka(poisha: number, locale = "en"): string {
-  const abs = Math.abs(poisha);
-  const taka = Math.trunc(abs / 100).toLocaleString("en-IN");
-  const rest = abs % 100;
-  const text = `${poisha < 0 ? "−" : ""}৳${taka}${rest ? `.${String(rest).padStart(2, "0")}` : ""}`;
-  return locale === "bn" ? text.replace(/\d/g, (d) => BN[Number(d)]) : text;
-}
+/** Poisha → "৳1,23,456.50" (Indian grouping), Bangla digits for bn: the shared rule (@kriraghor/ui/format). */
+export { formatTaka } from "@kriraghor/ui/format";
 
 /** What the result page shows for a payment status. */
 export type Outcome = "paid" | "waiting" | "failed" | "expired";

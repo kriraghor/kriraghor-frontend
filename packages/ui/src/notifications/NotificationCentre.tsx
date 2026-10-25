@@ -115,8 +115,8 @@ export function NotificationCentre({ settingsHref, signInHref }: { settingsHref?
                     }
                     // Links that belong to another site (a member link on the business panel) open there.
                     const env = publicEnv();
-                    const here = siteOfBell(signInHref, typeof window === "undefined" ? null : window.location.origin, env.ESPORTS_URL);
-                    const target = resolveNotificationLink(n.link, { here, webUrl: env.WEB_URL, vendorUrl: env.VENDOR_URL, adminUrl: env.ADMIN_URL, esportsUrl: env.ESPORTS_URL });
+                    const here = siteOfBell(signInHref, typeof window === "undefined" ? null : window.location.origin, env.ESPORTS_URL, env.GYM_URL);
+                    const target = resolveNotificationLink(n.link, { here, webUrl: env.WEB_URL, vendorUrl: env.VENDOR_URL, adminUrl: env.ADMIN_URL, esportsUrl: env.ESPORTS_URL, gymUrl: env.GYM_URL });
                     if (target?.external) window.location.assign(target.href);
                     else if (target) router.push(target.href);
                   }}

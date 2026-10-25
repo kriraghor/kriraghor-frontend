@@ -7,8 +7,8 @@ import { useAuth } from "@kriraghor/ui/auth";
 import { whenLabel } from "@/lib/bookings";
 import { reports, reviews, subjectNameOf } from "@/lib/trust";
 import { Notice } from "@kriraghor/ui/primitives";
-import { ReviewableList } from "./RateDialog";
-import { Stars } from "./SubjectReviews";
+import { ReviewableList } from "./ReviewableList";
+import { Stars } from "@kriraghor/ui/trust";
 
 function Gate({ next, children }: { next: string; children: React.ReactNode }) {
   const t = useTranslations("trust");

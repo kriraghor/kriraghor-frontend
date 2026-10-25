@@ -2868,13 +2868,8 @@
     }
   },
   "vendorGym": {
-    "gate": "Gyms are for approved gym owners. Apply as a gym owner on kriraghor.com first.",
-    "gateLink": "Back to the business desk",
-    "title": "My gyms",
-    "lead": "List your gym, set the week and the passes, and admit members at the front desk. Members pay online; you are paid when they use the pass.",
     "add": "Add a gym",
     "empty": "No gyms yet.",
-    "noPhoto": "No photo",
     "status": {
       "draft": "Draft",
       "pending_review": "In review",
@@ -2886,155 +2881,11 @@
       "suspended": "Suspended",
       "removed": "Removed"
     },
-    "edit": {
-      "draft": "Edit not sent",
-      "pending_review": "Edit in review",
-      "changes_requested": "Edit needs changes",
-      "rejected": "Edit rejected"
-    },
-    "dayFrom": "Day pass {price}",
-    "noPackages": "No passes yet",
-    "form": {
-      "name": "Gym name",
-      "area": "Area",
-      "chooseArea": "Choose an area",
-      "address": "Address",
-      "create": "Create the draft",
-      "lat": "Latitude",
-      "lng": "Longitude",
-      "about": "About the gym",
-      "capacity": "Day passes a day (most)",
-      "noLimit": "No limit",
-      "facilities": "Facilities"
-    },
-    "cancel": "Cancel",
-    "failed": "Couldn't do that. Try again.",
-    "loadFailed": "Couldn't load this gym.",
-    "reviewNote": "Staff asked for changes: {reason}",
-    "editNote": "Your changes are not public yet. Send them for review when you are done.",
-    "submit": "Send for review",
-    "submitEdit": "Send the changes for review",
-    "sent": "Sent. Staff usually answer within a day.",
-    "pause": "Pause sales",
-    "paused": "Sales paused. Passes already sold still work.",
-    "resume": "Resume sales",
-    "resumed": "Selling again.",
-    "viewPublic": "See the public page",
-    "basics": "Basics",
-    "saved": "Saved.",
-    "save": "Save",
-    "photos": "Photos",
-    "photosHelp": "{n} photos. At least {min}, at most {max}. The first is the cover.",
-    "cover": "Cover",
-    "photoN": "Photo {n}",
-    "moveLeft": "Move left",
-    "moveRight": "Move right",
-    "remove": "Remove",
-    "addPhotos": "Add photos (JPEG, PNG or WebP)",
-    "days": [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday"
-    ],
-    "hours": "Opening hours",
-    "hoursHelp": "Up to four windows a day. Mark a window women-only; a day without windows is closed.",
-    "hoursSaved": "Hours saved.",
-    "closed": "Closed",
-    "addWindow": "Add a window",
-    "copyToAll": "Copy to every day",
-    "opens": "Opens",
-    "closes": "Closes",
-    "womenOnly": "Women only",
-    "hoursProblem": {
-      "order": "Closes before it opens",
-      "overlap": "Overlaps the window before"
-    },
-    "saveHours": "Save the hours",
-    "kind": {
-      "day": "Day pass",
-      "month": "Month pass",
-      "quarter": "3-month pass"
-    },
-    "packages": "Passes",
-    "packagesHelp": "A day pass is required ({min} to {max}). Month and 3-month passes are optional.",
-    "packageTitle": "Name",
-    "packagePrice": "Price (৳)",
-    "packageProblem": {
-      "day_required": "Add a day pass.",
-      "bad_price": "Enter a whole taka price for each pass.",
-      "bad_title": "Give each pass a name."
-    },
-    "packagesSaved": "Passes saved.",
-    "savePackages": "Save the passes",
     "desk": {
-      "open": "Front desk",
-      "title": "Front desk",
-      "lead": "Scan the member's QR code or type the 6-character code. One admission a day per pass.",
-      "codeLabel": "Backup code",
-      "admit": "Admit",
-      "scan": "Scan with the camera",
-      "stopCamera": "Stop the camera",
-      "noCamera": "This browser cannot read QR codes. Type the backup code instead.",
-      "cameraDenied": "The camera is blocked. Allow it in the browser, or type the code.",
-      "admitted": "Admitted",
-      "member": "Member",
-      "at": "At {time}",
-      "refused": "Not admitted",
-      "usedAt": "Already used at {time}",
-      "validOn": "Valid {from} – {to}, not today",
-      "err": {
-        "PASS_WRONG_GYM": "This pass is for another gym.",
-        "PASS_NOT_ACTIVE": "This pass cannot be used (not paid, cancelled or ended).",
-        "GYM_CLOSED_NOW": "The gym is closed now (or this is a women-only window).",
-        "INVALID_PASS_TOKEN": "Not a Kriraghor pass. Check the code.",
-        "PASS_ALREADY_REDEEMED": "Already used today.",
-        "PASS_NOT_VALID_TODAY": "Not valid today.",
-        "NOT_OWNER": "This gym belongs to another owner."
-      },
-      "waiting": "Scan a pass or type a code.",
-      "today": "Today's admissions ({n})",
-      "noneToday": "No one yet today.",
-      "method": {
-        "qr": "QR",
-        "code": "Code"
-      },
-      "onDay": "Admissions on {date} ({n})",
-      "noneOnDay": "No one came in on this day.",
-      "prevDay": "Previous day",
-      "nextDay": "Next day",
-      "date": "Pick a date",
-      "todayButton": "Today"
+      "open": "Front desk"
     },
     "sold": {
-      "open": "Passes sold",
-      "title": "Passes sold",
-      "lead": "What each pass paid, the Kriraghor fee and what you receive. A day pass is paid out when it is used or its day ends; a month pass at its first visit.",
-      "all": "All",
-      "empty": "No passes sold yet.",
-      "pass": "Pass",
-      "member": "Member",
-      "valid": "Valid",
-      "price": "Price",
-      "fee": "Fee",
-      "net": "You receive",
-      "status": "Status",
-      "paidOut": "Paid out {amount}",
-      "refunded": "Refunded {amount}",
-      "held": "Held until use",
-      "leadStaff": "Passes sold at this gym, with the member and dates. Money stays with the owner."
-    },
-    "passStatus": {
-      "pending_payment": "Waiting for payment",
-      "active": "Active",
-      "redeemed": "Used",
-      "expired": "Expired",
-      "cancelled": "Cancelled",
-      "refunded": "Refunded",
-      "void": "Not paid"
+      "open": "Passes sold"
     },
     "home": {
       "active": "You are an approved gym owner.",
@@ -3043,9 +2894,7 @@
       "sell": "Run a gym? Sell day passes and memberships on Kriraghor.",
       "continue": "Continue the application",
       "start": "Apply as a gym owner"
-    },
-    "staffTitle": "Gyms you work at",
-    "staffLead": "Open the front desk to admit members, or see the passes sold, as the owner allows."
+    }
   },
   "gymAdmin": {
     "title": "Gyms",
@@ -4379,11 +4228,6 @@
       "added": "Added",
       "actions": "Actions"
     },
-    "type": {
-      "venue": "Venue",
-      "gym": "Gym",
-      "shop": "Shop"
-    },
     "edit": "Edit",
     "remove": "Remove",
     "noBusiness": "No business to add staff to yet",
@@ -4397,46 +4241,12 @@
     "emptyBody": "Add the people who check teams in, admit members at the desk or pack orders.",
     "note": "Staff never see your earnings, fees, settlement or payouts, and money always goes to you. Removing someone takes their access away straight away.",
     "permCount": "{n} of {total}",
-    "none": "Nothing yet",
     "permissions": "What they can do",
     "permissionsHelp": "The usual desk work is ticked. Optional items are off until you turn them on.",
     "optional": "Optional",
     "neededBy": "Needed by another ticked item",
     "alsoTicks": "Also ticks: {what}",
     "neverNote": "Prices, listings, products, settlement, analytics and payouts always stay with you.",
-    "perm": {
-      "bookings": {
-        "view": "See bookings",
-        "check_in": "Check teams in",
-        "no_show": "Mark no-shows",
-        "extend": "Extend a game by 30 minutes",
-        "collect_balance": "Record the balance paid at the venue",
-        "walk_in": "Add walk-ins",
-        "move": "Move a booking to another court",
-        "cancel": "Cancel bookings (the member gets a full refund)"
-      },
-      "reviews": {
-        "reply": "Reply to reviews"
-      },
-      "desk": {
-        "admit": "Admit members at the front desk",
-        "admissions": "See the day's admissions"
-      },
-      "passes": {
-        "view": "See the passes sold (no money)"
-      },
-      "orders": {
-        "view": "See orders",
-        "accept": "Accept orders",
-        "ship": "Ship orders (sees the buyer's phone and address)",
-        "deliver": "Mark orders delivered",
-        "reject": "Reject orders (the buyer gets a full refund)"
-      },
-      "stock": {
-        "view": "See stock",
-        "adjust": "Change stock counts"
-      }
-    },
     "permHelp": {
       "bookings": {
         "view": "The day's timeline and booking search. Every other venue item needs this.",
@@ -4507,41 +4317,6 @@
       "VALIDATION_FAILED": "Check the phone number and try again.",
       "failed": "Something went wrong. Please try again.",
       "RATE_LIMITED": "You've tried to add a lot of people in the last hour. Please wait a while and try again."
-    },
-    "access": {
-      "PERMISSION_REQUIRED": {
-        "title": "Not open to you",
-        "body": "The owner hasn't given you this permission. Ask them to add it on their Team page."
-      },
-      "PHONE_REQUIRED": {
-        "title": "Verify your phone number",
-        "body": "Staff need a verified phone number to work at a business.",
-        "action": "Verify it"
-      },
-      "BUSINESS_REQUIRED": {
-        "title": "Choose a business",
-        "body": "You work at more than one. Choose which one to open."
-      }
-    },
-    "work": {
-      "title": "You work at",
-      "owner": "Owner: {name}",
-      "since": "Since {date}",
-      "youCan": "You can:",
-      "noDesk": "No desk is open to you here yet. Ask the owner.",
-      "desk": {
-        "bookings": "Bookings",
-        "reviews": "Reviews",
-        "frontDesk": "Front desk",
-        "passes": "Passes sold",
-        "orders": "Orders",
-        "inventory": "Inventory"
-      },
-      "verifyPhone": "Verify your phone number",
-      "verifyPhoneBody": "Staff need a verified phone number. Until then the desks below stay closed.",
-      "verifyPhoneGo": "Verify on kriraghor.com",
-      "shop": "Shop",
-      "atOwner": "{name} ({owner})"
     }
   }
 }

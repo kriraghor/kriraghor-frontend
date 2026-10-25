@@ -22,6 +22,7 @@ COPY packages/ui/package.json packages/ui/
 COPY apps/web/package.json apps/web/
 COPY apps/esports/package.json apps/esports/
 COPY apps/portal/package.json apps/portal/
+COPY apps/gym/package.json apps/gym/
 RUN npm ci --no-audit --no-fund -w apps/web
 
 FROM ${NODE_IMAGE} AS build

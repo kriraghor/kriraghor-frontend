@@ -1,0 +1,253 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { ArrowLeft, CalendarDots, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { Button, IconButton, controlClass } from "@kriraghor/ui/kit";
+import { problemOf } from "@kriraghor/api-client";
+import { Notice } from "@kriraghor/ui/primitives";
+import { DeskAccessNotice, deskCan, inputCls, staffPermissionsAt, useDeskErrorText, useWorkplaces } from "@kriraghor/ui/desk";
+import { cleanCode, gymDesk, nextDays, scanInput, shiftDay, type Admission } from "@/lib/manage";
+
+type Result = { ok: true; a: Admission } | { ok: false; code: string; title: string; at?: string; validFrom?: string; validTo?: string };
+type Detector = { detect: (src: HTMLVideoElement) => Promise<{ rawValue: string }[]> };
+
+/** The browser's QR reader (Chrome on Android and desktop); absent elsewhere, so the code entry is always there. */
+function makeDetector(): Detector | null {
+  const D = (globalThis as unknown as { BarcodeDetector?: new (o: { formats: string[] }) => Detector }).BarcodeDetector;
+  return D ? new D({ formats: ["qr_code"] }) : null;
+}
+
+/**
+ * /manage/[gymId]/desk (M20 §5; /vendor/gyms/[id]/desk until 25 Oct 2026): the front desk. Scan the
+ * member's QR (camera, where the browser can read QR codes) or type the 6-character backup code. The
+ * server decides: the right gym, valid today, open now, not used today. The result card shows who it is and the pass; today's admissions follow.
+ */
+export function FrontDesk({ id }: { id: string }) {
+  const t = useTranslations("vendorGym");
+  const locale = useLocale();
+  const qc = useQueryClient();
+  // Round B3: the gym's staff work the desk too, by permission (desk.admit, desk.admissions). The
+  // gym itself (owner-only) is read for its owner; staff take its name from their workplaces.
+  const wp = useWorkplaces();
+  const perms = staffPermissionsAt(wp.refs, "gym", id);
+  const errorText = useDeskErrorText();
+  const gym = useQuery({ queryKey: ["vendor-gym", id], queryFn: () => gymDesk.get(id), enabled: !wp.me.isPending && perms === null });
+  const gymName = perms ? wp.named.find((w) => w.businessType === "gym" && w.businessId === id)?.business.name : gym.data?.name;
+  const canAdmit = deskCan(perms, "desk.admit");
+  const canList = deskCan(perms, "desk.admissions");
+  // Admissions for any day (today by default, Dhaka); the server reads no date as today.
+  const [todayDate] = useState(() => nextDays(1)[0]);
+  const [listDate, setListDate] = useState(todayDate);
+  const isToday = listDate === todayDate;
+  const today = useQuery({
+    queryKey: ["gym-admissions", id, listDate],
+    queryFn: () => gymDesk.admissions(id, isToday ? undefined : listDate),
+    refetchInterval: isToday ? 30_000 : false,
+    enabled: !wp.me.isPending && canList,
+  });
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<Result | null>(null);
+  const [camera, setCamera] = useState<"off" | "on" | "unsupported" | "denied">("off");
+  const video = useRef<HTMLVideoElement>(null);
+  const lastScan = useRef<{ value: string; at: number }>({ value: "", at: 0 });
+  const time = (iso?: string) => (iso ? new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Dhaka" }).format(new Date(iso)) : "");
+  const day = (d?: string) => (d ? new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`)) : "");
+
+  const admit = useCallback(
+    async (input: { token: string } | { code: string }) => {
+      setBusy(true);
+      try {
+        const a = await gymDesk.redeem(id, input);
+        setResult({ ok: true, a });
+        setCode("");
+        setListDate(todayDate); // a new admission is today's: show that list
+        // Prefix match: refreshes today's list (and any other day already loaded).
+        await qc.invalidateQueries({ queryKey: ["gym-admissions", id] });
+      } catch (err) {
+        // The API spreads the problem meta on the body: `at` (the earlier admission), validFrom and validTo.
+        const p = problemOf(err) as (ReturnType<typeof problemOf> & { at?: string; validFrom?: string; validTo?: string }) | null;
+        setResult({ ok: false, code: p?.code ?? "UNKNOWN", title: errorText(err, t("failed")) ?? t("failed"), at: p?.at, validFrom: p?.validFrom, validTo: p?.validTo });
+      } finally {
+        setBusy(false);
+      }
+    },
+    [id, qc, t, todayDate, errorText]
+  );
+
+  // The camera loop: read a QR every 300 ms; the same value is ignored for 5 s (one scan, one request).
+  useEffect(() => {
+    if (camera !== "on") return;
+    const detector = makeDetector();
+    let stream: MediaStream | null = null;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    let stopped = false;
+    (async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+        if (stopped || !video.current) return;
+        video.current.srcObject = stream;
+        await video.current.play();
+        timer = setInterval(async () => {
+          if (!video.current || !detector) return;
+          const found = await detector.detect(video.current).catch(() => []);
+          const value = found[0]?.rawValue;
+          if (!value) return;
+          const now = Date.now();
+          if (value === lastScan.current.value && now - lastScan.current.at < 5000) return;
+          lastScan.current = { value, at: now };
+          void admit(scanInput(value));
+        }, 300);
+      } catch {
+        setCamera("denied");
+      }
+    })();
+    return () => {
+      stopped = true;
+      if (timer) clearInterval(timer);
+      stream?.getTracks().forEach((tr) => tr.stop());
+    };
+  }, [camera, admit]);
+
+  const startCamera = () => setCamera(makeDetector() && typeof navigator.mediaDevices?.getUserMedia === "function" ? "on" : "unsupported");
+  const ready = cleanCode(code).length === 6;
+
+  return (
+    <section className="mx-auto max-w-[1100px] px-5 py-8">
+      <Link href={perms ? "/manage" : `/manage/${id}/edit`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-text hover:underline">
+        <ArrowLeft size={16} aria-hidden />
+        {gymName ?? t("title")}
+      </Link>
+      <h1 className="mt-3 text-3xl font-extrabold">{t("desk.title")}</h1>
+      <p className="mt-1 max-w-2xl text-muted">{t("desk.lead")}</p>
+
+      {!canAdmit ? <DeskAccessNotice code="PERMISSION_REQUIRED" className="mt-6" /> : null}
+      {canAdmit ? (
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="flex flex-col gap-4">
+          <form
+            className="border-2 border-line bg-surface p-5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (ready) void admit({ code: cleanCode(code) });
+            }}
+            data-testid="desk-code-form"
+          >
+            <label htmlFor="desk-code" className="text-sm font-semibold text-muted">
+              {t("desk.codeLabel")}
+            </label>
+            <div className="mt-1 flex gap-2">
+              <input
+                id="desk-code"
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                maxLength={9}
+                autoComplete="off"
+                autoCapitalize="characters"
+                spellCheck={false}
+                className={`${inputCls} flex-1 font-mono text-2xl tracking-[0.3em]`}
+                data-testid="desk-code"
+              />
+              <button type="submit" disabled={!ready || busy} className="min-h-12 bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="desk-admit">
+                {t("desk.admit")}
+              </button>
+            </div>
+          </form>
+          <div className="border-2 border-line bg-surface p-5">
+            {camera === "on" ? (
+              <>
+                <video ref={video} muted playsInline className="aspect-video w-full bg-black object-cover" />
+                <button type="button" onClick={() => setCamera("off")} className="mt-3 min-h-11 border-2 border-line px-4 font-bold">
+                  {t("desk.stopCamera")}
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="button" onClick={startCamera} className="min-h-12 border-2 border-brand px-5 font-bold" data-testid="desk-camera">
+                  {t("desk.scan")}
+                </button>
+                {camera === "unsupported" ? <p className="mt-2 text-sm text-muted">{t("desk.noCamera")}</p> : null}
+                {camera === "denied" ? <p className="mt-2 text-sm text-danger">{t("desk.cameraDenied")}</p> : null}
+              </>
+            )}
+          </div>
+        </div>
+
+        <div aria-live="polite" data-testid="desk-result">
+          {result?.ok ? (
+            <div className="border-4 border-brand bg-brand/10 p-6" data-testid="desk-admitted">
+              <p className="text-sm font-bold uppercase tracking-wide text-brand">{t("desk.admitted")}</p>
+              <p className="mt-2 text-3xl font-extrabold">{result.a.holder.displayName ?? t("desk.member")}</p>
+              <p className="mt-1 font-semibold">
+                {t(`kind.${result.a.kind}`)} · {result.a.passCode}
+              </p>
+              <p className="text-sm text-muted">{result.a.validFrom === result.a.validTo ? day(result.a.validFrom) : `${day(result.a.validFrom)} – ${day(result.a.validTo)}`}</p>
+              <p className="mt-2 text-sm text-muted">{t("desk.at", { time: time(result.a.redeemedAt) })}</p>
+            </div>
+          ) : result ? (
+            <div className="border-4 border-danger p-6" role="alert" data-testid="desk-refused">
+              <p className="text-sm font-bold uppercase tracking-wide text-danger">{t("desk.refused")}</p>
+              <p className="mt-2 text-2xl font-extrabold">
+                {result.code === "PASS_ALREADY_REDEEMED" && result.at
+                  ? t("desk.usedAt", { time: time(result.at) })
+                  : result.code === "PASS_NOT_VALID_TODAY" && result.validFrom
+                    ? t("desk.validOn", { from: day(result.validFrom), to: day(result.validTo) })
+                    : t.has(`desk.err.${result.code}`)
+                      ? t(`desk.err.${result.code}`)
+                      : result.title}
+              </p>
+            </div>
+          ) : (
+            <p className="border-2 border-dashed border-line p-8 text-center text-muted">{t("desk.waiting")}</p>
+          )}
+        </div>
+      </div>
+
+      ) : null}
+
+      {canList ? (
+      <>
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl font-extrabold">{isToday ? t("desk.today", { n: today.data?.items.length ?? 0 }) : t("desk.onDay", { date: day(listDate), n: today.data?.items.length ?? 0 })}</h2>
+        <div className="flex items-center gap-1.5" data-testid="desk-date">
+          <IconButton label={t("desk.prevDay")} variant="secondary" onClick={() => setListDate(shiftDay(listDate, -1))} data-testid="desk-prev-day">
+            <CaretLeft size={18} aria-hidden />
+          </IconButton>
+          <label className="relative">
+            <span className="sr-only">{t("desk.date")}</span>
+            <CalendarDots size={18} aria-hidden className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+            <input type="date" value={listDate} max={todayDate} onChange={(e) => e.target.value && setListDate(e.target.value)} className={`${controlClass} w-auto pl-10`} data-testid="desk-date-input" />
+          </label>
+          <IconButton label={t("desk.nextDay")} variant="secondary" onClick={() => setListDate(shiftDay(listDate, 1))} disabled={isToday} data-testid="desk-next-day">
+            <CaretRight size={18} aria-hidden />
+          </IconButton>
+          <Button type="button" variant="ghost" onClick={() => setListDate(todayDate)} disabled={isToday} data-testid="desk-to-today">
+            {t("desk.todayButton")}
+          </Button>
+        </div>
+      </div>
+      {today.isError ? <Notice tone="error">{errorText(today.error, t("failed"))}</Notice> : null}
+      {today.data && !today.data.items.length ? <p className="mt-3 text-muted">{isToday ? t("desk.noneToday") : t("desk.noneOnDay")}</p> : null}
+      <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line" data-testid="desk-today">
+        {(today.data?.items ?? []).map((a) => (
+          <li key={`${a.passCode}-${a.redeemedAt}`} className="flex flex-wrap items-center gap-3 py-2">
+            <span className="w-16 font-bold tabular-nums">{time(a.redeemedAt)}</span>
+            <span className="min-w-0 flex-1">
+              <span className="font-semibold">{a.holder ?? t("desk.member")}</span>
+              <span className="text-sm text-muted">
+                {" "}
+                · {t(`kind.${a.kind}`)} · {a.passCode}
+              </span>
+            </span>
+            <span className="text-xs font-bold uppercase text-muted">{t(`desk.method.${a.method}`)}</span>
+          </li>
+        ))}
+      </ul>
+      </>
+      ) : null}
+    </section>
+  );
+}

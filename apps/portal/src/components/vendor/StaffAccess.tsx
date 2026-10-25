@@ -2,73 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
-import { publicEnv } from "@kriraghor/session/env";
-import { ButtonLink, Notice, Select } from "@kriraghor/ui/kit";
-import { businessView } from "@/lib/panel-nav";
-import { vendor } from "@/lib/vendor/grounds";
+import { Select } from "@kriraghor/ui/kit";
+import { DeskAccessNotice, useDeskErrorText, useWorkplaces } from "@kriraghor/ui/desk";
 import { shopDesk } from "@/lib/vendor/market";
-import { deskAccessKey, deskChoices, staffPermissionsAt, team, type DeskChoice } from "@/lib/vendor/team";
+import { deskChoices, staffPermissionsAt, type DeskChoice } from "@/lib/vendor/team";
 
-/**
- * Round B3: where the signed-in person works as staff. `refs` (from /me, the same query as the
- * sidebar) carry the permissions every desk follows; `named` (GET /me/workplaces) adds the business
- * and owner names for the switchers, only fetched when there is a workplace.
- */
-export function useWorkplaces() {
-  const { status } = useAuth();
-  const signedIn = status === "signed_in";
-  const me = useQuery({ queryKey: ["vendor-me"], enabled: signedIn, queryFn: () => vendor.me() });
-  const refs = me.data?.workplaces ?? [];
-  const named = useQuery({ queryKey: ["my-workplaces"], enabled: signedIn && refs.length > 0, queryFn: () => team.workplaces() });
-  return {
-    me,
-    refs,
-    named: named.data?.items ?? [],
-    /** Still finding out where the person works (the desks wait, so they never flash a gate). */
-    pending: signedIn && (me.isPending || (refs.length > 0 && named.isPending)),
-    active: businessView(me.data).active,
-    phoneVerified: me.data?.phoneVerified ?? true,
-  };
-}
-
-/**
- * A desk's access answer in plain words (B3): the owner has not given this permission, verify your
- * phone, or choose a business. Anything else returns null, so the desk shows its own error.
- */
-export function DeskAccessNotice({ error, code, className }: { error?: unknown; code?: string; className?: string }) {
-  const t = useTranslations("team.access");
-  const key = deskAccessKey(code ?? problemOf(error)?.code);
-  if (!key) return null;
-  return (
-    <Notice
-      tone={key === "BUSINESS_REQUIRED" ? "info" : "warning"}
-      title={t(`${key}.title`)}
-      className={className}
-      action={
-        key === "PHONE_REQUIRED" ? (
-          <ButtonLink href={`${publicEnv().WEB_URL}/account/settings`} size="sm" variant="secondary">
-            {t("PHONE_REQUIRED.action")}
-          </ButtonLink>
-        ) : undefined
-      }
-    >
-      {t(`${key}.body`)}
-    </Notice>
-  );
-}
-
-/** The text of a desk error: the access answers in plain words, otherwise the problem's own title. */
-export function useDeskErrorText() {
-  const t = useTranslations("team.access");
-  return (error: unknown, fallback: string) => {
-    if (!error) return null;
-    const p = problemOf(error);
-    const key = deskAccessKey(p?.code);
-    return key ? t(`${key}.body`) : (p?.title ?? fallback);
-  };
-}
+// The workplace hook and the access answers are shared with gym.kriraghor.com/manage (@kriraghor/ui/desk).
+export { DeskAccessNotice, useDeskErrorText, useWorkplaces };
 
 /**
  * The shop a shop desk (orders, inventory) shows (Round B3): the owner's own shop first, then the
