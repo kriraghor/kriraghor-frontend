@@ -10739,7 +10739,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** My verification checklist: phone and NID status, badge, unlocks and limits (FR-18) */
+        /** My verification checklist: phone and NID status, badge, unlocks and limits, the consent text and version to show, and the minimum age (FR-18, FR-05) */
         get: {
             parameters: {
                 query?: {
@@ -10889,7 +10889,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Submit my NID (number, date of birth, legal name, three files) or a business document of a role I applied for (fields from the requirement, one file) */
+        /** Submit my NID (number, date of birth, legal name, three files) or a business document of a role I applied for (fields from the requirement, one file), with consent { accepted: true, version } to the current text (FR-05) */
         post: {
             parameters: {
                 query?: never;
@@ -10923,10 +10923,13 @@ export interface paths {
                             selfie: string;
                         };
                         /**
-                         * @description Agreement to the Privacy Policy and Terms for identity checks
-                         * @enum {boolean}
+                         * @description Required: { "accepted": true, "version": <GET /me/verification consent.version> }. Missing, true or accepted not true → 422 CONSENT_REQUIRED; another version → 422 CONSENT_VERSION_STALE (currentVersion in the problem body)
+                         * @example {
+                         *       "accepted": true,
+                         *       "version": 1
+                         *     }
                          */
-                        consent: true;
+                        consent?: unknown;
                     } | {
                         /** @enum {string} */
                         docType: "trade_license";
@@ -10944,8 +10947,14 @@ export interface paths {
                          * @enum {string}
                          */
                         role?: "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "player" | "pro";
-                        /** @enum {boolean} */
-                        consent: true;
+                        /**
+                         * @description Required: { "accepted": true, "version": <GET /me/verification consent.version> }. Missing, true or accepted not true → 422 CONSENT_REQUIRED; another version → 422 CONSENT_VERSION_STALE (currentVersion in the problem body)
+                         * @example {
+                         *       "accepted": true,
+                         *       "version": 1
+                         *     }
+                         */
+                        consent?: unknown;
                     } | {
                         /** @enum {string} */
                         docType: "deed_or_lease";
@@ -10963,8 +10972,14 @@ export interface paths {
                          * @enum {string}
                          */
                         role?: "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "player" | "pro";
-                        /** @enum {boolean} */
-                        consent: true;
+                        /**
+                         * @description Required: { "accepted": true, "version": <GET /me/verification consent.version> }. Missing, true or accepted not true → 422 CONSENT_REQUIRED; another version → 422 CONSENT_VERSION_STALE (currentVersion in the problem body)
+                         * @example {
+                         *       "accepted": true,
+                         *       "version": 1
+                         *     }
+                         */
+                        consent?: unknown;
                     } | {
                         /** @enum {string} */
                         docType: "tin";
@@ -10982,8 +10997,14 @@ export interface paths {
                          * @enum {string}
                          */
                         role?: "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "player" | "pro";
-                        /** @enum {boolean} */
-                        consent: true;
+                        /**
+                         * @description Required: { "accepted": true, "version": <GET /me/verification consent.version> }. Missing, true or accepted not true → 422 CONSENT_REQUIRED; another version → 422 CONSENT_VERSION_STALE (currentVersion in the problem body)
+                         * @example {
+                         *       "accepted": true,
+                         *       "version": 1
+                         *     }
+                         */
+                        consent?: unknown;
                     } | {
                         /** @enum {string} */
                         docType: "bin";
@@ -11001,8 +11022,14 @@ export interface paths {
                          * @enum {string}
                          */
                         role?: "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "player" | "pro";
-                        /** @enum {boolean} */
-                        consent: true;
+                        /**
+                         * @description Required: { "accepted": true, "version": <GET /me/verification consent.version> }. Missing, true or accepted not true → 422 CONSENT_REQUIRED; another version → 422 CONSENT_VERSION_STALE (currentVersion in the problem body)
+                         * @example {
+                         *       "accepted": true,
+                         *       "version": 1
+                         *     }
+                         */
+                        consent?: unknown;
                     } | {
                         /** @enum {string} */
                         docType: "credential";
@@ -11020,8 +11047,14 @@ export interface paths {
                          * @enum {string}
                          */
                         role?: "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "player" | "pro";
-                        /** @enum {boolean} */
-                        consent: true;
+                        /**
+                         * @description Required: { "accepted": true, "version": <GET /me/verification consent.version> }. Missing, true or accepted not true → 422 CONSENT_REQUIRED; another version → 422 CONSENT_VERSION_STALE (currentVersion in the problem body)
+                         * @example {
+                         *       "accepted": true,
+                         *       "version": 1
+                         *     }
+                         */
+                        consent?: unknown;
                     } | {
                         /** @enum {string} */
                         docType: "police_clearance";
@@ -11039,8 +11072,14 @@ export interface paths {
                          * @enum {string}
                          */
                         role?: "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "player" | "pro";
-                        /** @enum {boolean} */
-                        consent: true;
+                        /**
+                         * @description Required: { "accepted": true, "version": <GET /me/verification consent.version> }. Missing, true or accepted not true → 422 CONSENT_REQUIRED; another version → 422 CONSENT_VERSION_STALE (currentVersion in the problem body)
+                         * @example {
+                         *       "accepted": true,
+                         *       "version": 1
+                         *     }
+                         */
+                        consent?: unknown;
                     } | {
                         /** @enum {string} */
                         docType: "org_registration";
@@ -11058,8 +11097,14 @@ export interface paths {
                          * @enum {string}
                          */
                         role?: "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "player" | "pro";
-                        /** @enum {boolean} */
-                        consent: true;
+                        /**
+                         * @description Required: { "accepted": true, "version": <GET /me/verification consent.version> }. Missing, true or accepted not true → 422 CONSENT_REQUIRED; another version → 422 CONSENT_VERSION_STALE (currentVersion in the problem body)
+                         * @example {
+                         *       "accepted": true,
+                         *       "version": 1
+                         *     }
+                         */
+                        consent?: unknown;
                     };
                 };
             };
@@ -11091,7 +11136,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: VALIDATION_FAILED, NID_FORMAT_INVALID, DOB_INVALID, DOB_IN_FUTURE, UNDER_MIN_AGE, FILES_INCOMPLETE, DOC_TYPE_NOT_REQUIRED */
+                /** @description Error. Codes: VALIDATION_FAILED, CONSENT_REQUIRED, CONSENT_VERSION_STALE, NID_FORMAT_INVALID, DOB_INVALID, DOB_IN_FUTURE, UNDER_MIN_AGE, FILES_INCOMPLETE, DOC_TYPE_NOT_REQUIRED */
                 422: {
                     headers: {
                         [name: string]: unknown;
@@ -11242,6 +11287,60 @@ export interface paths {
                 };
                 /** @description Error. Codes: VALIDATION_FAILED */
                 422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/kyc/under-min-age": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Current NID documents (approved, in review, changes requested) whose holder is under kyc.min_age_years today in Dhaka: user, status, age, decided date. Read-only; every view is audited (no-store) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["KycUnderMinAge"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -49780,6 +49879,14 @@ export interface components {
             }[];
             unlocks: string[];
             limits: string[];
+            /** @description The consent the form shows (the NID text for role=member, the business text otherwise, in the locale asked). Send { accepted: true, version } with the document (M02-FR-05) */
+            consent: {
+                version: number;
+                draft: boolean;
+                text: string;
+            };
+            /** @description kyc.min_age_years: NID verification is for people this old and over (§6.3 age_ok) */
+            minAgeYears: number;
         };
         VerificationDocument: {
             /** Format: uuid */
@@ -49851,6 +49958,12 @@ export interface components {
                 blocks: boolean;
                 detail?: string | null;
             }[];
+            /** @description The consent the member gave with this version; null for documents sent before 25 Oct 2026 */
+            consent: {
+                version: number;
+                /** Format: date-time */
+                at: string;
+            } | null;
             /** Format: uuid */
             decidedBy: string | null;
             user: {
@@ -49869,6 +49982,23 @@ export interface components {
                 reasonCode: string | null;
                 /** Format: date-time */
                 submittedAt: string;
+                /** Format: date-time */
+                decidedAt: string | null;
+            }[];
+        };
+        /** @description Current NID documents whose holder is under kyc.min_age_years today (Dhaka). Ages only, never the number or date of birth. Audited; do not cache. */
+        KycUnderMinAge: {
+            minAgeYears: number;
+            count: number;
+            items: {
+                /** Format: uuid */
+                userId: string;
+                displayName: string | null;
+                /** Format: uuid */
+                documentId: string;
+                /** @enum {string} */
+                status: "approved" | "in_review" | "changes_requested";
+                age: number;
                 /** Format: date-time */
                 decidedAt: string | null;
             }[];
