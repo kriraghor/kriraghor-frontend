@@ -299,7 +299,7 @@
   },
   "kyc": {
     "title": "Verify your identity",
-    "intro": "We check your National ID once. It keeps Kriraghor safe for everyone and unlocks booking, buying, hiring, selling and prize withdrawals.",
+    "intro": "We check your National ID once, for people aged 18 and over. You need it to sell used gear, get hired, run a business on Kriraghor and withdraw prize money. Booking, buying and hiring someone need only your phone.",
     "signedOut": "Sign in to verify your identity.",
     "signIn": "Sign in",
     "loading": "Loading…",
@@ -366,7 +366,20 @@
         "deed_or_lease": "Your land deed or lease",
         "tin": "Your TIN certificate"
       }
-    }
+    },
+    "error": {
+      "UNDER_MIN_AGE": "NID verification is for people aged {age} and over.",
+      "CONSENT_REQUIRED": "Tick the box to agree before you send your documents.",
+      "CONSENT_VERSION_STALE": "The consent text was updated. Please read it and tick again.",
+      "DOB_IN_FUTURE": "The date of birth cannot be in the future.",
+      "DOB_INVALID": "Enter the date of birth as printed on the NID.",
+      "NID_FORMAT_INVALID": "Enter the NID number with 10, 13 or 17 digits.",
+      "FILES_INCOMPLETE": "Add the NID front, the back and a selfie holding it.",
+      "PHONE_REQUIRED": "Add and verify your phone number first.",
+      "DOC_ALREADY_APPROVED": "This document is already verified.",
+      "MEMBER_NOT_ACTIVE": "Verify your NID first."
+    },
+    "minAgeNotice": "You must be {age} or older to verify your NID."
   },
   "grounds": {
     "title": "Venues",

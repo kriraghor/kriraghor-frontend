@@ -31,13 +31,75 @@ export async function uploadFile(slot: Slot, file: File) {
   );
 }
 
-export const submitNid = async (fields: { legalName: string; number: string; dob: string }, files: Record<Slot, string>) =>
-  ok(await api().POST("/me/documents", { body: { docType: "nid", fields, files, consent: true } }));
+/** The consent sent with a document (M02-FR-05, 25 Oct 2026): the version of the text the member ticked. */
+export const consentBody = (version: number) => ({ accepted: true as const, version });
+
+export const submitNid = async (fields: { legalName: string; number: string; dob: string }, files: Record<Slot, string>, consentVersion: number) =>
+  ok(await api().POST("/me/documents", { body: { docType: "nid", fields, files, consent: consentBody(consentVersion) } }));
+
+/**
+ * The NID form's gate: all three files uploaded, a legal name, a valid number, a date of birth not
+ * after the latest allowed one (18+), and the consent ticked with a version from the API. The
+ * server re-checks everything.
+ */
+export function canSubmitNid(s: { files: Partial<Record<Slot, string | null>>; legalName: string; number: string; dob: string; maxDob: string; consented: boolean; consentVersion: number | null | undefined }): boolean {
+  return (
+    SLOTS.every((slot) => Boolean(s.files[slot])) &&
+    s.legalName.trim().length >= 3 &&
+    nidLooksValid(s.number) &&
+    /^\d{4}-\d{2}-\d{2}$/.test(s.dob) &&
+    s.dob <= s.maxDob &&
+    consentReady(s.consented, s.consentVersion)
+  );
+}
+
+/** The consent gate shared by the NID and business forms: ticked, and a version from the API to send. */
+export const consentReady = (consented: boolean, version: number | null | undefined): version is number => consented && typeof version === "number" && Number.isInteger(version) && version > 0;
 
 /** Mirrors the server: digits only (spaces and dashes ignored), 10, 13 or 17 long. */
 export function nidLooksValid(input: string): boolean {
   const digits = input.replace(/[\s-]/g, "");
   return /^\d+$/.test(digits) && [10, 13, 17].includes(digits.length);
+}
+
+/**
+ * Problem codes of POST /me/documents (M02-FR-05, the 18+ age check §6.3 and the versioned consent
+ * of 25 Oct 2026) that have their own text, as keys under the "kyc" namespace ("error.<CODE>").
+ * Anything else shows the server's own title.
+ */
+const KYC_ERRORS = [
+  "UNDER_MIN_AGE",
+  "CONSENT_REQUIRED",
+  "CONSENT_VERSION_STALE",
+  "DOB_IN_FUTURE",
+  "DOB_INVALID",
+  "NID_FORMAT_INVALID",
+  "FILES_INCOMPLETE",
+  "PHONE_REQUIRED",
+  "DOC_ALREADY_APPROVED",
+  "MEMBER_NOT_ACTIVE",
+] as const;
+export type KycErrorCode = (typeof KYC_ERRORS)[number];
+
+/** "error.UNDER_MIN_AGE" for a known code (translate with useTranslations("kyc")), otherwise null. */
+export const kycErrorKey = (code: string | undefined | null): `error.${KycErrorCode}` | null =>
+  code && (KYC_ERRORS as readonly string[]).includes(code) ? (`error.${code}` as `error.${KycErrorCode}`) : null;
+
+/**
+ * The text of a submit problem: our own message for a known code (UNDER_MIN_AGE carries the
+ * server's minimum age, `minAge`, falling back to `minAge` from the page), else the server's title.
+ */
+export function kycErrorText(
+  problem: { code?: string | null; title?: string | null; minAge?: unknown },
+  t: (key: `error.${KycErrorCode}`, values?: Record<string, string | number>) => string,
+  opts: { minAge?: number; fallback?: string } = {},
+): string {
+  const key = kycErrorKey(problem.code);
+  if (key) {
+    const age = typeof problem.minAge === "number" ? problem.minAge : (opts.minAge ?? 18);
+    return t(key, { age });
+  }
+  return problem.title || opts.fallback || "";
 }
 
 /** Client-side size and type check before uploading (the server re-checks). */
@@ -81,8 +143,8 @@ export async function uploadBusinessFile(docType: BusinessDocType, file: File) {
   );
 }
 
-export const submitBusiness = async (docType: BusinessDocType, fields: Record<string, string | null>, fileId: string, role: BusinessRole) =>
-  ok(await api().POST("/me/documents", { body: { docType, fields, files: { document: fileId }, consent: true, role } as never }));
+export const submitBusiness = async (docType: BusinessDocType, fields: Record<string, string | null>, fileId: string, role: BusinessRole, consentVersion: number) =>
+  ok(await api().POST("/me/documents", { body: { docType, fields, files: { document: fileId }, consent: consentBody(consentVersion), role } as never }));
 
 /** Fields the server needs that are still empty (the server checks the rest). */
 export function missingFields(fields: { key: string; required: boolean }[], values: Record<string, string>): string[] {

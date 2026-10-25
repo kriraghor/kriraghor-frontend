@@ -744,7 +744,9 @@
       "holderName": "Name on the licence",
       "expiresOn": "Valid until",
       "kind": "Deed or lease"
-    }
+    },
+    "consent": "Consent",
+    "consentNone": "Not recorded (sent before 25 Oct 2026)"
   },
   "moderation": {
     "title": "Moderation",
@@ -1075,7 +1077,7 @@
       "groundsCount": "{n, plural, =0 {No venues yet.} one {# venue} other {# venues}}",
       "open": "Open my venues",
       "step": {
-        "nid": "Verify your NID",
+        "nid": "Verify your NID (18+)",
         "docs": "Send your trade licence and land documents",
         "list": "List your first venue"
       },
@@ -3894,7 +3896,7 @@
       "progress": "{done} of {total} done",
       "done": "Done",
       "step": {
-        "nid": "Verify your NID",
+        "nid": "Verify your NID (18+)",
         "docs": "Send your trade licence and land documents",
         "list": "List your first venue",
         "payout": "Add a payout account",
@@ -3968,7 +3970,7 @@
     },
     "onboard": {
       "step": {
-        "nid": "Verify your NID",
+        "nid": "Verify your NID (18+)",
         "business": "Choose your business and send its documents",
         "setup": "Set up your desk here"
       },
@@ -4181,6 +4183,25 @@
       "PERMISSION_REQUIRED": "You don't have permission for this.",
       "VALIDATION_FAILED": "Some details aren't right. Check the form and try again.",
       "NOT_FOUND": "We couldn't find this account. It may have changed; reload the list."
+    },
+    "viewFilter": "View",
+    "allAccounts": "All accounts",
+    "underAge": {
+      "chip": "Under {age} with NID",
+      "intro": "{count, plural, =0 {No current NID document belongs to someone under {age} today.} one {# current NID document belongs to someone under {age} today (Dhaka). Nothing changes automatically; open the account to decide.} other {# current NID documents belong to people under {age} today (Dhaka). Nothing changes automatically; open an account to decide.}} Every view of this list is logged.",
+      "introLoading": "NID documents of people under {age} today (Dhaka). Every view of this list is logged.",
+      "empty": "No one under {age} has a current NID document.",
+      "notDecided": "Not decided",
+      "col": {
+        "status": "NID status",
+        "age": "Age",
+        "decided": "Decided"
+      },
+      "status": {
+        "approved": "Approved",
+        "in_review": "In review",
+        "changes_requested": "Changes asked"
+      }
     }
   },
   "staffDesk": {

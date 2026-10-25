@@ -416,7 +416,8 @@
         "paid": "Paid",
         "failed": "Failed",
         "cancelled": "Cancelled"
-      }
+      },
+      "verifyHelp": "NID verification is for people aged 18 and over, on kriraghor.com."
     },
     "lb": {
       "title": "Leaderboards",
