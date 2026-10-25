@@ -293,7 +293,7 @@
   },
   "kyc": {
     "title": "Verify your identity",
-    "intro": "We check your National ID once. It keeps Kriraghor safe for everyone and unlocks booking, buying, hiring, selling and prize withdrawals.",
+    "intro": "We check your National ID once, for people aged 18 and over. You need it to sell used gear, get hired, run a business on Kriraghor and withdraw prize money. Booking, buying and hiring someone need only your phone.",
     "signedOut": "Sign in to verify your identity.",
     "signIn": "Sign in",
     "loading": "Loading…",

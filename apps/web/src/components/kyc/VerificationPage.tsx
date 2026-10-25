@@ -16,8 +16,9 @@ const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: 
 
 /**
  * /account/verification (M02 §4): the member checklist with its badge, and the NID form: legal name,
- * number, date of birth, front, back and a selfie holding the NID. Approval by the Kriraghor team
- * unlocks booking, buying, hiring, selling and withdrawing winnings.
+ * number, date of birth, front, back and a selfie holding the NID (18+, explicit versioned consent).
+ * Approval by the Kriraghor team unlocks selling used gear, being hired, running a business and
+ * withdrawing winnings; booking, buying and hiring someone need only a verified phone (25 Oct 2026).
  */
 export function VerificationPage() {
   const t = useTranslations("kyc");
