@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
-import { kyc, type Reveal } from "@/lib/admin/kyc";
+import { useLocale, useTranslations } from "next-intl";
+import { consentLine, kyc, type Reveal } from "@/lib/admin/kyc";
+import { formatDhaka } from "../useAdminMe";
 import { problemOf } from "@kriraghor/api-client";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Field, inputCls } from "../finance/shared";
@@ -15,6 +16,7 @@ import { Field, inputCls } from "../finance/shared";
  */
 export function DocumentPanel({ documentId }: { documentId: string }) {
   const t = useTranslations("kyc");
+  const locale = useLocale();
   const d = useQuery({ queryKey: ["kyc-doc", documentId], queryFn: () => kyc.get(documentId) });
   if (d.isPending) return <div className="mt-4 h-40 animate-pulse bg-surface-2" />;
   if (d.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
@@ -57,6 +59,9 @@ export function DocumentPanel({ documentId }: { documentId: string }) {
         )}
         <dt className="text-muted">{t("phone")}</dt>
         <dd>{doc.user.phoneVerified ? t("phoneOk") : t("phoneMissing")}</dd>
+        {/* M02-FR-05 (25 Oct 2026): the consent version the member ticked, and when. */}
+        <dt className="text-muted">{t("consent")}</dt>
+        <dd data-testid="kyc-consent">{consentLine(doc.consent, (iso) => formatDhaka(iso, locale)) ?? <span className="text-muted">{t("consentNone")}</span>}</dd>
       </dl>
       <h3 className="mt-5 font-bold">{t("files")}</h3>
       <p className="text-xs text-muted">{t("filesAudited")}</p>

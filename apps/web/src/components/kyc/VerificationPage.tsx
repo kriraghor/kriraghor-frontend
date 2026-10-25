@@ -6,7 +6,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf, type Problem } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
-import { ACCEPT, fileProblem, getVerification, MAX_UPLOAD_BYTES, nidLooksValid, SLOTS, submitNid, uploadFile, type Slot, type VerificationItem } from "@/lib/kyc";
+import { ACCEPT, canSubmitNid, fileProblem, getVerification, kycErrorText, MAX_UPLOAD_BYTES, nidLooksValid, SLOTS, submitNid, uploadFile, type Slot, type Verification, type VerificationItem } from "@/lib/kyc";
+import { latestDobForAge } from "@/lib/age";
 import { risk } from "@/lib/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 
@@ -82,6 +83,11 @@ export function VerificationPage() {
           ) : null}
           {editing ? (
             <NidForm
+              consent={q.data.consent}
+              minAgeYears={q.data.minAgeYears}
+              onConsentStale={async () => {
+                await q.refetch();
+              }}
               onCancel={() => setEditing(false)}
               onDone={async () => {
                 setEditing(false);
@@ -138,7 +144,24 @@ function ItemRow({ item }: { item: VerificationItem }) {
 
 type Upload = { file: File; preview: string | null; id: string | null; error: string | null; busy: boolean };
 
-function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Promise<void> }) {
+/**
+ * The NID form (M02-FR-05). 25 Oct 2026: NID verification is for `minAgeYears` and over (§6.3
+ * age_ok, the date input cannot go later than that) and needs an explicit consent to the API's
+ * versioned text, unticked by default; the version ticked is sent with the documents.
+ */
+function NidForm({
+  consent: consentText,
+  minAgeYears,
+  onConsentStale,
+  onCancel,
+  onDone,
+}: {
+  consent: Verification["consent"];
+  minAgeYears: number;
+  onConsentStale: () => Promise<void>;
+  onCancel: () => void;
+  onDone: () => Promise<void>;
+}) {
   const t = useTranslations("kyc");
   const [legalName, setLegalName] = useState("");
   const [number, setNumber] = useState("");
@@ -148,6 +171,7 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
   const [uploads, setUploads] = useState<Partial<Record<Slot, Upload>>>({});
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<Problem | null>(null);
+  const [stale, setStale] = useState(false);
 
   // Object URLs are released when a preview is replaced, and all of them when the form closes.
   const previews = useRef(new Map<Slot, string>());
@@ -177,25 +201,45 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
     }
   }
 
-  const ready = SLOTS.every((s) => uploads[s]?.id) && legalName.trim().length >= 3 && nidLooksValid(number) && dob && consent;
+  const maxDob = latestDobForAge(minAgeYears);
+  const ready = canSubmitNid({
+    files: { front: uploads.front?.id, back: uploads.back?.id, selfie: uploads.selfie?.id },
+    legalName,
+    number,
+    dob,
+    maxDob,
+    consented: consent,
+    consentVersion: consentText?.version,
+  });
 
   return (
     <form
       className="mt-6 space-y-5 border-2 border-line-strong p-5"
       onSubmit={async (e) => {
         e.preventDefault();
+        if (!ready) return;
         setBusy(true);
         setProblem(null);
+        setStale(false);
         try {
-          await submitNid({ legalName: legalName.trim(), number, dob }, { front: uploads.front!.id!, back: uploads.back!.id!, selfie: uploads.selfie!.id! });
+          await submitNid({ legalName: legalName.trim(), number, dob }, { front: uploads.front!.id!, back: uploads.back!.id!, selfie: uploads.selfie!.id! }, consentText.version);
           await onDone();
         } catch (err) {
-          setProblem(problemOf(err) ?? { code: "UNKNOWN", title: t("failed"), status: 0 });
+          const p = problemOf(err) ?? { code: "UNKNOWN", title: t("failed"), status: 0 };
+          if (p.code === "CONSENT_VERSION_STALE") {
+            // The text changed since the page loaded: show the new one and ask again.
+            setConsent(false);
+            setStale(true);
+            await onConsentStale().catch(() => undefined);
+          } else {
+            setProblem(p);
+          }
         } finally {
           setBusy(false);
         }
       }}
     >
+      <Notice>{t("minAgeNotice", { age: minAgeYears })}</Notice>
       <label className="block">
         <span className="text-sm font-semibold text-muted">{t("legalName")}</span>
         <input value={legalName} onChange={(e) => setLegalName(e.target.value)} autoComplete="name" minLength={3} maxLength={120} className="mt-1 min-h-12 w-full field px-3 text-base" required />
@@ -219,7 +263,7 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
       </label>
       <label className="block">
         <span className="text-sm font-semibold text-muted">{t("dob")}</span>
-        <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} className="mt-1 min-h-12 field px-3 text-base" required />
+        <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={maxDob} className="mt-1 min-h-12 field px-3 text-base" required />
       </label>
       <fieldset>
         <legend className="text-sm font-semibold text-muted">{t("files")}</legend>
@@ -248,9 +292,18 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
         </div>
       </fieldset>
       <label className="flex items-start gap-2 text-sm">
-        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5" required />
+        <input
+          type="checkbox"
+          checked={consent}
+          onChange={(e) => {
+            setConsent(e.target.checked);
+            if (e.target.checked) setStale(false);
+          }}
+          className="mt-1 h-5 w-5"
+          required
+        />
         <span>
-          {t("consent")}{" "}
+          {consentText.text}{" "}
           <Link href="/privacy" className="underline">
             {tf("privacy")}
           </Link>
@@ -260,7 +313,8 @@ function NidForm({ onCancel, onDone }: { onCancel: () => void; onDone: () => Pro
           </Link>
         </span>
       </label>
-      {problem ? <Notice tone="error">{problem.title}</Notice> : null}
+      {stale ? <Notice tone="error">{t("error.CONSENT_VERSION_STALE")}</Notice> : null}
+      {problem ? <Notice tone="error">{kycErrorText(problem, t, { minAge: minAgeYears, fallback: t("failed") })}</Notice> : null}
       <div className="flex flex-wrap gap-3">
         <Button type="submit" busy={busy} disabled={!ready}>
           {t("submit")}

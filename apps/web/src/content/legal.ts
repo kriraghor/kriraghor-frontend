@@ -13,7 +13,7 @@ export type LegalDoc = {
 };
 export type LegalKey = "terms" | "privacy" | "refunds" | "protection" | "fairPlay";
 
-export const LEGAL_VERSION = { version: "0.1", updated: "2026-10-19" };
+export const LEGAL_VERSION = { version: "0.2", updated: "2026-10-25" };
 
 const en: Record<LegalKey, LegalDoc> = {
   terms: {
@@ -39,8 +39,9 @@ const en: Record<LegalKey, LegalDoc> = {
             "Keep your password and codes to yourself. We will never ask for them.",
             "One account per person. Accounts can't be sold or shared.",
             "Some actions need more checks: a verified phone to book, register or hire; a verified game UID for esports; an approved NID to sell used gear, open a business or withdraw winnings.",
+            "We ask for your NID only with your explicit consent each time you send it. How we use and protect it is in our Privacy policy.",
           ],
-          "[The minimum age for paid entry and prize withdrawal will be confirmed here (open question Q116).]",
+          "NID verification is for people aged 18 and over; there is no guardian route yet. [The minimum age for paid entry and prize withdrawal is still being decided (open questions Q116 and Q181).]",
         ],
       },
       {
@@ -204,7 +205,7 @@ const en: Record<LegalKey, LegalDoc> = {
       {
         id: "keep",
         title: "How long we keep it",
-        body: ["We keep your data while your account is open and as long as the law requires for payment and tax records. Closing an account removes it from public view. The photos of your NID are deleted a set number of days after the verification decision; the period is shown when you upload them. [The retention period for other verification records will be set during legal review.]"],
+        body: ["We keep your data while your account is open and as long as the law requires for payment and tax records. Closing an account removes it from public view. The photos of your NID are deleted 90 days after the verification decision (see NID verification below). [The retention period for other verification records will be set during legal review.]"],
       },
       {
         id: "security",
@@ -222,7 +223,21 @@ const en: Record<LegalKey, LegalDoc> = {
           ],
         ],
       },
-      { id: "children", title: "Children", body: ["[The minimum age for an account, and for paid entry and withdrawals, will be confirmed here (open questions Q37 and Q116).]"] },
+      {
+        id: "nid",
+        title: "NID verification",
+        body: [
+          "We ask for your National ID (NID) only when you need it: to sell on Kriraghor, to be hired, to receive business payouts or to withdraw winnings. It lets us check who you are and keep fraud off the platform.",
+          [
+            "What we collect: your NID number, the name and date of birth on it, and photos of its front and back and a selfie of you holding it.",
+            "Who sees it: only Kriraghor review staff. The NID number is encrypted, only its last 4 digits are shown, and every view is recorded.",
+            "How long: the photos are deleted 90 days after the verification decision.",
+            "Age: NID verification is for people aged 18 and over.",
+          ],
+          "We ask for your consent explicitly each time you send your NID. You can withdraw it by asking Kriraghor support; we then delete your verification data, except what the law requires us to keep.",
+        ],
+      },
+      { id: "children", title: "Children", body: ["NID verification is for people aged 18 and over; there is no guardian route yet. [The minimum age for an account, and for paid entry and withdrawals, is still being decided (open questions Q116 and Q181).]"] },
       { id: "changes", title: "Changes", body: ["We will tell you about important changes before they take effect. The version and date are at the top of this page."] },
       { id: "contact", title: "Contact", body: ["See the Help centre. [A privacy contact will be added before launch.]"] },
     ],
@@ -367,8 +382,9 @@ const bn: Record<LegalKey, LegalDoc> = {
             "পাসওয়ার্ড ও কোড কাউকে দেবেন না। আমরা কখনো এগুলো চাইব না।",
             "একজনের একটি অ্যাকাউন্ট। অ্যাকাউন্ট বিক্রি বা শেয়ার করা যাবে না।",
             "কিছু কাজে বাড়তি যাচাই লাগে: বুকিং, রেজিস্ট্রেশন বা হায়ারে যাচাই করা ফোন; ই-স্পোর্টসে যাচাই করা গেম UID; পুরনো জিনিস বিক্রি, ব্যবসা খোলা বা পুরস্কারের টাকা তুলতে অনুমোদিত NID।",
+            "প্রতিবার NID পাঠানোর সময় আমরা আপনার স্পষ্ট সম্মতি নিই। আমরা কীভাবে তা ব্যবহার ও সুরক্ষা করি, তা গোপনীয়তা নীতিতে আছে।",
           ],
-          "[পেইড এন্ট্রি ও পুরস্কার তোলার ন্যূনতম বয়স এখানে নিশ্চিত করা হবে (খোলা প্রশ্ন Q116)।]",
+          "NID যাচাই শুধু ১৮ বছর বা তার বেশি বয়সীদের জন্য; অভিভাবকের মাধ্যমে যাচাইয়ের ব্যবস্থা এখনো নেই। [পেইড এন্ট্রি ও পুরস্কার তোলার ন্যূনতম বয়স এখনো ঠিক হচ্ছে (খোলা প্রশ্ন Q116 ও Q181)।]",
         ],
       },
       {
@@ -517,14 +533,28 @@ const bn: Record<LegalKey, LegalDoc> = {
           "আমরা আপনার ব্যক্তিগত তথ্য বিক্রি করি না।",
         ],
       },
-      { id: "keep", title: "কতদিন রাখি", body: ["অ্যাকাউন্ট খোলা থাকা পর্যন্ত, এবং পেমেন্ট ও করের রেকর্ডের জন্য আইন যতদিন চায় ততদিন তথ্য রাখি। অ্যাকাউন্ট বন্ধ করলে তা আর প্রকাশ্যে দেখা যায় না। যাচাইয়ের সিদ্ধান্তের নির্দিষ্ট দিন পর আপনার NID-এর ছবি মুছে ফেলা হয়; কত দিন, তা আপলোডের সময় দেখানো হয়। [যাচাইয়ের অন্যান্য রেকর্ড কতদিন রাখা হবে, তা আইনি পর্যালোচনায় ঠিক হবে।]"] },
+      { id: "keep", title: "কতদিন রাখি", body: ["অ্যাকাউন্ট খোলা থাকা পর্যন্ত, এবং পেমেন্ট ও করের রেকর্ডের জন্য আইন যতদিন চায় ততদিন তথ্য রাখি। অ্যাকাউন্ট বন্ধ করলে তা আর প্রকাশ্যে দেখা যায় না। যাচাইয়ের সিদ্ধান্তের ৯০ দিন পর আপনার NID-এর ছবি মুছে ফেলা হয় (নিচে NID যাচাই অংশ দেখুন)। [যাচাইয়ের অন্যান্য রেকর্ড কতদিন রাখা হবে, তা আইনি পর্যালোচনায় ঠিক হবে।]"] },
       { id: "security", title: "কীভাবে সুরক্ষা দিই", body: ["NID নম্বর, পেআউট অ্যাকাউন্ট নম্বর ও ইভেন্টের রুমের তথ্য এনক্রিপ্ট করে রাখা হয়। কর্মীরা শুধু তাঁদের কাজের জন্য যা দরকার তা-ই দেখেন, আর সংবেদনশীল তথ্য দেখলে অডিট লগে রেকর্ড হয়।"] },
       {
         id: "rights",
         title: "আপনার সুযোগ",
         body: [["আমার অ্যাকাউন্টে নিজের তথ্য দেখুন ও ঠিক করুন।", "কোন নোটিশ SMS, ইমেইল বা অ্যাপে পাবেন তা বেছে নিন (নিরাপত্তা নোটিশ সবসময় আসবে)।", "হেল্প সেন্টারের মাধ্যমে নিজের তথ্যের কপি চাইতে বা অ্যাকাউন্ট বন্ধ করতে পারবেন।"]],
       },
-      { id: "children", title: "শিশু", body: ["[অ্যাকাউন্ট খোলা, পেইড এন্ট্রি ও টাকা তোলার ন্যূনতম বয়স এখানে নিশ্চিত করা হবে (খোলা প্রশ্ন Q37 ও Q116)।]"] },
+      {
+        id: "nid",
+        title: "NID যাচাই",
+        body: [
+          "আপনার জাতীয় পরিচয়পত্র (NID) আমরা শুধু দরকার হলেই চাই: ক্রীড়াঘরে বিক্রি করতে, হায়ার হতে, ব্যবসার পেআউট পেতে বা পুরস্কারের টাকা তুলতে। এতে আমরা আপনার পরিচয় যাচাই করি এবং প্ল্যাটফর্মে প্রতারণা ঠেকাই।",
+          [
+            "যা নিই: আপনার NID নম্বর, তাতে লেখা নাম ও জন্মতারিখ, এবং NID-এর সামনে ও পেছনের ছবি আর NID হাতে আপনার একটি সেলফি।",
+            "কে দেখেন: শুধু ক্রীড়াঘরের যাচাইকারী কর্মীরা। NID নম্বর এনক্রিপ্ট করা থাকে, শুধু শেষ ৪টি সংখ্যা দেখানো হয়, আর প্রতিবার দেখা রেকর্ড হয়।",
+            "কতদিন: যাচাইয়ের সিদ্ধান্তের ৯০ দিন পর ছবিগুলো মুছে ফেলা হয়।",
+            "বয়স: NID যাচাই শুধু ১৮ বছর বা তার বেশি বয়সীদের জন্য।",
+          ],
+          "প্রতিবার NID পাঠানোর সময় আমরা আপনার স্পষ্ট সম্মতি নিই। ক্রীড়াঘর সাপোর্টকে জানিয়ে আপনি সম্মতি তুলে নিতে পারেন; তখন আমরা আপনার যাচাইয়ের তথ্য মুছে ফেলি, শুধু আইন যা রাখতে বলে তা ছাড়া।",
+        ],
+      },
+      { id: "children", title: "শিশু", body: ["NID যাচাই শুধু ১৮ বছর বা তার বেশি বয়সীদের জন্য; অভিভাবকের মাধ্যমে যাচাইয়ের ব্যবস্থা এখনো নেই। [অ্যাকাউন্ট খোলা, পেইড এন্ট্রি ও টাকা তোলার ন্যূনতম বয়স এখনো ঠিক হচ্ছে (খোলা প্রশ্ন Q116 ও Q181)।]"] },
       { id: "changes", title: "পরিবর্তন", body: ["গুরুত্বপূর্ণ পরিবর্তন কার্যকর হওয়ার আগে জানাব। সংস্করণ ও তারিখ এই পাতার ওপরে আছে।"] },
       { id: "contact", title: "যোগাযোগ", body: ["হেল্প সেন্টার দেখুন। [গোপনীয়তা বিষয়ে যোগাযোগের ঠিকানা চালুর আগে যোগ হবে।]"] },
     ],

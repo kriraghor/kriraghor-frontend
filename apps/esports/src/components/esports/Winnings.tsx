@@ -40,7 +40,8 @@ export function Winnings() {
     }
   }
 
-  const fix = problem?.code === "KYC_REQUIRED" || problem?.code === "KYC_PENDING" ? `${web}/account/verification` : problem?.code === "PAYOUT_ACCOUNT_REQUIRED" ? `${web}/me/payout-account` : null;
+  const needsNid = problem?.code === "KYC_REQUIRED" || problem?.code === "KYC_PENDING";
+  const fix = needsNid ? `${web}/account/verification` : problem?.code === "PAYOUT_ACCOUNT_REQUIRED" ? `${web}/me/payout-account` : null;
   return (
     <section className="mx-auto max-w-[900px] px-5 py-10">
       <h1 className="text-3xl font-extrabold">{t("win.title")}</h1>
@@ -71,6 +72,8 @@ export function Winnings() {
                     </a>
                   </>
                 ) : null}
+                {/* M02 §6.3 age_ok (25 Oct 2026): NID verification is 18+ and happens on kriraghor.com. */}
+                {needsNid ? <span className="mt-1 block text-sm">{t("win.verifyHelp")}</span> : null}
               </Notice>
             </div>
           ) : done ? (

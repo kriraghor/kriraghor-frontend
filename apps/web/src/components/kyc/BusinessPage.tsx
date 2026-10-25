@@ -9,7 +9,26 @@ import { problemOf, type Problem } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { publicEnv } from "@kriraghor/session/env";
 import { hire } from "@/lib/hire";
-import { applyForRole, asOfRole, BUSINESS_ROLES, fileProblem, getRoleVerification, isPerson, MAX_UPLOAD_BYTES, missingFields, roleFromAs, submitBusiness, uploadBusinessFile, type BusinessDocType, type BusinessRole, type VerificationItem } from "@/lib/kyc";
+import {
+  applyForRole,
+  asOfRole,
+  BUSINESS_ROLES,
+  consentReady,
+  fileProblem,
+  getRoleVerification,
+  isPerson,
+  kycErrorKey,
+  kycErrorText,
+  MAX_UPLOAD_BYTES,
+  missingFields,
+  roleFromAs,
+  submitBusiness,
+  uploadBusinessFile,
+  type BusinessDocType,
+  type BusinessRole,
+  type Verification,
+  type VerificationItem,
+} from "@/lib/kyc";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { OrganisationApply } from "./OrganisationApply";
 
@@ -132,7 +151,7 @@ export function BusinessPage() {
           {role === "organiser" ? <OrganisationApply roleActive={v.roleStatus === "active"} /> : null}
           <ul className="mt-6 space-y-4" data-testid="business-items">
             {v.items.map((item) => (
-              <DocItem key={item.key} item={item} role={role} onSent={refresh} credentials={"credentials" in v ? (v.credentials as Credential[]) : []} />
+              <DocItem key={item.key} item={item} role={role} consent={v.consent} minAgeYears={v.minAgeYears} onSent={refresh} credentials={"credentials" in v ? (v.credentials as Credential[]) : []} />
             ))}
           </ul>
         </>
@@ -154,8 +173,29 @@ function Shell({ role, children }: { role: BusinessRole; children: React.ReactNo
 
 type Credential = { hireRole: string | null; level: string | null; issuer: string | null; status: string; expiresOn: string | null; documentId: string };
 
-function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; role: BusinessRole; onSent: () => Promise<unknown>; credentials: Credential[] }) {
+/**
+ * One business document. 25 Oct 2026 (M02-FR-05): sending it needs an explicit consent to the
+ * API's business text for this role, unticked by default; the version ticked is sent with it.
+ */
+function DocItem({
+  item,
+  role,
+  consent: consentText,
+  minAgeYears,
+  onSent,
+  credentials,
+}: {
+  item: VerificationItem;
+  role: BusinessRole;
+  consent: Verification["consent"];
+  minAgeYears: number;
+  onSent: () => Promise<unknown>;
+  credentials: Credential[];
+}) {
   const t = useTranslations("business");
+  const tk = useTranslations("kyc");
+  const tf = useTranslations("footer");
+  const [consent, setConsent] = useState(false);
   const locale = useLocale();
   const isCredential = item.key === "credential";
   // A credential is kept per hire role: pick the role and one of its tiers; another role can always be added.
@@ -173,6 +213,7 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
   async function send(e: React.FormEvent) {
     e.preventDefault();
     setProblem(null);
+    if (!consentReady(consent, consentText?.version)) return;
     if (missingFields(item.fields, values).length) return setProblem(t("fillAll"));
     if (!file) return setProblem(t("addFile"));
     const fp = fileProblem(file, MAX_UPLOAD_BYTES);
@@ -180,12 +221,22 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
     setBusy(true);
     try {
       const up = await uploadBusinessFile(item.key as BusinessDocType, file);
-      await submitBusiness(item.key as BusinessDocType, Object.fromEntries(item.fields.map((f) => [f.key, values[f.key]?.trim() || null])), up.fileId, role);
+      await submitBusiness(item.key as BusinessDocType, Object.fromEntries(item.fields.map((f) => [f.key, values[f.key]?.trim() || null])), up.fileId, role, consentText.version);
       setOpen(false);
+      setConsent(false);
       await onSent();
     } catch (err) {
       const p = problemOf(err);
-      setProblem(p?.errors?.length ? p.errors.map((x) => x.message).join(" · ") : p?.title ?? t("failed"));
+      if (p?.code === "CONSENT_VERSION_STALE") {
+        // The text changed since the page loaded: reload it, untick and ask again.
+        setConsent(false);
+        setProblem(tk("error.CONSENT_VERSION_STALE"));
+        await onSent().catch(() => undefined);
+      } else if (p && kycErrorKey(p.code)) {
+        setProblem(kycErrorText(p, tk, { minAge: minAgeYears }));
+      } else {
+        setProblem(p?.errors?.length ? p.errors.map((x) => x.message).join(" · ") : p?.title ?? t("failed"));
+      }
     } finally {
       setBusy(false);
     }
@@ -273,9 +324,18 @@ function DocItem({ item, role, onSent, credentials }: { item: VerificationItem; 
             <input type="file" accept="image/jpeg,image/png,application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 field px-3 py-2 text-sm" data-testid={`file-${item.key}`} />
             <span className="text-xs font-normal">{t("file.hint")}</span>
           </label>
+          <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5" required data-testid={`consent-${item.key}`} />
+            <span>
+              {consentText.text}{" "}
+              <Link href="/privacy" className="underline">
+                {tf("privacy")}
+              </Link>
+            </span>
+          </label>
           {problem ? <Notice tone="error">{problem}</Notice> : null}
           <div className="flex gap-2">
-            <Button type="submit" busy={busy}>
+            <Button type="submit" busy={busy} disabled={!consentReady(consent, consentText?.version)}>
               {t("submit")}
             </Button>
             <button type="button" className="min-h-12 border-2 border-line px-4 font-bold" onClick={() => setOpen(false)}>
