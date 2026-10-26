@@ -37,6 +37,8 @@
     "./brand/route-loading": "./src/brand/RouteLoading.tsx",
     "./payouts": "./src/payouts/index.ts",
     "./payouts/client": "./src/payouts/client.ts",
+    "./payments": "./src/payments/index.ts",
+    "./payments/client": "./src/payments/client.ts",
     "./share": "./src/share/ShareButton.tsx",
     "./share/links": "./src/share/links.ts",
     "./share/og": "./src/share/og.tsx",

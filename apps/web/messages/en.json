@@ -163,67 +163,6 @@
     "newOne": "New notification: {title}",
     "newGeneric": "You have a new notification."
   },
-  "payments": {
-    "payFor": "Pay for",
-    "chooseMethod": "Pay with",
-    "methods": {
-      "bkash": "bKash",
-      "nagad": "Nagad",
-      "card": "Card"
-    },
-    "payNow": "Pay {amount}",
-    "timeLeft": "{time} left to pay",
-    "gatewayNote": "You will finish on the secure SSLCommerz page, then come back here. Kriraghor never sees your PIN or card number.",
-    "lastFailed": "Your last try did not go through. You were not charged. Try again.",
-    "gatewayDown": "The payment gateway is not answering. Try again in a moment.",
-    "expired": "This payment request has expired. Go back and start again.",
-    "alreadyPaid": "This is already paid.",
-    "seeReceipt": "See the receipt",
-    "notFound": "We could not find this payment.",
-    "signedOut": "Sign in to pay.",
-    "signIn": "Sign in",
-    "loading": "Loading",
-    "loadFailed": "Your payments did not load. Refresh to try again.",
-    "confirming": "Confirming your payment…",
-    "for": "For",
-    "ref": "Reference",
-    "method": "Paid with",
-    "tryAgain": "Try again",
-    "myPayments": "My payments",
-    "empty": "No payments yet.",
-    "more": "Show more",
-    "pay": "Pay",
-    "refundLine": "Refund {amount}",
-    "result": {
-      "paidLabel": "Payment confirmed",
-      "paid": "{amount} paid",
-      "failed": "The payment did not go through",
-      "slow": "Still confirming",
-      "slowNote": "Your bank or wallet is taking longer than usual. We will let you know as soon as it is confirmed; you do not need to pay again."
-    },
-    "status": {
-      "initiated": "Not paid yet",
-      "pending": "Waiting for the gateway",
-      "succeeded": "Paid",
-      "failed": "Did not go through",
-      "cancelled": "Cancelled",
-      "expired": "Expired",
-      "partially_refunded": "Partly refunded",
-      "refunded": "Refunded"
-    },
-    "refundStatus": {
-      "pending_master": "Waiting for approval",
-      "approved": "Started",
-      "processing": "On its way",
-      "succeeded": "Done",
-      "failed": "Retrying",
-      "manual_required": "Our team will contact you",
-      "rejected": "Not approved"
-    },
-    "backToEsports": "Back to my matches",
-    "backToBooking": "See your booking",
-    "backToOrders": "See my order"
-  },
   "payouts": {
     "title": "My payouts",
     "accountTitle": "Payout account",

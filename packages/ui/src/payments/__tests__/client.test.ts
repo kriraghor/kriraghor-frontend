@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countdown, formatTaka, outcomeOf } from "../payments";
+import { countdown, formatTaka, outcomeOf } from "../client";
 
 describe("payments helpers (M06 §4)", () => {
   it("formats poisha as taka with Indian grouping, in English and Bangla digits", () => {
