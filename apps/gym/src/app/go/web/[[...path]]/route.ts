@@ -6,6 +6,7 @@ import { serverPublicEnv } from "@kriraghor/session/env";
  * GET /go/web/… sends the visitor on to kriraghor.com/… (help, terms, privacy, the account, the shop).
  * Server-rendered links point here, so the HTML never carries a build-time WEB_URL (ADR-003).
  */
+
 export async function GET(request: Request, { params }: { params: Promise<{ path?: string[] }> }) {
   await connection();
   const { path } = await params;
