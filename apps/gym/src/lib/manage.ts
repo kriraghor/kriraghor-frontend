@@ -3,15 +3,16 @@ import type { components } from "@kriraghor/api-client/schema";
 
 /**
  * Managing a gym (M20; on gym.kriraghor.com/manage since 25 Oct 2026, moved from the business panel):
- * my gyms (working copy, photos, weekly hours with women-only windows, the day / month / quarter packages, review, pause), the front desk (admit a
+ * my gyms (working copy, photos, weekly hours with women-only windows, the packages (M24-FR-24, edited on /manage/[gymId]/packages), review, pause), the front desk (admit a
  * pass by its QR token or 6-character code, today's admissions) and the passes sold. The customer
  * session; the API gate list_gym needs an active gym_owner role.
  */
 export type OwnerGym = components["schemas"]["OwnerGym"];
 export type Hours = OwnerGym["hours"];
 export type HoursWindow = Hours[number];
-export type PackageKind = "day" | "month" | "quarter";
-export type PackageInput = { kind: PackageKind; title: string; price: number };
+export type PackageKind = OwnerGym["packages"][number]["kind"];
+/** One package as PUT /me/gyms/:id/packages takes it (M24-FR-24); built by gym-manage packagesPayload. */
+export type PackageInput = { kind: PackageKind; title: string; price: number; days?: number; admissionFee?: number; channel?: "desk" | "online" | "both"; visitLimit?: number | null; sort?: number };
 export type Admission = components["schemas"]["GymAdmission"];
 export type AdmissionList = components["schemas"]["GymAdmissionList"];
 export type Sold = components["schemas"]["GymSoldList"]["items"][number];
@@ -70,8 +71,6 @@ export function shiftDay(day: string, n: number): string {
   return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
 }
 
-const KIND_ORDER: PackageKind[] = ["day", "month", "quarter"];
-
 /** What the owner can do in each state (mirrors gyms.service: no edits while in review, rejected, suspended or removed). */
 export function gymActions(status: OwnerGym["status"], editStatus: OwnerGym["editStatus"]): ("edit" | "submit" | "submit_edit" | "pause" | "resume")[] {
   const inReview = status === "pending_review" || editStatus === "pending_review";
@@ -105,20 +104,6 @@ export function hoursProblems(hours: Hours): string[] {
     });
   }
   return out;
-}
-
-/** The packages in kind order with prices in taka text → the API body (poisha), or the first problem. */
-export function packagesBody(rows: { kind: PackageKind; title: string; taka: string; on: boolean }[]): { ok: true; packages: PackageInput[] } | { ok: false; problem: "day_required" | "bad_price" | "bad_title" } {
-  const on = rows.filter((r) => r.on).sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind));
-  if (!on.some((r) => r.kind === "day")) return { ok: false, problem: "day_required" };
-  const packages: PackageInput[] = [];
-  for (const r of on) {
-    const m = /^\s*(\d+)\s*$/.exec(r.taka);
-    if (!m || Number(m[1]) <= 0) return { ok: false, problem: "bad_price" };
-    if (r.title.trim().length < 2) return { ok: false, problem: "bad_title" };
-    packages.push({ kind: r.kind, title: r.title.trim(), price: Number(m[1]) * 100 });
-  }
-  return { ok: true, packages };
 }
 
 /** A typed backup code: upper case, no spaces or dashes (the API also accepts the dashed form). */
