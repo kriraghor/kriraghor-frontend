@@ -131,6 +131,7 @@
     "tournament": "Events",
     "esports": "Esports",
     "gym": "Gym",
+    "gym_saas": "Gym subscriptions",
     "moderation": "Moderation",
     "money_limits": "Money limits",
     "risk": "Risk",
@@ -3001,7 +3002,9 @@
     "womenOnly": "women only",
     "closed": "Closed",
     "packages": "Passes",
-    "outOfLimits": "outside {min} – {max}"
+    "outOfLimits": "outside {min} – {max}",
+    "private": "Private",
+    "privateFilter": "Private (management only)"
   },
   "organiser": {
     "title": "Organiser console",

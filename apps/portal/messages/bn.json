@@ -131,6 +131,7 @@
     "tournament": "ইভেন্ট",
     "esports": "ইস্পোর্টস",
     "gym": "জিম",
+    "gym_saas": "জিম সাবস্ক্রিপশন",
     "moderation": "মডারেশন",
     "money_limits": "টাকার সীমা",
     "risk": "ঝুঁকি",
@@ -3001,7 +3002,9 @@
     "womenOnly": "শুধু নারী",
     "closed": "বন্ধ",
     "packages": "পাস",
-    "outOfLimits": "{min} – {max}-এর বাইরে"
+    "outOfLimits": "{min} – {max}-এর বাইরে",
+    "private": "প্রাইভেট",
+    "privateFilter": "প্রাইভেট (শুধু ম্যানেজমেন্ট)"
   },
   "organiser": {
     "title": "আয়োজক কনসোল",

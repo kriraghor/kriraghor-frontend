@@ -177,7 +177,7 @@ export function workplaceDesks(w: WorkplaceRef): { key: "bookings" | "reviews" |
     ];
   if (w.businessType === "gym")
     return [
-      ...(has("desk.admit") || has("desk.admissions") ? [{ key: "frontDesk" as const, href: gymHref(`/manage/${id}/desk`) }] : []),
+      ...(has("desk.admit") || has("desk.admissions") || has("attendance.mark") ? [{ key: "frontDesk" as const, href: gymHref(`/manage/${id}/desk`) }] : []),
       ...(has("passes.view") ? [{ key: "passes" as const, href: gymHref(`/manage/${id}/passes`) }] : []),
     ];
   return [

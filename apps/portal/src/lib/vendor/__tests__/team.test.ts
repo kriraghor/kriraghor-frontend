@@ -183,6 +183,8 @@ describe("workplaces", () => {
     expect(workplaceDesks({ businessType: "venue", businessId: "g1", permissions: [] })).toEqual([]);
     expect(workplaceDesks({ businessType: "gym", businessId: "y1", permissions: ["desk.admissions"] })).toEqual([{ key: "frontDesk", href: "/go/gym/manage/y1/desk" }]);
     expect(workplaceDesks({ businessType: "gym", businessId: "y1", permissions: ["passes.view"] })).toEqual([{ key: "passes", href: "/go/gym/manage/y1/passes" }]);
+    // M24: attendance.mark opens the front desk for member check-ins.
+    expect(workplaceDesks({ businessType: "gym", businessId: "y1", permissions: ["attendance.mark", "fees.collect"] })).toEqual([{ key: "frontDesk", href: "/go/gym/manage/y1/desk" }]);
     expect(workplaceDesks({ businessType: "shop", businessId: "s1", permissions: ["orders.view", "stock.view"] })).toEqual([
       { key: "orders", href: "/vendor/orders?shopId=s1" },
       { key: "inventory", href: "/vendor/inventory?shopId=s1" },

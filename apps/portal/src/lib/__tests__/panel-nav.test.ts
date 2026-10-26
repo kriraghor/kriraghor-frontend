@@ -132,7 +132,7 @@ describe("Round B3: the team page and staff desks", () => {
   });
 
   it("gym staff get one Gyms link to gym.kriraghor.com/manage by any gym desk permission (M24 §4.3)", () => {
-    for (const permissions of [["desk.admissions", "desk.admit"], ["desk.admit"], ["desk.admissions"], ["passes.view"]]) {
+    for (const permissions of [["desk.admissions", "desk.admit"], ["desk.admit"], ["desk.admissions"], ["passes.view"], ["attendance.mark"], ["members.view"], ["members.trainer"], ["members.view", "fees.collect"]]) {
       expect(hrefs(vendorSections([], "all", [{ businessType: "gym", businessId: "y1", permissions }]))).toEqual(["/vendor", "/go/gym/manage"]);
     }
     const two = vendorSections([], "all", [
