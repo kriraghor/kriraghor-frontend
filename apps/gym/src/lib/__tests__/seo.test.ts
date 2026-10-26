@@ -30,7 +30,7 @@ describe("gym SEO", () => {
     expect(robotsFor("staging", SITE)).toEqual({ rules: [{ userAgent: "*", disallow: "/" }] });
     const r = robotsFor("prod", SITE);
     expect(r.sitemap).toBe(`${SITE}/sitemap.xml`);
-    expect(PRIVATE_PATHS).toEqual(expect.arrayContaining(["/me", "/manage", "/start"]));
+    expect(PRIVATE_PATHS).toEqual(expect.arrayContaining(["/me", "/manage", "/start", "/r/"]));
   });
 });
 
