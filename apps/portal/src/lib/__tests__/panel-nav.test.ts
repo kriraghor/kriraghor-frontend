@@ -24,6 +24,12 @@ describe("adminSections, the admin sidebar", () => {
     expect(keys).not.toContain("system");
     expect(adminSections(undefined)).toEqual([]);
   });
+
+  it("the gym system desk (M24 §4.4) opens with manage_gyms or view_payouts", () => {
+    expect(hrefs(adminSections({ isMaster: false, permissions: ["manage_gyms"] }))).toContain("/admin/gym-manage");
+    expect(hrefs(adminSections({ isMaster: false, permissions: ["view_payouts"] }))).toContain("/admin/gym-manage");
+    expect(hrefs(adminSections({ isMaster: false, permissions: ["manage_users"] }))).not.toContain("/admin/gym-manage");
+  });
 });
 
 describe("vendorSections, the business sidebar", () => {

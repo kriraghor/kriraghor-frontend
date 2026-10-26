@@ -47,7 +47,7 @@ describe("pickBusiness and the URL", () => {
   it("writes the URL parameters back, clearing org for everything but an organisation", () => {
     expect(businessQuery({ role: "shop_owner", orgId: null })).toEqual({ business: "shop", org: null });
     expect(businessQuery({ role: "organiser", orgId: "o2" })).toEqual({ business: "organiser", org: "o2" });
-    expect(analyticsHref("gym_owner")).toBe("/vendor/analytics?business=gym");
+    expect(analyticsHref("gym_owner")).toBe("/go/gym/manage/reports"); // M24 prompt 2: the gym reports
     expect(analyticsHref("organiser", "o1")).toBe("/vendor/analytics?business=organiser&org=o1");
     expect(analyticsHref("ground_owner", "ignored")).toBe("/vendor/analytics?business=venue");
   });

@@ -11,14 +11,25 @@
  * | /vendor/gyms/:id/desk          | /manage/:id/desk         |
  * | /vendor/gyms/:id/passes        | /manage/:id/passes       |
  * | /vendor/gyms/:id/…             | /manage/:id/…            |
+ * | /vendor/analytics?business=gym | /manage/reports          |
  *
+ * Since M24 prompt 2 a gym's numbers live in the reports on gym.kriraghor.com (/manage/reports, all
+ * gyms), so the gym analytics link moves there too (business and org are dropped, the rest is kept).
  * The shared business pages stay on vendor: /vendor/team, /vendor/reviews, /vendor/payouts,
- * /vendor/analytics (and the admin gym desks on admin.kriraghor.com).
+ * /vendor/analytics for venues, shops and organisations (and the admin gym desks on admin.kriraghor.com).
  */
 export function gymRedirect(pathname: string, search: string, gymUrl: string): string | null {
+  const gym = gymUrl.replace(/\/+$/, "");
+  if (/^\/vendor\/analytics\/?$/.test(pathname)) {
+    const q = new URLSearchParams(search);
+    if (q.get("business") !== "gym") return null;
+    q.delete("business");
+    q.delete("org");
+    const rest = q.toString();
+    return `${gym}/manage/reports${rest ? `?${rest}` : ""}`;
+  }
   const m = /^\/vendor\/gyms(?:\/([^/]+)(\/.*)?)?\/?$/.exec(pathname);
   if (!m) return null;
-  const gym = gymUrl.replace(/\/+$/, "");
   const [, id, rest] = m;
   const tail = (rest ?? "").replace(/\/+$/, "");
   const path = !id ? "/manage" : tail ? `/manage/${id}${tail}` : `/manage/${id}/edit`;

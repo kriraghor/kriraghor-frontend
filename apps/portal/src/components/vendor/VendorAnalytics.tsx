@@ -8,7 +8,7 @@ import { ButtonLink, Dropdown, EmptyState, SegmentedControl, Skeleton } from "@k
 import type { Period } from "@/lib/dashboard";
 import { businessView } from "@/lib/panel-nav";
 import { useUrlFilters } from "@/lib/use-url-filters";
-import { BUSINESS_PARAMS, businessOptions, businessQuery, pickBusiness, type Business } from "@/lib/vendor/analytics";
+import { BUSINESS_PARAMS, GYM_REPORTS_HREF, businessOptions, businessQuery, pickBusiness, type Business } from "@/lib/vendor/analytics";
 import { vendor } from "@/lib/vendor/grounds";
 import { sportsConsole } from "@/lib/vendor/tournaments";
 import { MePanel } from "../MePanel";
@@ -22,7 +22,8 @@ const SEGMENTS_MAX = 4;
  * /vendor/analytics (M19 §4.2, §6.3): the charts and CSV exports of one business at a time. With more
  * than one business (venue, shop, gym, each sports organisation) a switcher picks it; the business
  * and the period stay in the URL, so a reload, the back button and a shared link keep them. Without
- * a choice in the URL it opens on the business the panel switcher is on.
+ * a choice in the URL it opens on the business the panel switcher is on. Choosing the gym opens its
+ * reports on gym.kriraghor.com (M24 prompt 2; ?business=gym redirects there, lib/gym-redirect).
  */
 export function VendorAnalytics() {
   const t = useTranslations("dashboard");
@@ -58,7 +59,7 @@ export function VendorAnalytics() {
         </div>
         {chosen ? <PeriodSwitch period={period} onChange={(p) => f.set({ period: p })} /> : null}
       </div>
-      {chosen && options.length > 1 ? <BusinessSwitch options={options} chosen={chosen} onChange={(b) => f.set(businessQuery(b))} /> : null}
+      {chosen && options.length > 1 ? <BusinessSwitch options={options} chosen={chosen} onChange={(b) => (b.role === "gym_owner" ? window.location.assign(GYM_REPORTS_HREF) : f.set(businessQuery(b)))} /> : null}
       <div className="mt-6">
         {!chosen ? (
           <EmptyState icon={<ChartLineUp aria-hidden />} title={t("noBusiness")} body={t("noBusinessBody")} action={<ButtonLink href="/vendor">{t("toHome")}</ButtonLink>} />

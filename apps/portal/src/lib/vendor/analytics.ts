@@ -1,4 +1,5 @@
 import { hourLabel } from "../dashboard";
+import { gymHref } from "../links";
 import type { BusinessRole } from "../panel-nav";
 
 /**
@@ -14,6 +15,9 @@ type Org = { id: string; name: string; kind: string; status: string };
 /** The ?business= value of each dashboard. */
 export const BUSINESS_PARAM: Record<DashRole, string> = { ground_owner: "venue", shop_owner: "shop", gym_owner: "gym", organiser: "organiser" };
 export const BUSINESS_PARAMS: readonly string[] = Object.values(BUSINESS_PARAM);
+
+/** The gym owner's reports (all gyms) on gym.kriraghor.com; /vendor/analytics?business=gym redirects there too (lib/gym-redirect). */
+export const GYM_REPORTS_HREF = gymHref("/manage/reports");
 
 /** A sports organisation whose console is open (verified, or suspended with its history). */
 export const isSportsOrg = (o: Org) => o.kind === "sports" && (o.status === "verified" || o.status === "suspended");
@@ -40,8 +44,12 @@ export function businessQuery(b: Pick<Business, "role" | "orgId">): { business: 
   return { business: BUSINESS_PARAM[b.role], org: b.role === "organiser" ? b.orgId : null };
 }
 
-/** A link to one business's analytics, as the vendor home and the to-do lists use it. */
+/**
+ * A link to one business's analytics, as the vendor home and the to-do lists use it. A gym's numbers
+ * are its reports on gym.kriraghor.com since M24 prompt 2 (/manage/reports, through /go/gym).
+ */
 export function analyticsHref(role: DashRole, orgId?: string | null): string {
+  if (role === "gym_owner") return GYM_REPORTS_HREF;
   const q = new URLSearchParams({ business: BUSINESS_PARAM[role] });
   if (role === "organiser" && orgId) q.set("org", orgId);
   return `/vendor/analytics?${q.toString()}`;

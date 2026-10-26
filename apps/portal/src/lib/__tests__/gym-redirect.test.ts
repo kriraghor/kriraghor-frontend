@@ -24,6 +24,13 @@ describe("old vendor gym URLs → gym.kriraghor.com/manage (M24 §4.3)", () => {
     expect(gymRedirect("/vendor/gyms/y1", "", `${GYM}/`)).toBe(`${GYM}/manage/y1/edit`);
   });
 
+  it("sends gym analytics to the gym reports (M24 prompt 2); other businesses stay", () => {
+    expect(gymRedirect("/vendor/analytics", "?business=gym", GYM)).toBe(`${GYM}/manage/reports`);
+    expect(gymRedirect("/vendor/analytics/", "?business=gym&utm_source=sms", GYM)).toBe(`${GYM}/manage/reports?utm_source=sms`);
+    expect(gymRedirect("/vendor/analytics", "?business=venue", GYM)).toBeNull();
+    expect(gymRedirect("/vendor/analytics", "?business=organiser&org=o1", GYM)).toBeNull();
+  });
+
   it("leaves the shared business pages and everything else alone", () => {
     for (const p of ["/vendor", "/vendor/team", "/vendor/reviews", "/vendor/payouts", "/vendor/analytics", "/vendor/gymsx", "/vendor/venues", "/admin/gym", "/gyms", "/manage"]) {
       expect(gymRedirect(p, "", GYM), p).toBeNull();

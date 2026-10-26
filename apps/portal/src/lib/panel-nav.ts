@@ -6,6 +6,7 @@ import {
   CalendarCheck,
   ChartLineUp,
   ClipboardText,
+  CreditCard,
   CurrencyCircleDollar,
   Flag,
   GameController,
@@ -73,6 +74,8 @@ export const ADMIN_SECTIONS: NavSection<AdminEntry>[] = [
       { href: "/admin/orders", key: "ordersAdmin", icon: Receipt, any: ["manage_users", "refund_small", "view_payouts"] },
       { href: "/admin/hire", key: "hireAdmin", icon: Handshake, any: ["manage_users", "approve_listings", "refund_small", "view_payouts"] },
       { href: "/admin/gym", key: "gymAdmin", icon: Barbell, any: ["manage_users", "approve_listings", "refund_small", "view_payouts"] },
+      // M24 §4.4: the gym system's owners, plans, invoices and fee overrides (masters write).
+      { href: "/admin/gym-manage", key: "gymManageAdmin", icon: CreditCard, any: ["manage_gyms", "view_payouts"] },
       { href: "/admin/users", key: "usersAdmin", icon: UserList, any: ["manage_users"] },
       { href: "/admin/teams", key: "teamsAdmin", icon: UsersThree, any: ["manage_users"] },
     ],

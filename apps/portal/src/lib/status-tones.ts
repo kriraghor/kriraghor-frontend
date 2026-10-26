@@ -44,6 +44,8 @@ export const DOMAINS = {
   organiser: { verified: "ok", pending_review: "warn", suspended: "bad", rejected: "bad", changes_requested: "bad", draft: "muted", active: "ok", ended: "muted", issued: "warn", overdue: "bad", paid: "ok", voided: "muted" },
   listing: { live: "ok", pending_review: "warn", changes_requested: "warn", paused: "muted", suspended: "bad", rejected: "bad", removed: "bad", draft: "muted", withdrawn: "muted" },
   ownerListing: { draft: "muted", pending_review: "warn", changes_requested: "bad", live: "ok", paused: "muted", rejected: "bad", withdrawn: "muted", suspended: "bad" },
+  // M24 gym system: owner plans (subscription) and their invoices.
+  gymSaas: { active: "ok", past_due: "warn", restricted: "bad", closed: "muted", issued: "warn", overdue: "bad", paid: "ok", void: "muted", ended: "muted" },
   gym: { live: "ok", pending_review: "warn", paused: "muted", suspended: "bad", changes_requested: "bad", rejected: "bad" },
   market: { live: "ok", pending_review: "warn", changes_requested: "bad", suspended: "bad", rejected: "bad", removed: "muted", paused: "muted", draft: "muted", withdrawn: "muted" },
   hire: { pending: "warn", accepted_unpaid: "warn", confirmed: "ok", completed: "ok", reserved: "warn", scheduled: "warn", checked_in: "warn", live: "ok", completed_marked: "warn", released: "ok", disputed: "bad", suspended: "bad", rejected: "bad", changes_requested: "bad", pending_review: "warn" },
