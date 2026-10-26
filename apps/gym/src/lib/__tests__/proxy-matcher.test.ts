@@ -11,12 +11,17 @@ const matches = (p: string) => new RegExp(`^${pattern}$`).test(p);
 
 describe("gym proxy matcher", () => {
   it("runs on pages", () => {
-    for (const p of ["/", "/gyms", "/gyms/iron-house", "/me/passes", "/me/passes/GP-31XZ", "/me/subscriptions", "/manage", "/manage/g1/desk", "/start", "/sign-in"]) expect(matches(p), p).toBe(true);
+    for (const p of ["/", "/gyms", "/gyms/iron-house", "/me/passes", "/me/passes/GP-31XZ", "/me/subscriptions", "/manage", "/manage/g1/desk", "/start", "/sign-in", "/pay/0b9e2c1a-7f00-4a1e-9c51-2f7f0f2b6a10", "/pay/0b9e2c1a-7f00-4a1e-9c51-2f7f0f2b6a10/result"]) expect(matches(p), p).toBe(true);
   });
 
   it("also runs on the receipt links, whose tokens carry dots (M24-FR-37)", () => {
     expect(matches("/r/v1.01a17594-ec2b.e18c2bff")).toBe(false);
     expect(source).toContain('"/r/:token"');
+  });
+
+  it("also runs on the payment links, whose tokens carry dots too (M24 prompt 2)", () => {
+    expect(matches("/p/v1.01a17594-ec2b.e18c2bff")).toBe(false);
+    expect(source).toContain('"/p/:token"');
   });
 
   it("skips files, Next internals, the API, /go/ and /env.js", () => {
