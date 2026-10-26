@@ -162,6 +162,8 @@ function PayoutLines({ id, code }: { id: string; code: string }) {
   if (d.isPending) return <Skeleton className="mt-2 h-16" />;
   if (d.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const lines = d.data.items.filter((i) => i.status === "included");
+  // The provider charge (online gym fees passed through at cost, M24-FR-46): a column only when a line has one.
+  const charged = lines.some((i) => (i.providerCharge ?? 0) > 0);
   return (
     <div className="mt-1 flex flex-col gap-3" data-testid="payout-lines">
       <table className="w-full text-left text-sm">
@@ -173,6 +175,11 @@ function PayoutLines({ id, code }: { id: string; code: string }) {
             <th scope="col" className="py-1 text-right font-semibold">
               {t("fee")}
             </th>
+            {charged ? (
+              <th scope="col" className="py-1 text-right font-semibold">
+                {t("providerCharge")}
+              </th>
+            ) : null}
             <th scope="col" className="py-1 text-right font-semibold">
               {t("net")}
             </th>
@@ -183,6 +190,7 @@ function PayoutLines({ id, code }: { id: string; code: string }) {
             <tr key={i.id} className="border-t border-line">
               <td className="py-1.5">{i.description}</td>
               <td className="py-1.5 text-right tabular">{formatTaka(i.fee, locale)}</td>
+              {charged ? <td className="py-1.5 text-right tabular">{formatTaka(i.providerCharge ?? 0, locale)}</td> : null}
               <td className="py-1.5 text-right tabular">{formatTaka(i.net, locale)}</td>
             </tr>
           ))}

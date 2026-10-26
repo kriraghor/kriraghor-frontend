@@ -361,6 +361,7 @@
     "more": "Show more",
     "line": "Line",
     "fee": "Fee",
+    "providerCharge": "Provider charge",
     "net": "Net",
     "statement": "Download statement (CSV)",
     "statementFailed": "We could not download the statement.",
