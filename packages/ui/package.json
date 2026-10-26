@@ -39,6 +39,7 @@
     "./payouts/client": "./src/payouts/client.ts",
     "./payments": "./src/payments/index.ts",
     "./payments/client": "./src/payments/client.ts",
+    "./csv": "./src/csv.ts",
     "./share": "./src/share/ShareButton.tsx",
     "./share/links": "./src/share/links.ts",
     "./share/og": "./src/share/og.tsx",

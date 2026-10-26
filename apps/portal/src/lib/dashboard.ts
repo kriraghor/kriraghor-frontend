@@ -1,5 +1,6 @@
 import { api } from "@kriraghor/api-client";
 import type { components, paths } from "@kriraghor/api-client/schema";
+import { downloadCsv as sharedDownloadCsv } from "@kriraghor/ui/csv";
 import { formatTaka, unwrap } from "./admin/finance";
 
 /**
@@ -37,34 +38,13 @@ export const dashboards = {
   staffActions: async () => unwrap(await api("admin").GET("/admin/analytics/actions")),
 };
 
-/** Fetch a CSV through the API (with the session) and save it. */
+/** Fetch a dashboard CSV through the API (with the session) and save it (the shared @kriraghor/ui/csv helper). */
 export async function downloadCsv(audience: "api" | "admin", path: "/me/dashboard/export" | "/admin/analytics/export", query: Record<string, string>) {
-  const client = api(audience) as unknown as { GET: (p: string, o: unknown) => Promise<{ data?: Blob; error?: unknown; response: Response }> };
-  saveCsv(await client.GET(path, { params: { query }, parseAs: "blob" }));
+  await sharedDownloadCsv(audience, path, query);
 }
 
-/** Save a CSV answer (fetched with `parseAs: "blob"`) under the server's file name; throws the problem on an error. */
-export function saveCsv({ data, error, response }: { data?: Blob; error?: unknown; response: Response }, fallback = "kriraghor.csv") {
-  if (error || !data) throw error ?? new Error("export failed");
-  const url = URL.createObjectURL(data);
-  const a = Object.assign(document.createElement("a"), { href: url, download: csvFilename(response.headers.get("Content-Disposition"), fallback) });
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-/** The file name a Content-Disposition header gives (attachment; filename="x.csv"), else the fallback. */
-export function csvFilename(contentDisposition: string | null | undefined, fallback = "kriraghor.csv"): string {
-  const cd = contentDisposition ?? "";
-  const name = /filename="([^"]+)"/.exec(cd)?.[1] ?? /filename=([^;\s"]+)/.exec(cd)?.[1];
-  // A plain file name only: never a folder path.
-  const clean = name?.split(/[\\/]/).pop()?.trim();
-  return clean || fallback;
-}
-
-/** The words for a failed export: this hour's limit, too many rows, or a plain failure. */
-export function csvErrorKey(code: string | null | undefined): "csv.limit" | "csv.tooLarge" | "csv.failed" {
-  return code === "EXPORT_LIMIT" ? "csv.limit" : code === "EXPORT_TOO_LARGE" ? "csv.tooLarge" : "csv.failed";
-}
+/** Saving a CSV answer, its file name and the words for a failed export live in @kriraghor/ui/csv (shared with gym.kriraghor.com). */
+export { csvErrorKey, csvFilename, saveCsv } from "@kriraghor/ui/csv";
 
 // ---------------- pure helpers (tested)
 
