@@ -17,7 +17,8 @@ import { formatDhaka, useAdminMe } from "../useAdminMe";
 type Row = Awaited<ReturnType<typeof gymAdmin.gyms>>["items"][number];
 type Period = StaffSubscription["periods"][number];
 
-const GYM_STATUSES = ["pending_review", "live", "paused", "suspended", "changes_requested", "rejected"] as const;
+// "draft" is a private gym (M24 §4.4: managed on gym.kriraghor.com, never listed): the "Private (management only)" filter.
+const GYM_STATUSES = ["pending_review", "live", "paused", "suspended", "changes_requested", "rejected", "draft"] as const;
 const TABS = ["gyms", "passes", "subscriptions"] as const;
 
 /**
@@ -102,7 +103,7 @@ function Gyms() {
       sort: (g) => g.status,
       cell: (g) => (
         <StatusBadge status={g.status} domain="gym">
-          {t(`gymStatus.${g.status}`)}
+          {g.status === "draft" ? t("private") : t(`gymStatus.${g.status}`)}
         </StatusBadge>
       ),
     },
@@ -119,7 +120,7 @@ function Gyms() {
     <div className="flex flex-col gap-4">
       <FilterBar
         search={{ value: search, onChange: (v) => set({ q: v }), label: t("name") }}
-        selects={[{ id: "status", label: t("status"), value: status, onChange: (v) => set({ status: v }), anyLabel: t("all"), options: GYM_STATUSES.map((s) => ({ value: s, label: t(`gymStatus.${s}`) })) }]}
+        selects={[{ id: "status", label: t("status"), value: status, onChange: (v) => set({ status: v }), anyLabel: t("all"), options: GYM_STATUSES.map((s) => ({ value: s, label: s === "draft" ? t("privateFilter") : t(`gymStatus.${s}`) })) }]}
         onClear={clear}
       />
       <DataTable

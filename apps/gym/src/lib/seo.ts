@@ -67,8 +67,8 @@ export function sitemapEntries(site: string, slugs: string[]): SitemapEntry[] {
 
 // ---------------- robots ----------------
 
-/** Pages a crawler has no business in (per person, management, sign-in and redirects). */
-export const PRIVATE_PATHS = ["/me", "/manage", "/start", "/sign-in", "/signup", "/go/"];
+/** Pages a crawler has no business in (per person, management, sign-in, redirects and the signed receipt links /r/). */
+export const PRIVATE_PATHS = ["/me", "/manage", "/start", "/sign-in", "/signup", "/go/", "/r/"];
 
 /** robots.txt: only production ("prod" in Helm, "production" on Vercel) is indexed; every other environment says keep out. */
 export function robotsFor(appEnv: string, site: string) {

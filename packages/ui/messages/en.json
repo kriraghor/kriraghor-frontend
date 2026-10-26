@@ -585,6 +585,24 @@
       "stock": {
         "view": "See stock",
         "adjust": "Change stock counts"
+      },
+      "attendance": {
+        "mark": "Check members in at the front desk"
+      },
+      "members": {
+        "view": "See members and their notes (phones masked)",
+        "edit": "Add and edit members, memberships and invites",
+        "trainer": "See the members assigned to them (trainer)"
+      },
+      "fees": {
+        "collect": "Collect fees at the counter and print receipts",
+        "adjust": "Give discounts, waive dues and reverse payments"
+      },
+      "reports": {
+        "view": "See money on the dashboard and everyone's cash closing"
+      },
+      "plans": {
+        "manage": "Write workout plans and diet charts"
       }
     },
     "none": "Nothing yet"

@@ -205,7 +205,8 @@ export function staffSections(workplaces: readonly WorkplaceNav[] | undefined): 
         ...(holds("venue", "reviews.reply") ? [{ href: "/vendor/reviews", key: "vendorReviews", icon: Star }] : []),
       ],
     },
-    { key: "workGym", items: holds("gym", "desk.admit", "desk.admissions", "passes.view") ? [{ href: GYMS_HREF, key: "gyms", icon: Barbell }] : [] },
+    // M24 §3.3: any gym desk on gym.kriraghor.com/manage (front desk, members, fees, passes).
+    { key: "workGym", items: holds("gym", "desk.admit", "desk.admissions", "passes.view", "attendance.mark", "members.view", "members.trainer", "fees.collect") ? [{ href: GYMS_HREF, key: "gyms", icon: Barbell }] : [] },
     {
       key: "workShop",
       items: [

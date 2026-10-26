@@ -14,6 +14,11 @@ describe("gym proxy matcher", () => {
     for (const p of ["/", "/gyms", "/gyms/iron-house", "/me/passes", "/me/passes/GP-31XZ", "/me/subscriptions", "/manage", "/manage/g1/desk", "/start", "/sign-in"]) expect(matches(p), p).toBe(true);
   });
 
+  it("also runs on the receipt links, whose tokens carry dots (M24-FR-37)", () => {
+    expect(matches("/r/v1.01a17594-ec2b.e18c2bff")).toBe(false);
+    expect(source).toContain('"/r/:token"');
+  });
+
   it("skips files, Next internals, the API, /go/ and /env.js", () => {
     for (const p of ["/logo.png", "/_next/static/chunk.js", "/api/health", "/go/web/help", "/env.js", "/sitemap.xml", "/robots.txt", "/manifest.webmanifest"]) expect(matches(p), p).toBe(false);
   });

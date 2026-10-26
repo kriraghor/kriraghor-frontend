@@ -2,44 +2,12 @@ import { api } from "@kriraghor/api-client";
 import { unwrap } from "./manage";
 
 /**
- * The landing page and /start on gym.kriraghor.com (M24 prompt 0, 25 Oct 2026). Prices come from the
- * public platform settings (M03, GET /settings/public) and show only once the M24 tier settings exist;
- * until then the page says the system is free during early access. Nothing here is hard-coded.
- * /start walks a member from the gym owner application (M02) to their first gym draft (M20).
+ * /start on gym.kriraghor.com (M24 prompt 0, extended in prompt 1). Two paths:
+ *  - a private gym (M24-FR-01, FR-09): a verified phone is enough; the gym (POST /me/gyms), its short
+ *    code, its packages, then import, the first member or skip (gym-manage privateStep);
+ *  - a listed gym: the gym owner application (M02) and documents, then the gym draft (M20) for review.
+ * The landing prices come from GET /gym-manage/pricing (components/home/Pricing), never from here.
  */
-export type PublicSettings = Record<string, unknown>;
-export type TierPrice = { key: string; poisha: number };
-
-export async function fetchPublicSettings(): Promise<PublicSettings> {
-  const { data, error } = await api().GET("/settings/public");
-  if (error || !data) throw error ?? new Error("settings unavailable");
-  return data as PublicSettings;
-}
-
-/**
- * The gym system's tier prices from the public settings: every numeric `gym.tier*` key (nested by
- * prefix with camelCase names, so `gym.tier_starter_poisha` arrives as gym.tierStarterPoisha), cheapest
- * first. Null when there is none yet (then the page shows "Free during early access").
- */
-export function tierPrices(settings: PublicSettings | undefined | null): TierPrice[] | null {
-  const gym = settings?.gym;
-  if (!gym || typeof gym !== "object") return null;
-  const out = Object.entries(gym as Record<string, unknown>)
-    .filter(([k, v]) => /^tier/i.test(k) && typeof v === "number" && Number.isFinite(v) && v >= 0)
-    .map(([key, v]) => ({ key, poisha: v as number }))
-    .sort((a, b) => a.poisha - b.poisha || a.key.localeCompare(b.key));
-  return out.length ? out : null;
-}
-
-/** "tierStarterPoisha" → "Starter" (the tier's name when the copy has no message for it). */
-export const tierName = (key: string) =>
-  key
-    .replace(/^tier/i, "")
-    .replace(/Poisha$|Price$|Monthly$/i, "")
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/[_-]+/g, " ")
-    .trim() || key;
-
 export type RoleStatus = "applied" | "documents_pending" | "in_review" | "active" | "changes_requested" | "rejected" | "suspended" | "withdrawn";
 /** Where a member stands on the way to running a gym. */
 export type StartStep = "signIn" | "apply" | "documents" | "review" | "create" | "suspended";

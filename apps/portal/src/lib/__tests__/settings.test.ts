@@ -95,3 +95,16 @@ describe("helpers", () => {
     expect(effectiveAtIso("2026-11-01T00:00")).toMatch(/^2026-1[01]-\d\dT/);
   });
 });
+
+describe("categories (M24 prompt 1)", () => {
+  it("shows the gym subscription settings (gym_saas) right after the gym card, with EN and BN names", async () => {
+    const { CATEGORY_ORDER } = await import("../admin/settings");
+    expect(CATEGORY_ORDER.indexOf("gym_saas")).toBe(CATEGORY_ORDER.indexOf("gym") + 1);
+    const en = (await import("../../../messages/en.json")).default as { categories: Record<string, string> };
+    const bn = (await import("../../../messages/bn.json")).default as { categories: Record<string, string> };
+    for (const cat of CATEGORY_ORDER) {
+      expect(en.categories[cat], cat).toBeTruthy();
+      expect(bn.categories[cat], cat).toBeTruthy();
+    }
+  });
+});

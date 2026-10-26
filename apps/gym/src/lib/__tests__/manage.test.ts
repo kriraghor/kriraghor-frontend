@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanCode, copyDayToAll, gymActions, hoursProblems, packagesBody, scanInput, windowsOf, type Hours } from "../manage";
+import { cleanCode, copyDayToAll, gymActions, hoursProblems, scanInput, windowsOf, type Hours } from "../manage";
 
 const w = (dow: number, openTime: string, closeTime: string, womenOnly = false) => ({ dow, openTime, closeTime, womenOnly });
 
@@ -26,19 +26,6 @@ describe("managing a gym (M20, moved from the business panel to gym.kriraghor.co
     expect(hoursProblems([w(0, "10:00", "09:00")])).toEqual(["0:0:order"]);
     expect(hoursProblems([w(3, "06:00", "12:00"), w(3, "11:00", "14:00")])).toEqual(["3:1:overlap"]);
     expect(hoursProblems([w(3, "06:00", "24:00")])).toEqual([]);
-  });
-
-  it("builds the packages body in poisha, day pass first and required", () => {
-    const rows = [
-      { kind: "quarter" as const, title: "Quarter", taka: "9000", on: true },
-      { kind: "day" as const, title: " Day pass ", taka: "400", on: true },
-      { kind: "month" as const, title: "Month", taka: "", on: false },
-    ];
-    expect(packagesBody(rows)).toEqual({ ok: true, packages: [{ kind: "day", title: "Day pass", price: 40000 }, { kind: "quarter", title: "Quarter", price: 900000 }] });
-    expect(packagesBody([{ kind: "month", title: "Month", taka: "3000", on: true }])).toEqual({ ok: false, problem: "day_required" });
-    expect(packagesBody([{ kind: "day", title: "Day", taka: "4.5", on: true }])).toEqual({ ok: false, problem: "bad_price" });
-    expect(packagesBody([{ kind: "day", title: "Day", taka: "0", on: true }])).toEqual({ ok: false, problem: "bad_price" });
-    expect(packagesBody([{ kind: "day", title: "D", taka: "400", on: true }])).toEqual({ ok: false, problem: "bad_title" });
   });
 
   it("tells a scanned QR token from a typed backup code", () => {

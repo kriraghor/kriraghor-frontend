@@ -24,10 +24,44 @@
   --glass-edge: rgb(255 255 255 / 0.08);
   --glass-highlight: rgb(255 255 255 / 0.05);
   --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
+  /* The theme's ink is light, so the soft status backgrounds (notices, badges) are the dark ones too;
+     the light-mode values left light text on light amber and pink. */
+  --kg-danger-soft: #3b1715;
+  --kg-info-soft: #172442;
+  --kg-warning: #f5b052;
+  --kg-warning-soft: #33250f;
+  --kg-prize-soft: #3a2a12;
+  --kg-prize-text: #f8c574;
 }
 @media print {
   header,
-  footer {
+  footer,
+  .no-print {
     display: none !important;
+  }
+  /* Paper is white: the receipt (/r/) and the cash closing print in dark ink. */
+  [data-theme="gym"] {
+    --kg-bg: #ffffff;
+    --kg-surface: #ffffff;
+    --kg-surface-2: #f3f4ee;
+    --kg-ink: #111210;
+    --kg-muted: #55574f;
+    --kg-line: #d9dbd2;
+    --kg-brand-text: #3d5200;
+    --kg-danger: #c62828;
+  }
+  /* A page with a .print-area prints only that (the receipt, the closing), not the menus around it. */
+  body:has(.print-area) * {
+    visibility: hidden;
+  }
+  body:has(.print-area) .print-area,
+  body:has(.print-area) .print-area * {
+    visibility: visible;
+  }
+  body:has(.print-area) .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
 }

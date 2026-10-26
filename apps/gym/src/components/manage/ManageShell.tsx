@@ -1,33 +1,45 @@
 "use client";
 
 import { Suspense, type ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowSquareOut, Barbell, PencilSimple, QrCode, Ticket } from "@phosphor-icons/react";
+import { ArrowSquareOut, Barbell, CashRegister, ChartBar, CreditCard, Gear, Package, PencilSimple, QrCode, Receipt, Ticket, Tray, UploadSimple, UsersThree } from "@phosphor-icons/react";
 import { publicEnv } from "@kriraghor/session/env";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard } from "@kriraghor/ui/account";
 import { usePathname } from "@kriraghor/ui/i18n/navigation";
 import { useWorkplaces } from "@kriraghor/ui/desk";
-import { gymDesk } from "@/lib/manage";
-import { manageGroups, type ManageItem } from "@/lib/manage-nav";
+import { useManageGyms } from "@/components/gym-manage/common";
+import { manageGroups, workplaceGyms, type ManageItem } from "@/lib/manage-nav";
 
-const ICON: Record<ManageItem["key"], typeof Barbell> = { gyms: Barbell, edit: PencilSimple, desk: QrCode, passes: Ticket };
+const ICON: Record<ManageItem["key"], typeof Barbell> = {
+  gyms: Barbell,
+  billing: CreditCard,
+  dashboard: ChartBar,
+  desk: QrCode,
+  members: UsersThree,
+  requests: Tray,
+  fees: CashRegister,
+  closing: Receipt,
+  packages: Package,
+  import: UploadSimple,
+  settings: Gear,
+  edit: PencilSimple,
+  passes: Ticket,
+};
+const EXACT = new Set<ManageItem["key"]>(["gyms", "dashboard", "fees"]);
 
 /**
- * /manage (moved from vendor.kriraghor.com, 25 Oct 2026): a sidebar with the owner's gyms (editor,
- * front desk, passes sold) and, for Round B3 gym staff, only the gyms they work at with the desks
- * their permissions open (lib/manage-nav). The business tools shared with venues and shops (team,
- * reviews, payouts, analytics) stay on the business panel, one link away. Signed out, the sign-in
- * prompt comes back here after signing in.
+ * /manage (M24 §4.1): a sidebar with one group per gym from GET /manage/gyms (owned gyms first, then the
+ * gyms worked at), each page shown by role and permission (lib/manage-nav), plus Billing for owners.
+ * The business tools shared with venues and shops (team, reviews, payouts, analytics) stay on the
+ * business panel, one link away. Signed out, the sign-in prompt comes back here after signing in.
  */
 export function ManageShell({ children }: { children: ReactNode }) {
   const t = useTranslations("manage");
   const { status } = useAuth();
   const wp = useWorkplaces();
-  const owner = wp.active.includes("gym_owner");
-  const gyms = useQuery({ queryKey: ["vendor-gyms"], queryFn: () => gymDesk.mine(), retry: false, enabled: status === "signed_in" && owner });
+  const gyms = useManageGyms(status === "signed_in");
 
   if (status === "signed_out")
     return (
@@ -37,11 +49,12 @@ export function ManageShell({ children }: { children: ReactNode }) {
     );
 
   const names = new Map(wp.named.map((w) => [w.businessId, w.business.name] as const));
-  const groups: ShellGroup[] = manageGroups({ owner, ownGyms: (gyms.data?.items ?? []).map((g) => ({ id: g.id, name: g.name })), workplaces: wp.refs, names }).map((g) => ({
+  const refs = gyms.data ? gyms.data.items.map((g) => ({ id: g.id, name: g.name, role: g.role, permissions: g.permissions })) : workplaceGyms(wp.refs, names);
+  const groups: ShellGroup[] = manageGroups({ gyms: refs }).map((g) => ({
     label: g.key === "overview" ? undefined : (g.name ?? t("gym")),
-    items: g.items.map((it) => ({ href: it.href, label: t(`nav.${it.key}`), icon: ICON[it.key], match: it.key === "gyms" ? ("exact" as const) : undefined, testId: `manage-${it.key}${g.gymId ? `-${g.gymId}` : ""}` })),
+    items: g.items.map((it) => ({ href: it.href, label: t(`nav.${it.key}`), icon: ICON[it.key], match: EXACT.has(it.key) ? ("exact" as const) : undefined, testId: `manage-${it.key}${g.gymId ? `-${g.gymId}` : ""}` })),
   }));
-  if (owner) {
+  if (refs.some((g) => g.role === "owner")) {
     const vendor = publicEnv().VENDOR_URL.replace(/\/+$/, "");
     groups.push({
       label: t("business"),

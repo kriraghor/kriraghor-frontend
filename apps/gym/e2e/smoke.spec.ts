@@ -31,3 +31,11 @@ test("switches to Bangla without changing the URL", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("আবার স্বাগতম");
   await expect(page).toHaveURL(/\/sign-in$/);
 });
+
+test("the public receipt page renders without sign-in and is never indexed (M24-FR-37)", async ({ page }) => {
+  // A token with dots, like the real ones (v1.<id>.<sig>): the proxy must still route it.
+  await page.goto("/r/v1.00000000-0000-0000-0000-000000000000.0123456789abcdef");
+  await expect(page.getByTestId("public-receipt")).toBeVisible();
+  await expect(page.getByTestId("public-receipt")).not.toHaveAttribute("data-state", "loading", { timeout: 15000 });
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+});
