@@ -23,6 +23,7 @@ export const PERMISSIONS = [
   "manage_esports",
   "enter_results",
   "manage_organisers",
+  "manage_gyms",
   "view_analytics",
   "edit_fees",
   "manage_staff",

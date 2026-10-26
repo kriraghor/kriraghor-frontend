@@ -1,21 +1,34 @@
 import { describe, expect, it } from "vitest";
+import en from "../../../messages/en.json";
+import bn from "../../../messages/bn.json";
 import { MASTER_ONLY, PERMISSIONS, activeMasters, grantableSet, inviteProblem, isPermission, permissionDiff, staffActions, staffStatusTone } from "../admin/staff";
 
 const row = (over: Partial<{ userId: string; isMaster: boolean; status: string; twoFactorEnabled: boolean }> = {}) => ({ userId: "s1", isMaster: false, status: "active", twoFactorEnabled: true, ...over });
 
 describe("staff permissions (M01-FR-17)", () => {
-  it("lists the 14 permissions, two of them master-only", () => {
-    expect(PERMISSIONS).toHaveLength(14);
+  it("lists the 15 permissions, two of them master-only (manage_gyms since M24 prompt 2)", () => {
+    expect(PERMISSIONS).toHaveLength(15);
+    expect(isPermission("manage_gyms")).toBe(true);
     expect(MASTER_ONLY).toEqual(["edit_fees", "manage_staff"]);
     expect(isPermission("manage_users")).toBe(true);
     expect(isPermission("godmode")).toBe(false);
   });
+  it("has a label and a description in English and Bangla for every permission", () => {
+    for (const m of [en, bn]) {
+      const perm = m.staffDesk.perm as Record<string, { label?: string; desc?: string }>;
+      for (const p of PERMISSIONS) {
+        expect(perm[p]?.label, p).toBeTruthy();
+        expect(perm[p]?.desc, p).toBeTruthy();
+      }
+    }
+  });
   it("takes the grantable set from the API, or everything but the master-only ones", () => {
     expect([...grantableSet({ grantable: ["manage_users", "nonsense"] })]).toEqual(["manage_users"]);
     const fallback = grantableSet(null);
-    expect(fallback.size).toBe(12);
+    expect(fallback.size).toBe(13);
+    expect(fallback.has("manage_gyms")).toBe(true);
     expect(fallback.has("edit_fees")).toBe(false);
-    expect(grantableSet({ grantable: [] }).size).toBe(12);
+    expect(grantableSet({ grantable: [] }).size).toBe(13);
   });
   it("sends only the changes, in matrix order, never a locked permission", () => {
     const g = grantableSet(null);

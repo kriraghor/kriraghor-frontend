@@ -4205,6 +4205,10 @@
         "label": "Manage organisers",
         "desc": "Approve and support event organisers and their teams."
       },
+      "manage_gyms": {
+        "label": "Manage gym owners",
+        "desc": "See gym owners on the gym management plan, their invoices, fee overrides and founding partner status. Changes need a master."
+      },
       "view_analytics": {
         "label": "See reports and numbers",
         "desc": "See dashboards, trends and platform figures."
