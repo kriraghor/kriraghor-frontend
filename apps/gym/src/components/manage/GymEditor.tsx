@@ -7,7 +7,7 @@ import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@kriraghor/ui/format";
 import { publicEnv } from "@kriraghor/session/env";
-import { copyDayToAll, gymActions, gymDesk, hoursProblems, packagesBody, windowsOf, type Hours, type OwnerGym, type PackageKind } from "@/lib/manage";
+import { copyDayToAll, gymActions, gymDesk, hoursProblems, windowsOf, type Hours, type OwnerGym } from "@/lib/manage";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls, STATUS_TONE } from "@kriraghor/ui/desk";
 
@@ -349,61 +349,38 @@ function WeekHours({ g, locked }: { g: OwnerGym; locked: boolean }) {
   );
 }
 
-/** Day pass (required), month and 3-month passes. The day price must sit within the platform limits. */
-function Packages({ g, locked }: { g: OwnerGym; locked: boolean }) {
+/**
+ * The packages, now edited on /manage/[gymId]/packages (M24-FR-24: day, month, 3, 6 and 12 months and
+ * custom days, admission fee, channel, visit limit). Saving replaces the whole active set, so this
+ * editor only summarises them and links there; a day pass sold online is needed to list the gym.
+ */
+function Packages({ g }: { g: OwnerGym; locked: boolean }) {
   const t = useTranslations("vendorGym");
+  const tg = useTranslations("gm");
   const locale = useLocale();
-  const init = (kind: PackageKind) => {
-    const p = g.packages.find((x) => x.kind === kind);
-    return { kind, title: p?.title ?? t(`kind.${kind}`), taka: p ? String(p.price / 100) : "", on: kind === "day" || Boolean(p) };
-  };
-  const [rows, setRows] = useState(() => (["day", "month", "quarter"] as const).map(init));
-  const [local, setLocal] = useState<string | null>(null);
-  const { msg, busy, run } = useRunner(g.id);
-  const patch = (i: number, x: Partial<(typeof rows)[number]>) => setRows(rows.map((r, j) => (j === i ? { ...r, ...x } : r)));
+  const day = g.packages.find((p) => p.kind === "day" && p.channel !== "desk");
   return (
-    <form
-      className="border-2 border-line bg-surface p-5"
-      onSubmit={(e) => {
-        e.preventDefault();
-        const body = packagesBody(rows);
-        if (!body.ok) return setLocal(t(`packageProblem.${body.problem}`));
-        setLocal(null);
-        void run(() => gymDesk.setPackages(g.id, body.packages), t("packagesSaved"));
-      }}
-      data-testid="gym-packages"
-    >
+    <div className="border-2 border-line bg-surface p-5" data-testid="gym-packages">
       <h2 className="text-xl font-extrabold">{t("packages")}</h2>
       <p className="mt-1 text-sm text-muted">{t("packagesHelp", { min: formatTaka(g.limits.dayMin, locale), max: formatTaka(g.limits.dayMax, locale) })}</p>
-      <fieldset disabled={locked} className="mt-3 flex flex-col gap-3">
-        {rows.map((r, i) => (
-          <div key={r.kind} className={`grid gap-2 border-2 p-3 sm:grid-cols-[auto_1fr_8rem] sm:items-end ${r.on ? "border-line" : "border-dashed border-line opacity-70"}`}>
-            <label className="flex min-h-11 items-center gap-2 font-bold">
-              <input type="checkbox" className="h-5 w-5" checked={r.on} disabled={r.kind === "day"} onChange={(e) => patch(i, { on: e.target.checked })} />
-              {t(`kind.${r.kind}`)}
-            </label>
-            <Field label={t("packageTitle")}>
-              <input value={r.title} onChange={(e) => patch(i, { title: e.target.value })} maxLength={80} disabled={!r.on} className={inputCls} />
-            </Field>
-            <Field label={t("packagePrice")}>
-              <input value={r.taka} onChange={(e) => patch(i, { taka: e.target.value.replace(/[^0-9]/g, "") })} inputMode="numeric" disabled={!r.on} className={inputCls} data-testid={`price-${r.kind}`} />
-            </Field>
-          </div>
-        ))}
-      </fieldset>
-      {local ? (
-        <div className="mt-2">
-          <Notice tone="error">{local}</Notice>
-        </div>
-      ) : null}
-      {msg ? (
-        <div className="mt-2">
-          <Notice tone={msg.tone}>{msg.text}</Notice>
-        </div>
-      ) : null}
-      <button type="submit" disabled={locked || busy} className={`${btn} mt-3 border-brand`}>
-        {t("savePackages")}
-      </button>
-    </form>
+      {g.packages.length ? (
+        <ul className="mt-3 divide-y-2 divide-line border-y-2 border-line">
+          {[...g.packages].sort((a, b) => a.sort - b.sort).map((p) => (
+            <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+              <span className="font-semibold">{p.title}</span>
+              <span className="text-sm text-muted">
+                {tg(`kind.${p.kind}`)} · {tg(`channel.${p.channel}`)} · {formatTaka(p.price, locale)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-sm text-muted">{t("noPackages")}</p>
+      )}
+      {!day ? <p className="mt-2 text-sm font-semibold text-danger">{tg("packages.dayNeeded")}</p> : null}
+      <Link href={`/manage/${g.id}/packages`} className={`${btn} mt-3 inline-flex items-center border-brand`} data-testid="edit-packages">
+        {tg("packages.edit")}
+      </Link>
+    </div>
   );
 }

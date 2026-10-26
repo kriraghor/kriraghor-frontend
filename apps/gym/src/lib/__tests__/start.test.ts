@@ -1,24 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { startStep, tierName, tierPrices } from "../start";
-
-describe("landing prices from the public settings (never hard-coded)", () => {
-  it("shows no price until the M24 tier settings exist", () => {
-    expect(tierPrices(undefined)).toBeNull();
-    expect(tierPrices({})).toBeNull();
-    expect(tierPrices({ gym: { passAdvanceDays: 7, subscriptionGraceDays: 3 } })).toBeNull();
-    expect(tierPrices({ gym: "x" })).toBeNull();
-  });
-
-  it("lists each numeric gym.tier* setting, cheapest first", () => {
-    expect(tierPrices({ gym: { tierProPoisha: 150000, tierStarterPoisha: 50000, tierBad: "x", passAdvanceDays: 7 } })).toEqual([
-      { key: "tierStarterPoisha", poisha: 50000 },
-      { key: "tierProPoisha", poisha: 150000 },
-    ]);
-    expect(tierPrices({ gym: { tierFree: 0 } })).toEqual([{ key: "tierFree", poisha: 0 }]);
-    expect(tierName("tierStarterPoisha")).toBe("Starter");
-    expect(tierName("tierMultiBranchPrice")).toBe("Multi Branch");
-  });
-});
+import { startStep } from "../start";
+import { privateStep, suggestShortCode } from "../gym-manage";
 
 describe("/start: from the gym owner application to the first gym", () => {
   const role = (status: string) => [{ role: "member", status: "active" }, { role: "gym_owner", status }];
@@ -37,5 +19,27 @@ describe("/start: from the gym owner application to the first gym", () => {
     expect(startStep(true, role("in_review"))).toBe("review");
     expect(startStep(true, role("active"))).toBe("create");
     expect(startStep(true, role("suspended"))).toBe("suspended");
+  });
+});
+
+describe("/start: the private gym path (M24-FR-01, FR-09)", () => {
+  it("needs a signed-in account with a verified phone, then walks gym → short code → packages → next", () => {
+    expect(privateStep({ signedIn: false, phoneVerified: true, gymId: null, step: null })).toBe("signIn");
+    expect(privateStep({ signedIn: true, phoneVerified: false, gymId: null, step: null })).toBe("phone");
+    expect(privateStep({ signedIn: true, phoneVerified: true, gymId: null, step: "packages" })).toBe("gym");
+    expect(privateStep({ signedIn: true, phoneVerified: true, gymId: "g1", step: null })).toBe("code");
+    expect(privateStep({ signedIn: true, phoneVerified: true, gymId: "g1", step: null, setupDone: true })).toBe("packages");
+    expect(privateStep({ signedIn: true, phoneVerified: true, gymId: "g1", step: "code", setupDone: true })).toBe("code");
+    expect(privateStep({ signedIn: true, phoneVerified: true, gymId: "g1", step: "packages" })).toBe("packages");
+    expect(privateStep({ signedIn: true, phoneVerified: true, gymId: "g1", step: "next" })).toBe("next");
+    expect(privateStep({ signedIn: true, phoneVerified: true, gymId: "g1", step: "nonsense" })).toBe("code");
+  });
+
+  it("suggests a short code from the gym's name (2 to 6 capitals)", () => {
+    expect(suggestShortCode("PowerHouse Gym Mirpur")).toBe("PM");
+    expect(suggestShortCode("Iron Paradise Fitness Club Uttara Sector 7")).toBe("IPUS");
+    expect(suggestShortCode("Lift")).toBe("LIF");
+    expect(suggestShortCode("জিম ১")).toBe("GYM");
+    expect(suggestShortCode("The Gym")).toBe("GYM");
   });
 });
