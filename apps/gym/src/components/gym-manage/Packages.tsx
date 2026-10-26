@@ -62,6 +62,7 @@ function Rows({ ctx, g }: { ctx: GymCtx; g: OwnerGym }) {
     try {
       const saved = await gymDesk.setPackages(ctx.gymId, body.packages);
       qc.setQueryData(["vendor-gym", ctx.gymId], saved);
+      void qc.invalidateQueries({ queryKey: ["gm-packages", ctx.gymId] });
       setRows(packageRowsOf(saved.packages));
       toast.show(t("packages.saved"));
     } catch (e) {

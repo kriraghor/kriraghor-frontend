@@ -299,6 +299,7 @@ function StarterRows({ gymId, limits, initial, initialFee }: { gymId: string; li
     try {
       const saved = await gymDesk.setPackages(gymId, body.packages);
       qc.setQueryData(["vendor-gym", gymId], saved);
+      void qc.invalidateQueries({ queryKey: ["gm-packages", gymId] });
       router.replace(`/start?gym=${gymId}&step=next`);
     } catch (e) {
       setProblem(err(e));

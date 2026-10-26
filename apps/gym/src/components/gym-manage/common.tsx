@@ -20,14 +20,23 @@ export function useManageGyms(enabled = true) {
 }
 
 /**
- * The gym's packages (M20 GET /me/gyms/:id, the owner's read). Staff cannot read it (403 NOT_OWNER: no
- * staff package list in prompt 1), so pages fall back to the member's current package for renewals.
- * `desk` keeps the ones a membership may use (channel desk or both).
+ * The gym's packages from the owner's listing read (M20 GET /me/gyms/:id), for the package editor and
+ * /start. `desk` keeps the ones a membership may use (channel desk or both).
  */
 export function usePackages(gymId: string, enabled: boolean) {
   const q = useQuery({ queryKey: ["vendor-gym", gymId], queryFn: () => gymDesk.get(gymId), enabled, retry: false, staleTime: 60_000 });
   const all = q.data?.packages ?? [];
   return { q, all, desk: all.filter((p) => p.channel !== "online") };
+}
+
+/**
+ * The packages a membership may use (channel desk or both), from GET /manage/gyms/:gymId/packages, which
+ * the owner and staff with members.view can read (M24-FR-25). Same row shape as the listing read.
+ */
+export function useDeskPackages(gymId: string, enabled: boolean) {
+  const q = useQuery({ queryKey: ["gm-packages", gymId], queryFn: () => gymManage.packages(gymId), enabled, retry: false, staleTime: 60_000 });
+  const desk = (q.data?.items ?? []).map((p) => ({ id: p.id, kind: p.kind, title: p.title, price: p.pricePoisha, admissionFee: p.admissionFeePoisha, days: p.days, channel: p.channel }));
+  return { q, all: desk, desk };
 }
 
 export type GymCtx = {

@@ -25,7 +25,7 @@ import {
   type Profile,
 } from "@/lib/gym-manage";
 import { MonthCalendar } from "./MonthCalendar";
-import { GymPage, MemberStatus, Row, useFmt, useGymError, usePackages, type GymCtx } from "./common";
+import { GymPage, MemberStatus, Row, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 import { emptyPayment, PayDialog, PaymentFields, paymentBody, ReceiptLink, WaiveDialog } from "./money";
 
 /**
@@ -413,7 +413,7 @@ function PackageDialog({ ctx, p, kind, ms, onClose }: { ctx: GymCtx; p: Profile;
   const f = useFmt();
   const toast = useToast();
   const act = useAct(ctx.gymId, p.member.id);
-  const packages = usePackages(ctx.gymId, ctx.owner);
+  const packages = useDeskPackages(ctx.gymId, ctx.owner || ctx.can("members.view"));
   const canCollect = ctx.can("fees.collect") && p.can.collect;
   const canAdjust = ctx.can("fees.adjust") && p.can.adjust;
   const [packageId, setPackageId] = useState(kind === "renew" ? "" : "");

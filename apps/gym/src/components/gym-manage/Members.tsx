@@ -7,7 +7,7 @@ import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Avatar, Badge, Button, ButtonLink, EmptyState, FilterBar, Notice, SkeletonList } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
 import { gymManage, MEMBER_VIEWS, membersQuery, type MemberRow } from "@/lib/gym-manage";
-import { GymPage, MemberStatus, useFmt, useGymError, usePackages, type GymCtx } from "./common";
+import { GymPage, MemberStatus, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 
 const SPEC = { view: { default: "", allowed: MEMBER_VIEWS }, q: { default: "" }, packageId: { default: "" } };
 
@@ -55,7 +55,7 @@ function List({ ctx }: { ctx: GymCtx }) {
   const err = useGymError();
   const { gymId } = ctx;
   const { values, set, clear } = useUrlFilters(SPEC);
-  const packages = usePackages(gymId, ctx.owner);
+  const packages = useDeskPackages(gymId, ctx.owner || ctx.can("members.view"));
   const q = useInfiniteQuery({
     queryKey: ["gm-members", gymId, values.view, values.q, values.packageId],
     queryFn: ({ pageParam }) => gymManage.members(gymId, membersQuery({ view: values.view, q: values.q, packageId: values.packageId, cursor: pageParam || undefined, limit: 25 })),
@@ -68,7 +68,7 @@ function List({ ctx }: { ctx: GymCtx }) {
       <FilterBar
         search={{ value: values.q, onChange: (v) => set({ q: v }), label: t("members.search"), placeholder: t("members.searchHint"), testId: "members-search" }}
         chips={{ value: values.view, onChange: (v) => set({ view: v }), label: t("members.views"), options: MEMBER_VIEWS.map((v) => ({ value: v, label: t(`members.view.${v || "all"}`) })), testId: "members-views" }}
-        selects={ctx.owner && packages.all.length ? [{ id: "package", label: t("members.package"), value: values.packageId, onChange: (v) => set({ packageId: v }), anyLabel: t("members.anyPackage"), options: packages.all.map((p) => ({ value: p.id, label: p.title })) }] : []}
+        selects={packages.all.length ? [{ id: "package", label: t("members.package"), value: values.packageId, onChange: (v) => set({ packageId: v }), anyLabel: t("members.anyPackage"), options: packages.all.map((p) => ({ value: p.id, label: p.title })) }] : []}
         onClear={clear}
       />
       {q.isPending ? (

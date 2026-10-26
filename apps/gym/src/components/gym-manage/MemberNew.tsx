@@ -9,7 +9,7 @@ import { newKey } from "@kriraghor/ui/format";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Button, ButtonLink, Card, Checkbox, Field, Notice, Select, Textarea, useToast } from "@kriraghor/ui/kit";
 import { dhakaToday, gymManage, takaToPoisha, type MemberInput } from "@/lib/gym-manage";
-import { GymPage, useFmt, useGymError, usePackages, type GymCtx } from "./common";
+import { GymPage, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 import { emptyPayment, PaymentFields, paymentBody, ReceiptLink } from "./money";
 
 /**
@@ -37,7 +37,7 @@ function Form({ ctx }: { ctx: GymCtx }) {
   const qc = useQueryClient();
   const toast = useToast();
   const { gymId } = ctx;
-  const packages = usePackages(gymId, ctx.owner);
+  const packages = useDeskPackages(gymId, ctx.owner || ctx.can("members.view"));
   const canAdjust = ctx.can("fees.adjust");
   const canCollect = ctx.can("fees.collect");
   const [d, setD] = useState<Draft>(EMPTY);

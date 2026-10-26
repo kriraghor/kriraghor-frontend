@@ -37625,6 +37625,80 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/manage/gyms/{gymId}/packages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Active packages sold at the desk (channel desk or both), for adding members and memberships (members.view, M24-FR-25) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymManagePackages"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/manage/gyms/{gymId}/settings": {
         parameters: {
             query?: never;
@@ -59221,6 +59295,25 @@ export interface components {
                 /** @description Owner and reports.view only */
                 dueTodayPoisha?: number;
             };
+        };
+        GymManagePackages: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                /** Format: uuid */
+                gymId: string;
+                /** @enum {string} */
+                kind: "day" | "month" | "quarter" | "half_year" | "year" | "custom";
+                title: string;
+                pricePoisha: number;
+                days: number;
+                admissionFeePoisha: number;
+                /** @enum {string} */
+                channel: "desk" | "online" | "both";
+                visitLimit: number | null;
+                sort: number;
+                status: string;
+            }[];
         };
         GymManageSettings: {
             /** Format: uuid */

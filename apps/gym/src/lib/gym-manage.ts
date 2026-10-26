@@ -89,6 +89,8 @@ const raw = (file: Blob) => ({ body: file as unknown as string, bodySerializer: 
 export const gymManage = {
   gyms: async () => unwrap(await api().GET("/manage/gyms")),
   overview: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/overview", { params: G(gymId) })),
+  /** Active packages sold at the desk (members.view): staff can add members and memberships (M24-FR-25). */
+  packages: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/packages", { params: G(gymId) })),
   settings: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/settings", { params: G(gymId) })),
   saveSettings: async (gymId: string, body: SettingsPatch) => unwrap(await api().PATCH("/manage/gyms/{gymId}/settings", { params: G(gymId), body: body as never })),
   // Desk and check-ins (attendance.mark)

@@ -921,7 +921,7 @@
       "discountReason": "Say why you are giving the discount.",
       "dueWillBe": "The due will be {amount}.",
       "noPackagesOwner": "Add your packages first.",
-      "noPackagesStaff": "Ask the owner to start a package for this member (the package list is for the owner in this version).",
+      "noPackagesStaff": "This gym has no packages sold at the desk yet. Ask the owner to add one.",
       "submit": "Add member",
       "added": "Member {code} added",
       "done": "{name} is {code}",
