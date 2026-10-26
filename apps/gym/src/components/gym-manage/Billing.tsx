@@ -200,7 +200,7 @@ function Invoices() {
         <ul className="mt-2 divide-y divide-line">
           {q.data.items.map((i: Invoice) => (
             <li key={i.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 py-2.5" data-testid="invoice-row">
-              <Link href={`/manage/billing/invoices/${i.id}`} className="min-w-0 flex-1 no-underline">
+              <Link href={`/manage/billing/invoices/${i.id}`} className="min-w-0 flex-1 basis-full no-underline sm:basis-0">
                 <span className="block font-semibold hover:underline">
                   {i.period ? f.month(i.period) : i.number}
                   <CaretRight size={14} className="ml-1 inline" aria-hidden />
