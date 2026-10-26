@@ -2,7 +2,7 @@
 
 import { Suspense, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowSquareOut, Barbell, CashRegister, ChartBar, CreditCard, Gear, Package, PencilSimple, QrCode, Receipt, Ticket, Tray, UploadSimple, UsersThree } from "@phosphor-icons/react";
+import { ArrowSquareOut, BellRinging, Barbell, CashRegister, ChartBar, ChartLineUp, CreditCard, Gear, Package, PencilSimple, PresentationChart, QrCode, Receipt, Ticket, Tray, UploadSimple, UsersThree, Wallet } from "@phosphor-icons/react";
 import { publicEnv } from "@kriraghor/session/env";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
@@ -15,12 +15,16 @@ import { manageGroups, workplaceGyms, type ManageItem } from "@/lib/manage-nav";
 const ICON: Record<ManageItem["key"], typeof Barbell> = {
   gyms: Barbell,
   billing: CreditCard,
+  payouts: Wallet,
+  allReports: PresentationChart,
   dashboard: ChartBar,
   desk: QrCode,
   members: UsersThree,
   requests: Tray,
   fees: CashRegister,
   closing: Receipt,
+  reports: ChartLineUp,
+  reminders: BellRinging,
   packages: Package,
   import: UploadSimple,
   settings: Gear,
@@ -31,9 +35,9 @@ const EXACT = new Set<ManageItem["key"]>(["gyms", "dashboard", "fees"]);
 
 /**
  * /manage (M24 §4.1): a sidebar with one group per gym from GET /manage/gyms (owned gyms first, then the
- * gyms worked at), each page shown by role and permission (lib/manage-nav), plus Billing for owners.
- * The business tools shared with venues and shops (team, reviews, payouts, analytics) stay on the
- * business panel, one link away. Signed out, the sign-in prompt comes back here after signing in.
+ * gyms worked at), each page shown by role and permission (lib/manage-nav), plus Billing, Payouts and
+ * All-gyms reports for owners (M24 prompt 2). The business tools shared with venues and shops (team,
+ * reviews) stay on the business panel, one link away. Signed out, the sign-in prompt comes back here after signing in.
  */
 export function ManageShell({ children }: { children: ReactNode }) {
   const t = useTranslations("manage");
@@ -61,8 +65,6 @@ export function ManageShell({ children }: { children: ReactNode }) {
       items: [
         { href: `${vendor}/vendor/team`, label: t("nav.team"), icon: ArrowSquareOut, testId: "manage-team" },
         { href: `${vendor}/vendor/reviews`, label: t("nav.reviews"), icon: ArrowSquareOut, testId: "manage-reviews" },
-        { href: `${vendor}/vendor/payouts`, label: t("nav.payouts"), icon: ArrowSquareOut, testId: "manage-payouts" },
-        { href: `${vendor}/vendor/analytics?business=gym`, label: t("nav.analytics"), icon: ArrowSquareOut, testId: "manage-analytics" },
       ],
     });
   }

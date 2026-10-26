@@ -11,7 +11,7 @@ import { Badge, ButtonLink, Card, ErrorState, Notice, Skeleton, type Tone } from
 import { DeskAccessNotice, deskAccessKey, useDeskErrorText, useWorkplaces } from "@kriraghor/ui/desk";
 import { cn } from "@kriraghor/ui/cn";
 import { featureLocked, gymManage, minTierFor, type Feature, type ManageGym, type MemberSummary } from "@/lib/gym-manage";
-import { canOpen, type ManageKey } from "@/lib/manage-nav";
+import { canOpen, type GymPageKey } from "@/lib/manage-nav";
 import { gymDesk } from "@/lib/manage";
 
 /** GET /manage/gyms: the gyms I own and the gyms I work at (the menu, the list and every page's access). */
@@ -117,7 +117,7 @@ export function GymPage({
   testId,
 }: {
   gymId: string;
-  page: Exclude<ManageKey, "gyms" | "billing">;
+  page: GymPageKey;
   feature?: Feature;
   title: ReactNode;
   description?: ReactNode;

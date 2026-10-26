@@ -6,9 +6,9 @@ const own = (id: string, name: string): ManageGymRef => ({ id, name, role: "owne
 const work = (id: string, permissions: string[], name: string | null = null): ManageGymRef => ({ id, name, role: "staff", permissions });
 
 describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", () => {
-  it("an owner sees My gyms and Billing, then every page of each gym in menu order", () => {
+  it("an owner sees My gyms, Billing, Payouts and All-gyms reports, then every page of each gym in menu order", () => {
     const groups = manageGroups({ gyms: [own("g1", "Iron House"), own("g2", "Lift")] });
-    expect(groups[0].items.map((i) => i.href)).toEqual(["/manage", "/manage/billing"]);
+    expect(groups[0].items.map((i) => i.href)).toEqual(["/manage", "/manage/billing", "/manage/payouts", "/manage/reports"]);
     expect(groups[1].items.map((i) => i.href)).toEqual([
       "/manage/g1",
       "/manage/g1/desk",
@@ -16,6 +16,8 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
       "/manage/g1/requests",
       "/manage/g1/fees",
       "/manage/g1/fees/closing",
+      "/manage/g1/reports",
+      "/manage/g1/reminders",
       "/manage/g1/packages",
       "/manage/g1/import",
       "/manage/g1/settings",
@@ -34,8 +36,10 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
     expect(gymItems("y1", ["members.trainer"]).map((i) => i.key)).toEqual(["dashboard", "members"]);
     expect(gymItems("y1", ["members.view", "fees.collect"]).map((i) => i.key)).toEqual(["dashboard", "members", "requests", "fees", "closing"]);
     expect(gymItems("y1", ["passes.view"]).map((i) => i.key)).toEqual(["dashboard", "passes"]);
-    expect(gymItems("y1", ["attendance.mark", "members.view", "members.edit", "fees.collect", "fees.adjust", "reports.view", "passes.view"]).some((i) => ["packages", "import", "settings", "edit"].includes(i.key))).toBe(false);
-    for (const page of ["packages", "import", "settings", "edit"] as const) {
+    expect(gymItems("y1", ["reports.view"]).map((i) => i.key)).toEqual(["dashboard", "reports"]);
+    expect(gymItems("y1", ["fees.collect", "reports.view"]).map((i) => i.key)).toEqual(["dashboard", "fees", "closing", "reports"]);
+    expect(gymItems("y1", ["attendance.mark", "members.view", "members.edit", "fees.collect", "fees.adjust", "reports.view", "passes.view"]).some((i) => ["reminders", "packages", "import", "settings", "edit"].includes(i.key))).toBe(false);
+    for (const page of ["reminders", "packages", "import", "settings", "edit"] as const) {
       expect(canOpen(page, ["attendance.mark", "members.edit", "fees.adjust"])).toBe(false);
       expect(canOpen(page, null)).toBe(true);
     }
@@ -46,7 +50,7 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
     expect(staffItems("y1", [])).toEqual([]);
   });
 
-  it("staff groups: Billing is owner-only, a gym with no desk besides the dashboard is left out", () => {
+  it("staff groups: Billing, Payouts and All-gyms reports are owner-only, a gym with no desk besides the dashboard is left out", () => {
     const groups = manageGroups({ gyms: [work("y1", ["attendance.mark", "fees.collect"], "Moushumi's gym"), work("y2", ["passes.view"]), work("y3", [])] });
     expect(groups[0].items.map((i) => i.key)).toEqual(["gyms"]);
     expect(hrefs(groups)).toEqual(["/manage", "/manage/y1", "/manage/y1/desk", "/manage/y1/fees", "/manage/y1/fees/closing", "/manage/y2", "/manage/y2/passes"]);
