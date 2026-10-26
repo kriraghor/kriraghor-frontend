@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Barbell, CaretRight, QrCode, Tray } from "@phosphor-icons/react";
+import { Barbell, CaretRight, CreditCard, QrCode, Tray } from "@phosphor-icons/react";
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard } from "@kriraghor/ui/account";
 import { Link } from "@kriraghor/ui/i18n/navigation";
@@ -22,7 +22,7 @@ export function useMyGyms() {
 
 /**
  * /me (M24 §4.1 member area): requests waiting (a badge), each gym I belong to (package, days left,
- * what is outstanding) and **My check-in QR**. No gyms → find one. Past gyms (unlinked) sit apart.
+ * what is outstanding with **Pay** when the gym takes fees online, M24 prompt 2) and **My check-in QR**. No gyms → find one. Past gyms (unlinked) sit apart.
  */
 export function MyHome() {
   const t = useTranslations("gm");
@@ -108,12 +108,15 @@ function MembershipCards({ items, loading, error }: { items: MyMembershipCard[];
 function GymCard({ m }: { m: MyMembershipCard }) {
   const t = useTranslations("gm");
   const f = useFmt();
+  const href = `/me/memberships/${m.memberId}`;
   return (
-    <Link href={`/me/memberships/${m.memberId}`} className="block no-underline" data-testid="me-gym">
-      <Card interactive className={cn("flex flex-col gap-2", !m.linked && "opacity-80")}>
+    <div data-testid="me-gym">
+      <Card className={cn("flex flex-col gap-2", !m.linked && "opacity-80")}>
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="truncate font-display text-lg font-bold">{m.gym?.name ?? t("me.gym")}</p>
+            <Link href={href} className="block truncate font-display text-lg font-bold hover:underline">
+              {m.gym?.name ?? t("me.gym")}
+            </Link>
             <p className="text-xs text-muted tabular-nums">{m.memberCode}</p>
           </div>
           <MemberStatus status={m.status} />
@@ -130,13 +133,21 @@ function GymCard({ m }: { m: MyMembershipCard }) {
         )}
         {m.outstandingPoisha > 0 ? (
           <p className="text-sm font-semibold text-warning" data-testid="me-outstanding">
-            {t("me.outstanding", { amount: f.taka(m.outstandingPoisha) })} · {m.onlineFees ? t("me.payOnlineSoon") : t("me.payCounter")}
+            {t("me.outstanding", { amount: f.taka(m.outstandingPoisha) })}
+            {m.onlineFees && m.linked ? null : ` · ${t("me.payCounter")}`}
           </p>
         ) : null}
-        <span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-brand-text">
-          {t("me.open")} <CaretRight size={14} aria-hidden />
-        </span>
+        <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+          <Link href={href} className="inline-flex min-h-9 items-center gap-1 text-sm font-semibold text-brand-text">
+            {t("me.open")} <CaretRight size={14} aria-hidden />
+          </Link>
+          {m.outstandingPoisha > 0 && m.onlineFees && m.linked ? (
+            <ButtonLink href="/me/dues" size="sm" icon={<CreditCard size={16} aria-hidden />} data-testid="me-gym-pay">
+              {t("me.pay")}
+            </ButtonLink>
+          ) : null}
+        </div>
       </Card>
-    </Link>
+    </div>
   );
 }

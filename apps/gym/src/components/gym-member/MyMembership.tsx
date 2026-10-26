@@ -13,6 +13,7 @@ import { dhakaToday, gymMe, monthOf, type Due, type Membership } from "@/lib/gym
 import { MemberStatus, Row, useFmt, useGymError } from "@/components/gym-manage/common";
 import { MonthCalendar } from "@/components/gym-manage/MonthCalendar";
 import { ReceiptLink } from "@/components/gym-manage/money";
+import { PayDueButton, useMyDues } from "./MyDues";
 
 /**
  * /me/memberships/[memberId] (M24 §4.1, FR-18): one gym I belong to. Package and period, days left,
@@ -51,6 +52,8 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
   const dues = data.dues.filter((x): x is Due => Boolean(x));
   const running = memberships.find((x) => x.status === "active" || x.status === "frozen") ?? memberships.find((x) => x.status === "upcoming");
   const readOnly = !m.linked || m.status === "left" || m.status === "removed";
+  const myDues = useMyDues();
+  const payable = new Map((myDues.data?.items ?? []).map((x) => [x.dueId, x] as const));
   return (
     <div className="mt-2 flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
@@ -121,7 +124,9 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
                     <Row label={t("money.outstandingLabel")}>{f.taka(d.outstandingPoisha)}</Row>
                   </div>
                 ) : null}
-                {(d.outstandingPoisha ?? 0) > 0 ? <p className="mt-1 text-xs text-muted">{t("me.payCounter")}</p> : null}
+                {(d.outstandingPoisha ?? 0) > 0 ? (
+                  <div className="mt-2">{payable.get(d.id) && !readOnly ? <PayDueButton due={payable.get(d.id)!} size="sm" /> : <p className="text-xs text-muted">{t("me.payCounter")}</p>}</div>
+                ) : null}
               </li>
             ))}
             {!dues.length ? <p className="text-sm text-muted">{t("profile.noDues")}</p> : null}

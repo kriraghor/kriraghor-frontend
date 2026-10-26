@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowCounterClockwise, CalendarBlank, Eye, LinkSimple, NotePencil, PencilSimple, Snowflake, UserMinus } from "@phosphor-icons/react";
+import { ArrowArcLeft, ArrowCounterClockwise, CalendarBlank, Eye, LinkSimple, NotePencil, PencilSimple, Snowflake, UserMinus } from "@phosphor-icons/react";
 import { newKey } from "@kriraghor/ui/format";
 import { Avatar, Badge, Button, Card, Checkbox, Dialog, Field, Notice, ReasonDialog, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
@@ -11,6 +11,7 @@ import {
   addDays,
   dhakaToday,
   dueActions,
+  featureLocked,
   gymManage,
   LEFT_REASONS,
   membershipActions,
@@ -27,6 +28,7 @@ import {
 import { MonthCalendar } from "./MonthCalendar";
 import { GymPage, MemberStatus, Row, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 import { emptyPayment, PayDialog, PaymentFields, paymentBody, ReceiptLink, WaiveDialog } from "./money";
+import { OnlineCharge, PaymentLinkDialog, RefundDialog } from "./online";
 
 /**
  * /manage/[gymId]/members/[memberId] (M24 §4.1): the member's profile. The person and the link to
@@ -561,6 +563,8 @@ function Dues({ ctx, p }: { ctx: GymCtx; p: Profile }) {
   const [paying, setPaying] = useState<Due | null>(null);
   const [waiving, setWaiving] = useState<Due | null>(null);
   const [reversing, setReversing] = useState<FeePayment | null>(null);
+  const [refunding, setRefunding] = useState<FeePayment | null>(null);
+  const [linking, setLinking] = useState<Due | null>(null);
   const [revKey, setRevKey] = useState(newKey);
   const dues = p.dues.filter((d): d is Due => Boolean(d));
   const title = (d: Due) => p.memberships.find((m) => m?.id === d.membershipId)?.title ?? t("profile.due");
@@ -607,12 +611,17 @@ function Dues({ ctx, p }: { ctx: GymCtx; p: Profile }) {
                   <li key={pm.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-sm" data-testid="payment-row">
                     <span className="tabular-nums">{f.short(pm.paidOn)}</span>
                     <span className={cn("font-semibold tabular-nums", pm.amountPoisha < 0 && "text-danger")}>{f.taka(pm.amountPoisha)}</span>
-                    <span className="text-muted">{t(`method.${pm.method}`)}</span>
+                    {pm.method === "online" ? <OnlineCharge p={pm} /> : <span className="text-muted">{t(`method.${pm.method}`)}</span>}
                     {pm.receiptNo ? <span className="text-xs text-muted">{pm.receiptNo}</span> : null}
                     {pm.reversedById ? <Badge tone="danger">{t("money.reversed")}</Badge> : null}
                     {pm.amountPoisha < 0 && pm.reason ? <span className="text-xs text-muted">{pm.reason}</span> : null}
                     <span className="ml-auto flex items-center gap-2">
                       <ReceiptLink url={pm.receiptUrl} />
+                      {ctx.owner && pm.method === "online" && pm.amountPoisha > 0 && !pm.reversedById ? (
+                        <Button type="button" size="sm" variant="ghost" icon={<ArrowArcLeft size={14} aria-hidden />} onClick={() => setRefunding(pm)} data-testid="payment-refund">
+                          {t("online.refund")}
+                        </Button>
+                      ) : null}
                       {reversible(pm, can.adjust) ? (
                         <Button type="button" size="sm" variant="ghost" icon={<ArrowCounterClockwise size={14} aria-hidden />} onClick={() => (setRevKey(newKey()), setReversing(pm))} data-testid="payment-reverse">
                           {t("money.reverse")}
@@ -630,6 +639,11 @@ function Dues({ ctx, p }: { ctx: GymCtx; p: Profile }) {
                     {t(`money.${a}`)}
                   </Button>
                 ))}
+                {dueActions(d, can).includes("collect") ? (
+                  <Button type="button" size="sm" variant="secondary" icon={<LinkSimple size={16} aria-hidden />} onClick={() => setLinking(d)} data-testid="due-link">
+                    {t("online.link")}
+                  </Button>
+                ) : null}
               </div>
             ) : null}
           </li>
@@ -637,6 +651,8 @@ function Dues({ ctx, p }: { ctx: GymCtx; p: Profile }) {
       </ul>
       {paying ? <PayDialog gymId={ctx.gymId} due={paying} canAdjust={can.adjust} open onOpenChange={(o) => !o && setPaying(null)} onDone={() => void act.refresh()} /> : null}
       {waiving ? <WaiveDialog gymId={ctx.gymId} due={waiving} open onOpenChange={(o) => !o && setWaiving(null)} onDone={() => void act.refresh()} /> : null}
+      {linking ? <PaymentLinkDialog gymId={ctx.gymId} due={linking} owner={ctx.owner} tierLocked={featureLocked(ctx.gym.features, "online_fees")} title={t("online.linkFor", { name: p.member.displayName })} open onOpenChange={(o) => !o && setLinking(null)} /> : null}
+      {refunding ? <RefundDialog gymId={ctx.gymId} payment={refunding} open onOpenChange={(o) => !o && setRefunding(null)} onDone={() => void act.refresh()} /> : null}
       <ReasonDialog
         open={Boolean(reversing)}
         onOpenChange={(o) => !o && setReversing(null)}

@@ -3,21 +3,22 @@
 import { useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { CashRegister, Receipt } from "@phosphor-icons/react";
+import { CashRegister, LinkSimple, Receipt } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Badge, Button, ButtonLink, EmptyState, FilterBar, Notice, SkeletonList } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
-import { dhakaToday, DUE_VIEWS, dueActions, duesQuery, gymManage, type DueRow } from "@/lib/gym-manage";
+import { dhakaToday, DUE_VIEWS, dueActions, duesQuery, featureLocked, gymManage, type DueRow } from "@/lib/gym-manage";
 import { GymPage, useFmt, useGymError, type GymCtx } from "./common";
 import { PayDialog, WaiveDialog } from "./money";
+import { PaymentLinkDialog } from "./online";
 
 const SPEC = { view: { default: "", allowed: DUE_VIEWS } };
 
 /**
  * /manage/[gymId]/fees (fees.collect; M24-FR-32 to FR-36): dues to collect (unpaid and partial by
  * default; overdue, due today, partial, paid, waived), **Collect** a counter payment with its receipt,
- * **Waive** (fees.adjust), and the day's cash closing.
+ * **Payment link** (QR and link for paying online, M24-FR-40), **Waive** (fees.adjust), and the day's cash closing.
  */
 export function Fees({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
@@ -47,6 +48,7 @@ function List({ ctx }: { ctx: GymCtx }) {
   const { values, set } = useUrlFilters(SPEC);
   const [paying, setPaying] = useState<DueRow | null>(null);
   const [waiving, setWaiving] = useState<DueRow | null>(null);
+  const [linking, setLinking] = useState<DueRow | null>(null);
   const today = dhakaToday();
   const q = useInfiniteQuery({
     queryKey: ["gm-dues", ctx.gymId, values.view],
@@ -98,6 +100,11 @@ function List({ ctx }: { ctx: GymCtx }) {
                     {t(`money.${a}`)}
                   </Button>
                 ))}
+                {dueActions(d, can).includes("collect") ? (
+                  <Button type="button" size="sm" variant="secondary" icon={<LinkSimple size={16} aria-hidden />} onClick={() => setLinking(d)} className="flex-1 sm:flex-none" data-testid="due-link">
+                    {t("online.link")}
+                  </Button>
+                ) : null}
               </div>
             </li>
           ))}
@@ -109,6 +116,9 @@ function List({ ctx }: { ctx: GymCtx }) {
         </Button>
       ) : null}
       {paying ? <PayDialog gymId={ctx.gymId} due={paying} canAdjust={can.adjust} title={t("money.collectFrom", { name: paying.member.displayName })} open onOpenChange={(o) => !o && setPaying(null)} onDone={refresh} /> : null}
+      {linking ? (
+        <PaymentLinkDialog gymId={ctx.gymId} due={linking} owner={ctx.owner} tierLocked={featureLocked(ctx.gym.features, "online_fees")} title={t("online.linkFor", { name: linking.member.displayName })} open onOpenChange={(o) => !o && setLinking(null)} />
+      ) : null}
       {waiving ? <WaiveDialog gymId={ctx.gymId} due={waiving} open onOpenChange={(o) => !o && setWaiving(null)} onDone={refresh} /> : null}
     </div>
   );
