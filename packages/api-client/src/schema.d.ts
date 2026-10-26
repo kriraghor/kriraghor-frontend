@@ -42314,6 +42314,1943 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/manage/gyms/{gymId}/payment-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Payment links of the gym, newest first (fees.collect; filters dueId, status) */
+        get: {
+            parameters: {
+                query?: {
+                    dueId?: string;
+                    status?: "open" | "paid" | "expired" | "cancelled";
+                };
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymPaymentLinkList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/dues/{dueId}/payment-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a payment link for a due (fees.collect; the owner’s gym_owner role, plan online_fees, not restricted): up to the outstanding, open for gym_manage.pay_link_hours, one open link per due; sent in-app, by push and by email when channels are chosen; the url is also the QR payload (M24-FR-40) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path: {
+                    gymId: string;
+                    dueId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @description Up to the outstanding; default all of it (M24-FR-40) */
+                        amountPoisha?: number;
+                        /** @description Send the link in-app (and by push) and by email; default both. [] only shows the QR. SMS needs the add-on (prompt 3b) */
+                        channels?: ("in_app" | "email")[];
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymPaymentLink"];
+                    };
+                };
+                /** @description Error. Codes: IDEMPOTENCY_KEY_REQUIRED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, GYM_ONLINE_FEES_UNAVAILABLE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_PAY_LINK_OPEN, GYM_DUE_STATE, GYM_MEMBER_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, GYM_PAYMENT_EXCEEDS_DUE */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/payment-links/{linkId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel an open payment link (fees.collect) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                    linkId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymPaymentLink"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_PAY_LINK_EXPIRED */
+                410: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/fee-payments/{feePaymentId}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refund an online fee from the hold before its release (owner; gym_owner role active): once per payment, up to the amount; M06 refunds it and the reversal row follows on refund.succeeded. After the release time → 409 GYM_REFUND_WINDOW_CLOSED (M24-FR-44) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path: {
+                    gymId: string;
+                    feePaymentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        amountPoisha: number;
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Refund requested */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymFeeRefundResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, GYM_ONLINE_FEES_UNAVAILABLE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_REFUND_WINDOW_CLOSED, GYM_PAYMENT_NOT_REVERSIBLE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, GYM_REFUND_EXCEEDS_PAID */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/reminders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The reminders page (owner): kinds on or off, offsets from settings, members reachable only by SMS, the log of the last gym_manage.reminder_log_days (no text, no phone) (M24-FR-59, FR-61) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymRemindersPage"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Members, money and attendance for a month or a period (reports.view, plan feature reports) (M24-FR-71) */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description A calendar month (YYYY-MM); otherwise from and to */
+                    month?: string;
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymReport"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, GYM_TIER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/reports/absent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Members not seen for the gym’s absent days (members.view; no money) (M24-FR-53) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymAbsentList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/reports/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CSV export (owner, plan feature reports): members (with the full phone), payments or check-ins for a period; at most analytics.export_sync_max_rows rows and analytics.exports_per_hour; audited (M24-FR-73) */
+        get: {
+            parameters: {
+                query: {
+                    /** @description A calendar month (YYYY-MM); otherwise from and to */
+                    month?: string;
+                    from?: string;
+                    to?: string;
+                    dataset: "members" | "payments" | "attendance";
+                };
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description CSV (UTF-8 with a byte-order mark; taka with two decimals; +06:00 times) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/csv": string;
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, GYM_TIER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, EXPORT_TOO_LARGE */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: EXPORT_LIMIT */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My gym plan invoices, newest first (gate run_gym) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymInvoiceList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, ROLE_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/invoices/{invoiceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One invoice with its lines (gate run_gym; print to PDF from the page) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    invoiceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymInvoice"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, ROLE_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/invoices/{invoiceId}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Pay an issued or overdue invoice: an M06 payment (purpose gym_saas_invoice) → the gym app’s pay page (M24-FR-85) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path: {
+                    invoiceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymInvoicePayResult"];
+                    };
+                };
+                /** @description Error. Codes: IDEMPOTENCY_KEY_REQUIRED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, ROLE_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_INVOICE_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** All my gyms together (gate run_gym, plan feature reports); side by side with multi_gym; pass sales are M19’s gym dashboard (M24-FR-74) */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description A calendar month (YYYY-MM); otherwise from and to */
+                    month?: string;
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymAllReports"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, ROLE_SUSPENDED, GYM_TIER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/gym-pay/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A payment link’s page (public, noindex, no-store): the gym, package, amount, member code and first name, status; for a signed-in viewer whether they may link; the receipt once paid */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    token: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymPayLinkSummary"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/gym-pay/{token}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Pay a link (gate join_gym: anyone signed in with a verified phone); linkAccount links the membership when the payer’s phone is the member’s (M24-FR-41) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path: {
+                    token: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /**
+                         * @description Link this membership to my account (only when my verified phone is the member’s; M24-FR-41)
+                         * @default false
+                         */
+                        linkAccount?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymPayStart"];
+                    };
+                };
+                /** @description Error. Codes: IDEMPOTENCY_KEY_REQUIRED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, GYM_ONLINE_FEES_UNAVAILABLE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_DUE_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_PAY_LINK_EXPIRED */
+                410: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/gym-dues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My outstanding dues across gyms, whether each gym takes fees online, and its open link */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MyGymDues"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/gym-dues/{dueId}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Pay one of my dues (gate join_gym): reuses the due’s open link or makes one for the outstanding (M24-FR-41) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path: {
+                    dueId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymPayStart"];
+                    };
+                };
+                /** @description Error. Codes: IDEMPOTENCY_KEY_REQUIRED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, GYM_ONLINE_FEES_UNAVAILABLE */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_DUE_STATE, GYM_PAY_LINK_OPEN */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/gym-manage/owners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Owners on the gym system (manage_gyms or view_payouts): plan, status, gyms, active members, last invoice; never member data */
+        get: {
+            parameters: {
+                query?: {
+                    tier?: "free" | "basic" | "standard" | "pro";
+                    status?: "active" | "past_due" | "restricted" | "closed";
+                    founding?: "true" | "false";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymAdminOwners"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/gym-manage/owners/{ownerId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One owner: subscription, gyms (counts only), invoices, overrides, imports, fees that apply (manage_gyms or view_payouts) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    ownerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymAdminOwnerDetail"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/gym-manage/owners/{ownerId}/founding-partner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Founding partner on or off (master, step-up settings.write; up to gym_saas.founding_partner_limit) (M24-FR-88) */
+        put: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Single-use step-up token from POST /auth/step-up */
+                    "x-step-up": string;
+                };
+                path: {
+                    ownerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        on: boolean;
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            ownerId: string;
+                            /** @enum {string} */
+                            chosenTier: "free" | "basic" | "standard" | "pro";
+                            /** @enum {string} */
+                            monthMaxTier: "free" | "basic" | "standard" | "pro";
+                            /** Format: date */
+                            monthOf: string;
+                            /** @enum {string} */
+                            status: "active" | "past_due" | "restricted" | "closed";
+                            /** Format: date */
+                            startedOn: string;
+                            /** Format: date */
+                            paidTierSince: string | null;
+                            foundingPartner: boolean;
+                            foundingNo: number | null;
+                            /** Format: date-time */
+                            pastDueAt: string | null;
+                            /** Format: date-time */
+                            restrictedAt: string | null;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, STEP_UP_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_FOUNDING_FULL */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/gym-manage/invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** All gym plan invoices with totals per status (manage_gyms or view_payouts) */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "issued" | "overdue" | "paid" | "void";
+                    period?: string;
+                    ownerId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymAdminInvoices"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/gym-manage/invoices/{invoiceId}/void": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Void an unpaid invoice (master, step-up escrow.manage): referral lines return to pending; the owner is restored when nothing is overdue (M24-FR-89) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Single-use step-up token from POST /auth/step-up */
+                    "x-step-up": string;
+                };
+                path: {
+                    invoiceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymInvoice"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, STEP_UP_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_INVOICE_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/gym-manage/fee-overrides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Per-owner and per-gym fee overrides (manage_gyms) */
+        get: {
+            parameters: {
+                query?: {
+                    ownerId?: string;
+                    status?: "active" | "ended";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymFeeOverrideList"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Set an override of fees.gym_referral_poisha or fees.gym_pct for an owner or a gym (master, step-up settings.write): one active per scope and key, inside the setting’s bounds; the owner is told (M24-FR-94) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Single-use step-up token from POST /auth/step-up */
+                    "x-step-up": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        scopeType: "owner" | "gym";
+                        /**
+                         * Format: uuid
+                         * @description The owner’s user id, or the gym id
+                         */
+                        scopeId: string;
+                        /** @enum {string} */
+                        key: "fees.gym_referral_poisha" | "fees.gym_pct";
+                        /** @description Poisha for the referral fee, percent for fees.gym_pct; inside the setting’s bounds */
+                        value: number;
+                        reason: string;
+                        /**
+                         * Format: date-time
+                         * @description Default now
+                         */
+                        validFrom?: string;
+                        /**
+                         * Format: date-time
+                         * @description Ended by the job at this time; null runs until a master ends it
+                         */
+                        validTo?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymFeeOverride"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, STEP_UP_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_OVERRIDE_ACTIVE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, GYM_OVERRIDE_OUT_OF_BOUNDS */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/gym-manage/fee-overrides/{overrideId}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** End an override now (master, step-up settings.write) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Single-use step-up token from POST /auth/step-up */
+                    "x-step-up": string;
+                };
+                path: {
+                    overrideId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymFeeOverride"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, STEP_UP_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_OVERRIDE_ENDED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/organisations": {
         parameters: {
             query?: never;
@@ -54367,6 +56304,8 @@ export interface components {
                 ledgerEntryId: number | null;
                 gross: number;
                 fee: number;
+                /** @description The payment provider’s charge passed through at cost (online gym membership fees, M24-FR-46); 0 otherwise. gross = fee + providerCharge + net */
+                providerCharge: number;
                 net: number;
                 description: string;
                 /** @enum {string} */
@@ -54504,6 +56443,8 @@ export interface components {
                 ledgerEntryId: number | null;
                 gross: number;
                 fee: number;
+                /** @description The payment provider’s charge passed through at cost (online gym membership fees, M24-FR-46); 0 otherwise. gross = fee + providerCharge + net */
+                providerCharge: number;
                 net: number;
                 description: string;
                 /** @enum {string} */
@@ -59618,6 +61559,22 @@ export interface components {
                 id: string;
                 displayName: string | null;
             } | null;
+            /**
+             * Format: uuid
+             * @description Online payments: the M06 payment
+             */
+            paymentId?: string | null;
+            /**
+             * Format: uuid
+             * @description Online payments: the payment link it paid
+             */
+            linkId?: string | null;
+            /** @description Online payments: the provider’s charge passed through at cost and what the gym receives (M24-FR-43). Round B3: business staff never receive this key; never shown to the member */
+            providerCharge?: {
+                bps: number;
+                poisha: number;
+                netPoisha: number;
+            } | null;
             /** Format: date-time */
             createdAt: string;
         };
@@ -60016,9 +61973,21 @@ export interface components {
                 /** Format: date */
                 startedOn: string;
                 foundingPartner: boolean;
+                foundingNo: number | null;
+                /** Format: date */
+                freeUntil: string | null;
+                /** Format: date */
+                discountUntil: string | null;
+                /**
+                 * Format: date
+                 * @description Past due: the last day before the panel becomes read-only
+                 */
+                restrictOn: string | null;
             };
             activeMembers: {
                 today: number;
+                /** @description The highest daily count this month (the next invoice uses the tier that fits it) */
+                monthPeak: number;
                 limit: number | null;
                 /** @enum {string} */
                 fitTier: "free" | "basic" | "standard" | "pro";
@@ -60048,6 +62017,99 @@ export interface components {
                 id: string;
                 name: string;
                 listingStatus: string;
+            }[];
+            /** @description The fees that apply to this owner: standard or a special rate until a date (M24-FR-90) */
+            fees: {
+                referral: {
+                    /** @enum {string} */
+                    source: "setting" | "owner_override" | "gym_override";
+                    /**
+                     * Format: date-time
+                     * @description A special rate until this time; null for the standard rate
+                     */
+                    validTo: string | null;
+                    valuePoisha: number;
+                };
+                passCommission: {
+                    /** @enum {string} */
+                    source: "setting" | "owner_override" | "gym_override";
+                    /**
+                     * Format: date-time
+                     * @description A special rate until this time; null for the standard rate
+                     */
+                    validTo: string | null;
+                    pct: number;
+                };
+            };
+            founding: {
+                partner: boolean;
+                no: number | null;
+                /** Format: date */
+                paidTierSince: string | null;
+                /** Format: date */
+                freeUntil: string | null;
+                /** Format: date */
+                discountUntil: string | null;
+                discountPct: number;
+                placesLeft: number;
+            };
+            /** @description The SMS add-on (prompt 3b) */
+            smsAddon: {
+                available: boolean;
+                status: null;
+                balance: number;
+            };
+            openInvoices: components["schemas"]["GymInvoice"][];
+        };
+        GymInvoice: {
+            /** Format: uuid */
+            id: string;
+            /** @description GI-26-000123 */
+            number: string;
+            /** Format: uuid */
+            ownerId: string;
+            /** @enum {string} */
+            kind: "monthly" | "sms_bundle";
+            /** Format: date */
+            periodStart: string | null;
+            /** Format: date */
+            periodEnd: string | null;
+            period: string | null;
+            /** @enum {string|null} */
+            billedTier: "free" | "basic" | "standard" | "pro" | null;
+            peakActive: number | null;
+            subtotalPoisha: number;
+            vatPoisha: number;
+            totalPoisha: number;
+            /** @enum {string} */
+            status: "issued" | "overdue" | "paid" | "void";
+            /** Format: date-time */
+            issuedAt: string;
+            /**
+             * Format: date-time
+             * @description Overdue from this instant (the start of the day after dueOn)
+             */
+            dueAt: string;
+            /** Format: date */
+            dueOn: string;
+            /** Format: date-time */
+            paidAt: string | null;
+            /** Format: uuid */
+            paymentId: string | null;
+            /** Format: date-time */
+            voidedAt: string | null;
+            voidReason: string | null;
+            lines?: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "vat" | "adjustment";
+                descriptionEn: string;
+                descriptionBn: string;
+                quantity: number;
+                unitPoisha: number;
+                /** @description Negative for discounts */
+                amountPoisha: number;
             }[];
         };
         GymPricing: {
@@ -60119,7 +62181,7 @@ export interface components {
                     frozen: boolean;
                 } | null;
                 outstandingPoisha: number;
-                /** @description Online fee payments (prompt 2); false in prompt 1 */
+                /** @description The gym takes fees online now (owner documents, plan, not restricted; M24-FR-41) */
                 onlineFees: boolean;
                 /** @description Workout plans and diet charts (prompt 3) */
                 plans: null;
@@ -60203,6 +62265,704 @@ export interface components {
                 } | null;
                 memberCode?: string;
             }[];
+        };
+        GymPaymentLinkList: {
+            items: components["schemas"]["GymPaymentLink"][];
+        };
+        GymPaymentLink: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            dueId: string;
+            /** Format: uuid */
+            memberId: string;
+            amountPoisha: number;
+            /**
+             * @description An open link past expiresAt shows expired
+             * @enum {string}
+             */
+            status: "open" | "paid" | "expired" | "cancelled";
+            /** @enum {string} */
+            origin: "staff" | "member";
+            channels: ("in_app" | "email")[];
+            /** Format: date-time */
+            expiresAt: string;
+            /** @description gym.kriraghor.com/p/{token}: the page the member pays from */
+            url: string;
+            /** @description The QR payload (the same URL) */
+            qr: string;
+            /** Format: uuid */
+            paymentId: string | null;
+            /** Format: date-time */
+            paidAt: string | null;
+            /**
+             * Format: date-time
+             * @description paid_at + gym_manage.online_fee_release_hours; the owner can refund until then
+             */
+            releaseAt: string | null;
+            /** Format: date-time */
+            releasedAt: string | null;
+            refundedPoisha: number;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        GymFeeRefundResult: {
+            refund: {
+                /** Format: uuid */
+                id: string;
+                amountPoisha: number;
+                status: string;
+            };
+            payment: components["schemas"]["GymFeePayment"];
+            link: components["schemas"]["GymPaymentLink"];
+        };
+        GymRemindersPage: {
+            /** Format: uuid */
+            gymId: string;
+            feature: {
+                reminders: boolean;
+                /** @enum {string} */
+                minTier: "free" | "basic" | "standard" | "pro";
+            };
+            restricted: boolean;
+            kinds: {
+                /** @enum {string} */
+                kind: "renewal_due" | "ends_today" | "overdue" | "expired" | "receipt" | "pay_link" | "plan" | "morning" | "monthly";
+                on: boolean;
+                member: boolean;
+            }[];
+            offsets: {
+                remindBeforeDays: number;
+                overdueRemindDays: number[];
+                morningSummaryTime: string;
+            };
+            sms: {
+                /** @description The SMS add-on (prompt 3b); false in prompt 2 */
+                available: boolean;
+                kinds: string[];
+            };
+            reachability: {
+                activeMembers: number;
+                /** @description Active members with no linked account and no email (reachable only by SMS, M24-FR-59) */
+                smsOnly: number;
+            };
+            log: {
+                days: number;
+                items: {
+                    /** Format: uuid */
+                    id: string;
+                    kind: string;
+                    /** Format: date */
+                    date: string;
+                    /** Format: date-time */
+                    createdAt: string;
+                    offsetKey: string;
+                    channels: string[];
+                    memberCode: string | null;
+                    /** @enum {string} */
+                    status: "published" | "skipped";
+                    skipReason: string | null;
+                }[];
+            };
+        };
+        GymReport: {
+            /** Format: uuid */
+            gymId: string;
+            period: {
+                /** Format: date */
+                from: string;
+                /** Format: date */
+                to: string;
+                month: string | null;
+            };
+            members: {
+                activeAtStart: number;
+                activeAtEnd: number;
+                activeNow: number;
+                new: number;
+                renewals: number;
+                left: {
+                    total: number;
+                    byReason: {
+                        [key: string]: number;
+                    };
+                };
+                /** @description left ÷ active at the start, 4 decimals */
+                churn: number | null;
+            };
+            money: {
+                collectedPoisha: number;
+                onlinePoisha: number;
+                counterPoisha: number;
+                byMethod: {
+                    [key: string]: number;
+                };
+                outstandingPoisha: number;
+                overduePoisha: number;
+                byPackage: {
+                    title: string;
+                    /** @enum {string} */
+                    packageKind: "day" | "month" | "quarter" | "half_year" | "year" | "custom";
+                    collectedPoisha: number;
+                }[];
+                monthOverMonth: {
+                    month: string;
+                    collectedPoisha: number;
+                }[];
+                overdueList?: {
+                    /** Format: uuid */
+                    memberId: string;
+                    memberCode: string;
+                    displayName: string;
+                    /** Format: uuid */
+                    dueId: string;
+                    /** Format: date */
+                    dueOn: string;
+                    outstandingPoisha: number;
+                }[];
+            };
+            attendance: {
+                visits: number;
+                daily: {
+                    /** Format: date */
+                    date: string;
+                    visits: number;
+                }[];
+                busiestHours: {
+                    hour: number;
+                    visits: number;
+                }[];
+                averagePerActive: number | null;
+                notSeen: number;
+                notSeenDays: number;
+            };
+        };
+        GymAbsentList: {
+            /** Format: uuid */
+            gymId: string;
+            days: number;
+            items: {
+                /** Format: uuid */
+                id: string;
+                memberCode: string;
+                displayName: string;
+                phoneLast4: string;
+                /** Format: date */
+                endsOn: string;
+                /** Format: date */
+                lastCheckInOn: string | null;
+                daysSince: number | null;
+            }[];
+        };
+        GymInvoiceList: {
+            items: components["schemas"]["GymInvoice"][];
+        };
+        GymInvoicePayResult: {
+            invoice: components["schemas"]["GymInvoice"];
+            payment: {
+                /** Format: uuid */
+                id: string;
+                payUrl: string;
+            };
+        };
+        GymAllReports: {
+            period: {
+                /** Format: date */
+                from: string;
+                /** Format: date */
+                to: string;
+                month: string | null;
+            };
+            gyms: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                slug: string;
+            }[];
+            totals: {
+                members: {
+                    activeAtStart: number;
+                    activeAtEnd: number;
+                    activeNow: number;
+                    new: number;
+                    renewals: number;
+                    left: {
+                        total: number;
+                        byReason: {
+                            [key: string]: number;
+                        };
+                    };
+                    /** @description left ÷ active at the start, 4 decimals */
+                    churn: number | null;
+                };
+                money: {
+                    collectedPoisha: number;
+                    onlinePoisha: number;
+                    counterPoisha: number;
+                    byMethod: {
+                        [key: string]: number;
+                    };
+                    outstandingPoisha: number;
+                    overduePoisha: number;
+                    byPackage: {
+                        title: string;
+                        /** @enum {string} */
+                        packageKind: "day" | "month" | "quarter" | "half_year" | "year" | "custom";
+                        collectedPoisha: number;
+                    }[];
+                    monthOverMonth: {
+                        month: string;
+                        collectedPoisha: number;
+                    }[];
+                    overdueList?: {
+                        /** Format: uuid */
+                        memberId: string;
+                        memberCode: string;
+                        displayName: string;
+                        /** Format: uuid */
+                        dueId: string;
+                        /** Format: date */
+                        dueOn: string;
+                        outstandingPoisha: number;
+                    }[];
+                };
+                attendance: {
+                    visits: number;
+                    daily: {
+                        /** Format: date */
+                        date: string;
+                        visits: number;
+                    }[];
+                    busiestHours: {
+                        hour: number;
+                        visits: number;
+                    }[];
+                    averagePerActive: number | null;
+                    notSeen: number;
+                    notSeenDays: number;
+                };
+            };
+            multiGym: boolean;
+            /** @description Side by side with the multi_gym feature (Pro) */
+            perGym: {
+                gym: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string;
+                    slug: string;
+                };
+                members: {
+                    activeAtStart: number;
+                    activeAtEnd: number;
+                    activeNow: number;
+                    new: number;
+                    renewals: number;
+                    left: {
+                        total: number;
+                        byReason: {
+                            [key: string]: number;
+                        };
+                    };
+                    /** @description left ÷ active at the start, 4 decimals */
+                    churn: number | null;
+                };
+                money: {
+                    collectedPoisha: number;
+                    onlinePoisha: number;
+                    counterPoisha: number;
+                    byMethod: {
+                        [key: string]: number;
+                    };
+                    outstandingPoisha: number;
+                    overduePoisha: number;
+                    byPackage: {
+                        title: string;
+                        /** @enum {string} */
+                        packageKind: "day" | "month" | "quarter" | "half_year" | "year" | "custom";
+                        collectedPoisha: number;
+                    }[];
+                    monthOverMonth: {
+                        month: string;
+                        collectedPoisha: number;
+                    }[];
+                    overdueList?: {
+                        /** Format: uuid */
+                        memberId: string;
+                        memberCode: string;
+                        displayName: string;
+                        /** Format: uuid */
+                        dueId: string;
+                        /** Format: date */
+                        dueOn: string;
+                        outstandingPoisha: number;
+                    }[];
+                };
+                attendance: {
+                    visits: number;
+                    daily: {
+                        /** Format: date */
+                        date: string;
+                        visits: number;
+                    }[];
+                    busiestHours: {
+                        hour: number;
+                        visits: number;
+                    }[];
+                    averagePerActive: number | null;
+                    notSeen: number;
+                    notSeenDays: number;
+                };
+            }[] | null;
+            passSales: {
+                available: boolean;
+                /** @description M19’s gym dashboard (pass sales), for an active gym_owner role */
+                dashboard: string;
+            };
+        };
+        GymPayLinkSummary: {
+            link: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                status: "open" | "paid" | "expired" | "cancelled";
+                amountPoisha: number;
+                /** Format: date-time */
+                expiresAt: string;
+            };
+            gym: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                slug: string;
+            } | null;
+            member: {
+                memberCode: string;
+                /** @description The first word of the name only */
+                firstName: string;
+            };
+            membership: {
+                title: string;
+                /** @enum {string} */
+                packageKind: "day" | "month" | "quarter" | "half_year" | "year" | "custom";
+                /** Format: date */
+                startsOn: string;
+                /** Format: date */
+                endsOn: string;
+            } | null;
+            /** Format: date */
+            dueOn: string | null;
+            /** @description false: the gym cannot take fees online now (pay at the counter) */
+            onlineFees: boolean;
+            receipt: {
+                receiptNo: string;
+                url: string;
+            } | null;
+            /** @description Signed-in viewers only: show the "Link this membership" tick when canLink */
+            viewer: {
+                phoneMatches: boolean;
+                linked: boolean;
+                canLink: boolean;
+            } | null;
+        };
+        GymPayStart: {
+            /** Format: uuid */
+            paymentId: string;
+            /** @description gym.kriraghor.com/pay/{paymentId} (M24-FR-104) */
+            payUrl: string;
+            amountPoisha: number;
+            willLink: boolean;
+        };
+        MyGymDues: {
+            items: {
+                /** Format: uuid */
+                dueId: string;
+                /** Format: uuid */
+                memberId: string;
+                memberCode: string;
+                gym: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string;
+                    slug: string;
+                } | null;
+                membership: {
+                    title: string;
+                    /** @enum {string} */
+                    packageKind: "day" | "month" | "quarter" | "half_year" | "year" | "custom";
+                    /** Format: date */
+                    startsOn: string;
+                    /** Format: date */
+                    endsOn: string;
+                } | null;
+                amountPoisha: number;
+                paidPoisha: number;
+                outstandingPoisha: number;
+                /** Format: date */
+                dueOn: string;
+                /** @enum {string} */
+                status: "unpaid" | "partial";
+                overdue: boolean;
+                onlineFees: boolean;
+                /** @enum {string|null} */
+                onlineFeesReason: "role" | "tier" | "restricted" | null;
+                openLink: {
+                    /** Format: uuid */
+                    id: string;
+                    amountPoisha: number;
+                    /** Format: date-time */
+                    expiresAt: string;
+                    url: string;
+                } | null;
+            }[];
+        };
+        GymAdminOwners: {
+            items: {
+                /** Format: uuid */
+                ownerId: string;
+                displayName: string | null;
+                subscription: {
+                    /** Format: uuid */
+                    id: string;
+                    /** Format: uuid */
+                    ownerId: string;
+                    /** @enum {string} */
+                    chosenTier: "free" | "basic" | "standard" | "pro";
+                    /** @enum {string} */
+                    monthMaxTier: "free" | "basic" | "standard" | "pro";
+                    /** Format: date */
+                    monthOf: string;
+                    /** @enum {string} */
+                    status: "active" | "past_due" | "restricted" | "closed";
+                    /** Format: date */
+                    startedOn: string;
+                    /** Format: date */
+                    paidTierSince: string | null;
+                    foundingPartner: boolean;
+                    foundingNo: number | null;
+                    /** Format: date-time */
+                    pastDueAt: string | null;
+                    /** Format: date-time */
+                    restrictedAt: string | null;
+                };
+                /** @description Gyms set up for management */
+                gyms: number;
+                activeMembers: {
+                    count: number;
+                    /** Format: date */
+                    on: string;
+                } | null;
+                lastInvoice: {
+                    /** Format: uuid */
+                    id: string;
+                    number: string;
+                    /** @enum {string} */
+                    status: "issued" | "overdue" | "paid" | "void";
+                    totalPoisha: number;
+                    period: string | null;
+                } | null;
+            }[];
+        };
+        GymAdminOwnerDetail: {
+            owner: {
+                /** Format: uuid */
+                id: string;
+                displayName: string | null;
+                gymOwnerRole: string | null;
+            };
+            subscription: {
+                /** Format: uuid */
+                id: string;
+                /** Format: uuid */
+                ownerId: string;
+                /** @enum {string} */
+                chosenTier: "free" | "basic" | "standard" | "pro";
+                /** @enum {string} */
+                monthMaxTier: "free" | "basic" | "standard" | "pro";
+                /** Format: date */
+                monthOf: string;
+                /** @enum {string} */
+                status: "active" | "past_due" | "restricted" | "closed";
+                /** Format: date */
+                startedOn: string;
+                /** Format: date */
+                paidTierSince: string | null;
+                foundingPartner: boolean;
+                foundingNo: number | null;
+                /** Format: date-time */
+                pastDueAt: string | null;
+                /** Format: date-time */
+                restrictedAt: string | null;
+            };
+            activeMembers: {
+                today: number;
+                gymsWithMembers: number;
+                monthPeak: number | null;
+                openInvoices: components["schemas"]["GymInvoice"][];
+                /** Format: date */
+                restrictOn: string | null;
+                founding: {
+                    partner: boolean;
+                    no: number | null;
+                    /** Format: date */
+                    paidTierSince: string | null;
+                    /** Format: date */
+                    freeUntil: string | null;
+                    /** Format: date */
+                    discountUntil: string | null;
+                    discountPct: number;
+                    placesLeft: number;
+                };
+                fees: {
+                    referral: {
+                        /** @enum {string} */
+                        source: "setting" | "owner_override" | "gym_override";
+                        /**
+                         * Format: date-time
+                         * @description A special rate until this time; null for the standard rate
+                         */
+                        validTo: string | null;
+                        valuePoisha: number;
+                    };
+                    passCommission: {
+                        /** @enum {string} */
+                        source: "setting" | "owner_override" | "gym_override";
+                        /**
+                         * Format: date-time
+                         * @description A special rate until this time; null for the standard rate
+                         */
+                        validTo: string | null;
+                        pct: number;
+                    };
+                };
+            };
+            /** @description Counts only, never member data */
+            gyms: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                listingStatus: string;
+                members: number;
+                activeMembers: number;
+            }[];
+            invoices: components["schemas"]["GymInvoice"][];
+            overrides: components["schemas"]["GymFeeOverride"][];
+            imports: {
+                /** Format: uuid */
+                id: string;
+                /** Format: uuid */
+                gymId: string;
+                /** @enum {string} */
+                status: "previewed" | "applied" | "undone" | "discarded";
+                rowsOk: number;
+                rowsFailed: number;
+                /** @enum {string} */
+                uploadedAs: "owner" | "staff";
+                /** Format: date-time */
+                createdAt: string;
+                /** Format: date-time */
+                appliedAt: string | null;
+                /** Format: date-time */
+                undoneAt: string | null;
+            }[];
+            smsAddon: {
+                available: boolean;
+                status: null;
+                balance: number;
+            };
+        };
+        GymFeeOverride: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            scopeType: "owner" | "gym";
+            /** Format: uuid */
+            scopeId: string;
+            /** Format: uuid */
+            ownerId: string;
+            /** @enum {string} */
+            key: "fees.gym_referral_poisha" | "fees.gym_pct";
+            value: number;
+            reason: string;
+            /** Format: date-time */
+            validFrom: string;
+            /** Format: date-time */
+            validTo: string | null;
+            /** @enum {string} */
+            status: "active" | "ended";
+            /** @enum {string} */
+            source: "owner_override" | "gym_override";
+            /** Format: uuid */
+            setBy: string;
+            /** Format: uuid */
+            endedBy: string | null;
+            /** Format: date-time */
+            endedAt: string | null;
+            endReason: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        GymAdminInvoices: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                /** @description GI-26-000123 */
+                number: string;
+                /** Format: uuid */
+                ownerId: string;
+                /** @enum {string} */
+                kind: "monthly" | "sms_bundle";
+                /** Format: date */
+                periodStart: string | null;
+                /** Format: date */
+                periodEnd: string | null;
+                period: string | null;
+                /** @enum {string|null} */
+                billedTier: "free" | "basic" | "standard" | "pro" | null;
+                peakActive: number | null;
+                subtotalPoisha: number;
+                vatPoisha: number;
+                totalPoisha: number;
+                /** @enum {string} */
+                status: "issued" | "overdue" | "paid" | "void";
+                /** Format: date-time */
+                issuedAt: string;
+                /**
+                 * Format: date-time
+                 * @description Overdue from this instant (the start of the day after dueOn)
+                 */
+                dueAt: string;
+                /** Format: date */
+                dueOn: string;
+                /** Format: date-time */
+                paidAt: string | null;
+                /** Format: uuid */
+                paymentId: string | null;
+                /** Format: date-time */
+                voidedAt: string | null;
+                voidReason: string | null;
+                lines?: {
+                    /** Format: uuid */
+                    id: string;
+                    /** @enum {string} */
+                    kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "vat" | "adjustment";
+                    descriptionEn: string;
+                    descriptionBn: string;
+                    quantity: number;
+                    unitPoisha: number;
+                    /** @description Negative for discounts */
+                    amountPoisha: number;
+                }[];
+                ownerName: string | null;
+            }[];
+            totals: {
+                [key: string]: {
+                    count: number;
+                    totalPoisha: number;
+                };
+            };
+        };
+        GymFeeOverrideList: {
+            items: components["schemas"]["GymFeeOverride"][];
         };
         OrganisationList: {
             items: components["schemas"]["Organisation"][];
