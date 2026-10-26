@@ -125,7 +125,9 @@ export function SignUpWizard({ next = "/me", roles = [], nextSteps, signInHref =
       onAuth(data as AuthBody, "google");
     });
 
-  const create = (chosen: SignupRole) =>
+  // The About values are passed in when the role step is skipped: setAbout has not re-rendered yet,
+  // so reading `about` there would send an empty name (the gym site has no role step).
+  const create = (chosen: SignupRole, a: typeof about = about) =>
     void run(async () => {
       if (!verified || verified.expiresAt <= Date.now()) {
         setVerified(null);
@@ -135,9 +137,9 @@ export function SignUpWizard({ next = "/me", roles = [], nextSteps, signInHref =
       const { data, error: err } = await api().POST("/auth/signup", {
         body: {
           signupToken: verified.signupToken,
-          displayName: about.displayName.trim(),
-          username: normalizeUsername(about.username) ?? undefined,
-          password: about.password || undefined,
+          displayName: a.displayName.trim(),
+          username: normalizeUsername(a.username) ?? undefined,
+          password: a.password || undefined,
           locale: locale === "bn" ? "bn" : "en",
           role: chosen === "none" ? undefined : chosen,
         },
@@ -152,7 +154,7 @@ export function SignUpWizard({ next = "/me", roles = [], nextSteps, signInHref =
       }
       const body = data as AuthBody;
       if (body?.accessToken) signedIn(body.accessToken);
-      setName(about.displayName.trim().split(/\s+/)[0] ?? "");
+      setName(a.displayName.trim().split(/\s+/)[0] ?? "");
       setStep("done");
     });
 
@@ -222,7 +224,7 @@ export function SignUpWizard({ next = "/me", roles = [], nextSteps, signInHref =
           onSubmit={(v) => {
             setAbout(v);
             if (roles.length) setStep("role");
-            else create("none");
+            else create("none", v);
           }}
         />
       ) : null}
