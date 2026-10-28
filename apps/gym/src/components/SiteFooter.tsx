@@ -12,7 +12,7 @@ export async function SiteFooter() {
       own: true,
       links: [
         { href: "/gyms", label: t("gyms") },
-        { href: "/gyms?tab=trainers", label: t("trainers") },
+        { href: "/trainers", label: t("trainers") },
         { href: "/me/passes", label: t("myPasses") },
         { href: "/me/subscriptions", label: t("myPlans") },
       ],

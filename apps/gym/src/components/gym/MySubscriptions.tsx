@@ -26,7 +26,7 @@ export function MySubscriptions() {
     <section className="mx-auto max-w-[1100px] px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-3xl font-extrabold">{t("mySubscriptions")}</h1>
-        <Link href="/gyms?tab=trainers" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+        <Link href="/trainers" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
           {t("findTrainer")}
         </Link>
       </div>

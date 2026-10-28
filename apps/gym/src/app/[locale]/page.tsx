@@ -77,7 +77,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
             <Link href="/gyms" className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand no-underline hover:bg-brand-hover">
               {t("findGym")}
             </Link>
-            <Link href="/gyms?tab=trainers" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold no-underline hover:border-brand">
+            <Link href="/trainers" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold no-underline hover:border-brand">
               {t("findTrainer")}
             </Link>
           </div>
