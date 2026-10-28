@@ -65,6 +65,7 @@ export function useFmt() {
   const shortF = new Intl.DateTimeFormat(tag, { day: "numeric", month: "short", timeZone: "UTC" });
   const timeF = new Intl.DateTimeFormat(tag, { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Dhaka" });
   const monthF = new Intl.DateTimeFormat(tag, { month: "long", year: "numeric", timeZone: "UTC" });
+  const weekdayF = new Intl.DateTimeFormat(tag, { weekday: "short", timeZone: "UTC" });
   const num = new Intl.NumberFormat(tag);
   return {
     locale,
@@ -73,6 +74,7 @@ export function useFmt() {
     short: (d: string | null | undefined) => (d ? shortF.format(new Date(`${d.slice(0, 10)}T12:00:00Z`)) : "–"),
     time: (iso: string | null | undefined) => (iso ? timeF.format(new Date(iso)) : ""),
     month: (m: string) => monthF.format(new Date(`${m}-15T12:00:00Z`)),
+    weekday: (d: string) => weekdayF.format(new Date(`${d.slice(0, 10)}T12:00:00Z`)),
     n: (v: number) => num.format(v),
   };
 }

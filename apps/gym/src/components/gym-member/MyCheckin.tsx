@@ -12,12 +12,14 @@ import { usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { Button, ButtonLink, EmptyState, Notice, SegmentedControl, Skeleton } from "@kriraghor/ui/kit";
 import { gymMe, qrRefreshIn, type CheckinToken } from "@/lib/gym-manage";
 import { useGymError } from "@/components/gym-manage/common";
+import { EntranceScan } from "./EntranceScan";
 
 /**
  * /me/checkin (M24-FR-50): my rotating check-in QR for a gym, full screen at the desk. The token is
  * valid for one window (gym_manage.member_qr_seconds) and holds no personal data; the page fetches a
  * new one a few seconds before it ends (the desk also accepts the previous one). One QR per gym I am
- * linked to (?m=memberId picks it).
+ * linked to (?m=memberId picks it). Below it, the entrance self check-in (EntranceScan, M24-FR-51,
+ * prompt 3): first on the page when it was opened from the door's QR.
  */
 export function MyCheckin() {
   const t = useTranslations("gm");
@@ -26,12 +28,16 @@ export function MyCheckin() {
   const router = useRouter();
   const pathname = usePathname();
   const list = useQuery({ queryKey: ["my-gym-memberships"], queryFn: () => gymMe.memberships(), enabled: status === "signed_in" });
-  if (status === "signed_out") return <SignedOutCard signInHref="/sign-in?next=/me/checkin" />;
+  // Opened from the entrance tablet's QR (?e=): the check-in comes first. Kept for the visit, since the
+  // scan drops ?e= from the URL once it is sent.
+  const [fromDoor] = useState(() => Boolean(params.get("e")));
+  if (status === "signed_out") return <SignedOutCard signInHref={`/sign-in?next=${encodeURIComponent(params.get("e") ? `/me/checkin?e=${params.get("e")}` : "/me/checkin")}`} />;
   const linked = (list.data?.items ?? []).filter((m) => m.linked && m.status !== "removed" && m.status !== "left");
   const chosen = linked.find((m) => m.memberId === params.get("m")) ?? linked[0];
   return (
     <section className="mx-auto w-full max-w-[560px] px-4 py-6 sm:px-6" data-testid="me-checkin-page">
       <h1 className="font-display text-3xl font-extrabold">{t("me.checkinQr")}</h1>
+      {fromDoor ? <EntranceScan /> : null}
       {list.isPending ? (
         <Skeleton className="mt-4 aspect-square w-full rounded-card" />
       ) : !chosen ? (
@@ -44,6 +50,7 @@ export function MyCheckin() {
           <Qr key={chosen.memberId} memberId={chosen.memberId} gym={chosen.gym?.name ?? ""} code={chosen.memberCode} />
         </>
       )}
+      {fromDoor ? null : <EntranceScan />}
     </section>
   );
 }
