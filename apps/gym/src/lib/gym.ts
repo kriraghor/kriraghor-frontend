@@ -17,7 +17,9 @@ export type PassResult = components["schemas"]["GymPassResult"];
 export type Subscription = components["schemas"]["TrainerSubscription"];
 export type Hours = GymPage["hours"];
 export type TrainerCard = components["schemas"]["GymTrainerCard"];
-export type GymSort = "price" | "rating" | "newest";
+export type GymSort = "price" | "rating" | "newest" | "nearest";
+/** The /gyms filters (M24 prompt 3, §4.1). The position is the viewer's, sent for this answer only and never stored. */
+export type GymListQuery = { areaId?: string; facility?: string; q?: string; sort?: GymSort; priceMax?: number; at?: { lat: number; lng: number } | null; radiusKm?: number; cursor?: string };
 
 async function ok<T>(res: { data?: T; error?: unknown }): Promise<T> {
   if (res.error || res.data === undefined) throw res.error;
@@ -26,8 +28,7 @@ async function ok<T>(res: { data?: T; error?: unknown }): Promise<T> {
 const key = (k: string) => ({ "idempotency-key": k });
 
 export const gym = {
-  list: async (q: { areaId?: string; facility?: string; sort?: GymSort; cursor?: string }) =>
-    ok(await api().GET("/gym/gyms", { params: { query: { ...(q.areaId ? { areaId: q.areaId } : {}), ...(q.facility ? { facility: q.facility } : {}), sort: q.sort ?? "price", ...(q.cursor ? { cursor: q.cursor } : {}), limit: 24 } } })),
+  list: async (q: GymListQuery) => ok(await api().GET("/gym/gyms", { params: { query: gymListParams(q) as never } })),
   page: async (slug: string) => ok(await api().GET("/gym/gyms/{slug}", { params: { path: { slug } } })),
   trainers: async () => ok(await api().GET("/gym/trainers", { params: { query: { sort: "rating" } } })),
   areas: async () => ok(await api().GET("/catalog/areas", { params: { query: { service: "delivery" } } })),
@@ -43,6 +44,31 @@ export const gym = {
   problem: async (id: string, statement: string, k: string) =>
     ok(await api().POST("/me/subscriptions/{id}/problem", { params: { path: { id }, header: key(k) }, body: { statement } })) as { dispute?: { code?: string } },
 };
+
+/** The /gyms filters → the API query: the nearest sort and the radius need a position, else the list sorts by price. */
+export function gymListParams(q: GymListQuery): Record<string, string | number> {
+  const out: Record<string, string | number> = { limit: 24 };
+  if (q.areaId) out.areaId = q.areaId;
+  if (q.facility) out.facility = q.facility;
+  if (q.q && q.q.trim().length >= 2) out.q = q.q.trim().slice(0, 60);
+  if (q.priceMax && q.priceMax > 0) out.priceMax = q.priceMax;
+  if (q.at) {
+    // About 11 m: enough for a distance, no more of the viewer's position than that.
+    out.lat = Math.round(q.at.lat * 1e4) / 1e4;
+    out.lng = Math.round(q.at.lng * 1e4) / 1e4;
+    if (q.radiusKm) out.radiusKm = q.radiusKm;
+  }
+  out.sort = q.sort === "nearest" && !q.at ? "price" : (q.sort ?? (q.at ? "nearest" : "price"));
+  if (q.cursor) out.cursor = q.cursor;
+  return out;
+}
+
+/** "850 m", "2.4 km" (null without a position). */
+export function distanceText(m: number | null | undefined, locale: string): string | null {
+  if (m == null) return null;
+  const n = (v: number, digits: number) => new Intl.NumberFormat(locale === "bn" ? "bn-BD" : "en-IN", { maximumFractionDigits: digits }).format(v);
+  return m < 1000 ? `${n(Math.max(10, Math.round(m / 10) * 10), 0)} m` : `${n(m / 1000, m < 10000 ? 1 : 0)} km`;
+}
 
 // ---------------- the Dhaka calendar (UTC+6, no daylight saving)
 

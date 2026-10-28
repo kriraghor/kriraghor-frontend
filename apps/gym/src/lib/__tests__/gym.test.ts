@@ -1,5 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { addDays, dhakaToday, dowOf, openDates, passTone, subscriptionTone, weekOf, type Hours } from "../gym";
+import { addDays, dhakaToday, distanceText, dowOf, gymListParams, openDates, passTone, subscriptionTone, weekOf, type Hours } from "../gym";
+
+describe("the /gyms filters (M24 prompt 3)", () => {
+  it("sorts nearest only with a position, and rounds the position", () => {
+    expect(gymListParams({})).toEqual({ limit: 24, sort: "price" });
+    expect(gymListParams({ sort: "nearest" })).toEqual({ limit: 24, sort: "price" });
+    expect(gymListParams({ at: { lat: 23.780887, lng: 90.407249 }, radiusKm: 5 })).toEqual({ limit: 24, lat: 23.7809, lng: 90.4072, radiusKm: 5, sort: "nearest" });
+    expect(gymListParams({ at: { lat: 23.78, lng: 90.4 }, sort: "rating" }).sort).toBe("rating");
+    expect(gymListParams({ radiusKm: 5 })).not.toHaveProperty("radiusKm");
+  });
+
+  it("sends the area, facility, search and monthly price cap only when set", () => {
+    expect(gymListParams({ areaId: "a1", facility: "f1", q: " iron ", priceMax: 250000, cursor: "24" })).toEqual({ limit: 24, areaId: "a1", facility: "f1", q: "iron", priceMax: 250000, sort: "price", cursor: "24" });
+    expect(gymListParams({ q: "a", priceMax: 0 })).toEqual({ limit: 24, sort: "price" });
+  });
+
+  it("writes a distance in metres or kilometres", () => {
+    expect(distanceText(null, "en")).toBeNull();
+    expect(distanceText(4, "en")).toBe("10 m");
+    expect(distanceText(846, "en")).toBe("850 m");
+    expect(distanceText(2440, "en")).toBe("2.4 km");
+    expect(distanceText(12600, "en")).toBe("13 km");
+  });
+});
 
 const w = (dow: number, openTime: string, closeTime: string, womenOnly = false) => ({ dow, openTime, closeTime, womenOnly });
 
