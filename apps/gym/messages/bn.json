@@ -256,7 +256,9 @@
       "settings": "সেটিংস",
       "allReports": "সব জিমের রিপোর্ট",
       "reports": "রিপোর্ট",
-      "reminders": "রিমাইন্ডার"
+      "reminders": "রিমাইন্ডার",
+      "entrance": "প্রবেশ QR",
+      "plans": "প্ল্যান"
     }
   },
   "gym": {
