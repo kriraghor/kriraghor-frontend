@@ -49,7 +49,7 @@ export const bigEvents = {
   announce: async (id: string, body: { textEn: string; textBn: string }) => unwrap(await api().POST("/admin/esports/events/{id}/feed", { ...p(id), body })),
 };
 
-/** A Dhaka wall-clock value from <input type="datetime-local"> as an ISO instant, and back. */
+/** A Dhaka wall-clock value from the DateTimePicker ("YYYY-MM-DDTHH:MM") as an ISO instant, and back. */
 export const dhakaIso = (v: string) => new Date(`${v}:00+06:00`).toISOString();
 export const dhakaLocal = (iso: string) => new Date(new Date(iso).getTime() + 6 * 3600000).toISOString().slice(0, 16);
 

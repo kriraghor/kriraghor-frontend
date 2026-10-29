@@ -54,6 +54,26 @@
       "score": "{score}% সম্পূর্ণ",
       "done": "শেষ",
       "todo": "বাকি"
+    },
+    "date": {
+      "choose": "তারিখ বাছুন",
+      "chooseTime": "সময় বাছুন",
+      "chooseMonth": "মাস বাছুন",
+      "today": "আজ",
+      "clear": "মুছুন",
+      "selected": "বাছাই করা",
+      "previousMonth": "আগের মাস",
+      "nextMonth": "পরের মাস",
+      "previousYear": "আগের বছর",
+      "nextYear": "পরের বছর",
+      "month": "মাস",
+      "year": "বছর",
+      "navigation": "মাস বদলান",
+      "date": "তারিখ",
+      "time": "সময়",
+      "dateOf": "{label}: তারিখ",
+      "timeOf": "{label}: সময়",
+      "endOfDay": "{time} (দিনের শেষ)"
     }
   },
   "auth": {

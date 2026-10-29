@@ -5,6 +5,9 @@ import {
   cellsOf,
   clock,
   dayBusy,
+  dayState,
+  stateOfBusy,
+  stateOfHours,
   dhakaDayOf,
   dhakaMidnight,
   lastWeekIndex,
@@ -264,5 +267,40 @@ describe("availability: the public busy strip", () => {
     expect(clock(0)).toBe("00:00");
     expect(clock(1110)).toBe("18:30");
     expect(clock(1440)).toBe("24:00");
+  });
+});
+
+describe("availability: day states (Available / Partly available / Unavailable)", () => {
+  const day = "2026-10-22";
+  it("a day with no busy time is available", () => {
+    expect(dayState([], day)).toBe("available");
+    expect(dayState([{ start: "2026-10-24T12:00:00.000Z", end: "2026-10-24T14:00:00.000Z" }], day)).toBe("available");
+  });
+
+  it("a day with some busy time is partly available", () => {
+    expect(dayState([{ start: "2026-10-22T12:00:00.000Z", end: "2026-10-22T14:00:00.000Z" }], day)).toBe("partly");
+    // Busy from 00:00 to 23:00 still leaves an hour.
+    expect(dayState([{ start: "2026-10-21T18:00:00.000Z", end: "2026-10-22T17:00:00.000Z" }], day)).toBe("partly");
+    expect(stateOfBusy([{ from: 0, to: 60 }, { from: 120, to: 1440 }])).toBe("partly");
+  });
+
+  it("a day busy from 00:00 to 24:00 is unavailable, also when spans meet", () => {
+    expect(dayState([{ start: "2026-10-21T18:00:00.000Z", end: "2026-10-22T18:00:00.000Z" }], day)).toBe("unavailable");
+    expect(
+      dayState(
+        [
+          { start: "2026-10-21T10:00:00.000Z", end: "2026-10-22T06:00:00.000Z" },
+          { start: "2026-10-22T06:00:00.000Z", end: "2026-10-23T02:00:00.000Z" },
+        ],
+        day,
+      ),
+    ).toBe("unavailable");
+  });
+
+  it("the pro's week grid uses the same words for the hours still to plan", () => {
+    expect(stateOfHours([])).toBeNull();
+    expect(stateOfHours([false, false])).toBe("available");
+    expect(stateOfHours([true, false])).toBe("partly");
+    expect(stateOfHours([true, true])).toBe("unavailable");
   });
 });

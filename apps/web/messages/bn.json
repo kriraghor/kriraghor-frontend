@@ -1148,7 +1148,18 @@
     "travelNote": "যাতায়াত: ঢাকা উত্তর {north}, ঢাকা দক্ষিণ {south}, ঢাকার বাইরে {outside} (নিজের এলাকায় নেই)",
     "maxPerDay": "দিনে সর্বোচ্চ {n, plural, other {# টি কাজ}}",
     "availability": "সামনের ১৪ দিন",
-    "free": "ফাঁকা",
+    "availabilityHint": "অনুরোধের তারিখ দিতে ফাঁকা একটি দিনে চাপুন।",
+    "dayState": {
+      "available": "ফাঁকা",
+      "partly": "আংশিক ফাঁকা",
+      "unavailable": "ফাঁকা নেই"
+    },
+    "stateLegend": "দিনগুলোর মানে",
+    "bookedAt": "বুক করা {times}",
+    "dayCell": "{date}, {state}",
+    "dayCellBooked": "{date}, {state}, বুক করা {times}",
+    "dayPicked": "{date} এখন আপনার অনুরোধের তারিখ।",
+    "dayPickedSignIn": "{date} এর জন্য অনুরোধ পাঠাতে সাইন ইন করুন।",
     "shortlist": "শর্টলিস্ট",
     "shortlisted": "শর্টলিস্টে আছে",
     "shortlistFull": "আপনার শর্টলিস্ট ভরে গেছে।",
@@ -1367,8 +1378,6 @@
       "days": "~{n} দিনে উত্তর দেন"
     },
     "accepts": "{pct} অনুরোধ নেন",
-    "busyAllDay": "সারাদিন ব্যস্ত",
-    "busyAt": "ব্যস্ত:",
     "checklist": {
       "title": "প্রোফাইল সম্পূর্ণ করুন",
       "lead": "সম্পূর্ণ প্রোফাইল বেশি কাজ পায়। প্রতিটি ধাপে এক-দুই মিনিট লাগে।",

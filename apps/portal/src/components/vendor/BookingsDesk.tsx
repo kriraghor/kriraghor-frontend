@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { CalendarDots, CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
-import { Badge, Button, DataTable, FilterBar, IconButton, controlClass, type Column, type Tone } from "@kriraghor/ui/kit";
+import { CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
+import { Badge, Button, DataTable, FilterBar, IconButton, type Column, type Tone } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
@@ -16,6 +16,7 @@ import { ownerTrust } from "@/lib/vendor/trust";
 import { allowedBookingActions, deskAccessKey, deskCan, deskChoices, staffPermissionsAt, worksWith } from "@/lib/vendor/team";
 import { DeskAccessNotice, useDeskErrorText, useWorkplaces } from "./StaffAccess";
 import { Notice } from "@kriraghor/ui/primitives";
+import { DatePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 
 const TONE: Record<string, string> = {
@@ -224,11 +225,7 @@ export function BookingsDesk() {
           <IconButton label={t("prevDay")} variant="secondary" onClick={() => setDay(shiftDay(day, -1))} data-testid="day-prev">
             <CaretLeft size={18} aria-hidden />
           </IconButton>
-          <label className="relative">
-            <span className="sr-only">{t("pickDate")}</span>
-            <CalendarDots size={18} aria-hidden className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-            <input type="date" value={day} onChange={(e) => e.target.value && setDay(e.target.value)} className={`${controlClass} w-auto pl-10`} data-testid="day-input" />
-          </label>
+          <DatePicker id="day-input" label={t("pickDate")} labelHidden value={day} onChange={(v) => v && setDay(v)} clearable={false} showToday={false} testId="day-input" triggerClassName="w-auto" />
           <IconButton label={t("nextDay")} variant="secondary" onClick={() => setDay(shiftDay(day, 1))} data-testid="day-next">
             <CaretRight size={18} aria-hidden />
           </IconButton>

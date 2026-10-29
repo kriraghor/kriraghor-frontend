@@ -10,6 +10,7 @@ import { publicEnv } from "@kriraghor/session/env";
 import { nextActions } from "@/lib/vendor/grounds";
 import { shopDesk, specsFrom, toPoisha, variantLabel, type ItemType, type Product } from "@/lib/vendor/market";
 import { Notice } from "@kriraghor/ui/primitives";
+import { DatePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
 import { SpecFields } from "./SpecFields";
@@ -388,9 +389,7 @@ function Variants({ p, type, supplement, locked }: { p: Product; type: ItemType;
         )}
         {supplement ? (
           <>
-            <Field label={t("variants.expiry")}>
-              <input type="date" value={f.expiry} onChange={(e) => setF({ ...f, expiry: e.target.value })} disabled={locked} className={inputCls} />
-            </Field>
+            <DatePicker id="variant-expiry" label={t("variants.expiry")} value={f.expiry} onChange={(v) => setF({ ...f, expiry: v })} disabled={locked} />
             <Field label={t("variants.batch")}>
               <input value={f.batch} onChange={(e) => setF({ ...f, batch: e.target.value })} maxLength={40} disabled={locked} className={inputCls} />
             </Field>

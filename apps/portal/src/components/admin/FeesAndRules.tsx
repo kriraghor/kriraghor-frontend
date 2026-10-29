@@ -18,6 +18,7 @@ import {
   type SettingValue,
 } from "@/lib/admin/settings";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { DateTimePicker, TimePicker } from "@kriraghor/ui/date";
 import { EntityHistory } from "./EntityHistory";
 import { formatDhaka, useAdminMe } from "./useAdminMe";
 
@@ -279,6 +280,9 @@ function SettingRow({
         ))}
       </div>
     );
+  } else if (s.valueType === "time") {
+    // A time of day ("HH:MM"): the shared picker, every 15 minutes, an off-step stored value kept in the list.
+    control = <TimePicker id={id} label={label} labelHidden value={String(raw)} step={15} disabled={disabled} onChange={(v) => onChange(v)} triggerClassName={error ? "border-danger" : changed ? "border-brand" : undefined} />;
   } else {
     const isNumber = s.valueType === "int" || s.valueType === "decimal" || s.valueType === "money";
     control = (
@@ -287,7 +291,7 @@ function SettingRow({
         <input
           id={id}
           className={inputCls}
-          type={s.valueType === "time" ? "time" : "text"}
+          type="text"
           inputMode={isNumber ? (s.valueType === "int" ? "numeric" : "decimal") : undefined}
           value={String(raw)}
           disabled={disabled}
@@ -304,7 +308,8 @@ function SettingRow({
   return (
     <li className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_minmax(0,14rem)]" data-key={s.key}>
       <div>
-        <label id={`${id}-label`} htmlFor={s.valueType === "json" ? undefined : id} className="font-semibold">
+        {/* A time setting labels its own picker (hidden there); this visible name stays, without a second label on the control. */}
+        <label id={s.valueType === "time" ? undefined : `${id}-label`} htmlFor={s.valueType === "json" || s.valueType === "time" ? undefined : id} className="font-semibold">
           {label}
         </label>
         {why ? <p className="mt-1 text-sm text-muted">{why}</p> : null}
@@ -441,7 +446,7 @@ function ReviewDialog({
               </label>
             ))}
           </div>
-          {when === "at" ? <input type="datetime-local" aria-label={t("at")} value={at} onChange={(e) => setAt(e.target.value)} className="mt-2 min-h-11 border-2 border-line bg-surface px-3" /> : null}
+          {when === "at" ? <DateTimePicker id="review-at" className="mt-2 max-w-md" label={t("at")} labelHidden value={at} onChange={setAt} /> : null}
         </fieldset>
 
         <label htmlFor="review-reason" className="mt-5 block text-sm font-semibold text-muted">

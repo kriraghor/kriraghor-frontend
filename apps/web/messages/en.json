@@ -1148,7 +1148,18 @@
     "travelNote": "Travel: Dhaka north {north}, Dhaka south {south}, outside Dhaka {outside} (none in their own area)",
     "maxPerDay": "At most {n, plural, one {# job} other {# jobs}} a day",
     "availability": "The next 14 days",
-    "free": "Free",
+    "availabilityHint": "Tap an available day to use it as the date in your request.",
+    "dayState": {
+      "available": "Available",
+      "partly": "Partly available",
+      "unavailable": "Unavailable"
+    },
+    "stateLegend": "What the days mean",
+    "bookedAt": "Booked {times}",
+    "dayCell": "{date}, {state}",
+    "dayCellBooked": "{date}, {state}, booked {times}",
+    "dayPicked": "{date} is now the date in your request.",
+    "dayPickedSignIn": "Sign in to send a request for {date}.",
     "shortlist": "Shortlist",
     "shortlisted": "Shortlisted",
     "shortlistFull": "Your shortlist is full.",
@@ -1367,8 +1378,6 @@
       "days": "Replies in ~{n} {n, plural, one {day} other {days}}"
     },
     "accepts": "Accepts {pct}",
-    "busyAllDay": "Busy all day",
-    "busyAt": "Busy:",
     "checklist": {
       "title": "Finish your profile",
       "lead": "Complete profiles get hired more. Each step takes a minute or two.",
@@ -1448,7 +1457,7 @@
       "pickDay": "Pick a day",
       "legend": "What the colours mean",
       "kind": {
-        "free": "Free",
+        "free": "Available",
         "blocked": "Blocked",
         "repeat": "Weekly repeat",
         "booked": "Booked job",

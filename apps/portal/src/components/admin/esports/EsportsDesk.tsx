@@ -12,6 +12,7 @@ import { problemOf } from "@kriraghor/api-client";
 import { Notice } from "@kriraghor/ui/primitives";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
+import { DateTimePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls } from "../finance/shared";
 
 type Tab = "tournaments" | "disputes" | "bans";
@@ -21,7 +22,7 @@ const btn = "min-h-11 border-2 px-4 text-sm font-semibold disabled:opacity-50";
 /** What the shared desk parts call; the M22 organiser client leaves the staff-only actions out. */
 export type DeskClient = Pick<typeof esportsAdmin, "catalog" | "create" | "board" | "match" | "room" | "setRoom" | "rotate" | "enter" | "post" | "preview"> &
   Partial<Pick<typeof esportsAdmin, "staffCheckIn" | "disqualify" | "revealNow" | "cancelMatch">>;
-/** A Dhaka wall-clock value from <input type="datetime-local"> as an ISO instant. */
+/** A Dhaka wall-clock value from the DateTimePicker ("YYYY-MM-DDTHH:MM") as an ISO instant. */
 const dhakaIso = (v: string) => new Date(`${v}:00+06:00`).toISOString();
 
 /**
@@ -248,9 +249,7 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
         </div>
         <p className="mt-2 text-xs text-muted">{t("form.prizesHelp")}</p>
       </fieldset>
-      <Field label={t("form.opens")}>
-        <input type="datetime-local" value={f.opens} onChange={(e) => set("opens", e.target.value)} className={inputCls} required />
-      </Field>
+      <DateTimePicker id="es-opens" label={t("form.opens")} value={f.opens} onChange={(v) => set("opens", v)} required />
       <fieldset className="border-2 border-line p-3">
         <legend className="px-1 font-bold">{t("form.matches")}</legend>
         {matches.map((m, i) => (
@@ -263,7 +262,14 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
                 </option>
               ))}
             </select>
-            <input type="datetime-local" value={m.at} onChange={(e) => setMatches(matches.map((x, j) => (j === i ? { ...x, at: e.target.value } : x)))} className={inputCls} aria-label={t("form.startsAt")} required />
+            <DateTimePicker
+              id={`es-match-at-${i}`}
+              label={t("form.startsAt")}
+              labelHidden
+              value={m.at}
+              onChange={(v) => setMatches(matches.map((x, j) => (j === i ? { ...x, at: v } : x)))}
+              required
+            />
             {matches.length > 1 ? (
               <button type="button" className={`${btn} border-line`} onClick={() => setMatches(matches.filter((_, j) => j !== i))}>
                 −

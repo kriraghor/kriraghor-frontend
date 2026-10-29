@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowCounterClockwise, FilePdf, Prohibit } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
+import { DatePicker } from "@kriraghor/ui/date";
 import { Button, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, ReasonDialog, Select, Skeleton, Textarea, buttonClass, cn, type Column } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
 import { contractBody, organisersAdmin, type Contract, type Invoice, type OrgStatus } from "@/lib/admin/organisers";
@@ -246,8 +247,8 @@ function OrgDetail({ id, external }: { id: string; external: boolean }) {
                   </Select>
                 </>
               )}
-              <Field id="contract-starts" type="date" label={t("startsOn")} value={form.startsOn} onChange={(e) => setForm({ ...form, startsOn: e.target.value })} required />
-              <Field id="contract-ends" type="date" label={t("endsOn")} value={form.endsOn} onChange={(e) => setForm({ ...form, endsOn: e.target.value })} />
+              <DatePicker id="contract-starts" label={t("startsOn")} value={form.startsOn} onChange={(v) => setForm({ ...form, startsOn: v })} required />
+              <DatePicker id="contract-ends" label={t("endsOn")} value={form.endsOn} onChange={(v) => setForm({ ...form, endsOn: v })} />
               <div className="flex items-end sm:col-span-2">
                 <Button type="submit" disabled={!body}>
                   {t("createContract")}

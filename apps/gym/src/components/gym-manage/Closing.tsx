@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CaretLeft, CaretRight, Printer } from "@phosphor-icons/react";
-import { Badge, Button, Card, Field, IconButton, Notice, Skeleton } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, IconButton, Notice, Skeleton } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
+import { DatePicker } from "@kriraghor/ui/date";
 import { addDays, dhakaToday, gymManage } from "@/lib/gym-manage";
 import { GymPage, Row, useFmt, useGymError, type GymCtx } from "./common";
 import { ReceiptLink } from "./money";
@@ -38,7 +39,7 @@ function Body({ ctx }: { ctx: GymCtx }) {
         <IconButton label={t("closing.prev")} variant="secondary" onClick={() => setDate(addDays(date, -1))}>
           <CaretLeft size={18} aria-hidden />
         </IconButton>
-        <Field id="closing-date" type="date" label={t("closing.date")} value={date} max={today} onChange={(e) => e.target.value && setDate(e.target.value)} className="w-44" />
+        <DatePicker id="closing-date" label={t("closing.date")} value={date} max={today} clearable={false} onChange={(v) => v && setDate(v)} className="w-56" />
         <IconButton label={t("closing.next")} variant="secondary" onClick={() => setDate(addDays(date, 1))} disabled={date >= today}>
           <CaretRight size={18} aria-hidden />
         </IconButton>

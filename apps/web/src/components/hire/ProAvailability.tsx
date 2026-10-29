@@ -17,6 +17,7 @@ import {
   planSave,
   saveErrorOf,
   startingIn,
+  stateOfHours,
   toggleCell,
   weekFirstDay,
   weekRange,
@@ -25,6 +26,8 @@ import {
   type Lock as LockKind,
   type Week,
 } from "@/lib/availability";
+import { DatePicker } from "@kriraghor/ui/date";
+import { DayStateIcon, DayStateLegend } from "./AvailabilityDays";
 
 /**
  * /pro/availability (M11 §4 Manage › Availability, FR-05, FR-14; Round B1): the pro's week on the
@@ -154,6 +157,18 @@ function WeekEditor({ firstDay, data, now, today, onDirty }: { firstDay: string;
   const saveError = save.error ? saveErrorOf(save.error) : null;
 
   const kindOf = (c: number): Kind => week.locks[c] ?? (selected.has(c) ? "blocked" : "free");
+  const th = useTranslations("hire");
+  // The public profile's words for a whole day, from the hours still to plan (unsaved changes included).
+  const dayStateLine = (d: number) => {
+    const kinds = Array.from({ length: HOURS }, (_, h) => kindOf(d * HOURS + h)).filter((k) => k !== "past" && k !== "horizon");
+    const st = stateOfHours(kinds.map((k) => k !== "free"));
+    return st ? (
+      <span className="mt-0.5 flex items-center justify-center gap-1 text-[11px] font-semibold leading-tight text-muted" data-day-state={st}>
+        <DayStateIcon state={st} size={12} />
+        {th(`dayState.${st}`)}
+      </span>
+    ) : null;
+  };
   const dayFmt = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "short", day: "numeric", timeZone: "UTC" });
   const longDay = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
   const hourFmt = new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "UTC" });
@@ -288,6 +303,7 @@ function WeekEditor({ firstDay, data, now, today, onDirty }: { firstDay: string;
               {week.days.map((d, i) => (
                 <span key={d} role="columnheader" className={cn("pb-1 text-center text-sm font-bold", d === today && "text-brand-text")}>
                   {dayFmt.format(dayDate(i))}
+                  {dayStateLine(i)}
                 </span>
               ))}
             </div>
@@ -313,10 +329,11 @@ function WeekEditor({ firstDay, data, now, today, onDirty }: { firstDay: string;
                   setDay(i);
                   setFocus(i * HOURS + (focus % HOURS));
                 }}
-                className={cn("min-h-11 shrink-0 rounded-control border px-3 text-sm font-semibold", day === i ? "border-brand bg-brand-soft text-brand-text" : "border-line bg-surface")}
+                className={cn("min-h-11 shrink-0 rounded-control border px-3 py-1 text-sm font-semibold", day === i ? "border-brand bg-brand-soft text-brand-text" : "border-line bg-surface")}
                 data-testid={`cal-day-${i}`}
               >
                 {dayFmt.format(dayDate(i))}
+                {dayStateLine(i)}
               </button>
             ))}
           </div>
@@ -340,6 +357,7 @@ function WeekEditor({ firstDay, data, now, today, onDirty }: { firstDay: string;
           </li>
         ))}
       </ul>
+      <DayStateLegend />
 
       <Repeats repeats={data.repeats} removed={removed} onToggle={(id) => setRemoved((s) => (s.has(id) ? new Set([...s].filter((x) => x !== id)) : new Set([...s, id])))} />
 
@@ -357,7 +375,7 @@ function WeekEditor({ firstDay, data, now, today, onDirty }: { firstDay: string;
         <Field id="cal-reason" label={t("reason")} optional={t("optional")} hint={t("reasonHint")} value={reason} maxLength={120} onChange={(e) => setReason(e.target.value)} />
         <Checkbox id="cal-repeat" label={t("repeat")} checked={repeat} onChange={(e) => setRepeat(e.target.checked)} />
         {repeat ? (
-          <Field id="cal-until" type="date" label={t("until")} optional={t("optional")} hint={t("untilHint")} value={until} min={today} max={addDays(today, data.horizonDays)} onChange={(e) => setUntil(e.target.value)} className="max-w-xs" />
+          <DatePicker id="cal-until" label={t("until")} optional={t("optional")} hint={t("untilHint")} value={until} min={today} max={addDays(today, data.horizonDays)} onChange={setUntil} className="max-w-xs" testId="cal-until" />
         ) : null}
         {saveError ? (
           <Notice tone="error">{saveError.key === "overJob" ? t("errors.overJob", { jobs: saveError.jobs }) : saveError.key === "horizon" ? t("errors.horizon", { days: data.horizonDays }) : t(`errors.${saveError.key}`)}</Notice>

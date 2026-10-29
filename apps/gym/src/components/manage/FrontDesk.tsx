@@ -4,10 +4,11 @@ import { useCallback, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { ArrowLeft, CalendarDots, CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
-import { Avatar, Badge, Button, IconButton, Notice, ReasonDialog, Skeleton, controlClass } from "@kriraghor/ui/kit";
+import { ArrowLeft, CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
+import { Avatar, Badge, Button, IconButton, Notice, ReasonDialog, Skeleton } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { cn } from "@kriraghor/ui/cn";
+import { DatePicker } from "@kriraghor/ui/date";
 import { DeskAccessNotice, inputCls, useDeskErrorText } from "@kriraghor/ui/desk";
 import { cleanCode, gymDesk, nextDays, scanInput, shiftDay, type Admission } from "@/lib/manage";
 import { DECISION_TONE, deskAction, deskInput, featureLocked, gymManage, type DeskCard, type DeskPass } from "@/lib/gym-manage";
@@ -327,11 +328,7 @@ export function FrontDesk({ id }: { id: string }) {
               <IconButton label={t("desk.prevDay")} variant="secondary" onClick={() => setListDate(shiftDay(listDate, -1))} data-testid="desk-prev-day">
                 <CaretLeft size={18} aria-hidden />
               </IconButton>
-              <label className="relative">
-                <span className="sr-only">{t("desk.date")}</span>
-                <CalendarDots size={18} aria-hidden className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-                <input type="date" value={listDate} max={todayDate} onChange={(e) => e.target.value && setListDate(e.target.value)} className={`${controlClass} w-auto pl-10`} data-testid="desk-date-input" />
-              </label>
+              <DatePicker id="desk-date-input" label={t("desk.date")} labelHidden value={listDate} max={todayDate} clearable={false} onChange={(v) => v && setListDate(v)} triggerClassName="w-auto min-w-48" testId="desk-date-input" />
               <IconButton label={t("desk.nextDay")} variant="secondary" onClick={() => setListDate(shiftDay(listDate, 1))} disabled={isToday} data-testid="desk-next-day">
                 <CaretRight size={18} aria-hidden />
               </IconButton>

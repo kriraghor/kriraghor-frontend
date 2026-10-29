@@ -54,6 +54,26 @@
       "score": "{score}% complete",
       "done": "Done",
       "todo": "To do"
+    },
+    "date": {
+      "choose": "Choose a date",
+      "chooseTime": "Choose a time",
+      "chooseMonth": "Choose a month",
+      "today": "Today",
+      "clear": "Clear",
+      "selected": "selected",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "previousYear": "Previous year",
+      "nextYear": "Next year",
+      "month": "Month",
+      "year": "Year",
+      "navigation": "Change month",
+      "date": "Date",
+      "time": "Time",
+      "dateOf": "{label}: date",
+      "timeOf": "{label}: time",
+      "endOfDay": "{time} (end of day)"
     }
   },
   "auth": {

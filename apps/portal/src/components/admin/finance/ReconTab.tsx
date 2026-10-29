@@ -5,7 +5,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { CaretDown, CaretRight } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
-import { Badge, Button, Checkbox, DataTable, Field, Notice, type Column } from "@kriraghor/ui/kit";
+import { Badge, Button, Checkbox, DataTable, Notice, type Column } from "@kriraghor/ui/kit";
+import { DatePicker } from "@kriraghor/ui/date";
 import { dhakaDate, finance, formatTaka, type Item, type Run } from "@/lib/admin/finance";
 import { StatusBadge } from "../../StatusBadge";
 import { formatDhaka } from "../useAdminMe";
@@ -70,7 +71,7 @@ export function ReconTab({ me }: { me: DeskMe }) {
     <div className="mt-6 flex flex-col gap-4">
       {me.isMaster ? (
         <form onSubmit={reconcile} className="flex flex-wrap items-end gap-3">
-          <Field id="recon-day" type="date" className="w-full sm:w-56" label={t("businessDay")} value={day} onChange={(e) => setDay(e.target.value)} />
+          <DatePicker id="recon-day" className="w-full sm:w-56" label={t("businessDay")} value={day} onChange={setDay} />
           <Button type="submit" busy={busy}>
             {t("reconcile")}
           </Button>

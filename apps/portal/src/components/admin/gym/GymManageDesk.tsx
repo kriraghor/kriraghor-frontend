@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Medal, Plus, Prohibit, XCircle } from "@phosphor-icons/react";
 import { Badge, Button, Card, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, Select, Skeleton, Tabs, Textarea, type Column, type MenuItem } from "@kriraghor/ui/kit";
+import { DateTimePicker, MonthPicker } from "@kriraghor/ui/date";
 import { formatTaka } from "@/lib/admin/finance";
 import {
   canWrite,
@@ -444,7 +445,7 @@ function Invoices() {
         chips={{ value: values.status, onChange: (v) => set({ status: v }), label: t("statusLabel"), options: [{ value: "", label: t("all") }, ...INVOICE_STATUSES.map((s) => ({ value: s, label: t(`invoiceStatus.${s}`), count: list.data?.totals[s]?.count }))], testId: "gm-invoice-status" }}
         extra={
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field id="gm-period" type="month" label={t("period")} value={values.period} onChange={(e) => set({ period: e.target.value })} />
+            <MonthPicker id="gm-period" label={t("period")} value={values.period} onChange={(v) => set({ period: v })} />
             <Field id="gm-owner-id" label={t("ownerId")} value={values.owner} onChange={(e) => set({ owner: e.target.value })} placeholder="00000000-0000-…" />
           </div>
         }
@@ -596,8 +597,8 @@ function Overrides() {
             required
             data-testid="gm-ov-value"
           />
-          <Field id="gm-ov-from" type="datetime-local" label={t("validFrom")} hint={t("validFromHint")} value={form.validFrom} onChange={(e) => setForm({ ...form, validFrom: e.target.value })} />
-          <Field id="gm-ov-to" type="datetime-local" label={t("validTo")} hint={t("validToHint")} value={form.validTo} onChange={(e) => setForm({ ...form, validTo: e.target.value })} />
+          <DateTimePicker id="gm-ov-from" label={t("validFrom")} hint={t("validFromHint")} value={form.validFrom} onChange={(v) => setForm({ ...form, validFrom: v })} />
+          <DateTimePicker id="gm-ov-to" label={t("validTo")} hint={t("validToHint")} value={form.validTo} onChange={(v) => setForm({ ...form, validTo: v })} />
           <Textarea id="gm-ov-reason" className="sm:col-span-2" label={t("reason")} value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} maxLength={300} data-testid="gm-ov-reason" />
           {problem ? (
             <p role="alert" className="text-sm text-danger sm:col-span-2">

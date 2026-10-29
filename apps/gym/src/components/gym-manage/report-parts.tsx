@@ -7,6 +7,7 @@ import { problemOf } from "@kriraghor/api-client";
 import { ChartBars, ChartLine, ChartRank, ChartSplit, KpiTile } from "@kriraghor/ui/charts";
 import { csvErrorKey, downloadCsv } from "@kriraghor/ui/csv";
 import { Link } from "@kriraghor/ui/i18n/navigation";
+import { MonthPicker as MonthField } from "@kriraghor/ui/date";
 import { Button, Card, IconButton, Notice } from "@kriraghor/ui/kit";
 import { shiftMonth } from "@/lib/gym-manage";
 import { churnPct, dayBars, exportQuery, hourBars, reasonsByCount, type ExportDataset, type Report } from "@/lib/gym-money";
@@ -23,10 +24,7 @@ export function MonthPicker({ month, max, onChange }: { month: string; max: stri
       <IconButton label={t("reports.prevMonth")} variant="secondary" onClick={() => onChange(shiftMonth(month, -1))} data-testid="month-prev">
         <CaretLeft size={18} aria-hidden />
       </IconButton>
-      <label className="sr-only" htmlFor="report-month">
-        {t("reports.month")}
-      </label>
-      <input id="report-month" type="month" value={month} max={max} onChange={(e) => e.target.value && onChange(e.target.value)} className="min-h-11 rounded-control border border-line bg-surface px-3 text-sm font-semibold" data-testid="report-month" />
+      <MonthField id="report-month" label={t("reports.month")} labelHidden value={month} max={max} clearable={false} onChange={(v) => v && onChange(v)} triggerClassName="min-h-11 w-auto min-w-44 text-sm font-semibold" testId="report-month" />
       <IconButton label={t("reports.nextMonth")} variant="secondary" onClick={() => onChange(shiftMonth(month, 1))} disabled={month >= max} data-testid="month-next">
         <CaretRight size={18} aria-hidden />
       </IconButton>

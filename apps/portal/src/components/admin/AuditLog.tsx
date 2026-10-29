@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { DownloadSimple } from "@phosphor-icons/react";
 import { api, problemOf } from "@kriraghor/api-client";
+import { DatePicker } from "@kriraghor/ui/date";
 import { Badge, Button, Checkbox, DataTable, DetailLayout, Dialog, Field, FilterBar, Notice, Skeleton, type Column } from "@kriraghor/ui/kit";
 import { stepUp } from "@/lib/admin/stepUp";
 import { diffRows, toApiFilters, type AuditEntry, type AuditFilters } from "@/lib/admin/audit";
@@ -127,8 +128,8 @@ function AuditDesk() {
           ]}
           extra={
             <>
-              <Field id="audit-from" type="date" className="w-full sm:w-44" label={t("from")} value={v.from} onChange={(e) => set({ from: e.target.value })} />
-              <Field id="audit-to" type="date" className="w-full sm:w-44" label={t("to")} value={v.to} onChange={(e) => set({ to: e.target.value })} />
+              <DatePicker id="audit-from" className="w-full sm:w-52" label={t("from")} value={v.from} onChange={(x) => set({ from: x })} />
+              <DatePicker id="audit-to" className="w-full sm:w-52" label={t("to")} value={v.to} onChange={(x) => set({ to: x })} />
               <TextFilter id="audit-entity-type" label={t("entityType")} placeholder="platform_setting" value={v.entityType} onCommit={(x) => set({ entityType: x })} />
               <TextFilter id="audit-entity-id" label={t("entityId")} value={v.entityId} onCommit={(x) => set({ entityId: x })} />
               <TextFilter id="audit-actor-id" label={t("actorId")} value={v.actorId} onCommit={(x) => set({ actorId: x })} />
