@@ -11,6 +11,7 @@ import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
 import { Notice } from "@kriraghor/ui/primitives";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
+import { DateTimePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls } from "../finance/shared";
 
 const btn = "min-h-11 border-2 px-4 text-sm font-semibold disabled:opacity-50";
@@ -181,12 +182,8 @@ function Basics({ event, onSaved }: { event?: BigEvent; onSaved: (id: string) =>
         <Field label={t("f.taglineBn")}>
           <input value={f.taglineBn} onChange={(x) => set("taglineBn", x.target.value)} className={inputCls} maxLength={200} />
         </Field>
-        <Field label={t("f.startsAt")}>
-          <input type="datetime-local" value={f.startsAt} onChange={(x) => set("startsAt", x.target.value)} className={inputCls} required />
-        </Field>
-        <Field label={t("f.endsAt")}>
-          <input type="datetime-local" value={f.endsAt} onChange={(x) => set("endsAt", x.target.value)} className={inputCls} required />
-        </Field>
+        <DateTimePicker id="be-starts" label={t("f.startsAt")} value={f.startsAt} onChange={(v) => set("startsAt", v)} required />
+        <DateTimePicker id="be-ends" label={t("f.endsAt")} value={f.endsAt} onChange={(v) => set("endsAt", v)} required />
         <Field label={t("f.accent")}>
           <span className="flex items-center gap-2">
             <input type="color" value={f.accentHex} onChange={(x) => set("accentHex", x.target.value)} className="h-11 w-14 border-2 border-line" aria-label={t("f.accent")} />

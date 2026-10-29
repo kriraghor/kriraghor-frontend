@@ -11,6 +11,8 @@ import { joinDateTime, splitDateTime, type DayRule } from "./dates";
 export type DateTimePickerProps = {
   id: string;
   label: ReactNode;
+  /** Keeps the label for screen readers only (a compact row named elsewhere). */
+  labelHidden?: boolean;
   hint?: ReactNode;
   error?: string;
   optional?: string;
@@ -36,7 +38,7 @@ export type DateTimePickerProps = {
  * side by side under one label. It reports exactly what the native input did: "YYYY-MM-DDTHH:MM" once
  * both halves are chosen, "" until then, so each caller keeps its own time zone handling.
  */
-export function DateTimePicker({ id, label, hint, error, optional, className, testId, name, required, disabled, value, onChange, min, max, disabledDays, step }: DateTimePickerProps) {
+export function DateTimePicker({ id, label, labelHidden, hint, error, optional, className, testId, name, required, disabled, value, onChange, min, max, disabledDays, step }: DateTimePickerProps) {
   const t = useTranslations("kit.date");
   // A half chosen on its own is kept here until the other half arrives (the value stays "" meanwhile).
   const [draft, setDraft] = useState<[string, string]>(() => splitDateTime(value));
@@ -55,7 +57,7 @@ export function DateTimePicker({ id, label, hint, error, optional, className, te
   const errId = `${id}-error`;
   return (
     <fieldset className={cn("flex min-w-0 flex-col gap-1.5", className)} aria-describedby={error ? errId : hint ? `${id}-hint` : undefined}>
-      <legend className="mb-1.5 flex w-full items-baseline justify-between gap-2 text-sm font-semibold text-ink">
+      <legend className={cn("mb-1.5 flex w-full items-baseline justify-between gap-2 text-sm font-semibold text-ink", labelHidden && "sr-only")}>
         <span>{label}</span>
         {optional ? <span className="text-xs font-normal text-muted">{optional}</span> : null}
       </legend>

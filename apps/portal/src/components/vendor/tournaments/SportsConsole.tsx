@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { ArrowLeft, ArrowsClockwise, CalendarX, DotsThree, DownloadSimple, Flag, PauseCircle, UsersThree } from "@phosphor-icons/react";
+import { DatePicker, DateTimePicker } from "@kriraghor/ui/date";
 import { Button, Dialog, Field as KitField, Menu, ReasonDialog, Select, Textarea, type MenuItem } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
@@ -309,18 +310,10 @@ function NewTournament({ orgId }: { orgId: string }) {
       <Field label={t("prizeTaka")}>
         <input className={inputCls} type="number" min={0} step={1} value={f.prize} onChange={set("prize")} />
       </Field>
-      <Field label={t("opensAt")}>
-        <input className={inputCls} type="datetime-local" value={f.opensAt} onChange={set("opensAt")} />
-      </Field>
-      <Field label={t("closesAt")}>
-        <input className={inputCls} type="datetime-local" value={f.closesAt} onChange={set("closesAt")} data-testid="tf-closes" />
-      </Field>
-      <Field label={t("startDate")}>
-        <input className={inputCls} type="date" value={f.startDate} onChange={set("startDate")} data-testid="tf-start" />
-      </Field>
-      <Field label={t("endDate")}>
-        <input className={inputCls} type="date" value={f.endDate} onChange={set("endDate")} data-testid="tf-end" />
-      </Field>
+      <DateTimePicker id="tf-opens" label={t("opensAt")} value={f.opensAt} onChange={(v) => setF({ ...f, opensAt: v })} />
+      <DateTimePicker id="tf-closes" label={t("closesAt")} value={f.closesAt} onChange={(v) => setF({ ...f, closesAt: v })} testId="tf-closes" />
+      <DatePicker id="tf-start" label={t("startDate")} value={f.startDate} onChange={(v) => setF({ ...f, startDate: v })} testId="tf-start" />
+      <DatePicker id="tf-end" label={t("endDate")} value={f.endDate} onChange={(v) => setF({ ...f, endDate: v })} testId="tf-end" />
       <Field label={t("venue")}>
         <input className={inputCls} value={f.venueText} onChange={set("venueText")} maxLength={160} data-testid="tf-venue" />
       </Field>
@@ -476,10 +469,7 @@ function OverviewTab({ orgId, x }: { orgId: string; x: Tournament }) {
         ) : null}
         {x.status === "registration_closed" && x.matches === 0 ? (
           <div className="flex flex-col gap-2 border-2 border-line p-3">
-            <label className="text-sm font-semibold text-muted" htmlFor="extend-at">
-              {t("extendTo")}
-            </label>
-            <input id="extend-at" type="datetime-local" className={inputCls} value={closesAt} onChange={(e) => setClosesAt(e.target.value)} />
+            <DateTimePicker id="extend-at" label={t("extendTo")} value={closesAt} onChange={setClosesAt} />
             <button type="button" className={btn} onClick={() => act.mutate(() => api.extend(orgId, x.id, fromLocalInput(closesAt) ?? ""))}>
               {t("extend")}
             </button>
@@ -1001,7 +991,7 @@ function MoveDialog({ orgId, m, busy, error, onClose, onSave }: ActionDialogProp
           onSave(() => api.move(orgId, m.id, { scheduledStart: fromLocalInput(start), court: court.trim() || null, version: m.version }));
         }}
       >
-        <KitField id="match-move-start" type="datetime-local" label={t("moveStart")} value={start} onChange={(e) => setStart(e.target.value)} />
+        <DateTimePicker id="match-move-start" label={t("moveStart")} value={start} onChange={setStart} />
         <KitField id="match-move-court" label={t("moveCourt")} value={court} onChange={(e) => setCourt(e.target.value)} maxLength={60} placeholder={t("courtsHint")} />
         {error ? <Notice tone="error">{error}</Notice> : null}
       </form>

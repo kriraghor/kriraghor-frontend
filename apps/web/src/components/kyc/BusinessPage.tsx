@@ -30,6 +30,7 @@ import {
   type VerificationItem,
 } from "@/lib/kyc";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { DatePicker } from "@kriraghor/ui/date";
 import { OrganisationApply } from "./OrganisationApply";
 
 const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: "text-ink", changes_requested: "text-danger", rejected: "text-danger", missing: "text-muted" };
@@ -276,7 +277,19 @@ function DocItem({
       ) : null}
       {open ? (
         <form onSubmit={send} className="mt-3 grid gap-3">
-          {item.fields.map((f) => (
+          {item.fields.map((f) =>
+            f.type === "date" ? (
+              <DatePicker
+                key={f.key}
+                id={`doc-${item.key}-${f.key}`}
+                label={f.label}
+                optional={f.required ? undefined : t("optional")}
+                value={values[f.key] ?? ""}
+                onChange={(v) => setValues({ ...values, [f.key]: v })}
+                required={f.required}
+                testId={`doc-${item.key}-${f.key}`}
+              />
+            ) : (
             <label key={f.key} className="flex flex-col gap-1 text-sm font-semibold text-muted">
               {f.label}
               {f.required ? null : <span className="text-xs font-normal">{t("optional")}</span>}
@@ -309,7 +322,7 @@ function DocItem({
                 </select>
               ) : (
                 <input
-                  type={f.type === "date" ? "date" : "text"}
+                  type="text"
                   inputMode={f.type === "digits" ? "numeric" : undefined}
                   value={values[f.key] ?? ""}
                   onChange={(e) => setValues({ ...values, [f.key]: e.target.value })}
@@ -318,7 +331,8 @@ function DocItem({
                 />
               )}
             </label>
-          ))}
+            ),
+          )}
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("file.label")}
             <input type="file" accept="image/jpeg,image/png,application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="min-h-12 field px-3 py-2 text-sm" data-testid={`file-${item.key}`} />

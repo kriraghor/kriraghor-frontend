@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Receipt as ReceiptIcon } from "@phosphor-icons/react";
 import { newKey } from "@kriraghor/ui/format";
+import { DatePicker } from "@kriraghor/ui/date";
 import { Button, Dialog, Field, Notice, Select, Textarea, useToast } from "@kriraghor/ui/kit";
 import { dhakaToday, gymManage, PAY_METHODS, poishaToTakaText, receiptPath, takaToPoisha, type PayMethod, type Payment } from "@/lib/gym-manage";
 import { useFmt, useGymError } from "./common";
@@ -58,7 +59,7 @@ export function PaymentFields({ id, value, onChange, backdate, max, error }: { i
           </option>
         ))}
       </Select>
-      {backdate ? <Field id={`${id}-date`} type="date" label={t("money.paidOn")} value={value.paidOn} max={dhakaToday()} onChange={(e) => onChange({ ...value, paidOn: e.target.value })} /> : null}
+      {backdate ? <DatePicker id={`${id}-date`} label={t("money.paidOn")} value={value.paidOn} max={dhakaToday()} onChange={(v) => onChange({ ...value, paidOn: v })} /> : null}
       <Field id={`${id}-note`} label={t("money.note")} optional={t("optional")} value={value.note} maxLength={300} onChange={(e) => onChange({ ...value, note: e.target.value })} />
     </div>
   );

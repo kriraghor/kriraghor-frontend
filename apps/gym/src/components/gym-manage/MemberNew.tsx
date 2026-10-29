@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { CheckCircle } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { newKey } from "@kriraghor/ui/format";
+import { DatePicker } from "@kriraghor/ui/date";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Button, ButtonLink, Card, Checkbox, Field, Notice, Select, Textarea, useToast } from "@kriraghor/ui/kit";
 import { dhakaToday, gymManage, takaToPoisha, type MemberInput } from "@/lib/gym-manage";
@@ -141,7 +142,7 @@ function Form({ ctx }: { ctx: GymCtx }) {
             </option>
           ))}
         </Select>
-        <Field id="m-birth" type="date" label={t("member.birthDate")} optional={t("optional")} value={d.birthDate} max={dhakaToday()} onChange={(e) => set("birthDate", e.target.value)} />
+        <DatePicker id="m-birth" label={t("member.birthDate")} optional={t("optional")} value={d.birthDate} max={dhakaToday()} onChange={(v) => set("birthDate", v)} />
         <Field id="m-email" type="email" label={t("member.email")} optional={t("optional")} value={d.email} onChange={(e) => set("email", e.target.value)} />
         <Field id="m-photo" type="file" accept="image/jpeg,image/png,image/webp" label={t("member.photo")} optional={t("optional")} onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} />
         <Field id="m-ec-name" label={t("member.ecName")} optional={t("optional")} value={d.ecName} onChange={(e) => set("ecName", e.target.value)} maxLength={80} />
@@ -165,7 +166,7 @@ function Form({ ctx }: { ctx: GymCtx }) {
                 </option>
               ))}
             </Select>
-            <Field id="m-start" type="date" label={t("member.startsOn")} value={ms.startsOn} onChange={(e) => setMs({ ...ms, startsOn: e.target.value })} />
+            <DatePicker id="m-start" label={t("member.startsOn")} value={ms.startsOn} onChange={(v) => setMs({ ...ms, startsOn: v })} />
             {canAdjust ? (
               <>
                 <Checkbox id="m-admission" label={t("new.admission", { amount: f.taka(pkg?.admissionFee ?? 0) })} checked={ms.admission} onChange={(e) => setMs({ ...ms, admission: e.target.checked })} className="sm:col-span-2" />

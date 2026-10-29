@@ -8,6 +8,7 @@ import { ArrowDown, ArrowUp, Barbell, CaretDown, CaretUp, ClipboardText, Copy, F
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { Badge, Button, ButtonLink, Card, Checkbox, DataTable, Dialog, Field, FilterBar, IconButton, Notice, SegmentedControl, SkeletonList, Textarea, useToast, type Column } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
+import { DatePicker, TimePicker } from "@kriraghor/ui/date";
 import { addDays, dhakaToday, gymManage, type DietContent, type MemberSummary, type Plan, type PlanContent, type PlanDetail, type PlanKind, type WorkoutContent } from "@/lib/gym-manage";
 import {
   blankContent,
@@ -515,15 +516,15 @@ export function PlanEditor({ value, onChange, problems }: { value: PlanContent; 
           onRemove={dt.meals.length > 1 ? () => setMeals(dt.meals.filter((_, j) => j !== i)) : undefined}
           tooMany={problems.some((p) => p.path === `meals[${i}].items`)}
           extra={
-            <Field
+            <TimePicker
               id={`meal-${m.ref}-time`}
-              type="time"
+              step={15}
               label={t("mealTime")}
               optional={t("optional")}
               value={m.time ?? ""}
               error={hasProblem(problems, `meals[${i}].time`) ? t("badTime") : undefined}
-              onChange={(e) => setMeals(dt.meals.map((x, j) => (j === i ? { ...x, time: e.target.value || null } : x)))}
-              className="sm:w-40"
+              onChange={(v) => setMeals(dt.meals.map((x, j) => (j === i ? { ...x, time: v || null } : x)))}
+              className="sm:w-44"
             />
           }
         >
@@ -898,8 +899,8 @@ function AssignDialog({ ctx, plan, onClose, onDone }: { ctx: GymCtx; plan: PlanD
           )}
         </ul>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field id="assign-start" type="date" label={t("startsOn")} value={startsOn} min={addDays(dhakaToday(), -30)} max={addDays(dhakaToday(), 60)} onChange={(e) => setStartsOn(e.target.value)} />
-          <Field id="assign-end" type="date" label={t("endsOn")} optional={t("optional")} value={endsOn} min={startsOn} onChange={(e) => setEndsOn(e.target.value)} />
+          <DatePicker id="assign-start" label={t("startsOn")} value={startsOn} min={addDays(dhakaToday(), -30)} max={addDays(dhakaToday(), 60)} onChange={setStartsOn} />
+          <DatePicker id="assign-end" label={t("endsOn")} optional={t("optional")} value={endsOn} min={startsOn} onChange={setEndsOn} />
         </div>
         <p className="text-sm text-muted">{t("replaceNote", { kind: t(`kind.${plan.kind}`) })}</p>
         {problem ? (

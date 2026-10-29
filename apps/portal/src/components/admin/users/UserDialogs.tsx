@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Select, Textarea, Field } from "@kriraghor/ui/kit";
+import { DatePicker } from "@kriraghor/ui/date";
 import { stepUp } from "@/lib/admin/stepUp";
 import { dhakaDate } from "@/lib/admin/finance";
 import {
@@ -72,7 +73,7 @@ export function SuspendDialog({ user, onClose, onDone }: { user: AdminUser; onCl
     >
       <ReasonSelect id="suspend-reason" value={reason} onChange={setReason} />
       <Textarea id="suspend-note" label={t("note")} hint={t("noteHint", { n: NOTE_MIN })} value={note} onChange={(e) => setNote(e.target.value)} maxLength={NOTE_MAX} />
-      <Field id="suspend-until" type="date" label={t("until")} hint={t("untilHint")} optional={t("optional")} value={until} min={today} max={last} onChange={(e) => setUntil(e.target.value)} />
+      <DatePicker id="suspend-until" label={t("until")} hint={t("untilHint")} optional={t("optional")} value={until} min={today} max={last} onChange={setUntil} />
     </ActionDialog>
   );
 }

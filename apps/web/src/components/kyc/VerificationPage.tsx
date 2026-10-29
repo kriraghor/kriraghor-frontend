@@ -10,6 +10,7 @@ import { ACCEPT, canSubmitNid, fileProblem, getVerification, kycErrorText, MAX_U
 import { latestDobForAge } from "@/lib/age";
 import { risk } from "@/lib/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { DatePicker } from "@kriraghor/ui/date";
 
 const BADGE_CLS = { fully_verified: "border-brand text-brand", documents_in_review: "border-amber-500 text-ink", verification_needed: "border-danger text-danger" } as const;
 const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: "text-ink", changes_requested: "text-danger", rejected: "text-danger", missing: "text-muted" };
@@ -262,10 +263,7 @@ function NidForm({
           {t("numberHelp")}
         </span>
       </label>
-      <label className="block">
-        <span className="text-sm font-semibold text-muted">{t("dob")}</span>
-        <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={maxDob} className="mt-1 min-h-12 field px-3 text-base" required />
-      </label>
+      <DatePicker id="nid-dob" label={t("dob")} value={dob} onChange={setDob} max={maxDob} required clearable={false} showToday={false} testId="nid-dob" />
       <fieldset>
         <legend className="text-sm font-semibold text-muted">{t("files")}</legend>
         <p className="text-xs text-muted">{t("filesHelp")}</p>

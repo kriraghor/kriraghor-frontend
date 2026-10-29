@@ -22,9 +22,11 @@ export type TimePickerProps = PickerChrome &
  * select styled like the kit's fields, so phones get their own wheel and keyboards type-ahead works.
  * Value in and out is "HH:MM" like the native input; `endOfDay` adds "24:00" for closing hours.
  */
-export function TimePicker({ id, label, labelHidden, hint, error, optional, className, testId, name, required, disabled, placeholder, value, onChange, step, min, max, endOfDay, triggerClassName }: TimePickerProps) {
+export function TimePicker({ id, label, labelHidden, hint, error, optional, className, testId, name, required, disabled, placeholder, value: raw, onChange, step, min, max, endOfDay, triggerClassName }: TimePickerProps) {
   const t = useTranslations("kit.date");
   const locale = useLocale();
+  // A stored "07:00:00" shows as "07:00" (what the native input did); choosing a time sends "HH:MM".
+  const value = /^\d{2}:\d{2}:\d{2}$/.test(raw) ? raw.slice(0, 5) : raw;
   const options = timeOptions({ step, min, max, endOfDay }, value);
   const label12 = (v: string) => (v === "24:00" ? t("endOfDay", { time: formatTimeLabel(v, locale) }) : formatTimeLabel(v, locale));
   return (

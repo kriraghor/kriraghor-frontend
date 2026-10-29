@@ -5,8 +5,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Tray } from "@phosphor-icons/react";
 import { newKey } from "@kriraghor/ui/format";
+import { DatePicker } from "@kriraghor/ui/date";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
-import { Avatar, Badge, Button, Checkbox, Dialog, EmptyState, Field, FilterBar, Notice, Select, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Avatar, Badge, Button, Checkbox, Dialog, EmptyState, FilterBar, Notice, Select, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
 import { addDays, dhakaToday, gymManage, type JoinAccept, type LinkRequest } from "@/lib/gym-manage";
 import { GymPage, useDeskPackages, useFmt, useGymError, type GymCtx } from "./common";
@@ -216,7 +217,7 @@ function AcceptDialog({ ctx, r, onClose, onDone }: { ctx: GymCtx; r: LinkRequest
         </Select>
         {packageId ? (
           <>
-            <Field id="join-start" type="date" label={t("member.startsOn")} value={startsOn} min={addDays(dhakaToday(), -60)} onChange={(e) => setStartsOn(e.target.value)} />
+            <DatePicker id="join-start" label={t("member.startsOn")} value={startsOn} min={addDays(dhakaToday(), -60)} onChange={setStartsOn} />
             {pkg?.admissionFee ? <Checkbox id="join-admission" label={tj("admission", { amount: f.taka(pkg.admissionFee) })} checked={admission} onChange={(e) => setAdmission(e.target.checked)} /> : null}
             {canCollect ? (
               <>

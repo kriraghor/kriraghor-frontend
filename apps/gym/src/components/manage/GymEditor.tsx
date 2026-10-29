@@ -9,6 +9,7 @@ import { formatTaka } from "@kriraghor/ui/format";
 import { publicEnv } from "@kriraghor/session/env";
 import { copyDayToAll, gymActions, gymDesk, hoursProblems, windowsOf, type Hours, type OwnerGym } from "@/lib/manage";
 import { Notice } from "@kriraghor/ui/primitives";
+import { TimePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls, STATUS_TONE } from "@kriraghor/ui/desk";
 
 const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
@@ -319,9 +320,9 @@ function WeekHours({ g, locked }: { g: OwnerGym; locked: boolean }) {
                 const patch = (x: Partial<typeof w>) => setDay(dow, ws.map((v, j) => (j === i ? { ...v, ...x } : v)));
                 return (
                   <div key={i} className="mt-2 flex flex-wrap items-center gap-2">
-                    <input type="time" step={1800} value={w.openTime} onChange={(e) => patch({ openTime: e.target.value })} aria-label={t("opens")} className={`${inputCls} w-32`} />
+                    <TimePicker id={`hours-${dow}-${i}-open`} label={t("opens")} labelHidden step={30} required value={w.openTime} onChange={(v) => patch({ openTime: v })} className="w-40" />
                     <span aria-hidden>–</span>
-                    <input type="time" step={1800} value={w.closeTime === "24:00" ? "23:59" : w.closeTime} onChange={(e) => patch({ closeTime: e.target.value === "23:59" ? "24:00" : e.target.value })} aria-label={t("closes")} className={`${inputCls} w-32`} />
+                    <TimePicker id={`hours-${dow}-${i}-close`} label={t("closes")} labelHidden step={30} endOfDay required value={w.closeTime} onChange={(v) => patch({ closeTime: v })} className="w-48" />
                     <label className="flex min-h-11 items-center gap-2 text-sm">
                       <input type="checkbox" className="h-5 w-5" checked={w.womenOnly} onChange={(e) => patch({ womenOnly: e.target.checked })} />
                       {t("womenOnly")}

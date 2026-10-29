@@ -30,6 +30,7 @@ import { useTrainers } from "./Members";
 import { GymPage, MemberStatus, Row, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 import { emptyPayment, PayDialog, PaymentFields, paymentBody, ReceiptLink, WaiveDialog } from "./money";
 import { OnlineCharge, PaymentLinkDialog, RefundDialog } from "./online";
+import { DatePicker } from "@kriraghor/ui/date";
 
 /**
  * /manage/[gymId]/members/[memberId] (M24 §4.1): the member's profile. The person and the link to
@@ -293,7 +294,7 @@ function EditDialog({ ctx, p, onClose }: { ctx: GymCtx; p: Profile; onClose: () 
             </option>
           ))}
         </Select>
-        <Field id="e-birth" type="date" label={t("member.birthDate")} value={d.birthDate} onChange={(e) => setD({ ...d, birthDate: e.target.value })} />
+        <DatePicker id="e-birth" label={t("member.birthDate")} value={d.birthDate} onChange={(v) => setD({ ...d, birthDate: v })} />
         {m.email !== undefined ? <Field id="e-email" type="email" label={t("member.email")} value={d.email} onChange={(e) => setD({ ...d, email: e.target.value })} /> : null}
         {m.emergencyContact !== undefined ? (
           <>
@@ -533,15 +534,14 @@ function PackageDialog({ ctx, p, kind, ms, onClose }: { ctx: GymCtx; p: Profile;
         ) : (
           <Notice tone="info">{ctx.owner ? t("new.noPackagesOwner") : t("new.noPackagesStaff")}</Notice>
         )}
-        <Field
+        <DatePicker
           id="ms-date"
-          type="date"
           label={kind === "change" ? t("ms.changeOn") : t("member.startsOn")}
           optional={kind === "renew" ? t("ms.autoStart") : undefined}
           hint={kind === "renew" ? t("ms.renewHint") : undefined}
           value={date}
           min={kind === "renew" ? dhakaToday() : addDays(dhakaToday(), -60)}
-          onChange={(e) => setDate(e.target.value)}
+          onChange={setDate}
         />
         {kind === "change" && canAdjust ? <Field id="ms-due" label={t("ms.dueOverride")} optional={t("ms.dueDefault")} inputMode="decimal" value={dueTaka} onChange={(e) => setDueTaka(e.target.value)} leading={<span className="text-muted">৳</span>} /> : null}
         {kind !== "change" && canCollect ? (
@@ -593,8 +593,8 @@ function FreezeDialog({ ctx, memberId, ms, onClose }: { ctx: GymCtx; memberId: s
       }
     >
       <div className="grid gap-3 sm:grid-cols-2" data-testid="ms-freeze-dialog">
-        <Field id="fr-from" type="date" label={t("ms.from")} value={fromOn} min={dhakaToday()} max={ms.endsOn} onChange={(e) => setFrom(e.target.value)} />
-        <Field id="fr-to" type="date" label={t("ms.to")} value={toOn} min={fromOn} onChange={(e) => setTo(e.target.value)} />
+        <DatePicker id="fr-from" label={t("ms.from")} value={fromOn} min={dhakaToday()} max={ms.endsOn} onChange={setFrom} />
+        <DatePicker id="fr-to" label={t("ms.to")} value={toOn} min={fromOn} onChange={setTo} />
         <Field id="fr-reason" label={t("money.reason")} value={reason} maxLength={200} onChange={(e) => setReason(e.target.value)} className="sm:col-span-2" data-testid="freeze-reason" />
         {act.problem ? <p role="alert" className="text-sm text-danger sm:col-span-2">{act.problem}</p> : null}
       </div>
@@ -835,7 +835,7 @@ function Lifecycle({ ctx, p }: { ctx: GymCtx; p: Profile }) {
               </option>
             ))}
           </Select>
-          <Field id="leave-on" type="date" label={t("profile.leftOnLabel")} value={leave.leftOn} max={dhakaToday()} onChange={(e) => setLeave({ ...leave, leftOn: e.target.value })} />
+          <DatePicker id="leave-on" label={t("profile.leftOnLabel")} value={leave.leftOn} max={dhakaToday()} onChange={(v) => setLeave({ ...leave, leftOn: v })} />
           <Textarea id="leave-note" label={t("money.note")} optional={t("optional")} value={leave.note} maxLength={2000} onChange={(e) => setLeave({ ...leave, note: e.target.value })} />
           {act.problem ? <p role="alert" className="text-sm text-danger">{act.problem}</p> : null}
         </div>
