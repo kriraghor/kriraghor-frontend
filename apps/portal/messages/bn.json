@@ -1764,7 +1764,10 @@
       "hire": "হায়ার",
       "gym": "জিম",
       "tournaments": "ইভেন্ট",
-      "other": "অন্যান্য"
+      "other": "অন্যান্য",
+      "gym_fee": "জিম ফি",
+      "gym_saas": "জিম সাবস্ক্রিপশন",
+      "esports_saas": "আয়োজক ইনভয়েস"
     },
     "ofTotal": "{total}টির মধ্যে {n}",
     "legend": {

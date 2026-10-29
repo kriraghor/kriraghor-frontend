@@ -1764,7 +1764,10 @@
       "hire": "Hire",
       "gym": "Gym",
       "tournaments": "Events",
-      "other": "Other"
+      "other": "Other",
+      "gym_fee": "Gym fees",
+      "gym_saas": "Gym subscriptions",
+      "esports_saas": "Organiser invoices"
     },
     "ofTotal": "{n} of {total}",
     "legend": {
