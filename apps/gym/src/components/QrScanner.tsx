@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef } from "react";
 
 type Detector = { detect: (src: HTMLVideoElement) => Promise<{ rawValue: string }[]> };
 
@@ -15,11 +15,13 @@ export const canScan = () => makeDetector() !== null && typeof navigator !== "un
 
 /**
  * The camera loop shared by the front desk and the member's entrance scan: while `on`, the back
- * camera plays into `video` and a QR is read every 300 ms; the same value is ignored for 5 s (one
- * scan, one request). `onDenied` runs when the camera can't be opened. The stream stops when `on`
- * turns false or the page leaves.
+ * camera plays into the returned video ref (put it on the <video> element) and a QR is read every
+ * 300 ms; the same value is ignored for 5 s (one scan, one request). `onDenied` runs when the camera
+ * can't be opened. The stream stops when `on` turns false or the page leaves. The hook owns the ref,
+ * so the effect may set the element's stream (the React compiler refuses mutating a caller's value).
  */
-export function useQrScanner({ on, video, onValue, onDenied }: { on: boolean; video: RefObject<HTMLVideoElement | null>; onValue: (value: string) => void; onDenied: () => void }) {
+export function useQrScanner({ on, onValue, onDenied }: { on: boolean; onValue: (value: string) => void; onDenied: () => void }) {
+  const video = useRef<HTMLVideoElement>(null);
   const last = useRef<{ value: string; at: number }>({ value: "", at: 0 });
   const handlers = useRef({ onValue, onDenied });
   useEffect(() => {
@@ -29,18 +31,20 @@ export function useQrScanner({ on, video, onValue, onDenied }: { on: boolean; vi
   useEffect(() => {
     if (!on) return;
     const detector = makeDetector();
-    let stream: MediaStream | null = null;
-    let timer: ReturnType<typeof setInterval> | null = null;
-    let stopped = false;
-    (async () => {
+    // One mutable holder for the loop, so cleanup sees what the async start produced.
+    const run: { stream: MediaStream | null; timer: ReturnType<typeof setInterval> | null; stopped: boolean } = { stream: null, timer: null, stopped: false };
+    const start = async () => {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-        if (stopped || !video.current) return;
-        video.current.srcObject = stream;
-        await video.current.play();
-        timer = setInterval(async () => {
-          if (!video.current || !detector) return;
-          const scanned = await detector.detect(video.current).catch(() => []);
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+        run.stream = stream;
+        const el = video.current;
+        if (run.stopped || !el) return;
+        el.srcObject = stream;
+        await el.play();
+        run.timer = setInterval(async () => {
+          const cur = video.current;
+          if (!cur || !detector) return;
+          const scanned = await detector.detect(cur).catch(() => []);
           const value = scanned[0]?.rawValue;
           if (!value) return;
           const now = Date.now();
@@ -51,11 +55,14 @@ export function useQrScanner({ on, video, onValue, onDenied }: { on: boolean; vi
       } catch {
         handlers.current.onDenied();
       }
-    })();
-    return () => {
-      stopped = true;
-      if (timer) clearInterval(timer);
-      stream?.getTracks().forEach((tr) => tr.stop());
     };
-  }, [on, video]);
+    void start();
+    return () => {
+      run.stopped = true;
+      if (run.timer) clearInterval(run.timer);
+      run.stream?.getTracks().forEach((tr) => tr.stop());
+    };
+  }, [on]);
+
+  return video;
 }

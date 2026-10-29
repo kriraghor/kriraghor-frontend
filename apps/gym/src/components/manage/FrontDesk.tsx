@@ -59,7 +59,6 @@ export function FrontDesk({ id }: { id: string }) {
   const [overriding, setOverriding] = useState<{ body: { memberId: string } | { token: string }; name?: string } | null>(null);
   const [overrideProblem, setOverrideProblem] = useState<string | null>(null);
   const [camera, setCamera] = useState<"off" | "on" | "unsupported" | "denied">("off");
-  const video = useRef<HTMLVideoElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const focus = () => setTimeout(() => input.current?.focus(), 0);
   const isNetwork = (err: unknown) => err instanceof TypeError || (err as { name?: string })?.name === "TypeError";
@@ -155,7 +154,7 @@ export function FrontDesk({ id }: { id: string }) {
     [admit, checkIn, canAdmit, canCheckIn],
   );
   const onDenied = useCallback(() => setCamera("denied"), []);
-  useQrScanner({ on: camera === "on", video, onValue: onScan, onDenied });
+  const video = useQrScanner({ on: camera === "on", onValue: onScan, onDenied });
 
   const startCamera = () => setCamera(canScan() ? "on" : "unsupported");
   const ready = cleanCode(code).length === 6;

@@ -33,7 +33,6 @@ export function EntranceScan() {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const video = useRef<HTMLVideoElement>(null);
   const [camera, setCamera] = useState<"off" | "on" | "denied" | "unsupported">("off");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
@@ -66,7 +65,8 @@ export function EntranceScan() {
   const linked = params.get("e");
   useEffect(() => {
     if (!linked || status !== "signed_in") return;
-    void submit(linked);
+    // After the effect, not inside it (no state update in the effect body); `sent` drops a repeat.
+    void Promise.resolve().then(() => submit(linked));
     const q = new URLSearchParams(params.toString());
     q.delete("e");
     const s = q.toString();
@@ -75,7 +75,7 @@ export function EntranceScan() {
 
   const onValue = useCallback((v: string) => void submit(v), [submit]);
   const onDenied = useCallback(() => setCamera("denied"), []);
-  useQrScanner({ on: camera === "on", video, onValue, onDenied });
+  const video = useQrScanner({ on: camera === "on", onValue, onDenied });
 
   return (
     <Card className="mt-6 flex flex-col gap-3" data-testid="entrance-scan">
