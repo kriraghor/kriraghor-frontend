@@ -90,7 +90,7 @@ export type MemberInput = {
 };
 export type MemberPatch = { version: number; displayName?: string; phone?: string; gender?: "male" | "female" | "other" | null; birthDate?: string | null; email?: string | null; emergencyContact?: { name: string; phone: string } | null };
 export type SettingsPatch = Partial<Pick<GymSettings, "shortCode" | "tin" | "bin" | "receiptFooter" | "entryPolicy" | "absentAlertDays" | "joinRequestsOpen">> & { remindersOff?: NonNullable<NonNullable<paths["/manage/gyms/{gymId}/settings"]["patch"]["requestBody"]>["content"]["application/json"]["remindersOff"]> };
-export type MembersQuery = { status?: MemberSummary["status"]; due?: "true" | "false"; overdue?: "true" | "false"; expiring?: "true" | "false"; frozen?: "true" | "false"; notSeen?: number; packageId?: string; linked?: "true" | "false"; q?: string; cursor?: string; limit?: number };
+export type MembersQuery = { status?: MemberSummary["status"]; due?: "true" | "false"; overdue?: "true" | "false"; expiring?: "true" | "false"; frozen?: "true" | "false"; notSeen?: number; packageId?: string; trainerId?: string; linked?: "true" | "false"; q?: string; cursor?: string; limit?: number };
 export type DuesQuery = { status?: Due["status"]; overdue?: "true" | "false"; dueOn?: string; memberId?: string; cursor?: string; limit?: number };
 
 export const PAY_METHODS: PayMethod[] = ["cash", "owner_bkash", "owner_nagad", "card_counter", "other"];
@@ -254,7 +254,7 @@ export function deskAction(card: Pick<DeskCard, "decision" | "canOverride">): "c
 /** The members list views (one chip each) → the API filters. Unknown views read as everyone. */
 export const MEMBER_VIEWS = ["", "active", "due", "overdue", "expiring", "frozen", "expired", "left", "notSeen", "unlinked"] as const;
 export type MemberView = (typeof MEMBER_VIEWS)[number];
-export function membersQuery(f: { view?: string; q?: string; packageId?: string; notSeenDays?: number; cursor?: string; limit?: number }): MembersQuery {
+export function membersQuery(f: { view?: string; q?: string; packageId?: string; trainerId?: string; notSeenDays?: number; cursor?: string; limit?: number }): MembersQuery {
   const out: MembersQuery = {};
   switch (f.view as MemberView) {
     case "active":
@@ -281,6 +281,7 @@ export function membersQuery(f: { view?: string; q?: string; packageId?: string;
   }
   if (f.q?.trim()) out.q = f.q.trim().slice(0, 80);
   if (f.packageId) out.packageId = f.packageId;
+  if (f.trainerId) out.trainerId = f.trainerId;
   if (f.cursor) out.cursor = f.cursor;
   if (f.limit) out.limit = f.limit;
   return out;

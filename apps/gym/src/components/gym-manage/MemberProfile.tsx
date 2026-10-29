@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowArcLeft, ArrowCounterClockwise, CalendarBlank, Eye, LinkSimple, NotePencil, PencilSimple, Snowflake, UserMinus } from "@phosphor-icons/react";
+import { ArrowArcLeft, ArrowCounterClockwise, Barbell, CalendarBlank, Eye, LinkSimple, NotePencil, PencilSimple, Snowflake, UserMinus } from "@phosphor-icons/react";
 import { newKey } from "@kriraghor/ui/format";
 import { Avatar, Badge, Button, Card, Checkbox, Dialog, Field, Notice, ReasonDialog, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
@@ -26,6 +26,7 @@ import {
   type Profile,
 } from "@/lib/gym-manage";
 import { MonthCalendar } from "./MonthCalendar";
+import { useTrainers } from "./Members";
 import { GymPage, MemberStatus, Row, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 import { emptyPayment, PayDialog, PaymentFields, paymentBody, ReceiptLink, WaiveDialog } from "./money";
 import { OnlineCharge, PaymentLinkDialog, RefundDialog } from "./online";
@@ -33,7 +34,7 @@ import { OnlineCharge, PaymentLinkDialog, RefundDialog } from "./online";
 /**
  * /manage/[gymId]/members/[memberId] (M24 §4.1): the member's profile. The person and the link to
  * their Kriraghor account (invite, unlink), memberships (assign, renew, freeze, unfreeze, change,
- * cancel), dues with their payments (collect, waive, reverse, receipt), the check-in calendar, notes,
+ * cancel), the trainer (feature trainers, FR-21), dues with their payments (collect, waive, reverse, receipt), the check-in calendar, notes,
  * and mark left, re-join or remove. Each action follows the profile's `can` and the permissions; the
  * API decides (M24-FR-12 to FR-36).
  */
@@ -88,6 +89,7 @@ function Body({ ctx, memberId }: { ctx: GymCtx; memberId: string }) {
       <div className="flex flex-col gap-4">
         <Person ctx={ctx} p={p} />
         <Memberships ctx={ctx} p={p} />
+        <Trainer ctx={ctx} p={p} />
       </div>
       <div className="flex flex-col gap-4">
         <Dues ctx={ctx} p={p} />
@@ -108,6 +110,52 @@ function Section({ title, actions, children, testId }: { title: ReactNode; actio
       </div>
       {children}
     </Card>
+  );
+}
+
+// ---------------------------------------------------------------- the trainer
+
+/**
+ * The member's trainer (M24-FR-21, feature trainers): staff with members.edit choose one of the gym's
+ * trainers or none. The API checks the trainer and audits the change; a trainer sees only their members.
+ */
+function Trainer({ ctx, p }: { ctx: GymCtx; p: Profile }) {
+  const t = useTranslations("gm");
+  const m = p.member;
+  const act = useAct(ctx.gymId, m.id);
+  const canEdit = ctx.can("members.edit") && m.status !== "removed";
+  const trainers = useTrainers(ctx, canEdit);
+  const [choice, setChoice] = useState<string | null>(null);
+  if (featureLocked(ctx.gym.features, "trainers") || (!m.trainer && !canEdit)) return null;
+  const current = m.trainer?.businessMemberId ?? "";
+  const value = choice ?? current;
+  const save = async () => {
+    if (await act.run(() => gymManage.setTrainer(ctx.gymId, m.id, value || null), value ? t("profile.trainerSet") : t("profile.trainerCleared"))) setChoice(null);
+  };
+  return (
+    <Section title={t("profile.trainer")} testId="profile-trainer" actions={<Barbell size={20} aria-hidden className="text-muted" />}>
+      {!canEdit ? (
+        <p>{m.trainer?.displayName ?? t("members.trainerNoName")}</p>
+      ) : !trainers.length && !m.trainer ? (
+        <p className="text-sm text-muted">{t("profile.noTrainers")}</p>
+      ) : (
+        <div className="flex flex-wrap items-end gap-2">
+          <Select id="member-trainer" label={t("profile.trainerPick")} value={value} onChange={(e) => setChoice(e.target.value)} className="min-w-56" data-testid="member-trainer">
+            <option value="">{t("profile.noTrainer")}</option>
+            {m.trainer && !trainers.some((tr) => tr.businessMemberId === current) ? <option value={current}>{m.trainer.displayName ?? t("members.trainerNoName")}</option> : null}
+            {trainers.map((tr) => (
+              <option key={tr.businessMemberId} value={tr.businessMemberId}>
+                {tr.displayName ?? t("members.trainerNoName")} · {t("profile.trainerCount", { n: tr.assignedMembers })}
+              </option>
+            ))}
+          </Select>
+          <Button type="button" size="sm" busy={act.busy} disabled={value === current} onClick={() => void save()} data-testid="member-trainer-save">
+            {t("save")}
+          </Button>
+        </div>
+      )}
+      {act.problem ? <p role="alert" className="mt-2 text-sm text-danger">{act.problem}</p> : null}
+    </Section>
   );
 }
 

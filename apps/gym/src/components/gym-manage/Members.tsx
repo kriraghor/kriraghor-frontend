@@ -1,20 +1,21 @@
 "use client";
 
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CaretRight, UploadSimple, UserPlus, UsersThree } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Avatar, Badge, Button, ButtonLink, EmptyState, FilterBar, Notice, SkeletonList } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
-import { gymManage, MEMBER_VIEWS, membersQuery, type MemberRow } from "@/lib/gym-manage";
+import { featureLocked, gymManage, MEMBER_VIEWS, membersQuery, type MemberRow } from "@/lib/gym-manage";
 import { GymPage, MemberStatus, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 
-const SPEC = { view: { default: "", allowed: MEMBER_VIEWS }, q: { default: "" }, packageId: { default: "" } };
+const SPEC = { view: { default: "", allowed: MEMBER_VIEWS }, q: { default: "" }, packageId: { default: "" }, trainerId: { default: "" } };
 
 /**
  * /manage/[gymId]/members (M24-FR-23): the member list with the views in the URL (active, due, overdue,
  * expiring in 7 days, frozen, expired, left, not seen, not linked), search by name, member code or
- * phone, a package filter (owner), cursor pages, **Add member** and **Import**.
+ * phone, a package filter (owner), a trainer filter (feature trainers, M24-FR-21), cursor pages,
+ * **Add member** and **Import**.
  */
 export function Members({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
@@ -56,9 +57,11 @@ function List({ ctx }: { ctx: GymCtx }) {
   const { gymId } = ctx;
   const { values, set, clear } = useUrlFilters(SPEC);
   const packages = useDeskPackages(gymId, ctx.owner || ctx.can("members.view"));
+  const trainers = useTrainers(ctx, ctx.can("members.view"));
   const q = useInfiniteQuery({
-    queryKey: ["gm-members", gymId, values.view, values.q, values.packageId],
-    queryFn: ({ pageParam }) => gymManage.members(gymId, membersQuery({ view: values.view, q: values.q, packageId: values.packageId, cursor: pageParam || undefined, limit: 25 })),
+    queryKey: ["gm-members", gymId, values.view, values.q, values.packageId, values.trainerId],
+    queryFn: ({ pageParam }) =>
+      gymManage.members(gymId, membersQuery({ view: values.view, q: values.q, packageId: values.packageId, trainerId: values.trainerId, cursor: pageParam || undefined, limit: 25 })),
     initialPageParam: "",
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   });
@@ -68,7 +71,10 @@ function List({ ctx }: { ctx: GymCtx }) {
       <FilterBar
         search={{ value: values.q, onChange: (v) => set({ q: v }), label: t("members.search"), placeholder: t("members.searchHint"), testId: "members-search" }}
         chips={{ value: values.view, onChange: (v) => set({ view: v }), label: t("members.views"), options: MEMBER_VIEWS.map((v) => ({ value: v, label: t(`members.view.${v || "all"}`) })), testId: "members-views" }}
-        selects={packages.all.length ? [{ id: "package", label: t("members.package"), value: values.packageId, onChange: (v) => set({ packageId: v }), anyLabel: t("members.anyPackage"), options: packages.all.map((p) => ({ value: p.id, label: p.title })) }] : []}
+        selects={[
+          ...(packages.all.length ? [{ id: "package", label: t("members.package"), value: values.packageId, onChange: (v: string) => set({ packageId: v }), anyLabel: t("members.anyPackage"), options: packages.all.map((p) => ({ value: p.id, label: p.title })) }] : []),
+          ...(trainers.length ? [{ id: "trainer", label: t("members.trainer"), value: values.trainerId, onChange: (v: string) => set({ trainerId: v }), anyLabel: t("members.anyTrainer"), options: trainers.map((tr) => ({ value: tr.businessMemberId, label: tr.displayName ?? t("members.trainerNoName") })) }] : []),
+        ]}
         onClear={clear}
       />
       {q.isPending ? (
@@ -76,7 +82,7 @@ function List({ ctx }: { ctx: GymCtx }) {
       ) : q.isError ? (
         <Notice tone="error">{err(q.error)}</Notice>
       ) : !rows.length ? (
-        values.view || values.q || values.packageId ? (
+        values.view || values.q || values.packageId || values.trainerId ? (
           <EmptyState title={t("members.noneMatch")} action={<Button type="button" variant="secondary" onClick={clear}>{t("members.clear")}</Button>} />
         ) : (
           <EmptyState icon={<UsersThree size={32} aria-hidden />} title={t("members.empty")} body={t("members.emptyBody")} action={<Actions ctx={ctx} />} />
@@ -120,6 +126,7 @@ function MemberLine({ gymId, m }: { gymId: string; m: MemberRow }) {
           {m.flags.overdue ? <Badge tone="danger">{t("flag.overdue")}</Badge> : m.flags.due ? <Badge tone="warning">{t("flag.due")}</Badge> : null}
           {m.current?.status === "frozen" ? <Badge tone="info">{t("flag.frozen")}</Badge> : null}
           {!m.linked ? <Badge>{t("flag.unlinked")}</Badge> : null}
+          {m.trainer ? <Badge tone="info">{t("members.withTrainer", { name: m.trainer.displayName ?? t("members.trainerNoName") })}</Badge> : null}
         </span>
       </span>
       <span className="hidden shrink-0 text-right text-xs text-muted sm:block">
@@ -129,4 +136,11 @@ function MemberLine({ gymId, m }: { gymId: string; m: MemberRow }) {
       <CaretRight size={16} aria-hidden className="shrink-0 text-muted" />
     </Link>
   );
+}
+
+/** The gym's trainers (staff with members.trainer or plans.manage) when the plan has the trainers feature (M24-FR-21). */
+export function useTrainers(ctx: GymCtx, enabled: boolean) {
+  const on = enabled && !featureLocked(ctx.gym.features, "trainers");
+  const q = useQuery({ queryKey: ["gm-trainers", ctx.gymId], queryFn: () => gymManage.trainers(ctx.gymId), enabled: on, staleTime: 60_000 });
+  return on ? (q.data?.items ?? []) : [];
 }
