@@ -270,6 +270,28 @@ export function dayBusy(busy: { start: string; end: string }[], day: string): { 
   return out;
 }
 
+/** How much of a day is still open to hire: no busy time, some, or all 24 hours. */
+export type DayState = "available" | "partly" | "unavailable";
+
+/** A day's state from its merged busy minutes (dayBusy): all of 00:00 to 24:00 busy is unavailable. */
+export function stateOfBusy(parts: { from: number; to: number }[]): DayState {
+  if (!parts.length) return "available";
+  return parts.length === 1 && parts[0].from <= 0 && parts[0].to >= 1440 ? "unavailable" : "partly";
+}
+
+/** A Dhaka day's state on the public profile (GET /hire/profiles/:slug busy, blocks and jobs merged). */
+export const dayState = (busy: { start: string; end: string }[], day: string): DayState => stateOfBusy(dayBusy(busy, day));
+
+/**
+ * The same three words for the pro's own week grid: of the hours still to come (not past, not beyond
+ * the horizon), none busy, some, or all. Null when no hour of the day is left to plan.
+ */
+export function stateOfHours(busy: boolean[]): DayState | null {
+  if (!busy.length) return null;
+  const n = busy.filter(Boolean).length;
+  return n === 0 ? "available" : n === busy.length ? "unavailable" : "partly";
+}
+
 /** Minutes after midnight → "HH:MM" (1440 → "24:00"). */
 export const clock = (minutes: number) => `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
 

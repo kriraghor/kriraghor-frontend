@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
@@ -10,9 +10,13 @@ import { newKey } from "@/lib/bookings";
 import { dhakaDay, dhakaInstant, hire, type Engagement, type Format, type ProfilePage, type Unit } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { DatePicker, TimePicker } from "@kriraghor/ui/date";
 
 type Row = { date: string; time: string; format: Format | ""; hours: string; venueText: string; venueAreaId: string };
 const MAX_ROWS = 10;
+
+/** A day picked on the profile's availability grid; `n` changes on every pick, so picking the same day again still applies. */
+export type DatePick = { date: string; n: number };
 
 /** A first engagement: four days out at 19:30 Dhaka (outside the short-notice window), the role's first format. */
 const blankRow = (profile: ProfilePage): Row => ({ date: dhakaDay(new Date(Date.now() + 4 * 86400000)), time: "19:30", format: profile.role.formatPriced ? (profile.role.formats[0] as Format) : "", hours: "2", venueText: "", venueAreaId: "" });
@@ -22,8 +26,10 @@ const blankRow = (profile: ProfilePage): Row => ({ date: dhakaDay(new Date(Date.
  * sessions (date and time on the Dhaka clock, format or hours, the venue and its area), a note, and
  * the server's quote per engagement (base, night, short notice, travel zone, rounded to ৳50). Sending
  * needs a verified phone (gate hire); the money is asked for only once the person accepts.
+ * A day picked on the availability grid (`pick`) becomes the date of the match or session last
+ * touched; days the pro is unavailable all day are greyed in the date picker.
  */
-export function RequestForm({ profile }: { profile: ProfilePage }) {
+export function RequestForm({ profile, pick, unavailableDays, onDateChange }: { profile: ProfilePage; pick?: DatePick | null; unavailableDays?: string[]; onDateChange?: (date: string) => void }) {
   const t = useTranslations("hire");
   const locale = useLocale();
   const router = useRouter();
@@ -34,6 +40,20 @@ export function RequestForm({ profile }: { profile: ProfilePage }) {
   const [today] = useState(() => dhakaDay(new Date()));
   const [note, setNote] = useState("");
   const [key] = useState(newKey);
+  // The row whose date a grid pick sets: the one last focused, else the first.
+  const [active, setActive] = useState(0);
+  const [seenPick, setSeenPick] = useState(pick);
+  if (pick !== seenPick) {
+    setSeenPick(pick);
+    if (pick) setRows((rs) => rs.map((r, j) => (j === Math.min(active, rs.length - 1) ? { ...r, date: pick.date } : r)));
+  }
+  useEffect(() => {
+    if (!pick) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(`hire-date-${active}`)?.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+    // Only a new pick scrolls; focusing another row must not.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pick]);
   const areas = useQuery({ queryKey: ["hire-areas"], queryFn: () => hire.areas(), staleTime: 300_000 });
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const money = (n: number) => formatTaka(n, locale);
@@ -90,7 +110,7 @@ export function RequestForm({ profile }: { profile: ProfilePage }) {
       ) : null}
       <ol className="flex flex-col gap-4">
         {rows.map((r, i) => (
-          <li key={i} className="border-2 border-line p-3" data-testid="hire-engagement">
+          <li key={i} className="border-2 border-line p-3" data-testid="hire-engagement" onFocusCapture={() => setActive(i)}>
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold">{unit === "match" ? t("matchN", { n: i + 1 }) : t("sessionN", { n: i + 1 })}</span>
               {rows.length > 1 ? (
@@ -100,14 +120,23 @@ export function RequestForm({ profile }: { profile: ProfilePage }) {
               ) : null}
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
-              <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-                {t("date")}
-                <input type="date" value={r.date} min={today} onChange={(e) => set(i, { date: e.target.value })} required className="min-h-12 field px-2 text-base text-ink" />
-              </label>
-              <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
-                {t("time")}
-                <input type="time" value={r.time} step={900} onChange={(e) => set(i, { time: e.target.value })} required className="min-h-12 field px-2 text-base text-ink" />
-              </label>
+              <DatePicker
+                id={`hire-date-${i}`}
+                className="col-span-2"
+                label={t("date")}
+                value={r.date}
+                min={today}
+                disabledDays={unavailableDays}
+                required
+                clearable={false}
+                onChange={(v) => {
+                  set(i, { date: v });
+                  setActive(i);
+                  onDateChange?.(v);
+                }}
+                testId="hire-date"
+              />
+              <TimePicker id={`hire-time-${i}`} label={t("time")} value={r.time} step={15} required onChange={(v) => set(i, { time: v })} testId="hire-time" />
               {unit === "match" && profile.role.formatPriced ? (
                 <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
                   {t("format")}

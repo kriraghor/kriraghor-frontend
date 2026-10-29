@@ -1,6 +1,8 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft, SealCheck } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
@@ -9,21 +11,31 @@ import { ShareButton } from "@kriraghor/ui/share";
 import { publicEnv } from "@kriraghor/session/env";
 import { Avatar } from "@kriraghor/ui/kit";
 import { hire, nextDays, type ProfilePage } from "@/lib/hire";
-import { clock, dayBusy } from "@/lib/availability";
+import { dayState } from "@/lib/availability";
+import { formatDateLong } from "@kriraghor/ui/date";
 import { formatTaka } from "@/lib/payments";
 import { TrainerPlans } from "../trainer/TrainerPlans";
 import { SubjectReviews } from "@kriraghor/ui/trust";
-import { RequestForm } from "./RequestForm";
+import { RequestForm, type DatePick } from "./RequestForm";
+import { AvailabilityDays } from "./AvailabilityDays";
 
 /**
  * /hiring/[slug] (M11 FR-05, FR-06): who they are, the verified credential level, the rate card
- * (base per hour or per match format, night and short-notice surcharges, travel by zone), a 14-day
- * strip of busy times, the shortlist and the request form with a live server quote.
+ * (base per hour or per match format, night and short-notice surcharges, travel by zone), the next 14
+ * days as Available / Partly available / Unavailable (tapping a day sets the request's date), the
+ * shortlist and the request form with a live server quote.
  */
 export function HireProfileView({ slug }: { slug: string }) {
   const t = useTranslations("hire");
   const locale = useLocale();
+  const { status } = useAuth();
   const q = useQuery({ queryKey: ["hire-profile", slug], queryFn: () => hire.page(slug), retry: false });
+  // The day picked on the availability grid (or in the form): the grid highlights it, the form takes it.
+  const [picked, setPicked] = useState<string | null>(null);
+  const [pick, setPick] = useState<DatePick | null>(null);
+  const [days] = useState(() => nextDays(14));
+  const busy = q.data?.busy;
+  const unavailable = useMemo(() => (busy ? days.filter((d) => dayState(busy, d) === "unavailable") : []), [busy, days]);
   if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />;
   if (q.isError || !q.data)
     return (
@@ -40,8 +52,9 @@ export function HireProfileView({ slug }: { slug: string }) {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-8" data-testid="hire-profile">
-      <Link href="/hiring" className="text-sm font-semibold text-brand underline">
-        ← {t("title")}
+      <Link href="/hiring" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-text underline">
+        <ArrowLeft size={16} aria-hidden />
+        {t("title")}
       </Link>
       <div className="mt-4 grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
         <div>
@@ -58,8 +71,9 @@ export function HireProfileView({ slug }: { slug: string }) {
             {p.years ? <span className="bg-surface-2 px-2 py-1">{t("years", { n: p.years })}</span> : null}
             {p.area ? <span className="bg-surface-2 px-2 py-1">{t("basedIn", { area: name(p.area) })}</span> : null}
             {credential ? (
-              <span className="border-2 border-brand px-2 py-0.5 text-brand" data-testid="hire-credential">
-                ✓ {t("verifiedCredential", { label: credential })}
+              <span className="inline-flex items-center gap-1 border-2 border-brand px-2 py-0.5 text-brand-text" data-testid="hire-credential">
+                <SealCheck size={16} weight="fill" aria-hidden />
+                {t("verifiedCredential", { label: credential })}
               </span>
             ) : null}
           </div>
@@ -69,7 +83,20 @@ export function HireProfileView({ slug }: { slug: string }) {
           {p.bio ? <p className="mt-6 max-w-[65ch] whitespace-pre-line leading-relaxed">{p.bio}</p> : null}
 
           <Rates p={p} />
-          <BusyStrip busy={p.busy} />
+          <AvailabilityDays
+            days={days}
+            busy={p.busy}
+            selected={picked}
+            onPick={
+              p.taking
+                ? (d) => {
+                    setPicked(d);
+                    setPick((x) => ({ date: d, n: (x?.n ?? 0) + 1 }));
+                  }
+                : undefined
+            }
+            note={pick && picked === pick.date ? t(status === "signed_in" ? "dayPicked" : "dayPickedSignIn", { date: formatDateLong(pick.date, locale) }) : null}
+          />
           <div className="mt-8 flex flex-wrap items-start gap-3">
             <ShortlistButton profileId={p.id} on={p.shortlisted} slug={slug} />
             <ShareButton url={`${publicEnv().WEB_URL}/hiring/${encodeURIComponent(slug)}`} title={`${p.name} · ${name(p.role)}`} text={p.headline} testId="hire-share" />
@@ -85,7 +112,7 @@ export function HireProfileView({ slug }: { slug: string }) {
             </div>
           ) : null}
           <div className="glass-card p-5">
-            {p.taking ? <RequestForm profile={p} /> : <p className="font-bold">{t("notTaking")}</p>}
+            {p.taking ? <RequestForm profile={p} pick={pick} unavailableDays={unavailable} onDateChange={setPicked} /> : <p className="font-bold">{t("notTaking")}</p>}
           </div>
         </aside>
       </div>
@@ -118,47 +145,6 @@ function Rates({ p }: { p: ProfilePage }) {
         <li>{t("travelNote", { north: money(c.travel.north), south: money(c.travel.south), outside: money(c.travel.outside) })}</li>
         <li>{t("maxPerDay", { n: c.maxJobsPerDay })}</li>
       </ul>
-    </div>
-  );
-}
-
-/**
- * The next 14 Dhaka days (FR-05), each free or with its busy times: booked jobs and the pro's blocked
- * hours merged, times only (never a reason or a job). A day with no free time says so.
- */
-function BusyStrip({ busy }: { busy: { start: string; end: string }[] }) {
-  const t = useTranslations("hire");
-  const locale = useLocale();
-  const tag = locale === "bn" ? "bn-BD" : "en-GB";
-  const fmt = new Intl.DateTimeFormat(tag, { weekday: "short", day: "numeric", timeZone: "UTC" });
-  const digits = new Intl.NumberFormat(tag, { minimumIntegerDigits: 2, useGrouping: false });
-  const time = (m: number) => clock(m).replace(/\d+/g, (n) => digits.format(Number(n)));
-  return (
-    <div className="mt-8">
-      <h2 className="text-xl font-extrabold">{t("availability")}</h2>
-      <ol className="mt-3 grid grid-cols-4 gap-1 sm:grid-cols-7" data-testid="hire-busy">
-        {nextDays(14).map((d) => {
-          const b = dayBusy(busy, d);
-          const allDay = b.length === 1 && b[0].from === 0 && b[0].to === 1440;
-          return (
-            <li key={d} className={`min-h-16 border-2 p-1 text-xs ${b.length ? "border-amber-500" : "border-line"}`} data-busy={b.length ? "true" : "false"}>
-              <span className="block font-bold">{fmt.format(new Date(`${d}T00:00:00Z`))}</span>
-              {allDay ? (
-                <span className="block font-semibold">{t("busyAllDay")}</span>
-              ) : b.length ? (
-                <>
-                  <span className="sr-only">{t("busyAt")}</span>
-                  {b.map((x) => (
-                    <span key={x.from} className="block tabular-nums">{`${time(x.from)}–${time(x.to)}`}</span>
-                  ))}
-                </>
-              ) : (
-                <span className="text-muted">{t("free")}</span>
-              )}
-            </li>
-          );
-        })}
-      </ol>
     </div>
   );
 }
