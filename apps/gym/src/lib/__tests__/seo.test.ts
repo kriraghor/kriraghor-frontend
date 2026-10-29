@@ -20,7 +20,7 @@ describe("gym SEO", () => {
 
   it("lists the landing page, the hub, then each gym once, capped", () => {
     const e = sitemapEntries(SITE, ["iron-house", "iron-house", "a b"]);
-    expect(e.map((x) => x.url)).toEqual([SITE, `${SITE}/gyms`, `${SITE}/gyms/iron-house`, `${SITE}/gyms/a%20b`]);
+    expect(e.map((x) => x.url)).toEqual([SITE, `${SITE}/gyms`, `${SITE}/trainers`, `${SITE}/gyms/iron-house`, `${SITE}/gyms/a%20b`]);
     expect(sitemapEntries(SITE, [])).toHaveLength(STATIC_PATHS.length);
     expect(sitemapEntries(SITE, Array.from({ length: SITEMAP_MAX + 5 }, (_, i) => `g${i}`))).toHaveLength(SITEMAP_MAX);
     expect(e.some((x) => PRIVATE_PATHS.some((p) => x.url.startsWith(`${SITE}${p}`)))).toBe(false);

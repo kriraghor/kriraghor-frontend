@@ -7,7 +7,7 @@
  * | kriraghor.com                          | goes to                                   |
  * |----------------------------------------|-------------------------------------------|
  * | /gym, /gym?tab=gyms                    | gym: /gyms (tab dropped)                  |
- * | /gym?tab=trainers                      | gym: /gyms?tab=trainers                   |
+ * | /gym?tab=trainers                      | gym: /trainers (tab dropped; M24 prompt 3) |
  * | /gym?tab=gear                          | kriraghor.com /shop?category=gym          |
  * | /gym/gyms/:slug                        | gym: /gyms/:slug                          |
  * | /gym/… (anything else under /gym)      | gym: /gyms                                |
@@ -37,6 +37,10 @@ export function gymRedirect(pathname: string, search: string, gymUrl: string): s
       params.delete("tab");
       params.set("category", "gym");
       return `/shop${query(params)}`;
+    }
+    if (tab === "trainers") {
+      params.delete("tab");
+      return `${gym}/trainers${query(params)}`;
     }
     if (tab === "gyms") params.delete("tab");
     return `${gym}/gyms${query(params)}`;

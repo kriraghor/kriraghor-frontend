@@ -10,6 +10,7 @@ import { Badge, ButtonLink, Card, EmptyState, Notice, Skeleton } from "@kriragho
 import { cn } from "@kriraghor/ui/cn";
 import { gymMe, type MyMembershipCard } from "@/lib/gym-manage";
 import { MemberStatus, useFmt, useGymError } from "@/components/gym-manage/common";
+import { TodayPlans } from "./MyPlans";
 
 /** My gym requests and memberships, shared by /me and its pieces. */
 export function useMyGyms() {
@@ -17,12 +18,14 @@ export function useMyGyms() {
   const on = status === "signed_in";
   const requests = useQuery({ queryKey: ["my-gym-requests"], queryFn: () => gymMe.requests(), enabled: on });
   const memberships = useQuery({ queryKey: ["my-gym-memberships"], queryFn: () => gymMe.memberships(), enabled: on });
-  return { status, requests, memberships, pending: (requests.data?.items ?? []).filter((r) => r.status === "pending").length };
+  // Waiting for my answer: gym invites (my own join requests wait for the gym).
+  return { status, requests, memberships, pending: (requests.data?.items ?? []).filter((r) => r.status === "pending" && r.direction === "gym_invite").length };
 }
 
 /**
  * /me (M24 §4.1 member area): requests waiting (a badge), each gym I belong to (package, days left,
- * what is outstanding with **Pay** when the gym takes fees online, M24 prompt 2) and **My check-in QR**. No gyms → find one. Past gyms (unlinked) sit apart.
+ * what is outstanding with **Pay** when the gym takes fees online, M24 prompt 2), today's workout and meals
+ * (prompt 3) and **My check-in QR**. No gyms → find one. Past gyms (unlinked) sit apart.
  */
 export function MyHome() {
   const t = useTranslations("gm");
@@ -48,6 +51,7 @@ export function MyHome() {
           {t("me.pending", { n: pending })}
         </Notice>
       ) : null}
+      <TodayPlans />
       <div className="mt-6">
         <MembershipCards items={items} loading={memberships.isPending} error={memberships.error} />
       </div>

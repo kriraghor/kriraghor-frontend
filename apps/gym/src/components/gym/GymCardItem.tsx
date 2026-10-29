@@ -2,11 +2,11 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import type { GymCard } from "@/lib/gym";
+import { distanceText, type GymCard } from "@/lib/gym";
 import { formatTaka } from "@kriraghor/ui/format";
 import { RatingLine } from "@kriraghor/ui/trust";
 
-/** A gym card: cover, name, area, facilities, day and monthly prices, open now, women-only hours. */
+/** A gym card: cover, name, area, distance (with Near me), facilities, day and monthly prices, open now, women-only hours. */
 export function GymCardItem({ card }: { card: GymCard }) {
   const t = useTranslations("gym");
   const locale = useLocale();
@@ -27,7 +27,11 @@ export function GymCardItem({ card }: { card: GymCard }) {
             {card.womenOnlyHours ? <span className="text-muted">· {t("womenOnly")}</span> : null}
           </span>
           <span className="mt-1 text-xl font-extrabold leading-snug">{card.name}</span>
-          {card.area ? <span className="text-sm text-muted">{name(card.area)}</span> : null}
+          {card.area || card.distanceM !== null ? (
+            <span className="text-sm text-muted" data-testid="gym-card-where">
+              {[card.area ? name(card.area) : null, distanceText(card.distanceM, locale)].filter(Boolean).join(" · ")}
+            </span>
+          ) : null}
           <RatingLine avg={card.ratingAvg} count={card.ratingCount} className="text-sm text-muted" />
           {card.facilities.length ? (
             <span className="mt-3 flex flex-wrap gap-1">

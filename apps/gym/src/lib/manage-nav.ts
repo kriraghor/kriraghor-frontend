@@ -6,7 +6,10 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  * work at), each page shown by role and permission (M24 §3.3):
  *  - Dashboard: the owner and every staff member of that gym (money tiles follow reports.view);
  *  - Front desk: attendance.mark (member check-ins) or desk.admit / desk.admissions (passes);
+ *  - Entrance QR (the tablet at the door, M24-FR-51): attendance.mark;
  *  - Members and Requests: members.view (Members also members.trainer);
+ *  - Plans (workout plans and diet charts, M24-FR-62): plans.manage;
+ *  - Reviews (M17 reviews of the gym with replies): the owner only;
  *  - Fees and Closing: fees.collect;
  *  - Passes sold: passes.view;
  *  - Reports: reports.view (its CSV exports are the owner's); Reminders: the owner only (prompt 2);
@@ -14,7 +17,27 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  * Owners also get Billing (their plan), Payouts (online fees and passes) and All-gyms reports. A gym both owned and worked at shows once, as owned. This only
  * shapes the menu: the API enforces every rule (ADR-004); tier-locked pages show an upsell.
  */
-export type ManageKey = "gyms" | "billing" | "payouts" | "allReports" | "dashboard" | "desk" | "members" | "requests" | "fees" | "closing" | "reports" | "reminders" | "packages" | "import" | "settings" | "edit" | "passes";
+export type ManageKey =
+  | "gyms"
+  | "billing"
+  | "payouts"
+  | "allReports"
+  | "dashboard"
+  | "desk"
+  | "entrance"
+  | "members"
+  | "requests"
+  | "plans"
+  | "fees"
+  | "closing"
+  | "reports"
+  | "reminders"
+  | "packages"
+  | "import"
+  | "settings"
+  | "edit"
+  | "passes"
+  | "reviews";
 /** The owner-wide pages (not one gym's). */
 export type OverviewKey = "gyms" | "billing" | "payouts" | "allReports";
 export type GymPageKey = Exclude<ManageKey, OverviewKey>;
@@ -30,8 +53,10 @@ export const PASSES_PERMISSION = "passes.view";
 export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   dashboard: [],
   desk: DESK_PERMISSIONS,
+  entrance: ["attendance.mark"],
   members: ["members.view", "members.trainer"],
   requests: ["members.view"],
+  plans: ["plans.manage"],
   fees: ["fees.collect"],
   closing: ["fees.collect"],
   reports: ["reports.view"],
@@ -41,9 +66,27 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   import: null,
   settings: null,
   edit: null,
+  reviews: null,
 };
-const ORDER: GymPageKey[] = ["dashboard", "desk", "members", "requests", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes"];
-const PATH: Record<GymPageKey, string> = { dashboard: "", desk: "/desk", members: "/members", requests: "/requests", fees: "/fees", closing: "/fees/closing", reports: "/reports", reminders: "/reminders", packages: "/packages", import: "/import", settings: "/settings", edit: "/edit", passes: "/passes" };
+const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews"];
+const PATH: Record<GymPageKey, string> = {
+  dashboard: "",
+  desk: "/desk",
+  entrance: "/entrance",
+  members: "/members",
+  requests: "/requests",
+  plans: "/plans",
+  fees: "/fees",
+  closing: "/fees/closing",
+  reports: "/reports",
+  reminders: "/reminders",
+  packages: "/packages",
+  import: "/import",
+  settings: "/settings",
+  edit: "/edit",
+  passes: "/passes",
+  reviews: "/reviews",
+};
 
 /** May someone with these permissions (null = the owner) open this page? */
 export function canOpen(page: GymPageKey, permissions: readonly string[] | null): boolean {

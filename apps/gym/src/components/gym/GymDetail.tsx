@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { MapPin } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { ShareButton } from "@kriraghor/ui/share";
 import { publicEnv } from "@kriraghor/session/env";
@@ -10,13 +11,16 @@ import { gym, weekOf } from "@/lib/gym";
 import { formatTaka } from "@kriraghor/ui/format";
 import { RatingLine, SubjectReviews } from "@kriraghor/ui/trust";
 import { PassBuy } from "./PassBuy";
+import { JoinCta } from "./Join";
 
 /**
  * /gyms/[slug] (M20 §4; on gym.kriraghor.com since 25 Oct 2026): gallery, address, facilities, the week's hours (Saturday first, women-only
- * windows marked) and the live packages. The aside buys a day, month or quarter pass (PassBuy).
+ * windows marked), a map pin and the live packages. The aside buys a day, month or quarter pass (PassBuy)
+ * and, while the gym takes join requests, asks to join it (JoinCta, M24-FR-16).
  */
 export function GymDetail({ slug }: { slug: string }) {
   const t = useTranslations("gym");
+  const tp = useTranslations("gp.join");
   const locale = useLocale();
   const q = useQuery({ queryKey: ["gym", slug], queryFn: () => gym.page(slug), retry: false });
   const [photo, setPhoto] = useState(0);
@@ -57,6 +61,11 @@ export function GymDetail({ slug }: { slug: string }) {
               {g.addressLine}
               {g.area ? `, ${name(g.area)}` : ""}
             </p>
+            {g.lat !== null && g.lng !== null ? (
+              <a href={`https://www.google.com/maps/search/?api=1&query=${g.lat},${g.lng}`} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-9 items-center gap-1.5 text-sm font-semibold text-brand underline" data-testid="gym-map">
+                <MapPin size={16} aria-hidden /> {tp("map")}
+              </a>
+            ) : null}
             <ShareButton url={`${publicEnv().GYM_URL}/gyms/${encodeURIComponent(slug)}`} title={g.area ? `${g.name}, ${name(g.area)}` : g.name} className="mt-3" testId="gym-share" />
 
             {g.photos.length ? (
@@ -135,6 +144,7 @@ export function GymDetail({ slug }: { slug: string }) {
 
           <aside className="h-fit glass-card p-5 lg:sticky lg:top-24">
             <PassBuy page={g} />
+            <JoinCta page={g} />
           </aside>
         </div>
       </section>

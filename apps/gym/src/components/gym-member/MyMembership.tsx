@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, QrCode, Snowflake } from "@phosphor-icons/react";
+import { ArrowLeft, ClipboardText, QrCode, Snowflake } from "@phosphor-icons/react";
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard } from "@kriraghor/ui/account";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
@@ -76,9 +76,14 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
           <p className="text-sm">
             {f.date(running.startsOn)} – {f.date(running.endsOn)} · {running.status === "frozen" ? t("flag.frozen") : t("ms.daysLeft", { n: running.daysLeft })}
           </p>
-          <ButtonLink href={`/me/checkin?m=${memberId}`} icon={<QrCode size={18} aria-hidden />} className="self-start">
-            {t("me.checkinQr")}
-          </ButtonLink>
+          <div className="flex flex-wrap gap-2">
+            <ButtonLink href={`/me/checkin?m=${memberId}`} icon={<QrCode size={18} aria-hidden />}>
+              {t("me.checkinQr")}
+            </ButtonLink>
+            <ButtonLink href="/me/plans" variant="secondary" icon={<ClipboardText size={18} aria-hidden />} data-testid="me-membership-plans">
+              {t("me.nav.plans")}
+            </ButtonLink>
+          </div>
         </Card>
       ) : null}
       <div className="grid gap-4 lg:grid-cols-2">

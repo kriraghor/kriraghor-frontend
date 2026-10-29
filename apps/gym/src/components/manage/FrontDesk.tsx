@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
@@ -12,17 +12,10 @@ import { DeskAccessNotice, inputCls, useDeskErrorText } from "@kriraghor/ui/desk
 import { cleanCode, gymDesk, nextDays, scanInput, shiftDay, type Admission } from "@/lib/manage";
 import { DECISION_TONE, deskAction, deskInput, featureLocked, gymManage, type DeskCard, type DeskPass } from "@/lib/gym-manage";
 import { Upsell, useFmt, useGymCtx, useGymError } from "@/components/gym-manage/common";
+import { canScan, useQrScanner } from "@/components/QrScanner";
 
 type PassResult = { ok: true; a: Admission } | { ok: false; code: string; title: string; at?: string; validFrom?: string; validTo?: string };
 type MemberResult = { ok: true; card: DeskCard } | { ok: false; code: string; title: string; reasons: string[]; canOverride: boolean; body: { memberId: string } | { token: string }; name?: string };
-type Detector = { detect: (src: HTMLVideoElement) => Promise<{ rawValue: string }[]> };
-
-/** The browser's QR reader (Chrome on Android and desktop); absent elsewhere, so typing is always there. */
-function makeDetector(): Detector | null {
-  const D = (globalThis as unknown as { BarcodeDetector?: new (o: { formats: string[] }) => Detector }).BarcodeDetector;
-  return D ? new D({ formats: ["qr_code"] }) : null;
-}
-
 /**
  * /manage/[gymId]/desk (M20 §5, M24-FR-47 to FR-50): the front desk. With attendance.mark (and the
  * owner): one search box for a name, phone, member code or pass code; a member's card shows the
@@ -66,9 +59,7 @@ export function FrontDesk({ id }: { id: string }) {
   const [overriding, setOverriding] = useState<{ body: { memberId: string } | { token: string }; name?: string } | null>(null);
   const [overrideProblem, setOverrideProblem] = useState<string | null>(null);
   const [camera, setCamera] = useState<"off" | "on" | "unsupported" | "denied">("off");
-  const video = useRef<HTMLVideoElement>(null);
   const input = useRef<HTMLInputElement>(null);
-  const lastScan = useRef<{ value: string; at: number }>({ value: "", at: 0 });
   const focus = () => setTimeout(() => input.current?.focus(), 0);
   const isNetwork = (err: unknown) => err instanceof TypeError || (err as { name?: string })?.name === "TypeError";
 
@@ -153,43 +144,19 @@ export function FrontDesk({ id }: { id: string }) {
     [admit, canAdmit, checkIn, gymErr, id],
   );
 
-  // The camera loop: read a QR every 300 ms; the same value is ignored for 5 s (one scan, one request).
-  useEffect(() => {
-    if (camera !== "on") return;
-    const detector = makeDetector();
-    let stream: MediaStream | null = null;
-    let timer: ReturnType<typeof setInterval> | null = null;
-    let stopped = false;
-    (async () => {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-        if (stopped || !video.current) return;
-        video.current.srcObject = stream;
-        await video.current.play();
-        timer = setInterval(async () => {
-          if (!video.current || !detector) return;
-          const scanned = await detector.detect(video.current).catch(() => []);
-          const value = scanned[0]?.rawValue;
-          if (!value) return;
-          const now = Date.now();
-          if (value === lastScan.current.value && now - lastScan.current.at < 5000) return;
-          lastScan.current = { value, at: now };
-          const d = deskInput(value);
-          if (d.kind === "member" && canCheckIn) void checkIn({ token: d.token });
-          else if (canAdmit) void admit(scanInput(value));
-        }, 300);
-      } catch {
-        setCamera("denied");
-      }
-    })();
-    return () => {
-      stopped = true;
-      if (timer) clearInterval(timer);
-      stream?.getTracks().forEach((tr) => tr.stop());
-    };
-  }, [camera, admit, checkIn, canAdmit, canCheckIn]);
+  // The camera loop (components/QrScanner): one scan, one request.
+  const onScan = useCallback(
+    (value: string) => {
+      const d = deskInput(value);
+      if (d.kind === "member" && canCheckIn) void checkIn({ token: d.token });
+      else if (canAdmit) void admit(scanInput(value));
+    },
+    [admit, checkIn, canAdmit, canCheckIn],
+  );
+  const onDenied = useCallback(() => setCamera("denied"), []);
+  const video = useQrScanner({ on: camera === "on", onValue: onScan, onDenied });
 
-  const startCamera = () => setCamera(makeDetector() && typeof navigator.mediaDevices?.getUserMedia === "function" ? "on" : "unsupported");
+  const startCamera = () => setCamera(canScan() ? "on" : "unsupported");
   const ready = cleanCode(code).length === 6;
   const backHref = ctx ? `/manage/${id}` : "/manage";
 

@@ -44,6 +44,7 @@ export type SitemapEntry = { url: string; changeFrequency?: "daily" | "weekly" |
 export const STATIC_PATHS: { path: string; changeFrequency: SitemapEntry["changeFrequency"]; priority: number }[] = [
   { path: "", changeFrequency: "weekly", priority: 1 },
   { path: "/gyms", changeFrequency: "daily", priority: 0.9 },
+  { path: "/trainers", changeFrequency: "weekly", priority: 0.8 },
 ];
 
 /** Where the public gym list lives and how its items become page paths. */

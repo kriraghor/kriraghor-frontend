@@ -10,8 +10,8 @@ describe("old gym URLs on kriraghor.com → gym.kriraghor.com (M24 §4.3)", () =
     expect(gymRedirect("/gym/", "", GYM)).toBe(`${GYM}/gyms`);
     expect(gymRedirect("/gym", "?tab=gyms", GYM)).toBe(`${GYM}/gyms`);
     expect(gymRedirect("/gym", "?tab=gyms&areaId=a1&sort=rating", GYM)).toBe(`${GYM}/gyms?areaId=a1&sort=rating`);
-    expect(gymRedirect("/gym", "?tab=trainers", GYM)).toBe(`${GYM}/gyms?tab=trainers`);
-    expect(gymRedirect("/gym", "?tab=trainers&utm_source=fb", GYM)).toBe(`${GYM}/gyms?tab=trainers&utm_source=fb`);
+    expect(gymRedirect("/gym", "?tab=trainers", GYM)).toBe(`${GYM}/trainers`);
+    expect(gymRedirect("/gym", "?tab=trainers&utm_source=fb", GYM)).toBe(`${GYM}/trainers?utm_source=fb`);
   });
 
   it("sends the gear tab to the shop's gym category on kriraghor.com (a same-site path)", () => {

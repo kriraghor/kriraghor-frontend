@@ -50,6 +50,27 @@ export type MyMemberships = S["MyGymMemberships"];
 export type MyMembershipCard = Omit<MyMemberships["items"][number], "plans">;
 export type MyMembership = S["MyGymMembership"];
 export type MyReceipt = S["MyGymReceipts"]["items"][number];
+// M24 prompt 3: plans, join requests, trainers, the entrance QR
+export type PlanKind = S["GymPlan"]["kind"];
+export type Plan = S["GymPlan"];
+export type PlanDetail = S["GymPlanDetail"];
+export type PlanContent = S["GymPlanContent"];
+export type WorkoutContent = S["GymWorkoutContent"];
+export type DietContent = S["GymDietContent"];
+export type PlanAssignment = S["GymPlanAssignment"];
+export type PlanLog = S["GymPlanLog"];
+export type MemberPlans = S["GymMemberPlans"];
+export type Trainers = S["GymTrainers"];
+export type Trainer = Trainers["items"][number];
+export type EntranceToken = S["GymEntranceToken"];
+export type EntranceCheckin = S["MyGymEntranceCheckin"];
+export type JoinAcceptResult = S["GymJoinAcceptResult"];
+export type MyPlans = S["MyGymPlans"];
+export type MyPlanItem = MyPlans["items"][number];
+export type MyPlan = S["MyGymPlan"];
+export type PlanInput = { kind: PlanKind; title: string; isTemplate?: boolean; content: PlanContent };
+export type PlanPatch = { title?: string; isTemplate?: boolean; content?: PlanContent; applyToAssigned?: boolean };
+export type JoinAccept = { packageId?: string; startsOn?: string; admissionFee?: boolean; discountPoisha?: number; discountReason?: string; payment?: Payment };
 export type PackageKind = S["GymOwnerPackage"]["kind"];
 export type OwnerPackage = S["GymOwnerPackage"];
 export type Channel = OwnerPackage["channel"];
@@ -69,7 +90,7 @@ export type MemberInput = {
 };
 export type MemberPatch = { version: number; displayName?: string; phone?: string; gender?: "male" | "female" | "other" | null; birthDate?: string | null; email?: string | null; emergencyContact?: { name: string; phone: string } | null };
 export type SettingsPatch = Partial<Pick<GymSettings, "shortCode" | "tin" | "bin" | "receiptFooter" | "entryPolicy" | "absentAlertDays" | "joinRequestsOpen">> & { remindersOff?: NonNullable<NonNullable<paths["/manage/gyms/{gymId}/settings"]["patch"]["requestBody"]>["content"]["application/json"]["remindersOff"]> };
-export type MembersQuery = { status?: MemberSummary["status"]; due?: "true" | "false"; overdue?: "true" | "false"; expiring?: "true" | "false"; frozen?: "true" | "false"; notSeen?: number; packageId?: string; linked?: "true" | "false"; q?: string; cursor?: string; limit?: number };
+export type MembersQuery = { status?: MemberSummary["status"]; due?: "true" | "false"; overdue?: "true" | "false"; expiring?: "true" | "false"; frozen?: "true" | "false"; notSeen?: number; packageId?: string; trainerId?: string; linked?: "true" | "false"; q?: string; cursor?: string; limit?: number };
 export type DuesQuery = { status?: Due["status"]; overdue?: "true" | "false"; dueOn?: string; memberId?: string; cursor?: string; limit?: number };
 
 export const PAY_METHODS: PayMethod[] = ["cash", "owner_bkash", "owner_nagad", "card_counter", "other"];
@@ -118,6 +139,27 @@ export const gymManage = {
   // Requests (gym invites)
   requests: async (gymId: string, query: { status?: LinkRequest["status"]; direction?: LinkRequest["direction"] } = {}) => unwrap(await api().GET("/manage/gyms/{gymId}/requests", { params: { ...G(gymId), query } })),
   cancelRequest: async (gymId: string, requestId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/requests/{requestId}/cancel", { params: { path: { gymId, requestId } } })),
+  /** M24-FR-16, FR-17: a join request becomes a member (or links the unlinked member with the same phone), optionally with a package and a first payment. */
+  acceptJoin: async (gymId: string, requestId: string, body: JoinAccept, key: string) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/requests/{requestId}/accept", { params: { path: { gymId, requestId }, header: ik(key) }, body: body as never })),
+  declineJoin: async (gymId: string, requestId: string, reason?: string) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/requests/{requestId}/decline", { params: { path: { gymId, requestId } }, body: reason ? { reason } : {} })),
+  // Trainers (M24-FR-21, FR-23; feature trainers)
+  trainers: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/trainers", { params: G(gymId) })),
+  setTrainer: async (gymId: string, memberId: string, businessMemberId: string | null) =>
+    unwrap(await api().PUT("/manage/gyms/{gymId}/members/{memberId}/trainer", { params: GM(gymId, memberId), body: { businessMemberId } })),
+  // Workout plans and diet charts (plans.manage; feature plans; M24-FR-62 to FR-69)
+  plans: async (gymId: string, query: { kind?: PlanKind; status?: Plan["status"]; template?: "true" | "false" } = {}) => unwrap(await api().GET("/manage/gyms/{gymId}/plans", { params: { ...G(gymId), query: query as never } })),
+  plan: async (gymId: string, planId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/plans/{planId}", { params: { path: { gymId, planId } } })),
+  createPlan: async (gymId: string, body: PlanInput) => unwrap(await api().POST("/manage/gyms/{gymId}/plans", { params: G(gymId), body: { ...body, source: "gym" } as never })),
+  updatePlan: async (gymId: string, planId: string, body: PlanPatch) => unwrap(await api().PATCH("/manage/gyms/{gymId}/plans/{planId}", { params: { path: { gymId, planId } }, body: body as never })),
+  retirePlan: async (gymId: string, planId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/plans/{planId}/retire", { params: { path: { gymId, planId } } })),
+  assignPlan: async (gymId: string, planId: string, body: { memberIds: string[]; startsOn: string; endsOn?: string | null }) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/plans/{planId}/assign", { params: { path: { gymId, planId } }, body })),
+  endAssignment: async (gymId: string, assignmentId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/plan-assignments/{assignmentId}/end", { params: { path: { gymId, assignmentId } } })),
+  memberPlans: async (gymId: string, memberId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/members/{memberId}/plans", { params: GM(gymId, memberId) })),
+  // The entrance tablet (attendance.mark; M24-FR-51)
+  entranceToken: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/entrance-token", { params: G(gymId) })),
   // Memberships (members.edit)
   renew: async (gymId: string, membershipId: string, body: { packageId?: string; startsOn?: string; payment?: Payment }, key: string) =>
     unwrap(await api().POST("/manage/gyms/{gymId}/memberships/{membershipId}/renew", { params: { ...GMS(gymId, membershipId), header: ik(key) }, body: body as never })),
@@ -163,6 +205,16 @@ export const gymMe = {
   healthNote: async (memberId: string, text: string | null) => unwrap(await api().PUT("/me/gym-memberships/{memberId}/health-note", { params: { path: { memberId } }, body: { text } })),
   unlink: async (memberId: string) => unwrap(await api().POST("/me/gym-memberships/{memberId}/unlink", { params: { path: { memberId } } })),
   receipts: async () => unwrap(await api().GET("/me/gym-receipts")),
+  // M24 prompt 3
+  /** "Join this gym" (gate join_gym: a verified phone; M24-FR-16). */
+  joinRequest: async (body: { gymId: string; packageId?: string; note?: string }) => unwrap(await api().POST("/me/gym-join-requests", { body })),
+  cancelRequest: async (requestId: string) => unwrap(await api().POST("/me/gym-requests/{requestId}/cancel", { params: { path: { requestId } } })),
+  plans: async () => unwrap(await api().GET("/me/gym-plans")),
+  plan: async (assignmentId: string) => unwrap(await api().GET("/me/gym-plans/{assignmentId}", { params: { path: { assignmentId } } })),
+  logPlan: async (assignmentId: string, body: { localDate: string; itemRef: string; done: boolean; note?: string | null }) =>
+    unwrap(await api().POST("/me/gym-plans/{assignmentId}/logs", { params: { path: { assignmentId } }, body })),
+  /** The entrance QR scanned at the door (M24-FR-51). */
+  entranceCheckin: async (token: string) => unwrap(await api().POST("/me/gym-checkins", { body: { token } })),
 };
 
 // ---------------------------------------------------------------- pure helpers (tested)
@@ -202,7 +254,7 @@ export function deskAction(card: Pick<DeskCard, "decision" | "canOverride">): "c
 /** The members list views (one chip each) → the API filters. Unknown views read as everyone. */
 export const MEMBER_VIEWS = ["", "active", "due", "overdue", "expiring", "frozen", "expired", "left", "notSeen", "unlinked"] as const;
 export type MemberView = (typeof MEMBER_VIEWS)[number];
-export function membersQuery(f: { view?: string; q?: string; packageId?: string; notSeenDays?: number; cursor?: string; limit?: number }): MembersQuery {
+export function membersQuery(f: { view?: string; q?: string; packageId?: string; trainerId?: string; notSeenDays?: number; cursor?: string; limit?: number }): MembersQuery {
   const out: MembersQuery = {};
   switch (f.view as MemberView) {
     case "active":
@@ -229,6 +281,7 @@ export function membersQuery(f: { view?: string; q?: string; packageId?: string;
   }
   if (f.q?.trim()) out.q = f.q.trim().slice(0, 80);
   if (f.packageId) out.packageId = f.packageId;
+  if (f.trainerId) out.trainerId = f.trainerId;
   if (f.cursor) out.cursor = f.cursor;
   if (f.limit) out.limit = f.limit;
   return out;

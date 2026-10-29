@@ -5,12 +5,46 @@ import { useLocale, useTranslations } from "next-intl";
 import { Check, Sparkle } from "@phosphor-icons/react";
 import { formatTaka } from "@kriraghor/ui/format";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { FEATURES, gymManage, tiersInOrder } from "@/lib/gym-manage";
+import { FEATURES, gymManage, tiersInOrder, type Pricing as PricingData } from "@/lib/gym-manage";
+
+/**
+ * The founding partner offer (M24-FR-88), shown while places are left: the first owners on a paid
+ * plan get free months, then a discount for some months. Every number comes from the settings
+ * (gym_saas.founding_*), read through GET /gym-manage/pricing.
+ */
+function FoundingOffer({ pricing }: { pricing: PricingData }) {
+  const t = useTranslations("landing.pricing");
+  const locale = useLocale();
+  const n = (v: number) => new Intl.NumberFormat(locale === "bn" ? "bn-BD" : "en-IN").format(v);
+  const f = pricing.founding;
+  return (
+    <div className="mt-5 flex flex-col gap-3 rounded-card border-2 border-brand bg-brand-soft p-5 md:flex-row md:items-center md:justify-between" data-testid="founding-offer">
+      <div className="flex items-start gap-3">
+        <Sparkle size={28} weight="fill" className="mt-0.5 shrink-0 text-brand-text" aria-hidden />
+        <div>
+          <p className="text-xl font-extrabold">{t("foundingTitle")}</p>
+          <p className="mt-1 max-w-2xl">
+            {f.discountPct > 0 && f.discountMonths > 0
+              ? t("foundingBody", { free: f.freeMonths, pct: n(f.discountPct), months: f.discountMonths })
+              : t("foundingBodyFree", { free: f.freeMonths })}
+          </p>
+          <p className="mt-1 text-sm font-semibold" data-testid="founding-left">
+            {t("foundingLeft", { left: pricing.foundingPlacesLeft, leftText: n(pricing.foundingPlacesLeft), limit: n(f.limit) })}
+          </p>
+        </div>
+      </div>
+      <Link href="/start" className="inline-flex min-h-12 shrink-0 items-center bg-brand px-5 font-bold text-on-brand no-underline hover:bg-brand-hover">
+        {t("foundingCta")}
+      </Link>
+    </div>
+  );
+}
 
 /**
  * The landing page's prices (M24 §4.1): the four tiers from GET /gym-manage/pricing (prices, member
  * limits and features come from the platform settings; nothing is written into the page). While the
- * pricing can't be read, the page shows the start card without prices.
+ * pricing can't be read, the page shows the start card without prices. The founding partner offer
+ * shows while places are left (prompt 3).
  */
 export function Pricing() {
   const t = useTranslations("landing.pricing");
@@ -47,6 +81,7 @@ export function Pricing() {
               </li>
             ))}
           </ul>
+          {pricing.data.foundingPlacesLeft > 0 ? <FoundingOffer pricing={pricing.data} /> : null}
           <p className="mt-3 text-sm text-muted">{t("activeNote", { days: pricing.data.activeWindowDays })}</p>
           <Link href="/start" className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand no-underline hover:bg-brand-hover" data-testid="pricing-start">
             {t("cta")}
