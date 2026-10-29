@@ -256,7 +256,9 @@
       "settings": "Settings",
       "allReports": "All gyms reports",
       "reports": "Reports",
-      "reminders": "Reminders"
+      "reminders": "Reminders",
+      "entrance": "Entrance QR",
+      "plans": "Plans"
     }
   },
   "gym": {
