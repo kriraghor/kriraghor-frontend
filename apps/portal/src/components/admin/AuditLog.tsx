@@ -128,8 +128,8 @@ function AuditDesk() {
           ]}
           extra={
             <>
-              <DatePicker id="audit-from" className="w-full sm:w-44" label={t("from")} value={v.from} onChange={(x) => set({ from: x })} />
-              <DatePicker id="audit-to" className="w-full sm:w-44" label={t("to")} value={v.to} onChange={(x) => set({ to: x })} />
+              <DatePicker id="audit-from" className="w-full sm:w-52" label={t("from")} value={v.from} onChange={(x) => set({ from: x })} />
+              <DatePicker id="audit-to" className="w-full sm:w-52" label={t("to")} value={v.to} onChange={(x) => set({ to: x })} />
               <TextFilter id="audit-entity-type" label={t("entityType")} placeholder="platform_setting" value={v.entityType} onCommit={(x) => set({ entityType: x })} />
               <TextFilter id="audit-entity-id" label={t("entityId")} value={v.entityId} onCommit={(x) => set({ entityId: x })} />
               <TextFilter id="audit-actor-id" label={t("actorId")} value={v.actorId} onCommit={(x) => set({ actorId: x })} />
