@@ -721,7 +721,10 @@
       "hire": "Hire",
       "gym": "Gym",
       "tournaments": "Events",
-      "other": "Other"
+      "other": "Other",
+      "gym_fee": "Gym fees",
+      "gym_saas": "Gym subscriptions",
+      "esports_saas": "Organiser invoices"
     },
     "csv": "Download my payments (CSV)",
     "csvFailed": "Couldn't export. You may have reached this hour's limit."
