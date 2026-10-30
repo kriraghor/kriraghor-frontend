@@ -22,6 +22,9 @@ test("home renders, says what the system does and links to start and sign-in", a
   await expect(page.getByTestId("find-gym")).toHaveAttribute("href", /\/gyms$/);
   await page.getByRole("link", { name: /sign in/i }).first().click();
   await expect(page).toHaveURL(/\/sign-in$/);
+  // Password first since 30 Oct 2026; the code is one tap away.
+  await expect(page.getByLabel("Mobile, email or username")).toBeVisible();
+  await page.getByTestId("use-code").click();
   await expect(page.getByLabel("Mobile number or email")).toBeVisible();
 });
 
