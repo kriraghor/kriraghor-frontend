@@ -24,9 +24,10 @@ type Step = { kind: "enter" } | { kind: "code"; target: string };
  * accounts made with a code have no password. A verified code or a Google account that has no
  * Kriraghor account yet carries on at the sign-up page (hand-over in sessionStorage, never the URL).
  * `passwordReset` means this site hosts /sign-in/reset (kriraghor.com); the other sites link to
- * kriraghor.com's page. `signUpHref` is where "Create an account" goes.
+ * kriraghor.com's page. `signUpHref` is where "Create an account" goes; `subtitle` replaces the
+ * line under the title where a site needs its own (gym).
  */
-export function SignInForm({ next = "/me", passwordReset = false, signUpHref = "/signup" }: { next?: string; passwordReset?: boolean; signUpHref?: string | null }) {
+export function SignInForm({ next = "/me", passwordReset = false, signUpHref = "/signup", subtitle }: { next?: string; passwordReset?: boolean; signUpHref?: string | null; subtitle?: string }) {
   const t = useTranslations("auth");
   const te = useTranslations("errors");
   const router = useRouter();
@@ -140,7 +141,7 @@ export function SignInForm({ next = "/me", passwordReset = false, signUpHref = "
     <div className="flex flex-col gap-6" data-testid="sign-in">
       <div>
         <h1 className="text-3xl sm:text-4xl">{t("signInTitle")}</h1>
-        <p className="mt-2 text-muted">{t("signInSubtitle")}</p>
+        <p className="mt-2 text-muted">{subtitle ?? t("signInSubtitle")}</p>
       </div>
 
       {error ? (

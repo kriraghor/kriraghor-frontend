@@ -1,4 +1,7 @@
 {
+  "signIn": {
+    "subtitle": "Sign in to buy passes, check in and follow your plan, or run your gym."
+  },
   "app": {
     "web": "Kriraghor",
     "esports": "Kriraghor Esports",
