@@ -91,6 +91,8 @@
     "show": "Show password",
     "hide": "Hide password",
     "forgot": "Forgot password?",
+    "noPasswordHint": "No password yet? Get a code instead.",
+    "lockedHint": "Too many tries. Get a code instead, or wait a while and try again.",
     "signIn": "Sign in",
     "codeTitle": "Check your messages",
     "codeSentTo": "We sent a 6-digit code to {target}. It expires in 5 minutes.",

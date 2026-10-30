@@ -19,6 +19,9 @@ test("home renders and links to sign-in", async ({ page }) => {
   await expect(page.getByTestId("home-title")).toBeVisible();
   await page.getByRole("link", { name: /sign in/i }).first().click();
   await expect(page).toHaveURL(/\/sign-in$/);
+  // Password first since 30 Oct 2026; the code is one tap away.
+  await expect(page.getByLabel("Mobile, email or username")).toBeVisible();
+  await page.getByTestId("use-code").click();
   await expect(page.getByLabel("Mobile number or email")).toBeVisible();
   await expect(page.getByTestId("create-account")).toHaveAttribute("href", /signup$/);
 });
