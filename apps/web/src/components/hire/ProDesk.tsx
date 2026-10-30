@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname } from "@kriraghor/ui/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { api, problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { DECLINE_REASONS, hire, minutesLeft, profileTone, requestTone, TONE, type RequestResult } from "@/lib/hire";
@@ -16,26 +16,17 @@ import { incomplete, proStepHref } from "@/lib/completeness";
 import { AvatarControl } from "../account/AvatarControl";
 import { JobCard } from "./JobCard";
 
-const TABS = [
-  { href: "/pro", key: "profiles" },
-  { href: "/pro/requests", key: "requests" },
-  { href: "/pro/jobs", key: "jobs" },
-  { href: "/pro/availability", key: "availability" },
-  { href: "/pro/earnings", key: "earnings" },
-  { href: "/pro/plans", key: "plans" },
-  { href: "/pro/reviews", key: "reviews" },
-] as const;
 const OPEN_ROLE = ["applied", "documents_pending", "in_review", "active"];
 
 /**
  * The pro desk on kriraghor.com/pro (M11; players and pros are people, so the desk lives here rather
  * than on the vendor portal): my profiles and their review, requests with the automatic checks, and
- * match day. Needs the player or pro role (applied on /account/business?as=pro).
+ * match day. Needs the player or pro role (applied on /account/business?as=pro). The desk's pages
+ * are the Work section's tabs in the account rail (AccountShell), so there is one tab row, not two.
  */
 export function ProShell({ children }: { children: ReactNode }) {
   const t = useTranslations("hire");
   const { status } = useAuth();
-  const pathname = usePathname();
   const me = useQuery({
     queryKey: ["me"],
     enabled: status === "signed_in",
@@ -65,16 +56,7 @@ export function ProShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       ) : (
-        <>
-          <nav aria-label={t("desk.title")} className="mt-6 flex gap-2 overflow-x-auto overflow-y-hidden border-b-2 border-line">
-            {TABS.map((x) => (
-              <Link key={x.key} href={x.href} aria-current={pathname === x.href ? "page" : undefined} className={`-mb-0.5 min-h-11 shrink-0 whitespace-nowrap border-b-4 px-4 py-2 font-bold ${pathname === x.href ? "border-brand" : "border-transparent text-muted"}`}>
-                {t(`desk.${x.key}`)}
-              </Link>
-            ))}
-          </nav>
-          <div className="mt-6">{children}</div>
-        </>
+        <div className="mt-6">{children}</div>
       )}
     </section>
   );
