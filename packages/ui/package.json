@@ -2,7 +2,7 @@
   "name": "@kriraghor/ui",
   "version": "0.1.0",
   "private": true,
-  "description": "Shared React UI for the Kriraghor web apps: the component kit (kit/), the desk layout (AppShell), fonts, the auth provider, notifications, charts, sign-in, the header, the page header, reviews (trust), the business desk helpers (desk), shared formatting, next-intl navigation and the glass stylesheet. Tokens come from @kriraghor/tokens.",
+  "description": "Shared React UI for the Kriraghor web apps: the component kit (kit/), the desk layouts (AppShell, and SectionShell for the kriraghor.com member area), fonts, the auth provider, notifications, charts, sign-in, the header, the page header, reviews (trust), the business desk helpers (desk), shared formatting, next-intl navigation and the glass stylesheet. Tokens come from @kriraghor/tokens.",
   "exports": {
     "./primitives": "./src/primitives.tsx",
     "./auth": "./src/auth.tsx",
@@ -20,6 +20,8 @@
     "./kit": "./src/kit/index.ts",
     "./date": "./src/date/index.ts",
     "./app-shell": "./src/AppShell.tsx",
+    "./section-shell": "./src/SectionShell.tsx",
+    "./sections": "./src/sections.ts",
     "./fonts": "./src/fonts.ts",
     "./cn": "./src/cn.ts",
     "./i18n/messages": "./src/i18n/messages.ts",
