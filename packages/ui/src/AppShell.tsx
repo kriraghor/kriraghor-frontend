@@ -1,53 +1,19 @@
 "use client";
 
-import { Suspense, useState, useSyncExternalStore, type ReactNode } from "react";
-import type { Icon } from "@phosphor-icons/react";
+import { Suspense, useState, type ReactNode } from "react";
 import { List, SidebarSimple } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
-import { isExternal } from "@kriraghor/session/links";
-import { Link, usePathname } from "./i18n/navigation";
+import { usePathname } from "./i18n/navigation";
 import { cn } from "./cn";
 import { Sheet, Tooltip } from "./kit/Overlay";
+import { HEADER, setCollapsed, ShellLink, useCollapsed, type ShellItem } from "./shell-parts";
 
-export type ShellItem = {
-  href: string;
-  label: string;
-  icon: Icon;
-  /** A count (unread, pending); hidden at 0. */
-  badge?: number;
-  testId?: string;
-  /** "exact" for overview pages whose children have their own items. */
-  match?: "exact" | "prefix";
-};
+export type { ShellItem };
 export type ShellGroup = { label?: string; items: ShellItem[] };
 
-const KEY = "kg.sidebar";
-const listeners = new Set<() => void>();
-const readCollapsed = () => {
-  try {
-    return window.localStorage.getItem(KEY) === "collapsed";
-  } catch {
-    return false;
-  }
-};
-const subscribe = (fn: () => void) => {
-  listeners.add(fn);
-  return () => listeners.delete(fn);
-};
-function setCollapsed(next: boolean) {
-  try {
-    window.localStorage.setItem(KEY, next ? "collapsed" : "open");
-  } catch {
-    /* private mode: the choice lasts for this page only */
-  }
-  listeners.forEach((fn) => fn());
-}
-
-/** The header is h-1 (brand strip) + h-16: the sidebar sticks below it. */
-const HEADER = "68px";
-
 /**
- * The desk layout for /me, /pro, /account, the esports account and the portal: a grouped icon
+ * The desk layout for the esports and gym account areas, gym /manage and the portal (kriraghor.com's
+ * member area uses SectionShell): a grouped icon
  * sidebar that collapses to a 76px rail in one click (remembered per browser), and a slide-in sheet
  * on phones. `variant="dark"` is the portal's full-height dark panel (Claude Design "Panels"), with
  * `foot` for the signed-in person's card at the bottom.
@@ -68,7 +34,7 @@ export function AppShell({
   children: ReactNode;
 }) {
   const t = useTranslations("kit");
-  const collapsed = useSyncExternalStore(subscribe, readCollapsed, () => false);
+  const collapsed = useCollapsed();
   const dark = variant === "dark";
 
   return (
@@ -180,45 +146,5 @@ function PhoneMenu({ groups, title, top }: { groups: ShellGroup[]; title: string
         <NavList groups={groups} title={title} rail={false} active={active} onNavigate={() => setSheetFor(null)} />
       </div>
     </Sheet>
-  );
-}
-
-function ShellLink({ item, active, rail, onNavigate, dark }: { item: ShellItem; active: boolean; rail: boolean; onNavigate?: () => void; dark?: boolean }) {
-  const Icon = item.icon;
-  const badge = item.badge && item.badge > 0 ? (item.badge > 99 ? "99+" : String(item.badge)) : null;
-  const cls = cn(
-    "group relative flex min-h-11 items-center gap-3 rounded-control px-3 text-[15px] font-medium no-underline transition-colors duration-150",
-    dark
-      ? active
-        ? "bg-band-text/12 font-semibold text-band-text"
-        : "text-band-text/75 hover:bg-band-text/8 hover:text-band-text"
-      : active
-        ? "bg-brand-soft font-semibold text-brand-text"
-        : "text-ink/80 hover:bg-surface-2 hover:text-ink",
-    rail && "justify-center px-0",
-  );
-  const inner = (
-    <>
-      {active ? <span className={cn("absolute inset-y-2 left-0 w-[3px] rounded-r-pill", dark ? "bg-prize" : "bg-brand")} aria-hidden /> : null}
-      <Icon size={22} weight={active ? "fill" : "regular"} aria-hidden className="shrink-0" />
-      <span className={cn("min-w-0 flex-1 truncate", rail && "sr-only")}>{item.label}</span>
-      {badge ? (
-        <span className={cn("tabular rounded-pill px-1.5 text-xs font-bold leading-5", dark ? "bg-prize text-prize-ink" : "bg-brand text-on-brand", rail && "absolute right-2 top-1.5 min-w-5 text-center text-[10px] leading-4")}>{badge}</span>
-      ) : null}
-    </>
-  );
-  const link = isExternal(item.href) ? (
-    <a href={item.href} className={cls} data-testid={item.testId} onClick={onNavigate}>
-      {inner}
-    </a>
-  ) : (
-    <Link href={item.href} className={cls} aria-current={active ? "page" : undefined} data-testid={item.testId} onClick={onNavigate}>
-      {inner}
-    </Link>
-  );
-  return (
-    <Tooltip content={item.label} side="right" disabled={!rail}>
-      {link}
-    </Tooltip>
   );
 }
