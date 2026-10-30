@@ -77,7 +77,7 @@ function Rail({ sections, title, rail, active, user }: { sections: ShellSection[
   const link = (s: ShellSection) => <ShellLink key={s.key} item={asItem(s)} active={active?.section.key === s.key} rail={rail} current="true" />;
   const pinned = sections.filter((s) => s.pin === "bottom");
   return (
-    <nav aria-label={title} className="flex min-h-full flex-1 flex-col">
+    <nav aria-label={title} className="flex flex-1 flex-col">
       <div className="flex flex-col gap-0.5">{sections.filter((s) => s.pin !== "bottom").map(link)}</div>
       {user || pinned.length ? (
         <div className="mt-auto flex flex-col gap-2 pt-6">
