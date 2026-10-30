@@ -39,10 +39,7 @@ export function MyEligibility() {
 
   return (
     <section className="mx-auto max-w-[760px] px-5 py-10">
-      <Link href="/me/teams" className="text-sm font-semibold text-brand underline">
-        ← {t("myTeams")}
-      </Link>
-      <h1 className="mt-4 text-3xl font-extrabold">{t("eligibility")}</h1>
+      <h1 className="text-3xl font-extrabold">{t("eligibility")}</h1>
       <p className="mt-1 text-muted">{t("eligibilityIntro")}</p>
 
       <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="readiness">

@@ -74,6 +74,11 @@
       "dateOf": "{label}: date",
       "timeOf": "{label}: time",
       "endOfDay": "{time} (end of day)"
+    },
+    "sections": {
+      "switch": "{section}: switch section",
+      "pages": "{section} pages",
+      "external": "{label}, opens on another Kriraghor site"
     }
   },
   "auth": {
@@ -312,6 +317,56 @@
       "events": "Join an event",
       "shop": "Shop gear",
       "hire": "Hire a pro"
+    },
+    "sections": {
+      "home": "Home",
+      "esports": "Esports",
+      "events": "Sports events",
+      "venues": "Venues",
+      "gym": "Gym",
+      "shop": "Shop",
+      "hire": "Hire",
+      "work": "Work",
+      "money": "Money",
+      "help": "Help",
+      "account": "Account"
+    },
+    "tabs": {
+      "matches": "My matches",
+      "winnings": "Winnings",
+      "gameIds": "Game IDs",
+      "esportsHome": "Esports home",
+      "myGyms": "My gyms",
+      "passes": "Passes",
+      "plans": "Plans",
+      "checkin": "Check-in",
+      "trainerPlans": "Trainer plans",
+      "overview": "Overview",
+      "requests": "Requests",
+      "jobs": "Jobs",
+      "availability": "Availability",
+      "earnings": "Earnings",
+      "proPlans": "Plans",
+      "reviews": "Reviews",
+      "settings": "Settings"
+    },
+    "landing": {
+      "esports": {
+        "lead": "Your PUBG Mobile and Free Fire matches, winnings and game IDs live on esports.kriraghor.com. The same account works there.",
+        "matches": "Room IDs, check-in and results for the events you joined.",
+        "winnings": "Your prize balance and withdrawals to bKash or Nagad.",
+        "gameIds": "Add and verify your PUBG Mobile and Free Fire IDs.",
+        "home": "Open events, showcases and top players."
+      },
+      "gym": {
+        "lead": "Your gyms, passes, workout plans and the check-in QR live on gym.kriraghor.com. The same account works there.",
+        "myGyms": "Memberships, dues and receipts at the gyms you joined.",
+        "passes": "Day and monthly passes, shown as a QR code at the front desk.",
+        "plans": "Workout plans your trainer made for you.",
+        "checkin": "Your QR code for the front desk.",
+        "trainerPlans": "Monthly plans with a personal trainer."
+      },
+      "opens": "Opens on {site}"
     }
   },
   "payoutsMe": {

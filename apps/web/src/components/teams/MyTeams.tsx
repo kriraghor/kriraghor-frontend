@@ -49,17 +49,8 @@ export function MyTeams() {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-3xl font-extrabold">{t("myTeams")}</h1>
-        <nav className="flex flex-wrap gap-x-5">
-          <Link href="/me/player" className="inline-flex min-h-11 items-center font-semibold underline">
-            {t("playerProfile")}
-          </Link>
-          <Link href="/me/eligibility" className="inline-flex min-h-11 items-center font-semibold underline">
-            {t("eligibility")}
-          </Link>
-        </nav>
-      </div>
+      {/* Player profile and Ready to play are the Sports events tabs above, not links here. */}
+      <h1 className="text-3xl font-extrabold">{t("myTeams")}</h1>
 
       {pending.length ? (
         <div className="mt-6 border-2 border-brand bg-surface p-4" data-testid="team-invites">

@@ -59,10 +59,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
 
   return (
     <section className="mx-auto max-w-[760px] px-5 py-10">
-      <Link href="/me/teams" className="text-sm font-semibold text-brand underline">
-        ← {t("myTeams")}
-      </Link>
-      <h1 className="mt-4 text-3xl font-extrabold">{t("playerProfile")}</h1>
+      <h1 className="text-3xl font-extrabold">{t("playerProfile")}</h1>
       <p className="mt-1 text-muted">{t("profilePrivacy")}</p>
 
       {/* Round B1: what is left to a complete player profile (hidden at 100%). */}
