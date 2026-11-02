@@ -311,7 +311,7 @@ export function FrontDesk({ id }: { id: string }) {
                 {found.items.map((c) => (
                   <MemberCard key={c.member.id} card={c} busy={busy} locked={attendanceLocked} onCheckIn={() => void checkIn({ memberId: c.member.id }, c.member.displayName)} onOverride={() => (setOverrideProblem(null), setOverriding({ body: { memberId: c.member.id }, name: c.member.displayName }))} gymId={id} />
                 ))}
-                {found.pass ? <PassCard pass={found.pass} canAdmit={canAdmit} busy={busy} onAdmit={() => void admit({ code: found.pass!.passCode })} /> : null}
+                {found.pass ? <PassCard pass={found.pass} canAdmit={canAdmit} busy={busy} onAdmit={() => void admit(scanInput(found.q))} /> : null}
                 {!found.items.length && !found.pass ? <p className="rounded-card border-2 border-dashed border-line p-6 text-center text-muted" data-testid="desk-none">{tg("desk.noMatch", { q: found.q })}</p> : null}
               </div>
             ) : null}

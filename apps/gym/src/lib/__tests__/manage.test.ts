@@ -31,6 +31,7 @@ describe("managing a gym (M20, moved from the business panel to gym.kriraghor.co
   it("tells a scanned QR token from a typed backup code", () => {
     expect(scanInput(" v1.0b2c.ab12.0123456789abcdef ")).toEqual({ token: "v1.0b2c.ab12.0123456789abcdef" });
     expect(scanInput("k7m-2pq")).toEqual({ code: "K7M2PQ" });
+    expect(scanInput("86x1w8")).toEqual({ code: "86X1W8" });
     expect(cleanCode(" ab 12-cd ")).toBe("AB12CD");
   });
 });
