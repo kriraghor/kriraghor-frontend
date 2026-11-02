@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, dhakaToday, distanceText, dowOf, gymListParams, openDates, passTone, subscriptionTone, weekOf, type Hours } from "../gym";
+import { addDays, dhakaToday, distanceText, dowOf, gymListParams, passTone, subscriptionTone, weekOf } from "../gym";
 
 describe("the /gyms filters (M24 prompt 3)", () => {
   it("sorts nearest only with a position, and rounds the position", () => {
@@ -33,12 +33,6 @@ describe("gyms for members (M20, on gym.kriraghor.com)", () => {
     expect(addDays("2026-10-31", 1)).toBe("2026-11-01");
     expect(addDays("2026-03-01", -1)).toBe("2026-02-28");
     expect(dowOf("2026-10-18")).toBe(0); // a Sunday
-  });
-
-  it("offers a day pass only on the days the gym opens", () => {
-    const hours: Hours = [w(0, "06:00", "22:00"), w(2, "06:00", "10:00"), w(2, "16:00", "22:00", true)];
-    expect(openDates(hours, "2026-10-18", 7)).toEqual(["2026-10-18", "2026-10-20"]);
-    expect(openDates([], "2026-10-18", 7)).toEqual([]);
   });
 
   it("lists the week Saturday first with each day's windows in time order", () => {

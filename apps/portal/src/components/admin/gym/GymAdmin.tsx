@@ -64,7 +64,7 @@ function Gyms() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const list = useQuery({ queryKey: ["admin-gyms", status, search], queryFn: () => gymAdmin.gyms({ status: (status || undefined) as GymStatus | undefined, q: search || undefined }), enabled: ready });
-  const day = (g: { packages: { kind: string; price: number }[] }) => g.packages.find((p) => p.kind === "day")?.price;
+  const month = (g: { packages: { kind: string; price: number }[] }) => g.packages.find((p) => p.kind === "month")?.price;
   const isMaster = Boolean(me?.isMaster);
   const canSuspend = Boolean(me && (me.isMaster || me.permissions.includes("manage_users" as never)));
 
@@ -96,7 +96,7 @@ function Gyms() {
         </>
       ),
     },
-    { id: "day", header: t("dayPass"), align: "end", sort: (g) => day(g), cell: (g) => (day(g) !== undefined ? formatTaka(day(g)!, locale) : "–") },
+    { id: "month", header: t("monthPrice"), align: "end", sort: (g) => month(g), cell: (g) => (month(g) !== undefined ? formatTaka(month(g)!, locale) : "–") },
     {
       id: "status",
       header: t("status"),

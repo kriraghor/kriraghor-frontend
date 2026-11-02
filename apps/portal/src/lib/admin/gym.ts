@@ -28,5 +28,3 @@ export const gymAdmin = {
 /** What is still held for a pass (what a platform cancel would refund). */
 export const heldOf = (p: Pick<StaffPass, "money">) => Math.max(0, p.money.price - p.money.released - p.money.refunded);
 
-/** Day-pass price against the platform limits (the review panel flags a price outside them). */
-export const outOfLimits = (price: number, limits: { dayMin: number; dayMax: number }) => price < limits.dayMin || price > limits.dayMax;

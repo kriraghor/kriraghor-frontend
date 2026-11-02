@@ -146,8 +146,7 @@ export function GymSection() {
                       </span>
                     </span>
                     <span className="shrink-0 text-right text-sm tabular-nums">
-                      {g.dayPrice != null ? <b className="block">{tc("dayPass", { price: money(g.dayPrice) })}</b> : null}
-                      {g.monthPrice != null ? <span className="block text-muted">{tc("monthly", { price: money(g.monthPrice) })}</span> : null}
+                      {g.monthPrice != null ? <b className="block">{tc("monthly", { price: money(g.monthPrice) })}</b> : null}
                     </span>
                   </a>
                 )}

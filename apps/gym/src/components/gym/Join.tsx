@@ -112,7 +112,7 @@ export function JoinForm({ slug }: { slug: string }) {
       </Notice>,
     );
 
-  const online = g.packages.filter((p) => p.kind !== "day" && (p.channel ?? "online") !== "desk");
+  const online = g.packages.filter((p) => (p.channel ?? "online") !== "desk");
   return shell(
     <form
       className="mt-4 flex flex-col gap-5"

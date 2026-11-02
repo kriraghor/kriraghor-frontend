@@ -43,12 +43,6 @@ export function GymCardItem({ card }: { card: GymCard }) {
             </span>
           ) : null}
           <span className="mt-auto grid grid-cols-2 gap-2 pt-4">
-            {card.dayPrice !== null ? (
-              <span>
-                <span className="block text-xs text-muted">{t("dayPass")}</span>
-                <span className="text-lg font-extrabold tabular-nums">{money(card.dayPrice)}</span>
-              </span>
-            ) : null}
             {card.monthPrice !== null ? (
               <span>
                 <span className="block text-xs text-muted">{t("monthly")}</span>

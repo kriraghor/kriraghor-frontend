@@ -42,9 +42,9 @@ export type ManageKey =
 export type OverviewKey = "gyms" | "billing" | "payouts" | "allReports";
 export type GymPageKey = Exclude<ManageKey, OverviewKey>;
 export type ManageItem = { key: ManageKey; href: string };
-export type ManageGroup = { key: string; gymId: string | null; name: string | null; staff: boolean; items: ManageItem[] };
+export type ManageGroup = { key: string; gymId: string | null; name: string | null; staff: boolean; listingStatus?: string | null; items: ManageItem[] };
 /** A gym as the menu needs it: GET /manage/gyms items, or a Round B3 workplace when that list is not available. */
-export type ManageGymRef = { id: string; name: string | null; role: "owner" | "staff"; permissions: readonly string[] | null };
+export type ManageGymRef = { id: string; name: string | null; role: "owner" | "staff"; permissions: readonly string[] | null; listingStatus?: string | null };
 
 export const DESK_PERMISSIONS = ["attendance.mark", "desk.admit", "desk.admissions"];
 export const PASSES_PERMISSION = "passes.view";
@@ -129,7 +129,7 @@ export function manageGroups(input: { gyms: readonly ManageGymRef[] }): ManageGr
     const items = gymItems(g.id, perms);
     if (perms && !items.some((i) => i.key !== "dashboard")) continue;
     seen.add(g.id);
-    groups.push({ key: `${g.role === "owner" ? "own" : "work"}:${g.id}`, gymId: g.id, name: g.name, staff: g.role === "staff", items });
+    groups.push({ key: `${g.role === "owner" ? "own" : "work"}:${g.id}`, gymId: g.id, name: g.name, staff: g.role === "staff", listingStatus: g.listingStatus ?? null, items });
   }
   return groups;
 }

@@ -11,7 +11,7 @@ import type { Card as EventCard } from "@/lib/tournaments";
 import type { MarketCard } from "@/lib/market";
 import { nameOf, type BigEvent, type EsportsCard, type Named } from "./queries";
 
-export type GymCard = { id: string; slug: string; name: string; area: Named | null; cover: string | null; dayPrice: number | null; monthPrice: number | null; openNow: boolean };
+export type GymCard = { id: string; slug: string; name: string; area: Named | null; cover: string | null; monthPrice: number | null; openNow: boolean };
 export type VenueCard = { id: string; slug: string; name: string; area: Named | null; coverUrl: string | null; sports: Named[]; priceFromPoisha: number };
 export type HireCard = { id: string; slug: string; name: string; headline: string | null; role: Named | null; area: Named | null; rateFrom: number | null; rateUnit: "hourly" | "match" | null };
 
@@ -98,7 +98,7 @@ export function GymTile({ item }: { item: GymCard }) {
       tag={item.openNow ? t("openNow") : undefined}
       title={item.name}
       meta={nameOf(item.area, locale)}
-      stat={item.dayPrice != null ? t("dayPass", { price: money(item.dayPrice) }) : item.monthPrice != null ? t("monthly", { price: money(item.monthPrice) }) : ""}
+      stat={item.monthPrice != null ? t("monthly", { price: money(item.monthPrice) }) : ""}
       cta={t("viewGym")}
       testId="home-gym"
     />

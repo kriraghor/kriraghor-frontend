@@ -8,13 +8,12 @@ import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { dayLabel, formatTaka, newKey } from "@kriraghor/ui/format";
 import { webHref } from "@/lib/links";
-import { addDays, gym, openDates, type GymPage } from "@/lib/gym";
+import { addDays, gym, type GymPage } from "@/lib/gym";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 
 /**
- * Buy a pass (M20 §5): pick a package, then a date. A day pass is for one open day up to
- * gym.pass_advance_days ahead; a month or quarter pass starts on the chosen date. The pass waits for
- * payment on the M06 page; once paid it shows as a QR on /me/passes.
+ * Buy a subscription (M20 §5): pick a package, then the day it starts, up to gym.pass_advance_days ahead.
+ * It waits for payment on the M06 page; once paid it shows as a QR on /me/passes.
  */
 export function PassBuy({ page }: { page: GymPage }) {
   const t = useTranslations("gym");
@@ -22,7 +21,7 @@ export function PassBuy({ page }: { page: GymPage }) {
   const { status } = useAuth();
   const [packageId, setPackageId] = useState(page.packages[0]?.id);
   const pkg = page.packages.find((p) => p.id === packageId) ?? page.packages[0];
-  const dates = pkg?.kind === "day" ? openDates(page.hours, page.today, page.advanceDays) : Array.from({ length: page.advanceDays }, (_, i) => addDays(page.today, i));
+  const dates = Array.from({ length: page.advanceDays }, (_, i) => addDays(page.today, i));
   const [picked, setPicked] = useState<string | undefined>(undefined);
   const date = picked && dates.includes(picked) ? picked : dates[0];
   // A new Idempotency-Key per choice: a retry of the same choice replays, a new choice is a new pass.
@@ -78,7 +77,7 @@ export function PassBuy({ page }: { page: GymPage }) {
       </fieldset>
 
       <fieldset>
-        <legend className="text-xs font-bold uppercase tracking-wide text-muted">{pkg.kind === "day" ? t("pickDay") : t("pickStart")}</legend>
+        <legend className="text-xs font-bold uppercase tracking-wide text-muted">{t("pickStart")}</legend>
         {dates.length ? (
           <div className="mt-2 flex flex-wrap gap-1" role="radiogroup">
             {dates.map((d) => (
@@ -90,14 +89,14 @@ export function PassBuy({ page }: { page: GymPage }) {
         ) : (
           <p className="mt-2 text-sm text-muted">{t("noOpenDays")}</p>
         )}
-        {pkg.kind !== "day" && date ? <p className="mt-2 text-sm text-muted">{t("validUntil", { date: dayLabel(addDays(date, pkg.days - 1), locale) })}</p> : null}
+        {date ? <p className="mt-2 text-sm text-muted">{t("validUntil", { date: dayLabel(addDays(date, pkg.days - 1), locale) })}</p> : null}
       </fieldset>
 
       <div className="flex items-baseline justify-between border-t-2 border-line pt-3">
         <span className="font-semibold">{t("total")}</span>
         <span className="text-2xl font-extrabold tabular-nums">{formatTaka(pkg.price, locale)}</span>
       </div>
-      <p className="text-sm text-muted">{pkg.kind === "day" ? t("dayRefund") : t("periodRefund")}</p>
+      <p className="text-sm text-muted">{t("periodRefund")}</p>
       {problem ? (
         <Notice tone="error">
           {t.has(`err.${problem.code}`) ? t(`err.${problem.code}`) : problem.title}{" "}

@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { formatTaka } from "@/lib/admin/finance";
-import { gymAdmin, outOfLimits } from "@/lib/admin/gym";
+import { gymAdmin } from "@/lib/admin/gym";
 import { Notice } from "@kriraghor/ui/primitives";
 
 type Diff = Record<string, { from: unknown; to: unknown }>;
@@ -44,8 +44,6 @@ export function GymPanel({ payload }: { payload: Record<string, unknown> }) {
         <dd>{g.addressLine}</dd>
         <dt className="text-muted">{t("about")}</dt>
         <dd className="whitespace-pre-line">{g.about ?? "–"}</dd>
-        <dt className="text-muted">{t("capacity")}</dt>
-        <dd>{g.dailyCapacity ?? t("noLimit")}</dd>
       </dl>
       {g.photos.length ? (
         <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
@@ -80,15 +78,11 @@ export function GymPanel({ payload }: { payload: Record<string, unknown> }) {
       <div>
         <h3 className="font-bold">{t("packages")}</h3>
         <ul className="mt-1 text-sm" data-testid="gym-panel-packages">
-          {g.packages.map((p) => {
-            const bad = p.kind === "day" && outOfLimits(p.price, g.limits);
-            return (
-              <li key={p.id} className={bad ? "font-bold text-danger" : ""}>
-                {t(`kind.${p.kind}`)} · {p.title} · {money(p.price)}
-                {bad ? ` · ${t("outOfLimits", { min: money(g.limits.dayMin), max: money(g.limits.dayMax) })}` : ""}
-              </li>
-            );
-          })}
+          {g.packages.map((p) => (
+            <li key={p.id}>
+              {t(`kind.${p.kind}`)} · {p.title} · {money(p.price)}
+            </li>
+          ))}
         </ul>
       </div>
     </div>

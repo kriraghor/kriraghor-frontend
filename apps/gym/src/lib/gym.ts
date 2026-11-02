@@ -77,11 +77,6 @@ export const dhakaToday = (now = new Date()) => new Date(now.getTime() + DHAKA_M
 export const addDays = (date: string, n: number) => new Date(Date.parse(`${date}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
 export const dowOf = (date: string) => new Date(`${date}T00:00:00Z`).getUTCDay();
 
-/** The next `n` dates from today on which the gym opens (for the day pass picker). */
-export function openDates(hours: Hours, today: string, n: number): string[] {
-  return Array.from({ length: n }, (_, i) => addDays(today, i)).filter((d) => hours.some((h) => h.dow === dowOf(d)));
-}
-
 /** Hours grouped by weekday, Saturday first (the Bangladesh week). */
 export function weekOf(hours: Hours): { dow: number; windows: Hours }[] {
   const order = [6, 0, 1, 2, 3, 4, 5];

@@ -24,7 +24,7 @@ const en: Record<LegalKey, LegalDoc> = {
         id: "about",
         title: "About Kriraghor",
         body: [
-          "Kriraghor is a sports and esports platform for Bangladesh. You can book venues, buy gear, hire players, officials and coaches, buy gym passes and trainer plans, and join esports and sports events.",
+          "Kriraghor is a sports and esports platform for Bangladesh. You can book venues, buy gear, hire players, officials and coaches, buy gym subscriptions and trainer plans, and join esports and sports events.",
           "Venue owners, shops, gyms, trainers, players for hire and event organisers provide their own services. Kriraghor runs the platform, takes the payments and holds the money until the service is delivered.",
           "[The legal entity that operates Kriraghor and its registered address will be added here before launch.]",
         ],
@@ -86,8 +86,8 @@ const en: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "gym",
-        title: "Gym passes and trainer plans",
-        body: ["Gym passes (day, month or three months) are shown as a QR code or a short code at the front desk. Trainer plans are paid month by month. The rules for each pass or plan are shown before you buy."],
+        title: "Gym subscriptions and trainer plans",
+        body: ["Gym subscriptions (one month, three months or longer) are shown as a QR code or a short code at the front desk. Trainer plans are paid month by month. The rules for each subscription or plan are shown before you buy."],
       },
       {
         id: "esports",
@@ -302,8 +302,8 @@ const en: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "gym",
-        title: "Gym passes and trainer plans",
-        body: [["Unused passes follow the rules shown when you bought them.", "A trainer plan cancelled within its first days is refunded in full; the number of days is shown on the plan."]],
+        title: "Gym subscriptions and trainer plans",
+        body: [["Unused subscriptions follow the rules shown when you bought them.", "A trainer plan cancelled within its first days is refunded in full; the number of days is shown on the plan."]],
       },
       { id: "ask", title: "How to ask for a refund", body: ["Open the booking, order, job, pass or registration in My account and choose cancel or report a problem. Our staff will reply in the app."] },
     ],
@@ -320,7 +320,7 @@ const en: Record<LegalKey, LegalDoc> = {
             "Venues: at check-in, or automatically after the booking, unless you open a dispute.",
             "Shop orders: when you mark the order received, or automatically after delivery, unless you report a problem.",
             "Hiring: when you confirm the job is done, or automatically after the period shown on the job, unless you open a dispute.",
-            "Gym passes: when the gym admits you, or when an unused pass expires.",
+            "Gym subscriptions: when the gym admits you, or when an unused subscription expires.",
             "Esports: entry fees stay held until results are final and prizes are paid.",
             "Sports events: entry fees are paid to the organiser in two parts, after the first result and at the end.",
           ],
@@ -367,7 +367,7 @@ const bn: Record<LegalKey, LegalDoc> = {
         id: "about",
         title: "ক্রীড়াঘর সম্পর্কে",
         body: [
-          "ক্রীড়াঘর বাংলাদেশের খেলাধুলা ও ই-স্পোর্টসের প্ল্যাটফর্ম। এখানে ভেন্যু বুক করা, খেলার সরঞ্জাম কেনা, খেলোয়াড়-আম্পায়ার-কোচ হায়ার করা, জিম পাস ও ট্রেইনার প্ল্যান কেনা এবং ই-স্পোর্টস ও খেলার ইভেন্টে অংশ নেওয়া যায়।",
+          "ক্রীড়াঘর বাংলাদেশের খেলাধুলা ও ই-স্পোর্টসের প্ল্যাটফর্ম। এখানে ভেন্যু বুক করা, খেলার সরঞ্জাম কেনা, খেলোয়াড়-আম্পায়ার-কোচ হায়ার করা, জিম সাবস্ক্রিপশন ও ট্রেইনার প্ল্যান কেনা এবং ই-স্পোর্টস ও খেলার ইভেন্টে অংশ নেওয়া যায়।",
           "ভেন্যুর মালিক, দোকান, জিম, ট্রেইনার, হায়ারের লোক ও ইভেন্ট আয়োজকরা নিজেদের সেবা দেন। ক্রীড়াঘর প্ল্যাটফর্ম চালায়, পেমেন্ট নেয় এবং সেবা পাওয়া পর্যন্ত টাকা নিজের কাছে রাখে।",
           "[ক্রীড়াঘর পরিচালনাকারী প্রতিষ্ঠানের আইনি নাম ও নিবন্ধিত ঠিকানা চালুর আগে এখানে যোগ হবে।]",
         ],
@@ -429,8 +429,8 @@ const bn: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "gym",
-        title: "জিম পাস ও ট্রেইনার প্ল্যান",
-        body: ["জিম পাস (এক দিন, এক মাস বা তিন মাস) ফ্রন্ট ডেস্কে QR কোড বা ছোট কোড হিসেবে দেখাবেন। ট্রেইনার প্ল্যানের টাকা মাসে মাসে দিতে হয়। প্রতিটি পাস বা প্ল্যানের নিয়ম কেনার আগে দেখানো হয়।"],
+        title: "জিম সাবস্ক্রিপশন ও ট্রেইনার প্ল্যান",
+        body: ["জিম সাবস্ক্রিপশন (এক মাস, তিন মাস বা আরও লম্বা) ফ্রন্ট ডেস্কে QR কোড বা ছোট কোড হিসেবে দেখাবেন। ট্রেইনার প্ল্যানের টাকা মাসে মাসে দিতে হয়। প্রতিটি সাবস্ক্রিপশন বা প্ল্যানের নিয়ম কেনার আগে দেখানো হয়।"],
       },
       {
         id: "esports",
@@ -499,7 +499,7 @@ const bn: Record<LegalKey, LegalDoc> = {
             "যাচাই: আপনার NID-এর ছবি ও নম্বর, এবং ব্যবসার ভূমিকার জন্য কাগজপত্র। এগুলো এনক্রিপ্ট করা থাকে, আর কর্মীরা যতবার খোলেন তা রেকর্ড হয়।",
             "ই-স্পোর্টস: গেম UID, গেমের নাম, ফলাফল ও র‍্যাংকিং।",
             "পেআউট: আপনার বিকাশ বা নগদ নম্বর, এনক্রিপ্ট করা এবং আংশিক লুকিয়ে দেখানো।",
-            "কার্যক্রম: বুকিং, অর্ডার, হায়ার, পাস, রেজিস্ট্রেশন, পেমেন্ট, রিভিউ, রিপোর্ট ও ক্রীড়াঘরে পাঠানো মেসেজ।",
+            "কার্যক্রম: বুকিং, অর্ডার, হায়ার, সাবস্ক্রিপশন, রেজিস্ট্রেশন, পেমেন্ট, রিভিউ, রিপোর্ট ও ক্রীড়াঘরে পাঠানো মেসেজ।",
             "ডেলিভারি: অর্ডারের জন্য দেওয়া নাম, ফোন ও ঠিকানা।",
             "লোকেশন: শুধু \"আমার লোকেশন ব্যবহার করুন\" চাপলে, দূরত্ব অনুযায়ী ভেন্যু সাজাতে। এটি রাখা হয় না।",
             "প্রযুক্তিগত: ডিভাইস, ব্রাউজার, IP ঠিকানা ও লগ, নিরাপত্তা ও সমস্যা সমাধানের জন্য।",
@@ -584,8 +584,8 @@ const bn: Record<LegalKey, LegalDoc> = {
         body: [["দোকান অর্ডার বাতিল করলে বা সময়মতো না পাঠালে: পুরো টাকা ফেরত।", "অর্ডার না পৌঁছালে: অর্ডার থেকে \"পাইনি\" অভিযোগ খুলুন।", "ফেরত দেওয়ার নিয়ম প্রতিটি দোকানের, পণ্যের পাতায় দেখানো থাকে। খোলা সাপ্লিমেন্ট ফেরত নেওয়া হয় না।"]],
       },
       { id: "hire", title: "হায়ার", body: [["যথেষ্ট আগে বাতিল করলে: পুরো টাকা ফেরত। কাজের কাছাকাছি সময়ে বাতিলে ফি লাগতে পারে; নিশ্চিত করার আগে পরিমাণ দেখানো হয়।", "যাকে হায়ার করেছেন তিনি বাতিল করলে বা না এলে: পুরো টাকা ফেরত।"]] },
-      { id: "gym", title: "জিম পাস ও ট্রেইনার প্ল্যান", body: [["অব্যবহৃত পাস কেনার সময় দেখানো নিয়ম মেনে চলে।", "ট্রেইনার প্ল্যান প্রথম কয়েক দিনের মধ্যে বাতিল করলে পুরো টাকা ফেরত; কত দিন, তা প্ল্যানে দেখানো থাকে।"]] },
-      { id: "ask", title: "কীভাবে রিফান্ড চাইবেন", body: ["আমার অ্যাকাউন্টে বুকিং, অর্ডার, কাজ, পাস বা রেজিস্ট্রেশন খুলে বাতিল বা সমস্যা জানান বেছে নিন। আমাদের কর্মীরা অ্যাপে উত্তর দেবেন।"] },
+      { id: "gym", title: "জিম সাবস্ক্রিপশন ও ট্রেইনার প্ল্যান", body: [["অব্যবহৃত সাবস্ক্রিপশন কেনার সময় দেখানো নিয়ম মেনে চলে।", "ট্রেইনার প্ল্যান প্রথম কয়েক দিনের মধ্যে বাতিল করলে পুরো টাকা ফেরত; কত দিন, তা প্ল্যানে দেখানো থাকে।"]] },
+      { id: "ask", title: "কীভাবে রিফান্ড চাইবেন", body: ["আমার অ্যাকাউন্টে বুকিং, অর্ডার, কাজ, সাবস্ক্রিপশন বা রেজিস্ট্রেশন খুলে বাতিল বা সমস্যা জানান বেছে নিন। আমাদের কর্মীরা অ্যাপে উত্তর দেবেন।"] },
     ],
   },
   protection: {
@@ -600,7 +600,7 @@ const bn: Record<LegalKey, LegalDoc> = {
             "ভেন্যু: চেক-ইনে, অথবা বুকিংয়ের পর নিজে থেকে, যদি না আপনি অভিযোগ করেন।",
             "শপের অর্ডার: অর্ডার পেয়েছেন জানালে, অথবা ডেলিভারির পর নিজে থেকে, যদি না সমস্যা জানান।",
             "হায়ার: কাজ শেষ বলে নিশ্চিত করলে, অথবা কাজে দেখানো সময় পেরোলে নিজে থেকে, যদি না অভিযোগ করেন।",
-            "জিম পাস: জিমে ঢোকার সময়, অথবা অব্যবহৃত পাসের মেয়াদ শেষ হলে।",
+            "জিম সাবস্ক্রিপশন: জিমে ঢোকার সময়, অথবা অব্যবহৃত সাবস্ক্রিপশনের মেয়াদ শেষ হলে।",
             "ই-স্পোর্টস: ফলাফল চূড়ান্ত হয়ে পুরস্কার দেওয়া পর্যন্ত এন্ট্রি ফি জমা থাকে।",
             "খেলার ইভেন্ট: এন্ট্রি ফি আয়োজককে দুই ধাপে দেওয়া হয়, প্রথম ফলাফলের পর এবং শেষে।",
           ],

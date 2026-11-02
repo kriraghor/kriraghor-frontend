@@ -71,7 +71,8 @@ export type MyPlan = S["MyGymPlan"];
 export type PlanInput = { kind: PlanKind; title: string; isTemplate?: boolean; content: PlanContent };
 export type PlanPatch = { title?: string; isTemplate?: boolean; content?: PlanContent; applyToAssigned?: boolean };
 export type JoinAccept = { packageId?: string; startsOn?: string; admissionFee?: boolean; discountPoisha?: number; discountReason?: string; payment?: Payment };
-export type PackageKind = S["GymOwnerPackage"]["kind"];
+/** What a gym can sell: old day packages stay in the history only (M24-FR-24, 2 Nov 2026). */
+export type PackageKind = Exclude<S["GymOwnerPackage"]["kind"], "day">;
 export type OwnerPackage = S["GymOwnerPackage"];
 export type Channel = OwnerPackage["channel"];
 export type PayMethod = "cash" | "owner_bkash" | "owner_nagad" | "card_counter" | "other";
@@ -97,7 +98,7 @@ export const PAY_METHODS: PayMethod[] = ["cash", "owner_bkash", "owner_nagad", "
 export const LEFT_REASONS: LeftReason[] = ["price", "moved", "injury", "other_gym", "schedule", "unknown", "other"];
 export const TIERS: Tier[] = ["free", "basic", "standard", "pro"];
 export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "reports", "trainers", "plans", "multi_gym"];
-export const KINDS: PackageKind[] = ["day", "month", "quarter", "half_year", "year", "custom"];
+export const KINDS: PackageKind[] = ["month", "quarter", "half_year", "year", "custom"];
 
 const ik = (key: string) => ({ "idempotency-key": key });
 const G = (gymId: string) => ({ path: { gymId } });
@@ -409,6 +410,9 @@ export type PackageBody = { kind: PackageKind; title: string; price: number; day
 export type PackageProblem = "none" | "bad_title" | "bad_price" | "bad_days" | "bad_admission" | "bad_visits" | "duplicate_kind" | "too_many_custom";
 
 /** The rows that are on → the PUT /me/gyms/:id/packages body (poisha), or the first problem with its row index. */
+/** The package to sell online when all are at the desk: the monthly one if there is one, else the first. */
+export const packageToSellOnline = (rows: readonly PackageRow[]) => rows.find((r) => r.on && r.kind === "month") ?? rows.find((r) => r.on) ?? null;
+
 export function packagesPayload(rows: readonly PackageRow[], maxCustom: number): { ok: true; packages: PackageBody[] } | { ok: false; problem: PackageProblem; row: number } {
   const on = rows.map((r, i) => ({ r, i })).filter((x) => x.r.on);
   if (!on.length) return { ok: false, problem: "none", row: -1 };
@@ -449,6 +453,7 @@ export function packagesPayload(rows: readonly PackageRow[], maxCustom: number):
 /** The saved packages → editable rows. */
 export const packageRowsOf = (packages: readonly OwnerPackage[]): PackageRow[] =>
   [...packages]
+    .filter((p): p is OwnerPackage & { kind: PackageKind } => p.kind !== "day")
     .sort((a, b) => a.sort - b.sort)
     .map((p) => ({ kind: p.kind, title: p.title, taka: poishaToTakaText(p.price), days: String(p.days), admissionTaka: p.admissionFee ? poishaToTakaText(p.admissionFee) : "", channel: p.channel, visitLimit: p.visitLimit ? String(p.visitLimit) : "", on: true }));
 
