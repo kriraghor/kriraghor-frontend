@@ -26,6 +26,7 @@ import {
   type Profile,
 } from "@/lib/gym-manage";
 import { MonthCalendar } from "./MonthCalendar";
+import { MemberPlans } from "./MemberPlans";
 import { useTrainers } from "./Members";
 import { GymPage, MemberStatus, Row, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 import { emptyPayment, PayDialog, PaymentFields, paymentBody, ReceiptLink, WaiveDialog } from "./money";
@@ -35,7 +36,7 @@ import { DatePicker } from "@kriraghor/ui/date";
 /**
  * /manage/[gymId]/members/[memberId] (M24 §4.1): the member's profile. The person and the link to
  * their Kriraghor account (invite, unlink), memberships (assign, renew, freeze, unfreeze, change,
- * cancel), the trainer (feature trainers, FR-21), dues with their payments (collect, waive, reverse, receipt), the check-in calendar, notes,
+ * cancel), the trainer (feature trainers, FR-21), the plans (feature plans, FR-64 to FR-66), dues with their payments (collect, waive, reverse, receipt), the check-in calendar, notes,
  * and mark left, re-join or remove. Each action follows the profile's `can` and the permissions; the
  * API decides (M24-FR-12 to FR-36).
  */
@@ -91,6 +92,7 @@ function Body({ ctx, memberId }: { ctx: GymCtx; memberId: string }) {
         <Person ctx={ctx} p={p} />
         <Memberships ctx={ctx} p={p} />
         <Trainer ctx={ctx} p={p} />
+        <MemberPlans ctx={ctx} p={p} />
       </div>
       <div className="flex flex-col gap-4">
         <Dues ctx={ctx} p={p} />

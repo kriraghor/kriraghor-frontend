@@ -185,6 +185,23 @@ export function progressOn(refs: readonly string[], ticks: ReadonlyMap<string, {
   return { done: refs.filter((r) => ticks.get(tickKey(date, r))?.done).length, total: refs.length };
 }
 
+/**
+ * Staff's view of one assignment (M24-FR-66): items ticked done in the last `days` Dhaka days up to
+ * `today` (the latest tick per item and date counts) and the last date anything was ticked done.
+ */
+export function recentDone(logs: readonly Pick<PlanLog, "localDate" | "itemRef" | "done" | "note">[], today: string, days = 7): { done: number; lastOn: string | null } {
+  let done = 0;
+  let lastOn: string | null = null;
+  for (const [key, tick] of latestTicks(logs)) {
+    if (!tick.done) continue;
+    const date = key.slice(0, key.indexOf("|"));
+    if (!lastOn || date > lastOn) lastOn = date;
+    const ago = daysBetween(date, today);
+    if (ago >= 0 && ago < days) done += 1;
+  }
+  return { done, lastOn };
+}
+
 /** Today's plans first: active ones that run today (workouts, then diets), then the rest in the API's order. */
 export function todayFirst<T extends Pick<MyPlanItem, "kind" | "todayIndex" | "readOnly">>(items: readonly T[]): T[] {
   const rank = (x: T) => (!x.readOnly && x.todayIndex !== null ? (x.kind === "workout" ? 0 : 1) : 2);

@@ -2048,6 +2048,36 @@
       "replyPosted": "Reply posted",
       "replyChanged": "Reply updated",
       "cancel": "Cancel"
+    },
+    "memberPlans": {
+      "title": "Plans",
+      "unlinked": "Not linked to a Kriraghor account yet: the member sees plans after accepting an invite.",
+      "none": "none",
+      "assign": "Assign",
+      "change": "Change",
+      "dates": "{from} to {to}",
+      "since": "From {from}",
+      "today": "Today {done} of {total} done",
+      "restDay": "Nothing to tick today",
+      "last7": "{n, plural, one {# item} other {# items}} done in 7 days",
+      "lastTick": "last tick {date}",
+      "noTicks": "no ticks yet",
+      "showPast": "Earlier plans ({n})",
+      "hidePast": "Hide earlier plans",
+      "status": {
+        "replaced": "Replaced",
+        "ended": "Ended",
+        "active": "Active"
+      },
+      "assignTitle": "Assign a {kind}",
+      "replaces": "It replaces {title}.",
+      "pick": "Plan",
+      "choose": "Choose a plan",
+      "template": "template",
+      "noPlans": "No active plan of this kind yet.",
+      "writeOne": "Write one",
+      "endsHint": "Optional",
+      "assigned": "Plan assigned"
     }
   }
 }

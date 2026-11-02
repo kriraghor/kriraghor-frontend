@@ -15,6 +15,7 @@ import {
   newRef,
   planProblems,
   progressOn,
+  recentDone,
   refsIn,
   textOf,
   tickKey,
@@ -207,5 +208,20 @@ describe("the entrance QR (M24-FR-51)", () => {
     expect(entranceTokenFrom("https://gym.kriraghor.com/me/checkin?e=nope")).toBeNull();
     expect(entranceTokenFrom("https://gym.kriraghor.com/me/checkin")).toBeNull();
     expect(entranceTokenFrom("hello")).toBeNull();
+  });
+});
+
+describe("recentDone (M24-FR-66)", () => {
+  const log = (localDate: string, itemRef: string, done: boolean) => ({ localDate, itemRef, done, note: null });
+  it("counts the latest done ticks in the last 7 days and the last done date", () => {
+    const logs = [log("2026-10-31", "a", true), log("2026-10-31", "b", false), log("2026-10-30", "a", true), log("2026-10-25", "a", true), log("2026-10-24", "a", true), log("2026-11-01", "a", true)];
+    expect(recentDone(logs, "2026-10-31")).toEqual({ done: 3, lastOn: "2026-11-01" });
+  });
+  it("uses the newest tick per item and date (an undone tick wins over an older done one)", () => {
+    expect(recentDone([log("2026-10-31", "a", false), log("2026-10-31", "a", true)], "2026-10-31")).toEqual({ done: 0, lastOn: null });
+  });
+  it("is empty without ticks and honours another window", () => {
+    expect(recentDone([], "2026-10-31")).toEqual({ done: 0, lastOn: null });
+    expect(recentDone([log("2026-10-29", "a", true)], "2026-10-31", 2)).toEqual({ done: 0, lastOn: "2026-10-29" });
   });
 });
