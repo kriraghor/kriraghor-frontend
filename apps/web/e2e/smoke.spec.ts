@@ -14,20 +14,25 @@ test("runtime config is served without secrets (ADR-003)", async ({ request }) =
   expect(body).not.toMatch(/SECRET|PASSWORD/);
 });
 
-test("home has the design's sections, in order, and nothing from the old page", async ({ page }) => {
+test("home has the hero and finder, then the sections in order, with no search per section", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("home-network")).toBeVisible();
   for (const key of ["esports", "gym", "venues", "shop", "hire", "events"]) await expect(page.getByTestId(`net-${key}`)).toHaveAttribute("href", `#${key}`);
   const order = await page.locator('[data-testid^="home-section-"]').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.testid));
   expect(order).toEqual(["esports", "gym", "venues", "shop", "hire", "events"].map((k) => `home-section-${k}`));
   await expect(page.getByTestId("home-info")).toBeVisible();
-  await expect(page.getByTestId("finder")).toHaveCount(0);
+  await expect(page.getByTestId("finder")).toBeVisible();
+  await expect(page.locator('[data-testid^="section-search-"]')).toHaveCount(0);
 });
 
-test("a section's search goes to its list page with the text in the URL", async ({ page }) => {
+test("the finder goes to the shop with the text in the URL", async ({ page }) => {
   await page.goto("/");
-  await page.locator("#shop-q").fill("whey protein");
-  await page.getByTestId("section-go-shop").click();
+  await expect(async () => {
+    await page.getByTestId("finder").getByRole("tab", { name: "Shop" }).click();
+    await expect(page.locator("#f-q")).toBeVisible({ timeout: 1000 });
+  }).toPass();
+  await page.locator("#f-q").fill("whey protein");
+  await page.getByTestId("finder-go").click();
   await expect(page).toHaveURL(/\/shop\?q=whey\+protein$/);
 });
 

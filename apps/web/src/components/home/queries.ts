@@ -21,6 +21,7 @@ export type EsportsCard = {
   slotsTaken: number;
   startsAt: string;
 };
+export type EsportsDetail = EsportsCard & { prizes: { place: number; amount: Money }[]; matches: { seq: number; map: Named | null }[] };
 export type BigEvent = { id: string; slug: string; titleEn: string; titleBn: string; phase: string; prizeTotal: Money; accentHex: string };
 
 const read = async <T,>(p: Promise<{ data?: unknown; error?: unknown }>) => {
@@ -35,6 +36,16 @@ export const useOpenEsports = () =>
     queryKey: ["home-esports-open"],
     queryFn: () => read<{ items: EsportsCard[]; nextCursor: string | null }>(api().GET("/esports/tournaments", { params: { query: { status: "registration_open", limit: 12 } } })),
   });
+
+export const useEsportsDetail = (slug: string | undefined) =>
+  useQuery({
+    queryKey: ["home-esports-detail", slug],
+    enabled: Boolean(slug),
+    queryFn: () => read<EsportsDetail>(api().GET("/esports/tournaments/{id}", { params: { path: { id: slug! } } })),
+  });
+
+export const useEsportsGames = () =>
+  useQuery({ queryKey: ["home-esports-games"], staleTime: 3600_000, queryFn: () => read<{ items: Named[] }>(api().GET("/esports/games")) });
 
 export const useFeaturedEvents = () =>
   useQuery({ queryKey: ["home-esports-events"], queryFn: () => read<{ items: BigEvent[] }>(api().GET("/esports/events", { params: { query: { featured: "true", limit: 3 } } })) });

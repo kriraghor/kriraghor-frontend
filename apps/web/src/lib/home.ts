@@ -64,3 +64,46 @@ export const searchGroups = (q: string | null | undefined) => {
   const text = searchText(q);
   return text ? SECTIONS.map((key) => ({ key, text, href: sectionUrl(key, { q: text }) })) : [];
 };
+
+// ---------------- the finder ----------------
+
+export type FinderTab = "tournaments" | "grounds" | "shop" | "hire";
+export type FinderValues = { game?: string; sport?: string; areaId?: string; q?: string; category?: string };
+
+/** Where a finder search goes: only filters the destination page really supports are sent. */
+export function finderUrl(tab: FinderTab, v: FinderValues): string {
+  const qs = (entries: [string, string | undefined][]) => {
+    const p = new URLSearchParams();
+    for (const [k, val] of entries) if (val && val.trim()) p.set(k, val.trim());
+    const s = p.toString();
+    return s ? `?${s}` : "";
+  };
+  switch (tab) {
+    case "tournaments":
+      return esportsHref(`/events${qs([["game", v.game]])}`);
+    case "grounds":
+      return `/venues${qs([["sport", v.sport], ["area", v.areaId]])}`;
+    case "shop":
+      return `/shop${qs([["q", v.q]])}`;
+    case "hire":
+      return `/hiring${qs([["category", v.category], ["areaId", v.areaId]])}`;
+  }
+}
+
+/** Roving tabindex for the finder tabs: arrows wrap, Home and End jump. Returns the next index or null. */
+export function nextTab(current: number, key: string, count: number): number | null {
+  if (key === "ArrowRight" || key === "ArrowDown") return (current + 1) % count;
+  if (key === "ArrowLeft" || key === "ArrowUp") return (current - 1 + count) % count;
+  if (key === "Home") return 0;
+  if (key === "End") return count - 1;
+  return null;
+}
+
+// ---------------- the hero's next event ----------------
+
+/** Share of places taken, 0–1, for the progress bar. */
+export const filled = (taken: number, max: number) => (max > 0 ? Math.min(1, Math.max(0, taken / max)) : 0);
+
+/** The top three places of a prize table, in place order. */
+export const podium = (prizes: { place: number; amount: { amount: number } }[] | null | undefined) =>
+  [...(prizes ?? [])].sort((a, b) => a.place - b.place).slice(0, 3);

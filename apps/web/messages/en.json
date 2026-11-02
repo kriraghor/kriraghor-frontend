@@ -1981,18 +1981,36 @@
   },
   "home": {
     "hero": {
-      "kicker": "Kriraghor",
-      "title": "Bangladesh's sports and esports platform",
-      "sub": "Book venues, get gym passes, hire talent, shop original gear and play competitive matches.",
-      "business": "Explore Business",
-      "how": "How it works"
-    },
-    "live": {
-      "title": "Live on Kriraghor",
-      "esports": "Esports events open",
-      "sports": "Sports events open",
-      "next": "Next esports event",
-      "none": "New events are added every week."
+      "title": "Play PUBG Mobile and Free Fire.",
+      "titleEm": "Win real prizes.",
+      "sub": "Daily custom rooms. Verified players, the room ID before kick-off, and prizes paid to bKash or Nagad.",
+      "join": "Join an event",
+      "how": "How it works",
+      "openCount": "{n}{more} events open for registration",
+      "loading": "Loading the next event",
+      "noneTitle": "New events every week",
+      "noneBody": "No event is taking registrations right now. See the schedule and past results on Kriraghor Esports.",
+      "browse": "Go to esports",
+      "nextUp": "Next up",
+      "startsIn": "Starts in",
+      "started": "Started",
+      "entry": "Entry",
+      "free": "Free",
+      "perPlayer": "per player",
+      "perSquad": "per squad",
+      "firstPrize": "1st prize",
+      "prizePool": "Prize pool",
+      "place": "{place, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} {amount}",
+      "playersIn": "Players registered",
+      "squadsIn": "Squads registered",
+      "ofMax": "{taken} of {max}",
+      "perKill": "+{amount} for every kill.",
+      "roomNote": "The room ID unlocks for checked-in players shortly before the start.",
+      "register": "Register for {fee}",
+      "registerFree": "Register free",
+      "eventLive": "Live now",
+      "eventUpcoming": "Showcase",
+      "eventPrizes": "Total prizes"
     },
     "network": {
       "title": "One network for every game you play",
@@ -2024,7 +2042,6 @@
       }
     },
     "search": {
-      "label": "Search",
       "failed": "This list couldn't load right now. Please try again in a moment.",
       "prev": "Show earlier cards",
       "next": "Show more cards"
@@ -2035,60 +2052,36 @@
         "sub": "Daily custom rooms for PUBG Mobile and Free Fire.",
         "all": "All events",
         "top": "Top players",
-        "hint": "Event name",
-        "filter": "Game",
-        "any": "All games",
-        "go": "Find events",
         "none": "Nothing is open right now. New events are added every week."
       },
       "gym": {
         "title": "Gym",
         "sub": "Gym passes, monthly memberships and personal trainers.",
         "all": "All gyms",
-        "hint": "Gym name",
-        "filter": "Area",
-        "any": "All areas",
-        "go": "Find gyms",
         "none": "No gyms are listed yet."
       },
       "venues": {
         "title": "Venues",
         "sub": "Book turfs, pitches and courts by the hour.",
         "all": "All venues",
-        "hint": "Venue name",
-        "filter": "Sport",
-        "any": "All sports",
-        "go": "Find venues",
         "none": "No venues are listed yet."
       },
       "shop": {
         "title": "Shop",
         "sub": "Original sports gear and authentic supplements from verified shops.",
         "all": "All products",
-        "hint": "Bat, boots, whey protein",
-        "filter": "Category",
-        "any": "All categories",
-        "go": "Find products",
         "none": "No products are listed yet."
       },
       "hire": {
         "title": "Hire",
         "sub": "Umpires, referees, coaches and players.",
         "all": "All talent",
-        "hint": "Name or skill",
-        "filter": "Role",
-        "any": "Everyone",
-        "go": "Find talent",
         "none": "No one is listed yet."
       },
       "events": {
         "title": "Sports events",
         "sub": "Football, cricket and more, open for your team.",
         "all": "All sports events",
-        "hint": "Event name",
-        "filter": "Sport",
-        "any": "All sports",
-        "go": "Search events",
         "none": "No sports events are open right now."
       }
     },
@@ -2135,6 +2128,75 @@
       "gymNext": "More gyms",
       "pause": "Pause the list",
       "play": "Play the list"
+    },
+    "finder": {
+      "label": "Find what you need",
+      "tabsLabel": "What are you looking for?",
+      "tab": {
+        "tournaments": "Events",
+        "grounds": "Venues",
+        "shop": "Shop",
+        "hire": "Hire"
+      },
+      "game": "Game",
+      "anyGame": "Any game",
+      "sport": "Sport",
+      "anySport": "Any sport",
+      "area": "Area",
+      "anyArea": "Anywhere",
+      "search": "Search the shop",
+      "searchPlaceholder": "Cricket bat, whey protein, futsal boots",
+      "need": "I need",
+      "anyone": "Anyone",
+      "go": {
+        "tournaments": "Find events",
+        "grounds": "Find a venue",
+        "shop": "Search the shop",
+        "hire": "Browse talent"
+      }
+    },
+    "carousel": {
+      "label": "Highlights",
+      "prev": "Previous slide",
+      "next": "Next slide",
+      "pause": "Pause the slides",
+      "play": "Play the slides",
+      "goTo": "Show {name}",
+      "slides": {
+        "esports": {
+          "tab": "Esports",
+          "kicker": "PUBG Mobile and Free Fire",
+          "cta": "Join an event"
+        },
+        "venues": {
+          "tab": "Venues",
+          "kicker": "Venue booking",
+          "title": "Book a turf, court or pitch by the hour",
+          "sub": "See open slots at venues across Dhaka and lock one with an advance by bKash or Nagad.",
+          "cta": "Find a venue"
+        },
+        "hire": {
+          "tab": "Hire",
+          "kicker": "Officials and players",
+          "title": "Short an umpire? Hire one for tonight.",
+          "sub": "Licensed umpires and referees, plus rated players, available by the match.",
+          "cta": "Hire now"
+        },
+        "shop": {
+          "tab": "Shop",
+          "kicker": "Shop",
+          "title": "New gear from shops. Used gear from players.",
+          "sub": "Bats, boots, rackets, supplements and gym gear from verified shops and NID-verified sellers.",
+          "cta": "Shop now"
+        },
+        "gym": {
+          "tab": "Gym",
+          "kicker": "Gym and fitness",
+          "title": "Train with certified coaches near you",
+          "sub": "Day passes, monthly memberships and personal trainers in one place.",
+          "cta": "Enter the gym"
+        }
+      }
     }
   },
   "notFound": {
