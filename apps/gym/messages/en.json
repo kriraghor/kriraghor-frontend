@@ -262,6 +262,18 @@
       "reminders": "Reminders",
       "entrance": "Entrance QR",
       "plans": "Plans"
+    },
+    "section": {
+      "today": "Today",
+      "people": "Members",
+      "money": "Money",
+      "setup": "Setup",
+      "allGyms": "All gyms"
+    },
+    "switcher": {
+      "label": "Gym",
+      "staff": "{name} (staff)",
+      "change": "Change gym"
     }
   },
   "gym": {
@@ -516,7 +528,7 @@
     "moveLeft": "Move left",
     "moveRight": "Move right",
     "remove": "Remove",
-    "addPhotos": "Add photos (JPEG, PNG or WebP)",
+    "addPhotos": "Add photos",
     "days": [
       "Sunday",
       "Monday",
@@ -546,7 +558,7 @@
       "quarter": "3-month pass"
     },
     "packages": "Passes",
-    "packagesHelp": "A day pass is required ({min} to {max}). Month and 3-month passes are optional.",
+    "packagesHelp": "A day pass sold online is required to list ({min} to {max}). Month and 3-month passes are optional.",
     "packageTitle": "Name",
     "packagePrice": "Price (৳)",
     "packageProblem": {
@@ -631,7 +643,32 @@
       "start": "Apply as a gym owner"
     },
     "staffTitle": "Gyms you work at",
-    "staffLead": "Open the front desk to admit members, or see the passes sold, as the owner allows."
+    "staffLead": "Open the front desk to admit members, or see the passes sold, as the owner allows.",
+    "addPhotosHint": "JPEG, PNG or WebP",
+    "coordsHint": "Optional. They help people find you with Near me.",
+    "dayDesk": "Your day pass is sold only at the desk. To list your gym, members must be able to buy it online.",
+    "sellOnline": "Sell it online too",
+    "sellDone": "Your day pass is now sold at the desk and online.",
+    "dayPrice": "Your day pass must cost between {min} and {max}.",
+    "addDayPass": "Add a day pass",
+    "finishFirst": "Finish these first:",
+    "listing": {
+      "title": "Before you can list this gym",
+      "description": "Staff review your gym page once these are done.",
+      "photos": "Add at least {need} photos",
+      "photosHint": "{have} of {need} so far",
+      "photosDone": "Photos added",
+      "hours": "Add your opening hours",
+      "hoursHint": "A day without hours is shown as closed.",
+      "hoursDone": "Opening hours added",
+      "dayNone": "Add a day pass",
+      "dayNoneHint": "Members need one to try your gym.",
+      "dayDesk": "Sell your day pass online",
+      "dayDeskHint": "It is sold only at the desk, so members can't buy it online.",
+      "dayPrice": "Fix your day pass price",
+      "dayPriceHint": "It must cost between {min} and {max}.",
+      "dayDone": "Day pass sold online"
+    }
   },
   "gm": {
     "myGyms": "My gyms",
@@ -1188,7 +1225,8 @@
         "bad_visits": "The visit limit must be a whole number.",
         "duplicate_kind": "Only one package of each kind (custom packages can repeat).",
         "too_many_custom": "At most {max} custom packages."
-      }
+      },
+      "dayDeskHint": "Not sold online, so it can't be used to list the gym."
     },
     "kind": {
       "day": "Day pass",

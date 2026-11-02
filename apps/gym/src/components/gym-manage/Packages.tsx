@@ -80,7 +80,7 @@ function Rows({ ctx, g }: { ctx: GymCtx; g: OwnerGym }) {
           <li key={i}>
             <Card padded={false} className={problem?.row === i ? "border-danger p-3" : "p-3"} data-testid="package-row">
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Select id={`pk-kind-${i}`} label={t("packages.kind")} value={r.kind} onChange={(e) => update(i, { kind: e.target.value as PackageKind, days: e.target.value === "custom" ? r.days || "30" : "" })}>
+                <Select id={`pk-kind-${i}`} label={t("packages.kind")} value={r.kind} onChange={(e) => update(i, { kind: e.target.value as PackageKind, ...(e.target.value === "day" && r.channel === "desk" ? { channel: "both" as const } : {}), days: e.target.value === "custom" ? r.days || "30" : "" })}>
                   {KINDS.map((k) => (
                     <option key={k} value={k} disabled={k !== "custom" && k !== r.kind && used.has(k)}>
                       {t(`kind.${k}`)}
@@ -95,7 +95,7 @@ function Rows({ ctx, g }: { ctx: GymCtx; g: OwnerGym }) {
                   <Field id={`pk-days-${i}`} label={t("packages.days")} value={String(kindDays[r.kind] ?? "")} readOnly disabled />
                 )}
                 <Field id={`pk-adm-${i}`} label={t("packages.admission")} optional={t("optional")} inputMode="decimal" value={r.admissionTaka} onChange={(e) => update(i, { admissionTaka: e.target.value })} leading={<span className="text-muted">৳</span>} />
-                <Select id={`pk-ch-${i}`} label={t("packages.channel")} value={r.channel} onChange={(e) => update(i, { channel: e.target.value as Channel })}>
+                <Select id={`pk-ch-${i}`} label={t("packages.channel")} hint={r.kind === "day" && r.channel === "desk" ? t("packages.dayDeskHint") : undefined} value={r.channel} onChange={(e) => update(i, { channel: e.target.value as Channel })}>
                   {(["desk", "online", "both"] as const).map((c) => (
                     <option key={c} value={c}>
                       {t(`channel.${c}`)}
