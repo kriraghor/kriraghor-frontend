@@ -1,50 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useLocale, useTranslations } from "next-intl";
-import { ArrowRight, CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
-import { Dropdown, IconButton, Skeleton } from "@kriraghor/ui/kit";
-import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
+import { ArrowRight, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { IconButton, Skeleton } from "@kriraghor/ui/kit";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { isExternal } from "@/lib/links";
-import { sectionUrl, type SectionKey } from "@/lib/home";
-import { nameOf } from "./queries";
-import { sectionFilters } from "./section-data";
-
-const FILTER_STALE_MS = 3600_000;
+import type { SectionKey } from "@/lib/home";
 
 export type RailState = "loading" | "error" | "empty" | "ready";
-
-/** A section's search bar: text and one dropdown, then on to its list page with both in the URL. */
-function SectionSearch({ section }: { section: SectionKey }) {
-  const t = useTranslations(`home.sections.${section}`);
-  const ts = useTranslations("home.search");
-  const locale = useLocale();
-  const router = useRouter();
-  const [filter, setFilter] = useState("");
-  const filters = useQuery({ queryKey: ["home-filter", section], staleTime: FILTER_STALE_MS, queryFn: sectionFilters[section] });
-  const go = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const href = sectionUrl(section, { q: String(new FormData(e.currentTarget).get("q") ?? ""), filter });
-    if (isExternal(href)) window.location.assign(href);
-    else router.push(href);
-  };
-  return (
-    <form role="search" aria-label={t("title")} action={sectionUrl(section)} onSubmit={go} className="glass-card mt-5 grid grid-cols-2 items-end gap-3 p-3 md:grid-cols-[minmax(0,1fr)_minmax(0,260px)_auto]" data-testid={`section-search-${section}`}>
-      <label htmlFor={`${section}-q`} className="col-span-2 flex min-w-0 flex-col gap-1 text-sm font-semibold text-muted md:col-span-1">
-        {ts("label")}
-        <span className="relative">
-          <MagnifyingGlass size={20} aria-hidden className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
-          <input id={`${section}-q`} name="q" type="search" placeholder={t("hint")} autoComplete="off" enterKeyHint="search" maxLength={60} className="min-h-12 w-full field pl-11 pr-3 text-base text-ink" />
-        </span>
-      </label>
-      <Dropdown id={`${section}-filter`} label={t("filter")} value={filter} onChange={setFilter} anyLabel={t("any")} options={(filters.data ?? []).map((o) => ({ value: o.value, label: nameOf(o, locale) }))} testId={`${section}-filter`} />
-      <button type="submit" className="inline-flex min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-control bg-brand px-3 font-bold text-on-brand transition-colors hover:bg-brand-hover sm:px-5" data-testid={`section-go-${section}`}>
-        {t("go")}
-      </button>
-    </form>
-  );
-}
 
 /** A sideways rail of cards: swipe on phones, arrows from `sm` up. */
 function Rail({ section, state, children }: { section: SectionKey; state: RailState; children: ReactNode }) {
@@ -95,7 +59,7 @@ function Rail({ section, state, children }: { section: SectionKey; state: RailSt
   );
 }
 
-/** One of the six home sections: title, search bar and a rail of live cards, or its own `body`. */
+/** One of the six home sections: the title and a rail of live cards, or its own `body`. */
 export function HomeSection({ section, icon, allHref, extra, state = "ready", body, children }: { section: SectionKey; icon: ReactNode; allHref: string; extra?: ReactNode; state?: RailState; body?: ReactNode; children?: ReactNode }) {
   const t = useTranslations(`home.sections.${section}`);
   const all = (
@@ -105,12 +69,12 @@ export function HomeSection({ section, icon, allHref, extra, state = "ready", bo
   );
   const allClass = "inline-flex min-h-11 items-center gap-1 font-bold text-brand-text underline-offset-4 hover:underline";
   return (
-    <section id={section} className="mx-auto max-w-wide scroll-mt-24 px-5 pt-16" aria-labelledby={`${section}-title`} data-testid={`home-section-${section}`}>
+    <section id={section} className="mx-auto max-w-wide scroll-mt-24 px-5 pt-24" aria-labelledby={`${section}-title`} data-testid={`home-section-${section}`}>
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div className="flex items-center gap-3">
           <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-text">{icon}</span>
           <div>
-            <h2 id={`${section}-title`} className="text-[clamp(26px,3vw,36px)] font-extrabold leading-tight">
+            <h2 id={`${section}-title`} className="text-[clamp(26px,3vw,36px)] font-extrabold uppercase leading-tight">
               {t("title")}
             </h2>
             <p className="text-muted">{t("sub")}</p>
@@ -129,7 +93,6 @@ export function HomeSection({ section, icon, allHref, extra, state = "ready", bo
           )}
         </div>
       </div>
-      <SectionSearch section={section} />
       {body ? (
         <div className="mt-5">{body}</div>
       ) : (

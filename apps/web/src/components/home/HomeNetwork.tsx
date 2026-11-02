@@ -44,6 +44,8 @@ export function HomeNetwork() {
     const root = box.current;
     if (!root || typeof ResizeObserver === "undefined") return;
     const draw = () => {
+      // Leaving the page clears the refs just before the observer is disconnected.
+      if (!hub.current || nodes.current.some((n) => !n)) return;
       const b = root.getBoundingClientRect();
       const centre = (el: Element) => {
         const r = el.getBoundingClientRect();
@@ -65,8 +67,8 @@ export function HomeNetwork() {
   }, []);
 
   return (
-    <section className="mx-auto max-w-wide px-5 pt-16 text-center" aria-labelledby="network-title" data-testid="home-network">
-      <h2 id="network-title" className="text-[clamp(26px,3vw,36px)] font-extrabold leading-tight">
+    <section className="mx-auto max-w-wide px-5 pt-24 text-center" aria-labelledby="network-title" data-testid="home-network">
+      <h2 id="network-title" className="text-[clamp(26px,3vw,36px)] font-extrabold uppercase leading-tight">
         {t("title")}
       </h2>
       <p className="mx-auto mt-2 max-w-[60ch] text-muted">{t("sub")}</p>
@@ -104,7 +106,7 @@ export function HomeNetwork() {
             className={cn("glass-card absolute z-10 grid w-[128px] -translate-x-1/2 -translate-y-1/2 gap-0.5 rounded-[16px] px-3 py-2 text-left no-underline transition-colors hover:border-brand sm:w-[160px] md:w-[176px]", n.at)}
             data-testid={`net-${n.key}`}
           >
-            <b className="font-display text-base leading-tight">{t(`${n.key}.title`)}</b>
+            <b className="font-display text-base uppercase leading-tight">{t(`${n.key}.title`)}</b>
             <span className="text-xs leading-snug text-muted sm:text-sm">{t(`${n.key}.sub`)}</span>
           </a>
         ))}

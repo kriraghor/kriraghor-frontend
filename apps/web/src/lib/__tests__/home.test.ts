@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countdown, dhakaDateOf, searchGroups, searchText, sectionUrl, SECTIONS } from "../home";
+import { countdown, dhakaDateOf, filled, finderUrl, nextTab, podium, searchGroups, searchText, sectionUrl, SECTIONS } from "../home";
 import en from "../../../messages/en.json";
 import bn from "../../../messages/bn.json";
 
@@ -45,6 +45,35 @@ describe("home", () => {
     const groups = searchGroups(" iron ");
     expect(groups.map((g) => g.key)).toEqual([...SECTIONS]);
     expect(groups[1]).toEqual({ key: "gym", text: "iron", href: "/go/gym/gyms?q=iron" });
+  });
+
+  it("builds finder links with only the filters each page supports", () => {
+    expect(finderUrl("tournaments", { game: "free_fire" })).toBe("/go/esports/events?game=free_fire");
+    expect(finderUrl("tournaments", {})).toBe("/go/esports/events");
+    expect(finderUrl("grounds", { sport: "football", areaId: "a1" })).toBe("/venues?sport=football&area=a1");
+    expect(finderUrl("shop", { q: "  whey protein " })).toBe("/shop?q=whey+protein");
+    expect(finderUrl("shop", { q: "   " })).toBe("/shop");
+    expect(finderUrl("hire", { category: "officials", areaId: "a1" })).toBe("/hiring?category=officials&areaId=a1");
+  });
+
+  it("moves between finder tabs with the arrow keys, Home and End", () => {
+    expect(nextTab(0, "ArrowRight", 4)).toBe(1);
+    expect(nextTab(3, "ArrowRight", 4)).toBe(0);
+    expect(nextTab(0, "ArrowLeft", 4)).toBe(3);
+    expect(nextTab(2, "ArrowUp", 4)).toBe(1);
+    expect(nextTab(2, "ArrowDown", 4)).toBe(3);
+    expect(nextTab(2, "Home", 4)).toBe(0);
+    expect(nextTab(1, "End", 4)).toBe(3);
+    expect(nextTab(1, "Enter", 4)).toBeNull();
+  });
+
+  it("works out the share of places taken and the top three prizes", () => {
+    expect(filled(3, 12)).toBe(0.25);
+    expect(filled(20, 12)).toBe(1);
+    expect(filled(1, 0)).toBe(0);
+    const prize = (place: number) => ({ place, amount: { amount: place } });
+    expect(podium([prize(4), prize(2), prize(1), prize(3)]).map((p) => p.place)).toEqual([1, 2, 3]);
+    expect(podium(null)).toEqual([]);
   });
 
   it("has every word of the new pages in both languages", () => {
