@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanCode, copyDayToAll, gymActions, hoursProblems, scanInput, windowsOf, type Hours } from "../manage";
+import { cleanCode, copyDayToAll, dayPassState, gymActions, hoursProblems, listingSteps, scanInput, windowsOf, type Hours, type OwnerGym } from "../manage";
 
 const w = (dow: number, openTime: string, closeTime: string, womenOnly = false) => ({ dow, openTime, closeTime, womenOnly });
 
@@ -32,5 +32,38 @@ describe("managing a gym (M20, moved from the business panel to gym.kriraghor.co
     expect(scanInput(" v1.0b2c.ab12.0123456789abcdef ")).toEqual({ token: "v1.0b2c.ab12.0123456789abcdef" });
     expect(scanInput("k7m-2pq")).toEqual({ code: "K7M2PQ" });
     expect(cleanCode(" ab 12-cd ")).toBe("AB12CD");
+  });
+});
+
+describe("what a gym lacks before review (M24-FR-24)", () => {
+  const limits = { dayMin: 10000, dayMax: 300000, minPhotos: 3 } as OwnerGym["limits"];
+  const pass = (kind: string, channel: string, price = 10000) => ({ kind, channel, price }) as OwnerGym["packages"][number];
+  const gym = (packages: OwnerGym["packages"], photos = 3, hours = 1) => ({ limits, packages, photos: Array(photos).fill({}), hours: Array(hours).fill({}) }) as Pick<OwnerGym, "limits" | "packages" | "photos" | "hours">;
+
+  it("counts only a day pass sold online", () => {
+    expect(dayPassState(gym([]))).toBe("none");
+    expect(dayPassState(gym([pass("month", "both")]))).toBe("none");
+    expect(dayPassState(gym([pass("day", "desk")]))).toBe("desk");
+    expect(dayPassState(gym([pass("day", "online")]))).toBe("online");
+    expect(dayPassState(gym([pass("day", "both")]))).toBe("online");
+  });
+
+  it("checks the day pass price against the limits", () => {
+    expect(dayPassState(gym([pass("day", "both", 9900)]))).toBe("price");
+    expect(dayPassState(gym([pass("day", "online", 300100)]))).toBe("price");
+    expect(dayPassState(gym([pass("day", "online", 300000)]))).toBe("online");
+  });
+
+  it("lists photos, hours and the day pass, each done or not", () => {
+    expect(listingSteps(gym([pass("day", "both")]))).toEqual([
+      { key: "photos", done: true, have: 3, need: 3 },
+      { key: "hours", done: true },
+      { key: "dayPass", done: true, state: "online" },
+    ]);
+    expect(listingSteps(gym([pass("day", "desk")], 2, 0))).toEqual([
+      { key: "photos", done: false, have: 2, need: 3 },
+      { key: "hours", done: false },
+      { key: "dayPass", done: false, state: "desk" },
+    ]);
   });
 });

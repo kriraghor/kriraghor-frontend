@@ -111,3 +111,24 @@ export const cleanCode = (text: string) => text.toUpperCase().replace(/[^0-9A-Z]
 
 /** A scanned value: a pass token (v1.<id>.<nonce>.<sig>) or else a backup code. */
 export const scanInput = (text: string): { token: string } | { code: string } => (/^v1\.[^.]+\.[^.]+\.[^.]+$/.test(text.trim()) ? { token: text.trim() } : { code: cleanCode(text) });
+
+export type DayPassState = "online" | "desk" | "none" | "price";
+export type ListingStep = { key: "photos"; done: boolean; have: number; need: number } | { key: "hours"; done: boolean } | { key: "dayPass"; done: boolean; state: DayPassState };
+
+/** The day pass as the review check sees it (M24-FR-24): only a pass sold online counts, inside the price limits. */
+export function dayPassState(g: Pick<OwnerGym, "packages" | "limits">): DayPassState {
+  const days = g.packages.filter((p) => p.kind === "day");
+  const online = days.find((p) => p.channel !== "desk");
+  if (online) return online.price < g.limits.dayMin || online.price > g.limits.dayMax ? "price" : "online";
+  return days.length ? "desk" : "none";
+}
+
+/** What a gym still lacks before review: the same checks as the API's submit (photos, hours, a day pass sold online). */
+export function listingSteps(g: Pick<OwnerGym, "photos" | "hours" | "packages" | "limits">): ListingStep[] {
+  const state = dayPassState(g);
+  return [
+    { key: "photos", done: g.photos.length >= g.limits.minPhotos, have: g.photos.length, need: g.limits.minPhotos },
+    { key: "hours", done: g.hours.length > 0 },
+    { key: "dayPass", done: state === "online", state },
+  ];
+}

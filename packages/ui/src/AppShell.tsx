@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState, type ReactNode } from "react";
-import { List, SidebarSimple } from "@phosphor-icons/react";
+import { CaretDown, List, SidebarSimple } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "./i18n/navigation";
 import { cn } from "./cn";
@@ -9,7 +9,13 @@ import { Sheet, Tooltip } from "./kit/Overlay";
 import { HEADER, setCollapsed, ShellLink, useCollapsed, type ShellItem } from "./shell-parts";
 
 export type { ShellItem };
-export type ShellGroup = { label?: string; items: ShellItem[] };
+export type ShellGroup = {
+  label?: string;
+  items: ShellItem[];
+  /** The label folds the group. It starts open when it holds the current page or `defaultOpen` is set. */
+  collapsible?: boolean;
+  defaultOpen?: boolean;
+};
 
 /**
  * The desk layout for the esports and gym account areas, gym /manage and the portal (kriraghor.com's
@@ -23,6 +29,7 @@ export function AppShell({
   title,
   top,
   foot,
+  context,
   variant = "light",
   children,
 }: {
@@ -30,6 +37,8 @@ export function AppShell({
   title: string;
   top?: (collapsed: boolean) => ReactNode;
   foot?: (collapsed: boolean) => ReactNode;
+  /** Which one the page belongs to (a gym's name), shown beside the page name on phones. */
+  context?: string | null;
   variant?: "light" | "dark";
   children: ReactNode;
 }) {
@@ -82,7 +91,7 @@ export function AppShell({
         {/* Phones: the page name and a button that opens the same menu as a sheet. */}
         <div className="sticky z-30 flex min-h-[61px] items-center gap-2 border-b border-line bg-bg/90 px-3 py-2 backdrop-blur md:hidden" style={{ top: HEADER }}>
           <Suspense fallback={null}>
-            <PhoneMenu groups={groups} title={title} top={top} />
+            <PhoneMenu groups={groups} title={title} top={top} context={context} />
           </Suspense>
         </div>
         {children}
@@ -103,9 +112,36 @@ function ActiveNav(props: { groups: ShellGroup[]; title: string; rail: boolean; 
 }
 
 function NavList({ groups, title, rail, active, onNavigate, dark }: { groups: ShellGroup[]; title: string; rail: boolean; active: ShellItem | null; onNavigate?: () => void; dark?: boolean }) {
+  // What the person folded or opened by hand; everything else follows the current page.
+  const [toggled, setToggled] = useState<Record<string, boolean>>({});
   return (
-    <nav aria-label={title} className="flex flex-col gap-5">
-      {groups.map((g, gi) => (
+    <nav aria-label={title} className={cn("flex flex-col", groups.some((g) => g.collapsible) && !rail ? "gap-1" : "gap-5")}>
+      {groups.map((g, gi) => {
+        const holdsActive = active !== null && g.items.some((it) => it.href === active.href);
+        const open = holdsActive || (toggled[g.label ?? gi] ?? Boolean(g.defaultOpen));
+        if (g.collapsible && g.label && !rail)
+          return (
+            <div key={gi} data-testid={`nav-group-${gi}`}>
+              <button
+                type="button"
+                aria-expanded={open}
+                disabled={holdsActive}
+                onClick={() => setToggled((all) => ({ ...all, [g.label ?? gi]: !open }))}
+                className={cn("flex min-h-11 w-full items-center justify-between gap-2 rounded-control px-3 text-left text-xs font-semibold uppercase tracking-wider", dark ? "text-band-muted hover:text-band-text" : "text-muted hover:text-ink", !holdsActive && (dark ? "hover:bg-band-text/10" : "hover:bg-surface-2"))}
+              >
+                {g.label}
+                {holdsActive ? null : <CaretDown size={14} weight="bold" aria-hidden className={cn("shrink-0 transition-transform duration-200 motion-reduce:transition-none", open && "rotate-180")} />}
+              </button>
+              <div className={cn("grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none", open ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
+                <div className="flex min-h-0 flex-col gap-0.5 overflow-hidden" inert={!open}>
+                  {g.items.map((it) => (
+                    <ShellLink key={it.href} item={it} active={active !== null && it.href === active.href} rail={rail} onNavigate={onNavigate} dark={dark} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        return (
         <div key={gi} className="flex flex-col gap-0.5">
           {g.label ? (
             rail ? (
@@ -118,12 +154,13 @@ function NavList({ groups, title, rail, active, onNavigate, dark }: { groups: Sh
             <ShellLink key={it.href} item={it} active={active !== null && it.href === active.href} rail={rail} onNavigate={onNavigate} dark={dark} />
           ))}
         </div>
-      ))}
+        );
+      })}
     </nav>
   );
 }
 
-function PhoneMenu({ groups, title, top }: { groups: ShellGroup[]; title: string; top?: (collapsed: boolean) => ReactNode }) {
+function PhoneMenu({ groups, title, top, context }: { groups: ShellGroup[]; title: string; top?: (collapsed: boolean) => ReactNode; context?: string | null }) {
   const pathname = usePathname();
   // The sheet belongs to the page it was opened on, so it closes by itself after navigating.
   const [sheetFor, setSheetFor] = useState<string | null>(null);
@@ -135,9 +172,10 @@ function PhoneMenu({ groups, title, top }: { groups: ShellGroup[]; title: string
       title={title}
       side="left"
       trigger={
-        <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-control px-2 text-sm font-semibold hover:bg-surface-2" data-testid="shell-menu">
-          <List size={22} aria-hidden />
-          <span>{active?.label ?? title}</span>
+        <button type="button" className="inline-flex min-h-11 min-w-0 items-center gap-2 rounded-control px-2 text-sm font-semibold hover:bg-surface-2" data-testid="shell-menu">
+          <List size={22} aria-hidden className="shrink-0" />
+          <span className="shrink-0">{active?.label ?? title}</span>
+          {context ? <span className="min-w-0 truncate font-normal text-muted" data-testid="shell-context">{context}</span> : null}
         </button>
       }
     >

@@ -136,3 +136,40 @@ export function manageGroups(input: { gyms: readonly ManageGymRef[] }): ManageGr
 
 /** May this person see /manage at all: someone who owns a gym, or staff at a gym with any desk. */
 export const canManage = (gyms: readonly ManageGymRef[]) => gyms.some((g) => g.role === "owner" || staffItems(g.id, g.permissions ?? []).length > 0);
+
+// ---------------- one gym at a time (2 Nov 2026) ----------------
+
+export type GymSectionKey = "today" | "people" | "money" | "setup";
+/** A gym's pages in the sidebar, by what the owner is doing. */
+const SECTIONS: { key: GymSectionKey; pages: GymPageKey[] }[] = [
+  { key: "today", pages: ["dashboard", "desk", "entrance", "requests"] },
+  { key: "people", pages: ["members", "plans", "reviews"] },
+  { key: "money", pages: ["fees", "closing", "passes", "reports"] },
+  { key: "setup", pages: ["edit", "packages", "reminders", "import", "settings"] },
+];
+/** The /manage pages that are not one gym's. */
+const NOT_A_GYM = new Set(["billing", "payouts", "reports"]);
+
+/** The gym id in a /manage path, or null on the pages that are not one gym's. */
+export function gymFromPath(pathname: string): string | null {
+  const id = pathname.split("/")[2];
+  return id && !NOT_A_GYM.has(id) ? id : null;
+}
+
+/** The gym the sidebar shows: the one in the URL, else the last one used, else the first. */
+export function currentGym(gyms: readonly ManageGroup[], pathname: string, remembered: string | null): ManageGroup | null {
+  const byId = (id: string | null) => (id ? gyms.find((g) => g.gymId === id) : undefined);
+  return byId(gymFromPath(pathname)) ?? byId(remembered) ?? gyms[0] ?? null;
+}
+
+/** A gym's pages in their sections; a section with no page this person may open is left out. */
+export const gymSections = (items: readonly ManageItem[]): { key: GymSectionKey; items: ManageItem[] }[] =>
+  SECTIONS.map((s) => ({ key: s.key, items: s.pages.flatMap((p) => items.filter((i) => i.key === p)) })).filter((s) => s.items.length);
+
+/** Where choosing another gym goes: the same page there when this person may open it, else its first page. */
+export function switchGymHref(pathname: string, from: ManageGroup | null, to: ManageGroup): string {
+  const first = to.items[0]?.href ?? "/manage";
+  if (!from || gymFromPath(pathname) !== from.gymId) return first;
+  const here = [...from.items].sort((a, b) => b.href.length - a.href.length).find((i) => pathname === i.href || pathname.startsWith(`${i.href}/`));
+  return to.items.find((i) => i.key === here?.key)?.href ?? first;
+}

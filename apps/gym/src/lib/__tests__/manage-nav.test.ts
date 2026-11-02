@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canManage, canOpen, gymItems, manageGroups, staffItems, workplaceGyms, type ManageGymRef } from "../manage-nav";
+import { canManage, canOpen, currentGym, gymFromPath, gymItems, gymSections, manageGroups, staffItems, switchGymHref, workplaceGyms, type ManageGymRef } from "../manage-nav";
 
 const hrefs = (groups: { items: { href: string }[] }[]) => groups.flatMap((g) => g.items.map((i) => i.href));
 const own = (id: string, name: string): ManageGymRef => ({ id, name, role: "owner", permissions: null });
@@ -86,5 +86,50 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
     expect(canManage([work("y1", ["fees.collect"])])).toBe(true);
     expect(canManage([work("y1", [])])).toBe(false);
     expect(canManage([])).toBe(false);
+  });
+});
+
+describe("/manage one gym at a time", () => {
+  const gyms = manageGroups({ gyms: [own("g1", "Iron House"), own("g2", "Lift"), work("g3", ["members.view"], "Pulse")] }).slice(1);
+  const [g1, g2, g3] = gyms;
+
+  it("finds the gym in the path, and none on the all-gyms pages", () => {
+    expect(gymFromPath("/manage/g1")).toBe("g1");
+    expect(gymFromPath("/manage/g1/members/m9")).toBe("g1");
+    for (const p of ["/manage", "/manage/billing", "/manage/billing/invoices", "/manage/payouts", "/manage/reports"]) expect(gymFromPath(p)).toBeNull();
+  });
+
+  it("shows the gym in the URL, else the last one used, else the first", () => {
+    expect(currentGym(gyms, "/manage/g2/fees", "g1")?.gymId).toBe("g2");
+    expect(currentGym(gyms, "/manage/billing", "g2")?.gymId).toBe("g2");
+    expect(currentGym(gyms, "/manage/billing", "gone")?.gymId).toBe("g1");
+    expect(currentGym(gyms, "/manage/unknown/fees", null)?.gymId).toBe("g1");
+    expect(currentGym([], "/manage", null)).toBeNull();
+  });
+
+  it("groups an owner's pages into sections, with every page once", () => {
+    const sections = gymSections(g1.items);
+    expect(sections.map((x) => x.key)).toEqual(["today", "people", "money", "setup"]);
+    expect(sections.flatMap((x) => x.items.map((i) => i.key)).sort()).toEqual(g1.items.map((i) => i.key).sort());
+    expect(sections[0].items.map((i) => i.key)).toEqual(["dashboard", "desk", "entrance", "requests"]);
+  });
+
+  it("leaves out a section with no page for staff", () => {
+    const sections = gymSections(g3.items);
+    expect(sections.map((x) => x.key)).toEqual(["today", "people"]);
+    expect(sections.flatMap((x) => x.items.map((i) => i.key))).toEqual(["dashboard", "requests", "members"]);
+  });
+
+  it("keeps your place when switching gyms", () => {
+    expect(switchGymHref("/manage/g1/members", g1, g2)).toBe("/manage/g2/members");
+    expect(switchGymHref("/manage/g1/members/m9", g1, g2)).toBe("/manage/g2/members");
+    expect(switchGymHref("/manage/g1/fees/closing", g1, g2)).toBe("/manage/g2/fees/closing");
+    expect(switchGymHref("/manage/g1", g1, g2)).toBe("/manage/g2");
+  });
+
+  it("opens the dashboard when that page is not allowed there, or the path has no gym", () => {
+    expect(switchGymHref("/manage/g1/settings", g1, g3)).toBe("/manage/g3");
+    expect(switchGymHref("/manage/billing", g1, g2)).toBe("/manage/g2");
+    expect(switchGymHref("/manage/g1/members", null, g2)).toBe("/manage/g2");
   });
 });
