@@ -7,9 +7,10 @@ export const APP = {
   title: "Kriraghor",
   description: "Esports, venues, gear and talent for players in Bangladesh.",
   audience: "api" as Audience,
-  // home-v3 order: esports first (priority 1), then grounds, shop, hire, gym; tournaments last.
+  // Business first (the 2 Nov 2026 design), then esports (priority 1), grounds, shop, hire, gym; tournaments last.
   // Esports and gym are their own sites (esports.kriraghor.com, gym.kriraghor.com), reached through /go/.
   nav: [
+    { href: "/business", key: "business" },
     { href: "/go/esports", key: "esports" },
     { href: "/venues", key: "grounds" },
     { href: "/shop", key: "shop" },

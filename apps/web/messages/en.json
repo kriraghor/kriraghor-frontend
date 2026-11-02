@@ -23,7 +23,9 @@
     "menu": "Menu",
     "closeMenu": "Close menu",
     "quick": "Quick links",
-    "account": "Account"
+    "account": "Account",
+    "business": "Business",
+    "search": "Search"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -436,7 +438,10 @@
       "picked": "{from}–{to} · about {amount}",
       "continue": "Continue",
       "clear": "Clear",
-      "hoursOf": "Open hours at {name}"
+      "hoursOf": "Open hours at {name}",
+      "search": "Search venues",
+      "searchHint": "Venue name",
+      "searchGo": "Search"
     },
     "page": {
       "all": "All venues",
@@ -1929,9 +1934,6 @@
     "withdrawConfirm": "Withdraw the team",
     "cancel": "Cancel",
     "refundRules": "Refunds: 100% before registration closes or if the team is not accepted, 50% after registration closes, none after the first match. A cancelled event refunds what is still held.",
-    "homeKicker": "Events",
-    "homeTitle": "Enter your team",
-    "homeAll": "All events",
     "errors": {
       "REGISTRATION_NOT_YET_OPEN": "Registration has not opened yet.",
       "REGISTRATION_CLOSED": "Registration is closed.",
@@ -1949,313 +1951,190 @@
   },
   "footer": {
     "homeLabel": "Kriraghor home",
-    "tagline": "Esports, venues, gear and talent for players in Bangladesh.",
-    "esports": "Esports",
-    "tournaments": "Events",
+    "tagline": "Esports, gym passes, venue booking, gear and talent for players in Bangladesh.",
+    "departments": "Departments",
+    "esports": "Esports events",
     "leaderboards": "Leaderboards",
-    "fairPlay": "Fair play rules",
-    "play": "Play",
+    "gym": "Gym",
     "grounds": "Venues",
     "shop": "Shop",
     "hire": "Hire",
-    "gym": "Gym",
     "sportsTournaments": "Sports events",
     "business": "Business",
+    "businessHome": "Business home",
+    "ownerSignIn": "Owner sign in",
     "listGround": "List your venue",
     "openShop": "Open a shop",
-    "getHired": "Get hired",
     "listGym": "List your gym",
+    "getHired": "Get hired",
     "organisers": "Events organisers",
-    "help": "Help",
+    "quickLinks": "Quick links",
+    "about": "About Kriraghor",
+    "howItWorks": "How it works",
     "helpCentre": "Help centre",
-    "refunds": "Refund policy",
-    "buyerProtection": "Buyer protection",
     "terms": "Terms",
     "privacy": "Privacy",
+    "refunds": "Refund policy",
+    "buyerProtection": "Buyer protection",
+    "fairPlay": "Fair play rules",
     "legal": "© 2026 Kriraghor, Dhaka."
   },
   "home": {
-    "soon": "Coming soon",
     "hero": {
-      "title": "Play PUBG Mobile and Free Fire.",
-      "titleEm": "Win real prizes.",
-      "sub": "Daily custom rooms. Verified players, the room ID before kick-off, and prizes paid to bKash or Nagad.",
-      "join": "Join an event",
-      "how": "How it works",
-      "openCount": "{n}{more} events open for registration",
-      "loading": "Loading the next event",
-      "noneTitle": "New events every week",
-      "noneBody": "No event is taking registrations right now. See the schedule and past results on Kriraghor Esports.",
-      "browse": "Go to esports",
-      "nextUp": "Next up",
-      "startsIn": "Starts in",
-      "started": "Started",
-      "entry": "Entry",
-      "free": "Free",
-      "perPlayer": "per player",
-      "perSquad": "per squad",
-      "firstPrize": "1st prize",
-      "prizePool": "Prize pool",
-      "place": "{place, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} {amount}",
-      "playersIn": "Players registered",
-      "squadsIn": "Squads registered",
-      "ofMax": "{taken} of {max}",
-      "perKill": "+{amount} for every kill.",
-      "roomNote": "The room ID unlocks for checked-in players shortly before the start.",
-      "register": "Register for {fee}",
-      "registerFree": "Register free",
-      "eventLive": "Live now",
-      "eventUpcoming": "Showcase",
-      "eventPrizes": "Total prizes"
+      "kicker": "Kriraghor",
+      "title": "Bangladesh's sports and esports platform",
+      "sub": "Book venues, get gym passes, hire talent, shop original gear and play competitive matches.",
+      "business": "Explore Business",
+      "how": "How it works"
     },
-    "finder": {
-      "label": "Find what you need",
-      "tabsLabel": "What are you looking for?",
-      "tab": {
-        "tournaments": "Events",
-        "grounds": "Venues",
-        "shop": "Shop",
-        "hire": "Hire"
+    "live": {
+      "title": "Live on Kriraghor",
+      "esports": "Esports events open",
+      "sports": "Sports events open",
+      "next": "Next esports event",
+      "none": "New events are added every week."
+    },
+    "network": {
+      "title": "One network for every game you play",
+      "sub": "Esports, gym, venues, shop, hiring and sports events, all on Kriraghor.",
+      "hub": "Kriraghor",
+      "esports": {
+        "title": "Esports",
+        "sub": "Daily custom rooms"
       },
-      "game": "Game",
-      "anyGame": "Any game",
-      "sport": "Sport",
-      "anySport": "Any sport",
-      "area": "Area",
-      "anyArea": "Anywhere",
-      "search": "Search the shop",
-      "searchPlaceholder": "Cricket bat, whey protein, futsal boots",
-      "need": "I need",
-      "anyone": "Anyone",
-      "go": {
-        "tournaments": "Find events",
-        "grounds": "Find a venue",
-        "shop": "Search the shop",
-        "hire": "Browse talent"
+      "gym": {
+        "title": "Gym",
+        "sub": "Passes with QR entry"
+      },
+      "venues": {
+        "title": "Venues",
+        "sub": "Hourly slot booking"
+      },
+      "shop": {
+        "title": "Shop",
+        "sub": "Verified sellers"
+      },
+      "hire": {
+        "title": "Hire",
+        "sub": "Umpires and coaches"
+      },
+      "events": {
+        "title": "Sports events",
+        "sub": "Teams and fixtures"
       }
     },
-    "open": {
-      "title": "Open for registration",
-      "sub": "Pay entry online. Full refund if an event doesn't fill.",
-      "filter": "Filter by game",
-      "all": "All games",
-      "listLabel": "Events open for registration",
-      "pool": "prize pool",
-      "free": "Free entry",
-      "perPlayer": "{fee} per player",
-      "perSquad": "{fee} per squad",
+    "search": {
+      "label": "Search",
+      "failed": "This list couldn't load right now. Please try again in a moment.",
+      "prev": "Show earlier cards",
+      "next": "Show more cards"
+    },
+    "sections": {
+      "esports": {
+        "title": "Esports events",
+        "sub": "Daily custom rooms for PUBG Mobile and Free Fire.",
+        "all": "All events",
+        "top": "Top players",
+        "hint": "Event name",
+        "filter": "Game",
+        "any": "All games",
+        "go": "Find events",
+        "none": "Nothing is open right now. New events are added every week."
+      },
+      "gym": {
+        "title": "Gym",
+        "sub": "Gym passes, monthly memberships and personal trainers.",
+        "all": "All gyms",
+        "hint": "Gym name",
+        "filter": "Area",
+        "any": "All areas",
+        "go": "Find gyms",
+        "none": "No gyms are listed yet."
+      },
+      "venues": {
+        "title": "Venues",
+        "sub": "Book turfs, pitches and courts by the hour.",
+        "all": "All venues",
+        "hint": "Venue name",
+        "filter": "Sport",
+        "any": "All sports",
+        "go": "Find venues",
+        "none": "No venues are listed yet."
+      },
+      "shop": {
+        "title": "Shop",
+        "sub": "Original sports gear and authentic supplements from verified shops.",
+        "all": "All products",
+        "hint": "Bat, boots, whey protein",
+        "filter": "Category",
+        "any": "All categories",
+        "go": "Find products",
+        "none": "No products are listed yet."
+      },
+      "hire": {
+        "title": "Hire",
+        "sub": "Umpires, referees, coaches and players.",
+        "all": "All talent",
+        "hint": "Name or skill",
+        "filter": "Role",
+        "any": "Everyone",
+        "go": "Find talent",
+        "none": "No one is listed yet."
+      },
+      "events": {
+        "title": "Sports events",
+        "sub": "Football, cricket and more, open for your team.",
+        "all": "All sports events",
+        "hint": "Event name",
+        "filter": "Sport",
+        "any": "All sports",
+        "go": "Search events",
+        "none": "No sports events are open right now."
+      }
+    },
+    "cards": {
+      "free": "Free",
+      "esportsMeta": "Entry {fee}. Prize pool {prize}.",
       "players": "{taken} of {max} players",
       "squads": "{taken} of {max} squads",
       "register": "Register",
-      "none": "Nothing open for this game right now. New events are added every week.",
-      "seeAll": "See all events",
-      "seeAllSub": "Filter by game and stage on Kriraghor Esports.",
-      "browse": "Browse events",
-      "swipe": "Swipe for more"
-    },
-    "players": {
-      "title": "Top players this season",
-      "sub": "Ranked by finalised results and event tier.",
-      "full": "Full leaderboard",
-      "points": "{n, number} pts",
-      "record": "{wins} wins · {kills} kills",
-      "none": "Rankings appear after the first finalised events."
-    },
-    "how": {
-      "title": "How it works",
-      "uid": {
-        "title": "Verify your game UID",
-        "body": "Add your UID with a profile screenshot. One UID per game."
-      },
-      "pay": {
-        "title": "Pay the entry fee",
-        "body": "bKash, Nagad or card. Held safely until results are final."
-      },
-      "room": {
-        "title": "Check in, get the room",
-        "body": "The room ID and password appear for you before the match."
-      },
-      "win": {
-        "title": "Win and withdraw",
-        "body": "Prizes land in your balance. Withdraw to bKash or Nagad."
-      }
-    },
-    "grounds": {
-      "eyebrow": "Venues",
-      "title": "Open tonight",
-      "titleNear": "Open tonight near you",
-      "sub": "Tap a time to book. Pay the advance or the full amount online.",
-      "locate": "Use my location",
-      "locating": "Finding you…",
-      "locationNote": "We use your location only to sort venues by distance. It isn't saved.",
-      "locationDenied": "We couldn't get your location, so venues are sorted by price.",
-      "all": "All venues",
-      "none": "No venues are listed yet.",
-      "perHour": "{price}/hr",
-      "metres": "{m} m",
-      "km": "{km} km",
-      "timesAt": "Free times tonight at {name}",
-      "full": "No free hours left tonight.",
-      "otherDays": "See other days",
-      "picked": "{name}, tonight at {time} for 1 hour.",
-      "continue": "Continue to booking",
-      "prev": "Previous venues",
-      "next": "More venues"
-    },
-    "shop": {
-      "title": "Gear, supplements and used kit",
-      "sub": "New stock from verified shops. Used gear from NID-verified members is coming soon.",
-      "all": "Browse the shop",
-      "gear": {
-        "title": "Sports gear shops",
-        "body": "Bats, boots, rackets and kits from verified shops."
-      },
-      "supplements": {
-        "title": "Supplement houses",
-        "body": "Expiry date and batch number on every listing. Expired stock is never sold."
-      },
-      "gym": {
-        "title": "Gym gear",
-        "body": "Weights, mats and machines."
-      },
-      "used": {
-        "title": "Sell your used gear",
-        "body": "List for free and get paid when the buyer collects."
-      }
-    },
-    "hire": {
-      "title": "Hire players, officials and coaches",
-      "sub": "Chat in the app and pay through Kriraghor. Money is released when the job is done.",
-      "all": "See everyone for hire",
-      "none": "Profiles appear here once they are approved.",
-      "jobs": "{n, plural, one {# job done} other {# jobs done}}",
-      "years": "{n, plural, one {# year} other {# years}} experience",
-      "perHour": "per hour",
-      "perMatch": "per match",
-      "officials": "Umpires and referees",
-      "playersTitle": "Players",
-      "available": "{n, number} available",
-      "checked": "Every profile is checked by our staff, with an NID and the licence or certificate for that role.",
-      "byRole": "Everyone your team needs, by role",
-      "prev": "Previous three",
-      "next": "Next three",
-      "pause": "Pause the list",
-      "play": "Play the list"
-    },
-    "gym": {
-      "body": "Day, monthly and three-month passes with QR entry at the front desk. Monthly plans with trainers.",
-      "cta": "Find a gym",
-      "none": "Gyms appear here once they are approved.",
+      "showcase": "Showcase",
+      "showcaseMeta": "Our big live-streamed event.",
+      "view": "View event",
       "openNow": "Open now",
-      "day": "{price} a day",
-      "month": "{price} a month",
-      "listTitle": "Gyms on Kriraghor",
-      "count": "{n, number} open to book",
-      "prev": "Previous gyms",
-      "next": "More gyms",
+      "dayPass": "{price} day pass",
+      "monthly": "{price} a month",
+      "viewGym": "View gym",
+      "perHour": "{price} / hr",
+      "perMatch": "{price} / match",
+      "bookSlot": "Book slot",
+      "viewItem": "View item",
+      "hireNow": "Hire now"
+    },
+    "info": {
+      "about": {
+        "title": "About Kriraghor",
+        "body": "One account for esports events, gyms, venues, gear, hiring and sports events in Bangladesh.",
+        "link": "Read more"
+      },
+      "help": {
+        "title": "Help and support",
+        "body": "Answers to common questions, and what to do about a booking, order or match.",
+        "link": "Go to the Help centre"
+      }
+    },
+    "tickers": {
+      "officials": "Umpires and referees",
+      "players": "Players",
+      "available": "{n, number} available",
+      "hirePrev": "Previous three",
+      "hireNext": "Next three",
+      "gymList": "Gyms on Kriraghor",
+      "gymCount": "{n, number} open to book",
+      "gymPrev": "Previous gyms",
+      "gymNext": "More gyms",
       "pause": "Pause the list",
       "play": "Play the list"
-    },
-    "business": {
-      "title": "Run your sports business on Kriraghor",
-      "sub": "Every business gets its own desk for bookings, orders, payouts and analytics.",
-      "grounds": {
-        "title": "Venue owners",
-        "body": "List venues, set prices and get paid at check-in.",
-        "cta": "List your venue"
-      },
-      "shops": {
-        "title": "Shops and supplement houses",
-        "body": "Sell new stock to verified buyers.",
-        "cta": "Open a shop"
-      },
-      "pros": {
-        "title": "Players, officials and coaches",
-        "body": "Set your rates, accept jobs, get paid to bKash.",
-        "cta": "Get hired"
-      },
-      "organisers": {
-        "title": "Events organisers",
-        "body": "Run your club, league or venue's sports events on Kriraghor.",
-        "cta": "Become an organiser"
-      }
-    },
-    "trust": {
-      "money": {
-        "title": "Money held safely",
-        "body": "Entry fees, bookings, orders and hires are held by Kriraghor until you get what you paid for."
-      },
-      "verified": {
-        "title": "Verified people",
-        "body": "Phone-verified players, NID-verified sellers, and owners and officials checked by our staff."
-      },
-      "refunds": {
-        "title": "Clear refunds",
-        "body": "Events that don't fill and bookings the owner cancels are refunded in full."
-      },
-      "more": "Read more:",
-      "protection": "Buyer protection",
-      "refundPolicy": "Refund policy",
-      "esports": "Esports events"
-    },
-    "sports": {
-      "title": "Pick your sport",
-      "sub": "Venues, events and gyms for the game you play.",
-      "names": {
-        "esports": "Esports",
-        "cricket": "Cricket",
-        "football": "Football",
-        "badminton": "Badminton",
-        "gym": "Gym"
-      },
-      "venues": "{n, plural, one {# venue} other {# venues}}",
-      "events": "{n, plural, one {# event open} other {# events open}}",
-      "gyms": "{n, plural, one {# gym} other {# gyms}}",
-      "prev": "Previous sports",
-      "next": "More sports"
-    },
-    "carousel": {
-      "label": "Highlights",
-      "prev": "Previous slide",
-      "next": "Next slide",
-      "pause": "Pause the slides",
-      "play": "Play the slides",
-      "goTo": "Show {name}",
-      "slides": {
-        "esports": {
-          "tab": "Esports",
-          "kicker": "PUBG Mobile and Free Fire",
-          "cta": "Join an event"
-        },
-        "venues": {
-          "tab": "Venues",
-          "kicker": "Venue booking",
-          "title": "Book a turf, court or pitch by the hour",
-          "sub": "See open slots at venues across Dhaka and lock one with an advance by bKash or Nagad.",
-          "cta": "Find a venue"
-        },
-        "hire": {
-          "tab": "Hire",
-          "kicker": "Officials and players",
-          "title": "Short an umpire? Hire one for tonight.",
-          "sub": "Licensed umpires and referees, plus rated players, available by the match.",
-          "cta": "Hire now"
-        },
-        "shop": {
-          "tab": "Shop",
-          "kicker": "Shop",
-          "title": "New gear from shops. Used gear from players.",
-          "sub": "Bats, boots, rackets, supplements and gym gear from verified shops and NID-verified sellers.",
-          "cta": "Shop now"
-        },
-        "gym": {
-          "tab": "Gym",
-          "kicker": "Gym and fitness",
-          "title": "Train with certified coaches near you",
-          "sub": "Day passes, monthly memberships and personal trainers in one place.",
-          "cta": "Enter the gym"
-        }
-      }
     }
   },
   "notFound": {
@@ -2556,6 +2435,266 @@
       "teams": "Teams",
       "fallbackTitle": "Kriraghor",
       "fallbackSubtitle": "Esports, venues, gear and talent in Bangladesh"
+    }
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "sub": "One account works across Kriraghor. Here is what happens in each part, and how your money is kept safe.",
+    "jump": "Jump to a part",
+    "forOwners": "For owners:",
+    "seeBusiness": "See Business",
+    "esports": {
+      "title": "Esports events",
+      "cta": "Browse esports events",
+      "s1": {
+        "title": "Verify your game UID",
+        "body": "Add your UID with a profile screenshot. One UID per game."
+      },
+      "s2": {
+        "title": "Pay the entry fee",
+        "body": "bKash, Nagad or card. Held safely until results are final."
+      },
+      "s3": {
+        "title": "Check in, get the room",
+        "body": "The room ID and password appear for you before the match."
+      },
+      "s4": {
+        "title": "Win and withdraw",
+        "body": "Prizes land in your balance. Withdraw to bKash or Nagad."
+      }
+    },
+    "gym": {
+      "title": "Gym",
+      "cta": "Find a gym",
+      "owners": "members, fees, check-ins, reminders and reports, all on gym.kriraghor.com.",
+      "s1": {
+        "title": "Find a gym",
+        "body": "Compare gyms near you by area, price and facilities."
+      },
+      "s2": {
+        "title": "Buy a pass or ask to join",
+        "body": "Buy a day pass online, or send a join request and the gym confirms your package."
+      },
+      "s3": {
+        "title": "Show your QR",
+        "body": "Show your code at the front desk to get in. A verified phone is enough, no NID needed."
+      },
+      "s4": {
+        "title": "Follow your plan",
+        "body": "See your dues, attendance, workout plans and diet charts from your gym in one place."
+      }
+    },
+    "venues": {
+      "title": "Venues",
+      "cta": "Find a venue",
+      "owners": "list your venue, set your prices and hours, and get paid at check-in.",
+      "s1": {
+        "title": "Pick a venue and a time",
+        "body": "See open hours by sport and area, then choose your slot."
+      },
+      "s2": {
+        "title": "Pay online",
+        "body": "Pay the full amount, or just the advance the venue asks for, with bKash, Nagad or card."
+      },
+      "s3": {
+        "title": "Check in and play",
+        "body": "Check in at the venue and pay any balance there. The venue gets its money at check-in."
+      },
+      "s4": {
+        "title": "If plans change",
+        "body": "The advance isn't refunded if you cancel or don't show up. If the venue cancels, you get everything back."
+      }
+    },
+    "shop": {
+      "title": "Shop",
+      "cta": "Go to the shop",
+      "owners": "open a verified shop with your own page, stock, orders and payouts.",
+      "s1": {
+        "title": "Find your gear",
+        "body": "Browse sports gear, gym gear and supplements from verified shops."
+      },
+      "s2": {
+        "title": "Pay online",
+        "body": "Pay with bKash, Nagad or card. Kriraghor holds the money until your order is delivered."
+      },
+      "s3": {
+        "title": "Get your order",
+        "body": "Follow your order in your account. If something is wrong, report it and the money stays held."
+      },
+      "s4": {
+        "title": "Supplements",
+        "body": "Expired stock can't be sold, and opened items can't be returned."
+      }
+    },
+    "hire": {
+      "title": "Hire",
+      "cta": "Browse talent",
+      "s1": {
+        "title": "Find the right person",
+        "body": "Umpires, referees, coaches and players, with ratings and rates on each profile."
+      },
+      "s2": {
+        "title": "Talk in the app",
+        "body": "Send a request and agree the job. Phone numbers stay hidden until you pay."
+      },
+      "s3": {
+        "title": "Pay through Kriraghor",
+        "body": "Your money is held safely until the job is done."
+      },
+      "s4": {
+        "title": "Confirm the job",
+        "body": "The pro marks the job complete and you confirm. If you don't respond in time and no dispute is open, the money is released."
+      }
+    },
+    "events": {
+      "title": "Sports events",
+      "cta": "Browse sports events",
+      "owners": "run your club or league's event, with registrations, fixtures and results.",
+      "s1": {
+        "title": "Find an event",
+        "body": "See which sports events are open for teams, and their dates and fees."
+      },
+      "s2": {
+        "title": "Register your team",
+        "body": "A captain enters the team with its squad and pays the entry fee online."
+      },
+      "s3": {
+        "title": "Play your matches",
+        "body": "Fixtures, results and standings are on the event page."
+      }
+    },
+    "money": {
+      "title": "How your money is protected",
+      "money": {
+        "title": "Money held safely",
+        "body": "Entry fees, bookings, orders and hires are held by Kriraghor until you get what you paid for."
+      },
+      "verified": {
+        "title": "Verified people",
+        "body": "Phone-verified players, NID-verified sellers, and owners and officials checked by our staff."
+      },
+      "refunds": {
+        "title": "Clear refunds",
+        "body": "Events that don't fill and bookings the owner cancels are refunded in full."
+      },
+      "more": "Read more:",
+      "protection": "Buyer protection",
+      "refundPolicy": "Refund policy",
+      "fairPlay": "Fair play rules"
+    }
+  },
+  "about": {
+    "title": "About Kriraghor",
+    "sub": "Kriraghor is a sports and esports platform for Bangladesh. One account works across all of it.",
+    "partsTitle": "What you can do here",
+    "parts": {
+      "esports": {
+        "title": "Esports events",
+        "body": "PUBG Mobile and Free Fire events with published prizes, organised by Kriraghor."
+      },
+      "gym": {
+        "title": "Gym",
+        "body": "Find a gym, buy a pass, and follow your membership and plans."
+      },
+      "venues": {
+        "title": "Venues",
+        "body": "Book turfs, pitches and courts by the hour."
+      },
+      "shop": {
+        "title": "Shop",
+        "body": "Sports gear, gym gear and supplements from verified shops."
+      },
+      "hire": {
+        "title": "Hire",
+        "body": "Umpires, referees, coaches and players, paid through Kriraghor."
+      },
+      "events": {
+        "title": "Sports events",
+        "body": "Enter your team in sports events, with fixtures and results online."
+      }
+    },
+    "trustTitle": "Why people can trust it",
+    "trust": {
+      "a": "Online payments are held by Kriraghor until you get what you paid for.",
+      "b": "Owners, sellers and officials are checked by our staff.",
+      "c": "If something goes wrong, you can open a dispute and our staff review both sides."
+    },
+    "links": {
+      "label": "More about Kriraghor",
+      "how": "How it works",
+      "help": "Help centre",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "refunds": "Refund policy"
+    }
+  },
+  "bizHome": {
+    "title": "Run your sports business on Kriraghor",
+    "sub": "Tools for gyms, venues and sports shops, with bookings, members, orders and payouts in one desk.",
+    "register": "Register your business",
+    "ownerSignIn": "Owner sign in",
+    "overview": "Overview",
+    "start": "Get started",
+    "soon": "Coming soon",
+    "gym": {
+      "title": "Gym management",
+      "body": "Run members, fees and attendance on your phone.",
+      "a": "Members and renewal dates",
+      "b": "QR check-ins and passes",
+      "c": "Reminders and reports"
+    },
+    "venue": {
+      "title": "Turf and venue booking",
+      "body": "Fill your hours and control your schedule.",
+      "a": "Live hourly booking",
+      "b": "Prices by sport and court",
+      "c": "Advance payments held safely"
+    },
+    "shop": {
+      "title": "Sports shop",
+      "body": "Sell gear and supplements to verified buyers.",
+      "a": "Your own shop page",
+      "b": "Stock and orders in one desk",
+      "c": "Settlements and payouts"
+    },
+    "academy": {
+      "title": "Academy and coaching",
+      "body": "For training camps and coaching academies.",
+      "a": "Student and batch lists",
+      "b": "Coach attendance",
+      "c": "Fee collection"
+    },
+    "othersTitle": "Also on Kriraghor",
+    "pros": {
+      "title": "Players, officials and coaches",
+      "body": "Set your rates, accept jobs, get paid to bKash.",
+      "cta": "Get hired"
+    },
+    "organisers": {
+      "title": "Events organisers",
+      "body": "Run your club, league or venue's sports events on Kriraghor.",
+      "cta": "Become an organiser"
+    }
+  },
+  "search": {
+    "title": "Search Kriraghor",
+    "titleFor": "Results for \"{q}\"",
+    "label": "Search Kriraghor",
+    "short": "Search",
+    "hint": "Event, gym, venue, gear or person",
+    "go": "Search",
+    "prompt": "Search esports events, gyms, venues, the shop, talent and sports events.",
+    "tooShort": "Type at least 2 letters.",
+    "none": "Nothing found for \"{q}\". Try a shorter word or another spelling.",
+    "partial": "Some lists couldn't load, so results may be incomplete.",
+    "seeAll": "See all",
+    "group": {
+      "esports": "Esports events",
+      "gym": "Gyms",
+      "venues": "Venues",
+      "shop": "Shop",
+      "hire": "Talent",
+      "events": "Sports events"
     }
   }
 }

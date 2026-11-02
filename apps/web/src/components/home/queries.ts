@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@kriraghor/api-client";
 
-/** Shapes of the public esports reads used on the home page (fields the backend guarantees). */
+/** Shapes of the public reads used on the home page and /search (fields the backend guarantees). */
 export type Named = { key: string; nameEn: string; nameBn: string };
 export type Money = { amount: number };
 export type EsportsCard = {
@@ -21,8 +21,6 @@ export type EsportsCard = {
   slotsTaken: number;
   startsAt: string;
 };
-export type EsportsDetail = EsportsCard & { prizes: { place: number; amount: Money }[]; matches: { seq: number; map: Named | null }[] };
-export type TopPlayer = { rank: number; username: string | null; displayName: string | null; game: { nameEn: string | null; nameBn?: string | null } | null; points: number; wins?: number; kills?: number; team?: string | null };
 export type BigEvent = { id: string; slug: string; titleEn: string; titleBn: string; phase: string; prizeTotal: Money; accentHex: string };
 
 const read = async <T,>(p: Promise<{ data?: unknown; error?: unknown }>) => {
@@ -31,24 +29,12 @@ const read = async <T,>(p: Promise<{ data?: unknown; error?: unknown }>) => {
   return r.data as T;
 };
 
-/** Tournaments open for registration, soonest first (shared by the hero, the count and the rail). */
-export const useOpenEsports = (game = "") =>
+/** Esports events open for registration, soonest first (the hero's count and next event, and the rail). */
+export const useOpenEsports = () =>
   useQuery({
-    queryKey: ["home-esports-open", game],
-    queryFn: () => read<{ items: EsportsCard[]; nextCursor: string | null }>(api().GET("/esports/tournaments", { params: { query: { status: "registration_open", limit: 12, ...(game ? { game } : {}) } } })),
+    queryKey: ["home-esports-open"],
+    queryFn: () => read<{ items: EsportsCard[]; nextCursor: string | null }>(api().GET("/esports/tournaments", { params: { query: { status: "registration_open", limit: 12 } } })),
   });
-
-export const useEsportsDetail = (slug: string | undefined) =>
-  useQuery({
-    queryKey: ["home-esports-detail", slug],
-    enabled: Boolean(slug),
-    queryFn: () => read<EsportsDetail>(api().GET("/esports/tournaments/{id}", { params: { path: { id: slug! } } })),
-  });
-
-export const useEsportsGames = () =>
-  useQuery({ queryKey: ["home-esports-games"], staleTime: 3600_000, queryFn: () => read<{ items: Named[] }>(api().GET("/esports/games")) });
-
-export const useTopPlayers = () => useQuery({ queryKey: ["home-esports-top"], queryFn: () => read<{ items: TopPlayer[] }>(api().GET("/esports/top-players")) });
 
 export const useFeaturedEvents = () =>
   useQuery({ queryKey: ["home-esports-events"], queryFn: () => read<{ items: BigEvent[] }>(api().GET("/esports/events", { params: { query: { featured: "true", limit: 3 } } })) });
