@@ -10,6 +10,7 @@ export type GroundCard = components["schemas"]["GroundCard"];
 export type GroundList = components["schemas"]["GroundList"];
 export type GroundDetail = components["schemas"]["GroundDetail"];
 export type Filters = {
+  q?: string;
   sport?: string;
   areaId?: string;
   surface?: string[];
@@ -40,6 +41,7 @@ export const grounds = {
       await api().GET("/grounds", {
         params: {
           query: {
+            ...(f.q ? { q: f.q } : {}),
             ...(f.sport ? { sport: f.sport } : {}),
             ...(f.areaId ? { areaId: f.areaId } : {}),
             ...(f.surface?.length ? { surface: f.surface.join(",") as unknown as string[] } : {}),
@@ -65,6 +67,7 @@ export function filtersFromParams(p: URLSearchParams): Filters {
   const list = (k: string) => (p.get(k) ? p.get(k)!.split(",").filter(Boolean) : undefined);
   const sort = p.get("sort");
   return {
+    q: p.get("q") ?? undefined,
     sport: p.get("sport") ?? undefined,
     areaId: p.get("area") ?? undefined,
     surface: list("surface"),
@@ -82,6 +85,7 @@ export function filtersFromParams(p: URLSearchParams): Filters {
 
 export function paramsFromFilters(f: Filters): string {
   const p = new URLSearchParams();
+  if (f.q) p.set("q", f.q);
   if (f.sport) p.set("sport", f.sport);
   if (f.areaId) p.set("area", f.areaId);
   if (f.surface?.length) p.set("surface", f.surface.join(","));

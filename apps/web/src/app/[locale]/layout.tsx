@@ -14,6 +14,7 @@ import { SiteHeader } from "@kriraghor/ui/site-header";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { CartLink } from "@/components/orders/CartLink";
+import { HeaderSearch } from "@/components/search/HeaderSearch";
 import { APP } from "@/app.config";
 import { siteUrl } from "@/lib/seo";
 import "../globals.css";
@@ -60,7 +61,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           <Providers audience={APP.audience}>
             {/* The header reads the pathname; routes known only at request time (/pay/[id]) stream it in. */}
             <Suspense fallback={<HeaderPlaceholder />}>
-              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} actions={<CartLink />} />
+              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} search={<HeaderSearch />} roomy actions={<CartLink />} />
             </Suspense>
             <main id="main" className="flex-1">
               {children}

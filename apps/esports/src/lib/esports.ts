@@ -70,7 +70,7 @@ export const fill = (taken: number, max: number) => (max > 0 ? Math.min(100, Mat
 
 export const esports = {
   games: async () => unwrap(await api().GET("/esports/games")),
-  list: async (query: { game?: string; status?: string; featured?: "true" | "false"; cursor?: string; limit?: number }) => unwrap(await api().GET("/esports/tournaments", { params: { query } })),
+  list: async (query: { q?: string; game?: string; status?: string; featured?: "true" | "false"; cursor?: string; limit?: number }) => unwrap(await api().GET("/esports/tournaments", { params: { query } })),
   get: async (slug: string) => unwrap(await api().GET("/esports/tournaments/{id}", { params: { path: { id: slug } } })),
   standings: async (id: string) => unwrap(await api().GET("/esports/tournaments/{id}/standings", { params: { path: { id } } })),
   match: async (id: string) => unwrap(await api().GET("/esports/matches/{id}", { params: { path: { id } } })),

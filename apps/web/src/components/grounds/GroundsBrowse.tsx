@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { searchText } from "@/lib/home";
 import { ArrowRight, CalendarBlank, Faders, MapPin, NavigationArrow, SquaresFour, Rows, X } from "@phosphor-icons/react";
 import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { Badge, Button, ButtonLink, Checkbox, Chip, Dropdown, EmptyState, ErrorState, SegmentedControl, Sheet, Skeleton } from "@kriraghor/ui/kit";
@@ -62,7 +63,7 @@ export function GroundsBrowse() {
   };
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const money = (n: number) => formatTaka(n, locale);
-  const activeCount = [f.sport, f.price, f.km, f.indoor !== undefined ? 1 : undefined, ...(f.surface ?? []), ...(f.facilities ?? []), f.areaId].filter(Boolean).length;
+  const activeCount = [f.q, f.sport, f.price, f.km, f.indoor !== undefined ? 1 : undefined, ...(f.surface ?? []), ...(f.facilities ?? []), f.areaId].filter(Boolean).length;
 
   const locate = () => {
     if (!("geolocation" in navigator)) return setLocating("denied");
@@ -176,6 +177,23 @@ export function GroundsBrowse() {
             {dayTitle}
           </h1>
           <p className="mt-2 max-w-[60ch] text-muted">{tb("lead")}</p>
+          <form
+            key={f.q ?? ""}
+            role="search"
+            className="mt-4 flex max-w-xl gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              go({ ...f, q: searchText(String(new FormData(e.currentTarget).get("q") ?? "")) || undefined });
+            }}
+          >
+            <label htmlFor="venue-q" className="sr-only">
+              {tb("search")}
+            </label>
+            <input id="venue-q" name="q" type="search" defaultValue={f.q ?? ""} placeholder={tb("searchHint")} autoComplete="off" enterKeyHint="search" maxLength={60} className="min-h-11 min-w-0 flex-1 field px-3 text-base text-ink" data-testid="venue-search" />
+            <Button type="submit" variant="secondary">
+              {tb("searchGo")}
+            </Button>
+          </form>
 
           <div className="mt-6 flex flex-wrap items-center gap-3 border-b-2 border-ink pb-4">
             <p className="font-semibold" role="status">

@@ -266,7 +266,10 @@
         "finished": "Finished"
       },
       "empty": "Nothing here yet",
-      "emptyBody": "Try another game or stage."
+      "emptyBody": "Try another game or stage.",
+      "search": "Search events",
+      "searchHint": "Event name",
+      "searchGo": "Search"
     },
     "startsAt": "Starts {when}",
     "perSquad": "Fee per squad",

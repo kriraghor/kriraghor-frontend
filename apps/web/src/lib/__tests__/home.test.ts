@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { bookingHref, countdown, dhakaDateOf, filled, finderUrl, freeHours, hourOf, initials, nextTab, podium } from "../home";
+import { countdown, dhakaDateOf, searchGroups, searchText, sectionUrl, SECTIONS } from "../home";
+import en from "../../../messages/en.json";
+import bn from "../../../messages/bn.json";
 
-const cell = (time: string, state = "open") => ({ start: `2026-10-19T${time}:00+06:00`, time, state });
+const keys = (o: object, at = ""): string[] => Object.entries(o).flatMap(([k, v]) => (v && typeof v === "object" ? keys(v, `${at}${k}.`) : [`${at}${k}`]));
 
-describe("home (launch polish)", () => {
+describe("home", () => {
   it("reads the Dhaka date of an instant (UTC+6)", () => {
     expect(dhakaDateOf("2026-10-18T17:59:59Z")).toBe("2026-10-18");
     expect(dhakaDateOf("2026-10-18T18:00:00Z")).toBe("2026-10-19");
@@ -17,65 +19,39 @@ describe("home (launch polish)", () => {
     expect(countdown("not a date", 0)).toBeNull();
   });
 
-  it("builds finder links with only the filters each page supports", () => {
-    expect(finderUrl("tournaments", { game: "free_fire" })).toBe("/go/esports/events?game=free_fire");
-    expect(finderUrl("tournaments", {})).toBe("/go/esports/events");
-    expect(finderUrl("grounds", { sport: "football", areaId: "a1" })).toBe("/venues?sport=football&areaId=a1");
-    expect(finderUrl("shop", { q: "  whey protein " })).toBe("/shop?q=whey+protein");
-    expect(finderUrl("shop", { q: "   " })).toBe("/shop");
-    expect(finderUrl("hire", { category: "officials" })).toBe("/hiring?category=officials");
+  it("sends each section's search to its list page with the filter that page reads", () => {
+    expect(sectionUrl("esports", { q: "squad", filter: "free_fire" })).toBe("/go/esports/events?q=squad&game=free_fire");
+    expect(sectionUrl("esports")).toBe("/go/esports/events");
+    expect(sectionUrl("gym", { q: "iron", filter: "a1" })).toBe("/go/gym/gyms?q=iron&areaId=a1");
+    expect(sectionUrl("venues", { filter: "football" })).toBe("/venues?sport=football");
+    expect(sectionUrl("shop", { q: "  whey protein " })).toBe("/shop?q=whey+protein");
+    expect(sectionUrl("shop", { filter: "supplements" })).toBe("/shop?category=supplements");
+    expect(sectionUrl("hire", { filter: "officials" })).toBe("/hiring?category=officials");
+    expect(sectionUrl("events", { q: "cup", filter: "cricket" })).toBe("/events?q=cup&sport=cricket");
   });
 
-  it("moves between finder tabs with the arrow keys, Home and End", () => {
-    expect(nextTab(0, "ArrowRight", 4)).toBe(1);
-    expect(nextTab(3, "ArrowRight", 4)).toBe(0);
-    expect(nextTab(0, "ArrowLeft", 4)).toBe(3);
-    expect(nextTab(2, "ArrowUp", 4)).toBe(1);
-    expect(nextTab(2, "ArrowDown", 4)).toBe(3);
-    expect(nextTab(2, "Home", 4)).toBe(0);
-    expect(nextTab(1, "End", 4)).toBe(3);
-    expect(nextTab(1, "Enter", 4)).toBeNull();
+  it("leaves out text too short for the APIs and caps long text", () => {
+    expect(sectionUrl("shop", { q: "   " })).toBe("/shop");
+    expect(sectionUrl("shop", { q: "a" })).toBe("/shop");
+    expect(searchText(null)).toBe("");
+    expect(searchText(undefined)).toBe("");
+    expect(searchText(" ab ")).toBe("ab");
+    expect(searchText("x".repeat(80))).toHaveLength(60);
   });
 
-  it("finds tonight's free hours: two open half-hours in a row, one per time, in order", () => {
-    const a = {
-      courts: [
-        { id: "c1", cells: [cell("16:00"), cell("16:30"), cell("18:00"), cell("18:30", "booked"), cell("19:00"), cell("19:30"), cell("21:00"), cell("21:30")] },
-        { id: "c2", cells: [cell("18:00"), cell("18:30"), cell("19:00"), cell("19:30"), cell("20:00", "past"), cell("20:30"), cell("22:00"), cell("22:30")] },
-      ],
-    };
-    expect(freeHours(a)).toEqual([
-      { courtId: "c2", start: "2026-10-19T18:00:00+06:00", time: "18:00" },
-      { courtId: "c1", start: "2026-10-19T19:00:00+06:00", time: "19:00" },
-      { courtId: "c1", start: "2026-10-19T21:00:00+06:00", time: "21:00" },
-    ]);
-    expect(freeHours(a, { from: "22:00" })).toEqual([{ courtId: "c2", start: "2026-10-19T22:00:00+06:00", time: "22:00" }]);
-    expect(freeHours({ courts: [{ id: "c", cells: [cell("19:30"), cell("20:00")] }] })).toEqual([]);
-    expect(freeHours(null)).toEqual([]);
+  it("builds a search group per section, or none for short text", () => {
+    expect(searchGroups("a")).toEqual([]);
+    expect(searchGroups(null)).toEqual([]);
+    const groups = searchGroups(" iron ");
+    expect(groups.map((g) => g.key)).toEqual([...SECTIONS]);
+    expect(groups[1]).toEqual({ key: "gym", text: "iron", href: "/go/gym/gyms?q=iron" });
   });
 
-  it("labels hours in English and Bangla", () => {
-    expect(hourOf("18:00", "en")).toBe("6 pm");
-    expect(hourOf("00:30", "en")).toBe("12:30 am");
-    expect(hourOf("12:00", "en")).toBe("12 pm");
-    expect(hourOf("21:00", "bn")).toBe("৯টা");
-    expect(hourOf("09:30", "bn")).toBe("৯:৩০");
-  });
-
-  it("links a picked hour to the booking widget without personal data", () => {
-    expect(bookingHref("mirpur-turf-10", { courtId: "c1", start: "2026-10-19T18:00:00+06:00", time: "18:00" })).toBe("/venues/mirpur-turf-10?court=c1&at=2026-10-19T18%3A00%3A00%2B06%3A00");
-  });
-
-  it("makes initials, a fill ratio and the prize podium", () => {
-    expect(initials("Kamrul Islam")).toBe("KI");
-    expect(initials("  nusrat  ")).toBe("N");
-    expect(initials("সাকিব হাসান")).toBe("সহ");
-    expect(initials("")).toBe("?");
-    expect(filled(32, 48)).toBeCloseTo(0.667, 3);
-    expect(filled(60, 48)).toBe(1);
-    expect(filled(1, 0)).toBe(0);
-    const prize = (place: number, amount: number) => ({ place, amount: { amount } });
-    expect(podium([prize(3, 30000), prize(1, 100000), prize(4, 10000), prize(2, 60000)]).map((p) => p.place)).toEqual([1, 2, 3]);
-    expect(podium(null)).toEqual([]);
+  it("has every word of the new pages in both languages", () => {
+    for (const ns of ["home", "howItWorks", "about", "bizHome", "search", "footer"] as const) {
+      expect(keys(bn[ns]).sort()).toEqual(keys(en[ns]).sort());
+    }
+    expect(bn.nav.business).toBeTruthy();
+    expect(bn.nav.search).toBeTruthy();
   });
 });

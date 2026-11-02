@@ -35,6 +35,7 @@ export function GymHub() {
   const [locating, setLocating] = useState<Locating>("idle");
   const asked = params.get("sort") as GymSort | null;
   const sort: GymSort = asked && SORTS.includes(asked) ? asked : at ? "nearest" : "price";
+  const text = params.get("q") ?? undefined;
   const areaId = params.get("areaId") ?? undefined;
   const facility = params.get("facility") ?? undefined;
   const priceMax = Number(params.get("priceMax")) > 0 ? Number(params.get("priceMax")) : undefined;
@@ -76,8 +77,8 @@ export function GymHub() {
   // A position outside Bangladesh is refused by the API (lat 20–27, lng 88–93): treat it as no position.
   const inBd = at && at.lat >= 20 && at.lat <= 27 && at.lng >= 88 && at.lng <= 93 ? at : null;
   const gyms = useQuery({
-    queryKey: ["gyms", sort, areaId, facility, priceMax, radiusKm, inBd?.lat, inBd?.lng],
-    queryFn: () => gym.list({ sort, areaId, facility, priceMax, at: inBd, radiusKm }),
+    queryKey: ["gyms", sort, text, areaId, facility, priceMax, radiusKm, inBd?.lat, inBd?.lng],
+    queryFn: () => gym.list({ sort, q: text, areaId, facility, priceMax, at: inBd, radiusKm }),
     enabled: tab !== "trainers" && tab !== "gear",
   });
   const areas = useQuery({ queryKey: ["gym-areas"], queryFn: () => gym.areas(), staleTime: 300_000 });
@@ -118,10 +119,16 @@ export function GymHub() {
           className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-end"
           onSubmit={(e) => {
             e.preventDefault();
-            applyPrice();
+            const q = String(new FormData(e.currentTarget).get("q") ?? "").trim();
+            const price = priceText.trim() ? takaToPoisha(priceText) : null;
+            go({ q: q.length >= 2 ? q : undefined, priceMax: price ? String(price) : undefined });
           }}
           aria-label={tg("filters")}
         >
+          <label className="col-span-2 flex flex-col gap-1 text-sm font-semibold text-muted">
+            {tg("search")}
+            <input key={text ?? ""} name="q" type="search" defaultValue={text ?? ""} placeholder={tg("searchHint")} autoComplete="off" enterKeyHint="search" maxLength={60} className={field} data-testid="gym-search" />
+          </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("area")}
             <select value={areaId ?? ""} onChange={(e) => go({ areaId: e.target.value || undefined })} className={field} data-testid="gym-area">

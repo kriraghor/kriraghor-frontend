@@ -12440,6 +12440,8 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @description Part of the title, English or Bangla (M21-FR-33) */
+                    q?: string;
                     game?: string;
                     mode?: string;
                     tier?: "daily" | "weekly" | "monthly" | "major";
@@ -14703,6 +14705,8 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @description Part of the title, English or Bangla (M21-FR-33) */
+                    q?: string;
                     game?: string;
                     mode?: string;
                     tier?: "daily" | "weekly" | "monthly" | "major";
@@ -17018,6 +17022,8 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    /** @description Part of the venue name (M09-FR-28) */
+                    q?: string;
                     sport?: string;
                     areaId?: string;
                     lat?: number;

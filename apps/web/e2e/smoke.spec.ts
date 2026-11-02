@@ -14,15 +14,52 @@ test("runtime config is served without secrets (ADR-003)", async ({ request }) =
   expect(body).not.toMatch(/SECRET|PASSWORD/);
 });
 
+test("home has the design's sections, in order, and nothing from the old page", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByTestId("home-network")).toBeVisible();
+  for (const key of ["esports", "gym", "venues", "shop", "hire", "events"]) await expect(page.getByTestId(`net-${key}`)).toHaveAttribute("href", `#${key}`);
+  const order = await page.locator('[data-testid^="home-section-"]').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.testid));
+  expect(order).toEqual(["esports", "gym", "venues", "shop", "hire", "events"].map((k) => `home-section-${k}`));
+  await expect(page.getByTestId("home-info")).toBeVisible();
+  await expect(page.getByTestId("finder")).toHaveCount(0);
+});
+
+test("a section's search goes to its list page with the text in the URL", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#shop-q").fill("whey protein");
+  await page.getByTestId("section-go-shop").click();
+  await expect(page).toHaveURL(/\/shop\?q=whey\+protein$/);
+});
+
+test("the new pages render and the header search opens the results", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/business");
+  await expect(page.getByTestId("business-page")).toBeVisible();
+  await expect(page.getByTestId("biz-academy")).toContainText("Coming soon");
+  await expect(page.getByTestId("biz-gym").getByRole("link", { name: "Get started" })).toHaveAttribute("href", "/go/gym/start");
+  await expect(page.getByTestId("biz-owner-sign-in")).toHaveAttribute("href", "/go/vendor/sign-in");
+  await page.goto("/about");
+  await expect(page.getByTestId("about-page")).toBeVisible();
+  await page.goto("/how-it-works");
+  await expect(page.getByTestId("how-page")).toBeVisible();
+  await page.getByTestId("header-search").fill("iron");
+  await page.getByTestId("header-search").press("Enter");
+  await expect(page).toHaveURL(/\/search\?q=iron$/);
+  await expect(page.getByTestId("search-input")).toHaveValue("iron");
+});
+
 test("home renders and links to sign-in", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("home-title")).toBeVisible();
-  await page.getByRole("link", { name: /sign in/i }).first().click();
+  await page.locator("header").getByRole("link", { name: /sign in/i }).click();
   await expect(page).toHaveURL(/\/sign-in$/);
   // Password first since 30 Oct 2026; the code is one tap away.
   await expect(page.getByLabel("Mobile, email or username")).toBeVisible();
-  await page.getByTestId("use-code").click();
-  await expect(page.getByLabel("Mobile number or email")).toBeVisible();
+  // A click can land before the page has hydrated after the navigation, so try again until it takes.
+  await expect(async () => {
+    if (await page.getByTestId("use-code").isVisible()) await page.getByTestId("use-code").click();
+    await expect(page.getByLabel("Mobile number or email")).toBeVisible({ timeout: 1000 });
+  }).toPass();
   await expect(page.getByTestId("create-account")).toHaveAttribute("href", /signup$/);
 });
 
