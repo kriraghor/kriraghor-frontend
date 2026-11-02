@@ -36617,7 +36617,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: PASS_WRONG_GYM, PASS_NOT_ACTIVE, PASS_NOT_VALID_TODAY, PASS_ALREADY_REDEEMED, GYM_CLOSED_NOW */
+                /** @description Error. Codes: PASS_WRONG_GYM, PASS_NOT_ACTIVE, PASS_NOT_VALID_TODAY, PASS_ALREADY_REDEEMED */
                 409: {
                     headers: {
                         [name: string]: unknown;

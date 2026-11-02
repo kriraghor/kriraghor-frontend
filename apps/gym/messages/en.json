@@ -586,7 +586,6 @@
       "err": {
         "PASS_WRONG_GYM": "This pass is for another gym.",
         "PASS_NOT_ACTIVE": "This pass cannot be used (not paid, cancelled or ended).",
-        "GYM_CLOSED_NOW": "The gym is closed now (or this is a women-only window).",
         "INVALID_PASS_TOKEN": "Not a Kriraghor pass. Check the code.",
         "PASS_ALREADY_REDEEMED": "Already used today.",
         "PASS_NOT_VALID_TODAY": "Not valid today.",
@@ -756,7 +755,6 @@
       "GYM_ACCOUNT_RESTRICTED": "Your account is restricted until the plan is settled. Check-ins, counter payments and receipts still work.",
       "GYM_ALREADY_LINKED": "This member is already linked to a Kriraghor account.",
       "GYM_CHECKIN_TOKEN_INVALID": "This QR has expired or isn't for this gym. Ask the member to open a fresh one.",
-      "GYM_CLOSED_NOW": "The gym is closed now (or this is a women-only window).",
       "GYM_DATE_OUT_OF_RANGE": "That date is outside what's allowed. Pick a nearer date.",
       "GYM_DUE_STATE": "This due is already settled.",
       "GYM_ENTRY_BLOCKED": "The gym's entry policy blocks this member.",
