@@ -1764,7 +1764,9 @@
       "outsideBd": "Your location looks outside Bangladesh, so gyms are not sorted by distance.",
       "nearestNeedsLocation": "Tap “Gyms near me” to sort by distance.",
       "clearFilters": "Clear filters",
-      "count": "{n, plural, =0 {No gyms} one {# gym} other {# gyms}}"
+      "count": "{n, plural, =0 {No gyms} one {# gym} other {# gyms}}",
+      "search": "Gym name",
+      "searchHint": "Search gyms"
     },
     "join": {
       "map": "Open in Maps",

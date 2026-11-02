@@ -24,6 +24,10 @@ export type HeaderConfig = {
   nav: { href: string; key: string }[];
   /** M08 bell: where "See all" and "Settings" go. */
   bell?: { centreHref: string; settingsHref?: string };
+  /** A site-wide search before the actions (kriraghor.com only). */
+  search?: ReactNode;
+  /** Keep the phone menu up to the `lg` breakpoint, for sites whose links and actions need the room. */
+  roomy?: boolean;
   /** Extra signed-in actions before the bell (kriraghor.com: the cart, M13). */
   actions?: ReactNode;
   /** Full width, for desks whose sidebar runs from the left edge (the portal). */
@@ -66,7 +70,7 @@ function AccountGlyph({ size }: { size: number }) {
 
 const iconBtn = "inline-flex size-11 shrink-0 items-center justify-center rounded-control text-ink transition-colors hover:bg-surface-2";
 
-export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, actions, full }: HeaderConfig) {
+export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, search, roomy, actions, full }: HeaderConfig) {
   const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();
@@ -88,7 +92,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
         <span className="flex-1 bg-amber-500" />
       </div>
       {/* Desktop: logo left, the links centred, actions right (three columns). */}
-      <div className={cn("mx-auto grid h-16 grid-cols-[minmax(0,1fr)_auto]", full ? "max-w-none" : "max-w-wide", "items-center gap-2 px-3 sm:px-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6")}>
+      <div className={cn("mx-auto grid h-16 grid-cols-[minmax(0,1fr)_auto]", full ? "max-w-none" : "max-w-wide", "items-center gap-2 px-3 sm:px-5", roomy ? "lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-4" : "md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6")}>
         <a href="#main" className="sr-only focus:not-sr-only">
           {t("nav.skip")}
         </a>
@@ -96,7 +100,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
           <Image src="/logo.png" alt="" width={36} height={36} priority className="shrink-0" />
           <span className="truncate whitespace-nowrap font-display text-lg font-bold tracking-tight sm:text-xl">{t(`app.${titleKey}`)}</span>
         </Link>
-        <nav aria-label={t("nav.main")} className="hidden items-center gap-1 justify-self-center md:flex">
+        <nav aria-label={t("nav.main")} className={cn("hidden items-center gap-1 justify-self-center", roomy ? "lg:flex" : "md:flex")}>
           {nav.map((item) => {
             const on = isCurrent(item.href);
             return (
@@ -108,7 +112,8 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
           })}
         </nav>
         <div className="flex items-center gap-1 justify-self-end sm:gap-1.5">
-          <ThemeToggle className="hidden md:inline-flex" />
+          {search}
+          <ThemeToggle className={roomy ? "hidden lg:inline-flex" : "hidden md:inline-flex"} />
           {/* Phones: the icon only, so the site name keeps its room; the name stays for screen readers. */}
           <button type="button" className={cn(iconBtn, "gap-1.5 text-sm font-semibold sm:w-auto sm:px-2.5")} onClick={switchLanguage} lang={locale === "en" ? "bn" : "en"} aria-label={t("nav.language")} data-testid="language-switch">
             <Translate size={21} aria-hidden />
@@ -118,7 +123,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
             <>
               {actions}
               {bell ? <NotificationBell centreHref={bell.centreHref} settingsHref={bell.settingsHref} /> : null}
-              <span className="hidden md:inline-flex">
+              <span className={roomy ? "hidden lg:inline-flex" : "hidden md:inline-flex"}>
                 <Menu
                   trigger={
                     <button type="button" className={cn(iconBtn, "w-auto gap-2 border border-line bg-surface pl-1.5 pr-3 text-sm font-semibold")} data-testid="account-menu">
@@ -139,14 +144,14 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
               {t("nav.signIn")}
             </ButtonLink>
           ) : null}
-          <button type="button" className={cn(iconBtn, "md:hidden")} aria-expanded={menuOpen} aria-controls="site-menu" onClick={() => setMenuFor(menuOpen ? null : pathname)} data-testid="menu-button">
+          <button type="button" className={cn(iconBtn, roomy ? "lg:hidden" : "md:hidden")} aria-expanded={menuOpen} aria-controls="site-menu" onClick={() => setMenuFor(menuOpen ? null : pathname)} data-testid="menu-button">
             {menuOpen ? <X size={22} aria-hidden /> : <List size={22} aria-hidden />}
             <span className="sr-only">{t(menuOpen ? "nav.closeMenu" : "nav.menu")}</span>
           </button>
         </div>
       </div>
       {menuOpen ? (
-        <div id="site-menu" className="border-t border-[var(--glass-edge)] md:hidden" data-testid="site-menu">
+        <div id="site-menu" className={cn("border-t border-[var(--glass-edge)]", roomy ? "lg:hidden" : "md:hidden")} data-testid="site-menu">
           <nav aria-label={t("nav.main")} className="mx-auto flex max-w-wide flex-col gap-0.5 px-3 py-3">
             {nav.map((item) => (
               <NavLink key={item.href} href={item.href} current={isCurrent(item.href)} onClick={closeMenu} className={cn("flex min-h-12 items-center rounded-control px-3 text-[17px] font-semibold no-underline", isCurrent(item.href) ? "bg-brand-soft text-brand-text" : "hover:bg-surface-2")}>
