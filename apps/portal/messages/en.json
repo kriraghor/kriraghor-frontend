@@ -63,7 +63,7 @@
     "vendorPayouts": "Payouts",
     "team": "Team",
     "frontDesk": "Front desk",
-    "gymPasses": "Passes sold"
+    "gymPasses": "Subscriptions sold"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -1669,10 +1669,10 @@
       "orders": "Orders",
       "averageOrder": "Average order",
       "repeatBuyers": "Repeat buyers",
-      "passSales": "Pass sales",
-      "passesSold": "Passes sold",
+      "passSales": "Subscription sales",
+      "passesSold": "Subscriptions sold",
       "admissions": "Admissions",
-      "unusedShare": "Unused passes",
+      "unusedShare": "Unused subscriptions",
       "teams": "Teams",
       "entryFees": "Entry fees",
       "matchesPlayed": "Matches played"
@@ -1733,7 +1733,7 @@
       "salesByCategory": "Sales by category (this period)",
       "noCategory": "No category",
       "bestSellers": "Best sellers (last 30 days, items sold)",
-      "passSales": "Pass sales",
+      "passSales": "Subscription sales",
       "admissionsByDay": "Admissions by day (this period)",
       "busiestHoursDhaka": "Busiest hours (admissions, Dhaka time)",
       "salesByPackage": "Sales by package (this period)",
@@ -1749,7 +1749,7 @@
       "failed": "Couldn't export. You may have reached this hour's limit.",
       "shopOrders": "Download orders (CSV)",
       "shopProducts": "Download sales by product (CSV)",
-      "gymPasses": "Download passes (CSV)",
+      "gymPasses": "Download subscriptions (CSV)",
       "gymAdmissions": "Download admissions (CSV)",
       "preparing": "Preparing the file…",
       "limit": "You've reached this hour's export limit. Try again later.",
@@ -1781,7 +1781,10 @@
     "passKind": {
       "day": "Day pass",
       "month": "Monthly",
-      "quarter": "Quarterly"
+      "quarter": "Quarterly",
+      "half_year": "6 months",
+      "year": "12 months",
+      "custom": "Custom days"
     },
     "comingLater": {
       "title": "Coming later",
@@ -1790,7 +1793,7 @@
       "body": "These need product-view counts, which Kriraghor does not collect yet."
     },
     "shopNote": "Sales are before the Kriraghor commission and leave out delivery. Settlement shows what you receive.",
-    "gymNote": "Pass sales are before the Kriraghor fee. Your payouts show what you receive.",
+    "gymNote": "Subscription sales are before the Kriraghor fee. Your payouts show what you receive.",
     "organiserNote": "Entry fees stay with Kriraghor until each event's fees are released to you.",
     "organiserCsv": "Each event's registrations, with squad lists, download from its Teams tab.",
     "openEvents": "Open your events",
@@ -1800,7 +1803,7 @@
     },
     "leads": {
       "shop": "Your shop week by week: what sold, how many orders, and who comes back.",
-      "gym": "Your gyms week by week: passes sold, front-desk admissions, and the busy hours.",
+      "gym": "Your gyms week by week: subscriptions sold, front-desk admissions, and the busy hours.",
       "organiser": "{name}: teams, entry fees and matches across your events.",
       "none": "Numbers for your venues, shop, gym and sports events show here once you run one."
     },
@@ -2890,23 +2893,23 @@
       "open": "Front desk"
     },
     "sold": {
-      "open": "Passes sold"
+      "open": "Subscriptions sold"
     },
     "home": {
       "active": "You are an approved gym owner.",
       "open": "Open my gyms",
       "applied": "Gym owner application: {status}",
-      "sell": "Run a gym? Sell day passes and memberships on Kriraghor.",
+      "sell": "Run a gym? Sell subscriptions on Kriraghor.",
       "continue": "Continue the application",
       "start": "Apply as a gym owner"
     }
   },
   "gymAdmin": {
     "title": "Gyms",
-    "intro": "Find a gym, a pass or a trainer subscription. Reviews happen on the Moderation desk; here staff suspend a gym (manage_users) and masters restore it or cancel a pass for the platform.",
+    "intro": "Find a gym, a gym subscription or a trainer subscription. Reviews happen on the Moderation desk; here staff suspend a gym (manage_users) and masters restore it or cancel a subscription for the platform.",
     "tab": {
       "gyms": "Gyms",
-      "passes": "Passes",
+      "passes": "Subscriptions",
       "subscriptions": "Trainer subscriptions"
     },
     "name": "Name",
@@ -2926,10 +2929,9 @@
     "find": "Find",
     "failed": "Couldn't load this.",
     "none": "Nothing found.",
-    "dayPass": "Day pass",
     "suspend": "Suspend",
     "restore": "Restore",
-    "suspendTitle": "Suspend {name}? It stops selling; passes already sold stay valid.",
+    "suspendTitle": "Suspend {name}? It stops selling; subscriptions already sold stay valid.",
     "restoreTitle": "Restore {name}?",
     "reason": "Reason (kept in the audit log)",
     "reasonNeeded": "Give a reason of at least 5 characters.",
@@ -2945,11 +2947,14 @@
       "void": "Not paid"
     },
     "gym": "Gym",
-    "pass": "Pass",
+    "pass": "Subscription",
     "kind": {
       "day": "Day pass",
-      "month": "Month pass",
-      "quarter": "3-month pass"
+      "month": "1 month",
+      "quarter": "3 months",
+      "half_year": "6 months",
+      "year": "12 months",
+      "custom": "Custom days"
     },
     "money": "Money",
     "moneyLine": "Price {price} · fee {fee} · gym {net} · released {released} · refunded {refunded}",
@@ -2957,7 +2962,7 @@
     "firstUse": "First use",
     "escrow": "Escrow hold",
     "cancelPass": "Cancel for the platform (refund {amount})",
-    "cancelTitle": "Cancel pass {code}",
+    "cancelTitle": "Cancel subscription {code}",
     "cancelHelp": "Refunds {amount} still held to the member. Enter your authenticator code.",
     "subCode": "Subscription code",
     "subStatus": {
@@ -2989,8 +2994,6 @@
     "diffField": "{field}: {from} → {to}",
     "address": "Address",
     "about": "About",
-    "capacity": "Day passes a day",
-    "noLimit": "No limit",
     "photoN": "Photo {n}",
     "noPhotos": "No photos.",
     "hours": "Hours",
@@ -3005,10 +3008,10 @@
     ],
     "womenOnly": "women only",
     "closed": "Closed",
-    "packages": "Passes",
-    "outOfLimits": "outside {min} – {max}",
+    "packages": "Packages",
     "private": "Private",
-    "privateFilter": "Private (management only)"
+    "privateFilter": "Private (management only)",
+    "monthPrice": "1 month"
   },
   "gymManageDesk": {
     "title": "Gym system",
@@ -3916,7 +3919,7 @@
     "addMore": "Add another business",
     "addMoreLead": "Apply on kriraghor.com with the same account. It shows up here once staff approve it.",
     "openSettlement": "See settlement",
-    "gymQuick": "Front desk and passes",
+    "gymQuick": "Front desk and subscriptions",
     "sections": {
       "ground_owner": "Your venues",
       "shop_owner": "Your shop",
@@ -3935,7 +3938,7 @@
         "shopProfile": "Send your shop profile for review",
         "firstProduct": "Get your first product live",
         "gymLive": "Get your gym live",
-        "packages": "Set your passes",
+        "packages": "Set your packages",
         "orgVerified": "Get your organisation verified"
       },
       "help": {
@@ -3945,8 +3948,8 @@
         "payout": "The bKash or Nagad account Kriraghor pays your earnings into.",
         "shopProfile": "Name, area, address and the shop type. Staff answer within a working day.",
         "firstProduct": "Photos, sizes and stock. Each product is checked before it goes on sale.",
-        "gymLive": "Photos, opening hours and a day pass, then send it for review.",
-        "packages": "A day pass, and month or 3-month passes if you sell them.",
+        "gymLive": "Photos, opening hours and a package sold online, then send it for review.",
+        "packages": "One month, three months or longer, at the prices you choose.",
         "orgVerified": "Register your organisation on kriraghor.com and choose sports events."
       },
       "go": {
@@ -3957,7 +3960,7 @@
         "shopProfile": "Open my shop",
         "firstProduct": "Add a product",
         "gymLive": "Open my gyms",
-        "packages": "Set passes",
+        "packages": "Set packages",
         "orgVerified": "Register"
       }
     },
@@ -3993,7 +3996,7 @@
       },
       "gym_owner": {
         "title": "A gym",
-        "body": "Day passes and memberships, admitted with a QR code at the front desk."
+        "body": "Subscriptions and memberships, admitted with a QR code at the front desk."
       },
       "organiser": {
         "title": "Sports events",

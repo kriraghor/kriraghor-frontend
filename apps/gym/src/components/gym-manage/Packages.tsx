@@ -13,7 +13,7 @@ import { GymPage, useGymError, usePackages, type GymCtx } from "./common";
  * /manage/[gymId]/packages (owner; M24-FR-24, M20 extended): every active package. Kind (day, month,
  * 3, 6 or 12 months, custom days), title, price, admission fee, channel (desk: the gym's own books;
  * online: passes; both), visit limit and order. Saving replaces the active set; a package left out is
- * retired (running memberships keep their snapshot). A day pass sold online is needed only to list.
+ * retired (running memberships keep their snapshot). One package sold online is needed only to list.
  */
 export function Packages({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
@@ -46,7 +46,7 @@ function Rows({ ctx, g }: { ctx: GymCtx; g: OwnerGym }) {
   const defaultChannel: Channel = listed ? "both" : "desk";
   const kindDays = g.limits.kindDays as Record<string, number>;
   const used = new Set(rows.filter((r) => r.kind !== "custom").map((r) => r.kind));
-  const nextKind = (["month", "quarter", "half_year", "year", "day"] as PackageKind[]).find((k) => !used.has(k)) ?? "custom";
+  const nextKind = (["month", "quarter", "half_year", "year"] as PackageKind[]).find((k) => !used.has(k)) ?? "custom";
   const update = (i: number, patch: Partial<PackageRow>) => setRows(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   const move = (i: number, d: -1 | 1) => {
     const next = [...rows];
@@ -73,14 +73,14 @@ function Rows({ ctx, g }: { ctx: GymCtx; g: OwnerGym }) {
   };
   return (
     <div className="flex flex-col gap-3">
-      {!listed ? <Notice tone="info">{t("packages.privateNote")}</Notice> : null}
+      {!listed ? <Notice tone="info">{t("packages.privateNote")}</Notice> : rows.length && rows.every((r) => r.channel === "desk") ? <Notice tone="warning">{t("packages.onlineNeeded")}</Notice> : null}
       {!rows.length ? <p className="text-sm text-muted">{t("packages.none")}</p> : null}
       <ul className="flex flex-col gap-2" data-testid="packages-rows">
         {rows.map((r, i) => (
           <li key={i}>
             <Card padded={false} className={problem?.row === i ? "border-danger p-3" : "p-3"} data-testid="package-row">
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Select id={`pk-kind-${i}`} label={t("packages.kind")} value={r.kind} onChange={(e) => update(i, { kind: e.target.value as PackageKind, ...(e.target.value === "day" && r.channel === "desk" ? { channel: "both" as const } : {}), days: e.target.value === "custom" ? r.days || "30" : "" })}>
+                <Select id={`pk-kind-${i}`} label={t("packages.kind")} value={r.kind} onChange={(e) => update(i, { kind: e.target.value as PackageKind, days: e.target.value === "custom" ? r.days || "30" : "" })}>
                   {KINDS.map((k) => (
                     <option key={k} value={k} disabled={k !== "custom" && k !== r.kind && used.has(k)}>
                       {t(`kind.${k}`)}
@@ -95,7 +95,7 @@ function Rows({ ctx, g }: { ctx: GymCtx; g: OwnerGym }) {
                   <Field id={`pk-days-${i}`} label={t("packages.days")} value={String(kindDays[r.kind] ?? "")} readOnly disabled />
                 )}
                 <Field id={`pk-adm-${i}`} label={t("packages.admission")} optional={t("optional")} inputMode="decimal" value={r.admissionTaka} onChange={(e) => update(i, { admissionTaka: e.target.value })} leading={<span className="text-muted">৳</span>} />
-                <Select id={`pk-ch-${i}`} label={t("packages.channel")} hint={r.kind === "day" && r.channel === "desk" ? t("packages.dayDeskHint") : undefined} value={r.channel} onChange={(e) => update(i, { channel: e.target.value as Channel })}>
+                <Select id={`pk-ch-${i}`} label={t("packages.channel")} value={r.channel} onChange={(e) => update(i, { channel: e.target.value as Channel })}>
                   {(["desk", "online", "both"] as const).map((c) => (
                     <option key={c} value={c}>
                       {t(`channel.${c}`)}
@@ -121,7 +121,7 @@ function Rows({ ctx, g }: { ctx: GymCtx; g: OwnerGym }) {
       </ul>
       {problem ? <Notice tone="error">{problem.text}</Notice> : null}
       <div className="flex flex-wrap gap-2">
-        <Button type="button" variant="secondary" icon={<Plus size={16} aria-hidden />} onClick={() => setRows([...rows, blankRow(nextKind, t(`kindTitle.${nextKind}`), nextKind === "day" ? "online" : defaultChannel)])} data-testid="package-add">
+        <Button type="button" variant="secondary" icon={<Plus size={16} aria-hidden />} onClick={() => setRows([...rows, blankRow(nextKind, t(`kindTitle.${nextKind}`), defaultChannel)])} data-testid="package-add">
           {t("packages.add")}
         </Button>
         <Button type="button" onClick={save} busy={busy} data-testid="packages-save">

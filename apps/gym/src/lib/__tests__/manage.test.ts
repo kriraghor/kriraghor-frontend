@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanCode, copyDayToAll, dayPassState, gymActions, hoursProblems, listingSteps, scanInput, windowsOf, type Hours, type OwnerGym } from "../manage";
+import { cleanCode, copyDayToAll, gymActions, hoursProblems, listingSteps, onlinePackageState, scanInput, windowsOf, type Hours, type OwnerGym } from "../manage";
 
 const w = (dow: number, openTime: string, closeTime: string, womenOnly = false) => ({ dow, openTime, closeTime, womenOnly });
 
@@ -36,34 +36,28 @@ describe("managing a gym (M20, moved from the business panel to gym.kriraghor.co
 });
 
 describe("what a gym lacks before review (M24-FR-24)", () => {
-  const limits = { dayMin: 10000, dayMax: 300000, minPhotos: 3 } as OwnerGym["limits"];
+  const limits = { minPhotos: 3 } as OwnerGym["limits"];
   const pass = (kind: string, channel: string, price = 10000) => ({ kind, channel, price }) as OwnerGym["packages"][number];
   const gym = (packages: OwnerGym["packages"], photos = 3, hours = 1) => ({ limits, packages, photos: Array(photos).fill({}), hours: Array(hours).fill({}) }) as Pick<OwnerGym, "limits" | "packages" | "photos" | "hours">;
 
-  it("counts only a day pass sold online", () => {
-    expect(dayPassState(gym([]))).toBe("none");
-    expect(dayPassState(gym([pass("month", "both")]))).toBe("none");
-    expect(dayPassState(gym([pass("day", "desk")]))).toBe("desk");
-    expect(dayPassState(gym([pass("day", "online")]))).toBe("online");
-    expect(dayPassState(gym([pass("day", "both")]))).toBe("online");
+  it("needs one package sold online, of any kind", () => {
+    expect(onlinePackageState(gym([]))).toBe("none");
+    expect(onlinePackageState(gym([pass("month", "desk")]))).toBe("desk");
+    expect(onlinePackageState(gym([pass("month", "desk"), pass("quarter", "desk")]))).toBe("desk");
+    expect(onlinePackageState(gym([pass("month", "desk"), pass("year", "online")]))).toBe("online");
+    expect(onlinePackageState(gym([pass("custom", "both")]))).toBe("online");
   });
 
-  it("checks the day pass price against the limits", () => {
-    expect(dayPassState(gym([pass("day", "both", 9900)]))).toBe("price");
-    expect(dayPassState(gym([pass("day", "online", 300100)]))).toBe("price");
-    expect(dayPassState(gym([pass("day", "online", 300000)]))).toBe("online");
-  });
-
-  it("lists photos, hours and the day pass, each done or not", () => {
-    expect(listingSteps(gym([pass("day", "both")]))).toEqual([
+  it("lists photos, hours and the online package, each done or not", () => {
+    expect(listingSteps(gym([pass("month", "both")]))).toEqual([
       { key: "photos", done: true, have: 3, need: 3 },
       { key: "hours", done: true },
-      { key: "dayPass", done: true, state: "online" },
+      { key: "onlinePackage", done: true, state: "online" },
     ]);
-    expect(listingSteps(gym([pass("day", "desk")], 2, 0))).toEqual([
+    expect(listingSteps(gym([pass("month", "desk")], 2, 0))).toEqual([
       { key: "photos", done: false, have: 2, need: 3 },
       { key: "hours", done: false },
-      { key: "dayPass", done: false, state: "desk" },
+      { key: "onlinePackage", done: false, state: "desk" },
     ]);
   });
 });

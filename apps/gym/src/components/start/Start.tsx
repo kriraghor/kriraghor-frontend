@@ -292,7 +292,7 @@ function StarterRows({ gymId, limits, initial, initialFee }: { gymId: string; li
   const update = (i: number, patch: Partial<PackageRow>) => setRows(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   const submit = async () => {
     setProblem(null);
-    const withFee = rows.map((r) => ({ ...r, admissionTaka: r.kind === "day" ? r.admissionTaka : admission }));
+    const withFee = rows.map((r) => ({ ...r, admissionTaka: admission }));
     const body = packagesPayload(withFee, limits?.maxCustomPackages ?? 5);
     if (!body.ok) return setProblem(tg(`packages.problem.${body.problem}`, { max: limits?.maxCustomPackages ?? 5 }));
     setBusy(true);
@@ -343,23 +343,27 @@ function StarterRows({ gymId, limits, initial, initialFee }: { gymId: string; li
   );
 }
 
-/** Step 4: how to fill the list: import a file, add the first member, or go to the dashboard. */
+/** Step 4: on to the gym page, whose checklist leads to review; the member list can be filled from here too. */
 function NextStep({ gymId }: { gymId: string }) {
   const t = useTranslations("start.privateFlow");
+  const page = `/manage/${gymId}/edit`;
   return (
     <div className="flex flex-col gap-3" data-testid="start-next">
       <p className="flex items-center gap-2 text-xl font-extrabold">
         <CheckCircle size={24} weight="fill" className="text-brand" aria-hidden /> {t("ready")}
       </p>
       <p className="text-sm text-muted">{t("nextBody")}</p>
+      <ButtonLink href={page} iconEnd={<ArrowRight size={18} aria-hidden />} className="self-start" data-testid="start-finish-page">
+        {t("finishPage")}
+      </ButtonLink>
       <div className="grid gap-2 sm:grid-cols-3">
-        <ButtonLink href={`/manage/${gymId}/import`} icon={<UploadSimple size={18} aria-hidden />} data-testid="start-import">
+        <ButtonLink href={`/manage/${gymId}/import`} variant="secondary" icon={<UploadSimple size={18} aria-hidden />} data-testid="start-import">
           {t("import")}
         </ButtonLink>
         <ButtonLink href={`/manage/${gymId}/members/new`} variant="secondary" icon={<UserPlus size={18} aria-hidden />} data-testid="start-first-member">
           {t("firstMember")}
         </ButtonLink>
-        <ButtonLink href={`/manage/${gymId}`} variant="ghost" data-testid="start-skip">
+        <ButtonLink href={page} variant="ghost" data-testid="start-skip">
           {t("skip")}
         </ButtonLink>
       </div>

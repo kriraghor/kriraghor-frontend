@@ -9,8 +9,8 @@ import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@kriraghor/ui/format";
 import { publicEnv } from "@kriraghor/session/env";
-import { copyDayToAll, dayPassState, gymActions, gymDesk, hoursProblems, listingSteps, windowsOf, type Hours, type OwnerGym } from "@/lib/manage";
-import { packageRowsOf, packagesPayload } from "@/lib/gym-manage";
+import { copyDayToAll, gymActions, gymDesk, hoursProblems, listingSteps, onlinePackageState, windowsOf, type Hours, type OwnerGym } from "@/lib/manage";
+import { packageRowsOf, packagesPayload, packageToSellOnline } from "@/lib/gym-manage";
 import { TimePicker } from "@kriraghor/ui/date";
 import { Chip as StatusChip, Field, inputCls, STATUS_TONE } from "@kriraghor/ui/desk";
 
@@ -30,6 +30,7 @@ function useRunner(gymId: string, explain?: (field: string, message: string) => 
       await fn();
       await qc.invalidateQueries({ queryKey: ["vendor-gym", gymId] });
       await qc.invalidateQueries({ queryKey: ["vendor-gyms"] });
+      await qc.invalidateQueries({ queryKey: ["manage-gyms"] }); // the status in the gym dropdown
       if (done) setMsg({ text: done, tone: "info" });
       return true;
     } catch (err) {
@@ -61,16 +62,13 @@ function Said({ msg }: { msg: Msg }) {
 /** What's left before this gym can go to review, each step leading to where it is fixed (M24-FR-24). */
 function ListingChecklist({ g }: { g: OwnerGym }) {
   const t = useTranslations("vendorGym.listing");
-  const locale = useLocale();
-  const range = { min: formatTaka(g.limits.dayMin, locale), max: formatTaka(g.limits.dayMax, locale) };
   const steps = listingSteps(g);
   const view: ChecklistStep[] = steps.map((s) => {
     if (s.key === "photos") return { key: s.key, done: s.done, label: s.done ? t("photosDone") : t("photos", { need: s.need }), hint: t("photosHint", { have: s.have, need: s.need }), href: "#gym-photos" };
     if (s.key === "hours") return { key: s.key, done: s.done, label: s.done ? t("hoursDone") : t("hours"), hint: t("hoursHint"), href: "#gym-hours" };
-    if (s.state === "online") return { key: s.key, done: true, label: t("dayDone") };
-    if (s.state === "desk") return { key: s.key, done: false, label: t("dayDesk"), hint: t("dayDeskHint"), href: "#gym-packages" };
-    if (s.state === "price") return { key: s.key, done: false, label: t("dayPrice"), hint: t("dayPriceHint", range), href: `/manage/${g.id}/packages` };
-    return { key: s.key, done: false, label: t("dayNone"), hint: t("dayNoneHint"), href: `/manage/${g.id}/packages` };
+    if (s.state === "online") return { key: s.key, done: true, label: t("onlineDone") };
+    if (s.state === "desk") return { key: s.key, done: false, label: t("onlineDesk"), hint: t("onlineDeskHint"), href: "#gym-packages" };
+    return { key: s.key, done: false, label: t("onlineNone"), hint: t("onlineNoneHint"), href: `/manage/${g.id}/packages` };
   });
   return <ChecklistCard className="mt-5" title={t("title")} description={t("description")} score={(steps.filter((s) => s.done).length / steps.length) * 100} steps={view} testId="gym-listing" />;
 }
@@ -83,19 +81,13 @@ export function GymEditor({ id }: { id: string }) {
   const t = useTranslations("vendorGym");
   const tl = useTranslations("vendorGym.listing");
   const q = useQuery({ queryKey: ["vendor-gym", id], queryFn: () => gymDesk.get(id) });
-  const locale = useLocale();
   const g0 = q.data;
-  // The API's completeness problems in the visitor's language, and the exact reason for the day pass.
+  // The API's completeness problems in the visitor's language.
   const explain = (field: string, message: string) => {
     if (!g0) return message;
     if (field === "photos") return tl("photos", { need: g0.limits.minPhotos });
     if (field === "hours") return tl("hours");
-    if (field === "packages" || field === "packages.day") {
-      const state = dayPassState(g0);
-      if (state === "desk") return t("dayDesk");
-      if (state === "price") return t("dayPrice", { min: formatTaka(g0.limits.dayMin, locale), max: formatTaka(g0.limits.dayMax, locale) });
-      if (state === "none") return tl("dayNone");
-    }
+    if (field === "packages") return onlinePackageState(g0) === "desk" ? t("onlineDesk") : tl("onlineNone");
     return message;
   };
   const { msg, busy, run } = useRunner(id, explain);
@@ -190,7 +182,7 @@ function Basics({ g, locked }: { g: OwnerGym; locked: boolean }) {
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const areas = useQuery({ queryKey: ["gym-areas"], queryFn: () => gymDesk.areas() });
   const facilities = useQuery({ queryKey: ["catalog-facilities"], queryFn: () => gymDesk.facilities() });
-  const [f, setF] = useState({ name: g.name, areaId: g.areaId, addressLine: g.addressLine, lat: g.lat === null ? "" : String(g.lat), lng: g.lng === null ? "" : String(g.lng), about: g.about ?? "", facilityIds: g.facilityIds, dailyCapacity: g.dailyCapacity === null ? "" : String(g.dailyCapacity) });
+  const [f, setF] = useState({ name: g.name, areaId: g.areaId, addressLine: g.addressLine, lat: g.lat === null ? "" : String(g.lat), lng: g.lng === null ? "" : String(g.lng), about: g.about ?? "", facilityIds: g.facilityIds });
   const { msg, busy, run } = useRunner(g.id);
   const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((x) => ({ ...x, [k]: v }));
   const num = (s: string) => (s.trim() === "" ? null : Number(s));
@@ -210,7 +202,6 @@ function Basics({ g, locked }: { g: OwnerGym; locked: boolean }) {
                 lng: num(f.lng),
                 about: f.about.trim() || null,
                 facilityIds: f.facilityIds,
-                dailyCapacity: num(f.dailyCapacity),
               }),
             t("saved")
           );
@@ -246,9 +237,6 @@ function Basics({ g, locked }: { g: OwnerGym; locked: boolean }) {
           </div>
           <Field label={t("form.about")}>
             <textarea value={f.about} onChange={(e) => set("about", e.target.value)} maxLength={3000} className={`${inputCls} min-h-24 py-2`} />
-          </Field>
-          <Field label={t("form.capacity")}>
-            <input value={f.dailyCapacity} onChange={(e) => set("dailyCapacity", e.target.value.replace(/[^0-9]/g, ""))} inputMode="numeric" placeholder={t("form.noLimit")} className={inputCls} />
           </Field>
           <fieldset>
             <legend className="text-sm font-semibold text-muted">{t("form.facilities")}</legend>
@@ -410,10 +398,10 @@ function WeekHours({ g, locked }: { g: OwnerGym; locked: boolean }) {
 }
 
 /**
- * The packages, now edited on /manage/[gymId]/packages (M24-FR-24: day, month, 3, 6 and 12 months and
- * custom days, admission fee, channel, visit limit). Saving replaces the whole active set, so this
- * editor summarises them and links there. A day pass sold online is needed to list the gym: one sold
- * only at the desk can be switched here in one tap, keeping every other package as it is.
+ * The packages, now edited on /manage/[gymId]/packages (M24-FR-24: month, 3, 6 and 12 months and custom
+ * days, admission fee, channel, visit limit). Saving replaces the whole active set, so this editor
+ * summarises them and links there. One package sold online is needed to list the gym: with all of them at
+ * the desk, one can be switched here in one tap, keeping every other package as it is.
  */
 function Packages({ g, locked }: { g: OwnerGym; locked: boolean }) {
   const t = useTranslations("vendorGym");
@@ -421,19 +409,22 @@ function Packages({ g, locked }: { g: OwnerGym; locked: boolean }) {
   const locale = useLocale();
   const qc = useQueryClient();
   const { msg, busy, run } = useRunner(g.id);
-  const state = dayPassState(g);
+  const state = onlinePackageState(g);
+  const rows = packageRowsOf(g.packages);
+  const toSell = packageToSellOnline(rows);
   const sellOnline = () => {
-    const body = packagesPayload(packageRowsOf(g.packages).map((r) => (r.kind === "day" ? { ...r, channel: "both" as const } : r)), g.limits.maxCustomPackages);
+    if (!toSell) return;
+    const body = packagesPayload(rows.map((r) => (r === toSell ? { ...r, channel: "both" as const } : r)), g.limits.maxCustomPackages);
     if (!body.ok) return;
     void run(async () => {
       await gymDesk.setPackages(g.id, body.packages);
       await qc.invalidateQueries({ queryKey: ["gm-packages", g.id] });
-    }, t("sellDone"));
+    }, t("sellDone", { title: toSell.title }));
   };
   return (
     <Card id="gym-packages" className="min-w-0 scroll-mt-24" data-testid="gym-packages">
       <h2 className="text-xl font-extrabold">{t("packages")}</h2>
-      <p className="mt-1 text-sm text-muted">{t("packagesHelp", { min: formatTaka(g.limits.dayMin, locale), max: formatTaka(g.limits.dayMax, locale) })}</p>
+      <p className="mt-1 text-sm text-muted">{t("packagesHelp")}</p>
       {g.packages.length ? (
         <ul className="mt-3 divide-y divide-line">
           {[...g.packages].sort((a, b) => a.sort - b.sort).map((p) => (
@@ -448,27 +439,22 @@ function Packages({ g, locked }: { g: OwnerGym; locked: boolean }) {
       ) : (
         <p className="mt-3 text-sm text-muted">{t("noPackages")}</p>
       )}
-      {state === "desk" ? (
-        <div className="mt-3" data-testid="day-desk-only">
-          <Notice tone="warning">{t("dayDesk")}</Notice>
-          <Button type="button" className="mt-3" disabled={locked} busy={busy} onClick={sellOnline} data-testid="sell-day-online">
-            {t("sellOnline")}
+      {state === "desk" && toSell ? (
+        <div className="mt-3" data-testid="online-desk-only">
+          <Notice tone="warning">{t("onlineDesk")}</Notice>
+          <Button type="button" className="mt-3" disabled={locked} busy={busy} onClick={sellOnline} data-testid="sell-online">
+            {t("sellOnline", { title: toSell.title })}
           </Button>
-        </div>
-      ) : null}
-      {state === "price" ? (
-        <div className="mt-3">
-          <Notice tone="warning">{t("dayPrice", { min: formatTaka(g.limits.dayMin, locale), max: formatTaka(g.limits.dayMax, locale) })}</Notice>
         </div>
       ) : null}
       {state === "none" ? (
         <div className="mt-3">
-          <Notice tone="warning">{tg("packages.dayNeeded")}</Notice>
+          <Notice tone="warning">{tg("packages.onlineNeeded")}</Notice>
         </div>
       ) : null}
       <Said msg={msg} />
       <ButtonLink href={`/manage/${g.id}/packages`} variant="secondary" className="mt-3" data-testid="edit-packages">
-        {state === "none" ? t("addDayPass") : tg("packages.edit")}
+        {state === "none" ? t("addPackage") : tg("packages.edit")}
       </ButtonLink>
     </Card>
   );

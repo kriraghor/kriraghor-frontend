@@ -6,6 +6,11 @@ const own = (id: string, name: string): ManageGymRef => ({ id, name, role: "owne
 const work = (id: string, permissions: string[], name: string | null = null): ManageGymRef => ({ id, name, role: "staff", permissions });
 
 describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", () => {
+  it("carries each gym's listing status for the dropdown", () => {
+    const groups = manageGroups({ gyms: [{ ...own("g1", "Iron House"), listingStatus: "draft" }, own("g2", "Lift")] });
+    expect(groups.slice(1).map((g) => g.listingStatus)).toEqual(["draft", null]);
+  });
+
   it("an owner sees My gyms, Billing, Payouts and All-gyms reports, then every page of each gym in menu order", () => {
     const groups = manageGroups({ gyms: [own("g1", "Iron House"), own("g2", "Lift")] });
     expect(groups[0].items.map((i) => i.href)).toEqual(["/manage", "/manage/billing", "/manage/payouts", "/manage/reports"]);

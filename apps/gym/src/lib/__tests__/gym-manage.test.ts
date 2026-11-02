@@ -25,6 +25,7 @@ import {
   secondsLeft,
   settingsPatch,
   shiftMonth,
+  packageToSellOnline,
   starterRows,
   takaToPoisha,
   tiersInOrder,
@@ -218,6 +219,16 @@ describe("packages (M24-FR-24): rows → the PUT body", () => {
       ["half_year", false, "desk"],
       ["year", false, "desk"],
     ]);
+  });
+});
+
+describe("the package to sell online (M24-FR-24)", () => {
+  const row = (kind: PackageRow["kind"], on = true) => ({ kind, on }) as PackageRow;
+  it("is the monthly one if there is one, else the first in use", () => {
+    expect(packageToSellOnline([row("quarter"), row("month")])?.kind).toBe("month");
+    expect(packageToSellOnline([row("month", false), row("year")])?.kind).toBe("year");
+    expect(packageToSellOnline([row("month", false)])).toBeNull();
+    expect(packageToSellOnline([])).toBeNull();
   });
 });
 

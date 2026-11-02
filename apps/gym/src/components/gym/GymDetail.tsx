@@ -132,7 +132,7 @@ export function GymDetail({ slug }: { slug: string }) {
                   <span className="block text-xs font-bold uppercase tracking-wide text-muted">{t(`kind.${p.kind}`)}</span>
                   <span className="mt-1 block font-bold">{p.title}</span>
                   <span className="mt-2 block text-2xl font-extrabold tabular-nums">{formatTaka(p.price, locale)}</span>
-                  <span className="text-sm text-muted">{p.kind === "day" ? t("oneVisit") : t("forDays", { n: p.days })}</span>
+                  <span className="text-sm text-muted">{t("forDays", { n: p.days })}</span>
                 </li>
               ))}
             </ul>

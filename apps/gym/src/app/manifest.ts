@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Kriraghor Gym",
     short_name: "Kriraghor Gym",
-    description: "Gym passes from verified gyms, monthly plans with trainers, and the tools to run a gym.",
+    description: "Subscriptions at verified gyms, monthly plans with trainers, and the tools to run a gym.",
     start_url: "/",
     display: "standalone",
     background_color: "#111210",

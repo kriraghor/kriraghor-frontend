@@ -71,7 +71,7 @@ export function ManageShell({ children }: { children: ReactNode }) {
     );
 
   const names = new Map(wp.named.map((w) => [w.businessId, w.business.name] as const));
-  const refs: ManageGymRef[] = gyms.data ? gyms.data.items.map((g) => ({ id: g.id, name: g.name, role: g.role, permissions: g.permissions })) : workplaceGyms(wp.refs, names);
+  const refs: ManageGymRef[] = gyms.data ? gyms.data.items.map((g) => ({ id: g.id, name: g.name, role: g.role, permissions: g.permissions, listingStatus: g.listingStatus })) : workplaceGyms(wp.refs, names);
   const overview = manageGroups({ gyms: refs })[0];
   // The path is request data (Cache Components): until it streams in, the menu shows the all-gyms pages.
   return (

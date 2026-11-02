@@ -130,7 +130,7 @@
       },
       "vendor": {
         "title": "Run your venue, shop or gym",
-        "p1": "Bookings, orders and passes in one desk",
+        "p1": "Bookings, orders and subscriptions in one desk",
         "p2": "Money held safely until the job is done",
         "p3": "Payouts straight to your account"
       },
@@ -142,8 +142,8 @@
       },
       "gym": {
         "title": "Train. Track. Keep going.",
-        "p1": "Day, monthly and quarterly passes from verified gyms",
-        "p2": "Your pass as a QR code at the front desk",
+        "p1": "Monthly and longer subscriptions from verified gyms",
+        "p2": "Your subscription as a QR code at the front desk",
         "p3": "Run your own gym: members, fees and the front desk"
       }
     },
@@ -194,7 +194,7 @@
         },
         "gym_owner": {
           "title": "I run a gym",
-          "body": "Sell day passes, memberships and training."
+          "body": "Sell subscriptions, memberships and training."
         },
         "organiser": {
           "title": "I organise events",
@@ -241,7 +241,7 @@
       "addPhone": "Add a mobile number",
       "hires": "My hires",
       "bookings": "Bookings",
-      "passes": "Gym passes",
+      "passes": "Gym subscriptions",
       "subscriptions": "Trainer plans",
       "orders": "Orders",
       "saved": "Saved items",
@@ -337,7 +337,7 @@
       "gameIds": "Game IDs",
       "esportsHome": "Esports home",
       "myGyms": "My gyms",
-      "passes": "Passes",
+      "passes": "Subscriptions",
       "plans": "Plans",
       "checkin": "Check-in",
       "trainerPlans": "Trainer plans",
@@ -359,9 +359,9 @@
         "home": "Open events, showcases and top players."
       },
       "gym": {
-        "lead": "Your gyms, passes, workout plans and the check-in QR live on gym.kriraghor.com. The same account works there.",
+        "lead": "Your gyms, subscriptions, workout plans and the check-in QR live on gym.kriraghor.com. The same account works there.",
         "myGyms": "Memberships, dues and receipts at the gyms you joined.",
-        "passes": "Day and monthly passes, shown as a QR code at the front desk.",
+        "passes": "Monthly and longer subscriptions, shown as a QR code at the front desk.",
         "plans": "Workout plans your trainer made for you.",
         "checkin": "Your QR code for the front desk.",
         "trainerPlans": "Monthly plans with a personal trainer."
@@ -511,7 +511,7 @@
     "backToEsports": "Back to my matches",
     "backToBooking": "See your booking",
     "backToOrders": "See my order",
-    "backToPasses": "See my passes",
+    "backToPasses": "See my subscriptions",
     "backToSubscriptions": "See my trainer subscriptions",
     "backToDues": "See my dues",
     "backToInvoice": "See the invoice"
@@ -588,11 +588,11 @@
         "NOT_YOUR_BOOKING": "Only the member who paid for this booking can rate it.",
         "NOT_YOUR_JOB": "Only the manager who paid for this job can rate the pro.",
         "NOT_YOUR_ORDER": "Only the buyer can rate this shop order.",
-        "NOT_YOUR_PASS": "Only the member who bought this pass can rate the gym.",
+        "NOT_YOUR_PASS": "Only the member who bought this subscription can rate the gym.",
         "NOT_PLAYED": "You can rate a venue after you have played there.",
         "JOB_NOT_RELEASED": "You can rate the pro once the job is done and paid out.",
         "ORDER_NOT_COMPLETED": "You can rate the shop once you have received the order.",
-        "PASS_NOT_REDEEMED": "You can rate the gym after you have used your pass there.",
+        "PASS_NOT_REDEEMED": "You can rate the gym after you have used your subscription there.",
         "REVIEW_WINDOW_CLOSED": "The time to rate this has passed.",
         "REVIEW_EXISTS": "You have already rated this.",
         "REVIEW_HIDDEN": "Your earlier review was hidden by our team, so it can't be changed.",
@@ -682,7 +682,7 @@
         "bookings": "Bookings",
         "reviews": "Reviews",
         "frontDesk": "Front desk",
-        "passes": "Passes sold",
+        "passes": "Subscriptions sold",
         "orders": "Orders",
         "inventory": "Inventory"
       },
@@ -716,7 +716,7 @@
         "admissions": "See the day's admissions"
       },
       "passes": {
-        "view": "See the passes sold (no money)"
+        "view": "See the subscriptions sold (no money)"
       },
       "orders": {
         "view": "See orders",

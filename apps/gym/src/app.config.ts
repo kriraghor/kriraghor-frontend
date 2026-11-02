@@ -5,7 +5,7 @@ export const APP = {
   id: "gym" as const,
   titleKey: "gym" as const,
   title: "Kriraghor Gym",
-  description: "Gym passes from verified gyms, monthly plans with trainers, and the tools to run a gym.",
+  description: "Subscriptions at verified gyms, monthly plans with trainers, and the tools to run a gym.",
   audience: "api" as Audience,
   nav: [
     { href: "/gyms", key: "gyms" },
