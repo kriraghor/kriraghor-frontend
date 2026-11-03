@@ -1471,17 +1471,15 @@
       "nav": {
         "home": "My gyms",
         "requests": "Gym requests",
-        "memberships": "Memberships",
         "receipts": "Receipts",
         "checkin": "Check-in QR",
         "dues": "Dues",
-        "plans": "My plans"
+        "plans": "Workout plans"
       },
       "checkinQr": "My check-in QR",
       "requests": "Gym requests",
       "review": "Review",
       "pending": "{n, plural, one {A gym wants to link your account.} other {# gyms want to link your account.}}",
-      "memberships": "My memberships",
       "noGyms": "You're not a member of a gym on Kriraghor yet",
       "noGymsBody": "When your gym invites you, the request appears here. You can also buy a subscription at a gym near you.",
       "findGym": "Find a gym",

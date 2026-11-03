@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { GymEditor } from "@/components/manage/GymEditor";
 
-export const metadata = { title: "Gym" };
+export const metadata = { title: "Gym page" };
 
 async function Content({ params }: { params: PageProps<"/[locale]/manage/[gymId]/edit">["params"] }) {
   const { locale, gymId } = await params;

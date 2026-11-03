@@ -12,7 +12,6 @@ import {
   CalendarDots,
   ChartLineUp,
   ChatCircleText,
-  ClipboardText,
   Flag,
   GameController,
   GearSix,
@@ -20,13 +19,11 @@ import {
   Handshake,
   Heart,
   House,
-  IdentificationBadge,
   IdentificationCard,
   Lifebuoy,
   ListChecks,
   MapPin,
   Package,
-  QrCode,
   Receipt,
   Repeat,
   Scales,
@@ -34,8 +31,6 @@ import {
   ShoppingBag,
   Star,
   Storefront,
-  Sword,
-  Ticket,
   Trophy,
   Tray,
   UserCircle,
@@ -44,7 +39,6 @@ import {
   Wallet,
 } from "@phosphor-icons/react";
 import type { ShellSection } from "@kriraghor/ui/sections";
-import { esportsHref, gymHref } from "./links";
 
 /** Only the player and pro roles, while applying or active, get the Work section (the pro desk). */
 export const WORK_ROLES = ["player", "pro"];
@@ -70,12 +64,8 @@ export function memberSections(t: (key: string) => string, me: MemberFacts | und
       label: t("sections.esports"),
       icon: GameController,
       href: "/me/esports",
-      items: [
-        { href: esportsHref("/me/matches"), label: t("tabs.matches"), icon: Sword, testId: "me-esports" },
-        { href: esportsHref("/me/winnings"), label: t("tabs.winnings"), icon: Wallet },
-        { href: esportsHref("/me/esports"), label: t("tabs.gameIds"), icon: IdentificationBadge },
-        { href: esportsHref(), label: t("tabs.esportsHome"), icon: Trophy },
-      ],
+      // The landing's cards are the way in (SectionLanding), so no tabs repeat them.
+      items: [],
     },
     {
       key: "events",
@@ -101,14 +91,8 @@ export function memberSections(t: (key: string) => string, me: MemberFacts | und
       label: t("sections.gym"),
       icon: Barbell,
       href: "/me/gym",
-      // Gym passes and trainer plans live on gym.kriraghor.com since 25 Oct 2026 (through /go/gym).
-      items: [
-        { href: gymHref("/me"), label: t("tabs.myGyms"), icon: House },
-        { href: gymHref("/me/passes"), label: t("tabs.passes"), icon: Ticket, testId: "me-passes" },
-        { href: gymHref("/me/plans"), label: t("tabs.plans"), icon: ClipboardText },
-        { href: gymHref("/me/checkin"), label: t("tabs.checkin"), icon: QrCode },
-        { href: gymHref("/me/subscriptions"), label: t("tabs.trainerPlans"), icon: Repeat, testId: "me-subscriptions" },
-      ],
+      // Gym passes and trainer plans live on gym.kriraghor.com since 25 Oct 2026; the landing's cards lead there.
+      items: [],
     },
     {
       key: "shop",

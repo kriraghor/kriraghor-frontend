@@ -1,7 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { EventsOps } from "@/components/admin/EventsOps";
 
-export const metadata = { title: "Events" };
+export const metadata = { title: "System events" };
 
 export default async function EventsPage({ params }: PageProps<"/[locale]/admin/events">) {
   const { locale } = await params;

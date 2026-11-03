@@ -2,20 +2,18 @@
 
 import type { ReactNode } from "react";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { useLocale, useTranslations } from "next-intl";
-import { ArrowRight, Barbell, Check, Package, QrCode, Receipt, ShoppingBag, SoccerBall, Storefront, Ticket, Trophy, Wallet, Warehouse } from "@phosphor-icons/react";
+import { useTranslations } from "next-intl";
+import { ArrowRight, Barbell, Check, Package, QrCode, ShoppingBag, SoccerBall, Storefront, Ticket, Trophy, Wallet, Warehouse } from "@phosphor-icons/react";
 import { api } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { publicEnv } from "@kriraghor/session/env";
-import { Badge, ButtonLink, Card, EmptyState, PageTitle, Skeleton, Stat, buttonClass, cn } from "@kriraghor/ui/kit";
-import { formatTaka } from "@/lib/admin/finance";
+import { Badge, ButtonLink, Card, EmptyState, PageTitle, Skeleton, buttonClass, cn } from "@kriraghor/ui/kit";
 import { checklist, dashboards, mergeActions, type ActionRole } from "@/lib/dashboard";
 import { BUSINESS_ROLES, businessView, type BusinessRole } from "@/lib/panel-nav";
 import { gymDesk } from "@/lib/vendor/gym";
 import { gymHref } from "@/lib/links";
 import { vendor } from "@/lib/vendor/grounds";
 import { shopDesk } from "@/lib/vendor/market";
-import { shopOrders } from "@/lib/vendor/orders";
 import { sportsConsole } from "@/lib/vendor/tournaments";
 import { MePanel } from "../MePanel";
 import { isSportsOrg } from "@/lib/vendor/analytics";
@@ -224,14 +222,10 @@ function VenueHome({ me, showActions }: { me: Me | undefined; showActions: boole
 // ---------------- shop owner (M12, M13)
 
 function ShopHome({ showActions }: { showActions: boolean }) {
-  const t = useTranslations("vendorHome");
   const tm = useTranslations("vendorMarket");
   const tn = useTranslations("nav");
-  const to = useTranslations("vendorOrders");
-  const locale = useLocale();
   const shop = useQuery({ queryKey: ["vendor-shop"], queryFn: () => shopDesk.profile(), retry: false });
   const products = useQuery({ queryKey: ["vendor-products"], queryFn: () => shopDesk.products(), retry: false, enabled: Boolean(shop.data) });
-  const settlement = useQuery({ queryKey: ["shop-settlement"], queryFn: () => shopOrders.settlement(), retry: false });
   const payout = usePayoutStep();
   const s = shop.data?.status;
   const steps: Step[] = [
@@ -244,8 +238,8 @@ function ShopHome({ showActions }: { showActions: boolean }) {
     { href: "/vendor/products", key: "products", icon: ShoppingBag },
     { href: "/vendor/inventory", key: "inventory", icon: Warehouse },
     { href: "/vendor/orders", key: "orders", icon: Package },
+    { href: "/vendor/settlement", key: "settlement", icon: Wallet },
   ] as const;
-  const money = (n: number) => formatTaka(n, locale);
   return (
     <>
       <ActiveCard testId="shop-owner-active" title={tm("home.active")} body={shop.data ? shop.data.name : undefined}>
@@ -258,23 +252,6 @@ function ShopHome({ showActions }: { showActions: boolean }) {
       {!shop.isPending && (!shop.data || !products.isPending) ? <SetupChecklist steps={steps} testId="shop-setup" /> : null}
       {showActions ? <OwnActions role="shop_owner" /> : null}
       <BusinessOverview role="shop_owner" />
-      {settlement.data ? (
-        <div data-testid="shop-settlement">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 className="font-display text-lg font-bold">{tn("settlement")}</h3>
-            <ButtonLink href="/vendor/settlement" variant="link" iconEnd={<ArrowRight size={16} aria-hidden />}>
-              {t("openSettlement")}
-            </ButtonLink>
-          </div>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            <Stat label={to("completedTile", { n: settlement.data.completed.count })} value={money(settlement.data.completed.net)} tone="prize" icon={<Wallet aria-hidden />} hint={to("afterCommission", { amount: money(settlement.data.completed.commission) })} />
-            <Stat label={to("inEscrowTile", { n: settlement.data.inEscrow.count })} value={money(settlement.data.inEscrow.net)} hint={to("inEscrowNote")} />
-            <Stat label={to("refundedTile")} value={money(settlement.data.refunded)} icon={<Receipt aria-hidden />} />
-          </div>
-        </div>
-      ) : settlement.isPending ? (
-        <Skeleton className="h-28 rounded-card" />
-      ) : null}
     </>
   );
 }

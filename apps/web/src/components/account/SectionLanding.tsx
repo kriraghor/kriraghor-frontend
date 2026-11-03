@@ -64,7 +64,7 @@ export function EsportsLanding() {
       lead={t("landing.esports.lead")}
       site="esports.kriraghor.com"
       cards={[
-        { key: "matches", href: esportsHref("/me/matches"), icon: Sword, title: t("tabs.matches"), body: t("landing.esports.matches") },
+        { key: "matches", href: esportsHref("/me/matches"), icon: Sword, title: t("tabs.matches"), body: t("landing.esports.matches"), testId: "me-esports" },
         { key: "winnings", href: esportsHref("/me/winnings"), icon: Wallet, title: t("tabs.winnings"), body: t("landing.esports.winnings") },
         { key: "game-ids", href: esportsHref("/me/esports"), icon: IdentificationBadge, title: t("tabs.gameIds"), body: t("landing.esports.gameIds") },
         { key: "esports-home", href: esportsHref(), icon: Trophy, title: t("tabs.esportsHome"), body: t("landing.esports.home") },
@@ -84,10 +84,10 @@ export function GymLanding() {
       site="gym.kriraghor.com"
       cards={[
         { key: "my-gyms", href: gymHref("/me"), icon: House, title: t("tabs.myGyms"), body: t("landing.gym.myGyms") },
-        { key: "passes", href: gymHref("/me/passes"), icon: Ticket, title: t("tabs.passes"), body: t("landing.gym.passes") },
+        { key: "passes", href: gymHref("/me/passes"), icon: Ticket, title: t("tabs.passes"), body: t("landing.gym.passes"), testId: "me-passes" },
         { key: "plans", href: gymHref("/me/plans"), icon: ClipboardText, title: t("tabs.plans"), body: t("landing.gym.plans") },
         { key: "checkin", href: gymHref("/me/checkin"), icon: QrCode, title: t("tabs.checkin"), body: t("landing.gym.checkin") },
-        { key: "trainer-plans", href: gymHref("/me/subscriptions"), icon: Repeat, title: t("tabs.trainerPlans"), body: t("landing.gym.trainerPlans") },
+        { key: "trainer-plans", href: gymHref("/me/subscriptions"), icon: Repeat, title: t("tabs.trainerPlans"), body: t("landing.gym.trainerPlans"), testId: "me-subscriptions" },
       ]}
     />
   );

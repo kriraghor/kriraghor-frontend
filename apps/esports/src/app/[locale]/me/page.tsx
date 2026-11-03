@@ -2,7 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { MePanel } from "@/components/MePanel";
 import { LiveStatus } from "@kriraghor/ui/live-status";
 
-export const metadata = { title: "My account" };
+export const metadata = { title: "Overview" };
 
 /** Account page plus the realtime connection that M21 uses for room reveals and live results. */
 export default async function MePage({ params }: PageProps<"/[locale]/me">) {

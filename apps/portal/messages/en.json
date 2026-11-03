@@ -44,8 +44,8 @@
     "hireCatalog": "Hire taxonomy",
     "hireAdmin": "Hire",
     "gyms": "Gyms",
-    "gymAdmin": "Gyms",
-    "gymManageAdmin": "Gym system",
+    "gymAdmin": "Gym listings",
+    "gymManageAdmin": "Gym owners",
     "organisersAdmin": "Organisers",
     "esportsConsole": "Esports",
     "bigEvents": "Showcases",
@@ -3918,7 +3918,6 @@
     "actionsTitle": "Needs your action",
     "addMore": "Add another business",
     "addMoreLead": "Apply on kriraghor.com with the same account. It shows up here once staff approve it.",
-    "openSettlement": "See settlement",
     "gymQuick": "Front desk and subscriptions",
     "sections": {
       "ground_owner": "Your venues",

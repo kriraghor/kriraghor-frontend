@@ -35,14 +35,11 @@ describe("the kriraghor.com member sections", () => {
     const ids = Object.fromEntries(memberSections(t, pro).flatMap((s) => s.items.filter((i) => i.testId).map((i) => [i.testId!, i.href])));
     expect(ids).toEqual({
       "me-tournaments": "/me/events",
-      "me-esports": "/go/esports/me/matches",
       "me-teams": "/me/teams",
       "me-player": "/me/player",
       "me-eligibility": "/me/eligibility",
       "me-hire": "/me/hire",
       "me-bookings": "/me/bookings",
-      "me-passes": "/go/gym/me/passes",
-      "me-subscriptions": "/go/gym/me/subscriptions",
       "me-orders": "/me/orders",
       "me-saved": "/shop/saved",
       "me-pro": "/pro",
@@ -53,12 +50,12 @@ describe("the kriraghor.com member sections", () => {
     });
   });
 
-  it("Esports and Gym open a landing on kriraghor.com; their tabs go to the other site", () => {
+  it("Esports and Gym open a landing on kriraghor.com, whose cards are the way in: no tabs repeat them", () => {
     const s = memberSections(t, member);
     for (const key of ["esports", "gym"]) {
       const x = s.find((y) => y.key === key)!;
       expect(x.href).toBe(`/me/${key}`);
-      expect(x.items.every((i) => i.href.startsWith(`/go/${key}`))).toBe(true);
+      expect(x.items).toEqual([]);
     }
   });
 

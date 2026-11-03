@@ -2,11 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Barbell, CaretRight, CreditCard, QrCode, Tray } from "@phosphor-icons/react";
+import { Barbell, CaretRight, CreditCard, QrCode } from "@phosphor-icons/react";
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard } from "@kriraghor/ui/account";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Badge, ButtonLink, Card, EmptyState, Notice, Skeleton } from "@kriraghor/ui/kit";
+import { ButtonLink, Card, EmptyState, Notice, Skeleton } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { gymMe, type MyMembershipCard } from "@/lib/gym-manage";
 import { MemberStatus, useFmt, useGymError } from "@/components/gym-manage/common";
@@ -36,16 +36,13 @@ export function MyHome() {
   return (
     <section className="mx-auto w-full max-w-[960px] px-4 py-6 sm:px-6 md:py-10" data-testid="me-home">
       <h1 className="font-display text-3xl font-extrabold">{t("me.title")}</h1>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {current.length ? (
+      {current.length ? (
+        <div className="mt-4">
           <ButtonLink href="/me/checkin" size="lg" icon={<QrCode size={20} aria-hidden />} data-testid="me-checkin">
             {t("me.checkinQr")}
           </ButtonLink>
-        ) : null}
-        <ButtonLink href="/me/requests" variant="secondary" size="lg" icon={<Tray size={20} aria-hidden />} data-testid="me-requests">
-          {t("me.requests")} {pending ? <Badge tone="danger">{pending}</Badge> : null}
-        </ButtonLink>
-      </div>
+        </div>
+      ) : null}
       {pending ? (
         <Notice tone="info" className="mt-4" action={<ButtonLink href="/me/requests" size="sm">{t("me.review")}</ButtonLink>}>
           {t("me.pending", { n: pending })}
@@ -54,21 +51,6 @@ export function MyHome() {
       <TodayPlans />
       <div className="mt-6">
         <MembershipCards items={items} loading={memberships.isPending} error={memberships.error} />
-      </div>
-    </section>
-  );
-}
-
-/** /me/memberships: every gym I belong to, current and past. */
-export function MyMemberships() {
-  const t = useTranslations("gm");
-  const { status, memberships } = useMyGyms();
-  if (status === "signed_out") return <SignedOutCard signInHref="/sign-in?next=/me/memberships" />;
-  return (
-    <section className="mx-auto w-full max-w-[960px] px-4 py-6 sm:px-6 md:py-10">
-      <h1 className="font-display text-3xl font-extrabold">{t("me.memberships")}</h1>
-      <div className="mt-6">
-        <MembershipCards items={memberships.data?.items ?? []} loading={memberships.isPending} error={memberships.error} />
       </div>
     </section>
   );

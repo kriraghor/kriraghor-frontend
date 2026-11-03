@@ -147,7 +147,7 @@ export const GYMS_HREF = gymHref("/manage");
 /**
  * The business sidebar. Analytics covers every business since Round B2 (venue, shop, gym and sports
  * organisations, one page with a business switcher), so it is one shared link with the business tools
- * rather than a copy in each section. Reviews cover venues, shops and gyms since Round B1 (M17 FR-34), so they sit with the shared
+ * rather than a copy in each section. Reviews cover venues and shops (M17 FR-34; a gym's are on gym.kriraghor.com/manage since 3 Nov 2026), so they sit with the shared
  * business tools for those three owners (not organisers). Since 21 Oct 2026 esports is run by
  * Kriraghor only, so the organiser section is sports events alone. Since 25 Oct 2026 gyms are managed
  * on gym.kriraghor.com (M24 §4.3): gym owners get a "Gyms" link there (through /go/gym) with the
@@ -181,7 +181,7 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
       { href: "/vendor/analytics", key: "analytics", icon: ChartLineUp },
       { href: "/vendor/payouts", key: "vendorPayouts", icon: CurrencyCircleDollar },
       { href: "/vendor/disputes", key: "vendorDisputes", icon: Gavel },
-      { href: "/vendor/reviews", key: "vendorReviews", icon: Star, roles: ["ground_owner", "shop_owner", "gym_owner"] },
+      { href: "/vendor/reviews", key: "vendorReviews", icon: Star, roles: ["ground_owner", "shop_owner"] },
       // Round B3: venue, gym and shop owners add staff (organisers have organisation members already).
       { href: "/vendor/team", key: "team", icon: UsersThree, roles: ["ground_owner", "shop_owner", "gym_owner"] },
       { href: GYMS_HREF, key: "gyms", icon: Barbell, roles: ["gym_owner"] },
