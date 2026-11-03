@@ -6,7 +6,7 @@ import { CaretRight, UploadSimple, UserPlus, UsersThree } from "@phosphor-icons/
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Avatar, Badge, Button, ButtonLink, EmptyState, FilterBar, Notice, SkeletonList } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
-import { featureLocked, gymManage, MEMBER_VIEWS, membersQuery, type MemberRow } from "@/lib/gym-manage";
+import { featureLocked, gymManage, MEMBER_VIEWS, membersListReady, membersQuery, type MemberRow } from "@/lib/gym-manage";
 import { GymPage, MemberStatus, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 
 const SPEC = { view: { default: "", allowed: MEMBER_VIEWS }, q: { default: "" }, packageId: { default: "" }, trainerId: { default: "" } };
@@ -58,10 +58,15 @@ function List({ ctx }: { ctx: GymCtx }) {
   const { values, set, clear } = useUrlFilters(SPEC);
   const packages = useDeskPackages(gymId, ctx.owner || ctx.can("members.view"));
   const trainers = useTrainers(ctx, ctx.can("members.view"));
+  // M24-FR-53: the same days as the Dashboard tile. The overview is open to all staff of the gym; the settings only to the owner.
+  const wantsDays = values.view === "notSeen";
+  const overview = useQuery({ queryKey: ["gm-overview", gymId], queryFn: () => gymManage.overview(gymId), enabled: wantsDays });
+  const notSeenDays = wantsDays ? overview.data?.tiles.notSeenDays : undefined;
   const q = useInfiniteQuery({
-    queryKey: ["gm-members", gymId, values.view, values.q, values.packageId, values.trainerId],
+    queryKey: ["gm-members", gymId, values.view, notSeenDays, values.q, values.packageId, values.trainerId],
     queryFn: ({ pageParam }) =>
-      gymManage.members(gymId, membersQuery({ view: values.view, q: values.q, packageId: values.packageId, trainerId: values.trainerId, cursor: pageParam || undefined, limit: 25 })),
+      gymManage.members(gymId, membersQuery({ view: values.view, q: values.q, packageId: values.packageId, trainerId: values.trainerId, notSeenDays, cursor: pageParam || undefined, limit: 25 })),
+    enabled: membersListReady(values.view, notSeenDays),
     initialPageParam: "",
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   });
@@ -77,7 +82,9 @@ function List({ ctx }: { ctx: GymCtx }) {
         ]}
         onClear={clear}
       />
-      {q.isPending ? (
+      {wantsDays && overview.isError && !notSeenDays ? (
+        <Notice tone="error">{err(overview.error)}</Notice>
+      ) : q.isPending ? (
         <SkeletonList rows={6} />
       ) : q.isError ? (
         <Notice tone="error">{err(q.error)}</Notice>

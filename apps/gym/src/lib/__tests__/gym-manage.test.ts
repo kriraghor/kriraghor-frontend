@@ -10,6 +10,7 @@ import {
   importPreview,
   importTemplateCsv,
   IMPORT_HEADERS,
+  membersListReady,
   membersQuery,
   membershipActions,
   minTierFor,
@@ -75,10 +76,25 @@ describe("list filters in the URL → API queries", () => {
     expect(membersQuery({ view: "due" })).toEqual({ due: "true" });
     expect(membersQuery({ view: "overdue" })).toEqual({ overdue: "true" });
     expect(membersQuery({ view: "expiring" })).toEqual({ expiring: "true" });
-    expect(membersQuery({ view: "notSeen" })).toEqual({ notSeen: 10 });
-    expect(membersQuery({ view: "notSeen", notSeenDays: 14 })).toEqual({ notSeen: 14 });
     expect(membersQuery({ view: "unlinked", packageId: "p1", cursor: "c", limit: 25 })).toEqual({ linked: "false", packageId: "p1", cursor: "c", limit: 25 });
     expect(membersQuery({ view: "nonsense" })).toEqual({});
+  });
+
+  it("the not-seen view asks for the gym's own days and assumes none (M24-FR-23, FR-53)", () => {
+    expect(membersQuery({ view: "notSeen", notSeenDays: 14 })).toEqual({ notSeen: 14 });
+    expect(membersQuery({ view: "notSeen", notSeenDays: 3, q: "rahim" })).toEqual({ notSeen: 3, q: "rahim" });
+    expect(membersQuery({ view: "notSeen" })).toEqual({});
+    expect(membersQuery({ view: "notSeen", notSeenDays: 0 })).toEqual({});
+    expect(membersQuery({ view: "active", notSeenDays: 14 })).toEqual({ status: "active" });
+  });
+
+  it("the list waits for those days on the not-seen view only (M24-FR-53)", () => {
+    expect(membersListReady("notSeen", undefined)).toBe(false);
+    expect(membersListReady("notSeen", 0)).toBe(false);
+    expect(membersListReady("notSeen", 14)).toBe(true);
+    expect(membersListReady("", undefined)).toBe(true);
+    expect(membersListReady("active", undefined)).toBe(true);
+    expect(membersListReady(undefined, undefined)).toBe(true);
   });
 
   it("maps each fee view to the dues filters (default unpaid and partial)", () => {
