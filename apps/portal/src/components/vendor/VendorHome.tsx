@@ -14,9 +14,7 @@ import { gymDesk } from "@/lib/vendor/gym";
 import { gymHref } from "@/lib/links";
 import { vendor } from "@/lib/vendor/grounds";
 import { shopDesk } from "@/lib/vendor/market";
-import { sportsConsole } from "@/lib/vendor/tournaments";
 import { MePanel } from "../MePanel";
-import { isSportsOrg } from "@/lib/vendor/analytics";
 import { BusinessOverview } from "./BusinessDashboards";
 import { ActionList, OwnerOverview } from "./OwnerDashboard";
 import { StaffHome } from "./Workplaces";
@@ -26,17 +24,16 @@ import { StaffHome } from "./Workplaces";
  * (`lastPanelRole`, as the sidebar does): one business, or "all" with a section per business and one
  * combined "Needs your action" list (M19-FR-11). Each business shows a short setup checklist while it
  * is new, always with the payout account; venue owners keep their Overview (M19 §6.2). Someone with
- * no business yet sees the steps to start one and the four kinds of business (applied for on
- * kriraghor.com with the same account). Esports is run by Kriraghor only (21 Oct 2026), so the
- * organiser section is sports events. Since Round B2 shops, gyms and each sports organisation show
- * their tiles too (M19 §6.3), and organisers' to-do items join the list. Since Round B3 the places
+ * no business yet sees the steps to start one and the three kinds of business (applied for on
+ * kriraghor.com with the same account). Since Round B2 shops and gyms show their tiles too (M19 §6.3).
+ * Nobody organises tournaments on Kriraghor since 3 Nov 2026 (ADR-008). Since Round B3 the places
  * the person works at as staff follow ("You work at", with their to-do); someone who only works for
  * others gets that alone, without the owner's onboarding.
  */
-const ICON: Record<BusinessRole, typeof SoccerBall> = { ground_owner: SoccerBall, shop_owner: Storefront, gym_owner: Barbell, organiser: Trophy };
+const ICON: Record<BusinessRole, typeof SoccerBall> = { ground_owner: SoccerBall, shop_owner: Storefront, gym_owner: Barbell };
 /** The `as` kriraghor.com's business page takes (the venue owner is its default). */
-const APPLY_AS: Record<BusinessRole, string> = { ground_owner: "", shop_owner: "?as=shop", gym_owner: "?as=gym", organiser: "?as=organiser" };
-const ACTIONS_FOR: Record<BusinessRole, ActionRole> = { ground_owner: "ground_owner", shop_owner: "shop_owner", gym_owner: "gym_owner", organiser: "organiser" };
+const APPLY_AS: Record<BusinessRole, string> = { ground_owner: "", shop_owner: "?as=shop", gym_owner: "?as=gym" };
+const ACTIONS_FOR: Record<BusinessRole, ActionRole> = { ground_owner: "ground_owner", shop_owner: "shop_owner", gym_owner: "gym_owner" };
 
 type Me = Awaited<ReturnType<typeof vendor.me>>;
 const roleStatus = (me: Me | undefined, role: string) => me?.roles.find((r) => r.role === role)?.status ?? null;
@@ -78,7 +75,6 @@ export function VendorHome() {
           {role === "ground_owner" ? <VenueHome me={me.data} showActions={!combined} /> : null}
           {role === "shop_owner" ? <ShopHome showActions={!combined} /> : null}
           {role === "gym_owner" ? <GymHome showActions={!combined} /> : null}
-          {role === "organiser" ? <OrganiserHome showActions={!combined} /> : null}
         </BusinessSection>
       ))}
       {working ? <StaffHome own /> : null}
@@ -310,66 +306,6 @@ function GymHome({ showActions }: { showActions: boolean }) {
   );
 }
 
-// ---------------- sports-event organiser (M14)
-
-function OrganiserHome({ showActions }: { showActions: boolean }) {
-  const t = useTranslations("vendorHome");
-  const ts = useTranslations("sportsConsole");
-  const { status } = useAuth();
-  const web = publicEnv().WEB_URL;
-  const orgs = useQuery({ queryKey: ["my-orgs"], queryFn: () => sportsConsole.mine(), enabled: status === "signed_in" });
-  const payout = usePayoutStep();
-  const sports = (orgs.data?.items ?? []).filter((o) => o.kind === "sports");
-  const steps: Step[] = [
-    { key: "orgVerified", done: sports.some((o) => o.status === "verified"), href: `${web}/account/business?as=organiser` },
-    ...(payout ? [payout] : []),
-  ];
-  return (
-    <>
-      <ActiveCard testId="organiser-card" title={t("organiser.active")} body={t("organiser.lead")}>
-        <ButtonLink href="/vendor/events" icon={<Trophy size={18} aria-hidden />} data-testid="open-sports-console">
-          {t("organiser.open")}
-        </ButtonLink>
-      </ActiveCard>
-      {orgs.isSuccess ? <SetupChecklist steps={steps} testId="organiser-setup" /> : null}
-      {showActions ? <OwnActions role="organiser" /> : null}
-      {sports.filter(isSportsOrg).map((o) => (
-        <BusinessOverview key={o.id} role="organiser" orgId={o.id} title={t("organiser.numbers", { name: o.name })} />
-      ))}
-      <div data-testid="organiser-orgs">
-        <h3 className="font-display text-lg font-bold">{t("organiser.orgs")}</h3>
-        {orgs.isPending ? (
-          <Skeleton className="mt-2 h-20 rounded-card" />
-        ) : !sports.length ? (
-          <EmptyState
-            className="mt-2"
-            icon={<Trophy aria-hidden />}
-            title={ts("applyFirst")}
-            body={ts("applyHelp")}
-            action={<ButtonLink href={`${web}/account/business?as=organiser`}>{t("organiser.apply")}</ButtonLink>}
-          />
-        ) : (
-          <ul className="mt-2 flex flex-col gap-2">
-            {sports.map((o) => (
-              <li key={o.id}>
-                <Card padded={false} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                  <span className="min-w-0 flex-1 truncate font-semibold">{o.name}</span>
-                  <Badge tone={o.status === "verified" ? "brand" : o.status === "suspended" || o.status === "rejected" ? "danger" : o.status === "changes_requested" ? "warning" : "neutral"}>{t(`orgStatus.${o.status}`)}</Badge>
-                  {o.status === "verified" ? (
-                    <ButtonLink href={`/vendor/events/${o.id}`} size="sm" variant="secondary" iconEnd={<ArrowRight size={16} aria-hidden />}>
-                      {t("organiser.openOrg")}
-                    </ButtonLink>
-                  ) : null}
-                </Card>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
-  );
-}
-
 // ---------------- staff only (Round B3)
 
 /** Someone who runs no business but works at one or more: their desks and to-do, and how to start their own. */
@@ -392,7 +328,7 @@ function StaffOnlyHome() {
 
 // ---------------- no business yet, and adding another
 
-/** The four kinds of business, each applied for on kriraghor.com with the same account. */
+/** The three kinds of business, each applied for on kriraghor.com with the same account. */
 function BusinessTypes({ me, roles }: { me: Me | undefined; roles: BusinessRole[] }) {
   const t = useTranslations("vendorHome");
   const tg = useTranslations("vendorGrounds");

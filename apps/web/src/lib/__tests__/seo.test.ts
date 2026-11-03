@@ -36,17 +36,19 @@ describe("seo (launch polish)", () => {
     expect(metaFor("shop", { name: "Gulshan Sports", about: "Cricket specialists.", area: null }, "en").description).toBe("Cricket specialists.");
     expect(metaFor("hire", { name: "Kamrul Islam", headline: null, bio: null, role: { nameEn: "Umpire", nameBn: "আম্পায়ার" }, area: null }, "bn")).toMatchObject({ title: "Kamrul Islam · আম্পায়ার" });
     expect(metaFor("gym", { name: "Iron House", about: null, area: { nameEn: "Uttara", nameBn: "উত্তরা" }, cover: null, photos: [{ url: "/g.jpg" }] }, "en", SITE).image).toBe(`${SITE}/g.jpg`);
-    const t = metaFor("tournament", { name: "Dhaka Futsal Cup", slug: "dhaka-futsal-cup", description: null, sport: { nameEn: "Futsal", nameBn: "ফুটসাল" }, startDate: "2026-11-07", endDate: null, status: "cancelled", organisation: { name: "Kriraghor" } }, "en", SITE);
-    expect(t.description).toBe("Dhaka Futsal Cup · Futsal · Kriraghor");
-    expect(t.jsonLd).toMatchObject({ "@type": "SportsEvent", startDate: "2026-11-07", eventStatus: "https://schema.org/EventCancelled", organizer: { name: "Kriraghor" } });
-    expect(metaFor("tournament", { name: "Cup", slug: "cup", status: "registration_open", organisation: null }, "en", SITE).jsonLd).toMatchObject({ eventStatus: "https://schema.org/EventScheduled" });
+    const t = metaFor("tournament", { title: "Dhaka Futsal Cup", slug: "dhaka-futsal-cup", description: null, sport: { en: "Futsal", bn: "ফুটসাল" }, startDate: "2026-11-07", endDate: null, organiserName: "Mirpur Club", venueName: "Kick Off Arena", cover: "/c.jpg" }, "en", SITE);
+    expect(t.title).toBe("Dhaka Futsal Cup");
+    expect(t.description).toBe("Dhaka Futsal Cup · Futsal · Mirpur Club");
+    expect(t.image).toBe(`${SITE}/c.jpg`);
+    expect(t.jsonLd).toMatchObject({ "@type": "SportsEvent", url: `${SITE}/tournaments/dhaka-futsal-cup`, startDate: "2026-11-07", sport: "Futsal", location: { name: "Kick Off Arena" }, organizer: { name: "Mirpur Club" } });
+    expect(metaFor("tournament", { title: "Cup", slug: "cup" }, "bn", SITE).jsonLd).not.toHaveProperty("organizer");
     expect(metaFor("player", { displayName: "Rafi Ahmed", bio: null, handle: "rafi" }, "en").description).toBe("Rafi Ahmed (@rafi)");
   });
 
   it("lists static pages, then each source's slugs, unique and capped", () => {
     const e = sitemapEntries(SITE, { grounds: ["a", "a", "b c"], tournaments: ["cup"] });
     expect(e.slice(0, STATIC_PATHS.length).map((x) => x.url)).toContain(`${SITE}/venues`);
-    expect(e.map((x) => x.url).slice(STATIC_PATHS.length)).toEqual([`${SITE}/venues/a`, `${SITE}/venues/b%20c`, `${SITE}/events/cup`]);
+    expect(e.map((x) => x.url).slice(STATIC_PATHS.length)).toEqual([`${SITE}/venues/a`, `${SITE}/venues/b%20c`, `${SITE}/tournaments/cup`]);
     expect(e.some((x) => PRIVATE_PATHS.some((p) => x.url.startsWith(`${SITE}${p}`)))).toBe(false);
     // When the API is down there are no slugs: the static pages alone.
     expect(sitemapEntries(SITE, {})).toHaveLength(STATIC_PATHS.length);

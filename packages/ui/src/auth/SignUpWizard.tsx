@@ -23,7 +23,6 @@ const ROLE_ICON: Record<SignupRole, Icon> = {
   ground_owner: Flag,
   shop_owner: Storefront,
   gym_owner: Barbell,
-  organiser: Trophy,
 };
 
 export type NextStep = { href: string; label: string };

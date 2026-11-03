@@ -83,14 +83,13 @@ describe("my roles and submissions (M05)", () => {
   });
 
   it("knows the self-service roles", () => {
-    expect(isSelfServiceRole("organiser")).toBe(true);
+    expect(isSelfServiceRole("organiser")).toBe(false); // nobody organises any more (ADR-008)
     expect(isSelfServiceRole("member")).toBe(false);
     expect(isSelfServiceRole("staff")).toBe(false);
   });
 
   it("links each role to its business page", () => {
     expect(businessHref("ground_owner")).toBe("/account/business");
-    expect(businessHref("organiser")).toBe("/account/business?as=organiser");
     expect(businessHref("shop_owner")).toBe("/account/business?as=shop");
   });
 
@@ -98,12 +97,12 @@ describe("my roles and submissions (M05)", () => {
     expect(roleNext("shop_owner", "applied", false)).toEqual({ kind: "verify", href: "/account/verification" });
     expect(roleNext("shop_owner", "documents_pending", true)).toEqual({ kind: "documents", href: "/account/business?as=shop" });
     expect(roleNext("gym_owner", "changes_requested", true)).toEqual({ kind: "fix", href: "/account/business?as=gym" });
-    expect(roleNext("organiser", "in_review", true)).toEqual({ kind: "wait" });
+    expect(roleNext("gym_owner", "in_review", true)).toEqual({ kind: "wait" });
     expect(roleNext("pro", "active", true)).toEqual({ kind: "openProDesk", href: "/pro" });
     expect(roleNext("player", "active", true)).toEqual({ kind: "openProDesk", href: "/pro" });
     expect(roleNext("ground_owner", "active", true)).toEqual({ kind: "openVendorDesk" });
-    expect(roleNext("organiser", "rejected", true)).toEqual({ kind: "applyAgain", href: "/account/business?as=organiser" });
-    expect(roleNext("organiser", "withdrawn", true)).toEqual({ kind: "applyAgain", href: "/account/business?as=organiser" });
+    expect(roleNext("gym_owner", "rejected", true)).toEqual({ kind: "applyAgain", href: "/account/business?as=gym" });
+    expect(roleNext("shop_owner", "withdrawn", true)).toEqual({ kind: "applyAgain", href: "/account/business?as=shop" });
     expect(roleNext("ground_owner", "suspended", true)).toEqual({ kind: "contact" });
   });
 

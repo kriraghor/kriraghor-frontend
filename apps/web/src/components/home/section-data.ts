@@ -4,7 +4,7 @@ import { api } from "@kriraghor/api-client";
 import { grounds } from "@/lib/grounds";
 import { hire } from "@/lib/hire";
 import { market, type MarketCard } from "@/lib/market";
-import { tournaments, type Card as EventCard } from "@/lib/tournaments";
+import { tournamentPosts, type PostCard } from "@/lib/tournament-posts";
 import type { SectionKey } from "@/lib/home";
 import type { GymCard, HireCard, VenueCard } from "./SectionCards";
 import type { EsportsCard } from "./queries";
@@ -19,7 +19,7 @@ const items = async <T,>(p: Promise<{ data?: unknown; error?: unknown }>) => {
   return (r.data as { items: T[] }).items;
 };
 
-export type SectionItems = { esports: EsportsCard; gym: GymCard; venues: VenueCard; shop: MarketCard; hire: HireCard; events: EventCard };
+export type SectionItems = { esports: EsportsCard; gym: GymCard; venues: VenueCard; shop: MarketCard; hire: HireCard; tournaments: PostCard };
 
 /** Each section's public list, searched by text when `q` is set (the home rails use it without). */
 export const sectionItems: { [K in SectionKey]: (q?: string) => Promise<SectionItems[K][]> } = {
@@ -28,5 +28,5 @@ export const sectionItems: { [K in SectionKey]: (q?: string) => Promise<SectionI
   venues: async (q) => (await grounds.list({ sort: "cheapest", ...(q ? { q } : {}) })).items as unknown as VenueCard[],
   shop: async (q) => (await market.list(q ? { q } : {})).items,
   hire: async (q) => (await hire.list(q ? { q } : {})).items as unknown as HireCard[],
-  events: async (q) => (await tournaments.list({ status: "open", ...(q ? { q } : {}) })).items,
+  tournaments: async (q) => (await tournamentPosts.feed(q ? { q } : {})).items.slice(0, RAIL_MAX),
 };

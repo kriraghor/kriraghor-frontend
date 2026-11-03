@@ -156,7 +156,7 @@ export function FlipTicker<T>({
       }}
       data-testid="flip-ticker"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-line pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
         <div className="min-w-0">{title}</div>
         {moves ? (
           <div className="flex shrink-0 gap-1.5">

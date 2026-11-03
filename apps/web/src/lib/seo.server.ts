@@ -38,7 +38,7 @@ const DETAIL: Record<MetaKind, (key: string) => string> = {
   shop: (s) => `/market/shops/${encodeURIComponent(s)}`,
   hire: (s) => `/hire/profiles/${encodeURIComponent(s)}`,
   gym: (s) => `/gym/gyms/${encodeURIComponent(s)}`,
-  tournament: (s) => `/tournaments/${encodeURIComponent(s)}`,
+  tournament: (s) => `/tournament-posts/${encodeURIComponent(s)}`,
   player: (s) => `/players/${encodeURIComponent(s)}`,
 };
 
@@ -77,23 +77,18 @@ export async function sitemapSlugs(maxPerSource = 2000) {
   const found: Record<string, string[]> = {};
   for (const src of SITEMAP_SOURCES) {
     const slugs: string[] = [];
-    let cursor: string | number | null = null;
+    let cursor: string | null = null;
     for (let page = 0; page < 60 && slugs.length < maxPerSource; page += 1) {
       const sep = src.path.includes("?") ? "&" : "?";
-      const at = cursor == null ? "" : src.paging === "offset" ? `${sep}offset=${cursor}` : `${sep}cursor=${encodeURIComponent(String(cursor))}`;
+      const at = cursor == null ? "" : `${sep}cursor=${encodeURIComponent(String(cursor))}`;
       const read = await publicRead(`${src.path}${at}`);
       if (read.status !== "ok") break;
       const body = read.data as { items?: { slug?: string; kind?: string }[]; nextCursor?: string | null };
       const items = body.items ?? [];
       // Shop items only: used listings (M13 step 2) will get their own pages.
       for (const it of items) if (it.slug && (src.key !== "products" || !it.kind || it.kind === "shop")) slugs.push(it.slug);
-      if (src.paging === "offset") {
-        if (items.length === 0) break;
-        cursor = slugs.length;
-      } else {
-        if (!body.nextCursor) break;
-        cursor = body.nextCursor;
-      }
+      if (!body.nextCursor) break;
+      cursor = body.nextCursor;
     }
     found[src.key] = slugs;
   }

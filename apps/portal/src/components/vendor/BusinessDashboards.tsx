@@ -5,46 +5,44 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, ChartLineUp, Hourglass } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
-import { Link } from "@kriraghor/ui/i18n/navigation";
 import { useAuth } from "@kriraghor/ui/auth";
 import { ButtonLink, Card, Skeleton } from "@kriraghor/ui/kit";
 import { ChartBars, ChartLine, ChartRank, ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
 import { Notice } from "@kriraghor/ui/primitives";
-import { bucketLabel, compactTaka, dashboards, pct, type GymDashboard, type OrganiserDashboard, type OwnerDashboard, type Period, type ShopDashboard } from "@/lib/dashboard";
-import { analyticsHref, dayBars, hourBars, lineSeries, pairSeries, type DashRole } from "@/lib/vendor/analytics";
+import { bucketLabel, compactTaka, dashboards, pct, type GymDashboard, type OwnerDashboard, type Period, type ShopDashboard } from "@/lib/dashboard";
+import { analyticsHref, dayBars, hourBars, lineSeries, type DashRole } from "@/lib/vendor/analytics";
 import { CsvButtons, PeriodSwitch } from "./OwnerDashboard";
 
 /**
- * Round B2 dashboards (M19 §6.3) for shops, gyms and sports organisations: the tiles (also on the
+ * Round B2 dashboards (M19 §6.3) for shops and gyms: the tiles (also on the
  * vendor home) and the charts and exports of /vendor/analytics. Money in poisha shown as taka;
  * days and hours are Dhaka's; each tile's "i" is the API's own definition in the page's language.
  */
-export type AnyDashboard = OwnerDashboard | ShopDashboard | GymDashboard | OrganiserDashboard;
-type Target = { role: DashRole; orgId?: string | null };
+export type AnyDashboard = OwnerDashboard | ShopDashboard | GymDashboard;
+type Target = { role: DashRole };
 
-/** One business's dashboard for a period (organisers per organisation). */
+/** One business's dashboard for a period. */
 export function useBusinessDashboard(b: Target | null, period: Period) {
   const locale = useLocale();
   const { status } = useAuth();
   return useQuery<AnyDashboard>({
-    queryKey: ["business-dashboard", b?.role ?? null, b?.orgId ?? null, period, locale],
-    enabled: status === "signed_in" && Boolean(b) && (b?.role !== "organiser" || Boolean(b?.orgId)),
+    queryKey: ["business-dashboard", b?.role ?? null, period, locale],
+    enabled: status === "signed_in" && Boolean(b),
     retry: false,
     queryFn: () => {
       if (!b) throw new Error("no business");
       if (b.role === "shop_owner") return dashboards.shop(period, locale);
       if (b.role === "gym_owner") return dashboards.gym(period, locale);
-      if (b.role === "organiser") return dashboards.organiser(b.orgId ?? "", period, locale);
       return dashboards.owner(period, locale);
     },
   });
 }
 
-/** Why a dashboard did not load, in the person's words (role missing, not a member, or a failure). */
+/** Why a dashboard did not load, in the person's words (role missing, or a failure). */
 export function DashboardError({ error }: { error: unknown }) {
   const t = useTranslations("dashboard");
   const code = problemOf(error)?.code;
-  return <Notice tone="error">{code === "ROLE_REQUIRED" ? t("errors.roleRequired") : code === "NOT_FOUND" ? t("errors.orgNotFound") : t("loadFailed")}</Notice>;
+  return <Notice tone="error">{code === "ROLE_REQUIRED" ? t("errors.roleRequired") : t("loadFailed")}</Notice>;
 }
 
 const n = (note: Record<string, number> | null | undefined, k: string) => note?.[k] ?? 0;
@@ -89,40 +87,10 @@ export function GymTiles({ d }: { d: GymDashboard }) {
   );
 }
 
-export function OrganiserTiles({ d }: { d: OrganiserDashboard }) {
-  const t = useTranslations("dashboard");
-  const locale = useLocale();
-  const vs = t(`vs.${d.period}`);
-  const { teams, entryFees, matchesPlayed } = d.tiles;
-  const money = (v: number) => compactTaka(v, locale);
-  return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-3" data-testid="organiser-tiles">
-      <KpiTile
-        testId="tile-teams"
-        label={t("tiles.teams")}
-        help={d.definitions.teams}
-        value={t("ofTotal", { n: teams.value ?? 0, total: n(teams.note, "maxTeams") })}
-        note={t("notes.teams", { waiting: n(teams.note, "waiting"), unpaid: n(teams.note, "unpaid"), reserve: n(teams.note, "reserve") })}
-      />
-      <KpiTile
-        testId="tile-entry-fees"
-        label={t("tiles.entryFees")}
-        help={d.definitions.entry_fees}
-        value={money(entryFees.value ?? 0)}
-        delta={<DeltaBadge value={entryFees.delta} kind="pct" label={vs} />}
-        note={t("notes.fees", { held: money(n(entryFees.note, "held")), released: money(n(entryFees.note, "released")), refunded: money(n(entryFees.note, "refunded")) })}
-        spark={entryFees.spark}
-      />
-      <KpiTile testId="tile-matches" label={t("tiles.matchesPlayed")} help={d.definitions.matches_played} value={t("ofTotal", { n: matchesPlayed.value ?? 0, total: n(matchesPlayed.note, "total") })} note={t("notes.matches")} />
-    </div>
-  );
-}
-
 /** The tiles of any dashboard. */
 export function BusinessTiles({ d }: { d: Exclude<AnyDashboard, OwnerDashboard> }) {
   if (d.role === "shop_owner") return <ShopTiles d={d} />;
-  if (d.role === "gym_owner") return <GymTiles d={d} />;
-  return <OrganiserTiles d={d} />;
+  return <GymTiles d={d} />;
 }
 
 // ---------------- charts (the analytics page)
@@ -187,70 +155,26 @@ export function GymAnalytics({ d }: { d: GymDashboard }) {
   );
 }
 
-export function OrganiserAnalytics({ d }: { d: OrganiserDashboard }) {
-  const t = useTranslations("dashboard");
-  const ts = useTranslations("sportsConsole");
-  const locale = useLocale();
-  const money = (v: number) => compactTaka(v, locale);
-  const regs = pairSeries(d.charts.registrationsOverTime, "registered", "approved");
-  const eventsHref = `/vendor/events/${d.organisation.id}`;
-  return (
-    <div className="space-y-6" data-testid="organiser-analytics">
-      <OrganiserTiles d={d} />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <ChartLine title={t("charts.registrations")} points={regs.points} compare={regs.compare} legend={{ current: t("legend.registered"), compare: t("legend.approved") }} format={(v) => String(v)} labelOf={(k) => bucketLabel(k, locale)} />
-        <figure className="min-w-0 glass-card p-4" data-testid="fees-by-event">
-          <figcaption className="font-bold">{t("charts.feesByEvent")}</figcaption>
-          {d.charts.feesByEvent.length ? (
-            <ul className="mt-3 divide-y divide-line">
-              {d.charts.feesByEvent.map((e) => (
-                <li key={e.tournamentId} className="py-2">
-                  <Link href={`${eventsHref}/e/${e.tournamentId}`} className="flex min-h-11 flex-wrap items-baseline gap-x-3 gap-y-0.5 no-underline hover:underline">
-                    <span className="min-w-0 flex-1 truncate font-semibold text-ink">{e.name}</span>
-                    <span className="font-display font-bold tabular-nums text-ink">{money(e.collected)}</span>
-                    <span className="w-full text-xs text-muted">
-                      {ts.has(`status.${e.status}`) ? ts(`status.${e.status}`) : e.status} · {t("notes.fees", { held: money(e.held), released: money(e.released), refunded: money(e.refunded) })}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-3 text-sm text-muted">{t("empty")}</p>
-          )}
-        </figure>
-      </div>
-      <p className="text-sm text-muted">
-        {t("organiserCsv")}{" "}
-        <Link href={eventsHref} className="font-semibold text-brand-text">
-          {t("openEvents")}
-        </Link>
-      </p>
-      <p className="text-xs text-muted">{t("organiserNote")}</p>
-    </div>
-  );
-}
-
 // ---------------- the vendor home's overview per business
 
 /**
  * A business's tiles on the vendor home with the period switch and the way into its analytics (as
- * the venue owner's Overview). Organisers get one row per sports organisation, named.
+ * the venue owner's Overview).
  */
-export function BusinessOverview({ role, orgId, title }: { role: Exclude<DashRole, "ground_owner">; orgId?: string; title?: string }) {
+export function BusinessOverview({ role }: { role: Exclude<DashRole, "ground_owner"> }) {
   const t = useTranslations("dashboard");
   const [period, setPeriod] = useState<Period>("7w");
-  const d = useBusinessDashboard({ role, orgId }, period);
+  const d = useBusinessDashboard({ role }, period);
   const data = d.data && d.data.role !== "ground_owner" ? d.data : null;
   return (
-    <div className="space-y-4" data-testid={`overview-${role}${orgId ? `-${orgId}` : ""}`}>
+    <div className="space-y-4" data-testid={`overview-${role}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="min-w-0 font-display text-xl font-bold">{title ?? t("overview")}</h3>
+        <h3 className="min-w-0 font-display text-xl font-bold">{t("overview")}</h3>
         <PeriodSwitch period={period} onChange={setPeriod} />
       </div>
       {d.isPending ? <Skeleton className="h-36 rounded-card" /> : d.isError ? <DashboardError error={d.error} /> : data ? <BusinessTiles d={data} /> : null}
       <div className="flex flex-wrap items-center gap-3">
-        <ButtonLink href={analyticsHref(role, orgId)} variant="secondary" icon={<ChartLineUp size={18} aria-hidden />} iconEnd={<ArrowRight size={16} aria-hidden />} data-testid={`open-analytics-${role}`}>
+        <ButtonLink href={analyticsHref(role)} variant="secondary" icon={<ChartLineUp size={18} aria-hidden />} iconEnd={<ArrowRight size={16} aria-hidden />} data-testid={`open-analytics-${role}`}>
           {t("openAnalytics")}
         </ButtonLink>
         {d.data?.asOf ? <span className="text-xs text-muted">{t("asOf", { time: new Date(d.data.asOf).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Dhaka" }) })}</span> : null}

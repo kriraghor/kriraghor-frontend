@@ -22,7 +22,7 @@ export async function SiteFooter() {
         { href: "/venues", label: t("grounds") },
         { href: "/shop", label: t("shop") },
         { href: "/hiring", label: t("hire") },
-        { href: "/events", label: t("sportsTournaments") },
+        { href: "/tournaments", label: t("sportsTournaments") },
       ],
     },
     {
@@ -34,7 +34,6 @@ export async function SiteFooter() {
         { href: "/account/business?as=shop", label: t("openShop") },
         { href: "/account/business?as=gym", label: t("listGym") },
         { href: "/account/business?as=pro", label: t("getHired") },
-        { href: "/account/business?as=organiser", label: t("organisers") },
       ],
     },
     {

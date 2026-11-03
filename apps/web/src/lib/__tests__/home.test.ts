@@ -27,7 +27,7 @@ describe("home", () => {
     expect(sectionUrl("shop", { q: "  whey protein " })).toBe("/shop?q=whey+protein");
     expect(sectionUrl("shop", { filter: "supplements" })).toBe("/shop?category=supplements");
     expect(sectionUrl("hire", { filter: "officials" })).toBe("/hiring?category=officials");
-    expect(sectionUrl("events", { q: "cup", filter: "cricket" })).toBe("/events?q=cup&sport=cricket");
+    expect(sectionUrl("tournaments", { q: "cup", filter: "cricket" })).toBe("/tournaments?q=cup&sport=cricket");
   });
 
   it("leaves out text too short for the APIs and caps long text", () => {

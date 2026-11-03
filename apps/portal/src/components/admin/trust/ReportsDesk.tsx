@@ -11,7 +11,7 @@ import { useCursorList } from "@/lib/use-cursor-list";
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 
-type SubjectType = "ground" | "booking" | "user" | "review" | "esports_tournament";
+type SubjectType = "ground" | "booking" | "user" | "review" | "esports_tournament" | "tournament_post" | "tournament_comment";
 type ReportRow = Awaited<ReturnType<typeof reportsAdmin.list>>["items"][number];
 type ReviewRow = Awaited<ReturnType<typeof reviewsAdmin.list>>["items"][number];
 
@@ -22,7 +22,7 @@ const REVIEW_VIEWS = ["held", "hidden", "published"] as const;
 const rowKey = (r: { subjectType: string; subjectId: string }) => `${r.subjectType}:${r.subjectId}`;
 const subjectName = (r: ReportRow) => {
   const s = r.subject as Record<string, unknown> | null;
-  return String(s?.name ?? s?.displayName ?? s?.text ?? r.subjectId).slice(0, 80);
+  return String(s?.name ?? s?.displayName ?? s?.title ?? s?.text ?? s?.body ?? r.subjectId).slice(0, 80);
 };
 
 /**

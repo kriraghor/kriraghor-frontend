@@ -83,7 +83,7 @@
   },
   "auth": {
     "signInTitle": "Welcome back",
-    "signInSubtitle": "Sign in to book venues, join events and track your winnings.",
+    "signInSubtitle": "Sign in to book venues, join tournaments and track your winnings.",
     "or": "or",
     "identifierLabel": "Mobile number or email",
     "identifierHint": "We'll send you a 6-digit code.",
@@ -119,7 +119,7 @@
       "web": {
         "title": "Bangladesh's home for sport and esports",
         "p1": "Book turfs and courts with a protected advance",
-        "p2": "Enter PUBG Mobile and Free Fire events for real prizes",
+        "p2": "Enter PUBG Mobile and Free Fire tournaments for real prizes",
         "p3": "Buy gear and hire players, umpires and coaches"
       },
       "esports": {
@@ -173,8 +173,8 @@
       "roleHint": "Pick one for now; you can add more later from your account.",
       "roles": {
         "none": {
-          "title": "Play and join events",
-          "body": "Book venues, enter esports events, shop gear."
+          "title": "Play and join tournaments",
+          "body": "Book venues, enter esports tournaments, shop gear."
         },
         "player": {
           "title": "Get hired as a player",
@@ -195,10 +195,6 @@
         "gym_owner": {
           "title": "I run a gym",
           "body": "Sell subscriptions, memberships and training."
-        },
-        "organiser": {
-          "title": "I organise events",
-          "body": "Run sports events for your club, league or venue."
         }
       },
       "create": "Create my account",
@@ -212,7 +208,7 @@
     },
     "nextSteps": {
       "gameId": "Add your PUBG Mobile or Free Fire ID",
-      "events": "See open esports events",
+      "events": "See open esports tournaments",
       "venues": "Find a venue to book",
       "hireProfile": "Build your hire profile",
       "business": "Send your documents for review",
@@ -234,11 +230,7 @@
     },
     "items": {
       "overview": "Overview",
-      "events": "My events",
-      "teams": "Teams",
       "player": "Player profile",
-      "ready": "Ready to play",
-      "addPhone": "Add a mobile number",
       "hires": "My hires",
       "bookings": "Bookings",
       "passes": "Gym subscriptions",
@@ -261,7 +253,8 @@
       "gameIds": "Game IDs",
       "matches": "Matches",
       "settings": "Account settings",
-      "esports": "My esports"
+      "esports": "My esports",
+      "tournaments": "My tournaments"
     },
     "roles": {
       "member": "Member",
@@ -290,7 +283,7 @@
       "evening": "Good evening"
     },
     "signedOutTitle": "Sign in to see your account",
-    "signedOutBody": "Your bookings, events, orders and winnings live here.",
+    "signedOutBody": "Your bookings, tournaments, orders and winnings live here.",
     "setup": {
       "title": "Finish setting up",
       "progress": "{done, number} of {total, number} done",
@@ -314,14 +307,13 @@
     "quick": {
       "title": "Jump back in",
       "venues": "Book a venue",
-      "events": "Join an event",
+      "events": "Join a tournament",
       "shop": "Shop gear",
       "hire": "Hire a pro"
     },
     "sections": {
       "home": "Home",
       "esports": "Esports",
-      "events": "Sports events",
       "venues": "Venues",
       "gym": "Gym",
       "shop": "Shop",
@@ -329,7 +321,8 @@
       "work": "Work",
       "money": "Money",
       "help": "Help",
-      "account": "Account"
+      "account": "Account",
+      "tournaments": "Tournaments"
     },
     "tabs": {
       "matches": "My matches",
@@ -353,10 +346,10 @@
     "landing": {
       "esports": {
         "lead": "Your PUBG Mobile and Free Fire matches, winnings and game IDs live on esports.kriraghor.com. The same account works there.",
-        "matches": "Room IDs, check-in and results for the events you joined.",
+        "matches": "Room IDs, check-in and results for the tournaments you joined.",
         "winnings": "Your prize balance and withdrawals to bKash or Nagad.",
         "gameIds": "Add and verify your PUBG Mobile and Free Fire IDs.",
-        "home": "Open events, showcases and top players."
+        "home": "Open tournaments, showcases and top players."
       },
       "gym": {
         "lead": "Your gyms, subscriptions, workout plans and the check-in QR live on gym.kriraghor.com. The same account works there.",
@@ -606,9 +599,11 @@
         "booking": "Report this booking",
         "user": "Report this member",
         "review": "Report this review",
-        "esports_tournament": "Report this event",
+        "esports_tournament": "Report this tournament",
         "shop": "Report this shop",
-        "product": "Report this item"
+        "product": "Report this item",
+        "tournament_post": "Report this post",
+        "tournament_comment": "Report this comment"
       },
       "reason": "What is wrong?",
       "note": "Anything else? (optional)",
@@ -636,9 +631,11 @@
         "booking": "A booking",
         "user": "A member",
         "review": "A review",
-        "esports_tournament": "An event",
+        "esports_tournament": "A tournament",
         "shop": "A shop",
-        "product": "A shop item"
+        "product": "A shop item",
+        "tournament_post": "A tournament post",
+        "tournament_comment": "A comment"
       },
       "status": {
         "open": "Our team is looking",

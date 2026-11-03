@@ -24,8 +24,8 @@ const en: Record<LegalKey, LegalDoc> = {
         id: "about",
         title: "About Kriraghor",
         body: [
-          "Kriraghor is a sports and esports platform for Bangladesh. You can book venues, buy gear, hire players, officials and coaches, buy gym subscriptions and trainer plans, and join esports and sports events.",
-          "Venue owners, shops, gyms, trainers, players for hire and event organisers provide their own services. Kriraghor runs the platform, takes the payments and holds the money until the service is delivered.",
+          "Kriraghor is a sports and esports platform for Bangladesh. You can book venues, buy gear, hire players, officials and coaches, buy gym subscriptions and trainer plans, and join esports and sports tournaments.",
+          "Venue owners, shops, gyms, trainers and players for hire provide their own services. Kriraghor runs the platform, takes the payments and holds the money until the service is delivered.",
           "[The legal entity that operates Kriraghor and its registered address will be added here before launch.]",
         ],
       },
@@ -49,7 +49,7 @@ const en: Record<LegalKey, LegalDoc> = {
         title: "Payments and how we hold your money",
         body: [
           "You pay online with bKash, Nagad or a card through our licensed payment partner. We never see or store your card details.",
-          "Your payment is held by Kriraghor, not sent straight to the seller. It is released only when the service is delivered: at check-in for a venue, when you receive an order, when you confirm a finished job, when a gym admits you, or when event results are final.",
+          "Your payment is held by Kriraghor, not sent straight to the seller. It is released only when the service is delivered: at check-in for a venue, when you receive an order, when you confirm a finished job, when a gym admits you, or when tournament results are final.",
           "Kriraghor's fee is shown in the price breakdown before you pay. The fee in force when you pay is the one that applies to that payment.",
           "Refunds follow our Refund policy and go back to the way you paid.",
         ],
@@ -91,12 +91,12 @@ const en: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "esports",
-        title: "Esports events",
+        title: "Esports tournaments",
         body: [
           [
             "Entry fees are paid online and held until results are final.",
-            "The prize table is published before registration opens and is paid as published once the event runs.",
-            "If an event doesn't reach its minimum number of players or squads, it is cancelled and everyone gets a full refund.",
+            "The prize table is published before registration opens and is paid as published once the tournament runs.",
+            "If a tournament doesn't reach its minimum number of players or squads, it is cancelled and everyone gets a full refund.",
             "You need a verified game UID, one per game. The room ID and password are shown only to checked-in players, shortly before the start.",
             "Results can be disputed for a short window after they are posted. After that they are final.",
             "Winnings are added to your Kriraghor balance. You can withdraw them to bKash or Nagad after your NID is approved.",
@@ -106,8 +106,8 @@ const en: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "tournaments",
-        title: "Sports events",
-        body: ["Verified organisers run football, cricket and other sports events on Kriraghor. Each event page shows its rules, entry fee, prizes and refund rules. Entry fees are held by Kriraghor and paid to the organiser in parts as the event is played. Prizes in sports events are paid by the organiser."],
+        title: "Tournaments",
+        body: ["People post tournaments they run elsewhere on Kriraghor's Tournaments page. Kriraghor doesn't organise these tournaments, check them, or take part in them, and doesn't collect or hold their entry fees or prizes. Anything you agree or pay is between you and the organiser, so check the details before you pay anyone. You can report a post, and we may remove posts that are false or break these terms. Phone numbers, emails and links can't go in public posts or comments; private messages can carry them."],
       },
       {
         id: "conduct",
@@ -126,7 +126,7 @@ const en: Record<LegalKey, LegalDoc> = {
       {
         id: "disputes",
         title: "Problems and disputes",
-        body: ["If something goes wrong, open a dispute from your booking, order, job or event within the window shown there, and add evidence such as photos or screenshots. Kriraghor staff review both sides and decide how the held money is used. This doesn't affect your rights under Bangladesh law."],
+        body: ["If something goes wrong, open a dispute from your booking, order, job or tournament within the window shown there, and add evidence such as photos or screenshots. Kriraghor staff review both sides and decide how the held money is used. This doesn't affect your rights under Bangladesh law."],
       },
       {
         id: "suspension",
@@ -136,7 +136,7 @@ const en: Record<LegalKey, LegalDoc> = {
       {
         id: "liability",
         title: "Our responsibility",
-        body: ["Owners, shops, gyms, trainers, people for hire and organisers are responsible for the services they provide. Kriraghor is responsible for running the platform and handling payments as these terms describe. Nothing here limits any responsibility that Bangladesh law does not allow us to limit."],
+        body: ["Owners, shops, gyms, trainers and people for hire are responsible for the services they provide. Kriraghor is responsible for running the platform and handling payments as these terms describe. Nothing here limits any responsibility that Bangladesh law does not allow us to limit."],
       },
       {
         id: "changes",
@@ -210,7 +210,7 @@ const en: Record<LegalKey, LegalDoc> = {
       {
         id: "security",
         title: "How we protect it",
-        body: ["NID numbers, payout account numbers and event room credentials are encrypted at rest. Staff can see only what their role needs, and sensitive views are recorded in an audit log."],
+        body: ["NID numbers, payout account numbers and tournament room credentials are encrypted at rest. Staff can see only what their role needs, and sensitive views are recorded in an audit log."],
       },
       {
         id: "rights",
@@ -259,25 +259,19 @@ const en: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "esports",
-        title: "Esports events",
+        title: "Esports tournaments",
         body: [
           [
-            "Not enough players or squads by the time registration closes: the event is cancelled and everyone gets a full refund.",
-            "You withdraw before registration closes: refunded as shown on the event page.",
+            "Not enough players or squads by the time registration closes: the tournament is cancelled and everyone gets a full refund.",
+            "You withdraw before registration closes: refunded as shown on the tournament page.",
             "After registration closes, entry fees are not refunded. A disqualified player or squad gets no refund and loses its prize.",
           ],
         ],
       },
       {
         id: "tournaments",
-        title: "Sports events",
-        body: [
-          [
-            "The organiser rejects your team, or the event is cancelled before the first result: full refund.",
-            "The event is cancelled after it has started: the part of the entry fee not yet paid to the organiser is refunded.",
-            "Your team withdraws after registration closes: a partial refund, as shown in the event's rules.",
-          ],
-        ],
+        title: "Tournaments",
+        body: ["Kriraghor doesn't collect entry fees for tournaments posted on the Tournaments page, so we can't refund them. Ask the organiser who took your money."],
       },
       {
         id: "orders",
@@ -322,7 +316,6 @@ const en: Record<LegalKey, LegalDoc> = {
             "Hiring: when you confirm the job is done, or automatically after the period shown on the job, unless you open a dispute.",
             "Gym subscriptions: when the gym admits you, or when an unused subscription expires.",
             "Esports: entry fees stay held until results are final and prizes are paid.",
-            "Sports events: entry fees are paid to the organiser in two parts, after the first result and at the end.",
           ],
         ],
       },
@@ -332,7 +325,7 @@ const en: Record<LegalKey, LegalDoc> = {
   },
   fairPlay: {
     title: "Fair play rules",
-    intro: "Esports on Kriraghor is for real players competing fairly. These rules apply to every Kriraghor and organiser event.",
+    intro: "Esports on Kriraghor is for real players competing fairly. These rules apply to every Kriraghor esports tournament.",
     sections: [
       {
         id: "rules",
@@ -340,20 +333,20 @@ const en: Record<LegalKey, LegalDoc> = {
         body: [
           [
             "One game UID per account for each game. The UID must be yours.",
-            "No hacks, cheats, modified game files, or emulators where an event doesn't allow them.",
+            "No hacks, cheats, modified game files, or emulators where a tournament doesn't allow them.",
             "No teaming with other squads, and no sharing the room ID or password.",
             "Play under your own account. Don't let anyone else play for you.",
-            "Respect other players, staff and organisers.",
+            "Respect other players and staff.",
           ],
         ],
       },
-      { id: "reports", title: "Reporting cheating", body: ["Report cheating from the event page with evidence such as a video or screenshots. Reports without evidence can't be acted on."] },
+      { id: "reports", title: "Reporting cheating", body: ["Report cheating from the tournament page with evidence such as a video or screenshots. Reports without evidence can't be acted on."] },
       {
         id: "penalties",
         title: "Penalties",
-        body: [["A warning, a points penalty or disqualification from the match or event.", "A disqualified player or squad loses its prize.", "Serious or repeated cheating can lead to a ban of the game UID and the account."]],
+        body: [["A warning, a points penalty or disqualification from the match or tournament.", "A disqualified player or squad loses its prize.", "Serious or repeated cheating can lead to a ban of the game UID and the account."]],
       },
-      { id: "decisions", title: "Decisions", body: ["Staff decide using the evidence and the event's rules. You can dispute a result within the window shown after it is posted."] },
+      { id: "decisions", title: "Decisions", body: ["Staff decide using the evidence and the tournament's rules. You can dispute a result within the window shown after it is posted."] },
     ],
   },
 };
@@ -367,8 +360,8 @@ const bn: Record<LegalKey, LegalDoc> = {
         id: "about",
         title: "ক্রীড়াঘর সম্পর্কে",
         body: [
-          "ক্রীড়াঘর বাংলাদেশের খেলাধুলা ও ই-স্পোর্টসের প্ল্যাটফর্ম। এখানে ভেন্যু বুক করা, খেলার সরঞ্জাম কেনা, খেলোয়াড়-আম্পায়ার-কোচ হায়ার করা, জিম সাবস্ক্রিপশন ও ট্রেইনার প্ল্যান কেনা এবং ই-স্পোর্টস ও খেলার ইভেন্টে অংশ নেওয়া যায়।",
-          "ভেন্যুর মালিক, দোকান, জিম, ট্রেইনার, হায়ারের লোক ও ইভেন্ট আয়োজকরা নিজেদের সেবা দেন। ক্রীড়াঘর প্ল্যাটফর্ম চালায়, পেমেন্ট নেয় এবং সেবা পাওয়া পর্যন্ত টাকা নিজের কাছে রাখে।",
+          "ক্রীড়াঘর বাংলাদেশের খেলাধুলা ও ই-স্পোর্টসের প্ল্যাটফর্ম। এখানে ভেন্যু বুক করা, খেলার সরঞ্জাম কেনা, খেলোয়াড়-আম্পায়ার-কোচ হায়ার করা, জিম সাবস্ক্রিপশন ও ট্রেইনার প্ল্যান কেনা এবং ই-স্পোর্টস ও টুর্নামেন্টে অংশ নেওয়া যায়।",
+          "ভেন্যুর মালিক, দোকান, জিম, ট্রেইনার, হায়ারের লোক ও টুর্নামেন্ট আয়োজকরা নিজেদের সেবা দেন। ক্রীড়াঘর প্ল্যাটফর্ম চালায়, পেমেন্ট নেয় এবং সেবা পাওয়া পর্যন্ত টাকা নিজের কাছে রাখে।",
           "[ক্রীড়াঘর পরিচালনাকারী প্রতিষ্ঠানের আইনি নাম ও নিবন্ধিত ঠিকানা চালুর আগে এখানে যোগ হবে।]",
         ],
       },
@@ -392,7 +385,7 @@ const bn: Record<LegalKey, LegalDoc> = {
         title: "পেমেন্ট এবং আমরা কীভাবে টাকা রাখি",
         body: [
           "বিকাশ, নগদ বা কার্ডে আমাদের লাইসেন্সপ্রাপ্ত পেমেন্ট পার্টনারের মাধ্যমে অনলাইনে পেমেন্ট করবেন। আপনার কার্ডের তথ্য আমরা দেখি না, রাখিও না।",
-          "আপনার টাকা সরাসরি বিক্রেতার কাছে যায় না, ক্রীড়াঘরের কাছে জমা থাকে। সেবা পাওয়ার পরই তা ছাড়া হয়: ভেন্যুতে চেক-ইনে, অর্ডার হাতে পেলে, কাজ শেষ বলে নিশ্চিত করলে, জিমে ঢোকার সময়, বা ইভেন্টের ফলাফল চূড়ান্ত হলে।",
+          "আপনার টাকা সরাসরি বিক্রেতার কাছে যায় না, ক্রীড়াঘরের কাছে জমা থাকে। সেবা পাওয়ার পরই তা ছাড়া হয়: ভেন্যুতে চেক-ইনে, অর্ডার হাতে পেলে, কাজ শেষ বলে নিশ্চিত করলে, জিমে ঢোকার সময়, বা টুর্নামেন্টের ফলাফল চূড়ান্ত হলে।",
           "পেমেন্টের আগে দামের বিবরণে ক্রীড়াঘরের ফি দেখানো হয়। আপনি যখন পেমেন্ট করেন, তখনকার ফি-ই সেই পেমেন্টে প্রযোজ্য।",
           "রিফান্ড আমাদের রিফান্ড নীতি অনুযায়ী হয় এবং যে মাধ্যমে পেমেন্ট করেছেন সেখানেই ফেরত যায়।",
         ],
@@ -434,12 +427,12 @@ const bn: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "esports",
-        title: "ই-স্পোর্টস ইভেন্ট",
+        title: "ই-স্পোর্টস টুর্নামেন্ট",
         body: [
           [
             "এন্ট্রি ফি অনলাইনে দিতে হয় এবং ফলাফল চূড়ান্ত না হওয়া পর্যন্ত জমা থাকে।",
-            "রেজিস্ট্রেশন খোলার আগে পুরস্কারের তালিকা প্রকাশ করা হয়, এবং ইভেন্ট হলে সেভাবেই পুরস্কার দেওয়া হয়।",
-            "ন্যূনতম খেলোয়াড় বা স্কোয়াড না হলে ইভেন্ট বাতিল হয় এবং সবাই পুরো টাকা ফেরত পান।",
+            "রেজিস্ট্রেশন খোলার আগে পুরস্কারের তালিকা প্রকাশ করা হয়, এবং টুর্নামেন্ট হলে সেভাবেই পুরস্কার দেওয়া হয়।",
+            "ন্যূনতম খেলোয়াড় বা স্কোয়াড না হলে টুর্নামেন্ট বাতিল হয় এবং সবাই পুরো টাকা ফেরত পান।",
             "যাচাই করা গেম UID লাগবে, প্রতি গেমে একটি। রুম আইডি ও পাসওয়ার্ড শুধু চেক-ইন করা খেলোয়াড়রা শুরুর কিছুক্ষণ আগে দেখতে পান।",
             "ফলাফল প্রকাশের পর অল্প সময়ের মধ্যে আপত্তি জানানো যায়। এরপর ফলাফল চূড়ান্ত।",
             "পুরস্কারের টাকা আপনার ক্রীড়াঘর ব্যালান্সে যোগ হয়। NID অনুমোদনের পর বিকাশ বা নগদে তুলতে পারবেন।",
@@ -449,8 +442,8 @@ const bn: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "tournaments",
-        title: "খেলার ইভেন্ট",
-        body: ["যাচাই করা আয়োজকরা ক্রীড়াঘরে ফুটবল, ক্রিকেটসহ নানা খেলার ইভেন্ট চালান। প্রতিটি ইভেন্টের পাতায় নিয়ম, এন্ট্রি ফি, পুরস্কার ও রিফান্ডের নিয়ম থাকে। এন্ট্রি ফি ক্রীড়াঘরের কাছে জমা থাকে এবং খেলা এগোনোর সঙ্গে ধাপে ধাপে আয়োজককে দেওয়া হয়। খেলার ইভেন্টের পুরস্কার দেন আয়োজক।"],
+        title: "টুর্নামেন্ট",
+        body: ["মানুষ ক্রীড়াঘরের টুর্নামেন্ট পেজে তাদের চালানো টুর্নামেন্টের পোস্ট করেন। ক্রীড়াঘর এসব টুর্নামেন্ট আয়োজন করে না, যাচাই করে না, এতে অংশও নেয় না, এবং এর এন্ট্রি ফি বা পুরস্কার নেয় না বা রাখে না। আপনি যা ঠিক করেন বা যে টাকা দেন তা আপনার ও আয়োজকের মধ্যে, তাই কাউকে টাকা দেওয়ার আগে সব মিলিয়ে নিন। আপনি পোস্ট রিপোর্ট করতে পারেন, এবং মিথ্যা বা এই শর্ত ভঙ্গ করা পোস্ট আমরা সরিয়ে দিতে পারি। ফোন নম্বর, ইমেইল ও লিংক সবার দেখার পোস্ট বা মন্তব্যে দেওয়া যাবে না; ব্যক্তিগত বার্তায় দেওয়া যাবে।"],
       },
       {
         id: "conduct",
@@ -469,7 +462,7 @@ const bn: Record<LegalKey, LegalDoc> = {
       {
         id: "disputes",
         title: "সমস্যা ও অভিযোগ",
-        body: ["কোনো সমস্যা হলে বুকিং, অর্ডার, কাজ বা ইভেন্ট থেকে সেখানে দেখানো সময়ের মধ্যে অভিযোগ খুলুন এবং ছবি বা স্ক্রিনশটের মতো প্রমাণ দিন। ক্রীড়াঘরের কর্মীরা দুই পক্ষের কথা দেখে জমা টাকার বিষয়ে সিদ্ধান্ত নেন। এতে বাংলাদেশের আইনে আপনার অধিকার ক্ষুণ্ন হয় না।"],
+        body: ["কোনো সমস্যা হলে বুকিং, অর্ডার, কাজ বা টুর্নামেন্ট থেকে সেখানে দেখানো সময়ের মধ্যে অভিযোগ খুলুন এবং ছবি বা স্ক্রিনশটের মতো প্রমাণ দিন। ক্রীড়াঘরের কর্মীরা দুই পক্ষের কথা দেখে জমা টাকার বিষয়ে সিদ্ধান্ত নেন। এতে বাংলাদেশের আইনে আপনার অধিকার ক্ষুণ্ন হয় না।"],
       },
       {
         id: "suspension",
@@ -534,7 +527,7 @@ const bn: Record<LegalKey, LegalDoc> = {
         ],
       },
       { id: "keep", title: "কতদিন রাখি", body: ["অ্যাকাউন্ট খোলা থাকা পর্যন্ত, এবং পেমেন্ট ও করের রেকর্ডের জন্য আইন যতদিন চায় ততদিন তথ্য রাখি। অ্যাকাউন্ট বন্ধ করলে তা আর প্রকাশ্যে দেখা যায় না। যাচাইয়ের সিদ্ধান্তের ৯০ দিন পর আপনার NID-এর ছবি মুছে ফেলা হয় (নিচে NID যাচাই অংশ দেখুন)। [যাচাইয়ের অন্যান্য রেকর্ড কতদিন রাখা হবে, তা আইনি পর্যালোচনায় ঠিক হবে।]"] },
-      { id: "security", title: "কীভাবে সুরক্ষা দিই", body: ["NID নম্বর, পেআউট অ্যাকাউন্ট নম্বর ও ইভেন্টের রুমের তথ্য এনক্রিপ্ট করে রাখা হয়। কর্মীরা শুধু তাঁদের কাজের জন্য যা দরকার তা-ই দেখেন, আর সংবেদনশীল তথ্য দেখলে অডিট লগে রেকর্ড হয়।"] },
+      { id: "security", title: "কীভাবে সুরক্ষা দিই", body: ["NID নম্বর, পেআউট অ্যাকাউন্ট নম্বর ও টুর্নামেন্টের রুমের তথ্য এনক্রিপ্ট করে রাখা হয়। কর্মীরা শুধু তাঁদের কাজের জন্য যা দরকার তা-ই দেখেন, আর সংবেদনশীল তথ্য দেখলে অডিট লগে রেকর্ড হয়।"] },
       {
         id: "rights",
         title: "আপনার সুযোগ",
@@ -570,13 +563,13 @@ const bn: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "esports",
-        title: "ই-স্পোর্টস ইভেন্ট",
-        body: [["রেজিস্ট্রেশন বন্ধের সময় যথেষ্ট খেলোয়াড় বা স্কোয়াড না হলে: ইভেন্ট বাতিল হয় এবং সবাই পুরো টাকা ফেরত পান।", "রেজিস্ট্রেশন বন্ধের আগে নাম তুলে নিলে: ইভেন্টের পাতায় দেখানো অনুযায়ী ফেরত।", "রেজিস্ট্রেশন বন্ধের পর এন্ট্রি ফি ফেরত হয় না। বাতিল হওয়া খেলোয়াড় বা স্কোয়াড টাকা ফেরত পায় না এবং পুরস্কারও পায় না।"]],
+        title: "ই-স্পোর্টস টুর্নামেন্ট",
+        body: [["রেজিস্ট্রেশন বন্ধের সময় যথেষ্ট খেলোয়াড় বা স্কোয়াড না হলে: টুর্নামেন্ট বাতিল হয় এবং সবাই পুরো টাকা ফেরত পান।", "রেজিস্ট্রেশন বন্ধের আগে নাম তুলে নিলে: টুর্নামেন্টের পাতায় দেখানো অনুযায়ী ফেরত।", "রেজিস্ট্রেশন বন্ধের পর এন্ট্রি ফি ফেরত হয় না। বাতিল হওয়া খেলোয়াড় বা স্কোয়াড টাকা ফেরত পায় না এবং পুরস্কারও পায় না।"]],
       },
       {
         id: "tournaments",
-        title: "খেলার ইভেন্ট",
-        body: [["আয়োজক আপনার দল বাতিল করলে, বা প্রথম ফলাফলের আগে ইভেন্ট বাতিল হলে: পুরো টাকা ফেরত।", "শুরুর পর ইভেন্ট বাতিল হলে: এন্ট্রি ফির যে অংশ এখনো আয়োজককে দেওয়া হয়নি তা ফেরত।", "রেজিস্ট্রেশন বন্ধের পর দল নাম তুলে নিলে: ইভেন্টের নিয়মে দেখানো আংশিক ফেরত।"]],
+        title: "টুর্নামেন্ট",
+        body: ["টুর্নামেন্ট পেজে পোস্ট করা টুর্নামেন্টের এন্ট্রি ফি ক্রীড়াঘর নেয় না, তাই আমরা তা ফেরত দিতে পারি না। যে আয়োজক আপনার টাকা নিয়েছেন তাঁকে বলুন।"],
       },
       {
         id: "orders",
@@ -602,7 +595,6 @@ const bn: Record<LegalKey, LegalDoc> = {
             "হায়ার: কাজ শেষ বলে নিশ্চিত করলে, অথবা কাজে দেখানো সময় পেরোলে নিজে থেকে, যদি না অভিযোগ করেন।",
             "জিম সাবস্ক্রিপশন: জিমে ঢোকার সময়, অথবা অব্যবহৃত সাবস্ক্রিপশনের মেয়াদ শেষ হলে।",
             "ই-স্পোর্টস: ফলাফল চূড়ান্ত হয়ে পুরস্কার দেওয়া পর্যন্ত এন্ট্রি ফি জমা থাকে।",
-            "খেলার ইভেন্ট: এন্ট্রি ফি আয়োজককে দুই ধাপে দেওয়া হয়, প্রথম ফলাফলের পর এবং শেষে।",
           ],
         ],
       },
@@ -612,16 +604,16 @@ const bn: Record<LegalKey, LegalDoc> = {
   },
   fairPlay: {
     title: "ফেয়ার প্লে নিয়ম",
-    intro: "ক্রীড়াঘরের ই-স্পোর্টস আসল খেলোয়াড়দের ন্যায্য প্রতিযোগিতার জন্য। ক্রীড়াঘর ও আয়োজকদের সব ইভেন্টে এই নিয়ম প্রযোজ্য।",
+    intro: "ক্রীড়াঘরের ই-স্পোর্টস আসল খেলোয়াড়দের ন্যায্য প্রতিযোগিতার জন্য। ক্রীড়াঘর ও আয়োজকদের সব টুর্নামেন্টে এই নিয়ম প্রযোজ্য।",
     sections: [
       {
         id: "rules",
         title: "নিয়ম",
-        body: [["প্রতি গেমে প্রতি অ্যাকাউন্টে একটি গেম UID। UID আপনার নিজের হতে হবে।", "হ্যাক, চিট, বদলানো গেম ফাইল চলবে না; ইভেন্ট অনুমতি না দিলে এমুলেটরও না।", "অন্য স্কোয়াডের সঙ্গে টিমিং চলবে না, রুম আইডি বা পাসওয়ার্ড কাউকে দেওয়া যাবে না।", "নিজের অ্যাকাউন্টে নিজে খেলুন। আপনার হয়ে অন্য কাউকে খেলতে দেবেন না।", "অন্য খেলোয়াড়, কর্মী ও আয়োজকদের সম্মান করুন।"]],
+        body: [["প্রতি গেমে প্রতি অ্যাকাউন্টে একটি গেম UID। UID আপনার নিজের হতে হবে।", "হ্যাক, চিট, বদলানো গেম ফাইল চলবে না; টুর্নামেন্ট অনুমতি না দিলে এমুলেটরও না।", "অন্য স্কোয়াডের সঙ্গে টিমিং চলবে না, রুম আইডি বা পাসওয়ার্ড কাউকে দেওয়া যাবে না।", "নিজের অ্যাকাউন্টে নিজে খেলুন। আপনার হয়ে অন্য কাউকে খেলতে দেবেন না।", "অন্য খেলোয়াড়, কর্মী ও আয়োজকদের সম্মান করুন।"]],
       },
-      { id: "reports", title: "চিটিং রিপোর্ট", body: ["ইভেন্টের পাতা থেকে ভিডিও বা স্ক্রিনশটের মতো প্রমাণসহ চিটিং রিপোর্ট করুন। প্রমাণ ছাড়া রিপোর্টে ব্যবস্থা নেওয়া যায় না।"] },
-      { id: "penalties", title: "শাস্তি", body: [["সতর্কবার্তা, পয়েন্ট কাটা, অথবা ম্যাচ বা ইভেন্ট থেকে বাদ।", "বাদ পড়া খেলোয়াড় বা স্কোয়াড পুরস্কার পায় না।", "গুরুতর বা বারবার চিটিংয়ে গেম UID ও অ্যাকাউন্ট নিষিদ্ধ হতে পারে।"]] },
-      { id: "decisions", title: "সিদ্ধান্ত", body: ["প্রমাণ ও ইভেন্টের নিয়ম দেখে কর্মীরা সিদ্ধান্ত নেন। ফলাফল প্রকাশের পর দেখানো সময়ের মধ্যে আপত্তি জানাতে পারবেন।"] },
+      { id: "reports", title: "চিটিং রিপোর্ট", body: ["টুর্নামেন্টের পাতা থেকে ভিডিও বা স্ক্রিনশটের মতো প্রমাণসহ চিটিং রিপোর্ট করুন। প্রমাণ ছাড়া রিপোর্টে ব্যবস্থা নেওয়া যায় না।"] },
+      { id: "penalties", title: "শাস্তি", body: [["সতর্কবার্তা, পয়েন্ট কাটা, অথবা ম্যাচ বা টুর্নামেন্ট থেকে বাদ।", "বাদ পড়া খেলোয়াড় বা স্কোয়াড পুরস্কার পায় না।", "গুরুতর বা বারবার চিটিংয়ে গেম UID ও অ্যাকাউন্ট নিষিদ্ধ হতে পারে।"]] },
+      { id: "decisions", title: "সিদ্ধান্ত", body: ["প্রমাণ ও টুর্নামেন্টের নিয়ম দেখে কর্মীরা সিদ্ধান্ত নেন। ফলাফল প্রকাশের পর দেখানো সময়ের মধ্যে আপত্তি জানাতে পারবেন।"] },
     ],
   },
 };
@@ -663,9 +655,9 @@ const helpEn: FaqGroup[] = [
     id: "esports",
     title: "Esports",
     items: [
-      { q: "How do I join an event?", a: "Verify your game UID, pay the entry fee, check in before the start, and the room ID appears for you shortly before the match." },
+      { q: "How do I join a tournament?", a: "Verify your game UID, pay the entry fee, check in before the start, and the room ID appears for you shortly before the match." },
       { q: "How do I get my winnings?", a: "Prizes are added to your balance. Withdraw to bKash or Nagad once your NID is approved." },
-      { q: "Someone cheated", a: "Report it from the event page with a video or screenshots.", link: { href: "/fair-play", label: "Fair play rules" } },
+      { q: "Someone cheated", a: "Report it from the tournament page with a video or screenshots.", link: { href: "/fair-play", label: "Fair play rules" } },
     ],
   },
   {
@@ -714,9 +706,9 @@ const helpBn: FaqGroup[] = [
     id: "esports",
     title: "ই-স্পোর্টস",
     items: [
-      { q: "কীভাবে ইভেন্টে যোগ দেব?", a: "গেম UID যাচাই করুন, এন্ট্রি ফি দিন, শুরুর আগে চেক-ইন করুন; ম্যাচের কিছুক্ষণ আগে রুম আইডি আপনার জন্য খুলবে।" },
+      { q: "কীভাবে টুর্নামেন্টে যোগ দেব?", a: "গেম UID যাচাই করুন, এন্ট্রি ফি দিন, শুরুর আগে চেক-ইন করুন; ম্যাচের কিছুক্ষণ আগে রুম আইডি আপনার জন্য খুলবে।" },
       { q: "পুরস্কারের টাকা কীভাবে পাব?", a: "পুরস্কার আপনার ব্যালান্সে যোগ হয়। NID অনুমোদনের পর বিকাশ বা নগদে তুলুন।" },
-      { q: "কেউ চিটিং করেছে", a: "ইভেন্টের পাতা থেকে ভিডিও বা স্ক্রিনশটসহ রিপোর্ট করুন।", link: { href: "/fair-play", label: "ফেয়ার প্লে নিয়ম" } },
+      { q: "কেউ চিটিং করেছে", a: "টুর্নামেন্টের পাতা থেকে ভিডিও বা স্ক্রিনশটসহ রিপোর্ট করুন।", link: { href: "/fair-play", label: "ফেয়ার প্লে নিয়ম" } },
     ],
   },
   {

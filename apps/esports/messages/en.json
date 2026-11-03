@@ -14,7 +14,7 @@
     "hiring": "Hire",
     "shop": "Shop",
     "gym": "Gym",
-    "esports": "Events",
+    "esports": "Tournaments",
     "language": "বাংলা",
     "leaderboards": "Leaderboards",
     "myMatches": "My matches",
@@ -78,7 +78,7 @@
   },
   "vendor": {
     "home": "Business desk",
-    "intro": "Manage your venues, shop, gym or events. Desks arrive with their modules."
+    "intro": "Manage your venues, shop, gym or tournaments. Desks arrive with their modules."
   },
   "errors": {
     "generic": "Something went wrong. Try again.",
@@ -114,7 +114,7 @@
       "hire": "Hire",
       "orders": "Orders",
       "offers": "Offers",
-      "tournaments": "Events",
+      "tournaments": "Tournaments",
       "moderation": "Reviews & approvals",
       "disputes_reports": "Disputes & reports",
       "reviews": "Reviews",
@@ -222,16 +222,16 @@
       "kicker": "PUBG Mobile · Free Fire",
       "title": "Play for real prizes, every day",
       "lead": "Verified UIDs, fixed prize tables published before you pay, prizes paid to your bKash or Nagad.",
-      "browse": "Find an event",
+      "browse": "Find a tournament",
       "addUid": "Add your game UID",
       "featured": "Showcase",
       "next": "Next up",
       "openNow": "Open for registration",
       "seeAll": "See all",
-      "noneOpen": "No events open right now",
+      "noneOpen": "No tournaments open right now",
       "noneOpenBody": "Add your UID now so you are ready when the next one opens.",
       "topPlayers": "Top players",
-      "noRankingsYet": "Rankings start after the first finished events.",
+      "noRankingsYet": "Rankings start after the first finished tournaments.",
       "leaderboards": "Leaderboards",
       "how": "How it works",
       "step": {
@@ -241,7 +241,7 @@
         },
         "register": {
           "title": "Register and pay",
-          "body": "bKash, Nagad or card. Your fee is held safely until the event ends."
+          "body": "bKash, Nagad or card. Your fee is held safely until the tournament ends."
         },
         "checkin": {
           "title": "Check in",
@@ -255,7 +255,7 @@
       "bigEvent": "Showcase"
     },
     "list": {
-      "title": "Events",
+      "title": "Tournaments",
       "game": "Game",
       "allGames": "All games",
       "stage": "Stage",
@@ -267,8 +267,8 @@
       },
       "empty": "Nothing here yet",
       "emptyBody": "Try another game or stage.",
-      "search": "Search events",
-      "searchHint": "Event name",
+      "search": "Search tournaments",
+      "searchHint": "Tournament name",
       "searchGo": "Search"
     },
     "startsAt": "Starts {when}",
@@ -277,7 +277,7 @@
     "prizes": "Prizes",
     "place": "#{n}",
     "perKill": "Per kill",
-    "guaranteed": "Prizes are guaranteed once the event runs, however many enter.",
+    "guaranteed": "Prizes are guaranteed once the tournament runs, however many enter.",
     "schedule": "Schedule",
     "match": "Match {n}",
     "checkinWindow": "Check-in {from}–{to}",
@@ -317,7 +317,7 @@
       "picked": "{n} of {of} players picked",
       "confirmFree": "Confirm my entry",
       "confirmPay": "Pay {amount} and register",
-      "refundNote": "Full refund if you withdraw before registration closes or the event is cancelled."
+      "refundNote": "Full refund if you withdraw before registration closes or the tournament is cancelled."
     },
     "me": {
       "title": "UIDs and squads",
@@ -353,7 +353,7 @@
       "join": "Join with a code"
     },
     "mine": {
-      "empty": "You have not entered an event yet",
+      "empty": "You have not entered a tournament yet",
       "offerTaken": "Slot taken.",
       "takeSlot": "Take the slot",
       "checkedIn": "Checked in.",
@@ -426,13 +426,13 @@
       "title": "Leaderboards",
       "rolling": "Last 12 months",
       "season": "Season",
-      "played": "{n} events",
+      "played": "{n} tournaments",
       "empty": "No ranked players yet",
       "how": "How points work",
-      "formula": "Each finished event scores your placement percentile (100 for the winner) plus 2 per kill, times the tier weight. Older results fade with a {half}-day half-life. You need at least {min} events to appear."
+      "formula": "Each finished tournament scores your placement percentile (100 for the winner) plus 2 per kill, times the tier weight. Older results fade with a {half}-day half-life. You need at least {min} tournaments to appear."
     },
     "player": {
-      "tournaments": "Events",
+      "tournaments": "Tournaments",
       "wins": "Wins",
       "kills": "Kills",
       "rank": "Rank #{n}",
@@ -442,11 +442,11 @@
     "organiser": {
       "by": "by {name}",
       "kicker": "Esports organiser",
-      "upcoming": "Events",
+      "upcoming": "Tournaments",
       "past": "Finished",
-      "none": "No events open right now. Check back soon.",
+      "none": "No tournaments open right now. Check back soon.",
       "notFound": "This organiser is not on Kriraghor.",
-      "note": "Events by {name} run on Kriraghor: entry fees and prizes are held in Kriraghor escrow, rooms are revealed to checked-in players, and winnings are withdrawn from your Kriraghor account."
+      "note": "Tournaments by {name} run on Kriraghor: entry fees and prizes are held in Kriraghor escrow, rooms are revealed to checked-in players, and winnings are withdrawn from your Kriraghor account."
     },
     "inviteOnly": "Invite only",
     "partOf": "Part of",
@@ -497,7 +497,7 @@
         "gold": "Gold",
         "partner": "Partner"
       },
-      "allTournaments": "All events",
+      "allTournaments": "All tournaments",
       "feedTitle": "Live feed",
       "feedEmpty": "Updates appear here as the showcase runs.",
       "feed": {
@@ -520,9 +520,9 @@
   "footer": {
     "homeLabel": "Kriraghor Esports home",
     "brand": "Kriraghor Esports",
-    "tagline": "PUBG Mobile and Free Fire events with real prizes, held safely until results are final.",
+    "tagline": "PUBG Mobile and Free Fire tournaments with real prizes, held safely until results are final.",
     "play": "Play",
-    "events": "Events",
+    "events": "Tournaments",
     "showcases": "Showcases",
     "leaderboards": "Leaderboards",
     "myMatches": "My matches",
@@ -558,7 +558,7 @@
       "wins": "Wins",
       "kills": "Kills",
       "fallbackTitle": "Kriraghor Esports",
-      "fallbackSubtitle": "PUBG Mobile and Free Fire events with real prizes"
+      "fallbackSubtitle": "PUBG Mobile and Free Fire tournaments with real prizes"
     }
   }
 }
