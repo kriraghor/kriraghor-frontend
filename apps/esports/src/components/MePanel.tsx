@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowRight, GameController, Plus, Sword, Trophy } from "@phosphor-icons/react";
+import { GameController, Plus, Trophy } from "@phosphor-icons/react";
 import { api } from "@kriraghor/api-client";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Badge, ButtonLink, Card, EmptyState, ErrorState, Skeleton, type Tone } from "@kriraghor/ui/kit";
@@ -13,13 +13,12 @@ import { taka } from "@/lib/esports";
 const UID_TONE: Record<string, Tone> = { verified: "brand", pending: "warning", rejected: "danger", banned: "danger", unlinked: "neutral" };
 
 /**
- * The esports account overview (design plan Part D): who you are, winnings, your game IDs and the
- * way to your matches. The same account as kriraghor.com (SSO); `children` is the live-connection
- * status the room reveal depends on.
+ * The esports account overview (design plan Part D): who you are, winnings and your game IDs. The
+ * same account as kriraghor.com (SSO); `children` is the live-connection status the room reveal
+ * depends on.
  */
 export function MePanel({ children, signInHref = "/sign-in" }: { children?: ReactNode; signInHref?: string }) {
   const locale = useLocale();
-  const t = useTranslations("account");
   const { status, me } = useMe();
 
   if (status === "signed_out") return <SignedOutCard signInHref={signInHref} />;
@@ -39,13 +38,6 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
         <GameIds />
         <WinningsCard withdrawHref="/me/winnings" format={(p) => taka(p, locale)} />
       </div>
-      <Link href="/me/matches" className="group flex min-h-20 items-center gap-4 rounded-card border border-line bg-surface p-5 no-underline shadow-sm transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-md">
-        <span className="flex size-12 items-center justify-center rounded-pill bg-brand-soft text-brand-text">
-          <Sword size={24} aria-hidden />
-        </span>
-        <span className="flex-1 font-display text-lg font-semibold">{t("items.matches")}</span>
-        <ArrowRight size={20} aria-hidden className="text-muted transition-transform group-hover:translate-x-0.5" />
-      </Link>
       {children}
     </section>
   );

@@ -1,15 +1,7 @@
-import { Suspense } from "react";
-import { setRequestLocale } from "next-intl/server";
-import { MyMemberships } from "@/components/gym-member/MyHome";
+import { redirect } from "@kriraghor/ui/i18n/navigation";
 
-export const metadata = { title: "My gyms" };
-
+/** /me/memberships was the same list as /me (3 Nov 2026); old links and bookmarks land there. A membership's own page stays. */
 export default async function Route({ params }: PageProps<"/[locale]/me/memberships">) {
   const { locale } = await params;
-  setRequestLocale(locale);
-  return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />}>
-      <MyMemberships />
-    </Suspense>
-  );
+  redirect({ href: "/me", locale });
 }

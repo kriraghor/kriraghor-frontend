@@ -31,6 +31,11 @@ describe("old vendor gym URLs → gym.kriraghor.com/manage (M24 §4.3)", () => {
     expect(gymRedirect("/vendor/analytics", "?business=organiser&org=o1", GYM)).toBeNull();
   });
 
+  it("sends gym reviews to the gym app; venue and shop reviews stay", () => {
+    expect(gymRedirect("/vendor/reviews", "?type=gym", GYM)).toBe(`${GYM}/manage`);
+    expect(gymRedirect("/vendor/reviews", "?type=ground&place=g1", GYM)).toBeNull();
+  });
+
   it("leaves the shared business pages and everything else alone", () => {
     for (const p of ["/vendor", "/vendor/team", "/vendor/reviews", "/vendor/payouts", "/vendor/analytics", "/vendor/gymsx", "/vendor/venues", "/admin/gym", "/gyms", "/manage"]) {
       expect(gymRedirect(p, "", GYM), p).toBeNull();

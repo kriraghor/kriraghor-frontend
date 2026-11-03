@@ -17,12 +17,16 @@ export function MobileTabBar() {
     </Link>
   );
   return (
-    <nav aria-label={t("quick")} className="glass-strong fixed inset-x-3 bottom-[calc(8px+env(safe-area-inset-bottom))] z-40 flex h-14 rounded-[22px] px-1 md:hidden" data-testid="tab-bar">
-      {item("/", t("home"), <House size={22} aria-hidden />)}
-      {item("/events", t("esports"), <Trophy size={22} aria-hidden />)}
-      {item("/showcases", t("events"), <Star size={22} aria-hidden />)}
-      {item("/leaderboards", t("tabRanks"), <ChartBar size={22} aria-hidden />)}
-      {item("/me/matches", t("tabMatches"), <GameController size={22} aria-hidden />)}
-    </nav>
+    <>
+      {/* Behind the floating bar, so page text doesn't show around it. */}
+      <div aria-hidden className="fixed inset-x-0 bottom-0 z-30 h-[calc(72px+env(safe-area-inset-bottom))] bg-[var(--glass-strong-bg)] backdrop-blur-xl md:hidden" />
+      <nav aria-label={t("quick")} className="glass-strong fixed inset-x-3 bottom-[calc(8px+env(safe-area-inset-bottom))] z-40 flex h-14 rounded-[22px] px-1 md:hidden" data-testid="tab-bar">
+        {item("/", t("home"), <House size={22} aria-hidden />)}
+        {item("/events", t("esports"), <Trophy size={22} aria-hidden />)}
+        {item("/showcases", t("events"), <Star size={22} aria-hidden />)}
+        {item("/leaderboards", t("tabRanks"), <ChartBar size={22} aria-hidden />)}
+        {item("/me/matches", t("tabMatches"), <GameController size={22} aria-hidden />)}
+      </nav>
+    </>
   );
 }

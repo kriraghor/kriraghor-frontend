@@ -9,7 +9,6 @@ import { Button, DataTable, DetailLayout, FilterBar, Notice, PageTitle, Skeleton
 import { formatTaka } from "@/lib/admin/finance";
 import { businessView } from "@/lib/panel-nav";
 import { vendor } from "@/lib/vendor/grounds";
-import { gymDesk } from "@/lib/vendor/gym";
 import { shopDesk } from "@/lib/vendor/market";
 import { EVIDENCE_TYPES, ownerTrust, replyErrorKey, replyOk, replyState, reviewSubjectsFor, subjectName, type BusinessSubject, type Review } from "@/lib/vendor/trust";
 import { useCursorList } from "@/lib/use-cursor-list";
@@ -204,11 +203,11 @@ function Stars({ n }: { n: number }) {
 }
 
 type ReviewRow = Review & { subjectName?: string | null };
-const KINDS = ["ground", "shop", "gym"] as const;
+const KINDS = ["ground", "shop"] as const;
 
 /**
- * /vendor/reviews (M17 FR-25, FR-34; Round B1): members' ratings of everything the owner runs (venues,
- * shops and gyms), newest first, filtered by kind and by place, with one reply each (editable) written
+ * /vendor/reviews (M17 FR-25, FR-34; Round B1): members' ratings of the owner's venues and shops (a
+ * gym's are on gym.kriraghor.com/manage since 3 Nov 2026), newest first, filtered by kind and by place, with one reply each (editable) written
  * in the side pane. The kinds offered follow the business roles held.
  */
 export function OwnerReviews() {
@@ -232,11 +231,9 @@ function Reviews() {
   const { values, set, clear, params } = useUrlFilters({ type: { default: "", allowed: ["", ...KINDS] }, place: { default: "" } });
   const grounds = useQuery({ queryKey: ["vendor-grounds"], queryFn: () => vendor.mine(), enabled: owned.includes("ground"), retry: false });
   const shop = useQuery({ queryKey: ["vendor-shop"], queryFn: () => shopDesk.profile(), enabled: kinds.includes("shop"), retry: false });
-  const gyms = useQuery({ queryKey: ["vendor-gyms"], queryFn: () => gymDesk.mine(), enabled: kinds.includes("gym"), retry: false });
   const places: { id: string; name: string; type: BusinessSubject }[] = [
     ...(grounds.data?.items ?? []).map((g) => ({ id: g.id, name: g.name, type: "ground" as const })),
     ...(shop.data ? [{ id: shop.data.id, name: shop.data.name, type: "shop" as const }] : []),
-    ...(gyms.data?.items ?? []).map((g) => ({ id: g.id, name: g.name, type: "gym" as const })),
     ...staffVenues.filter((w) => !(grounds.data?.items ?? []).some((g) => g.id === w.businessId)).map((w) => ({ id: w.businessId, name: w.business.name ?? "–", type: "ground" as const })),
   ];
   const names = new Map(places.map((p) => [p.id, p.name] as const));
@@ -327,7 +324,7 @@ function Reviews() {
             label={t("reviewsTitle")}
             testId="owner-reviews"
             columns={columns}
-            rows={list.rows}
+            rows={list.rows?.filter((r) => r.subjectType !== "gym")}
             rowId={(r) => r.id}
             loading={list.loading}
             error={list.error}

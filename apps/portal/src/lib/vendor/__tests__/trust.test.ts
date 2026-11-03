@@ -5,7 +5,7 @@ import { replyErrorKey, replyOk, replyState, reviewSubjectsFor, subjectName } fr
 
 describe("the business panel's reviews (M17 FR-34, Round B1)", () => {
   it("offers the review kinds for the business roles held, in sidebar order", () => {
-    expect(reviewSubjectsFor(["gym_owner", "ground_owner"])).toEqual(["ground", "gym"]);
+    expect(reviewSubjectsFor(["gym_owner", "ground_owner"])).toEqual(["ground"]);
     expect(reviewSubjectsFor(["shop_owner"])).toEqual(["shop"]);
     expect(reviewSubjectsFor(["organiser", "member"])).toEqual([]);
     expect(reviewSubjectsFor([])).toEqual([]);

@@ -44,8 +44,8 @@
     "hireCatalog": "হায়ার শ্রেণিবিন্যাস",
     "hireAdmin": "হায়ার",
     "gyms": "জিম",
-    "gymAdmin": "জিম",
-    "gymManageAdmin": "জিম সিস্টেম",
+    "gymAdmin": "জিম তালিকা",
+    "gymManageAdmin": "জিম মালিক",
     "organisersAdmin": "আয়োজক",
     "esportsConsole": "ইস্পোর্টস",
     "bigEvents": "শোকেস",
@@ -3918,7 +3918,6 @@
     "actionsTitle": "আপনার করণীয়",
     "addMore": "আরেকটি ব্যবসা যোগ করুন",
     "addMoreLead": "একই অ্যাকাউন্টে kriraghor.com-এ আবেদন করুন। স্টাফ অনুমোদন দিলেই এখানে দেখা যাবে।",
-    "openSettlement": "সেটেলমেন্ট দেখুন",
     "gymQuick": "ফ্রন্ট ডেস্ক ও সাবস্ক্রিপশন",
     "sections": {
       "ground_owner": "আপনার ভেন্যু",

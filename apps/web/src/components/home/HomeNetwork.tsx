@@ -6,14 +6,18 @@ import { useTranslations } from "next-intl";
 import { cn } from "@kriraghor/ui/cn";
 import type { SectionKey } from "@/lib/home";
 
-/** Where each node sits: three rows on phones, a ring on desktop. */
+/**
+ * Where each node sits: a ring on phones and desktop, three rows in between. On phones a card and the
+ * hub don't fit on one row, so the side cards sit above and below the hub, held inside the box
+ * (half a card is 68px).
+ */
 const NODES: { key: SectionKey; at: string }[] = [
-  { key: "esports", at: "left-[27%] top-[9%] md:left-[16%] md:top-[20%]" },
-  { key: "gym", at: "left-[73%] top-[9%] md:left-1/2 md:top-[8%]" },
-  { key: "venues", at: "left-[80%] top-1/2 md:left-[84%] md:top-[20%]" },
-  { key: "shop", at: "left-[73%] top-[91%] md:left-[84%] md:top-[80%]" },
-  { key: "hire", at: "left-[27%] top-[91%] md:left-1/2 md:top-[92%]" },
-  { key: "events", at: "left-[20%] top-1/2 md:left-[16%] md:top-[80%]" },
+  { key: "esports", at: "left-[max(68px,22%)] top-[27%] sm:left-[27%] sm:top-[9%] md:left-[16%] md:top-[20%]" },
+  { key: "gym", at: "left-1/2 top-[8%] sm:left-[73%] sm:top-[9%] md:left-1/2 md:top-[8%]" },
+  { key: "venues", at: "left-[min(calc(100%-68px),78%)] top-[27%] sm:left-[80%] sm:top-1/2 md:left-[84%] md:top-[20%]" },
+  { key: "shop", at: "left-[min(calc(100%-68px),78%)] top-[73%] sm:left-[73%] sm:top-[91%] md:left-[84%] md:top-[80%]" },
+  { key: "hire", at: "left-1/2 top-[92%] sm:left-[27%] sm:top-[91%] md:left-1/2 md:top-[92%]" },
+  { key: "events", at: "left-[max(68px,22%)] top-[73%] sm:left-[20%] sm:top-1/2 md:left-[16%] md:top-[80%]" },
 ];
 
 const DOT_SECONDS = 3.5;
@@ -72,7 +76,7 @@ export function HomeNetwork() {
         {t("title")}
       </h2>
       <p className="mx-auto mt-2 max-w-[60ch] text-muted">{t("sub")}</p>
-      <div ref={box} className="relative mx-auto mt-8 aspect-[4/5] max-w-[950px] sm:aspect-[5/4] md:aspect-[2/1]">
+      <div ref={box} className="relative mx-auto mt-8 aspect-[5/8] max-w-[950px] sm:aspect-[5/4] md:aspect-[2/1]">
         <svg className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
           {lines.map((d, i) => (
             <g key={NODES[i].key}>
@@ -103,7 +107,7 @@ export function HomeNetwork() {
             onMouseLeave={() => setHot(null)}
             onFocus={() => setHot(i)}
             onBlur={() => setHot(null)}
-            className={cn("glass-card absolute z-10 grid w-[128px] -translate-x-1/2 -translate-y-1/2 gap-0.5 rounded-[16px] px-3 py-2 text-left no-underline transition-colors hover:border-brand sm:w-[160px] md:w-[176px]", n.at)}
+            className={cn("glass-card absolute z-10 grid w-[136px] -translate-x-1/2 -translate-y-1/2 gap-0.5 rounded-[16px] px-3 py-2 text-left no-underline transition-colors hover:border-brand sm:w-[160px] md:w-[176px]", n.at)}
             data-testid={`net-${n.key}`}
           >
             <b className="font-display text-base uppercase leading-tight">{t(`${n.key}.title`)}</b>

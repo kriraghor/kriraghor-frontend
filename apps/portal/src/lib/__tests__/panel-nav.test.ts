@@ -67,8 +67,9 @@ describe("vendorSections, the business sidebar", () => {
     expect(hrefs(vendorSections([], "all"))).not.toContain("/vendor/analytics");
   });
 
-  it("reviews show once for venue, shop and gym owners, not for organisers (Round B1)", () => {
-    for (const role of ["ground_owner", "shop_owner", "gym_owner"] as const) expect(hrefs(vendorSections([role], "all")).filter((h) => h === "/vendor/reviews")).toHaveLength(1);
+  it("reviews show once for venue and shop owners, not for gym owners (on the gym app) or organisers", () => {
+    for (const role of ["ground_owner", "shop_owner"] as const) expect(hrefs(vendorSections([role], "all")).filter((h) => h === "/vendor/reviews")).toHaveLength(1);
+    expect(hrefs(vendorSections(["gym_owner"], "all"))).not.toContain("/vendor/reviews");
     expect(hrefs(vendorSections(["ground_owner", "shop_owner", "gym_owner"], "all")).filter((h) => h === "/vendor/reviews")).toHaveLength(1);
     expect(hrefs(vendorSections(["organiser"], "all"))).not.toContain("/vendor/reviews");
     // The switcher on the organiser business hides it; on the shop it shows.

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { PassesSold } from "@/components/manage/PassesSold";
 
-export const metadata = { title: "Passes sold" };
+export const metadata = { title: "Subscriptions sold" };
 
 async function Content({ params }: { params: PageProps<"/[locale]/manage/[gymId]/passes">["params"] }) {
   const { locale, gymId } = await params;

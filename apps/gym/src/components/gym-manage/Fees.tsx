@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { CashRegister, LinkSimple, Receipt } from "@phosphor-icons/react";
+import { CashRegister, LinkSimple } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Badge, Button, ButtonLink, EmptyState, FilterBar, Notice, SkeletonList } from "@kriraghor/ui/kit";
+import { Badge, Button, EmptyState, FilterBar, Notice, SkeletonList } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
 import { dhakaToday, DUE_VIEWS, dueActions, duesQuery, featureLocked, gymManage, type DueRow } from "@/lib/gym-manage";
@@ -29,11 +29,6 @@ export function Fees({ gymId }: { gymId: string }) {
       title={t("fees.title")}
       description={t("fees.lead")}
       testId="gm-fees"
-      actions={
-        <ButtonLink href={`/manage/${gymId}/fees/closing`} variant="secondary" icon={<Receipt size={18} aria-hidden />}>
-          {t("nav.closing")}
-        </ButtonLink>
-      }
     >
       {(ctx) => <List ctx={ctx} />}
     </GymPage>

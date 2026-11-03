@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@kriraghor/api-client";
 import Image from "next/image";
@@ -80,13 +80,47 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const menuOpen = menuFor === pathname;
   const closeMenu = () => setMenuFor(null);
+  const header = useRef<HTMLElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  // Where the top bar ends: the panel and its scrim start there, so the bar stays in reach.
+  const [menuTop, setMenuTop] = useState(0);
+  const toggleMenu = () => {
+    setMenuTop(header.current?.getBoundingClientRect().bottom ?? 0);
+    setMenuFor(menuOpen ? null : pathname);
+  };
+  useEffect(() => {
+    if (!menuOpen) return;
+    const page = document.documentElement;
+    const overflow = page.style.overflow;
+    page.style.overflow = "hidden";
+    panel.current?.querySelector<HTMLElement>("a, button")?.focus({ preventScroll: true });
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setMenuFor(null);
+      menuButton.current?.focus();
+    };
+    const onResize = () => {
+      // Wide enough for the desktop nav: the panel is hidden, so nothing should stay locked.
+      if (panel.current && getComputedStyle(panel.current).display === "none") setMenuFor(null);
+      else setMenuTop(header.current?.getBoundingClientRect().bottom ?? 0);
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => {
+      page.style.overflow = overflow;
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [menuOpen]);
   const isCurrent = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
   const switchLanguage = () => router.replace(pathname, { locale: locale === "en" ? "bn" : "en" });
   // On the sign-in and sign-up pages the header doesn't offer what the page already is.
   const onAuthPage = pathname.startsWith(signInHref) || pathname.startsWith("/signup");
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150" onKeyDown={(e) => (e.key === "Escape" && menuOpen ? closeMenu() : undefined)}>
+    <>
+    <header ref={header} className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150">
       <div className="flex h-1" aria-hidden>
         <span className="w-[72%] bg-brand" />
         <span className="flex-1 bg-amber-500" />
@@ -144,15 +178,19 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
               {t("nav.signIn")}
             </ButtonLink>
           ) : null}
-          <button type="button" className={cn(iconBtn, roomy ? "lg:hidden" : "md:hidden")} aria-expanded={menuOpen} aria-controls="site-menu" onClick={() => setMenuFor(menuOpen ? null : pathname)} data-testid="menu-button">
+          <button ref={menuButton} type="button" className={cn(iconBtn, roomy ? "lg:hidden" : "md:hidden")} aria-expanded={menuOpen} aria-controls="site-menu" onClick={toggleMenu} data-testid="menu-button">
             {menuOpen ? <X size={22} aria-hidden /> : <List size={22} aria-hidden />}
             <span className="sr-only">{t(menuOpen ? "nav.closeMenu" : "nav.menu")}</span>
           </button>
         </div>
       </div>
+    </header>
+      {/* Beside the header, not in it: its backdrop-filter would make a fixed child fixed to the header. */}
       {menuOpen ? (
-        <div id="site-menu" className={cn("border-t border-[var(--glass-edge)]", roomy ? "lg:hidden" : "md:hidden")} data-testid="site-menu">
-          <nav aria-label={t("nav.main")} className="mx-auto flex max-w-wide flex-col gap-0.5 px-3 py-3">
+        <>
+        <div aria-hidden className={cn("fixed inset-x-0 bottom-0 z-[45] animate-[kg-fade-in_200ms_var(--ease-kg)] bg-scrim motion-reduce:animate-none", roomy ? "lg:hidden" : "md:hidden")} style={{ top: menuTop }} onClick={closeMenu} data-testid="site-menu-scrim" />
+        <div ref={panel} id="site-menu" className={cn("fixed bottom-0 right-0 z-[45] w-[min(320px,86vw)] animate-[kg-slide-in-right_260ms_var(--ease-kg)] overflow-y-auto border-l border-line bg-surface pb-[env(safe-area-inset-bottom)] shadow-lg motion-reduce:animate-none", roomy ? "lg:hidden" : "md:hidden")} style={{ top: menuTop }} data-testid="site-menu">
+          <nav aria-label={t("nav.main")} className="flex flex-col gap-0.5 px-3 py-3">
             {nav.map((item) => (
               <NavLink key={item.href} href={item.href} current={isCurrent(item.href)} onClick={closeMenu} className={cn("flex min-h-12 items-center rounded-control px-3 text-[17px] font-semibold no-underline", isCurrent(item.href) ? "bg-brand-soft text-brand-text" : "hover:bg-surface-2")}>
                 {t(`nav.${item.key}`)}
@@ -176,7 +214,8 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
             </div>
           </nav>
         </div>
+        </>
       ) : null}
-    </header>
+    </>
   );
 }

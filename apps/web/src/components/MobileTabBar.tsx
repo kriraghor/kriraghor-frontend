@@ -20,15 +20,19 @@ export function MobileTabBar() {
   );
 
   return (
-    <nav aria-label={t("quick")} className="glass-strong fixed inset-x-3 bottom-[calc(8px+env(safe-area-inset-bottom))] z-40 flex h-14 rounded-[22px] px-1 md:hidden" data-testid="tab-bar">
-      {item("/", t("home"), <House size={22} aria-hidden />)}
-      <a href={esportsHref()} className={cls(false)}>
-        <Trophy size={22} aria-hidden />
-        {t("esports")}
-      </a>
-      {item("/venues", t("grounds"), <SoccerBall size={22} aria-hidden />)}
-      {item("/shop", t("shop"), <Storefront size={22} aria-hidden />)}
-      {item("/me", t("account"), <UserCircle size={22} aria-hidden />)}
-    </nav>
+    <>
+      {/* Behind the floating bar, so page text doesn't show around it. */}
+      <div aria-hidden className="fixed inset-x-0 bottom-0 z-30 h-[calc(72px+env(safe-area-inset-bottom))] bg-[var(--glass-strong-bg)] backdrop-blur-xl md:hidden" />
+      <nav aria-label={t("quick")} className="glass-strong fixed inset-x-3 bottom-[calc(8px+env(safe-area-inset-bottom))] z-40 flex h-14 rounded-[22px] px-1 md:hidden" data-testid="tab-bar">
+        {item("/", t("home"), <House size={22} aria-hidden />)}
+        <a href={esportsHref()} className={cls(false)}>
+          <Trophy size={22} aria-hidden />
+          {t("esports")}
+        </a>
+        {item("/venues", t("grounds"), <SoccerBall size={22} aria-hidden />)}
+        {item("/shop", t("shop"), <Storefront size={22} aria-hidden />)}
+        {item("/me", t("account"), <UserCircle size={22} aria-hidden />)}
+      </nav>
+    </>
   );
 }

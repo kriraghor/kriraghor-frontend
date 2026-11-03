@@ -108,10 +108,10 @@ test.describe("member sections", () => {
     await expect(page).toHaveURL(/\/me\/teams$/);
     await expect(tabs.getByTestId("me-teams")).toHaveAttribute("aria-current", "page");
 
-    // Esports opens its landing on kriraghor.com; its tabs are marked as another site.
+    // Esports opens its landing on kriraghor.com; its cards are marked as another site.
     await page.getByTestId("section-esports").click();
     await expect(page.getByTestId("esports-landing")).toBeVisible();
-    await expect(page.getByTestId("me-esports")).toHaveAttribute("aria-label", /opens on another Kriraghor site/);
+    await expect(page.getByTestId("me-esports")).toHaveAttribute("aria-label", /Opens on esports.kriraghor.com/);
 
     // The old test ids still resolve, each on its section's tabs.
     const where: [string, string[]][] = [
