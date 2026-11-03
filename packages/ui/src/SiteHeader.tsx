@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { List, SignOut, Translate, UserCircle, X } from "@phosphor-icons/react";
 import { Link, usePathname, useRouter } from "./i18n/navigation";
+import { useSwitchLocale } from "./i18n/switch-locale";
 import { useAuth } from "./auth";
 import { isExternal } from "@kriraghor/session/links";
 import { NotificationBell } from "./notifications/NotificationBell";
@@ -75,13 +76,14 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const switchLocale = useSwitchLocale();
   const { status, signOut } = useAuth();
   // The menu belongs to the page it was opened on, so it closes by itself after navigating.
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const menuOpen = menuFor === pathname;
   const closeMenu = () => setMenuFor(null);
   const isCurrent = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
-  const switchLanguage = () => router.replace(pathname, { locale: locale === "en" ? "bn" : "en" });
+  const switchLanguage = () => switchLocale(locale === "en" ? "bn" : "en");
   // On the sign-in and sign-up pages the header doesn't offer what the page already is.
   const onAuthPage = pathname.startsWith(signInHref) || pathname.startsWith("/signup");
 

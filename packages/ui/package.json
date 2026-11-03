@@ -16,6 +16,7 @@
     "./notifications/settings": "./src/notifications/NotificationSettings.tsx",
     "./i18n/routing": "./src/i18n/routing.ts",
     "./i18n/navigation": "./src/i18n/navigation.ts",
+    "./i18n/switch-locale": "./src/i18n/switch-locale.ts",
     "./styles/glass.css": "./styles/glass.css",
     "./kit": "./src/kit/index.ts",
     "./date": "./src/date/index.ts",
