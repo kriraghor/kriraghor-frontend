@@ -5,7 +5,7 @@ export const APP = {
   id: "esports" as const,
   titleKey: "esports" as const,
   title: "Kriraghor Esports",
-  description: "PUBG Mobile and Free Fire events with real prizes.",
+  description: "PUBG Mobile and Free Fire tournaments with real prizes.",
   audience: "api" as Audience,
   nav: [
     { href: "/events", key: "esports" },

@@ -22,9 +22,7 @@ export function SignUp({ next }: { next: string }) {
         return [nid, { href: "/account/business?as=shop", label: t("business") }];
       case "gym_owner":
         return [nid, { href: "/account/business?as=gym", label: t("business") }];
-      case "organiser":
-        return [nid, { href: "/account/business?as=organiser", label: t("business") }];
     }
   };
-  return <SignUpWizard next={next} roles={["none", "player", "pro", "ground_owner", "shop_owner", "gym_owner", "organiser"]} nextSteps={nextSteps} />;
+  return <SignUpWizard next={next} roles={["none", "player", "pro", "ground_owner", "shop_owner", "gym_owner"]} nextSteps={nextSteps} />;
 }

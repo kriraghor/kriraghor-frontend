@@ -24301,7 +24301,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @enum {string} */
-                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
+                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product" | "tournament_post" | "tournament_comment";
                         /** Format: uuid */
                         subjectId: string;
                         /** @enum {string} */
@@ -24430,7 +24430,7 @@ export interface paths {
             parameters: {
                 query?: {
                     status?: "open" | "escalated";
-                    subjectType?: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
+                    subjectType?: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product" | "tournament_post" | "tournament_comment";
                     limit?: number;
                 };
                 header?: never;
@@ -24498,7 +24498,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    type: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
+                    type: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product" | "tournament_post" | "tournament_comment";
                     id: string;
                 };
                 cookie?: never;
@@ -24572,7 +24572,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @enum {string} */
-                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
+                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product" | "tournament_post" | "tournament_comment";
                         /** Format: uuid */
                         subjectId: string;
                         /** @enum {string} */
@@ -24665,7 +24665,7 @@ export interface paths {
                 content: {
                     "application/json": {
                         /** @enum {string} */
-                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
+                        subjectType: "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product" | "tournament_post" | "tournament_comment";
                         /** Format: uuid */
                         subjectId: string;
                         note: string;
@@ -51415,6 +51415,1656 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tournament-posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The feed: open posts, filtered and sorted (M26-FR-05) */
+        get: {
+            parameters: {
+                query?: {
+                    sport?: string;
+                    divisionId?: string;
+                    districtId?: string;
+                    areaId?: string;
+                    /** @description Starting on or after */
+                    from?: string;
+                    /** @description Starting on or before */
+                    to?: string;
+                    fee?: "free" | "paid";
+                    format?: "league" | "knockout" | "group_knockout" | "round_robin" | "other";
+                    gender?: "open" | "men" | "women";
+                    skill?: "any" | "beginner" | "intermediate" | "advanced";
+                    /** @description Only tournaments still taking registrations */
+                    registrationOpen?: "true" | "false";
+                    q?: string;
+                    sort?: "newest" | "starts_soon" | "deadline_soon" | "most_discussed";
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["TournamentPostCard"][];
+                            total: number;
+                            nextCursor: string | null;
+                        };
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tournament-posts/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A post: every detail. A removed post shows only to its author */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TournamentPostPage"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tournament-posts/{id}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Its comments, oldest first */
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: {
+                                /** Format: uuid */
+                                id: string;
+                                body: string;
+                                /** Format: date-time */
+                                at: string;
+                                author: {
+                                    displayName: string;
+                                    username: string | null;
+                                    avatarUrl: string | null;
+                                };
+                                mine: boolean;
+                                canRemove: boolean;
+                            }[];
+                            total: number;
+                            nextCursor: string | null;
+                        };
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Comment on an open post (gate post_tournament); no phones, emails or links */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        body: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            body: string;
+                            /** Format: date-time */
+                            at: string;
+                            mine: boolean;
+                            canRemove: boolean;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: CONTACT_NOT_ALLOWED, TOURNAMENT_COMMENT_TOO_LONG, VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: RATE_LIMITED */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tournament-posts/{id}/comments/{commentId}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove a comment: the person who wrote it or the post's author */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            removed: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_COMMENT_NOT_YOURS */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND, TOURNAMENT_COMMENT_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tournament-posts/{id}/threads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Message the person who posted it: opens my thread, or finds the one I have (gate post_tournament) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TournamentThread"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_THREAD_OWN_POST */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/tournament-posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My posts, removed ones too */
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: {
+                                /** Format: uuid */
+                                id: string;
+                                slug: string;
+                                title: string;
+                                sport: {
+                                    key: string;
+                                    en: string;
+                                    bn: string;
+                                };
+                                /** @enum {string} */
+                                format: "league" | "knockout" | "group_knockout" | "round_robin" | "other";
+                                division: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    en: string;
+                                    bn: string;
+                                } | null;
+                                district: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    en: string;
+                                    bn: string;
+                                } | null;
+                                area: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    en: string;
+                                    bn: string;
+                                } | null;
+                                venueName: string;
+                                /** Format: date */
+                                startDate: string;
+                                /** Format: date */
+                                endDate: string | null;
+                                /** Format: date */
+                                registrationDeadline: string;
+                                registrationOpen: boolean;
+                                entryFee: number;
+                                prizePool: number | null;
+                                /** @enum {string} */
+                                gender: "open" | "men" | "women";
+                                ageGroup: string | null;
+                                /** @enum {string|null} */
+                                skillLevel: "any" | "beginner" | "intermediate" | "advanced" | null;
+                                organiserName: string;
+                                cover: string | null;
+                                commentCount: number;
+                                /** @enum {string} */
+                                status: "open" | "closed" | "expired" | "removed";
+                                author: {
+                                    displayName: string;
+                                    username: string | null;
+                                    avatarUrl: string | null;
+                                };
+                                /** Format: date-time */
+                                createdAt: string;
+                                removedReason: string | null;
+                            }[];
+                            total: number;
+                            nextCursor: string | null;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Post a tournament (gate post_tournament); live at once (M26-FR-01) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        title: string;
+                        /** @description A sport key from the catalogue */
+                        sport: string;
+                        /** @enum {string} */
+                        format: "league" | "knockout" | "group_knockout" | "round_robin" | "other";
+                        /** Format: uuid */
+                        districtId: string;
+                        /** Format: uuid */
+                        areaId?: string | null;
+                        venueName: string;
+                        address?: string | null;
+                        /** @description A Google Maps link */
+                        mapLink?: string | null;
+                        /** Format: date */
+                        startDate: string;
+                        /** Format: date */
+                        endDate?: string | null;
+                        /** Format: date */
+                        registrationDeadline: string;
+                        /** @description What the organiser charges, for information; 0 is free. Kriraghor does not collect it */
+                        entryFee: number;
+                        prizePool?: number | null;
+                        prizeDetails?: string | null;
+                        teamLimit?: number | null;
+                        playersPerTeam?: number | null;
+                        /** @enum {string} */
+                        gender?: "open" | "men" | "women";
+                        ageGroup?: string | null;
+                        /** @enum {string|null} */
+                        skillLevel?: "any" | "beginner" | "intermediate" | "advanced" | null;
+                        organiserName: string;
+                        description: string;
+                        rules?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            slug: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_LIMIT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: CONTACT_NOT_ALLOWED, TOURNAMENT_POST_DATE_PAST, TOURNAMENT_POST_DEADLINE_AFTER_START, TOURNAMENT_POST_END_BEFORE_START, TOURNAMENT_POST_MAP_LINK, TOURNAMENT_POST_SPORT_UNKNOWN, TOURNAMENT_POST_PLACE_UNKNOWN, VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_DAILY_LIMIT */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/tournament-posts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Change my open post: the whole form again */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        title: string;
+                        /** @description A sport key from the catalogue */
+                        sport: string;
+                        /** @enum {string} */
+                        format: "league" | "knockout" | "group_knockout" | "round_robin" | "other";
+                        /** Format: uuid */
+                        districtId: string;
+                        /** Format: uuid */
+                        areaId?: string | null;
+                        venueName: string;
+                        address?: string | null;
+                        /** @description A Google Maps link */
+                        mapLink?: string | null;
+                        /** Format: date */
+                        startDate: string;
+                        /** Format: date */
+                        endDate?: string | null;
+                        /** Format: date */
+                        registrationDeadline: string;
+                        /** @description What the organiser charges, for information; 0 is free. Kriraghor does not collect it */
+                        entryFee: number;
+                        prizePool?: number | null;
+                        prizeDetails?: string | null;
+                        teamLimit?: number | null;
+                        playersPerTeam?: number | null;
+                        /** @enum {string} */
+                        gender?: "open" | "men" | "women";
+                        ageGroup?: string | null;
+                        /** @enum {string|null} */
+                        skillLevel?: "any" | "beginner" | "intermediate" | "advanced" | null;
+                        organiserName: string;
+                        description: string;
+                        rules?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            slug: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, TOURNAMENT_POST_NOT_YOURS */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: CONTACT_NOT_ALLOWED, TOURNAMENT_POST_DATE_PAST, TOURNAMENT_POST_DEADLINE_AFTER_START, TOURNAMENT_POST_END_BEFORE_START, TOURNAMENT_POST_MAP_LINK, TOURNAMENT_POST_SPORT_UNKNOWN, TOURNAMENT_POST_PLACE_UNKNOWN, VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/me/tournament-posts/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Close my post: it leaves the feed */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            status: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_YOURS */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/tournament-posts/{id}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a photo (raw JPEG, PNG or WebP body); the first is the cover */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            url: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, TOURNAMENT_POST_NOT_YOURS */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_STATE, PHOTO_LIMIT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_TOO_LARGE */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_TYPE_NOT_ALLOWED, FILE_TYPE_MISMATCH */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: FILE_EMPTY */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: UPLOAD_RATE_LIMITED */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/tournament-posts/{id}/photos/{photoId}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove a photo */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    photoId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            removed: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_YOURS */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND, PHOTO_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/tournament-threads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My conversations, as the poster and as a player, latest first */
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["TournamentThread"][];
+                            total: number;
+                            nextCursor: string | null;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/tournament-threads/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A conversation; only its two people. `after` for polling */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Only messages after this time, for polling */
+                    after?: string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            thread: components["schemas"]["TournamentThread"];
+                            items: {
+                                /** Format: uuid */
+                                id: string;
+                                mine: boolean;
+                                body: string;
+                                /** Format: date-time */
+                                at: string;
+                            }[];
+                            canSend: boolean;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_THREAD_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Send a message (gate post_tournament); phones are allowed here */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        body: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            mine: boolean;
+                            body: string;
+                            /** Format: date-time */
+                            at: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_THREAD_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_MESSAGE_TOO_LONG, VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: RATE_LIMITED */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/tournament-threads/{id}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark what was sent to me here as read */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            read: number;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_THREAD_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/tournament-posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Every tournament post (approve_listings) */
+        get: {
+            parameters: {
+                query?: {
+                    status?: "open" | "closed" | "expired" | "removed";
+                    q?: string;
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: {
+                                /** Format: uuid */
+                                id: string;
+                                slug: string;
+                                title: string;
+                                sport: {
+                                    key: string;
+                                    en: string;
+                                    bn: string;
+                                };
+                                /** @enum {string} */
+                                format: "league" | "knockout" | "group_knockout" | "round_robin" | "other";
+                                division: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    en: string;
+                                    bn: string;
+                                } | null;
+                                district: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    en: string;
+                                    bn: string;
+                                } | null;
+                                area: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    en: string;
+                                    bn: string;
+                                } | null;
+                                venueName: string;
+                                /** Format: date */
+                                startDate: string;
+                                /** Format: date */
+                                endDate: string | null;
+                                /** Format: date */
+                                registrationDeadline: string;
+                                registrationOpen: boolean;
+                                entryFee: number;
+                                prizePool: number | null;
+                                /** @enum {string} */
+                                gender: "open" | "men" | "women";
+                                ageGroup: string | null;
+                                /** @enum {string|null} */
+                                skillLevel: "any" | "beginner" | "intermediate" | "advanced" | null;
+                                organiserName: string;
+                                cover: string | null;
+                                commentCount: number;
+                                /** @enum {string} */
+                                status: "open" | "closed" | "expired" | "removed";
+                                author: {
+                                    displayName: string;
+                                    username: string | null;
+                                    avatarUrl: string | null;
+                                };
+                                /** Format: date-time */
+                                createdAt: string;
+                                removedReason: string | null;
+                            }[];
+                            total: number;
+                            nextCursor: string | null;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/tournament-posts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A tournament post, removed or not */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TournamentPostPage"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/tournament-posts/{id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove a post with a reason; its author is told (M26-FR-09) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            status: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/tournament-posts/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Put a removed post back as it was */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            status: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: TOURNAMENT_POST_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/phone": {
         parameters: {
             query?: never;
@@ -65657,6 +67307,170 @@ export interface components {
             textBn: string;
             /** Format: date-time */
             createdAt: string;
+        };
+        TournamentPostCard: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            title: string;
+            sport: {
+                key: string;
+                en: string;
+                bn: string;
+            };
+            /** @enum {string} */
+            format: "league" | "knockout" | "group_knockout" | "round_robin" | "other";
+            division: {
+                /** Format: uuid */
+                id: string;
+                en: string;
+                bn: string;
+            } | null;
+            district: {
+                /** Format: uuid */
+                id: string;
+                en: string;
+                bn: string;
+            } | null;
+            area: {
+                /** Format: uuid */
+                id: string;
+                en: string;
+                bn: string;
+            } | null;
+            venueName: string;
+            /** Format: date */
+            startDate: string;
+            /** Format: date */
+            endDate: string | null;
+            /** Format: date */
+            registrationDeadline: string;
+            registrationOpen: boolean;
+            entryFee: number;
+            prizePool: number | null;
+            /** @enum {string} */
+            gender: "open" | "men" | "women";
+            ageGroup: string | null;
+            /** @enum {string|null} */
+            skillLevel: "any" | "beginner" | "intermediate" | "advanced" | null;
+            organiserName: string;
+            cover: string | null;
+            commentCount: number;
+            /** @enum {string} */
+            status: "open" | "closed" | "expired" | "removed";
+            author: {
+                displayName: string;
+                username: string | null;
+                avatarUrl: string | null;
+            };
+            /** Format: date-time */
+            createdAt: string;
+        };
+        TournamentPostPage: {
+            /** Format: uuid */
+            id: string;
+            slug: string;
+            title: string;
+            sport: {
+                key: string;
+                en: string;
+                bn: string;
+            };
+            /** @enum {string} */
+            format: "league" | "knockout" | "group_knockout" | "round_robin" | "other";
+            division: {
+                /** Format: uuid */
+                id: string;
+                en: string;
+                bn: string;
+            } | null;
+            district: {
+                /** Format: uuid */
+                id: string;
+                en: string;
+                bn: string;
+            } | null;
+            area: {
+                /** Format: uuid */
+                id: string;
+                en: string;
+                bn: string;
+            } | null;
+            venueName: string;
+            /** Format: date */
+            startDate: string;
+            /** Format: date */
+            endDate: string | null;
+            /** Format: date */
+            registrationDeadline: string;
+            registrationOpen: boolean;
+            entryFee: number;
+            prizePool: number | null;
+            /** @enum {string} */
+            gender: "open" | "men" | "women";
+            ageGroup: string | null;
+            /** @enum {string|null} */
+            skillLevel: "any" | "beginner" | "intermediate" | "advanced" | null;
+            organiserName: string;
+            cover: string | null;
+            commentCount: number;
+            /** @enum {string} */
+            status: "open" | "closed" | "expired" | "removed";
+            author: {
+                displayName: string;
+                username: string | null;
+                avatarUrl: string | null;
+            };
+            /** Format: date-time */
+            createdAt: string;
+            address: string | null;
+            mapLink: string | null;
+            prizeDetails: string | null;
+            teamLimit: number | null;
+            playersPerTeam: number | null;
+            description: string;
+            rules: string | null;
+            photos: {
+                /** Format: uuid */
+                id: string;
+                url: string;
+            }[];
+            removedReason: string | null;
+            mine: boolean;
+            /** Format: uuid */
+            threadId: string | null;
+            can: {
+                edit: boolean;
+                close: boolean;
+                comment: boolean;
+                message: boolean;
+            };
+        };
+        TournamentThread: {
+            /** Format: uuid */
+            id: string;
+            post: {
+                /** Format: uuid */
+                id: string;
+                slug: string;
+                title: string;
+                /** @enum {string} */
+                status: "open" | "closed" | "expired" | "removed";
+            };
+            other: {
+                displayName: string;
+                username: string | null;
+                avatarUrl: string | null;
+            };
+            /** @enum {string} */
+            role: "organiser" | "player";
+            lastMessage: {
+                body: string;
+                /** Format: date-time */
+                at: string;
+                mine: boolean;
+            } | null;
+            unread: number;
         };
         Team: {
             /** Format: uuid */

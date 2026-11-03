@@ -29,7 +29,7 @@ function HireColumn({ category, title, delay, interval }: { category: "officials
   const pros = useQuery({ queryKey: ["home-hire", category], queryFn: () => hire.list({ category }) });
   const people = ((pros.data?.items ?? []) as unknown as HireCard[]).slice(0, RAIL_MAX);
   return (
-    <div className="glass-card p-5">
+    <div className="glass-card min-w-0 p-5">
       {pros.isPending ? (
         <SkeletonList rows={PER_PAGE} />
       ) : !people.length ? (
@@ -46,7 +46,7 @@ function HireColumn({ category, title, delay, interval }: { category: "officials
           keyOf={(p) => p.id}
           labels={{ prev: t("hirePrev"), next: t("hireNext"), pause: t("pause"), play: t("play") }}
           title={
-            <h3 className="flex items-baseline gap-2 text-lg font-bold">
+            <h3 className="flex flex-wrap items-baseline gap-x-2 text-lg font-bold">
               {title}
               <span className="text-sm font-medium text-muted">{t("available", { n: people.length })}</span>
             </h3>
@@ -108,7 +108,7 @@ export function GymSection() {
           <div className="relative min-h-52 overflow-hidden rounded-card bg-surface-2">
             <Image src={PHOTOS.gym} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" />
           </div>
-          <div className="glass-card p-5">
+          <div className="glass-card min-w-0 p-5">
             {gyms.isPending ? (
               <SkeletonList rows={PER_PAGE} />
             ) : !list.length ? (
@@ -123,7 +123,7 @@ export function GymSection() {
                 keyOf={(g) => g.id}
                 labels={{ prev: t("gymPrev"), next: t("gymNext"), pause: t("pause"), play: t("play") }}
                 title={
-                  <h3 className="flex items-baseline gap-2 text-lg font-bold">
+                  <h3 className="flex flex-wrap items-baseline gap-x-2 text-lg font-bold">
                     {t("gymList")}
                     <span className="text-sm font-medium text-muted">{t("gymCount", { n: list.length })}</span>
                   </h3>

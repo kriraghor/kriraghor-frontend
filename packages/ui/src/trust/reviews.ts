@@ -13,7 +13,7 @@ export type ReviewSubject = "ground" | "hire_profile" | "shop" | "gym";
 export type ReviewSource = "booking" | "hire_job" | "sub_order" | "gym_pass";
 export type ReviewResult = components["schemas"]["ReviewResult"];
 export type ReviewableItem = components["schemas"]["Reviewable"]["items"][number];
-export type SubjectType = "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product";
+export type SubjectType = "ground" | "booking" | "user" | "review" | "esports_tournament" | "shop" | "product" | "tournament_post" | "tournament_comment";
 export type ReportReason = "fake_listing" | "wrong_info" | "unsafe" | "harassment" | "fraud" | "spam" | "offensive" | "cheating" | "other";
 
 async function ok<T>(res: { data?: T; error?: unknown }): Promise<T> {
@@ -97,4 +97,6 @@ export const REPORT_REASONS: Record<SubjectType, ReportReason[]> = {
   esports_tournament: ["cheating", "wrong_info", "fraud", "other"],
   shop: ["fake_listing", "fraud", "wrong_info", "other"],
   product: ["fake_listing", "wrong_info", "fraud", "offensive", "other"],
+  tournament_post: ["fake_listing", "wrong_info", "fraud", "spam", "other"],
+  tournament_comment: ["offensive", "harassment", "spam", "other"],
 };

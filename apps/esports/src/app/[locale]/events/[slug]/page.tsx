@@ -7,7 +7,7 @@ import { detailMetadata } from "@/lib/seo.server";
 /** The title with game, prize pool, entry and start day from the public read. */
 export async function generateMetadata({ params }: PageProps<"/[locale]/events/[slug]">): Promise<Metadata> {
   const { locale, slug } = await params;
-  return detailMetadata("tournament", slug, locale, "Event");
+  return detailMetadata("tournament", slug, locale, "Tournament");
 }
 
 async function Content({ params }: { params: PageProps<"/[locale]/events/[slug]">["params"] }) {

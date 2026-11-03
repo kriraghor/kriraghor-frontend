@@ -3,7 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import { AuthLayout } from "@kriraghor/ui/auth-layout";
 import { SignUp } from "@/components/SignUp";
 import { PHOTOS } from "@/lib/photos";
-import { safeNext } from "@/lib/teams";
+import { safeNext } from "@/lib/safe-next";
 
 export const metadata = { title: "Create your account" };
 

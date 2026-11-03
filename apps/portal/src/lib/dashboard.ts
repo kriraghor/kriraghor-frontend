@@ -13,26 +13,24 @@ type DashboardAnswer = paths["/me/dashboard"]["get"]["responses"][200]["content"
 export type OwnerDashboard = Extract<DashboardAnswer, { role: "ground_owner" }>;
 export type ShopDashboard = Extract<DashboardAnswer, { role: "shop_owner" }>;
 export type GymDashboard = Extract<DashboardAnswer, { role: "gym_owner" }>;
-export type OrganiserDashboard = Extract<DashboardAnswer, { role: "organiser" }>;
 export type PlatformOverview = components["schemas"]["PlatformOverview"];
 export type Actions = components["schemas"]["PendingActions"];
 export type Tile = components["schemas"]["KpiTile"];
 export type ActionItem = Actions["items"][number];
-/** The businesses "Needs your action" answers for (GET /me/dashboard/actions?role=); organisers since Round B2. */
-export type ActionRole = "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
-export const ACTION_ROLES: readonly string[] = ["ground_owner", "shop_owner", "gym_owner", "organiser"];
+/** The businesses "Needs your action" answers for (GET /me/dashboard/actions?role=). */
+export type ActionRole = "ground_owner" | "shop_owner" | "gym_owner";
+export const ACTION_ROLES: readonly string[] = ["ground_owner", "shop_owner", "gym_owner"];
 type Locale = "en" | "bn";
 const loc = (locale: string): Locale => (locale === "bn" ? "bn" : "en");
-const dash = async (query: { role: "ground_owner" | "shop_owner" | "gym_owner" | "organiser"; period: Period; locale: Locale; orgId?: string }) => unwrap(await api().GET("/me/dashboard", { params: { query } }));
+const dash = async (query: { role: "ground_owner" | "shop_owner" | "gym_owner"; period: Period; locale: Locale }) => unwrap(await api().GET("/me/dashboard", { params: { query } }));
 
 export const dashboards = {
   /** The tiles' definitions come back in the page's language (M19 §6, EN and BN). */
   owner: async (period: Period, locale = "en") => (await dash({ role: "ground_owner", period, locale: loc(locale) })) as OwnerDashboard,
-  /** Round B2 (M19 §6.3): the shop owner's, the gym owner's and one sports organisation's dashboard. */
+  /** Round B2 (M19 §6.3): the shop owner's and the gym owner's dashboard. */
   shop: async (period: Period, locale = "en") => (await dash({ role: "shop_owner", period, locale: loc(locale) })) as ShopDashboard,
   gym: async (period: Period, locale = "en") => (await dash({ role: "gym_owner", period, locale: loc(locale) })) as GymDashboard,
-  organiser: async (orgId: string, period: Period, locale = "en") => (await dash({ role: "organiser", orgId, period, locale: loc(locale) })) as OrganiserDashboard,
-  /** M19-FR-11 for one business: venue (default), shop, gym or the sports organisations. */
+  /** M19-FR-11 for one business: venue (default), shop or gym. */
   ownerActions: async (role: ActionRole = "ground_owner") => unwrap(await api().GET("/me/dashboard/actions", { params: { query: { role } } })),
   platform: async (period: Period) => unwrap(await api("admin").GET("/admin/analytics/overview", { params: { query: { period } } })),
   staffActions: async () => unwrap(await api("admin").GET("/admin/analytics/actions")),
@@ -49,14 +47,13 @@ export { csvErrorKey, csvFilename, saveCsv } from "@kriraghor/ui/csv";
 // ---------------- pure helpers (tested)
 
 /**
- * Desk paths a module may still send in its old form (the 19 Oct 2026 renames, and esports leaving
- * the business panel on 21 Oct 2026), mapped to where the desk lives now. Other paths pass through.
+ * Desk paths a module may still send in its old form (the 19 Oct 2026 renames, esports leaving the
+ * business panel on 21 Oct 2026, and the organiser panel going on 3 Nov 2026, ADR-008), mapped to where
+ * the desk lives now. Other paths pass through.
  */
 const MOVED: [RegExp, string][] = [
   [/^\/vendor\/grounds(?=[/?#]|$)/, "/vendor/venues"],
-  [/^\/vendor\/tournaments\/([^/?#]+)\/t\/([^/?#]+)/, "/vendor/events/$1/e/$2"],
-  [/^\/vendor\/tournaments(?=[/?#]|$)/, "/vendor/events"],
-  [/^\/vendor\/esports(?:\/[^?#]*)?(?:[?#].*)?$/, "/vendor/events"],
+  [/^\/vendor\/(?:tournaments|events|esports)(?:\/[^?#]*)?(?:[?#].*)?$/, "/vendor"],
 ];
 export function deskHref(href: string): string {
   for (const [from, to] of MOVED) if (from.test(href)) return href.replace(from, to);

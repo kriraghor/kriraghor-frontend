@@ -30,6 +30,7 @@ import {
   updateProfile,
   verifyEmailCode,
 } from "@/lib/account";
+import { AddPhone } from "./AddPhone";
 import { AvatarControl } from "./AvatarControl";
 
 /** A problem from the API in plain words: our own message for known codes, else the server's title. */
@@ -215,6 +216,8 @@ function ProfileCard({ me }: { me: Me }) {
 
 function SignInCard({ me }: { me: Me }) {
   const t = useTranslations("accountSettings.signIn");
+  // /account/settings#phone (from the setup checklist, checkout and the feed) opens the form straight away.
+  const [addingPhone, setAddingPhone] = useState(() => typeof window !== "undefined" && window.location.hash === "#phone" && !me.phoneVerified);
   return (
     <Section icon={<Key size={22} />} title={t("title")} lead={t("lead")} testId="settings-sign-in">
       <div className="flex flex-col gap-4">
@@ -225,13 +228,18 @@ function SignInCard({ me }: { me: Me }) {
           badge={me.phone ? <Badge tone={me.phoneVerified ? "brand" : "warning"}>{me.phoneVerified ? t("verified") : t("notVerified")}</Badge> : null}
           action={
             me.phone && me.phoneVerified ? null : (
-              <ButtonLink href="/me/eligibility" variant="secondary" size="sm" data-testid="settings-phone">
+              <Button type="button" variant="secondary" size="sm" onClick={() => setAddingPhone((v) => !v)} aria-expanded={addingPhone} data-testid="settings-phone">
                 {me.phone ? t("verifyPhone") : t("addPhone")}
-              </ButtonLink>
+              </Button>
             )
           }
           testId="method-phone"
         />
+        {addingPhone ? (
+          <div id="phone">
+            <AddPhone onDone={() => setAddingPhone(false)} />
+          </div>
+        ) : null}
         <EmailRow me={me} />
         <GoogleRow me={me} />
         <PasswordRow me={me} />

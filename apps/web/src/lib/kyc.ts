@@ -114,11 +114,11 @@ export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 // ---------------- business roles (ground owners M09, shop owners M12, players and pros M11, gym owners M20, sports-event organisers M14; documents are kept per role)
 
 export type BusinessDocType = "trade_license" | "deed_or_lease" | "tin" | "bin" | "credential" | "police_clearance" | "org_registration";
-export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner" | "organiser" | "pro" | "player";
-export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "gym_owner", "organiser", "pro", "player"];
+export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner" | "pro" | "player";
+export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "gym_owner", "pro", "player"];
 
 /** ?as= on /account/business ↔ the role (ground owner is the default). */
-const AS: Record<string, BusinessRole> = { shop: "shop_owner", gym: "gym_owner", organiser: "organiser", pro: "pro", player: "player" };
+const AS: Record<string, BusinessRole> = { shop: "shop_owner", gym: "gym_owner", pro: "pro", player: "player" };
 export const roleFromAs = (as: string | null): BusinessRole => AS[as ?? ""] ?? "ground_owner";
 export const asOfRole = (role: BusinessRole) => Object.entries(AS).find(([, r]) => r === role)?.[0] ?? null;
 /** Players and pros work from the pro desk on kriraghor.com; owners from vendor.kriraghor.com. */

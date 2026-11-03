@@ -17,7 +17,7 @@ const NODES: { key: SectionKey; at: string }[] = [
   { key: "venues", at: "left-[min(calc(100%-68px),78%)] top-[27%] sm:left-[80%] sm:top-1/2 md:left-[84%] md:top-[20%]" },
   { key: "shop", at: "left-[min(calc(100%-68px),78%)] top-[73%] sm:left-[73%] sm:top-[91%] md:left-[84%] md:top-[80%]" },
   { key: "hire", at: "left-1/2 top-[92%] sm:left-[27%] sm:top-[91%] md:left-1/2 md:top-[92%]" },
-  { key: "events", at: "left-[max(68px,22%)] top-[73%] sm:left-[20%] sm:top-1/2 md:left-[16%] md:top-[80%]" },
+  { key: "tournaments", at: "left-[max(68px,22%)] top-[73%] sm:left-[20%] sm:top-1/2 md:left-[16%] md:top-[80%]" },
 ];
 
 const DOT_SECONDS = 3.5;

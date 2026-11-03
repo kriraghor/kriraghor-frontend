@@ -32,11 +32,10 @@ type Player = {
   displayName?: string;
   handle?: string;
   sports?: { nameEn: string; nameBn: string; positions: { en: string; bn: string }[] }[];
-  teams?: unknown[];
 };
 
 /** A player page: "Player" above the name, sports with positions under it, then the team count. */
-export function playerCard(data: unknown, locale: Locale, labels: { player: string; sports: string; teams: string }): CardContent | null {
+export function playerCard(data: unknown, locale: Locale, labels: { player: string; sports: string }): CardContent | null {
   const p = (data ?? {}) as Player;
   if (!p.displayName) return null;
   const sports = (p.sports ?? []).map((s) => {
@@ -45,6 +44,5 @@ export function playerCard(data: unknown, locale: Locale, labels: { player: stri
   });
   const stats: OgStat[] = [];
   if (p.sports?.length) stats.push({ label: labels.sports, value: num(p.sports.length, locale) });
-  if (p.teams?.length) stats.push({ label: labels.teams, value: num(p.teams.length, locale) });
   return { eyebrow: labels.player, title: p.displayName, subtitle: sports.join(" · ") || null, stats };
 }

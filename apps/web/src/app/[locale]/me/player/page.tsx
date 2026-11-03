@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
-import { PlayerProfileForm } from "@/components/teams/PlayerProfileForm";
+import { PlayerProfileForm } from "@/components/players/PlayerProfileForm";
 
 export const metadata = { title: "Player profile" };
 

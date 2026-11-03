@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { hireCard, playerCard } from "../og";
 
 const hireLabels = { rating: "Rating", jobs: "Jobs done", years: "Years" };
-const playerLabels = { player: "Player", sports: "Sports", teams: "Teams" };
+const playerLabels = { player: "Player", sports: "Sports" };
 
 describe("hireCard (Round B1 part 5)", () => {
   const profile = {
@@ -69,14 +69,13 @@ describe("playerCard (Round B1 part 5)", () => {
     teams: [{}, {}, {}],
   };
 
-  it("names the sports with positions and counts sports and teams", () => {
+  it("names the sports with positions and counts them", () => {
     expect(playerCard(player, "en", playerLabels)).toEqual({
       eyebrow: "Player",
       title: "Tamim Hasan",
       subtitle: "Cricket (Batter, Wicket-keeper) · Futsal",
       stats: [
         { label: "Sports", value: "2" },
-        { label: "Teams", value: "3" },
       ],
     });
     expect(playerCard(player, "bn", playerLabels)!.subtitle).toBe("ক্রিকেট (ব্যাটার, উইকেটরক্ষক) · ফুটসাল");

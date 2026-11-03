@@ -16,6 +16,6 @@ export const APP = {
     { href: "/shop", key: "shop" },
     { href: "/hiring", key: "hiring" },
     { href: "/go/gym", key: "gym" },
-    { href: "/events", key: "tournaments" },
+    { href: "/tournaments", key: "tournaments" },
   ],
 };
