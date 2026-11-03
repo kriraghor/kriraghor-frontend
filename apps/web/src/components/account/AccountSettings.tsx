@@ -5,7 +5,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Camera, DeviceMobile, Envelope, GoogleLogo, Key, Monitor, SignOut, UserCircle } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
-import { Link, usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { Link } from "@kriraghor/ui/i18n/navigation";
+import { useSwitchLocale } from "@kriraghor/ui/i18n/switch-locale";
 import { GoogleButton } from "@kriraghor/ui/auth/google-button";
 import { SignedOutCard, useMe, type Me } from "@kriraghor/ui/account";
 import { Badge, Button, ButtonLink, Card, Dialog, ErrorState, Field, Notice, OtpInput, PageTitle, PasswordField, SegmentedControl, Skeleton, SkeletonList, useToast } from "@kriraghor/ui/kit";
@@ -138,8 +139,7 @@ function ProfileCard({ me }: { me: Me }) {
   const t = useTranslations("accountSettings.profile");
   const toast = useToast();
   const qc = useQueryClient();
-  const router = useRouter();
-  const pathname = usePathname();
+  const switchLocale = useSwitchLocale();
   const siteLocale = useLocale();
   const problemText = useProblemText();
   const [name, setName] = useState(me.displayName);
@@ -150,7 +150,7 @@ function ProfileCard({ me }: { me: Me }) {
       qc.setQueryData(["me"], next);
       toast.show(t("saved"));
       // The account language is also the site's language from now on.
-      if (next.locale !== siteLocale) router.replace(pathname, { locale: next.locale });
+      if (next.locale !== siteLocale) switchLocale(next.locale);
     },
   });
   const nameOk = displayNameOk(name);
