@@ -13,6 +13,6 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
   const lang = locale === "bn" ? "bn" : "en";
   const t = await getTranslations({ locale: lang, namespace: "share.og" });
   const read = await publicRead(`/players/${encodeURIComponent(handle)}`);
-  const content = read.status === "ok" ? playerCard(read.data, lang, { player: t("player"), sports: t("sports") }) : null;
+  const content = read.status === "ok" ? playerCard(read.data, lang, { player: t("player"), sports: t("sports"), teams: t("teams") }) : null;
   return shareImage(content, { locale: lang, brand: t("brandPlayers"), path: `/players/${encodeURIComponent(handle)}` });
 }

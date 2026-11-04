@@ -7,7 +7,7 @@ import { isExternal } from "@/lib/links";
 import { sectionUrl } from "@/lib/home";
 import { PHOTOS } from "@/lib/photos";
 
-export const metadata = { title: "How it works", description: "How esports, gyms, venues, the shop, hiring and tournaments work on Kriraghor.", alternates: { canonical: "/how-it-works" } };
+export const metadata = { title: "How it works", description: "How esports tournaments, gyms, venues, the shop, hiring and sports tournaments work on Kriraghor.", alternates: { canonical: "/how-it-works" } };
 
 const PARTS = [
   { key: "esports", photo: PHOTOS.esports, steps: 4, owners: false },
@@ -15,7 +15,7 @@ const PARTS = [
   { key: "venues", photo: PHOTOS.groundsFloodlit, steps: 4, owners: true },
   { key: "shop", photo: PHOTOS.shopGear, steps: 4, owners: true },
   { key: "hire", photo: PHOTOS.hire, steps: 4, owners: false },
-  { key: "tournaments", photo: PHOTOS.tournaments, steps: 3, owners: false },
+  { key: "events", photo: PHOTOS.tournaments, steps: 3, owners: true },
 ] as const;
 const TRUST = [
   { key: "money", icon: <ShieldCheck size={24} aria-hidden /> },

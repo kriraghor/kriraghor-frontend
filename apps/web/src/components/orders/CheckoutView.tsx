@@ -117,7 +117,7 @@ export function CheckoutView() {
             <div className="mt-3" role="alert">
               <Notice tone="error">{problem.code === "PHONE_REQUIRED" ? t("phoneRequired") : (problem.title ?? t("failed"))}</Notice>
               {problem.code === "PHONE_REQUIRED" ? (
-                <Link href="/account/settings#phone" className="mt-2 inline-flex min-h-11 items-center font-semibold text-brand underline">
+                <Link href="/me/eligibility#phone" className="mt-2 inline-flex min-h-11 items-center font-semibold text-brand underline">
                   {t("addPhone")}
                 </Link>
               ) : null}

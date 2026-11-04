@@ -25,7 +25,7 @@ const en: Record<LegalKey, LegalDoc> = {
         title: "About Kriraghor",
         body: [
           "Kriraghor is a sports and esports platform for Bangladesh. You can book venues, buy gear, hire players, officials and coaches, buy gym subscriptions and trainer plans, and join esports and sports tournaments.",
-          "Venue owners, shops, gyms, trainers and players for hire provide their own services. Kriraghor runs the platform, takes the payments and holds the money until the service is delivered.",
+          "Venue owners, shops, gyms, trainers, players for hire and tournament organisers provide their own services. Kriraghor runs the platform, takes the payments and holds the money until the service is delivered.",
           "[The legal entity that operates Kriraghor and its registered address will be added here before launch.]",
         ],
       },
@@ -106,8 +106,8 @@ const en: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "tournaments",
-        title: "Tournaments",
-        body: ["People post tournaments they run elsewhere on Kriraghor's Tournaments page. Kriraghor doesn't organise these tournaments, check them, or take part in them, and doesn't collect or hold their entry fees or prizes. Anything you agree or pay is between you and the organiser, so check the details before you pay anyone. You can report a post, and we may remove posts that are false or break these terms. Phone numbers, emails and links can't go in public posts or comments; private messages can carry them."],
+        title: "Sports tournaments",
+        body: ["Verified organisers run football, cricket and other sports tournaments on Kriraghor. Each tournament page shows its rules, entry fee, prizes and refund rules. Entry fees are held by Kriraghor and paid to the organiser in parts as the tournament is played. Prizes in sports tournaments are paid by the organiser."],
       },
       {
         id: "conduct",
@@ -136,7 +136,7 @@ const en: Record<LegalKey, LegalDoc> = {
       {
         id: "liability",
         title: "Our responsibility",
-        body: ["Owners, shops, gyms, trainers and people for hire are responsible for the services they provide. Kriraghor is responsible for running the platform and handling payments as these terms describe. Nothing here limits any responsibility that Bangladesh law does not allow us to limit."],
+        body: ["Owners, shops, gyms, trainers, people for hire and organisers are responsible for the services they provide. Kriraghor is responsible for running the platform and handling payments as these terms describe. Nothing here limits any responsibility that Bangladesh law does not allow us to limit."],
       },
       {
         id: "changes",
@@ -270,8 +270,14 @@ const en: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "tournaments",
-        title: "Tournaments",
-        body: ["Kriraghor doesn't collect entry fees for tournaments posted on the Tournaments page, so we can't refund them. Ask the organiser who took your money."],
+        title: "Sports tournaments",
+        body: [
+          [
+            "The organiser rejects your team, or the tournament is cancelled before the first result: full refund.",
+            "The tournament is cancelled after it has started: the part of the entry fee not yet paid to the organiser is refunded.",
+            "Your team withdraws after registration closes: a partial refund, as shown in the tournament's rules.",
+          ],
+        ],
       },
       {
         id: "orders",
@@ -316,6 +322,7 @@ const en: Record<LegalKey, LegalDoc> = {
             "Hiring: when you confirm the job is done, or automatically after the period shown on the job, unless you open a dispute.",
             "Gym subscriptions: when the gym admits you, or when an unused subscription expires.",
             "Esports: entry fees stay held until results are final and prizes are paid.",
+            "Sports tournaments: entry fees are paid to the organiser in two parts, after the first result and at the end.",
           ],
         ],
       },
@@ -325,7 +332,7 @@ const en: Record<LegalKey, LegalDoc> = {
   },
   fairPlay: {
     title: "Fair play rules",
-    intro: "Esports on Kriraghor is for real players competing fairly. These rules apply to every Kriraghor esports tournament.",
+    intro: "Esports on Kriraghor is for real players competing fairly. These rules apply to every Kriraghor and organiser tournament.",
     sections: [
       {
         id: "rules",
@@ -336,7 +343,7 @@ const en: Record<LegalKey, LegalDoc> = {
             "No hacks, cheats, modified game files, or emulators where a tournament doesn't allow them.",
             "No teaming with other squads, and no sharing the room ID or password.",
             "Play under your own account. Don't let anyone else play for you.",
-            "Respect other players and staff.",
+            "Respect other players, staff and organisers.",
           ],
         ],
       },
@@ -360,7 +367,7 @@ const bn: Record<LegalKey, LegalDoc> = {
         id: "about",
         title: "ক্রীড়াঘর সম্পর্কে",
         body: [
-          "ক্রীড়াঘর বাংলাদেশের খেলাধুলা ও ই-স্পোর্টসের প্ল্যাটফর্ম। এখানে ভেন্যু বুক করা, খেলার সরঞ্জাম কেনা, খেলোয়াড়-আম্পায়ার-কোচ হায়ার করা, জিম সাবস্ক্রিপশন ও ট্রেইনার প্ল্যান কেনা এবং ই-স্পোর্টস ও টুর্নামেন্টে অংশ নেওয়া যায়।",
+          "ক্রীড়াঘর বাংলাদেশের খেলাধুলা ও ই-স্পোর্টসের প্ল্যাটফর্ম। এখানে ভেন্যু বুক করা, খেলার সরঞ্জাম কেনা, খেলোয়াড়-আম্পায়ার-কোচ হায়ার করা, জিম সাবস্ক্রিপশন ও ট্রেইনার প্ল্যান কেনা এবং ই-স্পোর্টস ও খেলার টুর্নামেন্টে অংশ নেওয়া যায়।",
           "ভেন্যুর মালিক, দোকান, জিম, ট্রেইনার, হায়ারের লোক ও টুর্নামেন্ট আয়োজকরা নিজেদের সেবা দেন। ক্রীড়াঘর প্ল্যাটফর্ম চালায়, পেমেন্ট নেয় এবং সেবা পাওয়া পর্যন্ত টাকা নিজের কাছে রাখে।",
           "[ক্রীড়াঘর পরিচালনাকারী প্রতিষ্ঠানের আইনি নাম ও নিবন্ধিত ঠিকানা চালুর আগে এখানে যোগ হবে।]",
         ],
@@ -442,8 +449,8 @@ const bn: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "tournaments",
-        title: "টুর্নামেন্ট",
-        body: ["মানুষ ক্রীড়াঘরের টুর্নামেন্ট পেজে তাদের চালানো টুর্নামেন্টের পোস্ট করেন। ক্রীড়াঘর এসব টুর্নামেন্ট আয়োজন করে না, যাচাই করে না, এতে অংশও নেয় না, এবং এর এন্ট্রি ফি বা পুরস্কার নেয় না বা রাখে না। আপনি যা ঠিক করেন বা যে টাকা দেন তা আপনার ও আয়োজকের মধ্যে, তাই কাউকে টাকা দেওয়ার আগে সব মিলিয়ে নিন। আপনি পোস্ট রিপোর্ট করতে পারেন, এবং মিথ্যা বা এই শর্ত ভঙ্গ করা পোস্ট আমরা সরিয়ে দিতে পারি। ফোন নম্বর, ইমেইল ও লিংক সবার দেখার পোস্ট বা মন্তব্যে দেওয়া যাবে না; ব্যক্তিগত বার্তায় দেওয়া যাবে।"],
+        title: "খেলার টুর্নামেন্ট",
+        body: ["যাচাই করা আয়োজকরা ক্রীড়াঘরে ফুটবল, ক্রিকেটসহ নানা খেলার টুর্নামেন্ট চালান। প্রতিটি টুর্নামেন্টের পাতায় নিয়ম, এন্ট্রি ফি, পুরস্কার ও রিফান্ডের নিয়ম থাকে। এন্ট্রি ফি ক্রীড়াঘরের কাছে জমা থাকে এবং খেলা এগোনোর সঙ্গে ধাপে ধাপে আয়োজককে দেওয়া হয়। খেলার টুর্নামেন্টের পুরস্কার দেন আয়োজক।"],
       },
       {
         id: "conduct",
@@ -568,8 +575,8 @@ const bn: Record<LegalKey, LegalDoc> = {
       },
       {
         id: "tournaments",
-        title: "টুর্নামেন্ট",
-        body: ["টুর্নামেন্ট পেজে পোস্ট করা টুর্নামেন্টের এন্ট্রি ফি ক্রীড়াঘর নেয় না, তাই আমরা তা ফেরত দিতে পারি না। যে আয়োজক আপনার টাকা নিয়েছেন তাঁকে বলুন।"],
+        title: "খেলার টুর্নামেন্ট",
+        body: [["আয়োজক আপনার দল বাতিল করলে, বা প্রথম ফলাফলের আগে টুর্নামেন্ট বাতিল হলে: পুরো টাকা ফেরত।", "শুরুর পর টুর্নামেন্ট বাতিল হলে: এন্ট্রি ফির যে অংশ এখনো আয়োজককে দেওয়া হয়নি তা ফেরত।", "রেজিস্ট্রেশন বন্ধের পর দল নাম তুলে নিলে: টুর্নামেন্টের নিয়মে দেখানো আংশিক ফেরত।"]],
       },
       {
         id: "orders",
@@ -595,6 +602,7 @@ const bn: Record<LegalKey, LegalDoc> = {
             "হায়ার: কাজ শেষ বলে নিশ্চিত করলে, অথবা কাজে দেখানো সময় পেরোলে নিজে থেকে, যদি না অভিযোগ করেন।",
             "জিম সাবস্ক্রিপশন: জিমে ঢোকার সময়, অথবা অব্যবহৃত সাবস্ক্রিপশনের মেয়াদ শেষ হলে।",
             "ই-স্পোর্টস: ফলাফল চূড়ান্ত হয়ে পুরস্কার দেওয়া পর্যন্ত এন্ট্রি ফি জমা থাকে।",
+            "খেলার টুর্নামেন্ট: এন্ট্রি ফি আয়োজককে দুই ধাপে দেওয়া হয়, প্রথম ফলাফলের পর এবং শেষে।",
           ],
         ],
       },

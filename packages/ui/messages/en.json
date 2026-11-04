@@ -195,6 +195,10 @@
         "gym_owner": {
           "title": "I run a gym",
           "body": "Sell subscriptions, memberships and training."
+        },
+        "organiser": {
+          "title": "I organise tournaments",
+          "body": "Run sports tournaments for your club, league or venue."
         }
       },
       "create": "Create my account",
@@ -230,7 +234,11 @@
     },
     "items": {
       "overview": "Overview",
+      "events": "My tournaments",
+      "teams": "Teams",
       "player": "Player profile",
+      "ready": "Ready to play",
+      "addPhone": "Add a mobile number",
       "hires": "My hires",
       "bookings": "Bookings",
       "passes": "Gym subscriptions",
@@ -253,8 +261,7 @@
       "gameIds": "Game IDs",
       "matches": "Matches",
       "settings": "Account settings",
-      "esports": "My esports",
-      "tournaments": "My tournaments"
+      "esports": "My esports"
     },
     "roles": {
       "member": "Member",
@@ -263,7 +270,7 @@
       "ground_owner": "Venue owner",
       "shop_owner": "Shop owner",
       "gym_owner": "Gym owner",
-      "organiser": "Events organiser",
+      "organiser": "Tournament organiser",
       "staff": "Staff",
       "master_admin": "Master admin"
     },
@@ -314,6 +321,7 @@
     "sections": {
       "home": "Home",
       "esports": "Esports",
+      "events": "Sports tournaments",
       "venues": "Venues",
       "gym": "Gym",
       "shop": "Shop",
@@ -321,8 +329,7 @@
       "work": "Work",
       "money": "Money",
       "help": "Help",
-      "account": "Account",
-      "tournaments": "Tournaments"
+      "account": "Account"
     },
     "tabs": {
       "matches": "My matches",
@@ -601,9 +608,7 @@
         "review": "Report this review",
         "esports_tournament": "Report this tournament",
         "shop": "Report this shop",
-        "product": "Report this item",
-        "tournament_post": "Report this post",
-        "tournament_comment": "Report this comment"
+        "product": "Report this item"
       },
       "reason": "What is wrong?",
       "note": "Anything else? (optional)",
@@ -633,9 +638,7 @@
         "review": "A review",
         "esports_tournament": "A tournament",
         "shop": "A shop",
-        "product": "A shop item",
-        "tournament_post": "A tournament post",
-        "tournament_comment": "A comment"
+        "product": "A shop item"
       },
       "status": {
         "open": "Our team is looking",

@@ -14,7 +14,7 @@ export type ReportRow = components["schemas"]["ReportQueue"]["items"][number];
 export type ReportSubject = components["schemas"]["ReportSubject"];
 export type StaffReview = components["schemas"]["ReviewList"]["items"][number];
 export type ReportAction = "no_violation" | "content_removed" | "owner_warned" | "user_suspended" | "converted_to_dispute";
-type SubjectType = "ground" | "booking" | "user" | "review" | "esports_tournament" | "tournament_post" | "tournament_comment";
+type SubjectType = "ground" | "booking" | "user" | "review" | "esports_tournament";
 
 const key = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
 const a = () => api("admin");

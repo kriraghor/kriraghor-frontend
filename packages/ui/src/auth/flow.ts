@@ -44,7 +44,7 @@ export function normalizeUsername(input: string): string | null {
 }
 
 /** Roles a person can ask for at sign-up (the backend's SELF_SERVICE_ROLES); "none" asks for nothing. */
-export const SIGNUP_ROLES = ["none", "player", "pro", "ground_owner", "shop_owner", "gym_owner"] as const;
+export const SIGNUP_ROLES = ["none", "player", "pro", "ground_owner", "shop_owner", "gym_owner", "organiser"] as const;
 export type SignupRole = (typeof SIGNUP_ROLES)[number];
 
 export type SignupStep = "verify" | "about" | "role" | "done";

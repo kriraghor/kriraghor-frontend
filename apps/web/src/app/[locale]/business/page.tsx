@@ -17,6 +17,7 @@ const CARDS = [
 const FEATURES = ["a", "b", "c"];
 const OTHERS = [
   { key: "pros", href: "/account/business?as=pro" },
+  { key: "organisers", href: "/account/business?as=organiser" },
 ];
 
 /**

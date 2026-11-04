@@ -6,9 +6,9 @@ import type { Tone } from "../kit";
  * They only shape the screens: the API enforces every rule (business-members actFor, ADR-004).
  */
 export type BusinessType = "venue" | "gym" | "shop";
-export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner";
+export type BusinessRole = "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
 /** The business roles in sidebar order. */
-export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "gym_owner"];
+export const BUSINESS_ROLES: BusinessRole[] = ["ground_owner", "shop_owner", "gym_owner", "organiser"];
 /** What /me says about a workplace (ids and permissions; names come from /me/workplaces). */
 export type WorkplaceRef = { businessType: BusinessType; businessId: string; permissions: readonly string[] };
 

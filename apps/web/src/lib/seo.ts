@@ -31,7 +31,7 @@ type Product = { title: string; brand?: string | null; description?: string | nu
 type Shop = { name: string; about?: string | null; area?: Named };
 type Hire = { name: string; headline?: string | null; bio?: string | null; role?: Named; area?: Named };
 type Gym = { name: string; about?: string | null; area?: Named; cover?: string | null; photos?: { url: string }[] };
-type Tournament = { title: string; slug: string; description?: string | null; sport?: { en: string; bn: string }; startDate?: string | null; endDate?: string | null; organiserName?: string | null; cover?: string | null; venueName?: string | null };
+type Tournament = { name: string; slug: string; description?: string | null; sport?: Named; startDate?: string | null; endDate?: string | null; status?: string; organisation?: { name: string } | null };
 type Player = { displayName: string; bio?: string | null; handle: string };
 
 const joinDot = (...parts: (string | null | undefined)[]) => parts.filter(Boolean).join(" · ");
@@ -79,21 +79,21 @@ export function metaFor(kind: MetaKind, data: unknown, locale: Locale, site = DE
     }
     case "tournament": {
       const t = data as Tournament;
-      const sport = locale === "bn" ? t.sport?.bn : t.sport?.en;
+      const sport = pick(t.sport, locale);
       return {
-        title: t.title,
-        description: summary(t.description) || joinDot(t.title, sport, t.organiserName),
-        image: abs(t.cover),
+        title: t.name,
+        description: summary(t.description) || joinDot(t.name, sport, t.organisation?.name),
+        image: null,
         jsonLd: {
           "@context": "https://schema.org",
           "@type": "SportsEvent",
-          name: t.title,
-          url: `${site}/tournaments/${t.slug}`,
+          name: t.name,
+          url: `${site}/events/${t.slug}`,
           ...(t.startDate ? { startDate: t.startDate } : {}),
           ...(t.endDate ? { endDate: t.endDate } : {}),
           ...(sport ? { sport } : {}),
-          ...(t.venueName ? { location: { "@type": "Place", name: t.venueName } } : {}),
-          ...(t.organiserName ? { organizer: { "@type": "Organization", name: t.organiserName } } : {}),
+          eventStatus: t.status === "cancelled" ? "https://schema.org/EventCancelled" : "https://schema.org/EventScheduled",
+          ...(t.organisation ? { organizer: { "@type": "Organization", name: t.organisation.name } } : {}),
         },
       };
     }
@@ -114,7 +114,7 @@ export const STATIC_PATHS: { path: string; changeFrequency: SitemapEntry["change
   { path: "/venues", changeFrequency: "daily", priority: 0.9 },
   { path: "/shop", changeFrequency: "daily", priority: 0.9 },
   { path: "/hiring", changeFrequency: "daily", priority: 0.8 },
-  { path: "/tournaments", changeFrequency: "daily", priority: 0.8 },
+  { path: "/events", changeFrequency: "daily", priority: 0.8 },
   { path: "/business", changeFrequency: "monthly", priority: 0.6 },
   { path: "/how-it-works", changeFrequency: "monthly", priority: 0.5 },
   { path: "/about", changeFrequency: "monthly", priority: 0.4 },
@@ -128,10 +128,10 @@ export const STATIC_PATHS: { path: string; changeFrequency: SitemapEntry["change
 
 /** Where each public list lives and how its items become page paths. */
 export const SITEMAP_SOURCES = [
-  { key: "grounds", path: "/grounds?limit=50", page: (slug: string) => `/venues/${slug}` },
-  { key: "products", path: "/market/items?limit=48", page: (slug: string) => `/shop/p/${slug}` },
-  { key: "hire", path: "/hire/profiles?limit=50", page: (slug: string) => `/hiring/${slug}` },
-  { key: "tournaments", path: "/tournament-posts?limit=50", page: (slug: string) => `/tournaments/${slug}` },
+  { key: "grounds", path: "/grounds?limit=50", page: (slug: string) => `/venues/${slug}`, paging: "cursor" },
+  { key: "products", path: "/market/items?limit=48", page: (slug: string) => `/shop/p/${slug}`, paging: "cursor" },
+  { key: "hire", path: "/hire/profiles?limit=50", page: (slug: string) => `/hiring/${slug}`, paging: "cursor" },
+  { key: "tournaments", path: "/tournaments?limit=48", page: (slug: string) => `/events/${slug}`, paging: "offset" },
 ] as const;
 
 export const SITEMAP_MAX = 5000;
@@ -155,7 +155,7 @@ export function sitemapEntries(site: string, found: Partial<Record<(typeof SITEM
 // ---------------- robots ----------------
 
 /** Pages a crawler has no business in (private, per person, or one-time links). */
-export const PRIVATE_PATHS = ["/me", "/account", "/pay", "/pro", "/sign-in", "/go/"];
+export const PRIVATE_PATHS = ["/me", "/account", "/pay", "/pro", "/teams/join", "/sign-in", "/go/"];
 
 /** robots.txt: only production ("prod" in Helm, "production" on Vercel) is indexed; every other environment says keep out. */
 export function robotsFor(appEnv: string, site: string) {

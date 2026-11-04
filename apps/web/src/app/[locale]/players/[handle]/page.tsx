@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { detailMetadata, pageMeta } from "@/lib/seo.server";
-import { PublicPlayerView } from "@/components/players/PublicPlayerView";
+import { PublicPlayerView } from "@/components/teams/PublicPlayerView";
 
 /** Title, description and share image from the public read; an unknown handle is a 404 (seo.server). */
 export async function generateMetadata({ params }: PageProps<"/[locale]/players/[handle]">): Promise<Metadata> {

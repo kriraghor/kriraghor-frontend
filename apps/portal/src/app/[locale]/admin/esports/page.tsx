@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { EsportsDesk } from "@/components/admin/esports/EsportsDesk";
 
-export const metadata = { title: "Esports events" };
+export const metadata = { title: "Esports tournaments" };
 
 export default async function EsportsDeskPage({ params }: PageProps<"/[locale]/admin/esports">) {
   const { locale } = await params;
