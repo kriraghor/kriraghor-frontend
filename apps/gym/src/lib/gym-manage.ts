@@ -255,6 +255,8 @@ export function deskAction(card: Pick<DeskCard, "decision" | "canOverride">): "c
 /** The members list views (one chip each) → the API filters. Unknown views read as everyone. */
 export const MEMBER_VIEWS = ["", "active", "due", "overdue", "expiring", "frozen", "expired", "left", "notSeen", "unlinked"] as const;
 export type MemberView = (typeof MEMBER_VIEWS)[number];
+/** The notSeen view waits for the gym's own absent days (the overview's tiles.notSeenDays, M24-FR-23, FR-53); the other views need nothing. */
+export const membersListReady = (view: string | undefined, notSeenDays: number | undefined) => view !== "notSeen" || Boolean(notSeenDays && notSeenDays > 0);
 export function membersQuery(f: { view?: string; q?: string; packageId?: string; trainerId?: string; notSeenDays?: number; cursor?: string; limit?: number }): MembersQuery {
   const out: MembersQuery = {};
   switch (f.view as MemberView) {
@@ -274,7 +276,7 @@ export function membersQuery(f: { view?: string; q?: string; packageId?: string;
       out.expiring = "true";
       break;
     case "notSeen":
-      out.notSeen = f.notSeenDays && f.notSeenDays > 0 ? f.notSeenDays : 10;
+      if (membersListReady("notSeen", f.notSeenDays)) out.notSeen = f.notSeenDays;
       break;
     case "unlinked":
       out.linked = "false";
