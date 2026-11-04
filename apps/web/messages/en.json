@@ -77,7 +77,9 @@
     "passes": "Gym subscriptions",
     "subscriptions": "Trainer subscriptions",
     "proDesk": "Pro desk",
+    "teams": "My teams",
     "player": "Player profile",
+    "eligibility": "Ready to play",
     "addPhone": "Add a mobile number",
     "tournaments": "My tournaments"
   },
@@ -96,7 +98,7 @@
   },
   "vendor": {
     "home": "Business desk",
-    "intro": "Manage your venues, shop or gym."
+    "intro": "Manage your venues, shop, gym or tournaments. Desks arrive with their modules."
   },
   "errors": {
     "generic": "Something went wrong. Try again.",
@@ -551,6 +553,14 @@
         "apply": "Start my gym owner application",
         "active": "You are an approved gym owner"
       },
+      "organiser": {
+        "tab": "Tournament organiser",
+        "title": "Run sports tournaments",
+        "intro": "Clubs, leagues and venues run cricket, football, badminton and other sports tournaments on Kriraghor. We check your NID and your organisation's registration once; then you register the organisation and Kriraghor reviews it. Esports tournaments are run by Kriraghor itself.",
+        "applyTitle": "As an tournament organiser you can:",
+        "apply": "Start my organiser application",
+        "active": "Your organiser documents are approved"
+      },
       "pro": {
         "tab": "Pro",
         "title": "Get hired as a pro",
@@ -569,7 +579,32 @@
       }
     },
     "openProDesk": "Open the pro desk",
-    "addCredential": "Add a credential"
+    "addCredential": "Add a credential",
+    "org": {
+      "title": "Your organisation",
+      "lead": "Register the club, league or venue you run sports tournaments for. Once Kriraghor approves it, you open the tournament console.",
+      "name": "Organisation name",
+      "about": "About (what you run, for whom)",
+      "email": "Contact email (optional)",
+      "create": "Save the organisation",
+      "submit": "Send for review",
+      "waitDocs": "You can send it once your organiser documents are approved.",
+      "openConsole": "Open the tournament console",
+      "status": {
+        "draft": "Draft",
+        "pending_review": "In review",
+        "changes_requested": "Changes needed",
+        "verified": "Verified",
+        "rejected": "Not approved",
+        "suspended": "Suspended"
+      },
+      "kindLabel": "What will you run?",
+      "kind": {
+        "sports": "Sports tournaments",
+        "esports": "Esports tournaments (closed)"
+      },
+      "esportsClosed": "Esports tournaments are run by Kriraghor only now, so this organisation can't run tournaments. Register a sports organisation instead."
+    }
   },
   "bookings": {
     "loading": "Loading",
@@ -1547,183 +1582,370 @@
       "savePlan": "Add the plan"
     }
   },
+  "teams": {
+    "myTeams": "My teams",
+    "playerProfile": "Player profile",
+    "eligibility": "Ready to play",
+    "eligibilityIntro": "What tournaments check before you play. Fix anything missing here.",
+    "invitesForYou": "Team invites for you",
+    "invitedBy": "Invited by {name}",
+    "accept": "Accept",
+    "decline": "Decline",
+    "noTeams": "You are not in a team yet. Create one, or ask a captain to invite your phone number.",
+    "membersCount": "{n, plural, one {# member} other {# members}}",
+    "archived": "Archived",
+    "createTeam": "Create a team",
+    "sport": "Sport",
+    "teamName": "Team name",
+    "teamNameHint": "2 to 40 characters. No links or phone numbers.",
+    "shortCode": "Short code",
+    "shortCodeHint": "2 to 4 letters, e.g. GGL. Optional.",
+    "create": "Create team",
+    "failed": "Something went wrong. Please try again.",
+    "teamNotFound": "Team not found",
+    "logoOf": "{team} logo",
+    "yourRole": "You are {role}",
+    "members": "Members",
+    "jersey": "Jersey number",
+    "joined": "Joined {date}",
+    "nidVerified": "NID ✓",
+    "nidNotVerified": "NID not verified",
+    "makeVice": "Make vice-captain",
+    "makePlayer": "Make player",
+    "setJersey": "Jersey no.",
+    "jerseyPrompt": "Jersey number for {name} (0 to 999, empty to clear)",
+    "handOver": "Hand over captaincy",
+    "handOverConfirm": "Make {name} the captain? You will become a player.",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "pendingInvites": "Pending invites",
+    "expires": "Expires {date}",
+    "resend": "Resend",
+    "cancelInvite": "Cancel invite",
+    "invitePlayer": "Invite a player",
+    "phone": "Mobile number",
+    "inviteHint": "If the number has a Kriraghor account, they get a notice. Either way, send them the link below.",
+    "invite": "Invite",
+    "shareThis": "Send this link to the player:",
+    "shareLink": "Invite link",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "whatsapp": "Share on WhatsApp",
+    "shareText": "Join {team} on Kriraghor: {url}",
+    "captainTools": "Captain tools",
+    "editTeam": "Edit name and short code",
+    "save": "Save",
+    "uploadLogo": "Upload a logo",
+    "logoType": "Use a JPEG, PNG or WebP image.",
+    "logoSize": "The logo must be 2 MB or smaller.",
+    "archiveConfirm": "Archive this team? Members stay listed but nobody can join or be invited.",
+    "archive": "Archive team",
+    "leave": "Leave team",
+    "leaveConfirm": "Leave this team?",
+    "captainLeave": "Hand over the captaincy to another member before you leave.",
+    "addPhone": "Add your mobile number",
+    "addPhoneWhy": "Teams need a verified mobile number. Invites sent to this number will appear once it is verified.",
+    "code": "Code",
+    "codeSent": "We sent a 6-digit code by SMS.",
+    "sendCode": "Send code",
+    "verify": "Verify",
+    "changeNumber": "Use another number",
+    "teamInvite": "Team invite",
+    "sentTo": "This invite was sent to {phone}.",
+    "linkGone": "This invite link no longer works",
+    "linkGoneHint": "Ask the captain to send you a new link.",
+    "linkClosed": "This invite is closed.",
+    "joinTeam": "Join the team",
+    "signInWith": "Sign in or sign up with {phone} to join.",
+    "signInToJoin": "Sign in to join",
+    "profilePrivacy": "Your public page shows your name, sports, positions and teams. Never your gender, date of birth or phone.",
+    "publicPage": "Your public page:",
+    "username": "Username",
+    "usernameHint": "Your page address: kriraghor.com/players/username",
+    "setUsername": "Set username",
+    "sportsAndPositions": "Sports and positions",
+    "bio": "About you (optional)",
+    "whoSees": "Who can see your page",
+    "visibility": {
+      "public": "Everyone",
+      "members": "Only signed-in members"
+    },
+    "saved": "Saved.",
+    "gender": "Gender",
+    "genderPrivacy": "Used only for men's and women's tournaments. Captains, organisers and your public page never see it.",
+    "genderRecorded": "Recorded: {gender}. To correct it, contact support.",
+    "genderOnce": "You can set this once. Support can correct it later.",
+    "saveGender": "Save gender",
+    "genders": {
+      "male": "Male",
+      "female": "Female",
+      "third": "Third gender"
+    },
+    "check": {
+      "phone_verified": "Verified mobile number",
+      "nid_verified": "Verified NID (with date of birth)",
+      "gender_recorded": "Gender recorded"
+    },
+    "status": {
+      "pass": "Done",
+      "fail": "Not eligible",
+      "pending": "In review",
+      "missing": "Missing",
+      "n_a": "Not needed"
+    },
+    "fix": {
+      "add_phone": "Add a number",
+      "verify_nid": "Verify your NID",
+      "set_gender": "Set gender"
+    },
+    "role": {
+      "captain": "Captain",
+      "vice_captain": "Vice-captain",
+      "player": "Player"
+    },
+    "playerNotFound": "Player not found",
+    "teams": "Teams",
+    "noTeamsYet": "No teams yet.",
+    "elsewhere": "Elsewhere on Kriraghor",
+    "hireMe": "Hire this player",
+    "esportsProfile": "Esports profile",
+    "errors": {
+      "PHONE_REQUIRED": "Verify your mobile number first.",
+      "PHONE_IN_USE": "That number belongs to another account.",
+      "PHONE_ALREADY_VERIFIED": "Your account already has a verified number.",
+      "PHONE_INVALID": "Enter a Bangladeshi mobile number, e.g. 01712345678.",
+      "TEAM_NAME_INVALID": "Use 2 to 40 characters, with no links or phone numbers.",
+      "TEAM_SHORT_CODE_INVALID": "The short code is 2 to 4 letters or digits.",
+      "TEAM_SPORT_UNKNOWN": "Choose a team sport.",
+      "TEAM_ARCHIVED": "This team is archived.",
+      "TEAM_FULL": "This team is full.",
+      "TOO_MANY_TEAMS": "You are in the most teams allowed. Leave one first.",
+      "ALREADY_MEMBER": "Already a member of this team.",
+      "INVITE_SELF": "That is your own number.",
+      "INVITE_STATE": "This invite is no longer open.",
+      "INVITE_EXPIRED": "This invite has expired. Ask the captain for a new one.",
+      "INVITE_RESEND_TOO_SOON": "You resent this invite recently. Try again later.",
+      "INVITE_NOT_YOURS": "This invite was sent to a different number. Sign in with that number, or add it to your account.",
+      "CAPTAIN_MUST_HAND_OVER": "Hand over the captaincy before you leave.",
+      "CAPTAIN_ONLY": "Only the captain can do this.",
+      "NOT_A_MEMBER": "Not a member of this team.",
+      "CANNOT_REMOVE_CAPTAIN": "The captain cannot be removed.",
+      "PROFILE_SPORTS_INVALID": "Pick positions from each sport’s list.",
+      "USERNAME_TAKEN": "That username is taken.",
+      "GENDER_ALREADY_SET": "Gender is already recorded. Contact support to correct it.",
+      "FILE_TOO_LARGE": "The logo must be 2 MB or smaller.",
+      "FILE_TYPE_MISMATCH": "That file is not the image type it claims to be.",
+      "RATE_LIMITED": "Too many invites today. Try again tomorrow."
+    },
+    "checklist": {
+      "title": "Finish your player profile",
+      "lead": "Captains and managers find complete profiles first.",
+      "steps": {
+        "sports": "Pick your sports and positions",
+        "bio": "Write a short bio",
+        "team": "Join or create a team",
+        "esportsUid": "Verify a game UID",
+        "nid": "Verify your NID"
+      },
+      "hints": {
+        "sports": "Each sport needs at least one position.",
+        "bio": "A line or two about how you play.",
+        "team": "The teams you play for show on your page.",
+        "esportsUid": "On Kriraghor Esports, for PUBG Mobile or Free Fire.",
+        "nid": "A verified NID lets you join tournaments and get paid."
+      }
+    }
+  },
   "tournaments": {
+    "kicker": "Physical sports",
     "title": "Tournaments",
-    "lead": "Tournaments people are running near you. Find one for your team, ask a question in the comments, or message the organiser.",
-    "postOne": "Post a tournament",
+    "lead": "Cricket, football, futsal, badminton and more, run by verified organisers. Enter your team, pay the entry fee safely and follow every result.",
+    "tab": {
+      "open": "Open for teams",
+      "live": "Live",
+      "completed": "Finished",
+      "overview": "Overview",
+      "fixtures": "Fixtures",
+      "standings": "Standings",
+      "bracket": "Bracket",
+      "teams": "Teams"
+    },
+    "allSports": "All sports",
     "search": "Search tournaments",
-    "searchHint": "Name, organiser or venue",
-    "sortBy": "Sort by",
-    "sort": {
-      "newest": "Newest",
-      "starts_soon": "Starts soonest",
-      "deadline_soon": "Closing soonest",
-      "most_discussed": "Most discussed"
-    },
-    "count": "{n, plural, =0 {No tournaments} one {# tournament} other {# tournaments}}",
-    "more": "Load more",
-    "failed": "Could not load this. Please try again.",
-    "none": "No tournaments yet",
-    "noneBody": "Be the first to post one.",
-    "noneFiltered": "Nothing matches these filters",
-    "noneFilteredBody": "Try fewer filters or a wider area.",
-    "clearFilters": "Clear filters",
-    "notOurs": "Kriraghor doesn't organise these tournaments or handle their entry fees. Check the details with the organiser before you pay anyone.",
-    "filter": {
-      "sport": "Sport",
-      "anySport": "Any sport",
-      "district": "District",
-      "anyDistrict": "Any district",
-      "fee": "Entry fee",
-      "anyFee": "Free or paid",
-      "format": "Format",
-      "anyFormat": "Any format",
-      "gender": "Who can play",
-      "anyGender": "Anyone",
-      "open": "Registration open"
-    },
-    "feeKind": {
-      "free": "Free",
-      "paid": "Paid"
+    "failed": "Something went wrong. Please try again.",
+    "none": {
+      "open": "No tournament is taking teams right now.",
+      "live": "Nothing is live right now.",
+      "completed": "No finished tournaments yet."
     },
     "format": {
       "league": "League",
-      "knockout": "Knockout",
-      "group_knockout": "Groups, then knockout",
-      "round_robin": "Round robin",
-      "other": "Other"
-    },
-    "gender": {
-      "open": "Open to all",
-      "men": "Men",
-      "women": "Women"
-    },
-    "skill": {
-      "any": "Any level",
-      "beginner": "Beginner",
-      "intermediate": "Intermediate",
-      "advanced": "Advanced"
+      "double_league": "Double league",
+      "groups_knockout": "Groups and knockout",
+      "knockout": "Knockout"
     },
     "status": {
-      "open": "Open",
-      "closed": "Closed",
-      "expired": "Finished",
-      "removed": "Removed"
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes asked",
+      "rejected": "Rejected",
+      "registration_open": "Taking teams",
+      "registration_closed": "Registration closed",
+      "live": "Live",
+      "completed": "Finished",
+      "cancelled": "Cancelled"
     },
-    "by": "By {org}",
-    "prize": "Prize {amount}",
-    "fee": "Entry {amount}",
-    "free": "Free entry",
-    "closesToday": "Closes today",
-    "closesIn": "{n, plural, one {Closes in # day} other {Closes in # days}}",
-    "comments": "{n, plural, =0 {Comments} one {# comment} other {# comments}}",
-    "registrationOpen": "Registration open",
-    "registrationClosed": "Registration closed",
-    "backToFeed": "All tournaments",
-    "notFound": "This tournament isn't here",
-    "notFoundBody": "It may have been removed, or the link may be wrong.",
-    "removedTitle": "This post was removed and only you can see it",
-    "about": "About this tournament",
-    "openMap": "Open the map",
-    "report": "Report",
-    "yourPost": "This is your post",
-    "edit": "Edit",
-    "close": "Close this post",
-    "myPosts": "My posts",
-    "messages": "Messages",
-    "openConversation": "Open your conversation",
-    "signInToMessage": "Sign in to message the organiser",
-    "messageOrganiser": "Message the organiser",
-    "phoneRequired": "You need a verified phone number for this.",
-    "addPhone": "Add your phone",
-    "noComments": "No comments yet. Ask the first question.",
-    "addComment": "Add a comment",
-    "commentHint": "Everyone can read this. Share phone numbers and links in a private message instead.",
-    "sendComment": "Post comment",
-    "removeComment": "Remove",
-    "contactRefused": "Phone numbers, emails and links can't go in public text. People can reach you by private message.",
-    "signInToComment": "Sign in to comment",
-    "cannotEdit": "This post can't be edited.",
-    "editTitle": "Edit your tournament",
-    "editLead": "People see your changes straight away.",
-    "newTitle": "Post a tournament",
-    "newLead": "It goes live straight away. The more detail you give, the more teams will know if it suits them.",
-    "photosAfter": "You can add a poster and photos after you publish.",
-    "incomplete": "Please fix the fields marked above.",
-    "saveChanges": "Save changes",
-    "publish": "Publish",
-    "choose": "Choose",
-    "moneyNote": "For information only. Kriraghor doesn't collect or hold this money.",
-    "section": {
-      "basics": "The basics",
-      "when": "When",
-      "where": "Where",
-      "money": "Entry fee and prizes",
-      "who": "Who can play",
-      "photos": "Poster and photos"
+    "by": "by {org}",
+    "starts": "Starts",
+    "fee": "Entry fee",
+    "free": "Free",
+    "teams": "Teams",
+    "squad": "Squad",
+    "prize": "Prize",
+    "venue": "Venue",
+    "dates": "Dates",
+    "notFound": "Tournament not found",
+    "registerTeam": "Register a team",
+    "opensOn": "Registration opens {date}",
+    "placesTaken": "{n} of {max} places taken",
+    "rules": "Rules",
+    "tiebreakers": "Ties are broken by",
+    "tb": {
+      "points": "points",
+      "net_run_rate": "net run rate",
+      "nrr": "net run rate",
+      "wins": "wins",
+      "head_to_head": "head-to-head",
+      "fewer_no_results": "fewer no-results",
+      "goal_difference": "goal difference",
+      "goals_scored": "goals scored",
+      "fair_play": "fair play",
+      "point_difference": "point difference",
+      "points_scored": "points scored",
+      "score_difference": "score difference",
+      "game_difference": "game difference",
+      "set_difference": "set difference",
+      "set_ratio": "set ratio",
+      "point_ratio": "point ratio",
+      "lots": "drawing lots"
     },
-    "field": {
-      "title": "Tournament name",
-      "sport": "Sport",
-      "format": "Format",
-      "organiserName": "Organiser",
-      "organiserHint": "The club, league or person running it",
-      "description": "What people should know",
-      "descriptionHint": "Teams, schedule, what's provided. At least 20 characters.",
-      "dates": "Dates",
-      "startDate": "First day",
-      "endDate": "Last day",
-      "deadline": "Registration closes",
-      "division": "Division",
-      "district": "District",
-      "area": "Area",
-      "venueName": "Venue",
-      "address": "Address",
-      "mapLink": "Google Maps link",
-      "mapHint": "A link from Google Maps, such as maps.app.goo.gl/...",
-      "fee": "Entry fee (৳)",
-      "feeHint": "Leave empty if it's free",
-      "prizePool": "Prize pool (৳)",
-      "prizeDetails": "Prize details",
-      "gender": "Who can play",
-      "skillLevel": "Skill level",
-      "ageGroup": "Age group",
-      "ageHint": "For example, Under 19",
-      "teamLimit": "Most teams",
-      "playersPerTeam": "Players per team",
-      "rules": "Rules"
+    "eligibility": "Who can play",
+    "elig": {
+      "nid": "Every player needs a verified NID",
+      "age": "Age {min} to {max} on the first match day",
+      "gender": {
+        "men": "Men's tournament",
+        "women": "Women's tournament",
+        "mixed": "Mixed teams"
+      }
     },
-    "formError": {
-      "title": "Give it a name of at least 5 characters.",
-      "sport": "Choose a sport.",
-      "districtId": "Choose a district.",
-      "venueName": "Say where it's played.",
-      "startDate": "Choose a first day, today or later.",
-      "registrationDeadline": "Choose a date on or before the first day.",
-      "endDate": "The last day can't be before the first.",
-      "organiserName": "Say who is running it.",
-      "description": "Write at least 20 characters."
+    "prizes": "Prizes",
+    "prizeNote": "Prizes are paid by the organiser. Entry fees are held by Kriraghor and paid out as the tournament is played.",
+    "noFixtures": "Fixtures are not out yet.",
+    "dateTbc": "Date to be set",
+    "timeTbc": "Time to be set",
+    "group": "Group {name}",
+    "table": "Table",
+    "team": "Team",
+    "col": {
+      "p": "P",
+      "w": "W",
+      "d": "D",
+      "l": "L",
+      "nrr": "NRR",
+      "diff": "+/−",
+      "pts": "Pts"
     },
-    "photosLead": "The first photo is the cover on the feed.",
-    "addPhoto": "Add a photo",
-    "removePhoto": "Remove this photo",
-    "myTitle": "My tournaments",
-    "noMyPosts": "You haven't posted a tournament",
-    "noMyPostsBody": "Running one? Post it and let players find you.",
-    "removedBecause": "Removed: {reason}",
-    "noMessages": "No messages yet",
-    "noMessagesBody": "Message an organiser from any tournament, and the conversation shows here.",
-    "threadNotFound": "This conversation isn't here.",
-    "allMessages": "All messages",
-    "startConversation": "Say hello and ask what you need to know.",
-    "yourMessage": "Your message",
-    "messageHint": "Only the two of you can read this. You can share a phone number here.",
-    "send": "Send",
-    "threadClosed": "This post was removed, so the conversation is closed.",
-    "optional": "Optional",
-    "fact": {
-      "fee": "Entry fee",
-      "prizePool": "Prize pool"
+    "lots": "lots to draw",
+    "round": {
+      "final": "Final",
+      "third_place": "Third place",
+      "semi_final": "Semi-finals",
+      "quarter_final": "Quarter-finals",
+      "round_of_16": "Round of 16",
+      "round_of_32": "Round of 32",
+      "round_of_64": "Round of 64",
+      "round_of_128": "Round of 128"
+    },
+    "ref": {
+      "winner": "Winner of M{no}",
+      "loser": "Loser of M{no}",
+      "group": "{pos, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}, Group {group}",
+      "league": "{pos, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} in the table",
+      "ranked": "Best {pos, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}-placed team no. {rank}",
+      "tbd": "To be decided"
+    },
+    "matchStatus": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "postponed": "Postponed",
+      "completed": "Played",
+      "no_result": "No result",
+      "walkover": "Walkover",
+      "abandoned": "Abandoned",
+      "cancelled": "Cancelled"
+    },
+    "verifiedOf": "{players} players, {verified} NID verified",
+    "noTeams": "No team is approved yet.",
+    "signInToRegister": "Sign in to register your team.",
+    "signIn": "Sign in",
+    "notOpenYet": "Registration has not opened yet.",
+    "closed": "Registration is closed.",
+    "registerLead": "Pick your team and a squad of {min} to {max} players. Every player needs a verified NID.",
+    "step": {
+      "team": "1. Your team",
+      "squad": "2. Squad ({n} picked)"
+    },
+    "role": {
+      "captain": "Captain",
+      "vice_captain": "Vice-captain",
+      "player": "Player"
+    },
+    "noTeamOfSport": "You do not captain a {sport} team yet.",
+    "createTeam": "Create a team",
+    "nid": "NID ✓",
+    "noNid": "No NID",
+    "squadHint": "Players without a verified NID can be picked, but the organiser approves a squad only when enough players are eligible.",
+    "acceptRules": "I accept the tournament rules and the refund rules: a full refund if the team is not accepted or withdraws before registration closes, half after it closes, nothing after the first match.",
+    "fullReserve": "All places are taken: your team joins the reserve list and is offered a place if one opens.",
+    "joinReserve": "Join the reserve list",
+    "payEntry": "Pay {fee}",
+    "enterFree": "Enter the team",
+    "myTournaments": "My tournaments",
+    "findTournament": "Find a tournament",
+    "noRegistrations": "Your teams have not entered a tournament yet.",
+    "reservePos": "reserve no. {n}",
+    "refunded": "{amount} refunded",
+    "regStatus": {
+      "pending_payment": "Waiting for payment",
+      "reserve": "Reserve list",
+      "offered": "Place offered",
+      "pending_approval": "Waiting for the organiser",
+      "approved": "In",
+      "rejected": "Not accepted",
+      "lapsed": "Lapsed",
+      "withdrawn": "Withdrawn",
+      "removed": "Removed",
+      "cancelled": "Tournament cancelled"
+    },
+    "takePlace": "Take the place",
+    "withdraw": "Withdraw",
+    "withdrawConfirm": "Withdraw the team",
+    "cancel": "Cancel",
+    "refundRules": "Refunds: 100% before registration closes or if the team is not accepted, 50% after registration closes, none after the first match. A cancelled tournament refunds what is still held.",
+    "errors": {
+      "REGISTRATION_NOT_YET_OPEN": "Registration has not opened yet.",
+      "REGISTRATION_CLOSED": "Registration is closed.",
+      "TEAM_ALREADY_REGISTERED": "This team is already in the tournament.",
+      "TEAM_SPORT_MISMATCH": "This team plays a different sport.",
+      "NOT_TEAM_CAPTAIN": "Only the captain or vice-captain can register the team.",
+      "SQUAD_TOO_SMALL": "Pick more players.",
+      "SQUAD_TOO_LARGE": "Pick fewer players.",
+      "PLAYER_NOT_IN_TEAM": "Pick players from the team.",
+      "PLAYER_IN_OTHER_TEAM": "One of the players is already in another team in this tournament.",
+      "KYC_REQUIRED": "Verify your NID first to enter tournaments.",
+      "ROLE_REQUIRED": "Verify your NID first to enter tournaments.",
+      "REGISTRATION_STATE": "This registration cannot be changed now."
     }
   },
   "footer": {
@@ -1736,7 +1958,7 @@
     "grounds": "Venues",
     "shop": "Shop",
     "hire": "Hire",
-    "sportsTournaments": "Tournaments",
+    "sportsTournaments": "Sports tournaments",
     "business": "Business",
     "businessHome": "Business home",
     "ownerSignIn": "Owner sign in",
@@ -1744,6 +1966,7 @@
     "openShop": "Open a shop",
     "listGym": "List your gym",
     "getHired": "Get hired",
+    "organisers": "Tournament organisers",
     "quickLinks": "Quick links",
     "about": "About Kriraghor",
     "howItWorks": "How it works",
@@ -1790,7 +2013,7 @@
     },
     "network": {
       "title": "One network for every game you play",
-      "sub": "Esports, gym, venues, shop, hiring and tournaments, all on Kriraghor.",
+      "sub": "Esports, gym, venues, shop, hiring and sports tournaments, all on Kriraghor.",
       "hub": "Kriraghor",
       "esports": {
         "title": "Esports",
@@ -1812,9 +2035,9 @@
         "title": "Hire",
         "sub": "Umpires and coaches"
       },
-      "tournaments": {
-        "title": "Tournaments",
-        "sub": "Find one or post yours"
+      "events": {
+        "title": "Sports tournaments",
+        "sub": "Teams and fixtures"
       }
     },
     "search": {
@@ -1854,11 +2077,11 @@
         "all": "All talent",
         "none": "No one is listed yet."
       },
-      "tournaments": {
-        "title": "Tournaments",
-        "sub": "Football, cricket and more, near you.",
-        "all": "All tournaments",
-        "none": "No tournaments have been posted yet."
+      "events": {
+        "title": "Sports tournaments",
+        "sub": "Football, cricket and more, open for your team.",
+        "all": "All sports tournaments",
+        "none": "No sports tournaments are open right now."
       }
     },
     "cards": {
@@ -1882,7 +2105,7 @@
     "info": {
       "about": {
         "title": "About Kriraghor",
-        "body": "One account for esports, gyms, venues, gear, hiring and tournaments in Bangladesh.",
+        "body": "One account for esports tournaments, gyms, venues, gear, hiring and sports tournaments in Bangladesh.",
         "link": "Read more"
       },
       "help": {
@@ -2049,7 +2272,7 @@
     "profile": {
       "title": "Profile",
       "name": "Display name",
-      "nameHint": "Shown on your bookings, posts and reviews.",
+      "nameHint": "Shown on your bookings, teams and reviews.",
       "nameLength": "Use {min} to {max} characters.",
       "language": "Language",
       "languageHint": "Used for this site, SMS, email and notifications.",
@@ -2183,12 +2406,12 @@
     "applyNew": "Apply for a role",
     "rolesTitle": "Roles",
     "noRoles": "No roles yet",
-    "noRolesBody": "Own a venue, a shop or a gym, or get hired as a player or pro.",
+    "noRolesBody": "Own a venue, a shop or a gym, run sports tournaments, or get hired as a player or pro.",
     "roleName": {
       "ground_owner": "Venue owner",
       "shop_owner": "Shop owner",
       "gym_owner": "Gym owner",
-      "organiser": "Events organiser",
+      "organiser": "Tournament organiser",
       "pro": "Pro",
       "player": "Player for hire"
     },
@@ -2228,8 +2451,8 @@
       "game_profile": "Game ID",
       "document": "Document",
       "organisation": "Organisation",
-      "tournament": "Event",
-      "esports_tournament": "Esports event"
+      "tournament": "Tournament",
+      "esports_tournament": "Esports tournament"
     },
     "subStatus": {
       "pending_review": "In review",
@@ -2269,6 +2492,7 @@
       "years": "Years",
       "player": "Player",
       "sports": "Sports",
+      "teams": "Teams",
       "fallbackTitle": "Kriraghor",
       "fallbackSubtitle": "Esports, venues, gear and talent in Bangladesh"
     }
@@ -2382,6 +2606,23 @@
         "body": "The pro marks the job complete and you confirm. If you don't respond in time and no dispute is open, the money is released."
       }
     },
+    "events": {
+      "title": "Sports tournaments",
+      "cta": "Browse sports tournaments",
+      "owners": "run your club or league's tournament, with registrations, fixtures and results.",
+      "s1": {
+        "title": "Find a tournament",
+        "body": "See which sports tournaments are open for teams, and their dates and fees."
+      },
+      "s2": {
+        "title": "Register your team",
+        "body": "A captain enters the team with its squad and pays the entry fee online."
+      },
+      "s3": {
+        "title": "Play your matches",
+        "body": "Fixtures, results and standings are on the tournament page."
+      }
+    },
     "money": {
       "title": "How your money is protected",
       "money": {
@@ -2400,23 +2641,6 @@
       "protection": "Buyer protection",
       "refundPolicy": "Refund policy",
       "fairPlay": "Fair play rules"
-    },
-    "tournaments": {
-      "title": "Tournaments",
-      "cta": "Browse tournaments",
-      "owners": "",
-      "s1": {
-        "title": "Find one",
-        "body": "Filter tournaments by sport, district, fee or date."
-      },
-      "s2": {
-        "title": "Talk to the organiser",
-        "body": "Ask in the comments, or send the organiser a private message."
-      },
-      "s3": {
-        "title": "Post yours",
-        "body": "Running one? Post the details. Kriraghor doesn't organise it or handle its entry fees."
-      }
     }
   },
   "about": {
@@ -2444,9 +2668,9 @@
         "title": "Hire",
         "body": "Umpires, referees, coaches and players, paid through Kriraghor."
       },
-      "tournaments": {
-        "title": "Tournaments",
-        "body": "Find tournaments near you, post your own, and talk directly with the organiser."
+      "events": {
+        "title": "Sports tournaments",
+        "body": "Enter your team in sports tournaments, with fixtures and results online."
       }
     },
     "trustTitle": "Why people can trust it",
@@ -2505,6 +2729,11 @@
       "title": "Players, officials and coaches",
       "body": "Set your rates, accept jobs, get paid to bKash.",
       "cta": "Get hired"
+    },
+    "organisers": {
+      "title": "Tournament organisers",
+      "body": "Run your club, league or venue's sports tournaments on Kriraghor.",
+      "cta": "Become an organiser"
     }
   },
   "search": {
@@ -2514,7 +2743,7 @@
     "short": "Search",
     "hint": "Tournament, gym, venue, gear or person",
     "go": "Search",
-    "prompt": "Search esports tournaments, gyms, venues, the shop, talent and tournaments.",
+    "prompt": "Search esports tournaments, gyms, venues, the shop, talent and sports tournaments.",
     "tooShort": "Type at least 2 letters.",
     "none": "Nothing found for \"{q}\". Try a shorter word or another spelling.",
     "partial": "Some lists couldn't load, so results may be incomplete.",
@@ -2525,82 +2754,7 @@
       "venues": "Venues",
       "shop": "Shop",
       "hire": "Talent",
-      "tournaments": "Tournaments"
-    }
-  },
-  "players": {
-    "playerProfile": "Player profile",
-    "failed": "Something went wrong. Please try again.",
-    "phone": "Mobile number",
-    "save": "Save",
-    "addPhone": "Add your mobile number",
-    "addPhoneWhy": "Teams need a verified mobile number. Invites sent to this number will appear once it is verified.",
-    "code": "Code",
-    "codeSent": "We sent a 6-digit code by SMS.",
-    "sendCode": "Send code",
-    "verify": "Verify",
-    "changeNumber": "Use another number",
-    "profilePrivacy": "Your public page shows your name, sports, positions and teams. Never your gender, date of birth or phone.",
-    "publicPage": "Your public page:",
-    "username": "Username",
-    "usernameHint": "Your page address: kriraghor.com/players/username",
-    "setUsername": "Set username",
-    "sportsAndPositions": "Sports and positions",
-    "bio": "About you (optional)",
-    "whoSees": "Who can see your page",
-    "visibility": {
-      "public": "Everyone",
-      "members": "Only signed-in members"
-    },
-    "saved": "Saved.",
-    "playerNotFound": "Player not found",
-    "elsewhere": "Elsewhere on Kriraghor",
-    "hireMe": "Hire this player",
-    "esportsProfile": "Esports profile",
-    "errors": {
-      "PHONE_REQUIRED": "Verify your mobile number first.",
-      "PHONE_IN_USE": "That number belongs to another account.",
-      "PHONE_ALREADY_VERIFIED": "Your account already has a verified number.",
-      "PHONE_INVALID": "Enter a Bangladeshi mobile number, e.g. 01712345678.",
-      "TEAM_NAME_INVALID": "Use 2 to 40 characters, with no links or phone numbers.",
-      "TEAM_SHORT_CODE_INVALID": "The short code is 2 to 4 letters or digits.",
-      "TEAM_SPORT_UNKNOWN": "Choose a team sport.",
-      "TEAM_ARCHIVED": "This team is archived.",
-      "TEAM_FULL": "This team is full.",
-      "TOO_MANY_TEAMS": "You are in the most teams allowed. Leave one first.",
-      "ALREADY_MEMBER": "Already a member of this team.",
-      "INVITE_SELF": "That is your own number.",
-      "INVITE_STATE": "This invite is no longer open.",
-      "INVITE_EXPIRED": "This invite has expired. Ask the captain for a new one.",
-      "INVITE_RESEND_TOO_SOON": "You resent this invite recently. Try again later.",
-      "INVITE_NOT_YOURS": "This invite was sent to a different number. Sign in with that number, or add it to your account.",
-      "CAPTAIN_MUST_HAND_OVER": "Hand over the captaincy before you leave.",
-      "CAPTAIN_ONLY": "Only the captain can do this.",
-      "NOT_A_MEMBER": "Not a member of this team.",
-      "CANNOT_REMOVE_CAPTAIN": "The captain cannot be removed.",
-      "PROFILE_SPORTS_INVALID": "Pick positions from each sport’s list.",
-      "USERNAME_TAKEN": "That username is taken.",
-      "GENDER_ALREADY_SET": "Gender is already recorded. Contact support to correct it.",
-      "FILE_TOO_LARGE": "The logo must be 2 MB or smaller.",
-      "FILE_TYPE_MISMATCH": "That file is not the image type it claims to be.",
-      "RATE_LIMITED": "Too many invites today. Try again tomorrow."
-    },
-    "checklist": {
-      "title": "Finish your player profile",
-      "lead": "Captains and managers find complete profiles first.",
-      "steps": {
-        "sports": "Pick your sports and positions",
-        "bio": "Write a short bio",
-        "esportsUid": "Verify a game UID",
-        "nid": "Verify your NID"
-      },
-      "hints": {
-        "sports": "Each sport needs at least one position.",
-        "bio": "A line or two about how you play.",
-        "team": "The teams you play for show on your page.",
-        "esportsUid": "On Kriraghor Esports, for PUBG Mobile or Free Fire.",
-        "nid": "A verified NID lets you join events and get paid."
-      }
+      "events": "Sports tournaments"
     }
   }
 }

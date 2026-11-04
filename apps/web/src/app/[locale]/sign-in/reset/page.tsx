@@ -3,7 +3,7 @@ import { AuthLayout } from "@kriraghor/ui/auth-layout";
 import { PHOTOS } from "@/lib/photos";
 import { setRequestLocale } from "next-intl/server";
 import { ResetPasswordForm } from "@/components/ResetPasswordForm";
-import { safeNext } from "@/lib/safe-next";
+import { safeNext } from "@/lib/teams";
 
 export const metadata = { title: "Reset your password", robots: { index: false } };
 

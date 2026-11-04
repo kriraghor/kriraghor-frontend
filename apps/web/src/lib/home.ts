@@ -25,7 +25,7 @@ export function countdown(startsAt: string, now: number): string | null {
 // ---------------- the six sections ----------------
 
 /** The home sections, in page order; also the groups on /search. */
-export const SECTIONS = ["esports", "gym", "venues", "shop", "hire", "tournaments"] as const;
+export const SECTIONS = ["esports", "gym", "venues", "shop", "hire", "events"] as const;
 export type SectionKey = (typeof SECTIONS)[number];
 
 /** The shortest text the list APIs accept, and the longest. */
@@ -45,7 +45,7 @@ const PAGES: Record<SectionKey, { page: (query: string) => string; filter: strin
   venues: { page: (s) => `/venues${s}`, filter: "sport" },
   shop: { page: (s) => `/shop${s}`, filter: "category" },
   hire: { page: (s) => `/hiring${s}`, filter: "category" },
-  tournaments: { page: (s) => `/tournaments${s}`, filter: "sport" },
+  events: { page: (s) => `/events${s}`, filter: "sport" },
 };
 
 /** Where a section's search goes: its list page with the text and the dropdown's choice in the URL. */

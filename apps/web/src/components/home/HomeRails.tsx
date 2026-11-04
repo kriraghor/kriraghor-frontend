@@ -8,7 +8,7 @@ import { esportsHref } from "@/lib/links";
 import { sectionUrl, type SectionKey } from "@/lib/home";
 import { HomeSection, type RailState } from "./HomeSection";
 import { GymSection, HireSection } from "./HomeTickers";
-import { EsportsTile, TournamentTile, ProductTile, ShowcaseTile, VenueTile } from "./SectionCards";
+import { EsportsTile, EventTile, ProductTile, ShowcaseTile, VenueTile } from "./SectionCards";
 import { useFeaturedEvents, useOpenEsports } from "./queries";
 import { RAIL_MAX, sectionItems, type SectionItems } from "./section-data";
 
@@ -65,7 +65,7 @@ export function HomeRails() {
       <ListRail section="venues" icon={<SoccerBall size={26} aria-hidden />} render={(x) => <VenueTile item={x} />} />
       <ListRail section="shop" icon={<Storefront size={26} aria-hidden />} render={(x) => <ProductTile item={x} />} />
       <HireSection />
-      <ListRail section="tournaments" icon={<Trophy size={26} aria-hidden />} render={(x) => <TournamentTile item={x} />} />
+      <ListRail section="events" icon={<Trophy size={26} aria-hidden />} render={(x) => <EventTile item={x} />} />
     </>
   );
 }

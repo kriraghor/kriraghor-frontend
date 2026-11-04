@@ -4,7 +4,7 @@ import type { HeaderConfig } from "@kriraghor/ui/site-header";
 /**
  * One app, two areas, routed by host (proxy.ts):
  *   admin.kriraghor.com  → /admin  (staff; admin sessions, ADR-004)
- *   vendor.kriraghor.com → /vendor (ground owners, shops, gyms; customer sessions)
+ *   vendor.kriraghor.com → /vendor (ground owners, shops, gyms, organisers; customer sessions)
  * On plain localhost (no host to route by) PORTAL_DEFAULT_AREA picks the area (default admin).
  */
 import type { Area } from "@/lib/area";

@@ -7,7 +7,7 @@ import { Link } from "@kriraghor/ui/i18n/navigation";
 import { esportsHref, gymHref, isExternal } from "@/lib/links";
 import { PHOTOS } from "@/lib/photos";
 import { formatTaka } from "@/lib/payments";
-import type { PostCard } from "@/lib/tournament-posts";
+import type { Card as EventCard } from "@/lib/tournaments";
 import type { MarketCard } from "@/lib/market";
 import { nameOf, type BigEvent, type EsportsCard, type Named } from "./queries";
 
@@ -165,17 +165,16 @@ export function HireTile({ item }: { item: HireCard }) {
   );
 }
 
-export function TournamentTile({ item }: { item: PostCard }) {
+export function EventTile({ item }: { item: EventCard }) {
   const { t, locale, money } = useCard();
   return (
     <RailCard
-      href={`/tournaments/${item.slug}`}
+      href={`/events/${item.slug}`}
       photo={PHOTOS.tournaments}
-      cover={item.cover}
-      tag={locale === "bn" ? item.sport.bn : item.sport.en}
-      title={item.title}
-      meta={item.organiserName}
-      stat={item.entryFee ? money(item.entryFee) : t("free")}
+      tag={locale === "bn" ? item.sport.nameBn : item.sport.nameEn}
+      title={item.name}
+      meta={item.organisation?.name ?? ""}
+      stat={item.entryFeePoisha ? money(item.entryFeePoisha) : t("free")}
       cta={t("view")}
       testId="tournament-card"
     />

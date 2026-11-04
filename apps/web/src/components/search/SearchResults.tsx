@@ -9,7 +9,7 @@ import { Skeleton } from "@kriraghor/ui/kit";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { isExternal } from "@/lib/links";
 import { searchGroups, type SectionKey } from "@/lib/home";
-import { EsportsTile, TournamentTile, GymTile, HireTile, ProductTile, VenueTile } from "@/components/home/SectionCards";
+import { EsportsTile, EventTile, GymTile, HireTile, ProductTile, VenueTile } from "@/components/home/SectionCards";
 import { SEARCH_MAX, sectionItems, type SectionItems } from "@/components/home/section-data";
 
 const TILES: { [K in SectionKey]: (item: SectionItems[K]) => ReactNode } = {
@@ -18,7 +18,7 @@ const TILES: { [K in SectionKey]: (item: SectionItems[K]) => ReactNode } = {
   venues: (x) => <VenueTile item={x} />,
   shop: (x) => <ProductTile item={x} />,
   hire: (x) => <HireTile item={x} />,
-  tournaments: (x) => <TournamentTile item={x} />,
+  events: (x) => <EventTile item={x} />,
 };
 
 /** One search across the six sections: each group shows its best matches and leads to its own list page. */

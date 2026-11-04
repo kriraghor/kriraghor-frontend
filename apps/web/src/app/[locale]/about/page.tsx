@@ -10,7 +10,7 @@ import { PHOTOS } from "@/lib/photos";
 
 export const metadata = { title: "About Kriraghor", description: "Kriraghor is a sports and esports platform for Bangladesh, with one account for everything.", alternates: { canonical: "/about" } };
 
-const PHOTO: Record<SectionKey, string> = { esports: PHOTOS.esports, gym: PHOTOS.gym, venues: PHOTOS.groundsFloodlit, shop: PHOTOS.shopGear, hire: PHOTOS.hire, tournaments: PHOTOS.tournaments };
+const PHOTO: Record<SectionKey, string> = { esports: PHOTOS.esports, gym: PHOTOS.gym, venues: PHOTOS.groundsFloodlit, shop: PHOTOS.shopGear, hire: PHOTOS.hire, events: PHOTOS.tournaments };
 
 /** About Kriraghor: what it is, its six parts, and why people can trust it. */
 export default async function AboutPage({ params }: PageProps<"/[locale]/about">) {

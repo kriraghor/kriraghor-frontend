@@ -55,32 +55,33 @@ describe("vendorSections, the business sidebar", () => {
     expect(venue).not.toContain("/vendor/settlement");
   });
 
-  it("analytics shows once for every business (Round B2)", () => {
-    for (const role of ["ground_owner", "shop_owner", "gym_owner"] as const) {
+  it("analytics shows once for every business, organisers included (Round B2)", () => {
+    for (const role of ["ground_owner", "shop_owner", "gym_owner", "organiser"] as const) {
       expect(hrefs(vendorSections([role], "all")).filter((h) => h === "/vendor/analytics")).toHaveLength(1);
     }
-    expect(hrefs(vendorSections(["ground_owner", "shop_owner", "gym_owner"], "all")).filter((h) => h === "/vendor/analytics")).toHaveLength(1);
+    expect(hrefs(vendorSections(["ground_owner", "shop_owner", "gym_owner", "organiser"], "all")).filter((h) => h === "/vendor/analytics")).toHaveLength(1);
     // It sits with the shared business tools, so narrowing to one business keeps it.
-    expect(hrefs(vendorSections(["ground_owner", "shop_owner"], "shop_owner"))).toContain("/vendor/analytics");
+    expect(hrefs(vendorSections(["ground_owner", "organiser"], "organiser"))).toContain("/vendor/analytics");
     expect(vendorSections(["gym_owner"], "all").find((s) => s.items.some((i) => i.href === "/vendor/analytics"))?.key).toBe("business");
     // Someone with no business yet has no analytics.
     expect(hrefs(vendorSections([], "all"))).not.toContain("/vendor/analytics");
   });
 
-  it("reviews show once for venue and shop owners, not for gym owners (on the gym app)", () => {
+  it("reviews show once for venue and shop owners, not for gym owners (on the gym app) or organisers", () => {
     for (const role of ["ground_owner", "shop_owner"] as const) expect(hrefs(vendorSections([role], "all")).filter((h) => h === "/vendor/reviews")).toHaveLength(1);
     expect(hrefs(vendorSections(["gym_owner"], "all"))).not.toContain("/vendor/reviews");
     expect(hrefs(vendorSections(["ground_owner", "shop_owner", "gym_owner"], "all")).filter((h) => h === "/vendor/reviews")).toHaveLength(1);
-    // The switcher on the gym business hides it; on the shop it shows.
-    expect(hrefs(vendorSections(["gym_owner", "shop_owner"], "gym_owner"))).not.toContain("/vendor/reviews");
-    expect(hrefs(vendorSections(["gym_owner", "shop_owner"], "shop_owner"))).toContain("/vendor/reviews");
+    expect(hrefs(vendorSections(["organiser"], "all"))).not.toContain("/vendor/reviews");
+    // The switcher on the organiser business hides it; on the shop it shows.
+    expect(hrefs(vendorSections(["organiser", "shop_owner"], "organiser"))).not.toContain("/vendor/reviews");
+    expect(hrefs(vendorSections(["organiser", "shop_owner"], "shop_owner"))).toContain("/vendor/reviews");
   });
 
-  it("no organiser desks: nobody organises tournaments on Kriraghor (ADR-008)", () => {
-    for (const h of hrefs(VENDOR_SECTIONS)) {
-      expect(h.startsWith("/vendor/esports")).toBe(false);
-      expect(h.startsWith("/vendor/events")).toBe(false);
-    }
+  it("organisers get sports events only: no esports console (21 Oct 2026)", () => {
+    const got = hrefs(vendorSections(["organiser"], "all"));
+    expect(got).toContain("/vendor/events");
+    expect(got.some((h) => h.startsWith("/vendor/esports"))).toBe(false);
+    expect(hrefs(VENDOR_SECTIONS).some((h) => h.startsWith("/vendor/esports"))).toBe(false);
   });
 });
 
@@ -112,15 +113,15 @@ describe("Round B3: the team page and staff desks", () => {
   const venueDefaults: W = { businessType: "venue", businessId: "g1", permissions: ["bookings.check_in", "bookings.collect_balance", "bookings.extend", "bookings.no_show", "bookings.view", "bookings.walk_in"] };
   const OWNER_ONLY = ["/vendor/venues", "/vendor/shop", "/vendor/products", "/vendor/settlement", "/vendor/analytics", "/vendor/payouts", "/vendor/team", "/vendor/disputes", "/vendor/events"];
 
-  it("Team shows once for venue, shop and gym owners", () => {
+  it("Team shows once for venue, shop and gym owners, not for organisers", () => {
     for (const role of ["ground_owner", "shop_owner", "gym_owner"] as const) expect(hrefs(vendorSections([role], "all")).filter((h) => h === "/vendor/team")).toHaveLength(1);
     expect(hrefs(vendorSections(["ground_owner", "shop_owner", "gym_owner"], "all")).filter((h) => h === "/vendor/team")).toHaveLength(1);
-    expect(hrefs(vendorSections([], "all"))).not.toContain("/vendor/team");
+    expect(hrefs(vendorSections(["organiser"], "all"))).not.toContain("/vendor/team");
     expect(vendorSections(["gym_owner"], "all").find((s) => s.items.some((i) => i.href === "/vendor/team"))?.key).toBe("business");
   });
 
   it("owners without workplaces see exactly what they saw before", () => {
-    for (const roles of [["ground_owner"], ["shop_owner", "gym_owner"], []] as const) {
+    for (const roles of [["ground_owner"], ["shop_owner", "gym_owner"], ["organiser"], []] as const) {
       expect(vendorSections([...roles], "all", [])).toEqual(vendorSections([...roles], "all"));
     }
   });

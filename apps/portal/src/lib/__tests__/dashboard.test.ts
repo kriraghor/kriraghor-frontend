@@ -25,19 +25,17 @@ describe("dashboard helpers (M19)", () => {
 });
 
 describe("deskHref: old desk paths to the current ones", () => {
-  it("grounds became venues", () => {
+  it("grounds became venues, tournaments became events", () => {
     expect(deskHref("/vendor/grounds")).toBe("/vendor/venues");
     expect(deskHref("/vendor/grounds/abc/pricing")).toBe("/vendor/venues/abc/pricing");
     expect(deskHref("/vendor/grounds?status=draft")).toBe("/vendor/venues?status=draft");
+    expect(deskHref("/vendor/tournaments")).toBe("/vendor/events");
+    expect(deskHref("/vendor/tournaments/org1/t/t9")).toBe("/vendor/events/org1/e/t9");
   });
 
-  it("the organiser panel is gone (ADR-008): its links land on the business home", () => {
-    expect(deskHref("/vendor/tournaments")).toBe("/vendor");
-    expect(deskHref("/vendor/tournaments/org1/t/t9")).toBe("/vendor");
-    expect(deskHref("/vendor/events")).toBe("/vendor");
-    expect(deskHref("/vendor/events/org1/e/t9?x=1")).toBe("/vendor");
-    expect(deskHref("/vendor/esports")).toBe("/vendor");
-    expect(deskHref("/vendor/esports/org1/billing?x=1")).toBe("/vendor");
+  it("esports left the business panel (21 Oct 2026): its links land on events", () => {
+    expect(deskHref("/vendor/esports")).toBe("/vendor/events");
+    expect(deskHref("/vendor/esports/org1/billing?x=1")).toBe("/vendor/events");
   });
 
   it("leaves current and lookalike paths alone", () => {
@@ -63,6 +61,18 @@ describe("mergeActions: one Needs your action list across businesses (FR-11)", (
   it("maps old hrefs and keeps an empty list empty", () => {
     expect(mergeActions([{ role: "ground_owner", items: [a("ground_draft", "normal", null, "/vendor/grounds")] }])[0].href).toBe("/vendor/venues");
     expect(mergeActions([])).toEqual([]);
+  });
+
+  it("organisers' registrations join the list and land on the events console (Round B2)", () => {
+    const got = mergeActions([
+      { role: "shop_owner", items: [a("orders_to_ship", "normal", null)] },
+      { role: "organiser", items: [a("registrations_waiting", "high", "2026-10-25T12:00:00Z", "/vendor/tournaments/org1"), a("registrations_unpaid", "normal", null, "/vendor/tournaments/org1")] },
+    ]);
+    expect(got.map((x) => [x.key, x.role, x.href])).toEqual([
+      ["registrations_waiting", "organiser", "/vendor/events/org1"],
+      ["orders_to_ship", "shop_owner", "/vendor/orders_to_ship"],
+      ["registrations_unpaid", "organiser", "/vendor/events/org1"],
+    ]);
   });
 });
 

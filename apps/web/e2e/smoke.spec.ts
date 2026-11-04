@@ -19,7 +19,7 @@ test("home has the hero and finder, then the sections in order, with no search p
   await expect(page.getByTestId("home-network")).toBeVisible();
   for (const key of ["esports", "gym", "venues", "shop", "hire", "events"]) await expect(page.getByTestId(`net-${key}`)).toHaveAttribute("href", `#${key}`);
   const order = await page.locator('[data-testid^="home-section-"]').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.testid));
-  expect(order).toEqual(["esports", "gym", "venues", "shop", "hire", "tournaments"].map((k) => `home-section-${k}`));
+  expect(order).toEqual(["esports", "gym", "venues", "shop", "hire", "events"].map((k) => `home-section-${k}`));
   await expect(page.getByTestId("home-info")).toBeVisible();
   await expect(page.getByTestId("finder")).toBeVisible();
   await expect(page.locator('[data-testid^="section-search-"]')).toHaveCount(0);
@@ -95,17 +95,18 @@ test.describe("member sections", () => {
 
   test("the rail shows the sections and a click shows the section's tabs", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    for (const key of ["home", "esports", "tournaments", "venues", "gym", "shop", "hire", "money", "help", "account"]) {
+    for (const key of ["home", "esports", "events", "venues", "gym", "shop", "hire", "money", "help", "account"]) {
       await expect(page.getByTestId(`section-${key}`)).toBeVisible();
     }
     await expect(page.getByTestId("section-home")).toHaveAttribute("aria-current", "true");
-    await page.getByTestId("section-hire").click();
-    await expect(page).toHaveURL(/\/me\/hire$/);
+    await page.getByTestId("section-events").click();
+    await expect(page).toHaveURL(/\/me\/events$/);
     const tabs = page.getByTestId("section-tabs");
-    await expect(tabs.getByTestId("me-hire")).toHaveAttribute("aria-current", "page");
-    await tabs.getByTestId("me-player").click();
-    await expect(page).toHaveURL(/\/me\/player$/);
-    await expect(tabs.getByTestId("me-player")).toHaveAttribute("aria-current", "page");
+    await expect(tabs.getByTestId("me-tournaments")).toHaveAttribute("aria-current", "page");
+    for (const id of ["me-teams", "me-player", "me-eligibility"]) await expect(tabs.getByTestId(id)).toBeVisible();
+    await tabs.getByTestId("me-teams").click();
+    await expect(page).toHaveURL(/\/me\/teams$/);
+    await expect(tabs.getByTestId("me-teams")).toHaveAttribute("aria-current", "page");
 
     // Esports opens its landing on kriraghor.com; its cards are marked as another site.
     await page.getByTestId("section-esports").click();

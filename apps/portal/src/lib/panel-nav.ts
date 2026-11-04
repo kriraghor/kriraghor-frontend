@@ -2,7 +2,6 @@ import type { Icon } from "@phosphor-icons/react";
 import { BUSINESS_ROLES, type BusinessRole } from "@kriraghor/ui/desk/access";
 import { gymHref } from "./links";
 import {
-  Article,
   Barbell,
   CalendarCheck,
   ChartLineUp,
@@ -95,8 +94,6 @@ export const ADMIN_SECTIONS: NavSection<AdminEntry>[] = [
     items: [
       { href: "/admin/venues", key: "groundsAdmin", icon: SoccerBall, any: ["approve_listings", "manage_users"] },
       { href: "/admin/sports-events", key: "tournamentsAdmin", icon: Trophy },
-      // M26: the feed of tournaments people post; staff remove and restore them.
-      { href: "/admin/tournament-posts", key: "tournamentPosts", icon: Article, any: ["approve_listings"] },
       { href: "/admin/catalog/places", key: "places", icon: MapPin, any: ["manage_esports", "manage_catalog"] },
     ],
   },
@@ -148,13 +145,13 @@ export { BUSINESS_ROLES, type BusinessRole };
 export const GYMS_HREF = gymHref("/manage");
 
 /**
- * The business sidebar. Analytics covers every business since Round B2 (venue, shop and gym, one page
- * with a business switcher), so it is one shared link with the business tools rather than a copy in
- * each section. Reviews cover venues and shops (M17 FR-34; a gym's are on gym.kriraghor.com/manage
- * since 3 Nov 2026), so they sit with the shared business tools for those owners. Since 25 Oct 2026
- * gyms are managed on gym.kriraghor.com (M24 §4.3): gym owners get a "Gyms" link there (through
- * /go/gym) with the shared business tools instead of a gym section. Nobody organises tournaments on
- * Kriraghor since 3 Nov 2026 (ADR-008), so there is no organiser section.
+ * The business sidebar. Analytics covers every business since Round B2 (venue, shop, gym and sports
+ * organisations, one page with a business switcher), so it is one shared link with the business tools
+ * rather than a copy in each section. Reviews cover venues and shops (M17 FR-34; a gym's are on gym.kriraghor.com/manage since 3 Nov 2026), so they sit with the shared
+ * business tools for those three owners (not organisers). Since 21 Oct 2026 esports is run by
+ * Kriraghor only, so the organiser section is sports events alone. Since 25 Oct 2026 gyms are managed
+ * on gym.kriraghor.com (M24 §4.3): gym owners get a "Gyms" link there (through /go/gym) with the
+ * shared business tools instead of a gym section.
  */
 export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole })[] = [
   { key: "overview", items: [{ href: "/vendor", key: "home", icon: House, match: "exact" }] },
@@ -177,6 +174,7 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
       { href: "/vendor/settlement", key: "settlement", icon: Wallet },
     ],
   },
+  { key: "events", role: "organiser", items: [{ href: "/vendor/events", key: "sportsConsole", icon: Trophy }] },
   {
     key: "business",
     items: [
@@ -184,7 +182,7 @@ export const VENDOR_SECTIONS: (NavSection<VendorEntry> & { role?: BusinessRole }
       { href: "/vendor/payouts", key: "vendorPayouts", icon: CurrencyCircleDollar },
       { href: "/vendor/disputes", key: "vendorDisputes", icon: Gavel },
       { href: "/vendor/reviews", key: "vendorReviews", icon: Star, roles: ["ground_owner", "shop_owner"] },
-      // Round B3: venue, gym and shop owners add staff.
+      // Round B3: venue, gym and shop owners add staff (organisers have organisation members already).
       { href: "/vendor/team", key: "team", icon: UsersThree, roles: ["ground_owner", "shop_owner", "gym_owner"] },
       { href: GYMS_HREF, key: "gyms", icon: Barbell, roles: ["gym_owner"] },
     ],

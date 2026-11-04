@@ -27,6 +27,7 @@ import {
   Receipt,
   Repeat,
   Scales,
+  ShieldCheck,
   ShoppingBag,
   Star,
   Storefront,
@@ -34,6 +35,7 @@ import {
   Tray,
   UserCircle,
   UserGear,
+  UsersThree,
   Wallet,
 } from "@phosphor-icons/react";
 import type { ShellSection } from "@kriraghor/ui/sections";
@@ -66,11 +68,16 @@ export function memberSections(t: (key: string) => string, me: MemberFacts | und
       items: [],
     },
     {
-      key: "tournaments",
-      label: t("sections.tournaments"),
+      key: "events",
+      label: t("sections.events"),
       icon: Trophy,
-      href: "/me/tournaments",
-      items: [{ href: "/me/tournaments", label: t("items.tournaments"), icon: Trophy, testId: "me-tournaments" }],
+      href: "/me/events",
+      items: [
+        { href: "/me/events", label: t("items.events"), icon: Trophy, testId: "me-tournaments" },
+        { href: "/me/teams", label: t("items.teams"), icon: UsersThree, testId: "me-teams" },
+        { href: "/me/player", label: t("items.player"), icon: IdentificationCard, testId: "me-player" },
+        { href: "/me/eligibility", label: me && !me.phoneVerified ? t("items.addPhone") : t("items.ready"), icon: ShieldCheck, testId: "me-eligibility" },
+      ],
     },
     {
       key: "venues",
@@ -102,10 +109,7 @@ export function memberSections(t: (key: string) => string, me: MemberFacts | und
       label: t("sections.hire"),
       icon: Handshake,
       href: "/me/hire",
-      items: [
-        { href: "/me/hire", label: t("items.hires"), icon: Handshake, testId: "me-hire" },
-        { href: "/me/player", label: t("items.player"), icon: IdentificationCard, testId: "me-player" },
-      ],
+      items: [{ href: "/me/hire", label: t("items.hires"), icon: Handshake, testId: "me-hire" }],
     },
     canWork(me?.roles) && {
       key: "work",

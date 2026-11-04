@@ -50,7 +50,7 @@ export type ReviewSubject = "ground" | "shop" | "gym" | "hire_profile";
 export type BusinessSubject = Exclude<ReviewSubject, "hire_profile" | "gym">;
 const SUBJECT_OF_ROLE: Record<string, BusinessSubject> = { ground_owner: "ground", shop_owner: "shop" };
 
-/** The review subjects for the business roles held, in sidebar order. */
+/** The review subjects for the business roles held, in sidebar order (an organiser has none). */
 export const reviewSubjectsFor = (roles: readonly string[]): BusinessSubject[] => (["ground", "shop"] as const).filter((s) => roles.some((r) => SUBJECT_OF_ROLE[r] === s));
 
 /** Whether the owner has replied: drives the badge and the "Waiting for a reply" filter. */

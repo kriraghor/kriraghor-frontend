@@ -50,7 +50,8 @@
     "esportsConsole": "Esports",
     "bigEvents": "Showcases",
     "teamsAdmin": "Teams",
-    "tournamentsAdmin": "Sports events",
+    "sportsConsole": "Sports tournaments",
+    "tournamentsAdmin": "Sports tournaments",
     "skip": "Skip to content",
     "homeLabel": "Kriraghor home",
     "main": "Main",
@@ -62,8 +63,7 @@
     "vendorPayouts": "Payouts",
     "team": "Team",
     "frontDesk": "Front desk",
-    "gymPasses": "Subscriptions sold",
-    "tournamentPosts": "Tournament posts"
+    "gymPasses": "Subscriptions sold"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -115,7 +115,7 @@
   },
   "vendor": {
     "home": "Business desk",
-    "intro": "Manage your venues, shop or gym. Desks arrive with their modules."
+    "intro": "Manage your venues, shop, gym or tournaments. Desks arrive with their modules."
   },
   "errors": {
     "generic": "Something went wrong. Try again.",
@@ -781,7 +781,7 @@
       "hire_profile": "Hire profile",
       "gym": "Gym",
       "organisation": "Organisation",
-      "tournament": "Event"
+      "tournament": "Tournament"
     },
     "lockLabel": "Lock",
     "lockAny": "Any",
@@ -1672,7 +1672,10 @@
       "passSales": "Subscription sales",
       "passesSold": "Subscriptions sold",
       "admissions": "Admissions",
-      "unusedShare": "Unused subscriptions"
+      "unusedShare": "Unused subscriptions",
+      "teams": "Teams",
+      "entryFees": "Entry fees",
+      "matchesPlayed": "Matches played"
     },
     "notes": {
       "bookedAhead": "{amount} booked ahead",
@@ -1682,7 +1685,10 @@
       "businesses": "{n} businesses",
       "overdue": "{n} overdue",
       "items": "{n, plural, one {# item} other {# items}}",
-      "passKinds": "{day} day · {month} monthly · {quarter} quarterly"
+      "passKinds": "{day} day · {month} monthly · {quarter} quarterly",
+      "teams": "{waiting} waiting · {unpaid} unpaid · {reserve} reserve",
+      "fees": "Held {held} · released {released} · refunded {refunded}",
+      "matches": "Of matches not cancelled"
     },
     "actions": {
       "title": "Needs your action",
@@ -1706,7 +1712,9 @@
       "gym_changes_requested": "Staff asked for changes to {n, plural, one {a gym} other {# gyms}}",
       "other": "{n, plural, one {# thing} other {# things}} to look at",
       "due": "Due {time}",
-      "urgent": "Urgent"
+      "urgent": "Urgent",
+      "registrations_waiting": "{n, plural, one {# team registration is} other {# team registrations are}} waiting for your approval",
+      "registrations_unpaid": "{n, plural, one {# team hasn't} other {# teams haven't}} paid the entry fee yet"
     },
     "loadFailed": "Couldn't load the numbers. Try again.",
     "openAnalytics": "Open analytics",
@@ -1728,7 +1736,9 @@
       "passSales": "Subscription sales",
       "admissionsByDay": "Admissions by day (this period)",
       "busiestHoursDhaka": "Busiest hours (admissions, Dhaka time)",
-      "salesByPackage": "Sales by package (this period)"
+      "salesByPackage": "Sales by package (this period)",
+      "registrations": "Team registrations",
+      "feesByEvent": "Entry fees by tournament"
     },
     "hours": "{n} h",
     "empty": "Nothing yet.",
@@ -1759,9 +1769,12 @@
       "gym_saas": "Gym subscriptions",
       "esports_saas": "Organiser invoices"
     },
+    "ofTotal": "{n} of {total}",
     "legend": {
       "thisPeriod": "This year",
-      "lastYear": "Last year"
+      "lastYear": "Last year",
+      "registered": "Registered",
+      "approved": "Approved"
     },
     "units": "{n} sold",
     "admissionsN": "{n, plural, one {# admission} other {# admissions}}",
@@ -1781,22 +1794,28 @@
     },
     "shopNote": "Sales are before the Kriraghor commission and leave out delivery. Settlement shows what you receive.",
     "gymNote": "Subscription sales are before the Kriraghor fee. Your payouts show what you receive.",
+    "organiserNote": "Entry fees stay with Kriraghor until each tournament's fees are released to you.",
+    "organiserCsv": "Each tournament's registrations, with squad lists, download from its Teams tab.",
+    "openEvents": "Open your tournaments",
     "errors": {
-      "roleRequired": "These numbers are for active owners of this business."
+      "roleRequired": "These numbers are for active owners of this business.",
+      "orgNotFound": "We couldn't find this organisation among yours."
     },
     "leads": {
       "shop": "Your shop week by week: what sold, how many orders, and who comes back.",
       "gym": "Your gyms week by week: subscriptions sold, front-desk admissions, and the busy hours.",
-      "none": "Numbers for your venues, shop and gym show here once you run one."
+      "organiser": "{name}: teams, entry fees and matches across your tournaments.",
+      "none": "Numbers for your venues, shop, gym and sports tournaments show here once you run one."
     },
     "business": {
       "label": "Business",
       "ground_owner": "Venues",
       "shop_owner": "Shop",
-      "gym_owner": "Gym"
+      "gym_owner": "Gym",
+      "organiser": "Sports organisation"
     },
     "noBusiness": "No business yet",
-    "noBusinessBody": "Start a venue, shop or gym from your business home.",
+    "noBusinessBody": "Start a venue, shop, gym or sports organisation from your business home.",
     "toHome": "Go to your business home"
   },
   "disputesDesk": {
@@ -1915,9 +1934,7 @@
       "booking": "Booking",
       "user": "Member",
       "review": "Review",
-      "esports_tournament": "Tournament",
-      "tournament_post": "Tournament post",
-      "tournament_comment": "Comment on a tournament post"
+      "esports_tournament": "Tournament"
     },
     "reason": {
       "fake_listing": "Fake listing",
@@ -3186,7 +3203,7 @@
     },
     "tab": {
       "dashboard": "Overview",
-      "tournaments": "Events",
+      "tournaments": "Tournaments",
       "billing": "Billing",
       "branding": "Branding",
       "members": "Members"
@@ -3220,7 +3237,7 @@
     "cycle": {
       "monthly": "a month",
       "quarterly": "a quarter",
-      "per_tournament": "per event"
+      "per_tournament": "per tournament"
     },
     "dash": {
       "contract": "Contract",
@@ -3230,15 +3247,15 @@
       "invoices": "Invoices",
       "unpaid": "{n} unpaid ({total})",
       "allPaid": "All paid",
-      "submits": "New events",
-      "canSubmit": "You can send events for review",
+      "submits": "New tournaments",
+      "canSubmit": "You can send tournaments for review",
       "cannotSubmit": "Blocked: check the contract and invoices",
-      "upcoming": "Upcoming events",
+      "upcoming": "Upcoming tournaments",
       "none": "Nothing scheduled yet."
     },
     "tour": {
-      "new": "New event",
-      "empty": "No events yet.",
+      "new": "New tournament",
+      "empty": "No tournaments yet.",
       "entry": "Entry fee",
       "pool": "Prize pool",
       "starts": "Starts",
@@ -3259,7 +3276,7 @@
     "fund": {
       "title": "Prize fund",
       "line": "Pool {required} · deposited {deposited}",
-      "funded": "Funded. You can send the event for review.",
+      "funded": "Funded. You can send the tournament for review.",
       "needs": "Fund the prize pool before sending it for review. Prizes are paid from it; Kriraghor never adds money.",
       "over": "The deposit is more than the pool: raise the prizes, or cancel the draft to get the fund back.",
       "now": "Fund now ({amount})"
@@ -3294,15 +3311,15 @@
       "role": "Role",
       "add": "Add",
       "remove": "Remove",
-      "help": "Admins manage events, money and branding; staff run rooms and results."
+      "help": "Admins manage tournaments, money and branding; staff run rooms and results."
     },
     "home": {
-      "active": "You can run esports events as an organiser.",
+      "active": "You can run esports tournaments as an organiser.",
       "open": "Open the organiser console",
-      "sell": "Run esports events? Organisers use Kriraghor under a contract.",
+      "sell": "Run esports tournaments? Organisers use Kriraghor under a contract.",
       "continue": "Continue the application",
       "start": "Apply as an organiser",
-      "openSports": "Sports events"
+      "openSports": "Sports tournaments"
     }
   },
   "organisersDesk": {
@@ -3336,7 +3353,7 @@
     "cycle": {
       "monthly": "monthly",
       "quarterly": "quarterly",
-      "per_tournament": "per event"
+      "per_tournament": "per tournament"
     },
     "members": "Members: {list}",
     "suspend": "Suspend",
@@ -3381,7 +3398,7 @@
       "docs": "The owner's NID and the organisation's registration were checked on the documents desk."
     },
     "statusLabel": "Status",
-    "externalOff": "Outside esports organisers are switched off; Kriraghor runs every esports event. Contracts and invoices are hidden until they are switched back on."
+    "externalOff": "Outside esports organisers are switched off; Kriraghor runs every esports tournament. Contracts and invoices are hidden until they are switched back on."
   },
   "bigEvents": {
     "title": "Showcases",
@@ -3562,7 +3579,7 @@
     "reasonNeeded": "Give a reason of at least 5 characters.",
     "archive": "Archive team",
     "cancel": "Cancel",
-    "genderIntro": "Members declare their gender once. It is used only for men's and women's events and is never shown to captains, organisers or on public pages. Correct it here when a member writes in; every correction is audited.",
+    "genderIntro": "Members declare their gender once. It is used only for men's and women's tournaments and is never shown to captains, organisers or on public pages. Correct it here when a member writes in; every correction is audited.",
     "findMember": "Phone, email or name",
     "noMember": "No member matches.",
     "current": "Now: {gender} ({source})",
@@ -3580,15 +3597,225 @@
     "save": "Save correction",
     "corrected": "Corrected and recorded in the audit log."
   },
+  "sportsConsole": {
+    "title": "Sports tournaments",
+    "applyFirst": "You have no verified sports organisation yet.",
+    "applyHelp": "Register one on kriraghor.com (Account → Business → Organiser) and choose \"Sports tournaments\".",
+    "notFound": "Not found",
+    "failed": "Something went wrong. Please try again.",
+    "new": "New tournament",
+    "close": "Close",
+    "none": "No tournaments yet.",
+    "format": {
+      "league": "League",
+      "double_league": "Double league",
+      "groups_knockout": "Groups and knockout",
+      "knockout": "Knockout"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes asked",
+      "rejected": "Rejected",
+      "registration_open": "Taking teams",
+      "registration_closed": "Registration closed",
+      "live": "Live",
+      "completed": "Finished",
+      "cancelled": "Cancelled"
+    },
+    "sport": "Sport",
+    "preset": "Preset",
+    "name": "Tournament name",
+    "formatLabel": "Format",
+    "groupCount": "Groups",
+    "qualifiers": "Teams through per group",
+    "minTeams": "Fewest teams",
+    "maxTeams": "Most teams",
+    "squadMin": "Smallest squad",
+    "squadMax": "Largest squad",
+    "fromRules": "From the rules",
+    "feeTaka": "Entry fee per team (৳)",
+    "prizeTaka": "Prize pool (৳, shown only)",
+    "opensAt": "Registration opens",
+    "closesAt": "Registration closes",
+    "startDate": "First match day",
+    "endDate": "Last match day",
+    "venue": "Venue",
+    "area": "Area",
+    "courts": "Courts or pitches",
+    "courtsHint": "e.g. Court 1, Court 2",
+    "createDraft": "Create the draft",
+    "tab": {
+      "overview": "Overview",
+      "rules": "Rules",
+      "teams": "Teams",
+      "fixtures": "Fixtures"
+    },
+    "reviewReason": "Staff said",
+    "kpi": {
+      "teams": "Teams",
+      "waiting": "{n} waiting, {r} on reserve",
+      "matches": "Matches played",
+      "held": "Held in escrow",
+      "released": "Released to you",
+      "fees": "{amount} fee"
+    },
+    "checklist": "Setup checklist",
+    "check": {
+      "rules": "Rules and format",
+      "approval": "Staff approval",
+      "teams": "Teams approved",
+      "squads": "Squads meet the rules",
+      "fixtures": "Fixtures generated",
+      "scheduled": "Every match has a time",
+      "published": "Fixtures published",
+      "payout_account": "Payout account verified"
+    },
+    "submit": "Submit for staff review",
+    "closeRegistration": "Close registration now",
+    "extendTo": "Reopen registration until",
+    "extend": "Reopen registration (once)",
+    "reason": "Reason",
+    "unlockRules": "Unlock the rules",
+    "cancelTournament": "Cancel the tournament",
+    "unlockedUntil": "Rules unlocked until {at}",
+    "publicPage": "Open the public page",
+    "rulesLocked": "The rules are locked since the first result. Unlock them with a reason (Overview) to change them.",
+    "rulesFixed": "Rules cannot change after approval until the first result (they are part of the review).",
+    "ruleGroup": {
+      "match": "Match",
+      "squad": "Squad",
+      "points": "Points",
+      "discipline": "Discipline"
+    },
+    "tiebreakers": "Tiebreakers",
+    "saveRules": "Save rules",
+    "reset": "Reset",
+    "teamsLead": "Approve a team when its squad has at least {min} eligible players. Rejecting refunds the entry fee in full.",
+    "decisionReason": "Reason (for reject, remove, waive)",
+    "noRegistrations": "No team has registered yet.",
+    "squadLine": "{total} players, {eligible} eligible",
+    "waived": "fee waived",
+    "reservePos": "reserve no. {n}",
+    "refunded": "{amount} refunded",
+    "reg": {
+      "pending_payment": "Waiting for payment",
+      "reserve": "Reserve",
+      "offered": "Place offered",
+      "pending_approval": "Waiting for you",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "lapsed": "Lapsed",
+      "withdrawn": "Withdrawn",
+      "removed": "Removed",
+      "cancelled": "Cancelled"
+    },
+    "approve": "Approve",
+    "reject": "Reject",
+    "waive": "Waive fee",
+    "remove": "Remove",
+    "setsHint": "Sets ({a} first), e.g. 21-15, 21-17",
+    "runs": "Runs",
+    "wickets": "Wkts",
+    "overs": "Overs",
+    "decider": "Tie decided for",
+    "pens": "Penalties",
+    "amend": "Amend",
+    "saveResult": "Save result",
+    "enterResult": "Enter result",
+    "drawTitle": "The draw",
+    "seeding": {
+      "random": "Random draw (seed published)",
+      "registration_order": "Registration order"
+    },
+    "confirmDraw": "Confirm the draw",
+    "seed": "Draw seed: {seed}",
+    "scheduleTitle": "Schedule",
+    "dow": {
+      "0": "Sun",
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
+    },
+    "slots": "Start times (HH:MM, comma separated)",
+    "dryRun": "Dry run",
+    "generate": "Generate fixtures",
+    "planLine": "{n} matches, {unscheduled} without a slot",
+    "draftsWaiting": "{n} matches are not published yet.",
+    "publish": "Publish fixtures",
+    "timeTbc": "Time to be set",
+    "match": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "postponed": "Postponed",
+      "completed": "Played",
+      "no_result": "No result",
+      "walkover": "Walkover",
+      "abandoned": "Abandoned",
+      "cancelled": "Cancelled"
+    },
+    "noMatches": "No fixtures yet.",
+    "errors": {
+      "TOURNAMENT_INCOMPLETE": "Finish the details first: a venue, valid dates, squads that fit the sport, a verified payout account for paid entry.",
+      "RULES_LOCKED": "The rules are locked. Unlock them with a reason first.",
+      "REGISTRATION_STILL_OPEN": "Close registration first.",
+      "PENDING_DECISIONS": "Approve or reject the teams that are waiting first.",
+      "NOT_ENOUGH_TEAMS": "Not enough approved teams. Extend registration or cancel.",
+      "DRAW_NOT_CONFIRMED": "Confirm the draw first.",
+      "RESULTS_EXIST": "Results are in: fixtures can no longer change.",
+      "ROSTER_NOT_READY": "The squad does not have enough eligible players yet.",
+      "CAPACITY_FULL": "All places are taken.",
+      "SCHEDULE_CLASH": "That time clashes with another match.",
+      "RESULT_INVALID": "The score does not fit the rules.",
+      "KNOCKOUT_NEEDS_WINNER": "A knockout match needs a winner.",
+      "AMEND_BLOCKED": "A later match already used this result.",
+      "START_TOO_SOON": "The first match day is too soon.",
+      "REGISTRATION_CLOSES_TOO_LATE": "Registration must close a little before the first match day.",
+      "MATCH_STATE": "This match has moved on and can no longer change this way. Refresh the list."
+    },
+    "nav": {
+      "events": "Tournaments",
+      "members": "Members"
+    },
+    "membersTitle": "Members",
+    "membersLead": "People who can run this organisation's tournaments. Admins approve teams, give walkovers and cancel matches; staff draw fixtures, move and postpone matches and enter results.",
+    "matchActions": "Actions for match M{n}",
+    "mAct": {
+      "move": "Change date, time or court",
+      "postpone": "Postpone",
+      "walkover": "Give a walkover",
+      "cancel": "Cancel match"
+    },
+    "moveTitle": "Change M{n}",
+    "moveHelp": "Teams are told about the new time. Leave the time empty if it is not set yet.",
+    "moveStart": "Start (Dhaka time)",
+    "moveCourt": "Court or pitch",
+    "moveSave": "Save changes",
+    "postponeTitle": "Postpone M{n}?",
+    "postponeHelp": "Teams are told the match is postponed. Set the new time later with Change date, time or court.",
+    "cancelMatchTitle": "Cancel M{n}?",
+    "cancelMatchHelp": "The match is called off and no longer counts in the table. Teams are told. This cannot be undone.",
+    "walkoverTitle": "Walkover for M{n}",
+    "walkoverHelp": "The winner gets the match by walkover; the other team gets no points.",
+    "walkoverWinner": "Winner",
+    "reasonShort": "Write at least 5 characters.",
+    "export": {
+      "withSquads": "With squad lists",
+      "csv": "Export CSV"
+    }
+  },
   "tournamentsAdmin": {
-    "title": "Events",
-    "intro": "Physical-sport events with their registrations and the entry fees in escrow. Reviews are on the Moderation desk. Masters can cancel an event: teams get back what is still held.",
+    "title": "Tournaments",
+    "intro": "Physical-sport tournaments with their registrations and the entry fees in escrow. Reviews are on the Moderation desk. Masters can cancel a tournament: teams get back what is still held.",
     "name": "Name",
     "status": "Status",
     "all": "All",
     "find": "Find",
-    "none": "No events match.",
-    "pick": "Pick an event.",
+    "none": "No tournaments match.",
+    "pick": "Pick a tournament.",
     "failed": "Something went wrong.",
     "st": {
       "draft": "Draft",
@@ -3630,8 +3857,8 @@
     "eligibility": "Eligibility",
     "age": "age {min}–{max}",
     "gender": {
-      "men": "men's event",
-      "women": "women's event",
+      "men": "men's tournament",
+      "women": "women's tournament",
       "mixed": "mixed teams"
     },
     "open": "Open (NID verified)",
@@ -3644,8 +3871,8 @@
     "registrations": "Registrations ({n})",
     "waived": "waived",
     "reason": "Reason for cancelling",
-    "cancel": "Cancel the event",
-    "cancelTitle": "Cancel the event",
+    "cancel": "Cancel the tournament",
+    "cancelTitle": "Cancel the tournament",
     "cancelHelp": "Every team gets back what is still held. Enter your authenticator code."
   },
   "panel": {
@@ -3669,6 +3896,7 @@
       "overview": "Overview",
       "shop": "Shop",
       "gym": "Gym",
+      "events": "Tournaments",
       "business": "Business",
       "grounds": "Venues",
       "workVenue": "Venue desk",
@@ -3686,7 +3914,7 @@
   "vendorHome": {
     "title": "Business desk",
     "lead": "What your businesses need from you today, in one place.",
-    "leadNew": "Run a venue, a shop or a gym on Kriraghor. One account works for all of them.",
+    "leadNew": "Run a venue, a shop, a gym or sports tournaments on Kriraghor. One account works for all of them.",
     "actionsTitle": "Needs your action",
     "addMore": "Add another business",
     "addMoreLead": "Apply on kriraghor.com with the same account. It shows up here once staff approve it.",
@@ -3694,7 +3922,8 @@
     "sections": {
       "ground_owner": "Your venues",
       "shop_owner": "Your shop",
-      "gym_owner": "Your gyms"
+      "gym_owner": "Your gyms",
+      "organiser": "Your sports tournaments"
     },
     "setup": {
       "title": "Get set up",
@@ -3708,7 +3937,8 @@
         "shopProfile": "Send your shop profile for review",
         "firstProduct": "Get your first product live",
         "gymLive": "Get your gym live",
-        "packages": "Set your packages"
+        "packages": "Set your packages",
+        "orgVerified": "Get your organisation verified"
       },
       "help": {
         "nid": "On kriraghor.com, with the same account.",
@@ -3718,7 +3948,8 @@
         "shopProfile": "Name, area, address and the shop type. Staff answer within a working day.",
         "firstProduct": "Photos, sizes and stock. Each product is checked before it goes on sale.",
         "gymLive": "Photos, opening hours and a package sold online, then send it for review.",
-        "packages": "One month, three months or longer, at the prices you choose."
+        "packages": "One month, three months or longer, at the prices you choose.",
+        "orgVerified": "Register your organisation on kriraghor.com and choose sports tournaments."
       },
       "go": {
         "nid": "Verify NID",
@@ -3728,8 +3959,26 @@
         "shopProfile": "Open my shop",
         "firstProduct": "Add a product",
         "gymLive": "Open my gyms",
-        "packages": "Set packages"
+        "packages": "Set packages",
+        "orgVerified": "Register"
       }
+    },
+    "organiser": {
+      "active": "You can run sports tournaments as an organiser.",
+      "lead": "Leagues and knockouts with online team registration and live results.",
+      "open": "Open sports tournaments",
+      "orgs": "Your organisations",
+      "apply": "Register an organisation",
+      "openOrg": "Tournaments",
+      "numbers": "Numbers for {name}"
+    },
+    "orgStatus": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "changes_requested": "Changes needed",
+      "verified": "Verified",
+      "rejected": "Not approved",
+      "suspended": "Suspended"
     },
     "types": {
       "title": "What do you run?",
@@ -3747,6 +3996,10 @@
       "gym_owner": {
         "title": "A gym",
         "body": "Subscriptions and memberships, admitted with a QR code at the front desk."
+      },
+      "organiser": {
+        "title": "Sports tournaments",
+        "body": "Football, cricket and other sports tournaments with online team registration."
       }
     },
     "onboard": {
@@ -3758,7 +4011,7 @@
       "help": {
         "nid": "On kriraghor.com, with the same account.",
         "business": "Staff check them within a working day. Status: {status}.",
-        "setup": "List a venue, add products or set up a gym."
+        "setup": "List a venue, add products, set up a gym or create a tournament."
       },
       "go": {
         "nid": "Verify NID",
@@ -4132,7 +4385,7 @@
       },
       "manage_organisers": {
         "label": "Manage organisers",
-        "desc": "Approve and support event organisers and their teams."
+        "desc": "Approve and support tournament organisers and their teams."
       },
       "manage_gyms": {
         "label": "Manage gym owners",
@@ -4254,42 +4507,5 @@
       "failed": "Something went wrong. Please try again.",
       "RATE_LIMITED": "You've tried to add a lot of people in the last hour. Please wait a while and try again."
     }
-  },
-  "tournamentPosts": {
-    "title": "Tournament posts",
-    "intro": "Tournaments people have posted on the feed. They go live at once, so remove anything fake or unsafe here. Its author is told why.",
-    "post": "Post",
-    "author": "Posted by",
-    "organiser": "Organiser",
-    "sport": "Sport",
-    "place": "Where",
-    "starts": "Starts",
-    "ends": "Ends",
-    "deadline": "Registration closes",
-    "fee": "Entry fee",
-    "free": "Free",
-    "prize": "Prize pool",
-    "posted": "Posted",
-    "comments": "Comments",
-    "description": "About",
-    "rules": "Rules",
-    "search": "Search posts",
-    "all": "All",
-    "none": "No posts match.",
-    "failed": "That didn't work. Try again.",
-    "statusLabel": "Status",
-    "status": {
-      "open": "Open",
-      "closed": "Closed",
-      "expired": "Expired",
-      "removed": "Removed"
-    },
-    "openPublic": "Open its public page",
-    "remove": "Remove",
-    "restore": "Restore",
-    "removeHelp": "It leaves the feed and its author sees this reason.",
-    "restoreHelp": "It goes back to how it was before it was removed.",
-    "reason": "Reason",
-    "removedBecause": "Removed because"
   }
 }
