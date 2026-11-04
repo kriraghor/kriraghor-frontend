@@ -8,7 +8,7 @@ export type Step = { key: string; done: boolean };
 export type Completeness = { score: number; steps: Step[] };
 
 export const PRO_STEPS = ["photo", "headline", "bio", "rateCard", "credential", "policeClearance", "availability", "payoutAccount"] as const;
-export const PLAYER_STEPS = ["sports", "bio", "esportsUid", "nid"] as const;
+export const PLAYER_STEPS = ["sports", "bio", "team", "esportsUid", "nid"] as const;
 
 /** Where a hire profile's step is fixed. `as` is the business role the credential and police clearance are sent under. */
 export function proStepHref(key: string, profileId: string, as: "pro" | "player" = "pro"): string | null {
@@ -41,6 +41,8 @@ export function playerStepHref(key: string): string | null {
       return "#player-sports";
     case "bio":
       return "#player-bio";
+    case "team":
+      return "/me/teams";
     case "esportsUid":
       return esportsHref("/me/esports");
     case "nid":
