@@ -66,6 +66,7 @@ describe("checklist step links", () => {
     expect(Object.fromEntries(PLAYER_STEPS.map((k) => [k, playerStepHref(k)]))).toEqual({
       sports: "#player-sports",
       bio: "#player-bio",
+      team: "/me/teams",
       esportsUid: "/go/esports/me/esports",
       nid: "/account/verification",
     });
