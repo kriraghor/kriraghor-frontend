@@ -1,5 +1,4 @@
 # Kriraghor frontend
-
 The Kriraghor web apps in one repository (four since 25 Oct 2026: web, esports, portal and gym). The mobile app has its own repository, [kriraghor-mobile-app](https://github.com/kriraghor/kriraghor-mobile-app) (since 20 Oct 2026). The repo is an npm workspace: install once at the root, then run each app from its folder.
 
 
