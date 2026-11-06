@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   title: { default: `${APP.title}: esports, venues, gear and talent`, template: `%s · ${APP.title}` },
   description: APP.description,
   applicationName: APP.title,
-  openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/logo.png", width: 512, height: 512, alt: APP.title }] },
+  openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/icon-512.png", width: 512, height: 512, alt: APP.title }] },
   twitter: { card: "summary" },
-  icons: { icon: "/favicon.ico", apple: "/logo.png" },
+  icons: { icon: "/favicon.ico", apple: "/apple-icon.png" },
 };
 
 export const viewport: Viewport = {

@@ -1,5 +1,6 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { LogoMark } from "@kriraghor/ui/brand/logo-mark";
+import { SocialLinks } from "@kriraghor/ui/brand/social-links";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { esportsHref, gymHref, vendorHref } from "@/lib/links";
 
@@ -58,12 +59,13 @@ export async function SiteFooter() {
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div className="col-span-2 sm:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 no-underline" aria-label={t("homeLabel")}>
-              <Image src="/logo.png" alt="" width={38} height={38} />
+              <LogoMark size={38} motion="live" onBand />
               <span className="font-bangla text-xl font-bold" lang="bn">
                 ক্রীড়াঘর
               </span>
             </Link>
             <p className="mt-3 max-w-[34ch] text-sm text-band-muted">{t("tagline")}</p>
+            <SocialLinks label={t("social")} className="-ml-3 mt-3" />
           </div>
           {cols.map((col) => (
             <nav key={col.title} aria-label={col.title}>

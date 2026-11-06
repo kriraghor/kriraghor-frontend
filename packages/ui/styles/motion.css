@@ -24,51 +24,81 @@
   -webkit-user-drag: none;
 }
 
-/* Join: the cricket ball comes from the top left, the controller from the bottom left and the
-   football from the right, each turning as it flies, 90 ms apart; then the mark pulses once and a
-   ring ripples out. Transforms only (no layout). */
-.kg-join > .kg-c {
-  animation: kg-in-c 780ms var(--kg-spring) both;
+/* The black parts follow the theme; the always-dark footer band keeps them white. */
+.kg-mark > .kg-ink-dark,
+.kg-on-band > .kg-ink {
+  display: none;
 }
-.kg-join > .kg-e {
-  animation: kg-in-e 780ms var(--kg-spring) 90ms both;
+.kg-on-band > .kg-ink-dark {
+  display: block;
 }
-.kg-join > .kg-f {
-  animation: kg-in-f 780ms var(--kg-spring) 180ms both;
+:root[data-theme="dark"] .kg-mark > .kg-ink {
+  display: none;
+}
+:root[data-theme="dark"] .kg-mark > .kg-ink-dark {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .kg-mark > .kg-ink {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .kg-mark > .kg-ink-dark {
+    display: block;
+  }
+}
+/* The arms turn around the point where they meet the ring. */
+.kg-mark > .kg-u,
+.kg-mark > .kg-d {
+  transform-origin: 42% 63%;
+}
+
+/* Join: the bottle drops in, the arms unfold from it one after the other, then the mark pulses once and a
+   ripple leaves the ring. Transforms only (no layout). */
+.kg-join > .kg-b {
+  animation: kg-in-b 680ms var(--kg-spring) both;
+}
+.kg-join > .kg-u {
+  animation: kg-in-u 720ms var(--kg-spring) 220ms both;
+}
+.kg-join > .kg-d {
+  animation: kg-in-d 720ms var(--kg-spring) 320ms both;
 }
 .kg-join {
-  animation: kg-lock 460ms ease-out 900ms both;
+  animation: kg-lock 460ms ease-out 1000ms both;
 }
 .kg-join > .kg-ring {
   position: absolute;
-  inset: 2%;
+  left: 10%;
+  top: 49%;
+  width: 34%;
+  height: 34%;
   border-radius: 9999px;
-  border: 2px solid var(--kg-brand);
+  border: 2px solid #f86a00;
   opacity: 0;
-  animation: kg-ring 900ms ease-out 900ms forwards;
+  animation: kg-ring 900ms ease-out 1000ms forwards;
 }
-@keyframes kg-in-c {
+@keyframes kg-in-b {
   from {
     opacity: 0;
-    transform: translate(-70%, -70%) rotate(-55deg) scale(0.55);
+    transform: translateY(-60%) rotate(-10deg) scale(0.8);
   }
   60% {
     opacity: 1;
   }
 }
-@keyframes kg-in-e {
+@keyframes kg-in-u {
   from {
     opacity: 0;
-    transform: translate(-70%, 75%) rotate(45deg) scale(0.55);
+    transform: rotate(-70deg) scale(0.6);
   }
   60% {
     opacity: 1;
   }
 }
-@keyframes kg-in-f {
+@keyframes kg-in-d {
   from {
     opacity: 0;
-    transform: translate(90%, -10%) rotate(75deg) scale(0.55);
+    transform: rotate(70deg) scale(0.6);
   }
   60% {
     opacity: 1;
@@ -91,43 +121,76 @@
 }
 
 /* Loop (route loading): the pieces drift apart and snap back together, 1.6 s a round. */
-.kg-loop > .kg-c {
-  animation: kg-loop-c 1.6s var(--ease-kg) infinite;
+.kg-loop > .kg-b {
+  animation: kg-loop-b 1.6s var(--ease-kg) infinite;
 }
-.kg-loop > .kg-e {
-  animation: kg-loop-e 1.6s var(--ease-kg) infinite;
+.kg-loop > .kg-u {
+  animation: kg-loop-u 1.6s var(--ease-kg) infinite;
 }
-.kg-loop > .kg-f {
-  animation: kg-loop-f 1.6s var(--ease-kg) infinite;
+.kg-loop > .kg-d {
+  animation: kg-loop-d 1.6s var(--ease-kg) infinite;
 }
-@keyframes kg-loop-c {
-  0%,
-  100% {
-    transform: none;
-  }
-  40%,
-  55% {
-    transform: translate(-9%, -9%) rotate(-14deg);
-  }
-}
-@keyframes kg-loop-e {
+@keyframes kg-loop-b {
   0%,
   100% {
     transform: none;
   }
   45%,
   60% {
-    transform: translate(-9%, 10%) rotate(12deg);
+    transform: rotate(-3deg);
   }
 }
-@keyframes kg-loop-f {
+@keyframes kg-loop-u {
+  0%,
+  100% {
+    transform: none;
+  }
+  40%,
+  55% {
+    transform: rotate(-13deg);
+  }
+}
+@keyframes kg-loop-d {
   0%,
   100% {
     transform: none;
   }
   50%,
   65% {
-    transform: translate(11%, -2%) rotate(16deg);
+    transform: rotate(13deg);
+  }
+}
+
+/* Live (header and footer): the arms unfold once on load, and open a little when the link is hovered or
+   focused. The animation fills backwards only, so it never holds a transform over the hover. */
+.kg-live > .kg-u,
+.kg-live > .kg-d {
+  transition: transform 260ms var(--kg-spring);
+}
+.kg-live > .kg-u {
+  animation: kg-in-u 560ms var(--kg-spring) 80ms backwards;
+}
+.kg-live > .kg-d {
+  animation: kg-in-d 560ms var(--kg-spring) 160ms backwards;
+}
+a:hover > .kg-live > .kg-u,
+a:focus-visible > .kg-live > .kg-u {
+  transform: rotate(-9deg);
+}
+a:hover > .kg-live > .kg-d,
+a:focus-visible > .kg-live > .kg-d {
+  transform: rotate(9deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kg-mark,
+  .kg-mark > img {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .kg-mark > .kg-ring {
+    display: none;
   }
 }
 

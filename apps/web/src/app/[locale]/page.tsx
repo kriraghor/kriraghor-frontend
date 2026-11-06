@@ -1,4 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
+import { SOCIAL_PROFILES } from "@kriraghor/ui/brand/social-links";
+import { JsonLd } from "@/components/JsonLd";
+import { siteUrl } from "@/lib/seo";
 import { EsportsHero } from "@/components/home/HeroShell";
 import { Finder } from "@/components/home/Finder";
 import { HomeInfo } from "@/components/home/HomeInfo";
@@ -17,6 +20,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   setRequestLocale(locale);
   return (
     <Reveal>
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "Organization", name: "Kriraghor", url: siteUrl(), logo: `${siteUrl()}/icon-512.png`, sameAs: SOCIAL_PROFILES.map((p) => p.href) }} />
       <EsportsHero />
       <div className="mx-auto max-w-[1320px] px-5">
         <Finder />
