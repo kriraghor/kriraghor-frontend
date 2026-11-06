@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import Image from "next/image";
+import { LogoMark } from "@kriraghor/ui/brand/logo-mark";
 import { useTranslations } from "next-intl";
 import { cn } from "@kriraghor/ui/cn";
 import type { SectionKey } from "@/lib/home";
@@ -93,7 +93,7 @@ export function HomeNetwork() {
           ))}
         </svg>
         <div ref={hub} className="glass-strong absolute left-1/2 top-1/2 z-10 grid size-24 -translate-x-1/2 -translate-y-1/2 place-content-center justify-items-center gap-1 rounded-[24px] sm:size-28">
-          <Image src="/logo.png" alt="" width={40} height={40} />
+          <LogoMark size={40} />
           <span className="font-display text-sm font-bold">{t("hub")}</span>
         </div>
         {NODES.map((n, i) => (

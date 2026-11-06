@@ -32,6 +32,7 @@
     "./auth/google-button": "./src/auth/GoogleButton.tsx",
     "./account": "./src/account/parts.tsx",
     "./brand/logo-mark": "./src/brand/LogoMark.tsx",
+    "./brand/social-links": "./src/brand/SocialLinks.tsx",
     "./brand/boot-splash": "./src/brand/BootSplash.tsx",
     "./brand/logo-spinner": "./src/brand/LogoSpinner.tsx",
     "./styles/motion.css": "./styles/motion.css",

@@ -8,6 +8,7 @@ import type { HeaderConfig } from "@kriraghor/ui/site-header";
  * On plain localhost (no host to route by) PORTAL_DEFAULT_AREA picks the area (default admin).
  */
 import type { Area } from "@/lib/area";
+import { webHref } from "@/lib/links";
 export type { Area };
 
 export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> = {
@@ -19,8 +20,8 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       signInHref: "/admin/sign-in",
       meHref: "/admin",
       bell: { centreHref: "/admin/notifications" },
-      // The desks are in the sidebar (PortalShell); the header keeps the bell, theme and account.
-      nav: [],
+      // The desks are in the sidebar (PortalShell); the header keeps Home, the bell, theme and account.
+      nav: [{ href: webHref(), key: "home" }],
     },
   },
   vendor: {
@@ -31,8 +32,8 @@ export const AREAS: Record<Area, { audience: Audience; header: HeaderConfig }> =
       signInHref: "/vendor/sign-in",
       meHref: "/vendor",
       bell: { centreHref: "/vendor/notifications", settingsHref: "/vendor/notifications/settings" },
-      // The desks are in the sidebar (PortalShell); the header keeps the bell, theme and account.
-      nav: [],
+      // The desks are in the sidebar (PortalShell); the header keeps Home, the bell, theme and account.
+      nav: [{ href: webHref(), key: "home" }],
     },
   },
 };

@@ -1,5 +1,6 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { LogoMark } from "@kriraghor/ui/brand/logo-mark";
+import { SocialLinks } from "@kriraghor/ui/brand/social-links";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { webHref } from "@/lib/links";
 
@@ -44,10 +45,11 @@ export async function SiteFooter() {
       <div className="mx-auto grid max-w-[1320px] gap-8 px-5 py-12 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <Link href="/" className="inline-flex items-center gap-2 no-underline" aria-label={t("homeLabel")}>
-            <Image src="/logo.png" alt="" width={36} height={36} />
+            <LogoMark size={36} motion="live" />
             <span className="font-display text-lg font-extrabold">{t("brand")}</span>
           </Link>
           <p className="mt-3 max-w-[34ch] text-sm text-muted">{t("tagline")}</p>
+          <SocialLinks label={t("social")} className="-ml-3 mt-3" />
         </div>
         {cols.map((col) => (
           <nav key={col.title} aria-label={col.title}>

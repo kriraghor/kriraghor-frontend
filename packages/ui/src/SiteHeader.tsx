@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@kriraghor/api-client";
-import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { List, SignOut, Translate, UserCircle, X } from "@phosphor-icons/react";
 import { Link, usePathname, useRouter } from "./i18n/navigation";
@@ -16,6 +15,7 @@ import { Menu } from "./kit/Overlay";
 import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "./kit/Display";
 import { cn } from "./cn";
+import { LogoMark } from "./brand/LogoMark";
 
 export type HeaderConfig = {
   titleKey: "web" | "esports" | "admin" | "vendor" | "gym";
@@ -133,7 +133,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
           {t("nav.skip")}
         </a>
         <Link href={homeHref} className="flex min-w-0 items-center gap-2.5 justify-self-start no-underline" aria-label={t("nav.homeLabel")}>
-          <Image src="/logo.png" alt="" width={36} height={36} priority className="shrink-0" />
+          <LogoMark size={36} motion="live" className="shrink-0" />
           <span className="truncate whitespace-nowrap font-display text-lg font-bold tracking-tight sm:text-xl">{t(`app.${titleKey}`)}</span>
         </Link>
         <nav aria-label={t("nav.main")} className={cn("hidden items-center gap-1 justify-self-center", roomy ? "lg:flex" : "md:flex")}>

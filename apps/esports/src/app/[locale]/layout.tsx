@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: { default: APP.title, template: `%s · ${APP.title}` },
   description: APP.description,
   applicationName: APP.title,
-  openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/logo.png", width: 512, height: 512, alt: APP.title }] },
+  openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/icon-512.png", width: 512, height: 512, alt: APP.title }] },
   twitter: { card: "summary" },
 };
 
