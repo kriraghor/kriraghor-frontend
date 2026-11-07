@@ -221,15 +221,16 @@ describe("gym role presets (M27 §3)", () => {
     { key: "expenses.manage", default: false, needs: null },
     { key: "cash.drawer", default: false, needs: null },
     { key: "pos.sell", default: false, needs: null },
+    { key: "clock.in", default: true, needs: null },
     { key: "stock.manage", default: false, needs: null },
     { key: "lockers.manage", default: false, needs: null },
   ];
   it("fills the boxes for a job, keeps only offered keys, and finds the preset back", () => {
     expect(isGymCatalogue(gym)).toBe(true);
     expect(isGymCatalogue([{ key: "bookings.view", default: true, needs: null }])).toBe(false);
-    expect(presetPermissions(gym, "cashier").sort()).toEqual(["cash.drawer", "fees.collect", "members.view", "pos.sell"]);
+    expect(presetPermissions(gym, "cashier").sort()).toEqual(["cash.drawer", "clock.in", "fees.collect", "members.view", "pos.sell"]); // M27-FR-73: every role clocks in
     expect(presetPermissions(gym, "manager")).toHaveLength(gym.length);
-    expect(presetPermissions(gym.filter((p) => p.key !== "pos.sell"), "storekeeper")).toEqual(["stock.manage"]);
+    expect(presetPermissions(gym.filter((p) => p.key !== "pos.sell" && p.key !== "clock.in"), "storekeeper")).toEqual(["stock.manage"]);
     expect(matchingPreset(gym, presetPermissions(gym, "accountant"))).toBe("accountant");
     expect(matchingPreset(gym, ["members.view"])).toBeNull();
     expect(GYM_PRESET_KEYS).toEqual(["receptionist", "cashier", "trainer", "manager", "accountant", "storekeeper"]);

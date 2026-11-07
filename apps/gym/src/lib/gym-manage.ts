@@ -99,7 +99,7 @@ export type DuesQuery = { status?: Due["status"]; overdue?: "true" | "false"; du
 export const PAY_METHODS: PayMethod[] = ["cash", "owner_bkash", "owner_nagad", "card_counter", "other"];
 export const LEFT_REASONS: LeftReason[] = ["price", "moved", "injury", "other_gym", "schedule", "unknown", "other"];
 export const TIERS: Tier[] = ["free", "basic", "standard", "pro"];
-export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "leads", "reports", "pos", "pnl", "classes", "points", "notices", "trainers", "plans", "multi_gym"];
+export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "leads", "reports", "pos", "pnl", "classes", "points", "notices", "staff_attendance", "equipment", "trainers", "plans", "payroll", "multi_gym"];
 export const KINDS: PackageKind[] = ["month", "quarter", "half_year", "year", "custom"];
 
 const ik = (key: string) => ({ "idempotency-key": key });
