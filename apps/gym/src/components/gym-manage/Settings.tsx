@@ -7,18 +7,25 @@ import { Button, Card, Checkbox, Field, Notice, Select, Skeleton, Textarea, useT
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { draftOf, gymManage, settingsPatch, SHORT_CODE, type GymSettings, type SettingsDraft as Draft } from "@/lib/gym-manage";
 import { GymPage, useGymError, type GymCtx } from "./common";
+import { RemoveGym } from "./RemoveGym";
 
 /**
  * /manage/[gymId]/settings (owner; M24 §4.1, §6.8): the short code for member codes and receipts
  * (unique among the owner's gyms; the first save sets the gym up), TIN and BIN (printed on receipts
  * only when entered), the receipt footer, the entry policy for expired, frozen, unpaid or package-less
- * members (allow, warn, block with the owner's override), absent alert days and join requests.
+ * members (allow, warn, block with the owner's override), absent alert days and join requests; at the
+ * foot, the owner removes the gym (M20-FR-15).
  */
 export function Settings({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
   return (
     <GymPage gymId={gymId} page="settings" title={t("settings.title")} testId="gm-settings">
-      {(ctx) => <Form ctx={ctx} />}
+      {(ctx) => (
+        <div className="flex flex-col gap-8">
+          <Form ctx={ctx} />
+          <RemoveGym ctx={ctx} />
+        </div>
+      )}
     </GymPage>
   );
 }

@@ -285,7 +285,7 @@ describe("receipts (M24-FR-37)", () => {
 });
 
 describe("gym settings: only what changed is sent", () => {
-  const s: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002" };
+  const s: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002", vatEnabled: false, vatBps: null, vatMaxBps: 1500 };
   it("sends nothing for an untouched form, and blank text as null", () => {
     expect(settingsPatch(s, draftOf(s))).toEqual({});
     expect(settingsPatch(s, { ...draftOf(s), shortCode: "pmx", tin: " 123 ", entryPolicy: "block", absentAlertDays: "14", joinRequestsOpen: false })).toEqual({ shortCode: "PMX", tin: "123", entryPolicy: "block", absentAlertDays: 14, joinRequestsOpen: false });

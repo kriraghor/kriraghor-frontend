@@ -791,7 +791,9 @@
       "GYM_REFUND_EXCEEDS_PAID": "That is more than can still be refunded on this payment.",
       "GYM_INVOICE_STATE": "This invoice can't be paid in its current status.",
       "EXPORT_LIMIT": "You've reached this hour's export limit. Try again later.",
-      "EXPORT_TOO_LARGE": "Too many rows for one file. Pick a shorter period."
+      "EXPORT_TOO_LARGE": "Too many rows for one file. Pick a shorter period.",
+      "GYM_NAME_MISMATCH": "The name does not match. Type it exactly as shown.",
+      "GYM_HAS_ACTIVE_PASSES": "Members still have paid online packages at this gym."
     },
     "gyms": {
       "title": "My gyms",
@@ -1773,6 +1775,24 @@
     },
     "payouts": {
       "lead": "Online fees and subscription sales reach you with the weekly payout. Each line shows Kriraghor's fee, the payment provider's charge and what you get."
+    },
+    "remove": {
+      "title": "Remove this gym",
+      "body": "Closing for good or moving? Removing takes the gym off Kriraghor: it leaves search, the front desk and your gym list, and frees a place in your plan. Members, fees and receipts are kept in your records.",
+      "open": "Remove gym",
+      "confirmTitle": "Remove {name}?",
+      "confirmBody": "This cannot be undone from the gym app.",
+      "keeps": "Members, payments and receipts are kept, never deleted.",
+      "hides": "The gym page, check-ins and staff access stop at once.",
+      "final": "Members with paid online packages must finish or be refunded first.",
+      "typeName": "Type “{name}” to confirm",
+      "reason": "Why are you removing it?",
+      "optional": "optional",
+      "mismatch": "The name does not match. Type it exactly as shown.",
+      "activePasses": "{n, plural, one {# member still has a paid online package} other {# members still have paid online packages}} at this gym. Wait until they end or cancel them, then remove the gym.",
+      "cancel": "Keep the gym",
+      "confirm": "Remove for good",
+      "done": "{name} was removed"
     }
   },
   "gp": {
