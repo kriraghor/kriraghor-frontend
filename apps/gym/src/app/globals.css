@@ -34,6 +34,11 @@
   --kg-prize-text: #f8c574;
 }
 
+/* Dark gym: the danger red is light (#ff8a80), so danger buttons take dark text (white was about 2:1). */
+:root:not([data-theme="light"]) [data-theme="gym"] .bg-danger.text-white {
+  color: #111210;
+}
+
 /* The light gym palette (7 Nov 2026): picked with the header toggle (<html data-theme="light">). Lime stays
    the button colour with dark text; lime is too pale for text, borders and focus rings on white, so
    --kg-brand is a deep olive there and .bg-brand keeps the lime. Only this site: the dark gym band on
