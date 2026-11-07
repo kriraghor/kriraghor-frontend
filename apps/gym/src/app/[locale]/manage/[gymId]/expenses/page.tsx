@@ -1,0 +1,20 @@
+import { Suspense } from "react";
+import { setRequestLocale } from "next-intl/server";
+import { Expenses } from "@/components/gym-ops/Expenses";
+
+export const metadata = { title: "Expenses" };
+
+async function Content({ params }: { params: PageProps<"/[locale]/manage/[gymId]/expenses">["params"] }) {
+  const { locale, gymId } = await params;
+  setRequestLocale(locale);
+  return <Expenses gymId={gymId} />;
+}
+
+// Params are request data (cacheComponents): read them inside Suspense.
+export default function Route({ params }: PageProps<"/[locale]/manage/[gymId]/expenses">) {
+  return (
+    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />}>
+      <Content params={params} />
+    </Suspense>
+  );
+}

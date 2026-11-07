@@ -7,11 +7,12 @@ import { ButtonLink, Notice, Skeleton } from "@kriraghor/ui/kit";
 import { featureLocked, gymManage } from "@/lib/gym-manage";
 import { canOpen } from "@/lib/manage-nav";
 import { GymPage, Tile, Upsell, useFmt, useGymError, type GymCtx } from "./common";
+import { EndingSoon, MemberMix } from "../gym-ops/EndingSoon";
 
 /**
  * /manage/[gymId] (M24 §4.1): today at a glance. Check-ins, members, expiring, not seen, requests and
  * dues; the money tiles only when the API sends them (the owner, reports.view). Each tile opens the
- * list behind it.
+ * list behind it. M27: who ends soon, with Call and WhatsApp, and the membership mix.
  */
 export function Dashboard({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
@@ -80,6 +81,12 @@ function Body({ ctx }: { ctx: GymCtx }) {
         <Tile label={t("dash.overdue")} value={f.n(tl.overdueCount)} href={can("fees") ? `${base}/fees?view=overdue` : undefined} tone={tl.overdueCount ? "warn" : "neutral"} />
         {tl.collectedTodayPoisha !== undefined ? <Tile label={t("dash.collectedToday")} value={f.taka(tl.collectedTodayPoisha)} href={can("closing") ? `${base}/fees/closing` : undefined} tone="brand" testId="tile-collected" /> : null}
       </div>
+      {ctx.can("members.view") ? (
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <EndingSoon ctx={ctx} items={o.expiring} />
+          <MemberMix mix={o.mix} />
+        </div>
+      ) : null}
       {featureLocked(o.features, "attendance") ? <Upsell feature="attendance" owner={ctx.owner} /> : null}
     </div>
   );

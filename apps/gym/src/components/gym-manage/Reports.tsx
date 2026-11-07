@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { UserCircleMinus } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Card, Notice, Skeleton } from "@kriraghor/ui/kit";
+import { Button, Card, Field, Notice, Select, Skeleton } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
 import { dhakaToday } from "@/lib/gym-manage";
 import { gymMoney, monthParam } from "@/lib/gym-money";
@@ -54,17 +55,50 @@ function Body({ ctx }: { ctx: GymCtx }) {
   );
 }
 
-/** Members not seen for the gym's absent days (GET reports/absent), most days first. */
+/** Members not seen for the gym's absent days or a chosen 7, 14, 30 or any number of days (GET reports/absent, M27-FR-31), most days first. */
 function Absent({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
   const f = useFmt();
   const err = useGymError();
-  const q = useQuery({ queryKey: ["gm-absent", gymId], queryFn: () => gymMoney.absent(gymId), retry: false });
+  const [days, setDays] = useState<number | null>(null);
+  const [custom, setCustom] = useState("");
+  const q = useQuery({ queryKey: ["gm-absent", gymId, days], queryFn: () => gymMoney.absent(gymId, days ?? undefined), retry: false });
+  const pick = (v: string) => {
+    if (v === "custom") return setCustom(custom || String(q.data?.days ?? ""));
+    setCustom("");
+    setDays(v ? Number(v) : null);
+  };
   return (
     <Card padded={false} className="p-4" data-testid="absent-list">
       <h2 className="flex items-center gap-2 font-display text-lg font-bold">
         <UserCircleMinus size={20} aria-hidden /> {q.data ? t("reports.absent", { days: q.data.days }) : t("reports.absentTitle")}
       </h2>
+      <div className="mt-2 flex flex-wrap items-end gap-2">
+        <Select id="absent-days" label={t("reports.absentFor")} value={custom ? "custom" : days ? String(days) : ""} onChange={(e) => pick(e.target.value)} className="w-44">
+          <option value="">{t("reports.absentGymDays")}</option>
+          {[7, 14, 30].map((n) => (
+            <option key={n} value={n}>
+              {t("reports.absentDaysN", { n })}
+            </option>
+          ))}
+          <option value="custom">{t("reports.absentCustom")}</option>
+        </Select>
+        {custom !== "" ? (
+          <form
+            className="flex items-end gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const n = Number(custom);
+              if (Number.isInteger(n) && n >= 1 && n <= 365) setDays(n);
+            }}
+          >
+            <Field id="absent-custom" label={t("reports.absentDaysLabel")} inputMode="numeric" value={custom} onChange={(e) => setCustom(e.target.value.replace(/\D/g, "").slice(0, 3))} className="w-28" />
+            <Button type="submit" variant="secondary" size="sm">
+              {t("reports.absentShow")}
+            </Button>
+          </form>
+        ) : null}
+      </div>
       {q.isPending ? (
         <Skeleton className="mt-2 h-24" />
       ) : q.isError ? (

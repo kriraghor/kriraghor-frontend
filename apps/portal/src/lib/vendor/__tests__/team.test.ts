@@ -20,6 +20,7 @@ import {
   type CatalogueEntry,
   type TeamBusiness,
 } from "../team";
+import { GYM_PRESET_KEYS, isGymCatalogue, matchingPreset, presetPermissions } from "../team";
 
 // The catalogue GET /me/team answers (business-members.rules PERMISSIONS and REQUIRES).
 const VENUE: CatalogueEntry[] = [
@@ -203,5 +204,34 @@ describe("workplaces", () => {
     expect(allowedOrderActions("accepted", ["orders.view", "orders.ship"])).toEqual(["ship"]);
     expect(allowedOrderActions("shipped", ["orders.view", "orders.deliver"])).toEqual(["deliver"]);
     expect(allowedOrderActions("completed", null)).toEqual([]);
+  });
+});
+
+describe("gym role presets (M27 §3)", () => {
+  const gym = [
+    { key: "desk.admit", default: true, needs: null },
+    { key: "desk.admissions", default: true, needs: null },
+    { key: "attendance.mark", default: true, needs: null },
+    { key: "members.view", default: true, needs: null },
+    { key: "members.edit", default: false, needs: "members.view" },
+    { key: "fees.collect", default: false, needs: "members.view" },
+    { key: "reports.view", default: false, needs: null },
+    { key: "members.trainer", default: false, needs: null },
+    { key: "plans.manage", default: false, needs: null },
+    { key: "expenses.manage", default: false, needs: null },
+    { key: "cash.drawer", default: false, needs: null },
+    { key: "pos.sell", default: false, needs: null },
+    { key: "stock.manage", default: false, needs: null },
+    { key: "lockers.manage", default: false, needs: null },
+  ];
+  it("fills the boxes for a job, keeps only offered keys, and finds the preset back", () => {
+    expect(isGymCatalogue(gym)).toBe(true);
+    expect(isGymCatalogue([{ key: "bookings.view", default: true, needs: null }])).toBe(false);
+    expect(presetPermissions(gym, "cashier").sort()).toEqual(["cash.drawer", "fees.collect", "members.view", "pos.sell"]);
+    expect(presetPermissions(gym, "manager")).toHaveLength(gym.length);
+    expect(presetPermissions(gym.filter((p) => p.key !== "pos.sell"), "storekeeper")).toEqual(["stock.manage"]);
+    expect(matchingPreset(gym, presetPermissions(gym, "accountant"))).toBe("accountant");
+    expect(matchingPreset(gym, ["members.view"])).toBeNull();
+    expect(GYM_PRESET_KEYS).toEqual(["receptionist", "cashier", "trainer", "manager", "accountant", "storekeeper"]);
   });
 });

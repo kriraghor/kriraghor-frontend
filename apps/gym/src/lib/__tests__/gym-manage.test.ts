@@ -25,6 +25,7 @@ import {
   reversible,
   secondsLeft,
   settingsPatch,
+  vatBpsOf,
   shiftMonth,
   packageToSellOnline,
   starterRows,
@@ -285,10 +286,30 @@ describe("receipts (M24-FR-37)", () => {
 });
 
 describe("gym settings: only what changed is sent", () => {
-  const s: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002" };
+  const s: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002", vatEnabled: false, vatBps: null, vatMaxBps: 1500 };
   it("sends nothing for an untouched form, and blank text as null", () => {
     expect(settingsPatch(s, draftOf(s))).toEqual({});
     expect(settingsPatch(s, { ...draftOf(s), shortCode: "pmx", tin: " 123 ", entryPolicy: "block", absentAlertDays: "14", joinRequestsOpen: false })).toEqual({ shortCode: "PMX", tin: "123", entryPolicy: "block", absentAlertDays: 14, joinRequestsOpen: false });
     expect(settingsPatch({ ...s, tin: "1", absentAlertDays: 7 }, { ...draftOf({ ...s, tin: "1", absentAlertDays: 7 }), tin: "", absentAlertDays: "" })).toEqual({ tin: null, absentAlertDays: null });
+  });
+});
+
+describe("VAT on receipts in settings (M27-FR-28)", () => {
+  const base: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002", vatEnabled: false, vatBps: null, vatMaxBps: 1500 };
+  it("reads a percent as basis points", () => {
+    expect(vatBpsOf("15")).toBe(1500);
+    expect(vatBpsOf(" 7.5 ")).toBe(750);
+    expect(vatBpsOf("0")).toBe(0);
+    expect(vatBpsOf("101")).toBeNull();
+    expect(vatBpsOf("15%")).toBeNull();
+  });
+  it("sends the switch and the rate only when they change", () => {
+    expect(settingsPatch(base, { ...draftOf(base), vatEnabled: true, vatPct: "15" })).toEqual({ vatEnabled: true, vatBps: 1500 });
+    const on = { ...base, vatEnabled: true, vatBps: 1500 };
+    expect(draftOf(on).vatPct).toBe("15");
+    expect(settingsPatch(on, draftOf(on))).toEqual({});
+    expect(settingsPatch(on, { ...draftOf(on), vatEnabled: false })).toEqual({ vatEnabled: false });
+    expect(settingsPatch(on, { ...draftOf(on), vatPct: "" })).toEqual({ vatBps: null });
+    expect(settingsPatch(on, { ...draftOf(on), vatPct: "abc" })).toEqual({});
   });
 });

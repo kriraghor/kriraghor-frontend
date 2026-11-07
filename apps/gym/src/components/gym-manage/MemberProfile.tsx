@@ -210,6 +210,14 @@ function Person({ ctx, p }: { ctx: GymCtx; p: Profile }) {
         {m.email ? <Row label={t("member.email")}>{m.email}</Row> : null}
         {m.emergencyContact ? <Row label={t("member.emergency")}>{`${m.emergencyContact.name} · ${m.emergencyContact.phone}`}</Row> : null}
         {m.healthNote ? <Row label={t("member.healthNote")}>{m.healthNote}</Row> : null}
+        {m.bloodGroup ? <Row label={t("health.bloodGroup")}>{m.bloodGroup}</Row> : null}
+        {m.heightCm || m.weightKg ? (
+          <Row label={t("health.body")}>
+            {[m.heightCm ? t("health.cm", { n: f.n(m.heightCm) }) : null, m.weightKg ? t("health.kg", { n: f.n(m.weightKg) }) : null].filter(Boolean).join(" · ")}
+            {m.bmi ? <span className="ml-2 text-xs font-normal text-muted">{t("health.bmiShort", { value: f.n(m.bmi.value), band: t(`health.band.${m.bmi.band}`) })}</span> : null}
+          </Row>
+        ) : null}
+        {m.medical ? <Row label={t("health.medical")}>{m.medical}</Row> : null}
         <Row label={t("profile.account")}>
           {p.link.linked ? (
             <Badge tone="brand">{t("profile.linked")}</Badge>
@@ -256,7 +264,9 @@ function EditDialog({ ctx, p, onClose }: { ctx: GymCtx; p: Profile; onClose: () 
   const t = useTranslations("gm");
   const m = p.member;
   const act = useAct(ctx.gymId, m.id);
-  const [d, setD] = useState({ displayName: m.displayName, phone: "", gender: m.gender ?? "", birthDate: m.birthDate ?? "", email: m.email ?? "", ecName: m.emergencyContact?.name ?? "", ecPhone: m.emergencyContact?.phone ?? "" });
+  const [d, setD] = useState({ displayName: m.displayName, phone: "", gender: m.gender ?? "", birthDate: m.birthDate ?? "", email: m.email ?? "", ecName: m.emergencyContact?.name ?? "", ecPhone: m.emergencyContact?.phone ?? "", bloodGroup: m.bloodGroup ?? "", heightCm: m.heightCm == null ? "" : String(m.heightCm), weightKg: m.weightKg == null ? "" : String(m.weightKg), medical: m.medical ?? "" });
+  // M27-FR-30: the blood group with members.edit; height, weight and conditions only when the API shows them (owner, plans.manage).
+  const showBody = m.heightCm !== undefined;
   const save = async () => {
     const body: Parameters<typeof gymManage.updateMember>[2] = { version: m.version };
     if (d.displayName.trim() !== m.displayName) body.displayName = d.displayName.trim();
@@ -266,6 +276,15 @@ function EditDialog({ ctx, p, onClose }: { ctx: GymCtx; p: Profile; onClose: () 
     if (m.email !== undefined && (d.email.trim() || null) !== (m.email ?? null)) body.email = d.email.trim() || null;
     const ec = d.ecName.trim() && d.ecPhone.trim() ? { name: d.ecName.trim(), phone: d.ecPhone.trim() } : null;
     if (m.emergencyContact !== undefined && JSON.stringify(ec) !== JSON.stringify(m.emergencyContact ?? null)) body.emergencyContact = ec;
+    if (m.bloodGroup !== undefined && (d.bloodGroup || null) !== (m.bloodGroup ?? null)) body.bloodGroup = (d.bloodGroup || null) as typeof body.bloodGroup;
+    if (showBody) {
+      const h = d.heightCm.trim() ? Number(d.heightCm) : null;
+      const w = d.weightKg.trim() ? Number(d.weightKg) : null;
+      if ((h !== null && !(Number.isInteger(h) && h >= 50 && h <= 250)) || (w !== null && !(w >= 10 && w <= 400))) return act.setProblem(t("health.bodyBad"));
+      if (h !== (m.heightCm ?? null)) body.heightCm = h;
+      if (w !== (m.weightKg ?? null)) body.weightKg = w === null ? null : Math.round(w * 10) / 10;
+      if ((d.medical.trim() || null) !== (m.medical ?? null)) body.medical = d.medical.trim() || null;
+    }
     if (Object.keys(body).length === 1) return onClose();
     if (await act.run(() => gymManage.updateMember(ctx.gymId, m.id, body), t("saved"))) onClose();
   };
@@ -304,11 +323,32 @@ function EditDialog({ ctx, p, onClose }: { ctx: GymCtx; p: Profile; onClose: () 
             <Field id="e-ec-phone" type="tel" label={t("member.ecPhone")} value={d.ecPhone} onChange={(e) => setD({ ...d, ecPhone: e.target.value })} />
           </>
         ) : null}
+        {m.bloodGroup !== undefined ? (
+          <Select id="e-blood" label={t("health.bloodGroup")} value={d.bloodGroup} onChange={(e) => setD({ ...d, bloodGroup: e.target.value })}>
+            <option value="">–</option>
+            {BLOOD_GROUPS.map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
+            ))}
+          </Select>
+        ) : null}
+        {showBody ? (
+          <>
+            <div className="grid grid-cols-2 gap-3">
+              <Field id="e-height" label={t("health.height")} inputMode="numeric" value={d.heightCm} onChange={(e) => setD({ ...d, heightCm: e.target.value.replace(/\D/g, "") })} />
+              <Field id="e-weight" label={t("health.weight")} inputMode="decimal" value={d.weightKg} onChange={(e) => setD({ ...d, weightKg: e.target.value.replace(/[^\d.]/g, "") })} />
+            </div>
+            <Textarea id="e-medical" label={t("health.medical")} optional={t("optional")} hint={t("health.medicalHint")} value={d.medical} maxLength={500} onChange={(e) => setD({ ...d, medical: e.target.value })} />
+          </>
+        ) : null}
         {act.problem ? <p role="alert" className="text-sm text-danger">{act.problem}</p> : null}
       </div>
     </Dialog>
   );
 }
+
+const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const;
 
 function InviteDialog({ ctx, memberId, onClose }: { ctx: GymCtx; memberId: string; onClose: () => void }) {
   const t = useTranslations("gm");

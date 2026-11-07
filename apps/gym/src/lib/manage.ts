@@ -49,6 +49,8 @@ export const gymDesk = {
   submit: async (id: string) => unwrap(await api().POST("/me/gyms/{id}/submit", { params: g(id) })),
   pause: async (id: string) => unwrap(await api().POST("/me/gyms/{id}/pause", { params: g(id) })),
   resume: async (id: string) => unwrap(await api().POST("/me/gyms/{id}/resume", { params: g(id) })),
+  /** M20-FR-15: the owner removes the gym (typed name; never deleted). */
+  remove: async (id: string, body: { confirmName: string; reason?: string }) => unwrap(await api().POST("/me/gyms/{id}/remove", { params: g(id), body })),
   redeem: async (id: string, input: { token: string } | { code: string }) => unwrap(await api().POST("/me/gyms/{id}/redemptions", { params: g(id), body: input })),
   admissions: async (id: string, date?: string) => unwrap(await api().GET("/me/gyms/{id}/redemptions", { params: { ...g(id), query: date ? { date } : {} } })),
   sold: async (id: string, status?: Sold["status"]) => unwrap(await api().GET("/me/gyms/{id}/passes", { params: { ...g(id), query: status ? { status } : {} } })),

@@ -68,7 +68,7 @@ function Page({ ctx, r }: { ctx: GymCtx; r: RemindersPage }) {
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold">{t(`reminders.kind.${k.kind}`)}</p>
                   <p className="text-xs text-muted">
-                    {t(`reminders.when.${k.kind}`, { days: r.offsets.remindBeforeDays, overdue: r.offsets.overdueRemindDays.join(", "), time: r.offsets.morningSummaryTime })} · {k.member ? t("reminders.toMember") : t("reminders.toYou")}
+                    {t(`reminders.when.${k.kind}`, { days: r.offsets.renewalRemindDays.map((d) => f.n(d)).join(", "), overdue: r.offsets.overdueRemindDays.join(", "), time: r.offsets.morningSummaryTime })} · {k.member ? t("reminders.toMember") : t("reminders.toYou")}
                   </p>
                 </div>
                 <Switch on={k.on} busy={busy === k.kind} label={t(`reminders.kind.${k.kind}`)} onChange={(on) => void flip(k.kind, on)} testId={`reminder-switch-${k.kind}`} />
@@ -81,7 +81,7 @@ function Page({ ctx, r }: { ctx: GymCtx; r: RemindersPage }) {
           <Card padded={false} className="p-4" data-testid="reminder-offsets">
             <h2 className="font-display text-lg font-bold">{t("reminders.timing")}</h2>
             <div className="mt-1 divide-y divide-line">
-              <Row label={t("reminders.before")}>{t("reminders.days", { n: r.offsets.remindBeforeDays })}</Row>
+              <Row label={t("reminders.before")}>{t("reminders.days", { n: r.offsets.renewalRemindDays.map((d) => f.n(d)).join(", ") })}</Row>
               <Row label={t("reminders.overdueAfter")}>{r.offsets.overdueRemindDays.map((d) => f.n(d)).join(", ")}</Row>
               <Row label={t("reminders.morningAt")}>{r.offsets.morningSummaryTime}</Row>
             </div>

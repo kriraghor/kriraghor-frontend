@@ -197,3 +197,33 @@ export function allowedOrderActions(status: string, permissions: readonly string
   const byStatus: Record<string, ("accept" | "reject" | "ship" | "deliver")[]> = { placed: ["accept", "reject"], accepted: ["ship"], shipped: ["deliver"] };
   return (byStatus[status] ?? []).filter((a) => deskCan(permissions, `orders.${a}`));
 }
+
+/**
+ * Gym role presets (M27 §3, 7 Nov 2026): one tap ticks a usual set for the job, still editable. Only keys
+ * the catalogue offers are kept, and whatever they need is ticked too. "manager" is every gym permission.
+ */
+export const GYM_PRESETS = {
+  receptionist: ["members.view", "members.edit", "attendance.mark", "fees.collect", "desk.admit", "desk.admissions"],
+  cashier: ["members.view", "fees.collect", "cash.drawer", "pos.sell"],
+  trainer: ["members.trainer", "plans.manage", "attendance.mark"],
+  manager: null,
+  accountant: ["reports.view", "expenses.manage", "cash.drawer"],
+  storekeeper: ["stock.manage", "pos.sell"],
+} as const satisfies Record<string, readonly string[] | null>;
+export type GymPreset = keyof typeof GYM_PRESETS;
+export const GYM_PRESET_KEYS = Object.keys(GYM_PRESETS) as GymPreset[];
+
+export function presetPermissions(catalogue: readonly CatalogueEntry[], preset: GymPreset): string[] {
+  const keys = new Set(catalogue.map((p) => p.key));
+  const wanted = GYM_PRESETS[preset];
+  return withRequirements(catalogue, wanted === null ? [...keys] : wanted.filter((k) => keys.has(k)));
+}
+
+/** The preset these permissions match exactly, or null (a custom set). */
+export function matchingPreset(catalogue: readonly CatalogueEntry[], selected: readonly string[]): GymPreset | null {
+  const now = [...selected].sort().join(",");
+  return GYM_PRESET_KEYS.find((k) => presetPermissions(catalogue, k).sort().join(",") === now) ?? null;
+}
+
+/** Is this the gym catalogue (presets apply)? */
+export const isGymCatalogue = (catalogue: readonly CatalogueEntry[]) => catalogue.some((p) => p.key === "attendance.mark");

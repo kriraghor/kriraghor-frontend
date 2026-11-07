@@ -89,15 +89,15 @@ export type MemberInput = {
   membership?: { packageId: string; startsOn: string; admissionFee?: boolean; discountPoisha?: number; discountReason?: string };
   payment?: Payment;
 };
-export type MemberPatch = { version: number; displayName?: string; phone?: string; gender?: "male" | "female" | "other" | null; birthDate?: string | null; email?: string | null; emergencyContact?: { name: string; phone: string } | null };
-export type SettingsPatch = Partial<Pick<GymSettings, "shortCode" | "tin" | "bin" | "receiptFooter" | "entryPolicy" | "absentAlertDays" | "joinRequestsOpen">> & { remindersOff?: NonNullable<NonNullable<paths["/manage/gyms/{gymId}/settings"]["patch"]["requestBody"]>["content"]["application/json"]["remindersOff"]> };
+export type MemberPatch = { version: number; displayName?: string; phone?: string; gender?: "male" | "female" | "other" | null; birthDate?: string | null; email?: string | null; emergencyContact?: { name: string; phone: string } | null; bloodGroup?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | null; heightCm?: number | null; weightKg?: number | null; medical?: string | null };
+export type SettingsPatch = Partial<Pick<GymSettings, "shortCode" | "tin" | "bin" | "receiptFooter" | "entryPolicy" | "absentAlertDays" | "joinRequestsOpen" | "vatEnabled" | "vatBps">> & { remindersOff?: NonNullable<NonNullable<paths["/manage/gyms/{gymId}/settings"]["patch"]["requestBody"]>["content"]["application/json"]["remindersOff"]> };
 export type MembersQuery = { status?: MemberSummary["status"]; due?: "true" | "false"; overdue?: "true" | "false"; expiring?: "true" | "false"; frozen?: "true" | "false"; notSeen?: number; packageId?: string; trainerId?: string; linked?: "true" | "false"; q?: string; cursor?: string; limit?: number };
 export type DuesQuery = { status?: Due["status"]; overdue?: "true" | "false"; dueOn?: string; memberId?: string; cursor?: string; limit?: number };
 
 export const PAY_METHODS: PayMethod[] = ["cash", "owner_bkash", "owner_nagad", "card_counter", "other"];
 export const LEFT_REASONS: LeftReason[] = ["price", "moved", "injury", "other_gym", "schedule", "unknown", "other"];
 export const TIERS: Tier[] = ["free", "basic", "standard", "pro"];
-export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "reports", "trainers", "plans", "multi_gym"];
+export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "reports", "pos", "pnl", "trainers", "plans", "multi_gym"];
 export const KINDS: PackageKind[] = ["month", "quarter", "half_year", "year", "custom"];
 
 const ik = (key: string) => ({ "idempotency-key": key });
@@ -204,6 +204,9 @@ export const gymMe = {
   attendance: async (memberId: string, month?: string) => unwrap(await api().GET("/me/gym-memberships/{memberId}/attendance", { params: { path: { memberId }, query: month ? { month } : {} } })),
   checkinToken: async (memberId: string) => unwrap(await api().GET("/me/gym-memberships/{memberId}/checkin-token", { params: { path: { memberId } } })),
   healthNote: async (memberId: string, text: string | null) => unwrap(await api().PUT("/me/gym-memberships/{memberId}/health-note", { params: { path: { memberId } }, body: { text } })),
+  /** M27-FR-30: my blood group, height, weight and conditions (the API answers with the BMI). */
+  health: async (memberId: string, body: { bloodGroup?: string | null; heightCm?: number | null; weightKg?: number | null; medical?: string | null }) =>
+    unwrap(await api().PUT("/me/gym-memberships/{memberId}/health", { params: { path: { memberId } }, body: body as never })),
   unlink: async (memberId: string) => unwrap(await api().POST("/me/gym-memberships/{memberId}/unlink", { params: { path: { memberId } } })),
   receipts: async () => unwrap(await api().GET("/me/gym-receipts")),
   // M24 prompt 3
@@ -525,8 +528,16 @@ export function receiptState(q: { isPending: boolean; error: unknown; data?: Rec
 // ---------------- settings
 
 /** The settings form as typed (text), from the saved settings. */
-export type SettingsDraft = { shortCode: string; tin: string; bin: string; receiptFooter: string; entryPolicy: GymSettings["entryPolicy"]; absentAlertDays: string; joinRequestsOpen: boolean };
-export const draftOf = (s: GymSettings): SettingsDraft => ({ shortCode: s.shortCode ?? "", tin: s.tin ?? "", bin: s.bin ?? "", receiptFooter: s.receiptFooter ?? "", entryPolicy: s.entryPolicy, absentAlertDays: s.absentAlertDays == null ? "" : String(s.absentAlertDays), joinRequestsOpen: s.joinRequestsOpen });
+export type SettingsDraft = { shortCode: string; tin: string; bin: string; receiptFooter: string; entryPolicy: GymSettings["entryPolicy"]; absentAlertDays: string; joinRequestsOpen: boolean; vatEnabled: boolean; vatPct: string };
+export const draftOf = (s: GymSettings): SettingsDraft => ({ shortCode: s.shortCode ?? "", tin: s.tin ?? "", bin: s.bin ?? "", receiptFooter: s.receiptFooter ?? "", entryPolicy: s.entryPolicy, absentAlertDays: s.absentAlertDays == null ? "" : String(s.absentAlertDays), joinRequestsOpen: s.joinRequestsOpen, vatEnabled: s.vatEnabled, vatPct: s.vatBps == null ? "" : String(s.vatBps / 100) });
+
+/** VAT typed as a percent ("15", "7.5") → basis points, or null when it is not 0–100 with at most 2 decimals (M27-FR-28). */
+export function vatBpsOf(text: string): number | null {
+  const m = /^\s*(\d{1,3})(?:\.(\d{1,2}))?\s*$/.exec(text);
+  if (!m) return null;
+  const bps = Number(m[1]) * 100 + Number((m[2] ?? "").padEnd(2, "0"));
+  return bps <= 10000 ? bps : null;
+}
 
 /** Only what changed, as the PATCH body (blank text → null; the short code in capitals). */
 export function settingsPatch(s: GymSettings, d: SettingsDraft): SettingsPatch {
@@ -540,5 +551,8 @@ export function settingsPatch(s: GymSettings, d: SettingsDraft): SettingsPatch {
   const days = d.absentAlertDays.trim() ? Number(d.absentAlertDays) : null;
   if (days !== s.absentAlertDays) out.absentAlertDays = days;
   if (d.joinRequestsOpen !== s.joinRequestsOpen) out.joinRequestsOpen = d.joinRequestsOpen;
+  if (d.vatEnabled !== s.vatEnabled) out.vatEnabled = d.vatEnabled;
+  const bps = d.vatPct.trim() ? vatBpsOf(d.vatPct) : null;
+  if (bps !== s.vatBps && (bps !== null || !d.vatPct.trim())) out.vatBps = bps;
   return out;
 }
