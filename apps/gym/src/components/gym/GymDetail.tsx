@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GymExtras } from "./GymExtras";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { MapPin } from "@phosphor-icons/react";
@@ -137,6 +138,9 @@ export function GymDetail({ slug }: { slug: string }) {
               ))}
             </ul>
             <p className="mt-4 max-w-3xl text-sm text-muted">{t("refundRule")}</p>
+
+            {/* M27 round 2: the class timetable and "Ask the gym". */}
+            <GymExtras slug={slug} gymName={g.name} />
 
             {/* M20-FR-10, M17-FR-35: one review per member who visited, with the gym's replies. */}
             <SubjectReviews subjectType="gym" subjectId={g.id} testId="gym-reviews" />

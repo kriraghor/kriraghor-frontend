@@ -14,6 +14,7 @@ import { MemberStatus, Row, useFmt, useGymError } from "@/components/gym-manage/
 import { MonthCalendar } from "@/components/gym-manage/MonthCalendar";
 import { ReceiptLink } from "@/components/gym-manage/money";
 import { PayDueButton, useMyDues } from "./MyDues";
+import { MyPointsCard } from "./MyClasses";
 
 /**
  * /me/memberships/[memberId] (M24 §4.1, FR-18): one gym I belong to. Package and period, days left,
@@ -156,6 +157,7 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
           </ul>
         </Card>
         <Calendar memberId={memberId} />
+        {!readOnly ? <MyPointsCard memberId={memberId} /> : null}
         {!readOnly && m.health ? <MyBody memberId={memberId} health={m.health} /> : null}
         {!readOnly ? <HealthNote memberId={memberId} note={m.healthNote ?? null} at={m.healthNoteAt ?? null} /> : null}
         {m.linked ? <Unlink memberId={memberId} gym={m.gym?.name ?? ""} /> : null}

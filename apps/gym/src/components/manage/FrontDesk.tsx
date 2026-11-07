@@ -2,10 +2,11 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { LiveStrip, useDeskFeed, useDuration } from "../gym-ops/DeskFeed";
 import { useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { ArrowLeft, CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
-import { Avatar, Badge, Button, IconButton, Notice, ReasonDialog, Skeleton } from "@kriraghor/ui/kit";
+import { Avatar, Badge, Button, IconButton, Notice, ReasonDialog, Skeleton, useToast } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { cn } from "@kriraghor/ui/cn";
 import { DatePicker } from "@kriraghor/ui/date";
@@ -48,6 +49,23 @@ export function FrontDesk({ id }: { id: string }) {
     refetchInterval: isToday ? 30_000 : false,
     enabled: canList,
   });
+  // M27 round 2: the live feed of comings and goings, and check-out.
+  const feed = useDeskFeed(id);
+  const dur = useDuration();
+  const tgo = useTranslations("go");
+  const toast = useToast();
+  const [leaving, setLeaving] = useState<string | null>(null);
+  const checkOut = async (attendanceId: string) => {
+    setLeaving(attendanceId);
+    try {
+      await gymManage.checkOut(id, attendanceId);
+      await qc.invalidateQueries({ queryKey: ["gm-checkins", id] });
+    } catch (e) {
+      toast.show(gymErr(e), "error");
+    } finally {
+      setLeaving(null);
+    }
+  };
   const checkins = useQuery({ queryKey: ["gm-checkins", id, listDate], queryFn: () => gymManage.checkins(id, isToday ? undefined : listDate), refetchInterval: isToday ? 30_000 : false, enabled: canCheckIn });
 
   const [text, setText] = useState("");
@@ -340,7 +358,19 @@ export function FrontDesk({ id }: { id: string }) {
           <div className="mt-3 grid gap-6 lg:grid-cols-2">
             {canCheckIn ? (
               <div>
-                <h3 className="font-semibold">{tg("desk.checkins", { n: checkins.data?.counted ?? 0 })}</h3>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-semibold">{tg("desk.checkins", { n: checkins.data?.counted ?? 0 })}</h3>
+                  {isToday ? (
+                    <Badge tone="brand" data-testid="desk-in-gym">
+                      {tgo("desk.inGymNow", { n: f.n(feed.inGymNow ?? checkins.data?.inGymNow ?? 0) })}
+                    </Badge>
+                  ) : null}
+                </div>
+                {isToday ? (
+                  <div className="mt-2">
+                    <LiveStrip events={feed.events} />
+                  </div>
+                ) : null}
                 {checkins.isError ? <Notice tone="error">{gymErr(checkins.error)}</Notice> : null}
                 {checkins.data && !checkins.data.items.length ? <p className="mt-2 text-sm text-muted">{tg("desk.noCheckins")}</p> : null}
                 <ul className="mt-2 divide-y divide-line border-y border-line" data-testid="desk-checkins">
@@ -353,6 +383,16 @@ export function FrontDesk({ id }: { id: string }) {
                       {!c.counted ? <Badge>{tg("desk.repeat")}</Badge> : null}
                       {c.decision !== "allow" ? <Badge tone={c.decision === "override" ? "danger" : "warning"}>{tg(`decisionShort.${c.decision}`)}</Badge> : null}
                       <span className="text-xs font-bold uppercase text-muted">{tg(`checkinMethod.${c.method}`)}</span>
+                      {c.checkedOutAt ? (
+                        <span className="text-xs text-muted" data-testid="desk-out-time">
+                          {tgo("desk.outAt", { time: f.time(c.checkedOutAt) })}
+                          {c.visitMinutes != null ? ` · ${dur(c.visitMinutes)}` : ""}
+                        </span>
+                      ) : isToday && c.counted ? (
+                        <Button type="button" size="sm" variant="secondary" onClick={() => void checkOut(c.id)} busy={leaving === c.id} data-testid="desk-checkout">
+                          {tgo("desk.checkOut")}
+                        </Button>
+                      ) : null}
                     </li>
                   ))}
                 </ul>

@@ -16,6 +16,8 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  *  - Packages, Import, Settings and the listing editor: the owner only.
  *  - M27 round 1: Expenses (expenses.manage or reports.view), Cash drawer (cash.drawer or reports.view), Profit and
  *    loss (reports.view), Sell (pos.sell), Stock (stock.manage), Lockers (lockers.manage).
+ *  - M27 round 2: Classes (classes.manage or attendance.mark), Rewards (rewards.redeem), Notices (notices.send),
+ *    Enquiries (leads.manage).
  * Owners also get Billing (their plan), Payouts (online fees and passes) and All-gyms reports. A gym both owned and worked at shows once, as owned. This only
  * shapes the menu: the API enforces every rule (ADR-004); tier-locked pages show an upsell.
  */
@@ -45,7 +47,11 @@ export type ManageKey =
   | "pnl"
   | "sell"
   | "stock"
-  | "lockers";
+  | "lockers"
+  | "classes"
+  | "rewards"
+  | "notices"
+  | "leads";
 /** The owner-wide pages (not one gym's). */
 export type OverviewKey = "gyms" | "billing" | "payouts" | "allReports";
 export type GymPageKey = Exclude<ManageKey, OverviewKey>;
@@ -82,8 +88,13 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   sell: ["pos.sell"],
   stock: ["stock.manage"],
   lockers: ["lockers.manage"],
+  // M27 round 2
+  classes: ["classes.manage", "attendance.mark"],
+  rewards: ["rewards.redeem"],
+  notices: ["notices.send"],
+  leads: ["leads.manage"],
 };
-const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers"];
+const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads"];
 const PATH: Record<GymPageKey, string> = {
   dashboard: "",
   desk: "/desk",
@@ -107,6 +118,10 @@ const PATH: Record<GymPageKey, string> = {
   sell: "/sell",
   stock: "/stock",
   lockers: "/lockers",
+  classes: "/classes",
+  rewards: "/rewards",
+  notices: "/notices",
+  leads: "/leads",
 };
 
 /** May someone with these permissions (null = the owner) open this page? */
@@ -160,11 +175,12 @@ export const canManage = (gyms: readonly ManageGymRef[]) => gyms.some((g) => g.r
 
 // ---------------- one gym at a time (2 Nov 2026) ----------------
 
-export type GymSectionKey = "today" | "people" | "counter" | "money" | "setup";
+export type GymSectionKey = "today" | "people" | "engage" | "counter" | "money" | "setup";
 /** A gym's pages in the sidebar, by what the owner is doing. */
 const SECTIONS: { key: GymSectionKey; pages: GymPageKey[] }[] = [
   { key: "today", pages: ["dashboard", "desk", "entrance", "requests"] },
   { key: "people", pages: ["members", "plans", "reviews"] },
+  { key: "engage", pages: ["classes", "rewards", "notices", "leads"] },
   { key: "counter", pages: ["sell", "stock", "lockers"] },
   { key: "money", pages: ["fees", "closing", "cash", "expenses", "pnl", "passes", "reports"] },
   { key: "setup", pages: ["edit", "packages", "reminders", "import", "settings"] },

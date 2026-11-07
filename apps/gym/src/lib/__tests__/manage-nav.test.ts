@@ -37,13 +37,20 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
       "/manage/g1/sell",
       "/manage/g1/stock",
       "/manage/g1/lockers",
+      "/manage/g1/classes",
+      "/manage/g1/rewards",
+      "/manage/g1/notices",
+      "/manage/g1/leads",
     ]);
     expect(groups.map((g) => g.name)).toEqual([null, "Iron House", "Lift"]);
     expect(groups.every((g) => !g.staff)).toBe(true);
   });
 
   it("staff see the dashboard and only the pages their permissions open, never the owner's pages", () => {
-    expect(gymItems("y1", ["attendance.mark"]).map((i) => i.key)).toEqual(["dashboard", "desk", "entrance"]);
+    expect(gymItems("y1", ["attendance.mark"]).map((i) => i.key)).toEqual(["dashboard", "desk", "entrance", "classes"]);
+    // M27 round 2: classes for whoever runs or marks them; rewards, notices and enquiries each by their own permission.
+    expect(gymItems("y1", ["classes.manage"]).map((i) => i.key)).toEqual(["dashboard", "classes"]);
+    expect(gymItems("y1", ["rewards.redeem", "notices.send", "leads.manage"]).map((i) => i.key)).toEqual(["dashboard", "rewards", "notices", "leads"]);
     expect(gymItems("y1", ["plans.manage"]).map((i) => i.key)).toEqual(["dashboard", "plans"]);
     expect(gymItems("y1", ["desk.admit"]).map((i) => i.key)).toEqual(["dashboard", "desk"]);
     expect(gymItems("y1", ["desk.admissions"]).map((i) => i.key)).toEqual(["dashboard", "desk"]);
@@ -73,7 +80,7 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
   it("staff groups: Billing, Payouts and All-gyms reports are owner-only, a gym with no desk besides the dashboard is left out", () => {
     const groups = manageGroups({ gyms: [work("y1", ["attendance.mark", "fees.collect"], "Moushumi's gym"), work("y2", ["passes.view"]), work("y3", [])] });
     expect(groups[0].items.map((i) => i.key)).toEqual(["gyms"]);
-    expect(hrefs(groups)).toEqual(["/manage", "/manage/y1", "/manage/y1/desk", "/manage/y1/entrance", "/manage/y1/fees", "/manage/y1/fees/closing", "/manage/y2", "/manage/y2/passes"]);
+    expect(hrefs(groups)).toEqual(["/manage", "/manage/y1", "/manage/y1/desk", "/manage/y1/entrance", "/manage/y1/fees", "/manage/y1/fees/closing", "/manage/y1/classes", "/manage/y2", "/manage/y2/passes"]);
     expect(groups.slice(1).map((g) => [g.gymId, g.name, g.staff])).toEqual([
       ["y1", "Moushumi's gym", true],
       ["y2", null, true],
@@ -125,7 +132,7 @@ describe("/manage one gym at a time", () => {
 
   it("groups an owner's pages into sections, with every page once", () => {
     const sections = gymSections(g1.items);
-    expect(sections.map((x) => x.key)).toEqual(["today", "people", "counter", "money", "setup"]);
+    expect(sections.map((x) => x.key)).toEqual(["today", "people", "engage", "counter", "money", "setup"]);
     expect(sections.flatMap((x) => x.items.map((i) => i.key)).sort()).toEqual(g1.items.map((i) => i.key).sort());
     expect(sections[0].items.map((i) => i.key)).toEqual(["dashboard", "desk", "entrance", "requests"]);
   });
