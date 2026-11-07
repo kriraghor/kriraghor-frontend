@@ -31,6 +31,12 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
       "/manage/g1/edit",
       "/manage/g1/passes",
       "/manage/g1/reviews",
+      "/manage/g1/expenses",
+      "/manage/g1/cash",
+      "/manage/g1/pnl",
+      "/manage/g1/sell",
+      "/manage/g1/stock",
+      "/manage/g1/lockers",
     ]);
     expect(groups.map((g) => g.name)).toEqual([null, "Iron House", "Lift"]);
     expect(groups.every((g) => !g.staff)).toBe(true);
@@ -45,8 +51,13 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
     expect(gymItems("y1", ["members.trainer"]).map((i) => i.key)).toEqual(["dashboard", "members"]);
     expect(gymItems("y1", ["members.view", "fees.collect"]).map((i) => i.key)).toEqual(["dashboard", "members", "requests", "fees", "closing"]);
     expect(gymItems("y1", ["passes.view"]).map((i) => i.key)).toEqual(["dashboard", "passes"]);
-    expect(gymItems("y1", ["reports.view"]).map((i) => i.key)).toEqual(["dashboard", "reports"]);
-    expect(gymItems("y1", ["fees.collect", "reports.view"]).map((i) => i.key)).toEqual(["dashboard", "fees", "closing", "reports"]);
+    expect(gymItems("y1", ["reports.view"]).map((i) => i.key)).toEqual(["dashboard", "reports", "expenses", "cash", "pnl"]);
+    // M27 round 1: each counter desk on its own permission.
+    expect(gymItems("y1", ["cash.drawer", "pos.sell"]).map((i) => i.key)).toEqual(["dashboard", "cash", "sell"]);
+    expect(gymItems("y1", ["stock.manage"]).map((i) => i.key)).toEqual(["dashboard", "stock"]);
+    expect(gymItems("y1", ["lockers.manage"]).map((i) => i.key)).toEqual(["dashboard", "lockers"]);
+    expect(gymItems("y1", ["expenses.manage"]).map((i) => i.key)).toEqual(["dashboard", "expenses"]);
+    expect(gymItems("y1", ["fees.collect", "reports.view"]).map((i) => i.key)).toEqual(["dashboard", "fees", "closing", "reports", "expenses", "cash", "pnl"]);
     expect(gymItems("y1", ["attendance.mark", "members.view", "members.edit", "fees.collect", "fees.adjust", "reports.view", "passes.view"]).some((i) => ["reminders", "packages", "import", "settings", "edit", "reviews"].includes(i.key))).toBe(false);
     for (const page of ["reminders", "packages", "import", "settings", "edit", "reviews"] as const) {
       expect(canOpen(page, ["attendance.mark", "members.edit", "fees.adjust"])).toBe(false);
@@ -114,7 +125,7 @@ describe("/manage one gym at a time", () => {
 
   it("groups an owner's pages into sections, with every page once", () => {
     const sections = gymSections(g1.items);
-    expect(sections.map((x) => x.key)).toEqual(["today", "people", "money", "setup"]);
+    expect(sections.map((x) => x.key)).toEqual(["today", "people", "counter", "money", "setup"]);
     expect(sections.flatMap((x) => x.items.map((i) => i.key)).sort()).toEqual(g1.items.map((i) => i.key).sort());
     expect(sections[0].items.map((i) => i.key)).toEqual(["dashboard", "desk", "entrance", "requests"]);
   });

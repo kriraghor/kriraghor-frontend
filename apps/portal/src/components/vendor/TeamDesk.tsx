@@ -11,8 +11,12 @@ import {
   addableBusinesses,
   businessKey,
   defaultPermissions,
+  GYM_PRESET_KEYS,
+  isGymCatalogue,
   lockedPermissions,
+  matchingPreset,
   membersPerBusiness,
+  presetPermissions,
   samePermissions,
   staffErrorKey,
   team,
@@ -23,6 +27,7 @@ import {
   type TeamBusiness,
   type TeamMember,
 } from "@/lib/vendor/team";
+import { cn } from "@kriraghor/ui/cn";
 import { MePanel } from "../MePanel";
 
 const ICON: Record<BusinessType, typeof SoccerBall> = { venue: SoccerBall, gym: Barbell, shop: Storefront };
@@ -234,6 +239,7 @@ function PermissionPicker({ catalogue, value, onChange, idPrefix }: { catalogue:
     <fieldset className="flex flex-col" data-testid="permission-picker">
       <legend className="text-sm font-semibold">{t("permissions")}</legend>
       <p className="mb-1 text-sm text-muted">{t("permissionsHelp")}</p>
+      {isGymCatalogue(catalogue) ? <GymPresets catalogue={catalogue} value={value} onChange={onChange} /> : null}
       {catalogue.map((p) => {
         const id = `${idPrefix}-${p.key.replace(/\W/g, "-")}`;
         const isLocked = locked.has(p.key);
@@ -261,6 +267,34 @@ function PermissionPicker({ catalogue, value, onChange, idPrefix }: { catalogue:
       })}
       <p className="mt-2 text-sm text-muted">{t("neverNote")}</p>
     </fieldset>
+  );
+}
+
+/** M27: one tap fills the boxes for a usual gym job (receptionist, cashier …); the boxes stay editable. */
+function GymPresets({ catalogue, value, onChange }: { catalogue: CatalogueEntry[]; value: string[]; onChange: (v: string[]) => void }) {
+  const t = useTranslations("team");
+  const current = matchingPreset(catalogue, value);
+  return (
+    <div className="mb-2 flex flex-col gap-1.5" data-testid="gym-presets">
+      <span className="text-sm text-muted">{t("presets.label")}</span>
+      <div className="flex flex-wrap gap-2" role="group" aria-label={t("presets.label")}>
+        {GYM_PRESET_KEYS.map((k) => (
+          <button
+            key={k}
+            type="button"
+            aria-pressed={current === k}
+            onClick={() => onChange(presetPermissions(catalogue, k))}
+            className={cn(
+              "min-h-9 rounded-pill border px-3 text-sm font-semibold transition-colors",
+              current === k ? "border-brand bg-brand-soft text-brand-text" : "border-line-strong/60 hover:bg-surface-2",
+            )}
+            data-testid={`preset-${k}`}
+          >
+            {t(`presets.${k}`)}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 

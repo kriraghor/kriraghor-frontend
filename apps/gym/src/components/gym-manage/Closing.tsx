@@ -7,7 +7,9 @@ import { CaretLeft, CaretRight, Printer } from "@phosphor-icons/react";
 import { Badge, Button, Card, IconButton, Notice, Skeleton } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { DatePicker } from "@kriraghor/ui/date";
-import { addDays, dhakaToday, gymManage } from "@/lib/gym-manage";
+import { addDays, dhakaToday, featureLocked, gymManage } from "@/lib/gym-manage";
+import { canOpen } from "@/lib/manage-nav";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { GymPage, Row, useFmt, useGymError, type GymCtx } from "./common";
 import { ReceiptLink } from "./money";
 
@@ -46,6 +48,11 @@ function Body({ ctx }: { ctx: GymCtx }) {
         <Button type="button" variant="secondary" icon={<Printer size={18} aria-hidden />} onClick={() => window.print()} data-testid="closing-print">
           {t("closing.print")}
         </Button>
+        {canOpen("cash", ctx.perms) && !featureLocked(ctx.gym.features, "expenses") ? (
+          <Link href={`/manage/${ctx.gymId}/cash`} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text underline-offset-4 hover:underline" data-testid="closing-drawer">
+            {t("closing.drawer")}
+          </Link>
+        ) : null}
       </div>
       {q.isPending ? (
         <Skeleton className="h-64 rounded-card" />

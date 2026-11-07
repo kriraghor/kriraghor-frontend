@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowSquareOut, BellRinging, Barbell, CashRegister, ChartBar, ChartLineUp, ClipboardText, CreditCard, DoorOpen, Gear, Package, PencilSimple, PresentationChart, QrCode, Receipt, Star, Ticket, Tray, UploadSimple, UsersThree, Wallet } from "@phosphor-icons/react";
+import { Archive, ArrowSquareOut, BellRinging, Barbell, CashRegister, ChartBar, ChartLineUp, ChartPieSlice, ClipboardText, CreditCard, DoorOpen, Gear, Lockers, Package, PencilSimple, PresentationChart, QrCode, Receipt, ShoppingCart, Star, Ticket, Tray, UploadSimple, UsersThree, Vault, Wallet } from "@phosphor-icons/react";
 import { publicEnv } from "@kriraghor/session/env";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
@@ -34,6 +34,12 @@ const ICON: Record<ManageItem["key"], typeof Barbell> = {
   edit: PencilSimple,
   passes: Ticket,
   reviews: Star,
+  expenses: Wallet,
+  cash: Vault,
+  pnl: ChartPieSlice,
+  sell: ShoppingCart,
+  stock: Archive,
+  lockers: Lockers,
 };
 const EXACT = new Set<ManageItem["key"]>(["gyms", "dashboard", "fees"]);
 

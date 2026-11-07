@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Button, Card, Checkbox, Field, Notice, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { draftOf, gymManage, settingsPatch, SHORT_CODE, type GymSettings, type SettingsDraft as Draft } from "@/lib/gym-manage";
+import { draftOf, gymManage, settingsPatch, SHORT_CODE, vatBpsOf, type GymSettings, type SettingsDraft as Draft } from "@/lib/gym-manage";
 import { GymPage, useGymError, type GymCtx } from "./common";
 import { RemoveGym } from "./RemoveGym";
 
@@ -52,6 +52,9 @@ function Fields({ ctx, s }: { ctx: GymCtx; s: GymSettings }) {
     setProblem(null);
     if (!codeOk) return setProblem(t("settings.codeHint"));
     if (d.absentAlertDays.trim() && !/^\d{1,3}$/.test(d.absentAlertDays.trim())) return setProblem(t("settings.daysBad"));
+    const vat = d.vatPct.trim() ? vatBpsOf(d.vatPct) : null;
+    if (d.vatPct.trim() && (vat == null || vat > s.vatMaxBps)) return setProblem(t("settings.vatBad", { max: s.vatMaxBps / 100 }));
+    if (d.vatEnabled && vat == null) return setProblem(t("settings.vatNeeded"));
     const body = settingsPatch(s, d);
     if (!Object.keys(body).length) return toast.show(t("settings.nothing"), "info");
     setBusy(true);
@@ -100,6 +103,19 @@ function Fields({ ctx, s }: { ctx: GymCtx; s: GymSettings }) {
         </Select>
         <Field id="s-absent" label={t("settings.absentDays")} optional={t("settings.default", { n: s.absentAlertDaysDefault })} inputMode="numeric" value={d.absentAlertDays} onChange={(e) => setD({ ...d, absentAlertDays: e.target.value })} />
         <Checkbox id="s-join" label={t("settings.joinRequests")} checked={d.joinRequestsOpen} onChange={(e) => setD({ ...d, joinRequestsOpen: e.target.checked })} className="sm:col-span-2" />
+      </Card>
+      <Card className="grid gap-3 sm:grid-cols-2" data-testid="settings-vat">
+        <h2 className="font-display text-lg font-bold sm:col-span-2">{t("settings.vat")}</h2>
+        <p className="text-sm text-muted sm:col-span-2">{t("settings.vatHint")}</p>
+        <Checkbox id="s-vat-on" label={t("settings.vatOn")} checked={d.vatEnabled} onChange={(e) => setD({ ...d, vatEnabled: e.target.checked })} className="sm:col-span-2" />
+        {d.vatEnabled ? (
+          <Field id="s-vat" label={t("settings.vatRate")} inputMode="decimal" value={d.vatPct} onChange={(e) => setD({ ...d, vatPct: e.target.value })} hint={t("settings.vatRateHint", { max: s.vatMaxBps / 100 })} data-testid="s-vat" />
+        ) : null}
+        {d.vatEnabled && !d.bin.trim() ? (
+          <Notice tone="warning" className="sm:col-span-2">
+            {t("settings.vatBin")}
+          </Notice>
+        ) : null}
       </Card>
       {problem ? <Notice tone="error">{problem}</Notice> : null}
       <div className="flex flex-wrap items-center gap-3">

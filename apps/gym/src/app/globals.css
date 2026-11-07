@@ -111,4 +111,11 @@
     top: 0;
     width: 100%;
   }
+  /* M27-FR-20: a counter receipt on an 80 mm thermal roll prints 72 mm wide (the printable width); choose
+     the roll printer in the print dialog, its driver sets the paper length. */
+  body:has(.print-area) .print-area.receipt-80 {
+    width: 72mm;
+    padding: 0;
+    box-shadow: none;
+  }
 }

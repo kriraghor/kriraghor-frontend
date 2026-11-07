@@ -48,7 +48,8 @@ export const gymMoney = {
   // Reminders (owner) and reports (reports.view; exports owner)
   reminders: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/reminders", { params: G(gymId) })),
   report: async (gymId: string, period: Period) => unwrap(await api().GET("/manage/gyms/{gymId}/reports", { params: { ...G(gymId), query: period } })),
-  absent: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/reports/absent", { params: G(gymId) })),
+  /** M27-FR-31: not seen for `days` (1–365); the gym's own absent days when left out. */
+  absent: async (gymId: string, days?: number) => unwrap(await api().GET("/manage/gyms/{gymId}/reports/absent", { params: { ...G(gymId), query: days ? { days } : {} } })),
   allReports: async (period: Period) => unwrap(await api().GET("/manage/reports", { params: { query: period } })),
   // The owner's invoices
   invoices: async () => unwrap(await api().GET("/manage/billing/invoices")),

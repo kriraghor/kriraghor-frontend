@@ -66727,6 +66727,26 @@ export interface components {
                 /** @description Owner and reports.view only */
                 dueTodayPoisha?: number;
             };
+            /** @description Memberships ending within gym_manage.expiring_list_days, not yet renewed (members.view; empty otherwise); at most 50 */
+            expiring: {
+                /** Format: uuid */
+                memberId: string;
+                memberCode: string;
+                displayName: string;
+                phoneLast4: string;
+                /** Format: date */
+                endsOn: string;
+                daysLeft: number;
+                linked: boolean;
+            }[];
+            /** @description Members by status (removed left out) */
+            mix: {
+                active: number;
+                frozen: number;
+                expired: number;
+                new: number;
+                left: number;
+            };
         };
         GymManagePackages: {
             items: {
@@ -67785,6 +67805,17 @@ export interface components {
                 healthNote?: string | null;
                 /** Format: date-time */
                 healthNoteAt?: string | null;
+                /** @description M27-FR-30: my own health fields and BMI (linked members) */
+                health?: {
+                    /** Format: uuid */
+                    memberId: string;
+                    /** @enum {string|null} */
+                    bloodGroup: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | null;
+                    heightCm: number | null;
+                    weightKg: number | null;
+                    bmi: components["schemas"]["GymBmi"];
+                    medical: string | null;
+                };
             };
             memberships: components["schemas"]["GymMembership"][];
             dues: components["schemas"]["GymDue"][];
@@ -67809,6 +67840,11 @@ export interface components {
                 memberCode?: string;
             }[];
         };
+        GymBmi: {
+            value: number;
+            /** @enum {string} */
+            band: "under" | "normal" | "over" | "obese";
+        } | null;
         GymCheckinToken: {
             /** Format: uuid */
             memberId: string;
@@ -67832,11 +67868,6 @@ export interface components {
             bmi: components["schemas"]["GymBmi"];
             medical: string | null;
         };
-        GymBmi: {
-            value: number;
-            /** @enum {string} */
-            band: "under" | "normal" | "over" | "obese";
-        } | null;
         MyGymReceipts: {
             items: {
                 /** Format: uuid */

@@ -7,7 +7,7 @@ import { ArrowLeft, ClipboardText, QrCode, Snowflake } from "@phosphor-icons/rea
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard } from "@kriraghor/ui/account";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
-import { Badge, Button, ButtonLink, Card, Dialog, Notice, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, ButtonLink, Card, Dialog, Field, Notice, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { dhakaToday, gymMe, monthOf, type Due, type Membership } from "@/lib/gym-manage";
 import { MemberStatus, Row, useFmt, useGymError } from "@/components/gym-manage/common";
@@ -156,6 +156,7 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
           </ul>
         </Card>
         <Calendar memberId={memberId} />
+        {!readOnly && m.health ? <MyBody memberId={memberId} health={m.health} /> : null}
         {!readOnly ? <HealthNote memberId={memberId} note={m.healthNote ?? null} at={m.healthNoteAt ?? null} /> : null}
         {m.linked ? <Unlink memberId={memberId} gym={m.gym?.name ?? ""} /> : null}
       </div>
@@ -171,6 +172,72 @@ function Calendar({ memberId }: { memberId: string }) {
     <Card padded={false} className="p-4">
       <h2 className="mb-2 font-display text-lg font-bold">{t("profile.checkins")}</h2>
       <MonthCalendar month={month} onMonth={setMonth} days={(q.data?.days ?? []).map((d) => d.date)} count={q.data?.count ?? 0} />
+    </Card>
+  );
+}
+
+type Health = NonNullable<Awaited<ReturnType<typeof gymMe.membership>>["member"]["health"]>;
+const BLOOD = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const;
+
+/**
+ * My body (M27-FR-30): blood group, height and weight with the BMI, and conditions or injuries for my
+ * trainer. Only I, the gym owner and trainers who write my plans see height, weight and conditions; the
+ * desk sees the blood group (for an emergency).
+ */
+function MyBody({ memberId, health }: { memberId: string; health: Health }) {
+  const t = useTranslations("gm");
+  const f = useFmt();
+  const err = useGymError();
+  const qc = useQueryClient();
+  const toast = useToast();
+  const [d, setD] = useState({ bloodGroup: health.bloodGroup ?? "", heightCm: health.heightCm == null ? "" : String(health.heightCm), weightKg: health.weightKg == null ? "" : String(health.weightKg), medical: health.medical ?? "" });
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState<string | null>(null);
+  const save = async () => {
+    const h = d.heightCm.trim() ? Number(d.heightCm) : null;
+    const w = d.weightKg.trim() ? Math.round(Number(d.weightKg) * 10) / 10 : null;
+    if ((h !== null && !(Number.isInteger(h) && h >= 50 && h <= 250)) || (w !== null && !(w >= 10 && w <= 400))) return setProblem(t("health.bodyBad"));
+    setBusy(true);
+    setProblem(null);
+    try {
+      await gymMe.health(memberId, { bloodGroup: (d.bloodGroup || null) as Health["bloodGroup"], heightCm: h, weightKg: w, medical: d.medical.trim() || null });
+      await qc.invalidateQueries({ queryKey: ["my-gym-membership", memberId] });
+      toast.show(t("saved"));
+    } catch (e) {
+      setProblem(err(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Card padded={false} className="flex flex-col gap-3 p-4" data-testid="me-body">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 className="font-display text-lg font-bold">{t("health.mine")}</h2>
+        {health.bmi ? (
+          <span className="text-sm">
+            {t("health.bmi")} <span className="font-display text-xl font-extrabold tabular-nums">{f.n(health.bmi.value)}</span>{" "}
+            <Badge tone={health.bmi.band === "normal" ? "brand" : "warning"}>{t(`health.band.${health.bmi.band}`)}</Badge>
+          </span>
+        ) : null}
+      </div>
+      <p className="text-sm text-muted">{t("health.mineBody")}</p>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <Select id="my-blood" label={t("health.bloodGroup")} value={d.bloodGroup} onChange={(e) => setD({ ...d, bloodGroup: e.target.value })}>
+          <option value="">–</option>
+          {BLOOD.map((b) => (
+            <option key={b} value={b}>
+              {b}
+            </option>
+          ))}
+        </Select>
+        <Field id="my-height" label={t("health.height")} inputMode="numeric" value={d.heightCm} onChange={(e) => setD({ ...d, heightCm: e.target.value.replace(/\D/g, "") })} />
+        <Field id="my-weight" label={t("health.weight")} inputMode="decimal" value={d.weightKg} onChange={(e) => setD({ ...d, weightKg: e.target.value.replace(/[^\d.]/g, "") })} />
+      </div>
+      <Textarea id="my-medical" label={t("health.medical")} optional={t("optional")} hint={t("health.mineMedicalHint")} value={d.medical} maxLength={500} onChange={(e) => setD({ ...d, medical: e.target.value })} />
+      {problem ? <p role="alert" className="text-sm text-danger">{problem}</p> : null}
+      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} className="self-start" data-testid="body-save">
+        {t("save")}
+      </Button>
     </Card>
   );
 }
