@@ -203,12 +203,12 @@ export function allowedOrderActions(status: string, permissions: readonly string
  * the catalogue offers are kept, and whatever they need is ticked too. "manager" is every gym permission.
  */
 export const GYM_PRESETS = {
-  receptionist: ["members.view", "members.edit", "attendance.mark", "fees.collect", "desk.admit", "desk.admissions"],
-  cashier: ["members.view", "fees.collect", "cash.drawer", "pos.sell"],
-  trainer: ["members.trainer", "plans.manage", "attendance.mark"],
+  receptionist: ["members.view", "members.edit", "attendance.mark", "fees.collect", "desk.admit", "desk.admissions", "clock.in"],
+  cashier: ["members.view", "fees.collect", "cash.drawer", "pos.sell", "clock.in"],
+  trainer: ["members.trainer", "plans.manage", "attendance.mark", "clock.in"],
   manager: null,
-  accountant: ["reports.view", "expenses.manage", "cash.drawer"],
-  storekeeper: ["stock.manage", "pos.sell"],
+  accountant: ["reports.view", "expenses.manage", "cash.drawer", "clock.in"],
+  storekeeper: ["stock.manage", "pos.sell", "clock.in"],
 } as const satisfies Record<string, readonly string[] | null>;
 export type GymPreset = keyof typeof GYM_PRESETS;
 export const GYM_PRESET_KEYS = Object.keys(GYM_PRESETS) as GymPreset[];

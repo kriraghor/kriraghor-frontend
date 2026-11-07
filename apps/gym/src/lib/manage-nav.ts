@@ -18,6 +18,8 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  *    loss (reports.view), Sell (pos.sell), Stock (stock.manage), Lockers (lockers.manage).
  *  - M27 round 2: Classes (classes.manage or attendance.mark), Rewards (rewards.redeem), Notices (notices.send),
  *    Enquiries (leads.manage).
+ *  - M27 round 3: Staff attendance (shifts.manage or reports.view), Payroll (the owner only), Equipment
+ *    (assets.manage or reports.view), and My work for staff with clock.in (my clock and payslips; never the owner).
  * Owners also get Billing (their plan), Payouts (online fees and passes) and All-gyms reports. A gym both owned and worked at shows once, as owned. This only
  * shapes the menu: the API enforces every rule (ADR-004); tier-locked pages show an upsell.
  */
@@ -51,7 +53,11 @@ export type ManageKey =
   | "classes"
   | "rewards"
   | "notices"
-  | "leads";
+  | "leads"
+  | "staff"
+  | "payroll"
+  | "equipment"
+  | "mywork";
 /** The owner-wide pages (not one gym's). */
 export type OverviewKey = "gyms" | "billing" | "payouts" | "allReports";
 export type GymPageKey = Exclude<ManageKey, OverviewKey>;
@@ -93,8 +99,15 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   rewards: ["rewards.redeem"],
   notices: ["notices.send"],
   leads: ["leads.manage"],
+  // M27 round 3: staff attendance, payroll (the owner only), equipment, and each staff member's own clock and payslips
+  staff: ["shifts.manage", "reports.view"],
+  payroll: null,
+  equipment: ["assets.manage", "reports.view"],
+  mywork: ["clock.in"],
 };
-const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads"];
+/** Pages for staff only: the owner does not clock in or get payslips. */
+const STAFF_ONLY = new Set<GymPageKey>(["mywork"]);
+const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads", "staff", "payroll", "equipment", "mywork"];
 const PATH: Record<GymPageKey, string> = {
   dashboard: "",
   desk: "/desk",
@@ -122,11 +135,15 @@ const PATH: Record<GymPageKey, string> = {
   rewards: "/rewards",
   notices: "/notices",
   leads: "/leads",
+  staff: "/staff",
+  payroll: "/payroll",
+  equipment: "/equipment",
+  mywork: "/my-work",
 };
 
 /** May someone with these permissions (null = the owner) open this page? */
 export function canOpen(page: GymPageKey, permissions: readonly string[] | null): boolean {
-  if (permissions === null) return true;
+  if (permissions === null) return !STAFF_ONLY.has(page);
   const needs = PAGE_NEEDS[page];
   if (needs === null) return false;
   return needs.length === 0 || needs.some((p) => permissions.includes(p));
@@ -175,14 +192,15 @@ export const canManage = (gyms: readonly ManageGymRef[]) => gyms.some((g) => g.r
 
 // ---------------- one gym at a time (2 Nov 2026) ----------------
 
-export type GymSectionKey = "today" | "people" | "engage" | "counter" | "money" | "setup";
+export type GymSectionKey = "today" | "people" | "engage" | "counter" | "money" | "team" | "setup";
 /** A gym's pages in the sidebar, by what the owner is doing. */
 const SECTIONS: { key: GymSectionKey; pages: GymPageKey[] }[] = [
-  { key: "today", pages: ["dashboard", "desk", "entrance", "requests"] },
+  { key: "today", pages: ["dashboard", "mywork", "desk", "entrance", "requests"] },
   { key: "people", pages: ["members", "plans", "reviews"] },
   { key: "engage", pages: ["classes", "rewards", "notices", "leads"] },
   { key: "counter", pages: ["sell", "stock", "lockers"] },
   { key: "money", pages: ["fees", "closing", "cash", "expenses", "pnl", "passes", "reports"] },
+  { key: "team", pages: ["staff", "payroll", "equipment"] },
   { key: "setup", pages: ["edit", "packages", "reminders", "import", "settings"] },
 ];
 /** The /manage pages that are not one gym's. */

@@ -759,6 +759,27 @@
       },
       "lockers": {
         "manage": "Rent lockers and take locker fees"
+      },
+      "classes": {
+        "manage": "Run classes: times, bookings and attendance"
+      },
+      "rewards": {
+        "redeem": "Redeem members' reward points at the desk"
+      },
+      "notices": {
+        "send": "Send notices to groups of members"
+      },
+      "leads": {
+        "manage": "Follow up enquiries from the gym page"
+      },
+      "clock": {
+        "in": "Clock in and out with the entrance QR"
+      },
+      "shifts": {
+        "manage": "Set staff shifts and clock staff in at the desk"
+      },
+      "assets": {
+        "manage": "Keep the equipment register: services and repairs"
       }
     },
     "none": "Nothing yet",
