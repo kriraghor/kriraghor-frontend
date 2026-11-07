@@ -12,6 +12,7 @@ import { cn } from "@kriraghor/ui/cn";
 import { addDays, gymMe, type MyPlanItem, type MyPlans as MyPlansData, type PlanContent } from "@/lib/gym-manage";
 import { groupsOn, latestTicks, progressOn, textOf, tickKey, todayFirst, type Bilingual } from "@/lib/plans";
 import { useFmt, useGymError } from "@/components/gym-manage/common";
+import { ExerciseSteps } from "@/components/gym-ops/ExerciseLibrary";
 
 const KEY = ["my-gym-plans"] as const;
 type Ticks = Map<string, { done: boolean; note: string | null }>;
@@ -57,6 +58,7 @@ function ItemFacts({ content, itemRef }: { content: PlanContent; itemRef: string
             <PlayCircle size={16} aria-hidden /> {t("video")}
           </a>
         ) : null}
+        {x.exerciseKey ? <ExerciseSteps exerciseKey={x.exerciseKey} /> : null}
       </span>
     );
   }

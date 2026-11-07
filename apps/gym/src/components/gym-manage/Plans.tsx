@@ -33,6 +33,7 @@ import {
   type WorkoutDay,
 } from "@/lib/plans";
 import { GymPage, MemberStatus, useFmt, useGymError, type GymCtx } from "./common";
+import { ExercisePick } from "../gym-ops/ExerciseLibrary";
 
 const KINDS: PlanKind[] = ["workout", "diet"];
 const KIND_ICON = { workout: Barbell, diet: ForkKnife } as const;
@@ -666,6 +667,11 @@ function ExerciseRow({ x, invalid, onChange, onUp, onDown, onRemove }: { x: Exer
         </div>
         <RowTools onUp={onUp} onDown={onDown} onRemove={onRemove} removeLabel={t("removeItem")} />
       </div>
+      <ExercisePick
+        linkedKey={x.exerciseKey}
+        onPick={(lib) => onChange({ ...x, exerciseKey: lib.key, name: { en: lib.nameEn, bn: lib.nameBn }, videoUrl: x.videoUrl || lib.videoUrl })}
+        onUnlink={() => onChange({ ...x, exerciseKey: null })}
+      />
       <div className="grid grid-cols-3 gap-3">
         <Field id={`${id}-sets`} label={t("sets")} inputMode="numeric" value={numText(x.sets)} onChange={(e) => onChange({ ...x, sets: intOrNull(e.target.value, 50) })} />
         <Field id={`${id}-reps`} label={t("reps")} value={x.reps ?? ""} maxLength={20} placeholder="8-10" onChange={(e) => onChange({ ...x, reps: e.target.value })} />

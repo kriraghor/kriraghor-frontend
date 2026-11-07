@@ -9,12 +9,13 @@ import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { Button, Card, Notice } from "@kriraghor/ui/kit";
-import { gymMe, type EntranceCheckin } from "@/lib/gym-manage";
+import { gymMe, type EntranceCheckin, type EntranceCheckout } from "@/lib/gym-manage";
+import { useDuration } from "@/components/gym-ops/DeskFeed";
 import { entranceTokenFrom } from "@/lib/plans";
 import { canScan, useQrScanner } from "@/components/QrScanner";
 import { useFmt, useGymError } from "@/components/gym-manage/common";
 
-type Result = { ok: true; c: EntranceCheckin } | { ok: false; message: string };
+type Result = { ok: true; c: EntranceCheckin } | { ok: true; out: EntranceCheckout } | { ok: false; message: string };
 
 /**
  * The entrance self check-in on /me/checkin (M24-FR-51): the gym's tablet at the door shows a QR that
@@ -28,6 +29,8 @@ export function EntranceScan() {
   const tg = useTranslations("gm");
   const f = useFmt();
   const err = useGymError();
+  const dur = useDuration();
+  const tgo = useTranslations("go");
   const qc = useQueryClient();
   const { status } = useAuth();
   const params = useSearchParams();
@@ -46,8 +49,9 @@ export function EntranceScan() {
       sent.current = token;
       setBusy(true);
       try {
-        const c = await gymMe.entranceCheckin(token);
-        setResult({ ok: true, c });
+        const r = await gymMe.entranceCheckin(token);
+        // M27-FR-41: a second scan after the minimum visit is a check-out.
+        setResult(r.checkedOut === true ? { ok: true, out: r } : { ok: true, c: r as EntranceCheckin });
         setCamera("off");
         void qc.invalidateQueries({ queryKey: ["my-gym-memberships"] });
       } catch (e) {
@@ -83,7 +87,14 @@ export function EntranceScan() {
         <DoorOpen size={22} aria-hidden /> {t("title")}
       </h2>
       <p className="text-sm text-muted">{t("lead")}</p>
-      {result?.ok ? (
+      {result?.ok && "out" in result ? (
+        <Notice tone="info" title={tgo("desk.byeTitle", { gym: result.out.gym?.name ?? "" })}>
+          <span data-testid="entrance-result">
+            {tgo("desk.byeBody", { time: f.time(result.out.checkedOutAt) })}
+            {result.out.visitMinutes != null ? ` · ${dur(result.out.visitMinutes)}` : ""}
+          </span>
+        </Notice>
+      ) : result?.ok ? (
         <Notice tone={result.c.decision === "warn" ? "warning" : "success"} title={result.c.counted ? t("in", { gym: result.c.gym?.name ?? "" }) : t("already", { time: f.time(result.c.firstCheckInToday) })}>
           <span className="flex flex-col gap-1" data-testid="entrance-result">
             <span>{t("at", { time: f.time(result.c.checkedInAt), code: result.c.member.memberCode })}</span>

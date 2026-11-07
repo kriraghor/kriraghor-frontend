@@ -64,6 +64,8 @@ export type Trainers = S["GymTrainers"];
 export type Trainer = Trainers["items"][number];
 export type EntranceToken = S["GymEntranceToken"];
 export type EntranceCheckin = S["MyGymEntranceCheckin"];
+export type EntranceCheckout = S["MyGymEntranceCheckout"];
+export type EntranceScanResult = S["MyGymEntranceScan"];
 export type JoinAcceptResult = S["GymJoinAcceptResult"];
 export type MyPlans = S["MyGymPlans"];
 export type MyPlanItem = MyPlans["items"][number];
@@ -97,7 +99,7 @@ export type DuesQuery = { status?: Due["status"]; overdue?: "true" | "false"; du
 export const PAY_METHODS: PayMethod[] = ["cash", "owner_bkash", "owner_nagad", "card_counter", "other"];
 export const LEFT_REASONS: LeftReason[] = ["price", "moved", "injury", "other_gym", "schedule", "unknown", "other"];
 export const TIERS: Tier[] = ["free", "basic", "standard", "pro"];
-export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "reports", "pos", "pnl", "trainers", "plans", "multi_gym"];
+export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "leads", "reports", "pos", "pnl", "classes", "points", "notices", "trainers", "plans", "multi_gym"];
 export const KINDS: PackageKind[] = ["month", "quarter", "half_year", "year", "custom"];
 
 const ik = (key: string) => ({ "idempotency-key": key });
@@ -119,6 +121,8 @@ export const gymManage = {
   search: async (gymId: string, q: string) => unwrap(await api().GET("/manage/gyms/{gymId}/desk/search", { params: { ...G(gymId), query: { q } } })),
   checkIn: async (gymId: string, body: { memberId: string } | { token: string }, override?: { reason: string }) =>
     unwrap(await api().POST("/manage/gyms/{gymId}/checkins", { params: G(gymId), body: { ...body, ...(override ? { override: true, reason: override.reason } : {}) } })) as DeskCard,
+  /** M27-FR-40: check a member out of a visit. */
+  checkOut: async (gymId: string, attendanceId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/checkins/{attendanceId}/out", { params: { path: { gymId, attendanceId } } })),
   checkins: async (gymId: string, date?: string) => unwrap(await api().GET("/manage/gyms/{gymId}/checkins", { params: { ...G(gymId), query: date ? { date } : {} } })),
   // Members
   members: async (gymId: string, query: MembersQuery) => unwrap(await api().GET("/manage/gyms/{gymId}/members", { params: { ...G(gymId), query: query as never } })),

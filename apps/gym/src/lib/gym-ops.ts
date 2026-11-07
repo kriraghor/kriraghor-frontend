@@ -200,3 +200,88 @@ export function whatsappUrl(phone: string, text: string): string | null {
 
 /** A tel: link for a phone (spaces and dashes dropped). */
 export const telUrl = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
+
+// ---------------------------------------------------------------- round 2: classes, points, notices, enquiries
+
+export type GymClass = S["GymClass"];
+export type ClassSession = S["GymClassSession"];
+export type SessionDetail = S["GymClassSessionDetail"];
+export type ClassBooking = S["GymClassBooking"];
+export type MyTimetable = S["MyGymTimetable"];
+export type Reward = S["GymReward"];
+export type MemberPoints = S["GymMemberPoints"];
+export type MyPoints = S["MyGymPoints"];
+export type NoticeSegment = S["GymNoticeSegment"];
+export type Notice = S["GymNotice"];
+export type NoticeEstimate = S["GymNoticeEstimate"];
+export type Lead = S["GymLead"];
+export type Exercise = S["CatalogExercises"]["items"][number];
+export type Slot = { dow: number; startTime: string };
+export type ClassInput = { name: string; description?: string | null; trainerUserId?: string | null; capacity: number; minutes: number; room?: string | null; slots: Slot[] };
+
+export const gymOps2 = {
+  // classes
+  trainers: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/class-trainers", { params: G(gymId) })),
+  classes: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/classes", { params: G(gymId) })),
+  addClass: async (gymId: string, body: ClassInput) => unwrap(await api().POST("/manage/gyms/{gymId}/classes", { params: G(gymId), body: body as never })),
+  editClass: async (gymId: string, classId: string, body: Partial<Omit<ClassInput, "slots">> & { status?: "retired" }) =>
+    unwrap(await api().PATCH("/manage/gyms/{gymId}/classes/{classId}", { params: { path: { gymId, classId } }, body: body as never })),
+  setSlots: async (gymId: string, classId: string, slots: Slot[]) => unwrap(await api().PUT("/manage/gyms/{gymId}/classes/{classId}/slots", { params: { path: { gymId, classId } }, body: { slots } })),
+  sessions: async (gymId: string, from: string, to: string) => unwrap(await api().GET("/manage/gyms/{gymId}/class-sessions", { params: { ...G(gymId), query: { from, to } } })),
+  session: async (gymId: string, sessionId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/class-sessions/{sessionId}", { params: { path: { gymId, sessionId } } })),
+  cancelSession: async (gymId: string, sessionId: string, reason: string) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/class-sessions/{sessionId}/cancel", { params: { path: { gymId, sessionId } }, body: { reason } })),
+  deskBook: async (gymId: string, sessionId: string, memberId: string, key: string) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/class-sessions/{sessionId}/bookings", { params: { path: { gymId, sessionId }, header: ik(key) }, body: { memberId } })),
+  deskCancel: async (gymId: string, bookingId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/class-bookings/{bookingId}/cancel", { params: { path: { gymId, bookingId } } })),
+  attendance: async (gymId: string, sessionId: string, attended: string[]) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/class-sessions/{sessionId}/attendance", { params: { path: { gymId, sessionId } }, body: { attended } })),
+  // points
+  rewards: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/rewards", { params: G(gymId) })),
+  saveRewards: async (gymId: string, rewards: { id?: string; title: string; points: number; kind: "days" | "discount"; value: number; status: "active" | "retired" }[]) =>
+    unwrap(await api().PUT("/manage/gyms/{gymId}/rewards", { params: G(gymId), body: { rewards } as never })),
+  memberPoints: async (gymId: string, memberId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/members/{memberId}/points", { params: { path: { gymId, memberId } } })),
+  redeem: async (gymId: string, memberId: string, rewardId: string, key: string) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/members/{memberId}/redeem", { params: { path: { gymId, memberId }, header: ik(key) }, body: { rewardId } })),
+  adjustPoints: async (gymId: string, memberId: string, points: number, note: string) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/members/{memberId}/points/adjust", { params: { path: { gymId, memberId } }, body: { points, note } })),
+  setReferral: async (gymId: string, memberId: string, referrerMemberId: string) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/members/{memberId}/referral", { params: { path: { gymId, memberId } }, body: { referrerMemberId } })),
+  // notices
+  notices: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/notices", { params: G(gymId) })),
+  estimate: async (gymId: string, segment: NoticeSegment) => unwrap(await api().POST("/manage/gyms/{gymId}/notices/estimate", { params: G(gymId), body: { segment } })),
+  sendNotice: async (gymId: string, body: { title: string; body: string; segment: NoticeSegment }, key: string) =>
+    unwrap(await api().POST("/manage/gyms/{gymId}/notices", { params: { ...G(gymId), header: ik(key) }, body })),
+  // enquiries
+  leads: async (gymId: string, status?: Lead["status"]) => unwrap(await api().GET("/manage/gyms/{gymId}/leads", { params: { ...G(gymId), query: status ? { status } : {} } })),
+  updateLead: async (gymId: string, leadId: string, body: { status?: "contacted" | "joined" | "lost"; note?: string | null; memberId?: string }) =>
+    unwrap(await api().PATCH("/manage/gyms/{gymId}/leads/{leadId}", { params: { path: { gymId, leadId } }, body })),
+  leadPhone: async (gymId: string, leadId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/leads/{leadId}/reveal-phone", { params: { path: { gymId, leadId } } })),
+  // the member
+  myTimetable: async (memberId: string) => unwrap(await api().GET("/me/gym-classes", { params: { query: { memberId } } })),
+  myBook: async (sessionId: string, memberId: string, key: string) => unwrap(await api().POST("/me/gym-classes/{sessionId}/book", { params: { path: { sessionId }, header: ik(key) }, body: { memberId } })),
+  myCancel: async (bookingId: string) => unwrap(await api().POST("/me/gym-bookings/{bookingId}/cancel", { params: { path: { bookingId } } })),
+  myPoints: async (memberId: string) => unwrap(await api().GET("/me/gym-points", { params: { query: { memberId } } })),
+  // public
+  timetable: async (slug: string) => unwrap(await api().GET("/gym/gyms/{slug}/timetable", { params: { path: { slug } } })),
+  enquire: async (slug: string, body: { name: string; phone: string; message?: string | null; bestTime?: string | null; website?: string }) =>
+    unwrap(await api().POST("/gym/gyms/{slug}/enquiries", { params: { path: { slug } }, body })),
+  exercises: async () => unwrap(await api().GET("/catalog/exercises")),
+};
+
+/** Group sessions by Dhaka date, in order (the week view). */
+export function byDay<T extends { localDate: string }>(items: readonly T[]): { date: string; items: T[] }[] {
+  const out: { date: string; items: T[] }[] = [];
+  for (const x of items) {
+    const last = out[out.length - 1];
+    if (last && last.date === x.localDate) last.items.push(x);
+    else out.push({ date: x.localDate, items: [x] });
+  }
+  return out;
+}
+
+/** The Dhaka time of an instant as "06:30". */
+export const dhakaTime = (iso: string) => new Date(new Date(iso).getTime() + 6 * 3600000).toISOString().slice(11, 16);
+
+/** Days of the week starting Saturday (the Bangladesh week), as dow numbers (0 = Sunday). */
+export const WEEK_DOWS = [6, 0, 1, 2, 3, 4, 5];
