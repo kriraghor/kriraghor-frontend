@@ -32,7 +32,8 @@ export function generateStaticParams() {
  * gym.kriraghor.com (M24, ADR-006 amendment): the gym hub, gym pages, passes and trainer plans, and
  * /manage for gym owners and their staff. The same account as every Kriraghor site (cookies on
  * .kriraghor.com); help, terms and the rest of the account stay on kriraghor.com (/go/web).
- * The whole page is the gym theme (dark with the lime accent): data-theme="gym" on <body>.
+ * The whole page is the gym theme (lime accent): data-theme="gym" on <body>. Dark first; the header toggle
+ * switches to the light gym palette (globals.css), remembered on this site.
  */
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
@@ -43,7 +44,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
     <html lang={locale} suppressHydrationWarning className={`${fontVariables} h-full antialiased`}>
       <body data-theme="gym" className="flex min-h-full flex-col">
         {/* Theme before paint; the logo splash once per session (kriraghor-docs 09 §8). */}
-        <ThemeScript />
+        <ThemeScript fallback="dark" />
         <BootSplash word={locale === "bn" ? "ক্রীড়াঘর জিম" : "Kriraghor Gym"} />
         {/* Runtime config (ADR-003): window.__ENV before any client code runs. */}
         <Script src="/env.js" strategy="beforeInteractive" />

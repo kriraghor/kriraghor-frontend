@@ -33,6 +33,53 @@
   --kg-prize-soft: #3a2a12;
   --kg-prize-text: #f8c574;
 }
+
+/* Dark gym: the danger red is light (#ff8a80), so danger buttons take dark text (white was about 2:1). */
+:root:not([data-theme="light"]) [data-theme="gym"] .bg-danger.text-white {
+  color: #111210;
+}
+
+/* The light gym palette (7 Nov 2026): picked with the header toggle (<html data-theme="light">). Lime stays
+   the button colour with dark text; lime is too pale for text, borders and focus rings on white, so
+   --kg-brand is a deep olive there and .bg-brand keeps the lime. Only this site: the dark gym band on
+   kriraghor.com is unchanged. */
+:root[data-theme="light"] [data-theme="gym"] {
+  --kg-bg: #f4f5ef;
+  --kg-surface: #ffffff;
+  --kg-surface-2: #eceee4;
+  --kg-ink: #15160f;
+  --kg-muted: #575a4d;
+  --kg-line: #dcdfd2;
+  --kg-line-strong: #85897a;
+  --kg-on-brand: #111210;
+  --kg-lime: #c8f53c;
+  --kg-brand: #4f6a00;
+  --kg-brand-hover: #b9e62c;
+  --kg-brand-soft: #eef6d2;
+  --kg-brand-text: #45600a;
+  --kg-danger: #b42318;
+  --kg-danger-soft: #fdecea;
+  --kg-info: #2c5aa8;
+  --kg-info-soft: #e8eefa;
+  --kg-warning: #9a5a10;
+  --kg-warning-soft: #fdf3e3;
+  --kg-prize-soft: #fdefd6;
+  --kg-prize-text: #8f5115;
+  --kg-focus: #4f6a00;
+  --glass-bg: rgb(255 255 255 / 0.7);
+  --glass-strong-bg: rgb(255 255 255 / 0.88);
+  --glass-edge: rgb(21 22 15 / 0.09);
+  --glass-highlight: rgb(255 255 255 / 0.7);
+  --glass-shadow: 0 12px 40px -18px rgb(21 22 15 / 0.22);
+  color-scheme: light;
+}
+:root[data-theme="light"] [data-theme="gym"] .bg-brand,
+:root[data-theme="light"] [data-theme="gym"] .\[\&\>button\]\:bg-brand > button {
+  background-color: var(--kg-lime);
+}
+:root[data-theme="light"] [data-theme="gym"] .hover\:bg-brand-hover:hover {
+  background-color: var(--kg-brand-hover);
+}
 @media print {
   header,
   footer,
