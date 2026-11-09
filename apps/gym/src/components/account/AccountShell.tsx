@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowSquareOut, Bell, CalendarBlank, ClipboardText, House, QrCode, Receipt, Repeat, Ticket, Tray, Wallet } from "@phosphor-icons/react";
+import { ArrowSquareOut, Bell, CalendarBlank, ClipboardText, Footprints, House, QrCode, Receipt, Repeat, Ticket, Tray, Wallet } from "@phosphor-icons/react";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
 import { ShellUser, useMe } from "@kriraghor/ui/account";
@@ -13,13 +13,14 @@ import { gymMe } from "@/lib/gym-manage";
 import { useMyDues } from "@/components/gym-member/MyDues";
 
 /**
- * The gym account area (/me): my gyms (home, requests, plans, dues, receipts, the check-in QR; M24),
+ * The gym account area (/me): my gyms (home, requests, trial visits, plans, dues, receipts, the check-in QR; M24),
  * passes, trainer plans and updates. The rest of the account (profile,
  * payments, payouts, verification) lives on kriraghor.com, one link away (the same account, SSO).
  */
 export function AccountShell({ children }: { children: ReactNode }) {
   const t = useTranslations("account");
   const tg = useTranslations("gm");
+  const tv = useTranslations("gv");
   const { status, audience } = useAuth();
   const { me } = useMe();
   const bell = useQuery({ queryKey: ["bell", audience, "all"], enabled: status === "signed_in", queryFn: () => listNotifications(audience, { limit: 20, unread: false }) });
@@ -35,6 +36,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
         // Not exact: a membership's page (/me/memberships/[id]) belongs under My gyms.
         { href: "/me", label: tg("me.nav.home"), icon: House, testId: "me-home-link" },
         { href: "/me/requests", label: tg("me.nav.requests"), icon: Tray, badge: pending, testId: "me-requests-link" },
+        { href: "/me/visits", label: tv("nav"), icon: Footprints, testId: "me-visits-link" },
         { href: "/me/classes", label: tg("me.nav.classes"), icon: CalendarBlank, testId: "me-classes-link" },
         { href: "/me/plans", label: tg("me.nav.plans"), icon: ClipboardText, testId: "me-plans-link" },
         { href: "/me/dues", label: tg("me.nav.dues"), icon: Wallet, badge: dues.data?.items.length || undefined, testId: "me-dues" },

@@ -56,6 +56,7 @@ describe("the desk: one box, a member QR checks in, a pass QR admits (M24-FR-47,
   it("tells a member token, a pass token and a search apart", () => {
     expect(deskInput(" v1.gm.0b2c7f0e-1111-4222-8333-944455556666.29871234.0123456789abcdef0123456789abcdef ")).toEqual({ kind: "member", token: "v1.gm.0b2c7f0e-1111-4222-8333-944455556666.29871234.0123456789abcdef0123456789abcdef" });
     expect(deskInput("v1.0b2c.ab12.0123456789abcdef")).toEqual({ kind: "pass", token: "v1.0b2c.ab12.0123456789abcdef" });
+    expect(deskInput(" v1.gv.0b2c7f0e-1111-4222-8333-944455556666.a1b2c3d4e5f60718293a4b5c.0123456789abcdef0123456789abcdef")).toEqual({ kind: "visit", token: "v1.gv.0b2c7f0e-1111-4222-8333-944455556666.a1b2c3d4e5f60718293a4b5c.0123456789abcdef0123456789abcdef" });
     expect(deskInput("PM-0012")).toEqual({ kind: "search", q: "PM-0012" });
     expect(deskInput("01712345678")).toEqual({ kind: "search", q: "01712345678" });
     expect(deskInput("   ")).toEqual({ kind: "empty" });
@@ -285,17 +286,25 @@ describe("receipts (M24-FR-37)", () => {
   });
 });
 
+const VISITS = { visitsOpen: false, visitDailyCap: null, visitDailyCapDefault: 5, visitDailyCapMax: 50, visitPerPerson: 1, visitPerPersonMax: 3, visitNote: null };
+
 describe("gym settings: only what changed is sent", () => {
-  const s: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002", vatEnabled: false, vatBps: null, vatMaxBps: 1500 };
+  const s: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002", vatEnabled: false, vatBps: null, vatMaxBps: 1500, ...VISITS };
   it("sends nothing for an untouched form, and blank text as null", () => {
     expect(settingsPatch(s, draftOf(s))).toEqual({});
     expect(settingsPatch(s, { ...draftOf(s), shortCode: "pmx", tin: " 123 ", entryPolicy: "block", absentAlertDays: "14", joinRequestsOpen: false })).toEqual({ shortCode: "PMX", tin: "123", entryPolicy: "block", absentAlertDays: 14, joinRequestsOpen: false });
     expect(settingsPatch({ ...s, tin: "1", absentAlertDays: 7 }, { ...draftOf({ ...s, tin: "1", absentAlertDays: 7 }), tin: "", absentAlertDays: "" })).toEqual({ tin: null, absentAlertDays: null });
   });
+  it("free trial visits (M24-FR-109): on, a cap, visits per person, a note; blank cap and note as null", () => {
+    expect(settingsPatch(s, { ...draftOf(s), visitsOpen: true, visitDailyCap: "8", visitPerPerson: "2", visitNote: " Bring a towel " })).toEqual({ visitsOpen: true, visitDailyCap: 8, visitPerPerson: 2, visitNote: "Bring a towel" });
+    const on = { ...s, visitsOpen: true, visitDailyCap: 8, visitNote: "x" };
+    expect(settingsPatch(on, draftOf(on))).toEqual({});
+    expect(settingsPatch(on, { ...draftOf(on), visitDailyCap: "", visitNote: "" })).toEqual({ visitDailyCap: null, visitNote: null });
+  });
 });
 
 describe("VAT on receipts in settings (M27-FR-28)", () => {
-  const base: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002", vatEnabled: false, vatBps: null, vatMaxBps: 1500 };
+  const base: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002", vatEnabled: false, vatBps: null, vatMaxBps: 1500, ...VISITS };
   it("reads a percent as basis points", () => {
     expect(vatBpsOf("15")).toBe(1500);
     expect(vatBpsOf(" 7.5 ")).toBe(750);
