@@ -170,7 +170,7 @@ export function PassView({ code }: { code: string }) {
                 {t("cancelPass")}
               </button>
             )}
-            <p className="mt-2 text-sm text-muted">{p.kind === "day" ? t("dayRefund") : t("periodRefund")}</p>
+            <p className="mt-2 text-sm text-muted">{t("periodRefund")}</p>
           </div>
         ) : null}
         {problem ? (

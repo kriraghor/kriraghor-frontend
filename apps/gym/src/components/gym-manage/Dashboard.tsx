@@ -25,6 +25,7 @@ export function Dashboard({ gymId }: { gymId: string }) {
 
 function Body({ ctx }: { ctx: GymCtx }) {
   const t = useTranslations("gm");
+  const tv = useTranslations("gv");
   const f = useFmt();
   const err = useGymError();
   const { gymId } = ctx;
@@ -77,6 +78,7 @@ function Body({ ctx }: { ctx: GymCtx }) {
         <Tile label={t("dash.expiringThisWeek")} value={f.n(tl.expiringThisWeek)} href={can("members") ? `${base}/members?view=expiring` : undefined} tone={tl.expiringThisWeek ? "warn" : "neutral"} />
         <Tile label={t("dash.notSeen", { days: tl.notSeenDays })} value={f.n(tl.notSeen)} href={can("members") ? `${base}/members?view=notSeen` : undefined} />
         <Tile label={t("dash.requestsWaiting")} value={f.n(tl.requestsWaiting)} href={can("requests") ? `${base}/requests` : undefined} />
+        {tl.guestsToday !== undefined ? <Tile label={tv("dash.guestsToday")} value={f.n(tl.guestsToday)} href={can("desk") ? `${base}/desk` : undefined} tone={tl.guestsToday ? "brand" : "neutral"} testId="tile-guests" /> : null}
         <Tile label={t("dash.dueToday")} value={f.n(tl.dueTodayCount)} hint={tl.dueTodayPoisha !== undefined ? f.taka(tl.dueTodayPoisha) : undefined} href={can("fees") ? `${base}/fees?view=today` : undefined} />
         <Tile label={t("dash.overdue")} value={f.n(tl.overdueCount)} href={can("fees") ? `${base}/fees?view=overdue` : undefined} tone={tl.overdueCount ? "warn" : "neutral"} />
         {tl.collectedTodayPoisha !== undefined ? <Tile label={t("dash.collectedToday")} value={f.taka(tl.collectedTodayPoisha)} href={can("closing") ? `${base}/fees/closing` : undefined} tone="brand" testId="tile-collected" /> : null}

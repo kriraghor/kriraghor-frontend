@@ -5,16 +5,17 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Button, Card, Checkbox, Field, Notice, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { draftOf, gymManage, settingsPatch, SHORT_CODE, vatBpsOf, type GymSettings, type SettingsDraft as Draft } from "@/lib/gym-manage";
-import { GymPage, useGymError, type GymCtx } from "./common";
+import { draftOf, featureLocked, gymManage, settingsPatch, SHORT_CODE, vatBpsOf, type GymSettings, type SettingsDraft as Draft } from "@/lib/gym-manage";
+import { GymPage, Upsell, useGymError, type GymCtx } from "./common";
 import { RemoveGym } from "./RemoveGym";
 
 /**
  * /manage/[gymId]/settings (owner; M24 §4.1, §6.8): the short code for member codes and receipts
  * (unique among the owner's gyms; the first save sets the gym up), TIN and BIN (printed on receipts
  * only when entered), the receipt footer, the entry policy for expired, frozen, unpaid or package-less
- * members (allow, warn, block with the owner's override), absent alert days and join requests; at the
- * foot, the owner removes the gym (M20-FR-15).
+ * members (allow, warn, block with the owner's override), absent alert days and join requests, VAT, free
+ * trial visits (M24-FR-109: on or off, the daily cap, visits per person, a note for guests); at the foot,
+ * the owner removes the gym (M20-FR-15).
  */
 export function Settings({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
@@ -40,6 +41,7 @@ function Form({ ctx }: { ctx: GymCtx }) {
 
 function Fields({ ctx, s }: { ctx: GymCtx; s: GymSettings }) {
   const t = useTranslations("gm");
+  const tv = useTranslations("gv");
   const err = useGymError();
   const qc = useQueryClient();
   const toast = useToast();
@@ -55,6 +57,8 @@ function Fields({ ctx, s }: { ctx: GymCtx; s: GymSettings }) {
     const vat = d.vatPct.trim() ? vatBpsOf(d.vatPct) : null;
     if (d.vatPct.trim() && (vat == null || vat > s.vatMaxBps)) return setProblem(t("settings.vatBad", { max: s.vatMaxBps / 100 }));
     if (d.vatEnabled && vat == null) return setProblem(t("settings.vatNeeded"));
+    const cap = d.visitDailyCap.trim();
+    if (cap && (!/^\d{1,4}$/.test(cap) || Number(cap) < 1 || Number(cap) > (s.visitDailyCapMax ?? 50))) return setProblem(tv("settings.capBad", { max: s.visitDailyCapMax ?? 50 }));
     const body = settingsPatch(s, d);
     if (!Object.keys(body).length) return toast.show(t("settings.nothing"), "info");
     setBusy(true);
@@ -117,6 +121,7 @@ function Fields({ ctx, s }: { ctx: GymCtx; s: GymSettings }) {
           </Notice>
         ) : null}
       </Card>
+      <Visits ctx={ctx} s={s} d={d} setD={setD} />
       {problem ? <Notice tone="error">{problem}</Notice> : null}
       <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" busy={busy} data-testid="settings-save">
@@ -130,5 +135,44 @@ function Fields({ ctx, s }: { ctx: GymCtx; s: GymSettings }) {
         </Link>
       </div>
     </form>
+  );
+}
+
+/** Free trial visits (M24-FR-109, 9 Nov 2026): Basic plans and up; an Upsell below. */
+function Visits({ ctx, s, d, setD }: { ctx: GymCtx; s: GymSettings; d: Draft; setD: (d: Draft) => void }) {
+  const t = useTranslations("gv");
+  const locked = featureLocked(ctx.gym.features, "visits");
+  const perMax = s.visitPerPersonMax ?? 3;
+  return (
+    <Card className="grid gap-3 sm:grid-cols-2" data-testid="settings-visits">
+      <h2 className="font-display text-lg font-bold sm:col-span-2">{t("settings.title")}</h2>
+      <p className="text-sm text-muted sm:col-span-2">{t("settings.lead")}</p>
+      {locked ? (
+        <Upsell feature="visits" owner className="sm:col-span-2" />
+      ) : (
+        <>
+          <Checkbox id="s-visits" label={t("settings.open")} checked={d.visitsOpen} onChange={(e) => setD({ ...d, visitsOpen: e.target.checked })} className="sm:col-span-2" data-testid="s-visits-open" />
+          <Field
+            id="s-visit-cap"
+            label={t("settings.cap")}
+            optional={t("settings.capDefault", { n: s.visitDailyCapDefault ?? 5 })}
+            inputMode="numeric"
+            value={d.visitDailyCap}
+            onChange={(e) => setD({ ...d, visitDailyCap: e.target.value.replace(/\D/g, "") })}
+            hint={t("settings.capHint", { max: s.visitDailyCapMax ?? 50 })}
+            data-testid="s-visit-cap"
+          />
+          <Select id="s-visit-each" label={t("settings.each")} value={d.visitPerPerson} onChange={(e) => setD({ ...d, visitPerPerson: e.target.value })} hint={t("settings.eachHint")} data-testid="s-visit-each">
+            {Array.from({ length: perMax }, (_, i) => String(i + 1)).map((n) => (
+              <option key={n} value={n}>
+                {t("settings.eachOption", { n: Number(n) })}
+              </option>
+            ))}
+          </Select>
+          <Textarea id="s-visit-note" label={t("settings.note")} optional={t("settings.optional")} value={d.visitNote} maxLength={300} onChange={(e) => setD({ ...d, visitNote: e.target.value })} className="sm:col-span-2" hint={t("settings.noteHint")} data-testid="s-visit-note" />
+          <p className="text-sm text-muted sm:col-span-2">{t("settings.noFee")}</p>
+        </>
+      )}
+    </Card>
   );
 }

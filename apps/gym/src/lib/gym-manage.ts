@@ -92,7 +92,7 @@ export type MemberInput = {
   payment?: Payment;
 };
 export type MemberPatch = { version: number; displayName?: string; phone?: string; gender?: "male" | "female" | "other" | null; birthDate?: string | null; email?: string | null; emergencyContact?: { name: string; phone: string } | null; bloodGroup?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | null; heightCm?: number | null; weightKg?: number | null; medical?: string | null };
-export type SettingsPatch = Partial<Pick<GymSettings, "shortCode" | "tin" | "bin" | "receiptFooter" | "entryPolicy" | "absentAlertDays" | "joinRequestsOpen" | "vatEnabled" | "vatBps">> & { remindersOff?: NonNullable<NonNullable<paths["/manage/gyms/{gymId}/settings"]["patch"]["requestBody"]>["content"]["application/json"]["remindersOff"]> };
+export type SettingsPatch = Partial<Pick<GymSettings, "shortCode" | "tin" | "bin" | "receiptFooter" | "entryPolicy" | "absentAlertDays" | "joinRequestsOpen" | "vatEnabled" | "vatBps" | "visitsOpen" | "visitDailyCap" | "visitPerPerson" | "visitNote">> & { remindersOff?: NonNullable<NonNullable<paths["/manage/gyms/{gymId}/settings"]["patch"]["requestBody"]>["content"]["application/json"]["remindersOff"]> };
 export type MembersQuery = { status?: MemberSummary["status"]; due?: "true" | "false"; overdue?: "true" | "false"; expiring?: "true" | "false"; frozen?: "true" | "false"; notSeen?: number; packageId?: string; trainerId?: string; linked?: "true" | "false"; q?: string; cursor?: string; limit?: number };
 export type DuesQuery = { status?: Due["status"]; overdue?: "true" | "false"; dueOn?: string; memberId?: string; cursor?: string; limit?: number };
 
@@ -239,12 +239,16 @@ export function takaToPoisha(text: string, { allowZero = false } = {}): number |
 /** Poisha → the plain taka a form shows ("1500", "250.5"); empty for null. */
 export const poishaToTakaText = (poisha: number | null | undefined) => (poisha == null ? "" : String(poisha / 100));
 
-/** What the desk does with one scanned or typed value: a member QR checks in, a pass QR admits, anything else searches. */
-export type DeskInput = { kind: "member"; token: string } | { kind: "pass"; token: string } | { kind: "search"; q: string } | { kind: "empty" };
+/**
+ * What the desk does with one scanned or typed value: a member QR checks in, a pass QR admits, a trial-visit
+ * guest's QR (v1.gv…, 9 Nov 2026) is looked up to show the guest card, anything else searches.
+ */
+export type DeskInput = { kind: "member"; token: string } | { kind: "pass"; token: string } | { kind: "visit"; token: string } | { kind: "search"; q: string } | { kind: "empty" };
 export function deskInput(text: string): DeskInput {
   const v = text.trim();
   if (!v) return { kind: "empty" };
   if (/^v1\.gm\.[^.]+\.[^.]+\.[^.]+$/.test(v)) return { kind: "member", token: v };
+  if (/^v1\.gv\.[^.]+\.[^.]+\.[^.]+$/.test(v)) return { kind: "visit", token: v };
   if (/^v1\.[^.]+\.[^.]+\.[^.]+$/.test(v)) return { kind: "pass", token: v };
   return { kind: "search", q: v };
 }
@@ -532,8 +536,37 @@ export function receiptState(q: { isPending: boolean; error: unknown; data?: Rec
 // ---------------- settings
 
 /** The settings form as typed (text), from the saved settings. */
-export type SettingsDraft = { shortCode: string; tin: string; bin: string; receiptFooter: string; entryPolicy: GymSettings["entryPolicy"]; absentAlertDays: string; joinRequestsOpen: boolean; vatEnabled: boolean; vatPct: string };
-export const draftOf = (s: GymSettings): SettingsDraft => ({ shortCode: s.shortCode ?? "", tin: s.tin ?? "", bin: s.bin ?? "", receiptFooter: s.receiptFooter ?? "", entryPolicy: s.entryPolicy, absentAlertDays: s.absentAlertDays == null ? "" : String(s.absentAlertDays), joinRequestsOpen: s.joinRequestsOpen, vatEnabled: s.vatEnabled, vatPct: s.vatBps == null ? "" : String(s.vatBps / 100) });
+export type SettingsDraft = {
+  shortCode: string;
+  tin: string;
+  bin: string;
+  receiptFooter: string;
+  entryPolicy: GymSettings["entryPolicy"];
+  absentAlertDays: string;
+  joinRequestsOpen: boolean;
+  vatEnabled: boolean;
+  vatPct: string;
+  // Free trial visits (M24-FR-109, 9 Nov 2026).
+  visitsOpen: boolean;
+  visitDailyCap: string;
+  visitPerPerson: string;
+  visitNote: string;
+};
+export const draftOf = (s: GymSettings): SettingsDraft => ({
+  shortCode: s.shortCode ?? "",
+  tin: s.tin ?? "",
+  bin: s.bin ?? "",
+  receiptFooter: s.receiptFooter ?? "",
+  entryPolicy: s.entryPolicy,
+  absentAlertDays: s.absentAlertDays == null ? "" : String(s.absentAlertDays),
+  joinRequestsOpen: s.joinRequestsOpen,
+  vatEnabled: s.vatEnabled,
+  vatPct: s.vatBps == null ? "" : String(s.vatBps / 100),
+  visitsOpen: s.visitsOpen,
+  visitDailyCap: s.visitDailyCap == null ? "" : String(s.visitDailyCap),
+  visitPerPerson: String(s.visitPerPerson),
+  visitNote: s.visitNote ?? "",
+});
 
 /** VAT typed as a percent ("15", "7.5") → basis points, or null when it is not 0–100 with at most 2 decimals (M27-FR-28). */
 export function vatBpsOf(text: string): number | null {
@@ -558,5 +591,11 @@ export function settingsPatch(s: GymSettings, d: SettingsDraft): SettingsPatch {
   if (d.vatEnabled !== s.vatEnabled) out.vatEnabled = d.vatEnabled;
   const bps = d.vatPct.trim() ? vatBpsOf(d.vatPct) : null;
   if (bps !== s.vatBps && (bps !== null || !d.vatPct.trim())) out.vatBps = bps;
+  if (d.visitsOpen !== s.visitsOpen) out.visitsOpen = d.visitsOpen;
+  const cap = d.visitDailyCap.trim() ? Number(d.visitDailyCap) : null;
+  if (cap !== s.visitDailyCap) out.visitDailyCap = cap;
+  const each = Number(d.visitPerPerson) || 1;
+  if (each !== s.visitPerPerson) out.visitPerPerson = each;
+  if (text(d.visitNote) !== s.visitNote) out.visitNote = text(d.visitNote);
   return out;
 }

@@ -13,11 +13,13 @@ import { formatTaka } from "@kriraghor/ui/format";
 import { RatingLine, SubjectReviews } from "@kriraghor/ui/trust";
 import { PassBuy } from "./PassBuy";
 import { JoinCta } from "./Join";
+import { VisitCta } from "./Visit";
 
 /**
  * /gyms/[slug] (M20 §4; on gym.kriraghor.com since 25 Oct 2026): gallery, address, facilities, the week's hours (Saturday first, women-only
- * windows marked), a map pin and the live packages. The aside buys a day, month or quarter pass (PassBuy)
- * and, while the gym takes join requests, asks to join it (JoinCta, M24-FR-16).
+ * windows marked), a map pin and the live packages. The aside buys a subscription (PassBuy), asks to join
+ * while the gym takes join requests (JoinCta, M24-FR-16) and books a free trial visit while the gym takes
+ * them (VisitCta, M24-FR-110, 9 Nov 2026).
  */
 export function GymDetail({ slug }: { slug: string }) {
   const t = useTranslations("gym");
@@ -149,6 +151,7 @@ export function GymDetail({ slug }: { slug: string }) {
           <aside className="h-fit glass-card p-5 lg:sticky lg:top-24">
             <PassBuy page={g} />
             <JoinCta page={g} />
+            <VisitCta slug={slug} />
           </aside>
         </div>
       </section>

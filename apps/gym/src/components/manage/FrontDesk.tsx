@@ -15,6 +15,8 @@ import { cleanCode, gymDesk, nextDays, scanInput, shiftDay, type Admission } fro
 import { DECISION_TONE, deskAction, deskInput, featureLocked, gymManage, type DeskCard, type DeskPass } from "@/lib/gym-manage";
 import { Upsell, useFmt, useGymCtx, useGymError } from "@/components/gym-manage/common";
 import { canScan, useQrScanner } from "@/components/QrScanner";
+import type { GymVisit } from "@/lib/gym-visits";
+import { GuestCard, GuestsList } from "./GuestDesk";
 
 type PassResult = { ok: true; a: Admission } | { ok: false; code: string; title: string; at?: string; validFrom?: string; validTo?: string };
 type MemberResult = { ok: true; card: DeskCard } | { ok: false; code: string; title: string; reasons: string[]; canOverride: boolean; body: { memberId: string } | { token: string }; name?: string };
@@ -24,7 +26,8 @@ type MemberResult = { ok: true; card: DeskCard } | { ok: false; code: string; ti
  * status flags and the entry decision (amber warn, red block with the owner's override and a reason)
  * with **Check in**; a pass shows **Admit** (the M20 flow). The camera reads a member's rotating QR
  * (checks in) or a pass QR (admits). The search box keeps focus after each check-in; today's
- * check-ins and admissions follow. Staff with only desk.admit keep the pass code entry.
+ * check-ins and admissions follow. Staff with only desk.admit keep the pass code entry. Free trial visits
+ * (M24-FR-113, FR-114, 9 Nov 2026): a guest's QR or code shows the guest card, and the day's guests are listed.
  */
 export function FrontDesk({ id }: { id: string }) {
   const t = useTranslations("vendorGym");
@@ -40,6 +43,7 @@ export function FrontDesk({ id }: { id: string }) {
   const canAdmit = Boolean(ctx) && has("desk.admit");
   const canList = Boolean(ctx) && has("desk.admissions");
   const attendanceLocked = ctx ? featureLocked(ctx.gym.features, "attendance") : false;
+  const visitsLocked = ctx ? featureLocked(ctx.gym.features, "visits") : true;
   const [todayDate] = useState(() => nextDays(1)[0]);
   const [listDate, setListDate] = useState(todayDate);
   const isToday = listDate === todayDate;
@@ -72,7 +76,7 @@ export function FrontDesk({ id }: { id: string }) {
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [offline, setOffline] = useState(false);
-  const [found, setFound] = useState<{ items: DeskCard[]; pass: DeskPass | null; q: string } | null>(null);
+  const [found, setFound] = useState<{ items: DeskCard[]; pass: DeskPass | null; visit: GymVisit | null; q: string } | null>(null);
   const [passResult, setPassResult] = useState<PassResult | null>(null);
   const [memberResult, setMemberResult] = useState<MemberResult | null>(null);
   const [overriding, setOverriding] = useState<{ body: { memberId: string } | { token: string }; name?: string } | null>(null);
@@ -142,16 +146,18 @@ export function FrontDesk({ id }: { id: string }) {
 
   const submitText = useCallback(
     async (value: string) => {
-      const d = deskInput(value);
-      if (d.kind === "empty") return;
-      if (d.kind === "member") return void checkIn({ token: d.token });
+      const d0 = deskInput(value);
+      if (d0.kind === "empty") return;
+      if (d0.kind === "member") return void checkIn({ token: d0.token });
+      // A trial-visit guest's QR (9 Nov 2026) is looked up like a search: the guest card follows.
+      const d = d0.kind === "visit" ? { kind: "search" as const, q: d0.token } : d0;
       if (d.kind === "pass") return void (canAdmit ? admit({ token: d.token }) : undefined);
       setBusy(true);
       setPassResult(null);
       setMemberResult(null);
       try {
         const r = await gymManage.search(id, d.q);
-        setFound({ items: r.items, pass: r.pass, q: d.q });
+        setFound({ items: r.items, pass: r.pass, visit: r.visit ?? null, q: d.q });
         setOffline(false);
       } catch (err) {
         if (isNetwork(err)) setOffline(true);
@@ -168,9 +174,10 @@ export function FrontDesk({ id }: { id: string }) {
     (value: string) => {
       const d = deskInput(value);
       if (d.kind === "member" && canCheckIn) void checkIn({ token: d.token });
+      else if (d.kind === "visit" && canCheckIn) void submitText(value);
       else if (canAdmit) void admit(scanInput(value));
     },
-    [admit, checkIn, canAdmit, canCheckIn],
+    [admit, checkIn, submitText, canAdmit, canCheckIn],
   );
   const onDenied = useCallback(() => setCamera("denied"), []);
   const video = useQrScanner({ on: camera === "on", onValue: onScan, onDenied });
@@ -329,8 +336,9 @@ export function FrontDesk({ id }: { id: string }) {
                 {found.items.map((c) => (
                   <MemberCard key={c.member.id} card={c} busy={busy} locked={attendanceLocked} onCheckIn={() => void checkIn({ memberId: c.member.id }, c.member.displayName)} onOverride={() => (setOverrideProblem(null), setOverriding({ body: { memberId: c.member.id }, name: c.member.displayName }))} gymId={id} />
                 ))}
+                {found.visit && ctx ? <GuestCard key={found.visit.id} ctx={ctx} visit={found.visit} today={todayDate} onChanged={() => setText("")} /> : null}
                 {found.pass ? <PassCard pass={found.pass} canAdmit={canAdmit} busy={busy} onAdmit={() => void admit(scanInput(found.q))} /> : null}
-                {!found.items.length && !found.pass ? <p className="rounded-card border-2 border-dashed border-line p-6 text-center text-muted" data-testid="desk-none">{tg("desk.noMatch", { q: found.q })}</p> : null}
+                {!found.items.length && !found.pass && !found.visit ? <p className="rounded-card border-2 border-dashed border-line p-6 text-center text-muted" data-testid="desk-none">{tg("desk.noMatch", { q: found.q })}</p> : null}
               </div>
             ) : null}
             {!found && !memberResult && !passResult ? <p className="rounded-card border-2 border-dashed border-line p-6 text-center text-muted">{canCheckIn ? tg("desk.waiting") : t("desk.waiting")}</p> : null}
@@ -338,7 +346,7 @@ export function FrontDesk({ id }: { id: string }) {
         </div>
       ) : null}
 
-      {canCheckIn || canList ? (
+      {canCheckIn || canList || (ctx && has("members.view") && !visitsLocked) ? (
         <>
           <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-display text-xl font-extrabold">{isToday ? tg("desk.todayTitle") : tg("desk.dayTitle", { date: f.short(listDate) })}</h2>
@@ -356,6 +364,12 @@ export function FrontDesk({ id }: { id: string }) {
             </div>
           </div>
           <div className="mt-3 grid gap-6 lg:grid-cols-2">
+            {/* M24 trial visits: the day's guests, where the plan has visits. */}
+            {ctx && (canCheckIn || has("members.view")) && !visitsLocked ? (
+              <div className="lg:col-span-2">
+                <GuestsList ctx={ctx} date={listDate} today={todayDate} />
+              </div>
+            ) : null}
             {canCheckIn ? (
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2">

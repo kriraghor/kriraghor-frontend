@@ -364,7 +364,6 @@
     "noOpenDays": "The gym is not open in the coming days.",
     "validUntil": "Valid until {date}",
     "total": "Total",
-    "dayRefund": "Full refund if you cancel before the day starts.",
     "periodRefund": "Full refund if you cancel before your first visit.",
     "verifyPhone": "Verify your phone",
     "payNow": "Pay {price}",
@@ -745,7 +744,8 @@
       "leads": "Enquiries from your gym page",
       "staff_attendance": "Staff shifts and clocking in",
       "equipment": "The equipment register",
-      "payroll": "Payroll and payslips"
+      "payroll": "Payroll and payslips",
+      "visits": "Free trial visits"
     },
     "upsell": {
       "needs": "Available from the {tier} plan.",
@@ -822,6 +822,10 @@
       "payroll": {
         "title": "Payroll needs a higher plan",
         "body": "Pay terms, commissions, the monthly payroll and payslips are part of the top plan."
+      },
+      "visits": {
+        "title": "Free trial visits need a paid plan",
+        "body": "Let people book a free visit on your gym page and see today's guests at the desk."
       }
     },
     "err": {
@@ -3066,6 +3070,118 @@
       "noHistory": "Nothing logged yet.",
       "statusTo": "Status: {status}",
       "inExpenses": "in the expenses"
+    }
+  },
+  "gv": {
+    "nav": "My visits",
+    "cta": {
+      "lead": "Not sure yet? Try the gym once for free before you join.",
+      "button": "Book a free visit",
+      "full": "No free visit places are left in the next two weeks."
+    },
+    "form": {
+      "title": "A free visit to {gym}",
+      "lead": "Pick a day and a time. It is free and confirmed at once; the gym is told you are coming.",
+      "closed": "This gym is not taking free visits right now.",
+      "phoneTitle": "Add your phone first",
+      "phoneBody": "A free visit needs a verified phone number, so the gym knows who is coming.",
+      "phoneCta": "Add a phone",
+      "noteTitle": "From the gym",
+      "day": "Day",
+      "today": "Today",
+      "todayInline": "today",
+      "places": "{n, plural, one {# place left} other {# places left}}",
+      "time": "Arrival time",
+      "privacy": "{gym} will see your name and the last 4 digits of your phone. The gym can see your full number only to call you about this visit.",
+      "pickTime": "Pick a time",
+      "confirm": "Book {day} at {time}"
+    },
+    "err": {
+      "GYM_VISITS_CLOSED": "This gym is not taking free visits right now.",
+      "GYM_VISIT_OWN_GYM": "You run or work at this gym, so you cannot book a visit here.",
+      "GYM_VISIT_MEMBER": "You are already a member of this gym.",
+      "GYM_VISIT_DATE": "That time has passed or is too far ahead. Pick another.",
+      "GYM_VISIT_HOURS": "The gym is closed at that time. Pick another.",
+      "GYM_VISIT_LIMIT": "You have used your free visits at this gym.",
+      "GYM_VISIT_FULL": "That day just filled up. Pick another day.",
+      "GYM_VISIT_STATE": "This visit cannot change now.",
+      "GYM_VISIT_CANCEL_CLOSED": "It is too late to cancel this visit.",
+      "RATE_LIMITED": "You have booked many visits today. Try again tomorrow."
+    },
+    "me": {
+      "title": "My visits",
+      "lead": "Free visits to try a gym before you join. Show the QR or read out the code at the front desk.",
+      "bookedTitle": "Your free visit is booked",
+      "bookedBody": "The gym knows you are coming. We will remind you on the morning of your visit.",
+      "none": "No visits yet",
+      "noneBody": "Find a gym and book a free visit to try it.",
+      "findGym": "Find a gym",
+      "history": "Earlier visits",
+      "qrAlt": "Your visit QR for {gym}",
+      "codeAria": "Visit code {code}",
+      "howTo": "At the front desk, show this QR or read out the code. Bring your usual workout clothes.",
+      "fullScreen": "Full screen",
+      "cancel": "Cancel visit",
+      "cancelTitle": "Cancel this visit?",
+      "cancelBody": "{gym} will be told. You can book another day if the gym has places.",
+      "keep": "Keep it",
+      "cancelConfirm": "Cancel visit",
+      "cancelled": "Visit cancelled",
+      "reason": "The gym said: {reason}"
+    },
+    "status": {
+      "booked": "Booked",
+      "attended": "Visited",
+      "cancelled": "Cancelled",
+      "cancelledByGym": "Cancelled by the gym",
+      "cancelledByGuest": "Cancelled by the guest",
+      "no_show": "Missed"
+    },
+    "desk": {
+      "guest": "Guest",
+      "guestTitle": "Free visit",
+      "todayAt": "Today at {time}",
+      "onDayAt": "{date} at {time}",
+      "notToday": "This visit is for another day.",
+      "inAt": "Came in at {time}",
+      "checkIn": "Check in guest",
+      "checkedIn": "{name} checked in",
+      "makeMember": "Make member",
+      "madeMember": "Added as a member",
+      "isMember": "Member",
+      "call": "Call {name}",
+      "whatsapp": "WhatsApp {name}",
+      "waMessage": "Hi {name}, this is {gym} about your free visit.",
+      "noWhatsapp": "This number cannot open WhatsApp.",
+      "cancel": "Cancel",
+      "cancelTitle": "Cancel {name}'s visit?",
+      "cancelBody": "The guest is told, with your reason.",
+      "cancelConfirm": "Cancel visit",
+      "cancelled": "Visit cancelled",
+      "todayList": "Guests today ({n})",
+      "dayList": "Guests ({n})",
+      "off": "Visits off",
+      "none": "No guests booked.",
+      "noneOff": "Free visits are off. Switch them on in Settings."
+    },
+    "dash": {
+      "guestsToday": "Guests today"
+    },
+    "settings": {
+      "title": "Free trial visits",
+      "lead": "Let people try your gym once before they join. They book a time on your gym page with a verified phone; you are told, and they show a QR at the desk.",
+      "open": "Take free visits",
+      "cap": "Visits a day",
+      "capDefault": "default {n}",
+      "capHint": "Up to {max}.",
+      "capBad": "Visits a day is a number from 1 to {max}.",
+      "each": "Visits per person",
+      "eachOption": "{n, plural, one {# visit} other {# visits}}",
+      "eachHint": "Missed visits count too.",
+      "note": "Note for guests",
+      "optional": "optional",
+      "noteHint": "What to bring, where to go, ladies-only hours.",
+      "noFee": "When a guest joins, Kriraghor charges no referral fee."
     }
   }
 }

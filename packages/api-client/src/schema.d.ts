@@ -34937,7 +34937,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: PACKAGE_UNKNOWN, DATE_OUT_OF_RANGE, GYM_CLOSED_ON_DATE, VALIDATION_FAILED */
+                /** @description Error. Codes: PACKAGE_UNKNOWN, DATE_OUT_OF_RANGE, VALIDATION_FAILED */
                 422: {
                     headers: {
                         [name: string]: unknown;
@@ -36017,7 +36017,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Every active package (M24-FR-24): month, quarter, 6 months, 12 months (one each) and custom days (at most gym_manage.max_custom_packages); admission fee, channel desk/online/both, visit limit, order. A day pass sold online (within gym.day_pass_min/max_poisha) is needed only to submit */
+        /** Every active package (M24-FR-24): month, quarter, 6 months, 12 months (one each) and custom days (at most gym_manage.max_custom_packages); admission fee, channel desk/online/both, visit limit, order. At least one package sold online is needed to submit (M20 §23) */
         put: {
             parameters: {
                 query?: never;
@@ -37947,6 +37947,14 @@ export interface paths {
                         vatEnabled?: boolean;
                         /** @description The VAT rate in basis points (15% = 1500), at most gym_manage.vat_max_bps */
                         vatBps?: number | null;
+                        /** @description Trial visits: people book a free visit from the gym page (plan feature visits) */
+                        visitsOpen?: boolean;
+                        /** @description Visits a day, at most gym_manage.visit_daily_cap_max; null = gym_manage.visit_daily_cap_default */
+                        visitDailyCap?: number | null;
+                        /** @description Visits one person may book at this gym, at most gym_manage.visit_per_person_max */
+                        visitPerPerson?: number;
+                        /** @description What to bring and where to go, shown with the booking */
+                        visitNote?: string | null;
                     };
                 };
             };
@@ -50542,6 +50550,678 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/visits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Trial visits on a day (default today), booked first by time; the guest’s name and the last 4 digits of the phone (attendance.mark or members.view; feature visits) (M24-FR-113) */
+        get: {
+            parameters: {
+                query?: {
+                    date?: string;
+                    status?: "booked" | "attended" | "cancelled" | "no_show";
+                };
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymVisits"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/visits/{visitId}/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** The guest has come: the visit is attended and the desk feed hears it (attendance.mark; today only) (M24-FR-114) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                    visitId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymVisitOne"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_VISIT_STATE, GYM_VISIT_NOT_TODAY */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/visits/{visitId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a booked visit with a reason; the guest is told (attendance.mark) (M24-FR-115) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                    visitId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymVisitOne"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_VISIT_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/visits/{visitId}/reveal-phone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** The guest’s full phone number: no-store, audited, rate-limited per person (members.view) (M24-FR-116) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                    visitId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymVisitPhone"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: RATE_LIMITED */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/visits/{visitId}/convert": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Make the guest a member: links their account (or the member already linked) with source desk, so no referral fee (members.edit) (M24-FR-117) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                    visitId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Member */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymVisitConverted"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_VISIT_STATE, GYM_ALREADY_LINKED, GYM_MEMBER_PHONE_TAKEN */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/gym-visits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My trial visits, newest first; a booked visit carries its QR token and 6-character code (no-store) (M24-FR-112) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MyGymVisits"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Book a free trial visit: a verified phone, inside the gym’s hours, within the days ahead, the daily cap and the gym’s visits per person; confirmed at once (M24-FR-111) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        gymId: string;
+                        /** Format: date */
+                        date: string;
+                        arriveAt: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Booked */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MyGymVisitOne"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_VISITS_CLOSED, GYM_VISIT_OWN_GYM, GYM_VISIT_MEMBER, GYM_VISIT_LIMIT, GYM_VISIT_FULL */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, GYM_VISIT_DATE, GYM_VISIT_HOURS */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: RATE_LIMITED */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/gym-visits/{visitId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel my visit up to gym_manage.visit_cancel_cutoff_minutes before it; the gym is told (M24-FR-112) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    visitId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MyGymVisitOne"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_VISIT_STATE, GYM_VISIT_CANCEL_CLOSED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/gym/gyms/{slug}/visit-slots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Trial visits on a gym page (no sign-in): whether they are on, the note, and each open day ahead with its hours and places left (M24-FR-110) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymVisitSlots"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -70622,8 +71302,6 @@ export interface components {
                 nameBn: string;
                 icon: string | null;
             }[];
-            /** @description Always null: gyms sell no day pass since 2 Nov 2026. Installed apps still read it; it goes in a later release. */
-            dayPrice: number | null;
             monthPrice: number | null;
             quarterPrice: number | null;
             womenOnlyHours: boolean;
@@ -70655,8 +71333,6 @@ export interface components {
                 nameBn: string;
                 icon: string | null;
             }[];
-            /** @description Always null: gyms sell no day pass since 2 Nov 2026. Installed apps still read it; it goes in a later release. */
-            dayPrice: number | null;
             monthPrice: number | null;
             quarterPrice: number | null;
             womenOnlyHours: boolean;
@@ -71169,6 +71845,7 @@ export interface components {
                     staff_attendance?: boolean;
                     equipment?: boolean;
                     payroll?: boolean;
+                    visits?: boolean;
                 };
                 restricted: boolean;
                 /** @enum {string} */
@@ -71196,6 +71873,7 @@ export interface components {
                     staff_attendance?: boolean;
                     equipment?: boolean;
                     payroll?: boolean;
+                    visits?: boolean;
                 };
                 restricted: boolean;
                 /** @enum {string} */
@@ -71229,6 +71907,7 @@ export interface components {
                 staff_attendance?: boolean;
                 equipment?: boolean;
                 payroll?: boolean;
+                visits?: boolean;
             };
             restricted: boolean;
             /** @enum {string} */
@@ -71246,6 +71925,7 @@ export interface components {
                 requestsWaiting: number;
                 dueTodayCount: number;
                 overdueCount: number;
+                guestsToday?: number;
                 /** @description Owner and reports.view only */
                 collectedTodayPoisha?: number;
                 /** @description Owner and reports.view only */
@@ -71309,6 +71989,13 @@ export interface components {
             vatEnabled: boolean;
             vatBps: number | null;
             vatMaxBps: number;
+            visitsOpen: boolean;
+            visitDailyCap: number | null;
+            visitDailyCapDefault: number;
+            visitDailyCapMax: number;
+            visitPerPerson: number;
+            visitPerPersonMax: number;
+            visitNote: string | null;
             /** Format: date-time */
             importConsentUntil: string | null;
             nextMemberCode: string | null;
@@ -71331,6 +72018,31 @@ export interface components {
                 };
                 /** @enum {string} */
                 method: "qr" | "code";
+            } | null;
+            /** @description A trial-visit guest named by their QR or code (plan feature visits); check in with POST …/visits/{visitId}/check-in */
+            visit?: {
+                /** Format: uuid */
+                id: string;
+                guest: {
+                    /** Format: uuid */
+                    userId: string;
+                    name: string | null;
+                    phoneLast4: string | null;
+                };
+                /** Format: date */
+                date: string;
+                arriveAt: string;
+                /** @enum {string} */
+                status: "booked" | "attended" | "cancelled" | "no_show";
+                /** @enum {string|null} */
+                cancelledBy: "guest" | "gym" | null;
+                cancelReason: string | null;
+                /** Format: date-time */
+                attendedAt: string | null;
+                /** Format: uuid */
+                memberId: string | null;
+                /** Format: date-time */
+                createdAt: string;
             } | null;
         };
         GymDeskCard: {
@@ -72109,13 +72821,14 @@ export interface components {
                 staff_attendance?: boolean;
                 equipment?: boolean;
                 payroll?: boolean;
+                visits?: boolean;
             };
             tiers: {
                 /** @enum {string} */
                 key: "free" | "basic" | "standard" | "pro";
                 maxMembers: number | null;
                 pricePoisha: number;
-                features: ("attendance" | "reminders" | "online_fees" | "reports" | "trainers" | "plans" | "multi_gym" | "expenses" | "lockers" | "pos" | "pnl" | "classes" | "points" | "notices" | "leads" | "staff_attendance" | "equipment" | "payroll")[];
+                features: ("attendance" | "reminders" | "online_fees" | "reports" | "trainers" | "plans" | "multi_gym" | "expenses" | "lockers" | "pos" | "pnl" | "classes" | "points" | "notices" | "leads" | "staff_attendance" | "equipment" | "payroll" | "visits")[];
                 minGyms?: number;
             }[];
             gyms: {
@@ -72226,7 +72939,7 @@ export interface components {
                 key: "free" | "basic" | "standard" | "pro";
                 maxMembers: number | null;
                 pricePoisha: number;
-                features: ("attendance" | "reminders" | "online_fees" | "reports" | "trainers" | "plans" | "multi_gym" | "expenses" | "lockers" | "pos" | "pnl" | "classes" | "points" | "notices" | "leads" | "staff_attendance" | "equipment" | "payroll")[];
+                features: ("attendance" | "reminders" | "online_fees" | "reports" | "trainers" | "plans" | "multi_gym" | "expenses" | "lockers" | "pos" | "pnl" | "classes" | "points" | "notices" | "leads" | "staff_attendance" | "equipment" | "payroll" | "visits")[];
                 minGyms?: number;
             }[];
             featureMinTiers: {
@@ -74232,6 +74945,104 @@ export interface components {
         GymEnquiryAccepted: {
             /** @enum {boolean} */
             accepted: true;
+        };
+        GymVisits: {
+            /** Format: date */
+            date: string;
+            open: boolean;
+            cap: number;
+            counts: {
+                booked: number;
+                attended: number;
+                cancelled: number;
+                no_show: number;
+            };
+            items: components["schemas"]["GymVisit"][];
+        };
+        GymVisit: {
+            /** Format: uuid */
+            id: string;
+            guest: {
+                /** Format: uuid */
+                userId: string;
+                name: string | null;
+                phoneLast4: string | null;
+            };
+            /** Format: date */
+            date: string;
+            arriveAt: string;
+            /** @enum {string} */
+            status: "booked" | "attended" | "cancelled" | "no_show";
+            /** @enum {string|null} */
+            cancelledBy: "guest" | "gym" | null;
+            cancelReason: string | null;
+            /** Format: date-time */
+            attendedAt: string | null;
+            /** Format: uuid */
+            memberId: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        GymVisitOne: {
+            visit: components["schemas"]["GymVisit"];
+        };
+        GymVisitPhone: {
+            /** Format: uuid */
+            visitId: string;
+            phone: string;
+        };
+        GymVisitConverted: {
+            member: {
+                [key: string]: unknown;
+            };
+        };
+        MyGymVisits: {
+            items: components["schemas"]["MyGymVisit"][];
+        };
+        MyGymVisit: {
+            /** Format: uuid */
+            id: string;
+            gym: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                slug: string;
+                addressLine: string | null;
+            } | null;
+            /** Format: date */
+            date: string;
+            arriveAt: string;
+            /** @enum {string} */
+            status: "booked" | "attended" | "cancelled" | "no_show";
+            /** @description The 6-character code for the desk, while booked and not past */
+            code: string | null;
+            /** @description The QR text for the desk (v1.gv…), while booked and not past */
+            token: string | null;
+            /** @enum {string|null} */
+            cancelledBy: "guest" | "gym" | null;
+            cancelReason: string | null;
+            /** Format: date-time */
+            attendedAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        MyGymVisitOne: {
+            visit: components["schemas"]["MyGymVisit"];
+        };
+        GymVisitSlots: {
+            open: boolean;
+            note: string | null;
+            perPerson?: number;
+            days: {
+                /** Format: date */
+                date: string;
+                windows: {
+                    openTime: string;
+                    closeTime: string;
+                    womenOnly: boolean;
+                }[];
+                placesLeft: number;
+            }[];
         };
         GymStaffShifts: {
             items: {
