@@ -67,6 +67,7 @@ function useGuestActions(ctx: GymCtx) {
     convert: async (v: GymVisit) => {
       const r = (await run(`member:${v.id}`, () => gymVisits.convert(ctx.gymId, v.id), t("desk.madeMember"))) as { member: { id: string } } | null;
       if (r?.member?.id) router.push(`/manage/${ctx.gymId}/members/${r.member.id}`);
+      return r?.member?.id ?? null;
     },
     // The number comes from the audited reveal at the moment of the tap (M24-FR-116), never kept on the page.
     reach: async (v: GymVisit, how: "call" | "whatsapp") => {
@@ -166,6 +167,12 @@ export function GuestCard({ ctx, visit, today, onChanged }: { ctx: GymCtx; visit
         onChanged?.(r.visit);
       }
       return r;
+    },
+    // Make member: the card shows "Member" at once, while the member's page opens.
+    convert: async (x) => {
+      const memberId = await a.convert(x);
+      if (memberId) setV({ ...x, memberId });
+      return memberId;
     },
   };
   return (
