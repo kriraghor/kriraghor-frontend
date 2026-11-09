@@ -296,6 +296,8 @@ function OwnerPane({ ownerId, canOverrides }: { ownerId: string; canOverrides: b
         ) : null}
       </section>
 
+      <SmsSection ownerId={ownerId} addon={d.smsAddon} canAdjust={canWrite(me)} />
+
       <section>
         <h3 className="font-display text-base font-bold">{t("fees")}</h3>
         <div className="mt-1 divide-y divide-line">
@@ -673,5 +675,65 @@ function Overrides() {
         </CodeDialog>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * The owner's SMS add-on (M24 prompt 3b): its state, the balance and the month's allowance left; a master
+ * adds or takes units with a note (step-up settings.write), never below 0.
+ */
+function SmsSection({ ownerId, addon, canAdjust }: { ownerId: string; addon: { available: boolean; enabled: boolean; status: string | null; balance: number; allowanceLeft: number }; canAdjust: boolean }) {
+  const t = useTranslations("gymManageDesk");
+  const qc = useQueryClient();
+  const errText = useErrText();
+  const [units, setUnits] = useState("");
+  const [note, setNote] = useState("");
+  const [asking, setAsking] = useState(false);
+  const [done, setDone] = useState<string | null>(null);
+  const n = Number(units);
+  const valid = Number.isInteger(n) && n !== 0 && Math.abs(n) <= 100000 && note.trim().length >= 3;
+  return (
+    <section data-testid="gm-sms">
+      <h3 className="font-display text-base font-bold">{t("sms.title")}</h3>
+      <div className="mt-1 divide-y divide-line">
+        <Fact label={t("sms.state")}>{addon.status ? t(`sms.status.${addon.status}`) : addon.enabled ? t("sms.notOn") : t("sms.platformOff")}</Fact>
+        <Fact label={t("sms.balance")}>
+          <span className="tabular" data-testid="gm-sms-balance">
+            {addon.balance}
+          </span>
+        </Fact>
+        <Fact label={t("sms.allowanceLeft")}>{addon.allowanceLeft}</Fact>
+      </div>
+      {canAdjust ? (
+        <div className="mt-2 grid gap-2 sm:grid-cols-[8rem_minmax(0,1fr)_auto] sm:items-end">
+          <Field id="gm-sms-units" label={t("sms.units")} inputMode="numeric" value={units} onChange={(e) => setUnits(e.target.value.replace(/[^0-9-]/g, ""))} hint={t("sms.unitsHint")} data-testid="gm-sms-units" />
+          <Field id="gm-sms-note" label={t("sms.note")} value={note} maxLength={200} onChange={(e) => setNote(e.target.value)} data-testid="gm-sms-note" />
+          <Button type="button" size="sm" disabled={!valid} onClick={() => setAsking(true)} data-testid="gm-sms-adjust">
+            {t("sms.adjust")}
+          </Button>
+        </div>
+      ) : null}
+      {done ? (
+        <Notice tone="success" className="mt-2">
+          {done}
+        </Notice>
+      ) : null}
+      {asking ? (
+        <CodeDialog
+          title={t("sms.adjustTitle", { units: n })}
+          help={t("stepUpHelp")}
+          onClose={() => setAsking(false)}
+          onConfirm={async (code) => {
+            const token = await stepUp(code, "settings.write");
+            await guarded(() => gymManageAdmin.smsAdjust(ownerId, n, note.trim(), token), (e) => errText(e));
+            setDone(t("sms.adjusted", { units: n }));
+            setAsking(false);
+            setUnits("");
+            setNote("");
+            await qc.invalidateQueries({ queryKey: ["admin-gm-owner", ownerId] });
+          }}
+        />
+      ) : null}
+    </section>
   );
 }

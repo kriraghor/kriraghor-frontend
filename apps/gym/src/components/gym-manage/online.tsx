@@ -8,7 +8,7 @@ import QRCode from "qrcode";
 import { problemOf } from "@kriraghor/api-client";
 import { newKey } from "@kriraghor/ui/format";
 import { Badge, Button, ButtonLink, Checkbox, Dialog, Field, Notice, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
-import { poishaToTakaText, takaToPoisha, type FeePayment } from "@/lib/gym-manage";
+import { gymManage, poishaToTakaText, takaToPoisha, type FeePayment } from "@/lib/gym-manage";
 import { gymMoney, linkChannels, onlineFeesFix, openLinkOf, refundState, type PaymentLink } from "@/lib/gym-money";
 import { useFmt, useGymError } from "./common";
 
@@ -83,6 +83,10 @@ export function PaymentLinkDialog({ gymId, due, owner, tierLocked, title, open, 
   const [taka, setTaka] = useState(poishaToTakaText(due.outstandingPoisha ?? null));
   const [inApp, setInApp] = useState(true);
   const [email, setEmail] = useState(true);
+  // Prompt 3b: by SMS too, when the owner's SMS add-on is on (only the owner reads the billing page).
+  const billing = useQuery({ queryKey: ["gm-billing"], queryFn: () => gymManage.billing(), enabled: open && owner, retry: false, staleTime: 60_000 });
+  const smsOn = billing.data?.smsAddon.status === "active";
+  const [bySms, setBySms] = useState(false);
   const [key, setKey] = useState(newKey);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<{ text: string; reason?: string } | null>(tierLocked ? { text: "", reason: "tier" } : null);
@@ -99,7 +103,7 @@ export function PaymentLinkDialog({ gymId, due, owner, tierLocked, title, open, 
     setBusy(true);
     setProblem(null);
     try {
-      const l = await gymMoney.createLink(gymId, due.id, { amountPoisha, channels: linkChannels(inApp, email) }, key);
+      const l = await gymMoney.createLink(gymId, due.id, { amountPoisha, channels: linkChannels(inApp, email, smsOn && bySms) }, key);
       setCreated(l);
       toast.show(t("online.created"));
       await refresh();
@@ -199,6 +203,7 @@ export function PaymentLinkDialog({ gymId, due, owner, tierLocked, title, open, 
               <legend className="text-sm font-semibold">{t("online.send")}</legend>
               <Checkbox id="link-inapp" label={t("online.channel.in_app")} checked={inApp} onChange={(e) => setInApp(e.target.checked)} data-testid="link-inapp" />
               <Checkbox id="link-email" label={t("online.channel.email")} checked={email} onChange={(e) => setEmail(e.target.checked)} data-testid="link-email" />
+              {smsOn ? <Checkbox id="link-sms" label={t("online.channel.sms")} checked={bySms} onChange={(e) => setBySms(e.target.checked)} data-testid="link-sms" /> : null}
               <p className="text-xs text-muted">{t("online.sendHint")}</p>
             </fieldset>
           </>

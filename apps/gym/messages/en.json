@@ -869,7 +869,10 @@
       "EXPORT_LIMIT": "You've reached this hour's export limit. Try again later.",
       "EXPORT_TOO_LARGE": "Too many rows for one file. Pick a shorter period.",
       "GYM_NAME_MISMATCH": "The name does not match. Type it exactly as shown.",
-      "GYM_HAS_ACTIVE_PASSES": "Members still have paid online packages at this gym."
+      "GYM_HAS_ACTIVE_PASSES": "Members still have paid online packages at this gym.",
+      "GYM_SMS_ADDON_UNAVAILABLE": "The SMS add-on is not available on this plan right now.",
+      "GYM_SMS_ADDON_OFF": "Switch the SMS add-on on first, in Plan and billing.",
+      "GYM_SMS_BALANCE_SHORT": "That would take the SMS balance below 0."
     },
     "gyms": {
       "title": "My gyms",
@@ -1506,9 +1509,6 @@
       "pastDue": "An invoice is overdue",
       "pastDueBody": "Pay it before {date} to keep your paid features.",
       "pastDueSoon": "Pay it soon to keep your paid features.",
-      "sms": "SMS add-on",
-      "smsBalance": "{n} SMS left",
-      "smsSoon": "Coming soon: reminders by SMS for members without the app or email.",
       "fees": "Fees that apply to you",
       "standard": "Standard",
       "special": "Special rate",
@@ -1645,7 +1645,8 @@
       "sendHint": "Leave both off to only show the QR here at the counter.",
       "channel": {
         "in_app": "In the app (and push)",
-        "email": "By email"
+        "email": "By email",
+        "sms": "By SMS (from your SMS balance)"
       },
       "create": "Create link",
       "created": "Payment link ready",
@@ -1737,9 +1738,6 @@
       "timingHint": "Set by Kriraghor for every gym.",
       "reach": "Only SMS could reach",
       "smsOnly": "{n, plural, one {active member has} other {active members have}} no linked account and no email (of {active}).",
-      "sms": "SMS reminders",
-      "smsAvailable": "Choose which reminders also go by SMS.",
-      "smsSoon": "Coming with the SMS add-on.",
       "log": "Sent in the last {days} days",
       "logEmpty": "Nothing sent yet",
       "col": {
@@ -3182,6 +3180,63 @@
       "optional": "optional",
       "noteHint": "What to bring, where to go, ladies-only hours.",
       "noFee": "When a guest joins, Kriraghor charges no referral fee."
+    }
+  },
+  "gs": {
+    "title": "SMS add-on",
+    "soon": "Coming soon: reminders by SMS for members without the app or email.",
+    "needsPaid": "Available on the Basic plan and up.",
+    "lead": "Send renewal, overdue and receipt reminders by SMS too, including to members who have only a phone.",
+    "perMonth": "{price} a month",
+    "included": "{n} SMS included each month",
+    "switchOn": "Switch on",
+    "billedNote": "Billed on your monthly invoice for any month it was on. Unused monthly SMS do not carry over.",
+    "switchedOn": "SMS add-on switched on",
+    "switchedOff": "SMS add-on switched off",
+    "onLead": "Reminders you chose also go by SMS while SMS are left.",
+    "active": "On",
+    "balance": "SMS left",
+    "tone": {
+      "empty": "Empty",
+      "low": "Running low",
+      "ok": "Enough"
+    },
+    "allowanceLeft": "Left from this month's allowance",
+    "bundleUntil": "Bundle, usable until {date}",
+    "buyTitle": "Buy SMS: {size} SMS for {price} a bundle",
+    "fewer": "One bundle fewer",
+    "more": "One bundle more",
+    "buy": "Buy {n} SMS for {price}",
+    "buyNote": "Paid now by bKash, Nagad or card. The SMS arrive as soon as the payment goes through and stay usable for {days} days.",
+    "showHistory": "History",
+    "hideHistory": "Hide history",
+    "noEntries": "Nothing yet.",
+    "switchOff": "Switch off",
+    "offTitle": "Switch the SMS add-on off?",
+    "offBody": "Reminders go by app and email only. SMS you bought stay on your balance for when you switch it on again.",
+    "keep": "Keep it on",
+    "kind": {
+      "grant": "Monthly SMS",
+      "purchase": "Bundle bought",
+      "reserve": "Held for a message",
+      "settle": "Message sent, the rest back",
+      "expire": "Expired",
+      "adjust": "Changed by Kriraghor"
+    },
+    "remindersTitle": "By SMS too",
+    "remindersOff": "Switch the SMS add-on on to send reminders by SMS.",
+    "toBilling": "Plan and billing",
+    "remindersLead": "These reminders also go by SMS while SMS are left. Members with only a phone get them too.",
+    "balanceShort": "{n} SMS left",
+    "bySms": "{kind} by SMS",
+    "kindOn": "{kind} goes by SMS too",
+    "kindOff": "{kind} no longer goes by SMS",
+    "kinds": {
+      "renewal_due": "Renewal due",
+      "ends_today": "Ends today",
+      "overdue": "Fee overdue",
+      "receipt": "Payment receipt",
+      "pay_link": "Payment link"
     }
   }
 }

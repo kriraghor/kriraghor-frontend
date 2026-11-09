@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, CaretRight, ChatText, Check, Medal } from "@phosphor-icons/react";
+import { ArrowLeft, CaretRight, Check, Medal } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Badge, Button, Card, EmptyState, Notice, Skeleton, useToast } from "@kriraghor/ui/kit";
 import { DeskAccessNotice, deskAccessKey } from "@kriraghor/ui/desk";
@@ -13,11 +13,12 @@ import { FEATURES, gymManage, tiersInOrder, type Tier } from "@/lib/gym-manage";
 import { billingBanner, feeKind, gymMoney, type BillingFull, type Invoice } from "@/lib/gym-money";
 import { Row, useFmt, useGymError } from "./common";
 import { InvoiceStatus, PayInvoiceButton } from "./billing-parts";
+import { SmsAddonCard } from "./SmsAddon";
 
 /**
  * /manage/billing (owner; M24 §6.6, FR-81 to FR-90): the plan chosen, active members today and this
  * month's peak against its limit, past-due and restricted banners, invoices with **Pay**, the fees that
- * apply (standard or a special rate until a date), founding partner status, the SMS add-on (later),
+ * apply (standard or a special rate until a date), founding partner status, the SMS add-on (prompt 3b),
  * what each tier includes and costs (prices from settings) and the tier picker.
  */
 export function Billing() {
@@ -68,13 +69,7 @@ export function Billing() {
               <div className="flex flex-col gap-4">
                 <Fees b={b} />
                 <Founding b={b} />
-                <Card padded={false} className="flex gap-3 border-dashed p-4" data-testid="billing-sms">
-                  <ChatText size={24} className="shrink-0 text-muted" aria-hidden />
-                  <div>
-                    <p className="font-semibold">{t("billing.sms")}</p>
-                    <p className="text-sm text-muted">{b.smsAddon.available ? t("billing.smsBalance", { n: b.smsAddon.balance }) : t("billing.smsSoon")}</p>
-                  </div>
-                </Card>
+                <SmsAddonCard addon={b.smsAddon} />
               </div>
             </div>
             {problem ? <Notice tone="error">{problem}</Notice> : null}

@@ -3187,6 +3187,25 @@
       "STEP_UP_REQUIRED": "নতুন অথেনটিকেটর কোড দিন।",
       "MASTER_REQUIRED": "এটি শুধু মাস্টার করতে পারেন।",
       "PERMISSION_REQUIRED": "এর অনুমতি আপনার নেই।"
+    },
+    "sms": {
+      "title": "SMS অ্যাড-অন",
+      "state": "অবস্থা",
+      "status": {
+        "active": "চালু",
+        "paused": "থামানো",
+        "ended": "বন্ধ"
+      },
+      "notOn": "চালু করা হয়নি",
+      "platformOff": "প্ল্যাটফর্মে বন্ধ (এখনো SMS গেটওয়ে নেই)",
+      "balance": "বাকি SMS",
+      "allowanceLeft": "এ মাসের বরাদ্দ থেকে বাকি",
+      "units": "ইউনিট",
+      "unitsHint": "মাইনাস দিলে কমে",
+      "note": "কারণ",
+      "adjust": "ব্যালেন্স বদলান",
+      "adjustTitle": "SMS ব্যালেন্স {units} বদলান",
+      "adjusted": "SMS ব্যালেন্স {units} বদলানো হয়েছে।"
     }
   },
   "organiser": {

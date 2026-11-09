@@ -6,7 +6,9 @@ import { useTranslations } from "next-intl";
 import { BellRinging, ChatText } from "@phosphor-icons/react";
 import { Badge, Card, EmptyState, Notice, Skeleton, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { gymManage } from "@/lib/gym-manage";
+import { smsKindsAfter, type SmsKind } from "@/lib/gym-sms";
 import { gymMoney, remindersOffAfter, type ReminderKind, type RemindersPage } from "@/lib/gym-money";
 import { GymPage, Row, useFmt, useGymError, type GymCtx } from "./common";
 
@@ -94,13 +96,7 @@ function Page({ ctx, r }: { ctx: GymCtx; r: RemindersPage }) {
             </p>
             <p className="text-sm text-muted">{t("reminders.smsOnly", { n: r.reachability.smsOnly, active: f.n(r.reachability.activeMembers) })}</p>
           </Card>
-          <Card padded={false} className="flex gap-3 border-dashed p-4" data-testid="reminder-sms">
-            <ChatText size={24} className="shrink-0 text-muted" aria-hidden />
-            <div>
-              <p className="font-semibold">{t("reminders.sms")}</p>
-              <p className="text-sm text-muted">{r.sms.available ? t("reminders.smsAvailable") : t("reminders.smsSoon")}</p>
-            </div>
-          </Card>
+          <SmsKinds ctx={ctx} r={r} />
         </div>
       </div>
       <Log r={r} />
@@ -164,6 +160,63 @@ function Log({ r }: { r: RemindersPage }) {
           </table>
         </div>
       )}
+    </Card>
+  );
+}
+
+/**
+ * Prompt 3b (M24-FR-97): which reminders also go by SMS, paid from the owner's SMS balance. Coming soon while
+ * the add-on cannot be switched on; a link to Plan and billing while it is off.
+ */
+function SmsKinds({ ctx, r }: { ctx: GymCtx; r: RemindersPage }) {
+  const t = useTranslations("gs");
+  const f = useFmt();
+  const err = useGymError();
+  const qc = useQueryClient();
+  const toast = useToast();
+  const [busy, setBusy] = useState<string | null>(null);
+  const flip = async (kind: string, on: boolean) => {
+    setBusy(kind);
+    try {
+      await gymManage.saveSettings(ctx.gymId, { smsKinds: smsKindsAfter(r.sms.kinds, r.sms.choosable, kind, on) as SmsKind[] });
+      await qc.invalidateQueries({ queryKey: ["gm-reminders", ctx.gymId] });
+      toast.show(on ? t("kindOn", { kind: t(`kinds.${kind}`) }) : t("kindOff", { kind: t(`kinds.${kind}`) }));
+    } catch (e) {
+      toast.show(err(e), "error");
+    } finally {
+      setBusy(null);
+    }
+  };
+  if (!r.sms.active)
+    return (
+      <Card padded={false} className="flex gap-3 border-dashed p-4" data-testid="reminder-sms" data-state={r.sms.available ? "off" : "soon"}>
+        <ChatText size={24} className="shrink-0 text-muted" aria-hidden />
+        <div>
+          <p className="font-semibold">{t("remindersTitle")}</p>
+          <p className="text-sm text-muted">{r.sms.available ? t("remindersOff") : t("soon")}</p>
+          {r.sms.available && ctx.owner ? (
+            <Link href="/manage/billing" className="mt-1 inline-block text-sm font-semibold text-brand-text underline">
+              {t("toBilling")}
+            </Link>
+          ) : null}
+        </div>
+      </Card>
+    );
+  return (
+    <Card padded={false} className="p-4" data-testid="reminder-sms" data-state="on">
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 className="font-display text-lg font-bold">{t("remindersTitle")}</h2>
+        <span className="text-sm text-muted tabular-nums">{t("balanceShort", { n: f.n(r.sms.balance) })}</span>
+      </div>
+      <p className="mt-1 text-xs text-muted">{t("remindersLead")}</p>
+      <ul className="mt-2 divide-y divide-line">
+        {r.sms.choosable.map((kind) => (
+          <li key={kind} className="flex items-center gap-3 py-2">
+            <span className="min-w-0 flex-1 text-sm font-semibold">{t(`kinds.${kind}`)}</span>
+            <Switch on={r.sms.kinds.includes(kind)} busy={busy === kind} label={t("bySms", { kind: t(`kinds.${kind}`) })} onChange={(on) => void flip(kind, on)} testId={`sms-kind-${kind}`} />
+          </li>
+        ))}
+      </ul>
     </Card>
   );
 }

@@ -76,7 +76,8 @@ export function payPath(url: string): string {
 }
 
 /** The channels toggles → the POST body's channels ([] = only the QR at the counter). */
-export const linkChannels = (inApp: boolean, email: boolean): LinkChannel[] => [...(inApp ? (["in_app"] as const) : []), ...(email ? (["email"] as const) : [])];
+/** The channels a new payment link is sent by; sms only with the SMS add-on (prompt 3b). */
+export const linkChannels = (inApp: boolean, email: boolean, sms = false): LinkChannel[] => [...(inApp ? (["in_app"] as const) : []), ...(email ? (["email"] as const) : []), ...(sms ? (["sms"] as const) : [])];
 
 /** The status a viewer should see: an open link past its expiry is expired (the job marks it later). */
 export const linkStatus = (l: Pick<PaymentLink, "status" | "expiresAt">, now = Date.now()): LinkStatus => (l.status === "open" && Date.parse(l.expiresAt) <= now ? "expired" : l.status);

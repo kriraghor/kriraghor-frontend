@@ -34,6 +34,9 @@ export const gymManageAdmin = {
   owner: async (ownerId: string) => unwrap(await api("admin").GET("/admin/gym-manage/owners/{ownerId}", { params: { path: { ownerId } } })),
   setFounding: async (ownerId: string, on: boolean, reason: string, token: string) =>
     unwrap(await api("admin").PUT("/admin/gym-manage/owners/{ownerId}/founding-partner", { params: { path: { ownerId }, header: step(token) }, body: { on, reason } })),
+  // M24 prompt 3b: add or take an owner's SMS units (master, step-up settings.write; never below 0).
+  smsAdjust: async (ownerId: string, units: number, note: string, token: string) =>
+    unwrap(await api("admin").POST("/admin/gym-manage/owners/{ownerId}/sms-adjust", { params: { path: { ownerId }, header: step(token) }, body: { units, note } })),
   invoices: async (q: { status?: InvoiceStatus; period?: string; ownerId?: string }) => unwrap(await api("admin").GET("/admin/gym-manage/invoices", { params: { query: q } })),
   voidInvoice: async (invoiceId: string, reason: string, token: string) =>
     unwrap(await api("admin").POST("/admin/gym-manage/invoices/{invoiceId}/void", { params: { path: { invoiceId }, header: step(token) }, body: { reason } })),

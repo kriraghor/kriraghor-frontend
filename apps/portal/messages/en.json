@@ -3187,6 +3187,25 @@
       "STEP_UP_REQUIRED": "Enter a fresh authenticator code.",
       "MASTER_REQUIRED": "Only a master can do this.",
       "PERMISSION_REQUIRED": "You don't have permission for this."
+    },
+    "sms": {
+      "title": "SMS add-on",
+      "state": "State",
+      "status": {
+        "active": "On",
+        "paused": "Paused",
+        "ended": "Off"
+      },
+      "notOn": "Not switched on",
+      "platformOff": "Switched off on the platform (no SMS gateway yet)",
+      "balance": "SMS left",
+      "allowanceLeft": "Left from this month's allowance",
+      "units": "Units",
+      "unitsHint": "Negative takes units away",
+      "note": "Why",
+      "adjust": "Change balance",
+      "adjustTitle": "Change the SMS balance by {units}",
+      "adjusted": "SMS balance changed by {units}."
     }
   },
   "organiser": {
