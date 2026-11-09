@@ -42671,8 +42671,8 @@ export interface paths {
                     "application/json": {
                         /** @description Up to the outstanding; default all of it (M24-FR-40) */
                         amountPoisha?: number;
-                        /** @description Send the link in-app (and by push) and by email; default both. [] only shows the QR. SMS needs the add-on (prompt 3b) */
-                        channels?: ("in_app" | "email")[];
+                        /** @description Send the link in-app (and by push), by email and, with the SMS add-on, by SMS; default in-app and email. [] only shows the QR */
+                        channels?: ("in_app" | "email" | "sms")[];
                     };
                 };
             };
@@ -43228,6 +43228,221 @@ export interface paths {
                 };
                 /** @description Error. Codes: EXPORT_LIMIT */
                 429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/sms-addon": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Switch the SMS add-on on (paid plan, gym_saas.sms_addon_enabled; grants the month’s allowance) or off (M24-FR-96) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        enabled: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymSmsAddon"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, ROLE_SUSPENDED, PERMISSION_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SMS_ADDON_UNAVAILABLE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/sms-bundles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Buy SMS bundles: a bundle invoice paid at once through M06 (purpose gym_saas_invoice); the units arrive at capture, valid gym_saas.sms_bundle_valid_days (M24-FR-98) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        bundles: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description Invoice and payment */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymSmsBundleBought"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, ROLE_SUSPENDED, PERMISSION_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SMS_ADDON_UNAVAILABLE, GYM_SMS_ADDON_OFF */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/sms-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My SMS units: the balance and the latest entries (grant, purchase, reserve, settle, expire, adjust) */
+        get: {
+            parameters: {
+                query?: {
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymSmsEntries"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PHONE_REQUIRED, ROLE_SUSPENDED, PERMISSION_REQUIRED */
+                403: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -44070,6 +44285,99 @@ export interface paths {
             };
         };
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/gym-manage/owners/{ownerId}/sms-adjust": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add or take SMS units with a note (master, step-up settings.write); never below 0 (M24 prompt 3b) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Single-use step-up token from POST /auth/step-up */
+                    "x-step-up": string;
+                };
+                path: {
+                    ownerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        units: number;
+                        note: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymSmsAdjusted"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED, STEP_UP_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SMS_BALANCE_SHORT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -72872,13 +73180,32 @@ export interface components {
                 discountPct: number;
                 placesLeft: number;
             };
-            /** @description The SMS add-on (prompt 3b) */
-            smsAddon: {
-                available: boolean;
-                status: null;
-                balance: number;
-            };
+            smsAddon: components["schemas"]["GymSmsAddon"];
             openInvoices: components["schemas"]["GymInvoice"][];
+        };
+        GymSmsAddon: {
+            /** @description The platform switch is on and the plan is paid */
+            available: boolean;
+            /** @description gym_saas.sms_addon_enabled */
+            enabled: boolean;
+            /** @enum {string|null} */
+            status: "active" | "paused" | "ended" | null;
+            startedAt: string | null;
+            balance: number;
+            allowanceLeft: number;
+            pricePoisha: number;
+            included: number;
+            bundle: {
+                size: number;
+                pricePoisha: number;
+                validDays: number;
+            };
+            reserveUnits: number;
+            lowBalance: number;
+            bundles: {
+                units: number;
+                expiresOn: string;
+            }[];
         };
         GymInvoice: {
             /** Format: uuid */
@@ -73161,7 +73488,7 @@ export interface components {
             status: "open" | "paid" | "expired" | "cancelled";
             /** @enum {string} */
             origin: "staff" | "member";
-            channels: ("in_app" | "email")[];
+            channels: ("in_app" | "email" | "sms")[];
             /** Format: date-time */
             expiresAt: string;
             /** @description gym.kriraghor.com/p/{token}: the page the member pays from */
@@ -73214,9 +73541,12 @@ export interface components {
                 morningSummaryTime: string;
             };
             sms: {
-                /** @description The SMS add-on (prompt 3b); false in prompt 2 */
+                /** @description The SMS add-on can be switched on (platform switch and a paid plan) */
                 available: boolean;
+                active: boolean;
+                balance: number;
                 kinds: string[];
+                choosable: string[];
             };
             reachability: {
                 activeMembers: number;
@@ -73329,6 +73659,34 @@ export interface components {
                 /** Format: date */
                 lastCheckInOn: string | null;
                 daysSince: number | null;
+            }[];
+        };
+        GymSmsBundleBought: {
+            invoice: {
+                [key: string]: unknown;
+            };
+            units: number;
+            payment: {
+                /** Format: uuid */
+                id: string;
+                payUrl: string;
+            };
+        };
+        GymSmsEntries: {
+            balance: number;
+            items: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                kind: "grant" | "purchase" | "reserve" | "settle" | "expire" | "adjust";
+                units: number;
+                expiresOn: string | null;
+                /** Format: uuid */
+                gymId: string | null;
+                /** Format: uuid */
+                invoiceId: string | null;
+                note: string | null;
+                createdAt: string;
             }[];
         };
         GymInvoiceList: {
@@ -73741,11 +74099,7 @@ export interface components {
                 /** Format: date-time */
                 undoneAt: string | null;
             }[];
-            smsAddon: {
-                available: boolean;
-                status: null;
-                balance: number;
-            };
+            smsAddon: components["schemas"]["GymSmsAddon"];
         };
         GymFeeOverride: {
             /** Format: uuid */
@@ -73777,6 +74131,23 @@ export interface components {
             endReason: string | null;
             /** Format: date-time */
             createdAt: string;
+        };
+        GymSmsAdjusted: {
+            balance: number;
+            entry: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                kind: "grant" | "purchase" | "reserve" | "settle" | "expire" | "adjust";
+                units: number;
+                expiresOn: string | null;
+                /** Format: uuid */
+                gymId: string | null;
+                /** Format: uuid */
+                invoiceId: string | null;
+                note: string | null;
+                createdAt: string;
+            };
         };
         GymAdminInvoices: {
             items: {

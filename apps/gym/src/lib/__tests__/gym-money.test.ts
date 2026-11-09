@@ -36,6 +36,8 @@ describe("pay URLs and payment links (M24-FR-40, FR-41)", () => {
   it("builds the channels from the toggles; none means the QR only", () => {
     expect(linkChannels(true, true)).toEqual(["in_app", "email"]);
     expect(linkChannels(false, true)).toEqual(["email"]);
+    expect(linkChannels(false, false, true)).toEqual(["sms"]);
+    expect(linkChannels(true, true, true)).toEqual(["in_app", "email", "sms"]);
     expect(linkChannels(true, false)).toEqual(["in_app"]);
     expect(linkChannels(false, false)).toEqual([]);
   });
