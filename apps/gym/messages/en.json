@@ -1249,7 +1249,7 @@
     },
     "requests": {
       "title": "Requests",
-      "lead": "Invites you sent for members to link their Kriraghor account. Join requests from your gym page come later.",
+      "lead": "Invites you sent for members to link their Kriraghor account, and join requests people sent from your gym page.",
       "status": "Status",
       "someone": "Member",
       "sent": "Sent {date}",
