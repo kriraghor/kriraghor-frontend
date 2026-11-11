@@ -107,6 +107,10 @@ function Fields({ ctx, s }: { ctx: GymCtx; s: GymSettings }) {
         </Select>
         <Field id="s-absent" label={t("settings.absentDays")} optional={t("settings.default", { n: s.absentAlertDaysDefault })} inputMode="numeric" value={d.absentAlertDays} onChange={(e) => setD({ ...d, absentAlertDays: e.target.value })} />
         <Checkbox id="s-join" label={t("settings.joinRequests")} checked={d.joinRequestsOpen} onChange={(e) => setD({ ...d, joinRequestsOpen: e.target.checked })} className="sm:col-span-2" />
+        <div className="sm:col-span-2">
+          <Checkbox id="s-self-renew" label={t("settings.selfRenew")} checked={d.selfRenewOpen} onChange={(e) => setD({ ...d, selfRenewOpen: e.target.checked })} />
+          <p className="ml-8 text-xs text-muted">{t("settings.selfRenewHint", { n: s.selfRenewDaysBefore })}</p>
+        </div>
       </Card>
       <Card className="grid gap-3 sm:grid-cols-2" data-testid="settings-vat">
         <h2 className="font-display text-lg font-bold sm:col-span-2">{t("settings.vat")}</h2>
