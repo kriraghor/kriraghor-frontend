@@ -33,6 +33,11 @@ export const gymDesk = {
   create: async (body: GymInput) => unwrap(await api().POST("/me/gyms", { body })),
   update: async (id: string, body: Partial<GymInput>) => unwrap(await api().PATCH("/me/gyms/{id}", { params: g(id), body })),
   setHours: async (id: string, hours: { dow: number; openTime: string; closeTime: string; womenOnly: boolean }[]) => unwrap(await api().PUT("/me/gyms/{id}/hours", { params: g(id), body: { hours } })),
+  // M20-FR-16 to FR-21: holidays and special hours (applied at once, no review)
+  specialDays: async (id: string, scope: "upcoming" | "past" = "upcoming") => unwrap(await api().GET("/me/gyms/{id}/special-days", { params: { ...g(id), query: { scope } } })),
+  previewSpecialDay: async (id: string, body: SpecialDayInput) => unwrap(await api().POST("/me/gyms/{id}/special-days/preview", { params: g(id), body })),
+  addSpecialDay: async (id: string, body: SpecialDayInput) => unwrap(await api().POST("/me/gyms/{id}/special-days", { params: g(id), body })),
+  removeSpecialDay: async (id: string, specialDayId: string) => unwrap(await api().POST("/me/gyms/{id}/special-days/{specialDayId}/remove", { params: { path: { id, specialDayId } } })),
   setPackages: async (id: string, packages: PackageInput[]) => unwrap(await api().PUT("/me/gyms/{id}/packages", { params: g(id), body: { packages } })),
   /** One photo, sent raw; the API checks its first bytes. */
   uploadPhoto: async (id: string, file: File) =>
@@ -107,6 +112,34 @@ export function hoursProblems(hours: Hours): string[] {
   }
   return out;
 }
+
+// ---------------- holidays and special hours (M20-FR-16 to FR-22)
+export type SpecialDay = components["schemas"]["GymSpecialDay"];
+export type SpecialDayRef = components["schemas"]["GymSpecialDayRef"];
+export type SpecialWindow = SpecialDayRef["windows"][number];
+export type SpecialDayInput = { fromOn: string; toOn: string; kind: "closed" | "hours"; windows: SpecialWindow[]; title: string };
+export type SpecialDayProblem = "title" | "order" | "past" | "long" | "hours";
+
+const daysApart = (from: string, to: string) => Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
+
+/**
+ * What stops a holiday or special hours from being sent, or null: a title, dates in order from today on, at
+ * most `maxDays` long, and for changed hours at least one window with times in order and no overlap.
+ */
+export function specialDayProblem(d: SpecialDayInput, { today, maxDays }: { today: string; maxDays: number }): SpecialDayProblem | null {
+  if (d.title.trim().length < 2) return "title";
+  if (d.toOn < d.fromOn) return "order";
+  if (d.fromOn < today) return "past";
+  if (daysApart(d.fromOn, d.toOn) + 1 > maxDays) return "long";
+  if (d.kind === "hours" && (!d.windows.length || hoursProblems(d.windows.map((w) => ({ ...w, dow: 0 }))).length > 0)) return "hours";
+  return null;
+}
+
+/** What is sent: a closed day carries no windows. */
+export const specialDayBody = (d: SpecialDayInput): SpecialDayInput => ({ ...d, title: d.title.trim(), windows: d.kind === "hours" ? d.windows : [] });
+
+/** Is one day or a range shown ("20 Mar" or "20 – 22 Mar")? */
+export const isOneDay = (d: { fromOn: string; toOn: string }) => d.fromOn === d.toOn;
 
 /** A typed backup code: upper case, no spaces or dashes (the API also accepts the dashed form). */
 export const cleanCode = (text: string) => text.toUpperCase().replace(/[^0-9A-Z]/g, "");

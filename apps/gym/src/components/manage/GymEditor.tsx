@@ -12,6 +12,7 @@ import { publicEnv } from "@kriraghor/session/env";
 import { copyDayToAll, gymActions, gymDesk, hoursProblems, listingSteps, onlinePackageState, windowsOf, type Hours, type OwnerGym } from "@/lib/manage";
 import { packageRowsOf, packagesPayload, packageToSellOnline } from "@/lib/gym-manage";
 import { TimePicker } from "@kriraghor/ui/date";
+import { SpecialDays } from "./SpecialDays";
 import { Chip as StatusChip, Field, inputCls, STATUS_TONE } from "@kriraghor/ui/desk";
 
 const WEEK = [6, 0, 1, 2, 3, 4, 5]; // Saturday first (the Bangladesh week)
@@ -171,6 +172,9 @@ export function GymEditor({ id }: { id: string }) {
       </div>
       <div className="mt-5">
         <WeekHours g={g} locked={locked} />
+      </div>
+      <div className="mt-5">
+        <SpecialDays gymId={g.id} />
       </div>
     </section>
   );

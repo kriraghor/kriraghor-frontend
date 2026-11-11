@@ -257,6 +257,8 @@ export const gymOps2 = {
   updateLead: async (gymId: string, leadId: string, body: { status?: "contacted" | "joined" | "lost"; note?: string | null; memberId?: string }) =>
     unwrap(await api().PATCH("/manage/gyms/{gymId}/leads/{leadId}", { params: { path: { gymId, leadId } }, body })),
   leadPhone: async (gymId: string, leadId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/leads/{leadId}/reveal-phone", { params: { path: { gymId, leadId } } })),
+  // the conversion report (M27-FR-87 to FR-90)
+  conversion: async (gymId: string, month?: string) => unwrap(await api().GET("/manage/gyms/{gymId}/reports/conversion", { params: { ...G(gymId), query: month ? { month } : {} } })),
   // the member
   myTimetable: async (memberId: string) => unwrap(await api().GET("/me/gym-classes", { params: { query: { memberId } } })),
   myBook: async (sessionId: string, memberId: string, key: string) => unwrap(await api().POST("/me/gym-classes/{sessionId}/book", { params: { path: { sessionId }, header: ik(key) }, body: { memberId } })),
@@ -268,6 +270,26 @@ export const gymOps2 = {
     unwrap(await api().POST("/gym/gyms/{slug}/enquiries", { params: { path: { slug } }, body })),
   exercises: async () => unwrap(await api().GET("/catalog/exercises")),
 };
+
+// ---------------------------------------------------------------- the conversion report (M27-FR-87 to FR-90)
+
+export type Conversion = S["GymConversionReport"];
+export type ConversionGroup = { key: "enquiries" | "visits" | "joinRequests"; stages: { key: string; value: number }[]; joinedPct: number | null };
+
+/**
+ * The report's groups for the screen, each with its stages in the order people move through them. A group
+ * the gym's plan lacks (enquiries, trial visits) is left out.
+ */
+export function conversionGroups(r: Conversion): ConversionGroup[] {
+  const out: ConversionGroup[] = [];
+  const e = r.enquiries;
+  if (e) out.push({ key: "enquiries", joinedPct: e.joinedPct, stages: [{ key: "received", value: e.received }, { key: "contacted", value: e.contacted }, { key: "joined", value: e.joined }, { key: "lost", value: e.lost }, { key: "open", value: e.open }] });
+  const v = r.visits;
+  if (v) out.push({ key: "visits", joinedPct: v.joinedPct, stages: [{ key: "booked", value: v.booked }, { key: "attended", value: v.attended }, { key: "becameMember", value: v.joined }, { key: "missed", value: v.missed }, { key: "cancelled", value: v.cancelled }, { key: "toCome", value: v.waiting }] });
+  const j = r.joinRequests;
+  out.push({ key: "joinRequests", joinedPct: j.joinedPct, stages: [{ key: "received", value: j.received }, { key: "accepted", value: j.accepted }, { key: "closed", value: j.closed }, { key: "waiting", value: j.waiting }] });
+  return out;
+}
 
 /** Group sessions by Dhaka date, in order (the week view). */
 export function byDay<T extends { localDate: string }>(items: readonly T[]): { date: string; items: T[] }[] {

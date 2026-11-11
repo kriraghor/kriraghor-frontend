@@ -23,7 +23,7 @@ export function GymCardItem({ card }: { card: GymCard }) {
         )}
         <span className="flex flex-1 flex-col p-4">
           <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide">
-            <span className={card.openNow ? "text-brand" : "text-muted"}>{card.openNow ? t("openNow") : t("closedNow")}</span>
+            <span className={card.openNow ? "text-brand" : "text-muted"}>{card.specialToday?.kind === "closed" ? t("closedToday", { title: card.specialToday.title }) : card.openNow ? t("openNow") : t("closedNow")}</span>
             {card.womenOnlyHours ? <span className="text-muted">· {t("womenOnly")}</span> : null}
           </span>
           <span className="mt-1 text-xl font-extrabold leading-snug">{card.name}</span>

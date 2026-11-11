@@ -11,13 +11,15 @@ import { dhakaToday } from "@/lib/gym-manage";
 import { gymMoney, monthParam } from "@/lib/gym-money";
 import { GymPage, useFmt, useGymError, type GymCtx } from "./common";
 import { ExportButtons, MonthPicker, ReportFigures } from "./report-parts";
+import { ConversionCard } from "../gym-ops/Conversion";
 
 const SPEC = { month: { default: "" } };
 
 /**
  * /manage/[gymId]/reports (reports.view; feature reports, Standard and up; M24-FR-71 to FR-73): the
  * month in the URL (?month=YYYY-MM, the monthly report links here), members, money and attendance,
- * the overdue list, members not seen lately (members.view) and, for the owner, CSV exports.
+ * where members come from (enquiries, trial visits, join requests; M27-FR-87), the overdue list, members
+ * not seen lately (members.view) and, for the owner, CSV exports.
  */
 export function Reports({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
@@ -46,6 +48,7 @@ function Body({ ctx }: { ctx: GymCtx }) {
       ) : (
         <ReportFigures r={q.data} gymId={ctx.gymId} testId="report-figures" />
       )}
+      <ConversionCard gymId={ctx.gymId} month={month} owner={ctx.owner} />
       <div className="grid gap-3 lg:grid-cols-2">
         {ctx.can("members.view") ? <Absent gymId={ctx.gymId} /> : null}
         {ctx.owner ? <ExportButtons gymId={ctx.gymId} month={month} /> : null}

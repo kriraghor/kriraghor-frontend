@@ -480,7 +480,9 @@
       "savePlan": "Add the plan"
     },
     "gearTitle": "Gym gear",
-    "gearLead": "Dumbbells, supplements and gym wear from verified shops, in the Kriraghor shop."
+    "gearLead": "Dumbbells, supplements and gym wear from verified shops, in the Kriraghor shop.",
+    "closedToday": "Closed today: {title}",
+    "specialDays": "Holidays and special hours"
   },
   "vendorGym": {
     "gate": "Gyms are for approved gym owners. Apply as a gym owner first.",
@@ -680,7 +682,58 @@
       "onlineDone": "A package is sold online"
     },
     "onlineDesk": "Your packages are sold only at the desk. To list your gym, members must be able to buy one online.",
-    "addPackage": "Add a package"
+    "addPackage": "Add a package",
+    "special": {
+      "title": "Holidays and special hours",
+      "help": "Close the gym for a holiday or a repair, or give a range of days its own hours (Ramadan timings). It shows on your gym page at once. Classes and booked free visits on those days are cancelled, and the people are told.",
+      "add": "Add",
+      "addTitle": "A holiday or special hours",
+      "show": "Show",
+      "upcoming": "Coming",
+      "past": "Past and removed",
+      "none": "No holidays or special hours coming up.",
+      "nonePast": "Nothing here yet.",
+      "failed": "That did not work. Try again.",
+      "kind": {
+        "closed": "Closed",
+        "hours": "Special hours"
+      },
+      "removed": "Removed",
+      "remove": "Remove",
+      "removeTitle": "Remove this?",
+      "removeBody": "The gym goes back to its usual hours on those days. Classes that were cancelled come back empty; bookings and visits are not restored.",
+      "keep": "Keep it",
+      "name": "Name",
+      "nameHint": "Shown on your gym page, like Eid-ul-Fitr or Floor repair.",
+      "from": "First day",
+      "to": "Last day",
+      "what": "On these days the gym is",
+      "hoursOn": "Hours on these days",
+      "opens": "Opens",
+      "closes": "Closes",
+      "womenOnly": "Women only",
+      "addWindow": "Add hours",
+      "removeWindow": "Remove these hours",
+      "applies": "Check first to see what this would cancel. Nothing is saved until you press Save.",
+      "check": "Check",
+      "save": "Save",
+      "checkTitle": "What this cancels",
+      "willCancel": "Class sessions: {classes}. Booked free visits: {visits}. Everyone booked is told.",
+      "cancelsNothing": "Nothing is booked on these days.",
+      "problem": {
+        "title": "Give it a name of at least 2 letters.",
+        "order": "The last day is before the first day.",
+        "past": "Choose today or a later day.",
+        "long": "At most {n} days at a time.",
+        "hours": "Each set of hours must close after it opens, and they must not overlap."
+      },
+      "error": {
+        "GYM_SPECIAL_DAY_OVERLAP": "These days overlap another holiday or special hours.",
+        "GYM_SPECIAL_DAY_LIMIT": "This gym has the most holidays and special hours allowed. Remove one first.",
+        "GYM_SPECIAL_DAY_DATES": "Choose days from today on, within the range allowed.",
+        "GYM_SPECIAL_DAY_HOURS": "Check the hours: each must close after it opens."
+      }
+    }
   },
   "gm": {
     "myGyms": "My gyms",
@@ -2823,6 +2876,48 @@
       "close": "Close",
       "showSteps": "How to do it",
       "hideSteps": "Hide steps"
+    },
+    "conversion": {
+      "title": "Where members come from",
+      "lead": "Of the people who asked, visited or sent a join request this month, how many became members by today.",
+      "csv": "Download CSV",
+      "nothing": "Nothing this month",
+      "noShare": "Nothing to compare yet",
+      "group": {
+        "enquiries": "Enquiries",
+        "visits": "Free trial visits",
+        "joinRequests": "Join requests"
+      },
+      "stage": {
+        "received": "Received",
+        "contacted": "Contacted",
+        "joined": "Joined",
+        "lost": "Lost",
+        "open": "Still new",
+        "booked": "Booked",
+        "attended": "Came",
+        "becameMember": "Became members",
+        "missed": "Did not come",
+        "cancelled": "Cancelled",
+        "toCome": "Still to come",
+        "accepted": "Accepted",
+        "closed": "Declined or expired",
+        "waiting": "Waiting"
+      },
+      "share": {
+        "enquiries": "{pct}% of enquiries joined",
+        "visits": "{pct}% of visits became members",
+        "joinRequests": "{pct}% of requests accepted"
+      },
+      "members": "New members this month: {n}",
+      "source": {
+        "desk": "Added at the desk",
+        "platform": "From Kriraghor",
+        "import": "Imported",
+        "fromVisit": "Came from a visit",
+        "fromEnquiry": "Came from an enquiry"
+      },
+      "membersNote": "A member who came from a visit or an enquiry is also counted under how they were added."
     }
   },
   "gt": {
