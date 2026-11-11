@@ -92,14 +92,14 @@ export type MemberInput = {
   payment?: Payment;
 };
 export type MemberPatch = { version: number; displayName?: string; phone?: string; gender?: "male" | "female" | "other" | null; birthDate?: string | null; email?: string | null; emergencyContact?: { name: string; phone: string } | null; bloodGroup?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | null; heightCm?: number | null; weightKg?: number | null; medical?: string | null };
-export type SettingsPatch = Partial<Pick<GymSettings, "shortCode" | "tin" | "bin" | "receiptFooter" | "entryPolicy" | "absentAlertDays" | "joinRequestsOpen" | "vatEnabled" | "vatBps" | "visitsOpen" | "visitDailyCap" | "visitPerPerson" | "visitNote" | "smsKinds">> & { remindersOff?: NonNullable<NonNullable<paths["/manage/gyms/{gymId}/settings"]["patch"]["requestBody"]>["content"]["application/json"]["remindersOff"]> };
+export type SettingsPatch = Partial<Pick<GymSettings, "shortCode" | "tin" | "bin" | "receiptFooter" | "entryPolicy" | "absentAlertDays" | "joinRequestsOpen" | "vatEnabled" | "vatBps" | "visitsOpen" | "visitDailyCap" | "visitPerPerson" | "visitNote" | "selfRenewOpen" | "smsKinds">> & { remindersOff?: NonNullable<NonNullable<paths["/manage/gyms/{gymId}/settings"]["patch"]["requestBody"]>["content"]["application/json"]["remindersOff"]> };
 export type MembersQuery = { status?: MemberSummary["status"]; due?: "true" | "false"; overdue?: "true" | "false"; expiring?: "true" | "false"; frozen?: "true" | "false"; notSeen?: number; packageId?: string; trainerId?: string; linked?: "true" | "false"; q?: string; cursor?: string; limit?: number };
 export type DuesQuery = { status?: Due["status"]; overdue?: "true" | "false"; dueOn?: string; memberId?: string; cursor?: string; limit?: number };
 
 export const PAY_METHODS: PayMethod[] = ["cash", "owner_bkash", "owner_nagad", "card_counter", "other"];
 export const LEFT_REASONS: LeftReason[] = ["price", "moved", "injury", "other_gym", "schedule", "unknown", "other"];
 export const TIERS: Tier[] = ["free", "basic", "standard", "pro"];
-export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "leads", "reports", "pos", "pnl", "classes", "points", "notices", "staff_attendance", "equipment", "trainers", "plans", "payroll", "multi_gym"];
+export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "leads", "reports", "pos", "pnl", "classes", "points", "notices", "staff_attendance", "equipment", "trainers", "plans", "progress", "payroll", "multi_gym"];
 export const KINDS: PackageKind[] = ["month", "quarter", "half_year", "year", "custom"];
 
 const ik = (key: string) => ({ "idempotency-key": key });
@@ -551,6 +551,8 @@ export type SettingsDraft = {
   visitDailyCap: string;
   visitPerPerson: string;
   visitNote: string;
+  // M24-FR-121: members renew by themselves in the app.
+  selfRenewOpen: boolean;
 };
 export const draftOf = (s: GymSettings): SettingsDraft => ({
   shortCode: s.shortCode ?? "",
@@ -566,6 +568,7 @@ export const draftOf = (s: GymSettings): SettingsDraft => ({
   visitDailyCap: s.visitDailyCap == null ? "" : String(s.visitDailyCap),
   visitPerPerson: String(s.visitPerPerson),
   visitNote: s.visitNote ?? "",
+  selfRenewOpen: s.selfRenewOpen,
 });
 
 /** VAT typed as a percent ("15", "7.5") → basis points, or null when it is not 0–100 with at most 2 decimals (M27-FR-28). */
@@ -597,5 +600,6 @@ export function settingsPatch(s: GymSettings, d: SettingsDraft): SettingsPatch {
   const each = Number(d.visitPerPerson) || 1;
   if (each !== s.visitPerPerson) out.visitPerPerson = each;
   if (text(d.visitNote) !== s.visitNote) out.visitNote = text(d.visitNote);
+  if (d.selfRenewOpen !== s.selfRenewOpen) out.selfRenewOpen = d.selfRenewOpen;
   return out;
 }

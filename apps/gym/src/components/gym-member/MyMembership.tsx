@@ -15,6 +15,9 @@ import { MonthCalendar } from "@/components/gym-manage/MonthCalendar";
 import { ReceiptLink } from "@/components/gym-manage/money";
 import { PayDueButton, useMyDues } from "./MyDues";
 import { MyPointsCard } from "./MyClasses";
+import { RenewCard } from "./RenewCard";
+import { BodyProgressView } from "./BodyProgress";
+import { gymBody } from "@/lib/gym-progress";
 
 /**
  * /me/memberships/[memberId] (M24 §4.1, FR-18): one gym I belong to. Package and period, days left,
@@ -43,6 +46,27 @@ export function MyMembership({ memberId }: { memberId: string }) {
         <Body data={q.data} memberId={memberId} f={f} />
       )}
     </section>
+  );
+}
+
+/** My body progress (M24 §20): hidden when the gym's plan does not include it. A member removes only what they recorded. */
+function MyBodyProgress({ memberId }: { memberId: string }) {
+  const qc = useQueryClient();
+  const key = ["my-gym-body", memberId];
+  const q = useQuery({ queryKey: key, queryFn: () => gymBody.mine(memberId) });
+  if (!q.data?.on) return null;
+  const saved = async (fresh: Awaited<ReturnType<typeof gymBody.mine>>) => {
+    qc.setQueryData(key, fresh);
+    await qc.invalidateQueries({ queryKey: ["my-gym-membership", memberId] });
+  };
+  return (
+    <BodyProgressView
+      data={q.data}
+      testId="me-body"
+      onAdd={async (body, idem) => saved(await gymBody.addMine(memberId, body, idem))}
+      onRemove={async (entryId) => saved(await gymBody.voidMine(memberId, entryId))}
+      canRemove={(e) => e.byRole === "member"}
+    />
   );
 }
 
@@ -87,6 +111,8 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
           </div>
         </Card>
       ) : null}
+      {!readOnly ? <RenewCard memberId={memberId} payable={payable} /> : null}
+      {!readOnly ? <MyBodyProgress memberId={memberId} /> : null}
       <div className="grid gap-4 lg:grid-cols-2">
         <Card padded={false} className="p-4">
           <h2 className="font-display text-lg font-bold">{t("profile.memberships")}</h2>

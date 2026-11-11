@@ -798,7 +798,8 @@
       "staff_attendance": "Staff shifts and clocking in",
       "equipment": "The equipment register",
       "payroll": "Payroll and payslips",
-      "visits": "Free trial visits"
+      "visits": "Free trial visits",
+      "progress": "Body progress: measurements over time with a chart"
     },
     "upsell": {
       "needs": "Available from the {tier} plan.",
@@ -879,6 +880,10 @@
       "visits": {
         "title": "Free trial visits need a paid plan",
         "body": "Let people book a free visit on your gym page and see today's guests at the desk."
+      },
+      "progress": {
+        "title": "Body progress needs the Standard plan",
+        "body": "Members and trainers record weight and measurements and see the change over time."
       }
     },
     "err": {
@@ -925,7 +930,14 @@
       "GYM_HAS_ACTIVE_PASSES": "Members still have paid online packages at this gym.",
       "GYM_SMS_ADDON_UNAVAILABLE": "The SMS add-on is not available on this plan right now.",
       "GYM_SMS_ADDON_OFF": "Switch the SMS add-on on first, in Plan and billing.",
-      "GYM_SMS_BALANCE_SHORT": "That would take the SMS balance below 0."
+      "GYM_SMS_BALANCE_SHORT": "That would take the SMS balance below 0.",
+      "GYM_SELF_RENEW_OFF": "This gym takes renewals at the front desk.",
+      "GYM_RENEWAL_EXISTS": "A renewal is already waiting for this membership.",
+      "GYM_NOTHING_TO_RENEW": "There is nothing to renew here. Ask at the front desk.",
+      "GYM_RENEW_TOO_EARLY": "It is too early to renew this package.",
+      "GYM_BODY_EMPTY": "Enter at least one measurement.",
+      "GYM_BODY_RANGE": "One of the measurements is outside what can be recorded.",
+      "GYM_BODY_ENTRY_STATE": "This entry cannot be removed here."
     },
     "gyms": {
       "title": "My gyms",
@@ -1216,7 +1228,8 @@
       "cancelledDone": "Membership cancelled",
       "cancelled": "Cancelled: {reason}",
       "daysLeft": "{n, plural, one {# day left} other {# days left}}",
-      "frozenDays": "{n} frozen days ({count, plural, one {# freeze} other {# freezes}})"
+      "frozenDays": "{n} frozen days ({count, plural, one {# freeze} other {# freezes}})",
+      "byMember": "Renewed in the app"
     },
     "msStatus": {
       "upcoming": "Upcoming",
@@ -1533,7 +1546,9 @@
       "vatRateHint": "Up to {max}%.",
       "vatBad": "Enter a VAT rate from 0 to {max}%.",
       "vatNeeded": "Enter the VAT rate, or switch VAT off.",
-      "vatBin": "Add your BIN above so it prints on VAT receipts."
+      "vatBin": "Add your BIN above so it prints on VAT receipts.",
+      "selfRenew": "Members can renew their package in the app",
+      "selfRenewHint": "From {n} days before the end. They pay online or at your front desk, and you are told each time."
     },
     "billing": {
       "title": "Plan and billing",
@@ -1959,6 +1974,97 @@
       "mineBody": "Your height and weight give your BMI. Your trainer uses them, with any conditions, to plan your training.",
       "mineMedicalHint": "Only you, the gym owner and the trainer who writes your plans see this. Kept encrypted.",
       "bmi": "BMI"
+    },
+    "renew": {
+      "title": "Your package ends on {date}",
+      "expiredTitle": "Your package has ended",
+      "lead": "Renew it here. You can pay online or at the front desk.",
+      "open": "Renew",
+      "formTitle": "Renew your membership",
+      "package": "Package",
+      "currentPackage": "Your package now",
+      "days": "{n} days",
+      "how": "How you will pay",
+      "online": "Pay online",
+      "counter": "Pay at the front desk",
+      "onlineHint": "You pay now by bKash, Nagad or card. If you stop before paying, the fee waits under your dues.",
+      "counterHint": "The renewal is saved now and the gym is told. You pay the fee at the front desk.",
+      "noOnline": "This gym takes fees at the front desk only. The renewal is saved now and you pay there.",
+      "sendOnline": "Renew and pay {amount}",
+      "sendCounter": "Renew, pay at the desk",
+      "savedCounter": "Renewed. Pay {amount} at the front desk.",
+      "waitingTitle": "Your renewal",
+      "toPay": "Still to pay: {amount}",
+      "payAtDesk": "Pay at the front desk.",
+      "paid": "Paid. It starts by itself on the first day.",
+      "cancel": "Cancel renewal",
+      "cancelTitle": "Cancel this renewal?",
+      "cancelBody": "The renewal and its fee are removed. Your current package is not changed. You can renew again later.",
+      "keep": "Keep it",
+      "cancelled": "Renewal cancelled.",
+      "later": "You can renew from {date}.",
+      "desk": "This gym takes renewals at the front desk."
+    },
+    "body": {
+      "title": "Body progress",
+      "lead": "Your measurements over time. Only you, the gym owner and your trainers see them.",
+      "add": "Add a measurement",
+      "addTitle": "Add a measurement",
+      "empty": "Nothing recorded yet. Add your weight to start.",
+      "show": "Show",
+      "up": "Up {amount}",
+      "down": "Down {amount}",
+      "same": "No change",
+      "since": "since {date} ({from} to {to})",
+      "oneEntry": "Add one more entry to see the change.",
+      "bmi": "BMI {n}",
+      "byGym": "Recorded at the gym",
+      "remove": "Remove",
+      "removeTitle": "Remove this entry?",
+      "removeBody": "The measurements of {date} leave your progress.",
+      "keep": "Keep it",
+      "failed": "That did not work. Try again.",
+      "date": "Measured on",
+      "replaces": "You already have an entry for this day. Saving replaces it.",
+      "hint": "Fill in what you measured and leave the rest empty. One decimal, for example 78.4.",
+      "needOne": "Enter at least one measurement.",
+      "bad": "{field} must be between {min} and {max}.",
+      "range": "Between {min} and {max}",
+      "save": "Save",
+      "unit": {
+        "kg": "{n} kg",
+        "pct": "{n}%",
+        "cm": "{n} cm"
+      },
+      "field": {
+        "weightKg": "Weight",
+        "bodyFatPct": "Body fat",
+        "chestCm": "Chest",
+        "waistCm": "Waist",
+        "hipsCm": "Hips",
+        "armCm": "Arm",
+        "thighCm": "Thigh"
+      },
+      "short": {
+        "weightKg": "Weight",
+        "bodyFatPct": "Fat",
+        "chestCm": "Chest",
+        "waistCm": "Waist",
+        "hipsCm": "Hips",
+        "armCm": "Arm",
+        "thighCm": "Thigh"
+      },
+      "label": {
+        "weightKg": "Weight (kg)",
+        "bodyFatPct": "Body fat (%)",
+        "chestCm": "Chest (cm)",
+        "waistCm": "Waist (cm)",
+        "hipsCm": "Hips (cm)",
+        "armCm": "Arm (cm)",
+        "thighCm": "Thigh (cm)"
+      },
+      "leadStaff": "The member’s measurements over time. Only the member, the owner and staff who write plans see them.",
+      "emptyStaff": "Nothing recorded yet."
     }
   },
   "gp": {

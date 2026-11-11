@@ -7,6 +7,8 @@ import { ArrowArcLeft, ArrowCounterClockwise, Barbell, CalendarBlank, Eye, LinkS
 import { newKey } from "@kriraghor/ui/format";
 import { Avatar, Badge, Button, Card, Checkbox, Dialog, Field, Notice, ReasonDialog, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
+import { gymBody } from "@/lib/gym-progress";
+import { BodyProgressView } from "@/components/gym-member/BodyProgress";
 import {
   addDays,
   dhakaToday,
@@ -93,6 +95,7 @@ function Body({ ctx, memberId }: { ctx: GymCtx; memberId: string }) {
         <Memberships ctx={ctx} p={p} />
         <Trainer ctx={ctx} p={p} />
         <MemberPlans ctx={ctx} p={p} />
+        <Progress ctx={ctx} memberId={memberId} />
       </div>
       <div className="flex flex-col gap-4">
         <Dues ctx={ctx} p={p} />
@@ -101,6 +104,32 @@ function Body({ ctx, memberId }: { ctx: GymCtx; memberId: string }) {
         <Lifecycle ctx={ctx} p={p} />
       </div>
     </div>
+  );
+}
+
+/**
+ * Body progress on the profile (M24-FR-131): for the owner and staff who write plans, on a plan that has
+ * it. A trainer who only sees their own members gets nothing for anyone else (the API answers 404).
+ */
+function Progress({ ctx, memberId }: { ctx: GymCtx; memberId: string }) {
+  const qc = useQueryClient();
+  const on = (ctx.owner || ctx.can("plans.manage")) && !featureLocked(ctx.gym.features, "progress");
+  const key = ["gm-body", ctx.gymId, memberId];
+  const q = useQuery({ queryKey: key, queryFn: () => gymBody.forMember(ctx.gymId, memberId), enabled: on, retry: false });
+  if (!on || !q.data) return null;
+  const saved = async (fresh: Awaited<ReturnType<typeof gymBody.forMember>>) => {
+    qc.setQueryData(key, fresh);
+    await qc.invalidateQueries({ queryKey: ["gm-member", ctx.gymId, memberId] });
+  };
+  return (
+    <BodyProgressView
+      data={q.data}
+      forStaff
+      testId="profile-body"
+      onAdd={async (body, idem) => saved(await gymBody.addFor(ctx.gymId, memberId, body, idem))}
+      onRemove={async (entryId) => saved(await gymBody.voidFor(ctx.gymId, memberId, entryId))}
+      canRemove={() => true}
+    />
   );
 }
 
@@ -445,7 +474,10 @@ function Memberships({ ctx, p }: { ctx: GymCtx; p: Profile }) {
                   {["active", "frozen"].includes(ms.status) ? ` · ${t("ms.daysLeft", { n: ms.daysLeft })}` : ""}
                 </p>
               </div>
-              <Badge tone={MS_TONE[ms.status]}>{t(`msStatus.${ms.status}`)}</Badge>
+              <span className="flex flex-wrap justify-end gap-1">
+                {ms.createdVia === "member" ? <Badge tone="brand">{t("ms.byMember")}</Badge> : null}
+                <Badge tone={MS_TONE[ms.status]}>{t(`msStatus.${ms.status}`)}</Badge>
+              </span>
             </div>
             {ms.frozenDays ? <p className="mt-1 text-xs text-muted">{t("ms.frozenDays", { n: ms.frozenDays, count: ms.freezesCount })}</p> : null}
             {ms.freezes.filter((fr) => fr.status !== "cancelled").map((fr) => (

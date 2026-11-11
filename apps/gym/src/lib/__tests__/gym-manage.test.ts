@@ -286,7 +286,7 @@ describe("receipts (M24-FR-37)", () => {
   });
 });
 
-const VISITS = { visitsOpen: false, visitDailyCap: null, visitDailyCapDefault: 5, visitDailyCapMax: 50, visitPerPerson: 1, visitPerPersonMax: 3, visitNote: null };
+const VISITS = { visitsOpen: false, visitDailyCap: null, visitDailyCapDefault: 5, visitDailyCapMax: 50, visitPerPerson: 1, visitPerPersonMax: 3, visitNote: null, selfRenewOpen: true, selfRenewDaysBefore: 14 };
 
 describe("gym settings: only what changed is sent", () => {
   const s: GymSettings = { gymId: "g", setupDone: true, shortCode: "PM", tin: null, bin: null, receiptFooter: null, entryPolicy: "warn", absentAlertDays: null, absentAlertDaysDefault: 10, joinRequestsOpen: true, remindersOff: [], smsKinds: [], importConsentUntil: null, nextMemberCode: "PM-0002", vatEnabled: false, vatBps: null, vatMaxBps: 1500, ...VISITS };
