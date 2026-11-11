@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addToCart, cartTotal, changeDue, cleanBarcode, daysLeft, delta, drawerTone, lockerNumbers, monthRange, plusDays, previousMonth, setQty } from "../gym-ops";
+import { addToCart, cartTotal, conversionGroups, changeDue, cleanBarcode, daysLeft, delta, drawerTone, lockerNumbers, monthRange, plusDays, previousMonth, setQty, type Conversion } from "../gym-ops";
 
 const whey = { id: "w", name: "Whey 1kg", pricePoisha: 450000, stockQty: 2 };
 const water = { id: "a", name: "Water", pricePoisha: 3000, stockQty: 0 };
@@ -77,5 +77,39 @@ describe("chat buttons (M27-FR-32)", () => {
     expect(whatsappUrl("01712345678", "x")).toBe("https://wa.me/8801712345678?text=x");
     expect(whatsappUrl("12345", "x")).toBeNull();
     expect(telUrl("+880 1712-345678")).toBe("tel:+8801712345678");
+  });
+});
+
+describe("where members come from (M27-FR-87 to FR-89)", () => {
+  const report = (x: Partial<Conversion> = {}): Conversion => ({
+    period: { month: "2026-11", from: "2026-11-01", to: "2026-11-30" },
+    today: "2026-11-11",
+    enquiries: { received: 3, open: 1, contacted: 1, joined: 1, lost: 0, joinedPct: 33.3 },
+    visits: { booked: 3, attended: 1, missed: 0, cancelled: 1, waiting: 1, joined: 1, joinedPct: 50 },
+    joinRequests: { received: 2, accepted: 1, closed: 0, waiting: 1, joinedPct: 50 },
+    members: { total: 3, bySource: { desk: 2, platform: 1, import: 0 }, fromVisit: 1, fromEnquiry: 1 },
+    ...x,
+  });
+
+  it("lists the three groups with their stages, the start of each first", () => {
+    const groups = conversionGroups(report());
+    expect(groups.map((g) => g.key)).toEqual(["enquiries", "visits", "joinRequests"]);
+    expect(groups[0]!.stages).toEqual([
+      { key: "received", value: 3 },
+      { key: "contacted", value: 1 },
+      { key: "joined", value: 1 },
+      { key: "lost", value: 0 },
+      { key: "open", value: 1 },
+    ]);
+    expect(groups[1]!.stages.map((s) => s.key)).toEqual(["booked", "attended", "becameMember", "missed", "cancelled", "toCome"]);
+    expect(groups[1]!.stages.find((s) => s.key === "becameMember")!.value).toBe(1);
+    expect(groups[2]!.stages.map((s) => s.value)).toEqual([2, 1, 0, 1]);
+    expect(groups.map((g) => g.joinedPct)).toEqual([33.3, 50, 50]);
+  });
+
+  it("leaves out a group the plan lacks, and keeps a share that cannot be worked out as null", () => {
+    const groups = conversionGroups(report({ enquiries: null, visits: null, joinRequests: { received: 0, accepted: 0, closed: 0, waiting: 0, joinedPct: null } }));
+    expect(groups.map((g) => g.key)).toEqual(["joinRequests"]);
+    expect(groups[0]!.joinedPct).toBeNull();
   });
 });

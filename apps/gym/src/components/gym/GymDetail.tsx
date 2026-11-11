@@ -4,6 +4,7 @@ import { useState } from "react";
 import { GymExtras } from "./GymExtras";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { formatDateLabel, localDigits } from "@kriraghor/ui/date";
 import { MapPin } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { ShareButton } from "@kriraghor/ui/share";
@@ -53,7 +54,9 @@ export function GymDetail({ slug }: { slug: string }) {
         <div className="mt-4 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide">
-              <span className={g.openNow ? "text-brand" : "text-muted"}>{g.openNow ? t("openNow") : t("closedNow")}</span>
+              <span className={g.openNow ? "text-brand" : "text-muted"} data-testid="gym-open-state">
+                {g.specialToday?.kind === "closed" ? t("closedToday", { title: g.specialToday.title }) : g.openNow ? t("openNow") : t("closedNow")}
+              </span>
               <span className="text-muted"> · </span>
               <RatingLine avg={g.ratingAvg} count={g.ratingCount} className="text-muted" />
             </p>
@@ -127,6 +130,24 @@ export function GymDetail({ slug }: { slug: string }) {
                 ))}
               </tbody>
             </table>
+            {g.specialDays.length ? (
+              <div className="mt-4 max-w-xl" data-testid="gym-special-days">
+                <h3 className="text-sm font-bold uppercase tracking-wide text-muted">{t("specialDays")}</h3>
+                <ul className="mt-1 flex flex-col divide-y divide-line text-sm">
+                  {g.specialDays.map((d) => (
+                    <li key={d.id} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 py-2">
+                      <span>
+                        <span className="font-semibold">{d.fromOn === d.toOn ? formatDateLabel(d.fromOn, locale) : `${formatDateLabel(d.fromOn, locale)} – ${formatDateLabel(d.toOn, locale)}`}</span>
+                        <span className="text-muted"> · {d.title}</span>
+                      </span>
+                      <span className={d.kind === "closed" ? "font-bold text-danger" : "tabular-nums"}>
+                        {d.kind === "closed" ? t("closed") : d.windows.map((w) => localDigits(`${w.openTime}–${w.closeTime}`, locale)).join(", ")}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
 
             <h2 className="mt-8 text-2xl font-extrabold">{t("packages")}</h2>
             <ul className="mt-3 grid gap-3 sm:grid-cols-3" data-testid="gym-packages">
