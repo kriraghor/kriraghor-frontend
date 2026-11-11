@@ -372,3 +372,108 @@
 [data-theme="gym"] .bg-brand {
   color: #111210;
 }
+
+/*
+ * UI v2 "Floodlight" (product owner, 11 Nov 2026). The same names with the new values, switched on for
+ * an area by data-ui="v2" on its layout (the panels first, then the public sites; when every page has
+ * moved these values replace the ones at the top of this file). The orange accent takes dark text
+ * (--kg-on-accent): white on it fails contrast. Kept in step with paletteV2 in src/tokens.ts (tokens.test.ts).
+ */
+[data-ui="v2"] {
+  --kg-bg: #f5f4f0;
+  --kg-surface: #ffffff;
+  --kg-surface-2: #ecebe6;
+  --kg-ink: #0d1512;
+  --kg-muted: #55615a;
+  --kg-line: #dddfd9;
+  --kg-line-strong: #868f88;
+  --kg-brand: #00804a;
+  --kg-brand-hover: #006b3d;
+  --kg-brand-soft: #ddf3e6;
+  --kg-brand-text: #006b3d;
+  --kg-on-brand: #ffffff;
+  --kg-band: #0a0f0c;
+  --kg-band-text: #eef2ef;
+  --kg-accent: #f26a1b;
+  --kg-accent-hover: #dd5c10;
+  --kg-accent-soft: #fde6d8;
+  --kg-accent-text: #b4460b;
+  --kg-on-accent: #1a0e05;
+  --kg-prize: #f26a1b;
+  --kg-prize-ink: #1a0e05;
+  --kg-prize-soft: #fde6d8;
+  --kg-prize-text: #b4460b;
+  --kg-live: #e5484d;
+  --kg-danger: #b42318;
+  --kg-danger-soft: #fdecea;
+  --kg-info: #2c5aa8;
+  --kg-info-soft: #e8eefa;
+  --kg-warning: #b46714;
+  --kg-warning-soft: #fdf3e3;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-ui="v2"] {
+    --kg-bg: #0a0f0c;
+    --kg-surface: #121a15;
+    --kg-surface-2: #1a241e;
+    --kg-ink: #eef2ef;
+    --kg-muted: #9fada5;
+    --kg-line: #25302a;
+    --kg-line-strong: #5b6961;
+    --kg-brand: #1fd17f;
+    --kg-brand-hover: #45e096;
+    --kg-brand-soft: #0f3524;
+    --kg-brand-text: #5ce6a4;
+    --kg-on-brand: #04130b;
+    --kg-band: #060a08;
+    --kg-band-text: #eef2ef;
+    --kg-accent: #ff7a2f;
+    --kg-accent-hover: #ff914f;
+    --kg-accent-soft: #3a1f0f;
+    --kg-accent-text: #ff9a5c;
+    --kg-on-accent: #1a0e05;
+    --kg-prize: #ff7a2f;
+    --kg-prize-ink: #1a0e05;
+    --kg-prize-soft: #3a1f0f;
+    --kg-prize-text: #ff9a5c;
+    --kg-live: #e5484d;
+    --kg-danger: #ff7b72;
+    --kg-danger-soft: #3b1715;
+    --kg-info: #84adff;
+    --kg-info-soft: #172442;
+    --kg-warning: #f5b052;
+    --kg-warning-soft: #33250f;
+  }
+}
+:root[data-theme="dark"] [data-ui="v2"] {
+  --kg-bg: #0a0f0c;
+  --kg-surface: #121a15;
+  --kg-surface-2: #1a241e;
+  --kg-ink: #eef2ef;
+  --kg-muted: #9fada5;
+  --kg-line: #25302a;
+  --kg-line-strong: #5b6961;
+  --kg-brand: #1fd17f;
+  --kg-brand-hover: #45e096;
+  --kg-brand-soft: #0f3524;
+  --kg-brand-text: #5ce6a4;
+  --kg-on-brand: #04130b;
+  --kg-band: #060a08;
+  --kg-band-text: #eef2ef;
+  --kg-accent: #ff7a2f;
+  --kg-accent-hover: #ff914f;
+  --kg-accent-soft: #3a1f0f;
+  --kg-accent-text: #ff9a5c;
+  --kg-on-accent: #1a0e05;
+  --kg-prize: #ff7a2f;
+  --kg-prize-ink: #1a0e05;
+  --kg-prize-soft: #3a1f0f;
+  --kg-prize-text: #ff9a5c;
+  --kg-live: #e5484d;
+  --kg-danger: #ff7b72;
+  --kg-danger-soft: #3b1715;
+  --kg-info: #84adff;
+  --kg-info-soft: #172442;
+  --kg-warning: #f5b052;
+  --kg-warning-soft: #33250f;
+}
