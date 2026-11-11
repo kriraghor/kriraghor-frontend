@@ -2062,7 +2062,9 @@
         "hipsCm": "Hips (cm)",
         "armCm": "Arm (cm)",
         "thighCm": "Thigh (cm)"
-      }
+      },
+      "leadStaff": "The member’s measurements over time. Only the member, the owner and staff who write plans see them.",
+      "emptyStaff": "Nothing recorded yet."
     }
   },
   "gp": {

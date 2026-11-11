@@ -124,6 +124,7 @@ function Progress({ ctx, memberId }: { ctx: GymCtx; memberId: string }) {
   return (
     <BodyProgressView
       data={q.data}
+      forStaff
       testId="profile-body"
       onAdd={async (body, idem) => saved(await gymBody.addFor(ctx.gymId, memberId, body, idem))}
       onRemove={async (entryId) => saved(await gymBody.voidFor(ctx.gymId, memberId, entryId))}
