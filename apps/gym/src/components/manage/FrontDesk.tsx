@@ -338,10 +338,10 @@ export function FrontDesk({ id }: { id: string }) {
                 ))}
                 {found.visit && ctx ? <GuestCard key={found.visit.id} ctx={ctx} visit={found.visit} today={todayDate} onChanged={() => setText("")} /> : null}
                 {found.pass ? <PassCard pass={found.pass} canAdmit={canAdmit} busy={busy} onAdmit={() => void admit(scanInput(found.q))} /> : null}
-                {!found.items.length && !found.pass && !found.visit ? <p className="rounded-card border-2 border-dashed border-line p-6 text-center text-muted" data-testid="desk-none">{tg("desk.noMatch", { q: found.q })}</p> : null}
+                {!found.items.length && !found.pass && !found.visit ? <p className="rounded-card border border-dashed border-line p-6 text-center text-muted" data-testid="desk-none">{tg("desk.noMatch", { q: found.q })}</p> : null}
               </div>
             ) : null}
-            {!found && !memberResult && !passResult ? <p className="rounded-card border-2 border-dashed border-line p-6 text-center text-muted">{canCheckIn ? tg("desk.waiting") : t("desk.waiting")}</p> : null}
+            {!found && !memberResult && !passResult ? <p className="rounded-card border border-dashed border-line p-6 text-center text-muted">{canCheckIn ? tg("desk.waiting") : t("desk.waiting")}</p> : null}
           </div>
         </div>
       ) : null}
@@ -466,7 +466,7 @@ function MemberCard({ card, busy, locked, onCheckIn, onOverride, gymId }: { card
   const action = deskAction(card);
   const m = card.member;
   return (
-    <div className={cn("rounded-card border-2 p-3", TONE_BORDER[tone])} data-testid="desk-member" data-decision={card.decision}>
+    <div className={cn("rounded-card border p-3", TONE_BORDER[tone])} data-testid="desk-member" data-decision={card.decision}>
       <div className="flex items-start gap-3">
         <Avatar name={m.displayName} src={m.avatarUrl} size={48} />
         <div className="min-w-0 flex-1">
@@ -514,7 +514,7 @@ function PassCard({ pass, canAdmit, busy, onAdmit }: { pass: DeskPass; canAdmit:
   const t = useTranslations("gm");
   const f = useFmt();
   return (
-    <div className="rounded-card border-2 border-line bg-surface p-3" data-testid="desk-pass">
+    <div className="rounded-card border border-line bg-surface p-3" data-testid="desk-pass">
       <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("desk.pass")}</p>
       <p className="mt-1 text-lg font-extrabold">{pass.holder.displayName ?? t("desk.thisMember")}</p>
       <p className="text-sm">

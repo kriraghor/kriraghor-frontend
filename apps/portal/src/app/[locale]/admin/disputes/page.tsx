@@ -13,7 +13,7 @@ async function Content({ params }: { params: PageProps<"/[locale]/admin/disputes
 // The desk reads ?code= (links from notifications): request data, so inside Suspense (cacheComponents).
 export default function DisputesPage({ params }: PageProps<"/[locale]/admin/disputes">) {
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1320px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-card mx-auto mt-10 h-64 max-w-[1320px] kg-shimmer bg-surface-2" />}>
       <Content params={params} />
     </Suspense>
   );

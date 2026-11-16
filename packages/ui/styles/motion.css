@@ -370,3 +370,26 @@ html[data-splash="on"] .kg-slide-in > .kg-slide-line {
     transform: scaleX(1);
   }
 }
+
+/* Loading placeholders (UI v2): a soft light sweeping across, which reads as "loading" where a plain
+   pulse read as "stuck". Still with reduce motion on. */
+@keyframes kg-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+.kg-shimmer {
+  background-image: linear-gradient(100deg, transparent 30%, color-mix(in oklab, var(--kg-surface) 70%, transparent) 50%, transparent 70%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: kg-shimmer 1.3s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kg-shimmer {
+    animation: none;
+    background-image: none;
+  }
+}

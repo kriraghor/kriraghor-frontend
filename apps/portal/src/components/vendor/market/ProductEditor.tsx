@@ -15,7 +15,7 @@ import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
 import { SpecFields } from "./SpecFields";
 
-const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
+const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 type Msg = { text: string; tone: "info" | "error" } | null;
 
 /** Run an API call, refresh the product, and report the result (problem details or a done message). */
@@ -55,7 +55,7 @@ export function ProductEditor({ id }: { id: string }) {
   const q = useQuery({ queryKey: ["vendor-product", id], queryFn: () => shopDesk.product(id) });
   const cats = useQuery({ queryKey: ["market-categories"], queryFn: () => shopDesk.categories(), staleTime: 300_000 });
   const { msg, busy, run } = useRunner(id);
-  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   if (q.isError) return <p className="mx-auto max-w-[1100px] px-5 py-10 text-danger">{problemOf(q.error)?.title ?? t("loadFailed")}</p>;
   const p = q.data;
   const found = (cats.data?.items ?? []).flatMap((c) => c.types.map((type) => ({ category: c, type }))).find((x) => x.type.id === p.itemTypeId);
@@ -130,7 +130,7 @@ export function ProductEditor({ id }: { id: string }) {
           <Variants p={p} type={found.type} supplement={found.category.isSupplement} locked={locked} />
         </>
       ) : (
-        <div className="mt-8 h-48 animate-pulse bg-surface-2" />
+        <div className="rounded-card mt-8 h-48 kg-shimmer bg-surface-2" />
       )}
     </section>
   );
@@ -145,7 +145,7 @@ function Basics({ p, type, supplement, locked }: { p: Product; type: ItemType; s
   const set = (k: keyof typeof f, v: string | boolean) => setF((x) => ({ ...x, [k]: v }));
   return (
     <form
-      className="grid gap-4 border-2 border-line bg-surface p-5"
+      className="rounded-card grid gap-4 border border-line bg-surface p-5"
       data-testid="product-basics"
       onSubmit={(e) => {
         e.preventDefault();
@@ -222,24 +222,24 @@ function Photos({ p, locked }: { p: Product; locked: boolean }) {
     return run(() => shopDesk.orderPhotos(p.id, next));
   };
   return (
-    <div className="border-2 border-line bg-surface p-5" data-testid="product-photos">
+    <div className="rounded-card border border-line bg-surface p-5" data-testid="product-photos">
       <h2 className="text-xl font-extrabold">{t("photos")}</h2>
       <p className="mt-1 text-sm text-muted">{t("photosHelp", { n: p.photos.length })}</p>
       <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {p.photos.map((ph, i) => (
-          <li key={ph.id} className="border-2 border-line">
+          <li key={ph.id} className="rounded-card border border-line">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={ph.url} alt={i === 0 ? t("cover") : t("photoN", { n: i + 1 })} className="aspect-square w-full object-cover" />
             <div className="flex items-center gap-1 p-1">
               {i === 0 ? <span className="px-1 text-xs font-bold text-brand">{t("cover")}</span> : null}
               <span className="ml-auto flex gap-1">
-                <button type="button" disabled={locked || busy || i === 0} onClick={() => void move(i, -1)} className="min-h-9 min-w-9 border-2 border-line text-sm disabled:opacity-40" aria-label={t("moveLeft")}>
+                <button type="button" disabled={locked || busy || i === 0} onClick={() => void move(i, -1)} className="rounded-control min-h-9 min-w-9 border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveLeft")}>
                   ←
                 </button>
-                <button type="button" disabled={locked || busy || i === p.photos.length - 1} onClick={() => void move(i, 1)} className="min-h-9 min-w-9 border-2 border-line text-sm disabled:opacity-40" aria-label={t("moveRight")}>
+                <button type="button" disabled={locked || busy || i === p.photos.length - 1} onClick={() => void move(i, 1)} className="rounded-control min-h-9 min-w-9 border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveRight")}>
                   →
                 </button>
-                <button type="button" disabled={locked || busy} onClick={() => void run(() => shopDesk.removePhoto(p.id, ph.id))} className="min-h-9 border-2 border-line px-2 text-xs font-semibold text-danger disabled:opacity-40">
+                <button type="button" disabled={locked || busy} onClick={() => void run(() => shopDesk.removePhoto(p.id, ph.id))} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40">
                   {t("remove")}
                 </button>
               </span>
@@ -255,7 +255,7 @@ function Photos({ p, locked }: { p: Product; locked: boolean }) {
           multiple
           disabled={locked || busy}
           data-testid="photo-input"
-          className="mt-1 block min-h-12 w-full border-2 border-line bg-surface px-3 py-2 text-sm"
+          className="rounded-control mt-1 block min-h-12 w-full border border-line-strong/60 bg-surface px-3 py-2 text-sm"
           onChange={async (e) => {
             const files = [...(e.target.files ?? [])];
             e.target.value = "";
@@ -282,7 +282,7 @@ function Variants({ p, type, supplement, locked }: { p: Product; type: ItemType;
   const [f, setF] = useState({ sku: "", price: "", stock: "0", expiry: "", batch: "" });
   const [prices, setPrices] = useState<Record<string, string>>({});
   return (
-    <div className="mt-8 border-2 border-line bg-surface p-5" data-testid="product-variants">
+    <div className="rounded-card mt-8 border border-line bg-surface p-5" data-testid="product-variants">
       <h2 className="text-xl font-extrabold">{t("variants.title")}</h2>
       <p className="mt-1 text-sm text-muted">{axes.length ? t("variants.help", { axes: axes.map(label).join(", ") }) : t("variants.standard")}</p>
       <div className="mt-3 overflow-x-auto">
@@ -310,13 +310,13 @@ function Variants({ p, type, supplement, locked }: { p: Product; type: ItemType;
                       onChange={(e) => setPrices({ ...prices, [v.id]: e.target.value })}
                       disabled={locked}
                       inputMode="decimal"
-                      className="min-h-9 w-24 border-2 border-line bg-surface px-2"
+                      className="rounded-control min-h-9 w-24 border border-line-strong/60 bg-surface px-2"
                     />
                     {prices[v.id] !== undefined ? (
                       <button
                         type="button"
                         disabled={busy || locked}
-                        className="min-h-9 border-2 border-brand px-2 text-xs font-bold"
+                        className="rounded-control min-h-9 border border-brand px-2 text-xs font-bold"
                         onClick={() => {
                           const n = toPoisha(prices[v.id]);
                           if (n === null) return;
@@ -331,7 +331,7 @@ function Variants({ p, type, supplement, locked }: { p: Product; type: ItemType;
                 <td className="py-2 pr-3 tabular-nums">{p.isMto ? t("mto") : t("variants.onHand", { onHand: v.onHand, held: v.held })}</td>
                 {supplement ? <td className={`py-2 pr-3 ${v.saleBlocked ? "text-danger" : ""}`}>{v.expiryDate ?? "–"} {v.batchNo ? `· ${v.batchNo}` : ""}</td> : null}
                 <td className="py-2 text-right">
-                  <button type="button" disabled={busy || locked || p.variants.length <= 1} className="min-h-9 border-2 border-line px-2 text-xs font-semibold text-danger disabled:opacity-40" onClick={() => void run(() => shopDesk.retireVariant(v.id), t("variants.retired"))}>
+                  <button type="button" disabled={busy || locked || p.variants.length <= 1} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40" onClick={() => void run(() => shopDesk.retireVariant(v.id), t("variants.retired"))}>
                     {t("variants.retire")}
                   </button>
                 </td>

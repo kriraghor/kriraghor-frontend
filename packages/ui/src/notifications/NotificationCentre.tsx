@@ -138,7 +138,7 @@ export function NotificationCentre({ settingsHref, signInHref }: { settingsHref?
       </div>
       {q.hasNextPage ? (
         <div className="mt-4">
-          <button type="button" className="min-h-11 border-2 border-line px-4 text-sm font-semibold" onClick={() => void q.fetchNextPage()} disabled={q.isFetchingNextPage}>
+          <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-4 text-sm font-semibold" onClick={() => void q.fetchNextPage()} disabled={q.isFetchingNextPage}>
             {t("more")}
           </button>
         </div>

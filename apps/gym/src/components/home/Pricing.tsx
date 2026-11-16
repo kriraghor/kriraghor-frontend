@@ -18,7 +18,7 @@ function FoundingOffer({ pricing }: { pricing: PricingData }) {
   const n = (v: number) => new Intl.NumberFormat(locale === "bn" ? "bn-BD" : "en-IN").format(v);
   const f = pricing.founding;
   return (
-    <div className="mt-5 flex flex-col gap-3 rounded-card border-2 border-brand bg-brand-soft p-5 md:flex-row md:items-center md:justify-between" data-testid="founding-offer">
+    <div className="mt-5 flex flex-col gap-3 rounded-card border border-brand bg-brand-soft p-5 md:flex-row md:items-center md:justify-between" data-testid="founding-offer">
       <div className="flex items-start gap-3">
         <Sparkle size={28} weight="fill" className="mt-0.5 shrink-0 text-brand-text" aria-hidden />
         <div>
@@ -58,7 +58,7 @@ export function Pricing() {
         {t("title")}
       </h2>
       {pricing.isPending ? (
-        <div className="mt-6 h-32 animate-pulse rounded-card bg-surface-2" />
+        <div className="mt-6 h-32 kg-shimmer rounded-card bg-surface-2" />
       ) : pricing.data?.tiers.length ? (
         <>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="tiers">

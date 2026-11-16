@@ -2,7 +2,8 @@
 export { Button, ButtonLink, IconButton, buttonClass, type ButtonProps, type ButtonVariant, type ButtonSize } from "./Button";
 export { Field, Select, Textarea, PasswordField, OtpInput, Checkbox, FieldShell, controlClass, type FieldProps } from "./Form";
 export { Dropdown, type DropdownOption } from "./Dropdown";
-export { Card, Badge, Chip, Avatar, Skeleton, SkeletonList, EmptyState, ErrorState, Notice, PageTitle, Divider, Stat, type Tone } from "./Display";
+export { Card, Badge, Chip, Avatar, Skeleton, SkeletonList, EmptyState, ErrorState, Notice, PageTitle, SectionHeading, Divider, Stat, type Tone } from "./Display";
+export { ActionTile, ActionGrid } from "./ActionTile";
 export { Tabs, SegmentedControl } from "./Tabs";
 export { Dialog, DialogClose, Sheet, Tooltip, TooltipProvider, Menu } from "./Overlay";
 export { ToastProvider, useToast } from "./Toast";

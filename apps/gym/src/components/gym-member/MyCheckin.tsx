@@ -114,7 +114,7 @@ function Qr({ memberId, gym, code }: { memberId: string; gym: string; code: stri
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt={t("me.qrAlt", { gym })} className="aspect-square w-full max-w-[min(80vh,520px)]" data-token-expires={token?.expiresAt} />
         ) : (
-          <div className="aspect-square w-full max-w-[520px] animate-pulse rounded-control bg-neutral-200" />
+          <div className="aspect-square w-full max-w-[520px] kg-shimmer rounded-control bg-neutral-200" />
         )}
         <p className="font-mono text-sm tabular-nums">{code}</p>
         {token ? <p className="text-xs">{t("me.qrRefresh", { s: left })}</p> : null}

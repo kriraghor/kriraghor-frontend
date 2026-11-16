@@ -2065,6 +2065,22 @@
       },
       "leadStaff": "The member’s measurements over time. Only the member, the owner and staff who write plans see them.",
       "emptyStaff": "Nothing recorded yet."
+    },
+    "first": {
+      "title": "Your first days",
+      "description": "Three steps and the gym runs on Kriraghor. Each one opens the page where it is done.",
+      "setup": "Finish setting up the gym",
+      "setupHint": "Your short code for member numbers, opening hours and how members pay.",
+      "packages": "Add the packages you sell",
+      "packagesHint": "Monthly, quarterly or your own: the price and how long each one lasts.",
+      "member": "Add your first member",
+      "memberHint": "Someone who joined at the front desk. Or bring your member list in from a spreadsheet.",
+      "quickTitle": "Start a task",
+      "quickDesk": "Check members in with their QR or code.",
+      "quickMember": "Add someone who joins at the counter.",
+      "quickFees": "Take a fee in cash, bKash or by card.",
+      "quickImport": "Bring your member list in from a spreadsheet.",
+      "todayTitle": "Today at a glance"
     }
   },
   "gp": {

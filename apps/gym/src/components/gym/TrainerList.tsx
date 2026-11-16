@@ -29,10 +29,10 @@ export function TrainerList() {
           </h1>
           <p className="mt-4 max-w-2xl text-muted">{tp("lead")}</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/gyms" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold no-underline hover:border-brand">
+            <Link href="/gyms" className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-bold no-underline hover:border-brand">
               {tp("findGym")}
             </Link>
-            <Link href="/me/subscriptions" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold no-underline hover:border-brand">
+            <Link href="/me/subscriptions" className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-bold no-underline hover:border-brand">
               {tp("mine")}
             </Link>
           </div>
@@ -40,11 +40,11 @@ export function TrainerList() {
       </section>
       <section className="mx-auto max-w-[1320px] px-5 pb-10">
         {trainers.isPending ? (
-          <div className="h-64 animate-pulse bg-surface-2" />
+          <div className="rounded-card h-64 kg-shimmer bg-surface-2" />
         ) : trainers.isError ? (
-          <p className="border-2 border-danger p-6 font-bold">{t("error")}</p>
+          <p className="rounded-card border border-danger p-6 font-bold">{t("error")}</p>
         ) : !trainers.data.items.length ? (
-          <p className="border-2 border-dashed border-line p-10 text-center font-bold" data-testid="trainers-empty">
+          <p className="rounded-card border border-dashed border-line p-10 text-center font-bold" data-testid="trainers-empty">
             {t("noTrainers")}
           </p>
         ) : (

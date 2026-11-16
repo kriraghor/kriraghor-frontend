@@ -29,7 +29,7 @@ type Row = {
   policeCheckForU16?: boolean;
 };
 const LEVELS = ["amateur", "semi_pro", "pro", "national"];
-const btn = "min-h-10 border-2 px-3 text-sm font-semibold disabled:opacity-50";
+const btn = "rounded-control min-h-10 border px-3 text-sm font-semibold disabled:opacity-50";
 
 async function call<T>(p: Promise<{ data?: T; error?: unknown }>): Promise<T> {
   const { data, error } = await p;
@@ -96,7 +96,7 @@ export function HireCatalog() {
           <ul className="flex flex-col gap-2" data-testid="hire-categories">
             {(cats.data?.items ?? []).map((c) => (
               <li key={c.id}>
-                <button type="button" onClick={() => (setCatId(c.id), setEdit(null), setAdding(false))} className={`block w-full border-2 p-3 text-left ${cat?.id === c.id ? "border-brand" : "border-line hover:border-brand"}`}>
+                <button type="button" onClick={() => (setCatId(c.id), setEdit(null), setAdding(false))} className={`rounded-card block w-full border p-3 text-left ${cat?.id === c.id ? "border-brand" : "border-line hover:border-brand"}`}>
                   <span className="block font-bold">
                     {c.code} · {name(c)}
                   </span>
@@ -167,7 +167,7 @@ function RoleForm({ row, onSave, onCancel }: { row?: Row; onSave: (body: Record<
   const flip = (u: string) => setUnits(units.includes(u) ? units.filter((x) => x !== u) : [...units, u]);
   return (
     <form
-      className="mt-3 grid gap-3 border-2 border-line p-3 sm:grid-cols-2"
+      className="rounded-card mt-3 grid gap-3 border border-line p-3 sm:grid-cols-2"
       onSubmit={async (e) => {
         e.preventDefault();
         setBusy(true);
@@ -220,7 +220,7 @@ function RoleForm({ row, onSave, onCancel }: { row?: Row; onSave: (body: Record<
         </Field>
       ) : null}
       <Field label={t("tiers", { levels: LEVELS.join(", ") })}>
-        <textarea value={tiers} onChange={(e) => setTiers(e.target.value)} rows={4} placeholder="pro|BCB Level 2|বিসিবি লেভেল ২" className="border-2 border-line bg-surface p-2 font-mono text-sm text-ink" />
+        <textarea value={tiers} onChange={(e) => setTiers(e.target.value)} rows={4} placeholder="pro|BCB Level 2|বিসিবি লেভেল ২" className="rounded-card border border-line bg-surface p-2 font-mono text-sm text-ink" />
       </Field>
       <div className="flex flex-col gap-2 sm:col-span-2">
         <label className="flex min-h-11 items-center gap-2">

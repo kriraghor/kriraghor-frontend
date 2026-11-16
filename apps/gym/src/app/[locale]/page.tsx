@@ -35,7 +35,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
             <Link href="/start" className="inline-flex min-h-12 items-center gap-2 bg-brand px-6 font-bold text-on-brand no-underline hover:bg-brand-hover" data-testid="start-free">
               {t("startFree")} <ArrowRight size={18} aria-hidden />
             </Link>
-            <Link href="/gyms" className="inline-flex min-h-12 items-center border-2 border-line px-6 font-bold no-underline hover:border-brand" data-testid="find-gym">
+            <Link href="/gyms" className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-6 font-bold no-underline hover:border-brand" data-testid="find-gym">
               {t("findGym")}
             </Link>
           </div>
@@ -77,7 +77,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
             <Link href="/gyms" className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand no-underline hover:bg-brand-hover">
               {t("findGym")}
             </Link>
-            <Link href="/trainers" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold no-underline hover:border-brand">
+            <Link href="/trainers" className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-bold no-underline hover:border-brand">
               {t("findTrainer")}
             </Link>
           </div>

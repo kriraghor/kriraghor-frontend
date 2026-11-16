@@ -88,7 +88,7 @@ export function RateDialog({ target, open, onOpenChange, onDone }: { target: Rat
                 aria-checked={stars === s}
                 aria-label={t("starN", { n: s })}
                 onClick={() => setStars(s)}
-                className={`flex size-12 items-center justify-center rounded-control border-2 ${s <= stars ? "border-brand bg-brand text-on-brand" : "border-line text-muted hover:border-brand"}`}
+                className={`flex size-12 items-center justify-center rounded-control border ${s <= stars ? "border-brand bg-brand text-on-brand" : "border-line text-muted hover:border-brand"}`}
                 data-testid={`star-${s}`}
               >
                 <Star size={22} weight={s <= stars ? "fill" : "regular"} aria-hidden />

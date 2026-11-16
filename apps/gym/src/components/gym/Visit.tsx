@@ -135,7 +135,7 @@ export function VisitForm({ slug }: { slug: string }) {
                   role="radio"
                   aria-checked={on}
                   onClick={() => (setDate(d.date), setTime(null))}
-                  className={cn("flex min-h-16 min-w-20 shrink-0 flex-col items-center justify-center rounded-control border-2 px-3 py-2 text-sm transition-colors", on ? "border-brand bg-brand-soft font-bold" : "border-line hover:border-brand/60")}
+                  className={cn("flex min-h-16 min-w-20 shrink-0 flex-col items-center justify-center rounded-control border px-3 py-2 text-sm transition-colors", on ? "border-brand bg-brand-soft font-bold" : "border-line hover:border-brand/60")}
                   data-testid="visit-day"
                 >
                   <span>{d.date === today ? t("form.today") : f.weekday(d.date)}</span>
@@ -159,7 +159,7 @@ export function VisitForm({ slug }: { slug: string }) {
                   role="radio"
                   aria-checked={on}
                   onClick={() => setTime(tm)}
-                  className={cn("min-h-11 rounded-control border-2 text-sm font-semibold tabular-nums transition-colors", on ? "border-brand bg-brand text-on-brand" : "border-line hover:border-brand/60")}
+                  className={cn("min-h-11 rounded-control border text-sm font-semibold tabular-nums transition-colors", on ? "border-brand bg-brand text-on-brand" : "border-line hover:border-brand/60")}
                   data-testid="visit-time"
                 >
                   {tm}

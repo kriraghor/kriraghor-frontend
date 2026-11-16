@@ -6,7 +6,7 @@ import { isExternal } from "@kriraghor/session/links";
 import { Link } from "../i18n/navigation";
 import { cn } from "../cn";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "prize" | "link";
+export type ButtonVariant = "primary" | "accent" | "secondary" | "ghost" | "danger" | "prize" | "link";
 export type ButtonSize = "sm" | "md" | "lg";
 
 /** The one button look (09 §7): 12px corners, 44px+ targets (sm is for dense tables only), press feedback. */
@@ -25,6 +25,8 @@ export function buttonClass({ variant = "primary", size = "md", block = false }:
     variant === "ghost" && "text-ink hover:bg-surface-2",
     variant === "danger" && "bg-danger text-white hover:opacity-90",
     variant === "prize" && "bg-prize text-prize-ink hover:brightness-105",
+    // UI v2: the one call to start a task that matters (the logo's orange, dark text; amber outside v2).
+    variant === "accent" && "bg-accent text-on-accent shadow-[0_6px_18px_-10px_var(--kg-accent)] hover:bg-accent-hover",
   );
 }
 

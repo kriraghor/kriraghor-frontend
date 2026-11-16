@@ -9,7 +9,7 @@ export default async function OrdersPage({ params }: PageProps<"/[locale]/vendor
   setRequestLocale(locale);
   // The tab and the open order come from the URL (?tab=to_ship&id=…), so the desk renders inside Suspense.
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1200px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-card mx-auto mt-10 h-64 max-w-[1200px] kg-shimmer bg-surface-2" />}>
       <OrdersDesk />
     </Suspense>
   );

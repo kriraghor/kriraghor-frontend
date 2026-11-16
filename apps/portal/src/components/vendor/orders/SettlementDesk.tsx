@@ -30,7 +30,7 @@ export function SettlementDesk() {
       </Link>
       <h1 className="mt-3 text-3xl font-extrabold">{t("settlementTitle")}</h1>
       <p className="mt-1 max-w-3xl text-muted">{t("settlementLead")}</p>
-      {q.isPending ? <div className="mt-6 h-32 animate-pulse bg-surface-2" /> : null}
+      {q.isPending ? <div className="rounded-card mt-6 h-32 kg-shimmer bg-surface-2" /> : null}
       {q.isError && !problem?.code.startsWith("ROLE") ? (
         <div className="mt-6">
           <Notice tone="error">{t("failed")}</Notice>
@@ -38,19 +38,19 @@ export function SettlementDesk() {
       ) : null}
       {q.data ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-3" data-testid="settlement">
-          <div className="border-2 border-line p-5">
+          <div className="rounded-card border border-line p-5">
             <p className="text-sm text-muted">{t("completedTile", { n: q.data.completed.count })}</p>
             <p className="mt-1 text-3xl font-extrabold tabular-nums" data-testid="settlement-net">
               {money(q.data.completed.net)}
             </p>
             <p className="mt-1 text-sm text-muted">{t("afterCommission", { amount: money(q.data.completed.commission) })}</p>
           </div>
-          <div className="border-2 border-line p-5">
+          <div className="rounded-card border border-line p-5">
             <p className="text-sm text-muted">{t("inEscrowTile", { n: q.data.inEscrow.count })}</p>
             <p className="mt-1 text-3xl font-extrabold tabular-nums">{money(q.data.inEscrow.net)}</p>
             <p className="mt-1 text-sm text-muted">{t("inEscrowNote")}</p>
           </div>
-          <div className="border-2 border-line p-5">
+          <div className="rounded-card border border-line p-5">
             <p className="text-sm text-muted">{t("refundedTile")}</p>
             <p className="mt-1 text-3xl font-extrabold tabular-nums">{money(q.data.refunded)}</p>
           </div>

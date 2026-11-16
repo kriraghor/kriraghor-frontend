@@ -48,17 +48,17 @@ export function GroundsDesk() {
       {adding ? <AddGround onClose={() => setAdding(false)} /> : null}
       <div role="tablist" aria-label={t("title")} className="mt-6 flex flex-wrap gap-2">
         {TABS.map((k) => (
-          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`min-h-11 border-2 px-3 text-sm font-bold ${tab === k ? "border-brand text-ink" : "border-line text-muted"}`}>
+          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`rounded-control min-h-11 border px-3 text-sm font-bold ${tab === k ? "border-brand text-ink" : "border-line text-muted"}`}>
             {t(`tab.${k}`)}
           </button>
         ))}
       </div>
-      {q.isPending ? <div className="mt-6 h-48 animate-pulse bg-surface-2" /> : null}
-      {q.data && !items.length ? <p className="mt-8 border-2 border-dashed border-line p-8 text-center text-muted">{t("empty")}</p> : null}
+      {q.isPending ? <div className="rounded-card mt-6 h-48 kg-shimmer bg-surface-2" /> : null}
+      {q.data && !items.length ? <p className="rounded-card mt-8 border border-dashed border-line p-8 text-center text-muted">{t("empty")}</p> : null}
       <ul className="mt-6 grid gap-4 sm:grid-cols-2" data-testid="my-grounds">
         {items.map((g) => (
           <li key={g.id}>
-            <Link href={`/vendor/venues/${g.id}`} className="flex h-full gap-4 border-2 border-line bg-surface p-3 hover:border-brand">
+            <Link href={`/vendor/venues/${g.id}`} className="rounded-card flex h-full gap-4 border border-line bg-surface p-3 hover:border-brand">
               {g.coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={g.coverUrl} alt="" className="h-24 w-32 shrink-0 object-cover" />
@@ -122,7 +122,7 @@ function AddGround({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <form onSubmit={submit} className="mt-6 grid gap-4 border-2 border-brand bg-surface p-5 md:grid-cols-2" data-testid="add-ground-form">
+    <form onSubmit={submit} className="rounded-card mt-6 grid gap-4 border border-brand bg-surface p-5 md:grid-cols-2" data-testid="add-ground-form">
       <h2 className="text-xl font-extrabold md:col-span-2">{t("add")}</h2>
       <Field label={t("form.name")}>
         <input value={f.name} onChange={(e) => set("name", e.target.value)} minLength={3} maxLength={80} required className={inputCls} />
@@ -165,7 +165,7 @@ function AddGround({ onClose }: { onClose: () => void }) {
         <button type="submit" disabled={busy} className="min-h-12 bg-brand px-5 font-bold text-white disabled:opacity-50">
           {t("form.create")}
         </button>
-        <button type="button" className="min-h-12 border-2 border-line px-5 font-bold" onClick={onClose}>
+        <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-5 font-bold" onClick={onClose}>
           {t("cancel")}
         </button>
       </div>

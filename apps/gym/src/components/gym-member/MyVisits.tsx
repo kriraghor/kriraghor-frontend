@@ -102,14 +102,14 @@ function VisitTicket({ v }: { v: MyVisit }) {
   };
   const gym = v.gym?.name ?? "";
   return (
-    <article className="grid gap-5 rounded-card border-2 border-brand/40 p-4 sm:grid-cols-[minmax(0,280px)_minmax(0,1fr)] sm:p-5" data-testid="visit-ticket">
+    <article className="grid gap-5 rounded-card border border-brand/40 p-4 sm:grid-cols-[minmax(0,280px)_minmax(0,1fr)] sm:p-5" data-testid="visit-ticket">
       <div ref={box} className="flex flex-col items-center justify-center gap-2 rounded-card bg-white p-3 text-[#111210] [&:fullscreen]:rounded-none" data-testid="visit-qr">
         <p className="text-center font-extrabold">{gym}</p>
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt={t("me.qrAlt", { gym })} className="aspect-square w-full max-w-[min(80vh,480px)]" />
         ) : (
-          <div className="aspect-square w-full max-w-[280px] animate-pulse rounded-control bg-neutral-200" />
+          <div className="aspect-square w-full max-w-[280px] kg-shimmer rounded-control bg-neutral-200" />
         )}
         {v.code ? (
           <p className="font-mono text-2xl font-bold tracking-[0.2em] tabular-nums" data-testid="visit-code" aria-label={t("me.codeAria", { code: v.code.split("").join(" ") })}>

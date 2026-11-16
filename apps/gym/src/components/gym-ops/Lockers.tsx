@@ -82,7 +82,7 @@ function Body({ ctx }: { ctx: GymCtx }) {
                     <button
                       type="button"
                       onClick={() => setOpen(l)}
-                      className={cn("flex aspect-square w-full flex-col items-center justify-center gap-0.5 rounded-control border-2 p-1 transition-transform active:scale-[0.97]", STATE_CLASS[l.state])}
+                      className={cn("flex aspect-square w-full flex-col items-center justify-center gap-0.5 rounded-control border p-1 transition-transform active:scale-[0.97]", STATE_CLASS[l.state])}
                       aria-label={t("lockers.cellLabel", { number: l.number, state: t(`lockers.state.${l.state}`) })}
                       data-testid={`locker-${l.number}`}
                     >

@@ -26,18 +26,18 @@ export function MySubscriptions() {
     <section className="mx-auto max-w-[1100px] px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-3xl font-extrabold">{t("mySubscriptions")}</h1>
-        <Link href="/trainers" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+        <Link href="/trainers" className="rounded-control min-h-11 border border-line-strong/60 px-4 py-2 font-bold hover:border-brand">
           {t("findTrainer")}
         </Link>
       </div>
       {q.isPending ? (
-        <div className="mt-6 h-40 animate-pulse bg-surface-2" />
+        <div className="rounded-card mt-6 h-40 kg-shimmer bg-surface-2" />
       ) : q.isError ? (
         <div className="mt-6">
           <Notice tone="error">{t("error")}</Notice>
         </div>
       ) : !q.data.items.length ? (
-        <p className="mt-6 border-2 border-dashed border-line p-8 text-center font-semibold" data-testid="my-subs-empty">
+        <p className="rounded-card mt-6 border border-dashed border-line p-8 text-center font-semibold" data-testid="my-subs-empty">
           {t("noSubscriptions")}
         </p>
       ) : (
@@ -70,7 +70,7 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
   const due = s.next?.status === "pending_payment" ? s.next : cur?.status === "pending_payment" ? cur : null;
 
   return (
-    <li className="border-2 border-line p-4" data-testid="my-sub">
+    <li className="rounded-card border border-line p-4" data-testid="my-sub">
       <div className="flex flex-wrap items-center gap-3">
         <span className="min-w-0 flex-1">
           <span className="block text-xs font-bold uppercase tracking-wide text-muted">{s.code}</span>
@@ -81,7 +81,7 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
             {t("perMonth", { price: money(s.price) })} · {s.sessionsPerMonth ? t("sessions", { n: s.sessionsPerMonth }) : t("sessionsAgreed")}
           </span>
         </span>
-        <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[subscriptionTone(s.phase)]}`} data-testid="my-sub-phase">
+        <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[subscriptionTone(s.phase)]}`} data-testid="my-sub-phase">
           {t(`phase.${s.phase}`)}
         </span>
       </div>
@@ -107,12 +107,12 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
           )
         ) : null}
         {s.can.cancel && !confirm ? (
-          <button type="button" onClick={() => setConfirm(true)} className="min-h-11 border-2 border-line px-4 font-bold hover:border-danger" data-testid="my-sub-cancel">
+          <button type="button" onClick={() => setConfirm(true)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold hover:border-danger" data-testid="my-sub-cancel">
             {t("cancelSubscription")}
           </button>
         ) : null}
         {s.can.problem && !reporting ? (
-          <button type="button" onClick={() => setReporting(true)} className="min-h-11 border-2 border-line px-4 font-bold" data-testid="my-sub-problem">
+          <button type="button" onClick={() => setReporting(true)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold" data-testid="my-sub-problem">
             {t("reportProblem")}
           </button>
         ) : null}
@@ -120,13 +120,13 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
       </div>
 
       {confirm ? (
-        <div className="mt-3 border-2 border-danger p-3">
+        <div className="rounded-card mt-3 border border-danger p-3">
           <p className="font-semibold">{s.can.refundOnCancel ? t("cancelRefund", { price: money(cur?.price ?? s.price) }) : t("cancelAtEnd")}</p>
           <div className="mt-3 flex gap-2">
             <button type="button" onClick={() => cancel.mutate()} disabled={cancel.isPending} className="min-h-11 bg-danger px-4 font-bold text-white disabled:opacity-50" data-testid="my-sub-cancel-yes">
               {t("cancelYes")}
             </button>
-            <button type="button" onClick={() => setConfirm(false)} className="min-h-11 border-2 border-line px-4 font-bold">
+            <button type="button" onClick={() => setConfirm(false)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold">
               {t("keepSubscription")}
             </button>
           </div>
@@ -149,7 +149,7 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
             <button type="submit" disabled={problem.isPending || statement.trim().length < 10} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50">
               {t("sendProblem")}
             </button>
-            <button type="button" onClick={() => setReporting(false)} className="min-h-11 border-2 border-line px-4 font-bold">
+            <button type="button" onClick={() => setReporting(false)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold">
               {t("close")}
             </button>
           </div>

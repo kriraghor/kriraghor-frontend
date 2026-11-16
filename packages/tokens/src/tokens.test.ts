@@ -57,7 +57,8 @@ describe("UI v2 tokens match between tokens.ts and tokens.css", () => {
   it.each([
     ["light", () => block(v2Light, v2Media)],
     ["dark (system)", () => block(v2Media, v2Dark)],
-    ["dark (chosen)", () => block(v2Dark, css.length)],
+    // The extras that follow (the band shades and focus ring) are not palette colours.
+    ["dark (chosen)", () => block(v2Dark, css.includes("/* UI v2 extras") ? css.indexOf("/* UI v2 extras") : css.length)],
   ] as const)("%s colours", (mode, read) => {
     const values = read();
     const source = paletteV2[mode === "light" ? "light" : "dark"];

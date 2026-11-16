@@ -46,7 +46,7 @@ export function ReportButton({ subjectType, subjectId, label }: { subjectType: S
     );
   return (
     <form
-      className="mt-2 space-y-3 border-2 border-line p-4"
+      className="rounded-card mt-2 space-y-3 border border-line p-4"
       onSubmit={(e) => {
         e.preventDefault();
         send.mutate();
@@ -79,7 +79,7 @@ export function ReportButton({ subjectType, subjectId, label }: { subjectType: S
         <button type="submit" disabled={send.isPending} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white disabled:opacity-50" data-testid="send-report">
           {t("send")}
         </button>
-        <button type="button" onClick={() => setOpen(false)} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-semibold">
+        <button type="button" onClick={() => setOpen(false)} className="rounded-control inline-flex min-h-11 items-center border border-line-strong/60 px-4 font-semibold">
           {t("cancel")}
         </button>
       </div>

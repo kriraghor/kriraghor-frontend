@@ -98,7 +98,7 @@ export function GymEditor({ id }: { id: string }) {
     setTriedAt(q.dataUpdatedAt);
     void run(fn, done);
   };
-  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse rounded-card bg-surface-2" />;
+  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer rounded-card bg-surface-2" />;
   if (q.isError) return <p className="mx-auto max-w-[1100px] px-5 py-10 text-danger">{problemOf(q.error)?.title ?? t("loadFailed")}</p>;
   const g = q.data;
   const actions = gymActions(g.status, g.editStatus);

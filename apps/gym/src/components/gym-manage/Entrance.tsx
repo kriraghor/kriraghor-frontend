@@ -106,7 +106,7 @@ function Board({ ctx }: { ctx: GymCtx }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt={t("qrAlt")} className="aspect-square w-full max-w-[min(70vh,640px)]" data-testid="entrance-qr" data-token-expires={token?.expiresAt} />
         ) : (
-          <div className="aspect-square w-full max-w-[640px] animate-pulse rounded-control bg-neutral-200" />
+          <div className="aspect-square w-full max-w-[640px] kg-shimmer rounded-control bg-neutral-200" />
         )}
         <p className="font-mono text-4xl font-bold tabular-nums" aria-live="off">
           {clock}

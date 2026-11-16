@@ -24,7 +24,7 @@ export function GroundSchedule({ groundId }: { groundId: string }) {
   const t = useTranslations("vendorSchedule");
   const { status } = useAuth();
   const g = useQuery({ queryKey: ["vendor-ground", groundId], enabled: status === "signed_in", queryFn: () => vendor.get(groundId) });
-  if (g.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (g.isPending) return <div className="rounded-card mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   if (g.isError || !g.data)
     return (
       <section className="mx-auto max-w-3xl px-5 py-10">
@@ -126,7 +126,7 @@ function Closures({ groundId, courts }: { groundId: string; courts: { id: string
           <legend className="text-sm font-semibold text-muted">{t("courts")}</legend>
           <div className="mt-1 flex flex-wrap gap-2">
             {courts.map((k) => (
-              <label key={k.id} className="flex min-h-11 items-center gap-2 border-2 border-line px-3 text-sm">
+              <label key={k.id} className="rounded-control flex min-h-11 items-center gap-2 border border-line-strong/60 px-3 text-sm">
                 <input type="checkbox" checked={picked.includes(k.id)} onChange={(e) => setPicked(e.target.checked ? [...picked, k.id] : picked.filter((x) => x !== k.id))} />
                 {k.name}
               </label>
@@ -148,12 +148,12 @@ function Closures({ groundId, courts }: { groundId: string; courts: { id: string
             <Chip tone="muted">{t(`reasons.${x.reason}`)}</Chip>
             <span className="ml-auto flex gap-2">
               {x.phase === "upcoming" ? (
-                <button type="button" className="min-h-11 border-2 border-line px-3 font-semibold" onClick={() => act.mutate(() => desk.reopen(x.id))}>
+                <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold" onClick={() => act.mutate(() => desk.reopen(x.id))}>
                   {t("reopen")}
                 </button>
               ) : null}
               {x.phase === "in_progress" ? (
-                <button type="button" className="min-h-11 border-2 border-line px-3 font-semibold" onClick={() => act.mutate(() => desk.endNow(x.id))}>
+                <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold" onClick={() => act.mutate(() => desk.endNow(x.id))}>
                   {t("endNow")}
                 </button>
               ) : null}
@@ -238,14 +238,14 @@ function SeriesPanel({ groundId, courts }: { groundId: string; courts: { id: str
           </select>
         </Field>
         <div className="flex items-end">
-          <button type="button" disabled={form.teamName.trim().length < 2 || preview.isPending} onClick={() => preview.mutate()} className="min-h-11 w-full border-2 border-brand px-4 font-bold text-brand disabled:opacity-50" data-testid="series-preview">
+          <button type="button" disabled={form.teamName.trim().length < 2 || preview.isPending} onClick={() => preview.mutate()} className="rounded-control min-h-11 w-full border border-brand px-4 font-bold text-brand disabled:opacity-50" data-testid="series-preview">
             {t("check")}
           </button>
         </div>
       </div>
       <Clashes problem={preview.error ? problemOf(preview.error) : create.error ? problemOf(create.error) : null} />
       {p ? (
-        <div className="mt-4 border-2 border-line p-3 text-sm">
+        <div className="rounded-card mt-4 border border-line p-3 text-sm">
           <p className="font-bold">{t("perSession", { amount: formatTaka(p.pricePerSession, locale), pct: p.discountPct })}</p>
           <ul className="mt-2 grid grid-cols-2 gap-1">
             {p.weeks.map((w) => (
@@ -268,7 +268,7 @@ function SeriesPanel({ groundId, courts }: { groundId: string; courts: { id: str
             </span>
             <Chip tone={s.status === "active" ? "ok" : "muted"}>{t(`seriesStatus.${s.status}`)}</Chip>
             {s.status === "active" ? (
-              <button type="button" className="ml-auto min-h-11 border-2 border-danger px-3 font-semibold text-danger" onClick={() => end.mutate(s.id)}>
+              <button type="button" className="rounded-control ml-auto min-h-11 border border-danger px-3 font-semibold text-danger" onClick={() => end.mutate(s.id)}>
                 {t("end")}
               </button>
             ) : null}

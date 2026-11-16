@@ -47,12 +47,12 @@ export function GameProfilePanel({ payload }: { payload: Record<string, unknown>
         <dd className="text-lg font-bold">{String(payload.ign ?? "–")}</dd>
         <dd className="text-xs text-muted">{t("compare")}</dd>
       </dl>
-      <div className="flex min-h-48 flex-col items-center justify-center gap-2 border-2 border-line p-2 text-center text-sm">
+      <div className="rounded-control flex min-h-48 flex-col items-center justify-center gap-2 border border-line-strong/60 p-2 text-center text-sm">
         {url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={url} alt={t("screenshot")} className="max-h-96 w-full object-contain" data-testid="uid-screenshot" />
         ) : (
-          <button type="button" disabled={busy} onClick={() => void show()} className="min-h-11 border-2 border-line px-3 font-semibold disabled:opacity-50">
+          <button type="button" disabled={busy} onClick={() => void show()} className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold disabled:opacity-50">
             {t("showScreenshot")}
           </button>
         )}

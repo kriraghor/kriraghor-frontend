@@ -65,7 +65,7 @@ export function PassBuy({ page }: { page: GymPage }) {
         <legend className="text-xs font-bold uppercase tracking-wide text-muted">{t("pickPackage")}</legend>
         <div className="mt-2 grid gap-2">
           {page.packages.map((p) => (
-            <label key={p.id} className={`flex min-h-12 cursor-pointer items-center justify-between border-2 px-3 ${p.id === pkg.id ? "border-brand" : "border-line"}`}>
+            <label key={p.id} className={`rounded-control flex min-h-12 cursor-pointer items-center justify-between border px-3 ${p.id === pkg.id ? "border-brand" : "border-line"}`}>
               <span className="flex items-center gap-2">
                 <input type="radio" name="package" value={p.id} checked={p.id === pkg.id} onChange={() => choose(() => setPackageId(p.id))} className="accent-[var(--kg-brand)]" />
                 <span className="font-semibold">{t(`kind.${p.kind}`)}</span>
@@ -81,7 +81,7 @@ export function PassBuy({ page }: { page: GymPage }) {
         {dates.length ? (
           <div className="mt-2 flex flex-wrap gap-1" role="radiogroup">
             {dates.map((d) => (
-              <button key={d} type="button" role="radio" aria-checked={d === date} onClick={() => choose(() => setPicked(d))} className={`min-h-11 border-2 px-2 text-sm font-semibold ${d === date ? "border-brand bg-brand" : "border-line"}`} data-testid="pass-date">
+              <button key={d} type="button" role="radio" aria-checked={d === date} onClick={() => choose(() => setPicked(d))} className={`rounded-control min-h-11 border px-2 text-sm font-semibold ${d === date ? "border-brand bg-brand" : "border-line"}`} data-testid="pass-date">
                 {d === page.today ? t("today") : dayLabel(d, locale)}
               </button>
             ))}

@@ -79,6 +79,13 @@
       "switch": "{section}: switch section",
       "pages": "{section} pages",
       "external": "{label}, opens on another Kriraghor site"
+    },
+    "jump": {
+      "open": "Jump to",
+      "placeholder": "Type a page, for example fees or members",
+      "results": "Pages",
+      "none": "No page with that name in your menu.",
+      "help": "Arrow keys to move, Enter to open, Esc to close. Ctrl+K opens this from anywhere."
     }
   },
   "auth": {

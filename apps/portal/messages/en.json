@@ -111,7 +111,20 @@
     "home": "Admin desk",
     "welcome": "Signed in as {name}",
     "permissions": "Permissions",
-    "master": "Master admin"
+    "master": "Master admin",
+    "greeting": {
+      "morning": "Good morning, {name}",
+      "afternoon": "Good afternoon, {name}",
+      "evening": "Good evening, {name}"
+    },
+    "lead": "Start with what needs you, then open any of your desks below.",
+    "clearTitle": "Nothing is waiting for you",
+    "clearBody": "Reviews, reports and risk flags you can act on show here as soon as they arrive.",
+    "desksTitle": "Your desks",
+    "desksLead": "Every desk your permissions open, grouped as in the menu. Ctrl+K jumps to any of them.",
+    "canTitle": "What you can do",
+    "canMaster": "You are a master admin: every desk is open to you. Fee and staff changes still need a second master to approve them.",
+    "canNone": "No permissions yet. A master admin gives them on the Staff desk."
   },
   "vendor": {
     "home": "Business desk",
@@ -1714,7 +1727,12 @@
       "due": "Due {time}",
       "urgent": "Urgent",
       "registrations_waiting": "{n, plural, one {# team registration is} other {# team registrations are}} waiting for your approval",
-      "registrations_unpaid": "{n, plural, one {# team hasn't} other {# teams haven't}} paid the entry fee yet"
+      "registrations_unpaid": "{n, plural, one {# team hasn't} other {# teams haven't}} paid the entry fee yet",
+      "gym_dues_overdue": "{n, plural, one {# member fee is} other {# member fees are}} overdue at your gym",
+      "gym_dues_due_today": "{n, plural, one {# member fee is} other {# member fees are}} due today",
+      "gym_requests_waiting": "{n, plural, one {# join or link request is} other {# join or link requests are}} waiting",
+      "gym_invoices_to_pay": "{n, plural, one {# gym plan invoice} other {# gym plan invoices}} to pay",
+      "gym_panel_restricted": "Your gym panel is restricted until the plan invoice is paid"
     },
     "loadFailed": "Couldn't load the numbers. Try again.",
     "openAnalytics": "Open analytics",

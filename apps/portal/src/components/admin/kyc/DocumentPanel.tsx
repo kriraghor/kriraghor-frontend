@@ -18,7 +18,7 @@ export function DocumentPanel({ documentId }: { documentId: string }) {
   const t = useTranslations("kyc");
   const locale = useLocale();
   const d = useQuery({ queryKey: ["kyc-doc", documentId], queryFn: () => kyc.get(documentId) });
-  if (d.isPending) return <div className="mt-4 h-40 animate-pulse bg-surface-2" />;
+  if (d.isPending) return <div className="rounded-card mt-4 h-40 kg-shimmer bg-surface-2" />;
   if (d.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const doc = d.data;
   const fields = doc.fields as Record<string, unknown> & { legalName?: string; dob?: string; numberMasked: string | null };
@@ -103,7 +103,7 @@ function RevealNid({ id, masked }: { id: string; masked: string }) {
     return (
       <span className="flex flex-wrap items-center gap-2">
         <span className="font-mono">{masked}</span>
-        <button type="button" className="min-h-9 border-2 border-line px-2 text-xs font-semibold" onClick={() => setAsking(true)}>
+        <button type="button" className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold" onClick={() => setAsking(true)}>
           {t("reveal")}
         </button>
       </span>
@@ -128,7 +128,7 @@ function RevealNid({ id, masked }: { id: string; masked: string }) {
       <Field label={t("revealReason")}>
         <input value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} maxLength={300} required className={inputCls} />
       </Field>
-      <button type="submit" className="min-h-11 border-2 border-brand px-3 text-sm font-semibold">
+      <button type="submit" className="rounded-control min-h-11 border border-brand px-3 text-sm font-semibold">
         {t("revealConfirm")}
       </button>
       {problem ? <span className="text-sm text-danger">{problem}</span> : null}
@@ -167,7 +167,7 @@ function FileView({ docId, fileId, slot, mime, purged }: { docId: string; fileId
   }
 
   return (
-    <div className="flex min-h-40 flex-col items-center justify-center gap-2 border-2 border-line p-2 text-center text-sm">
+    <div className="rounded-control flex min-h-40 flex-col items-center justify-center gap-2 border border-line-strong/60 p-2 text-center text-sm">
       <span className="font-bold">{t(`slot.${slot}`)}</span>
       {purged ? (
         <span className="text-xs text-muted">{t("purged")}</span>
@@ -175,7 +175,7 @@ function FileView({ docId, fileId, slot, mime, purged }: { docId: string; fileId
         // eslint-disable-next-line @next/next/no-img-element
         <img src={url} alt={t(`slot.${slot}`)} className="max-h-60 w-full object-contain" data-testid={`kyc-file-${slot}`} />
       ) : (
-        <button type="button" disabled={busy} onClick={() => void show()} className="min-h-11 border-2 border-line px-3 font-semibold disabled:opacity-50">
+        <button type="button" disabled={busy} onClick={() => void show()} className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold disabled:opacity-50">
           {mime === "application/pdf" ? t("openPdf") : t("show")}
         </button>
       )}

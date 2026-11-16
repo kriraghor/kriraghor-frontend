@@ -73,9 +73,9 @@ export function Avatar({ name, src, size = 40, className }: { name: string; src?
   );
 }
 
-/** A loading placeholder in the shape of what is coming. */
+/** A loading placeholder in the shape of what is coming, with a soft light sweeping across (still under reduce motion). */
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse rounded-control bg-surface-2", className)} aria-hidden />;
+  return <div className={cn("kg-shimmer rounded-control bg-surface-2", className)} aria-hidden />;
 }
 
 /** A list of skeleton rows, announced once as loading. */
@@ -94,8 +94,8 @@ export function SkeletonList({ rows = 3, className, label }: { rows?: number; cl
 export function EmptyState({ icon, title, body, action, className }: { icon?: ReactNode; title: ReactNode; body?: ReactNode; action?: ReactNode; className?: string }) {
   return (
     <div className={cn("flex flex-col items-center gap-3 rounded-card border border-dashed border-line-strong/50 px-6 py-10 text-center", className)}>
-      {icon ? <span className="flex size-12 items-center justify-center rounded-pill bg-surface-2 text-muted [&>svg]:size-6">{icon}</span> : null}
-      <p className="font-display text-lg font-semibold">{title}</p>
+      {icon ? <span className="flex size-14 items-center justify-center rounded-card bg-accent-soft text-accent-text [&>svg]:size-7">{icon}</span> : null}
+      <p className="font-display text-xl font-bold">{title}</p>
       {body ? <p className="max-w-[46ch] text-sm text-muted">{body}</p> : null}
       {action ? <div className="mt-1">{action}</div> : null}
     </div>
@@ -155,6 +155,22 @@ export function PageTitle({ title, eyebrow, description, actions, back, classNam
         {description ? <p className="mt-2 max-w-[60ch] text-muted">{description}</p> : null}
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap gap-2">{actions}</div> : null}
+    </div>
+  );
+}
+
+/**
+ * A section's heading (UI v2): the slanted orange mark taken from the logo's K, the title in the heading
+ * face, and an optional action on the right ("See all"). The mark is decoration only.
+ */
+export function SectionHeading({ title, action, id, as: Tag = "h2", className }: { title: ReactNode; action?: ReactNode; id?: string; as?: "h2" | "h3"; className?: string }) {
+  return (
+    <div className={cn("flex flex-wrap items-center justify-between gap-x-3 gap-y-1", className)}>
+      <Tag id={id} className={cn("flex items-center gap-2.5 font-display font-bold", Tag === "h2" ? "text-xl" : "text-lg")}>
+        <span aria-hidden className={cn("inline-block shrink-0 -skew-x-[18deg] rounded-[2px] bg-accent", Tag === "h2" ? "h-5 w-[7px]" : "h-4 w-1.5")} />
+        {title}
+      </Tag>
+      {action}
     </div>
   );
 }

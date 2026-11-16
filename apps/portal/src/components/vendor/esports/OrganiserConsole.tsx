@@ -14,7 +14,7 @@ import { CheckinBoard, CreateForm, Finalise, Matches } from "../../admin/esports
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { formatDhaka } from "../../admin/useAdminMe";
 
-const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
+const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = {
   draft: "muted",
   review: "warn",
@@ -53,7 +53,7 @@ export function OrganiserHome() {
     if (usable.length === 1) router.replace(`/vendor/esports/${usable[0].id}`);
   }, [usable, router]);
   if (status !== "signed_in") return <MePanel signInHref="/vendor/sign-in" />;
-  if (q.isPending) return <div className="mx-auto mt-10 h-40 max-w-3xl animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mx-auto mt-10 h-40 max-w-3xl kg-shimmer bg-surface-2" />;
   return (
     <section className="mx-auto max-w-3xl px-5 py-10">
       <h1 className="text-3xl font-extrabold">{t("title")}</h1>
@@ -61,14 +61,14 @@ export function OrganiserHome() {
         <ul className="mt-6 flex flex-col gap-3">
           {usable.map((o) => (
             <li key={o.id}>
-              <Link href={`/vendor/esports/${o.id}`} className="flex items-center justify-between border-2 border-line p-4 font-bold hover:border-brand">
+              <Link href={`/vendor/esports/${o.id}`} className="rounded-card flex items-center justify-between border border-line p-4 font-bold hover:border-brand">
                 {o.name} <span className="text-sm text-muted">{t(`role.${o.role}`)}</span>
               </Link>
             </li>
           ))}
         </ul>
       ) : (
-        <div className="mt-6 border-2 border-line p-5" data-testid="org-apply-first">
+        <div className="rounded-card mt-6 border border-line p-5" data-testid="org-apply-first">
           <p className="font-bold">{t("applyFirst")}</p>
           <p className="mt-1 text-sm text-muted">{t("applyHelp")}</p>
         </div>
@@ -128,12 +128,12 @@ export function OrgDashboard({ orgId }: { orgId: string }) {
     queryKey: ["org-dash", orgId],
     queryFn: () => organiser.dashboard(orgId),
   });
-  if (q.isPending) return <div className="h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card h-40 kg-shimmer bg-surface-2" />;
   if (q.isError) return null;
   const d = q.data;
   return (
     <div className="grid gap-4 md:grid-cols-3" data-testid="org-dashboard">
-      <div className="border-2 border-line p-4">
+      <div className="rounded-card border border-line p-4">
         <p className="text-sm font-semibold text-muted">{t("dash.contract")}</p>
         {d.contract ? (
           <>
@@ -151,7 +151,7 @@ export function OrgDashboard({ orgId }: { orgId: string }) {
           <p className="mt-1 font-semibold">{t("dash.noContract")}</p>
         )}
       </div>
-      <div className="border-2 border-line p-4">
+      <div className="rounded-card border border-line p-4">
         <p className="text-sm font-semibold text-muted">{t("dash.invoices")}</p>
         <p className="mt-1 text-lg font-extrabold tabular-nums">
           {d.unpaidInvoices
@@ -162,7 +162,7 @@ export function OrgDashboard({ orgId }: { orgId: string }) {
             : t("dash.allPaid")}
         </p>
       </div>
-      <div className={`border-2 p-4 ${d.canSubmit ? "border-brand" : "border-danger"}`}>
+      <div className={`rounded-card border p-4 ${d.canSubmit ? "border-brand" : "border-danger"}`}>
         <p className="text-sm font-semibold text-muted">{t("dash.submits")}</p>
         <p className="mt-1 font-bold">{d.canSubmit ? t("dash.canSubmit") : t("dash.cannotSubmit")}</p>
       </div>
@@ -214,8 +214,8 @@ export function OrgTournaments({ orgId }: { orgId: string }) {
           <CreateForm client={orgDesk(orgId)} organiser onCreated={(id) => router.push(`/vendor/esports/${orgId}/events/${id}`)} />
         </div>
       ) : null}
-      {q.isPending ? <div className="mt-6 h-32 animate-pulse bg-surface-2" /> : null}
-      {q.data && !q.data.items.length ? <p className="mt-6 border-2 border-dashed border-line p-8 text-center text-muted">{t("tour.empty")}</p> : null}
+      {q.isPending ? <div className="rounded-card mt-6 h-32 kg-shimmer bg-surface-2" /> : null}
+      {q.data && !q.data.items.length ? <p className="rounded-card mt-6 border border-dashed border-line p-8 text-center text-muted">{t("tour.empty")}</p> : null}
       <ul className="mt-6 divide-y-2 divide-line border-y-2 border-line" data-testid="org-tournaments">
         {(q.data?.items ?? []).map((x) => (
           <li key={x.id}>
@@ -242,7 +242,7 @@ function FundBox({ orgId, id, fund, onChange }: { orgId: string; id: string; fun
   const state = fundState(fund);
   void onChange;
   return (
-    <div className={`border-2 p-4 ${state === "funded" ? "border-brand" : "border-amber-500"}`} data-testid="fund-box">
+    <div className={`rounded-card border p-4 ${state === "funded" ? "border-brand" : "border-amber-500"}`} data-testid="fund-box">
       <h3 className="font-bold">{t("fund.title")}</h3>
       <p className="mt-1 text-sm">
         {t("fund.line", {
@@ -288,7 +288,7 @@ export function OrgTournament({ orgId, id }: { orgId: string; id: string }) {
       setMsg({ text: problemOf(err)?.title ?? t("failed"), tone: "error" });
     }
   };
-  if (q.isPending) return <div className="h-64 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card h-64 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("notFound")}</Notice>;
   const x = q.data;
   const draft = x.status === "draft";
@@ -415,7 +415,7 @@ export function OrgBilling({ orgId }: { orgId: string }) {
         <h2 className="text-xl font-extrabold">{t("bill.contracts")}</h2>
         <ul className="mt-3 flex flex-col gap-2">
           {((contracts.data?.items ?? []) as Contract[]).map((k) => (
-            <li key={k.id} className="flex flex-wrap items-center gap-3 border-2 border-line p-3">
+            <li key={k.id} className="rounded-card flex flex-wrap items-center gap-3 border border-line p-3">
               <span className="min-w-0 flex-1 font-semibold">
                 {k.model === "percentage"
                   ? t("dash.pct", { pct: k.effectivePct ?? 0 })
@@ -465,7 +465,7 @@ export function OrgBranding({ orgId }: { orgId: string }) {
     queryKey: ["org-branding", orgId],
     queryFn: () => organiser.branding(orgId),
   });
-  if (!q.data) return <div className="h-40 animate-pulse bg-surface-2" />;
+  if (!q.data) return <div className="rounded-card h-40 kg-shimmer bg-surface-2" />;
   return <BrandingForm orgId={orgId} data={q.data} />;
 }
 
@@ -498,7 +498,7 @@ function BrandingForm({ orgId, data }: { orgId: string; data: Branding }) {
   const okAccent = isHex(f.accentHex) && contrast(f.accentHex, "#111210") >= 4.5;
   return (
     <div className="grid gap-8 lg:grid-cols-2">
-      <div className="grid content-start gap-3 border-2 border-line p-5" data-testid="org-branding">
+      <div className="rounded-card grid content-start gap-3 border border-line p-5" data-testid="org-branding">
         <form
           className="grid gap-3"
           onSubmit={(e) => {
@@ -523,7 +523,7 @@ function BrandingForm({ orgId, data }: { orgId: string; data: Branding }) {
                   type="color"
                   value={isHex(f[k]) ? f[k] : "#000000"}
                   onChange={(e) => setF({ ...f, [k]: e.target.value })}
-                  className="h-11 w-14 border-2 border-line"
+                  className="rounded-control h-11 w-14 border border-line-strong/60"
                   aria-label={t(`brand.${k}`)}
                 />
                 <input value={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.value })} className={`${inputCls} w-32 font-mono`} />
@@ -548,7 +548,7 @@ function BrandingForm({ orgId, data }: { orgId: string; data: Branding }) {
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
-            className="mt-1 block min-h-12 w-full border-2 border-line px-3 py-2 text-sm"
+            className="rounded-control mt-1 block min-h-12 w-full border border-line-strong/60 px-3 py-2 text-sm"
             onChange={(e) => {
               const file = e.target.files?.[0];
               e.target.value = "";

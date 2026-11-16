@@ -104,10 +104,10 @@ export function GymHub() {
             <button type="button" onClick={locate} disabled={locating === "asking"} className="inline-flex min-h-12 items-center gap-2 bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover disabled:opacity-60" data-testid="gym-near-me">
               <Crosshair size={20} aria-hidden /> {locating === "asking" ? tg("locating") : inBd ? tg("nearMeAgain") : tg("nearMe")}
             </button>
-            <Link href="/trainers" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold no-underline hover:border-brand" data-testid="gym-trainers-link">
+            <Link href="/trainers" className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-bold no-underline hover:border-brand" data-testid="gym-trainers-link">
               {t("bookTrainer")}
             </Link>
-            <Link href="/me/passes" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold no-underline hover:border-brand">
+            <Link href="/me/passes" className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-bold no-underline hover:border-brand">
               {t("myPasses")}
             </Link>
           </div>
@@ -181,11 +181,11 @@ export function GymHub() {
         </form>
 
         {locating === "denied" || locating === "unavailable" ? (
-          <p className="mt-4 border-2 border-line p-4 text-sm" role="status" data-testid="gym-no-location">
+          <p className="rounded-card mt-4 border border-line p-4 text-sm" role="status" data-testid="gym-no-location">
             {tg(locating === "denied" ? "locationDenied" : "locationUnavailable")}
           </p>
         ) : sort === "nearest" && !inBd ? (
-          <p className="mt-4 border-2 border-line p-4 text-sm" role="status">
+          <p className="rounded-card mt-4 border border-line p-4 text-sm" role="status">
             {at ? tg("outsideBd") : tg("nearestNeedsLocation")}
           </p>
         ) : null}
@@ -193,13 +193,13 @@ export function GymHub() {
         {gyms.isPending ? (
           <ul className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {[0, 1, 2].map((i) => (
-              <li key={i} className="h-80 animate-pulse bg-surface-2" />
+              <li key={i} className="rounded-card h-80 kg-shimmer bg-surface-2" />
             ))}
           </ul>
         ) : gyms.isError ? (
-          <p className="mt-6 border-2 border-danger p-6 font-bold">{t("error")}</p>
+          <p className="rounded-card mt-6 border border-danger p-6 font-bold">{t("error")}</p>
         ) : !gyms.data.items.length ? (
-          <div className="mt-6 border-2 border-dashed border-line p-10 text-center" data-testid="gym-empty">
+          <div className="rounded-card mt-6 border border-dashed border-line p-10 text-center" data-testid="gym-empty">
             <p className="font-bold">{t("noGyms")}</p>
             {areaId || facility || priceMax || radiusKm ? (
               <button type="button" onClick={() => go({ areaId: undefined, facility: undefined, priceMax: undefined, radiusKm: undefined })} className="mt-3 font-semibold text-brand underline">
