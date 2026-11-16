@@ -2,7 +2,7 @@
 
 import { Fragment, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { CaretDown, CaretUp, CaretUpDown, DotsThree } from "@phosphor-icons/react";
+import { CaretDown, CaretUp, CaretUpDown, DotsThree, Tray } from "@phosphor-icons/react";
 import { cn } from "../cn";
 import { Button } from "./Button";
 import { EmptyState, ErrorState, Skeleton } from "./Display";
@@ -150,7 +150,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
       ))}
     </div>
   ) : !rows?.length ? (
-    <EmptyState className="m-4 border-0" icon={empty?.icon} title={empty?.title ?? t("empty")} body={empty?.body} action={empty?.action} />
+    <EmptyState className="m-4 border-0" icon={empty?.icon ?? <Tray weight="duotone" aria-hidden />} title={empty?.title ?? t("empty")} body={empty?.body} action={empty?.action} />
   ) : wide ? (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-sm" aria-label={label}>

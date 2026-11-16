@@ -22,7 +22,7 @@ export function HireProfilePanel({ payload }: { payload: Record<string, unknown>
   const locale = useLocale();
   const id = String(payload.profileId);
   const q = useQuery({ queryKey: ["admin-hire-profile", id], queryFn: () => hireAdmin.profile(id) });
-  if (q.isPending) return <div className="mt-4 h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mt-4 h-40 kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <Notice tone="error">{t("failed")}</Notice>;
   const p = q.data;
   const money = (n: number) => formatTaka(n, locale);

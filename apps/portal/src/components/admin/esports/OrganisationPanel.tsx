@@ -14,7 +14,7 @@ export function OrganisationPanel({ payload }: { payload: Record<string, unknown
   const t = useTranslations("organisersDesk");
   const id = String(payload.organisationId);
   const q = useQuery({ queryKey: ["admin-org", id], queryFn: () => organisersAdmin.get(id) });
-  if (q.isPending) return <div className="mt-4 h-32 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mt-4 h-32 kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <Notice tone="error">{t("failed")}</Notice>;
   const o = q.data;
   return (

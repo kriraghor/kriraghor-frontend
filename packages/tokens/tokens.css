@@ -31,6 +31,12 @@
   --kg-prize-ink: #10231a;
   --kg-prize-soft: #fdefd6;
   --kg-prize-text: #8f5115;
+  /* The call-to-action accent: the prize amber until an area moves to UI v2 (the logo's orange there). */
+  --kg-accent: var(--kg-prize);
+  --kg-accent-hover: var(--kg-prize);
+  --kg-accent-soft: var(--kg-prize-soft);
+  --kg-accent-text: var(--kg-prize-text);
+  --kg-on-accent: var(--kg-prize-ink);
   --kg-live: #e5484d;
   --kg-danger: #b42318;
   --kg-danger-soft: #fdecea;
@@ -151,6 +157,11 @@
   --color-prize-ink: var(--kg-prize-ink);
   --color-prize-soft: var(--kg-prize-soft);
   --color-prize-text: var(--kg-prize-text);
+  --color-accent: var(--kg-accent);
+  --color-accent-hover: var(--kg-accent-hover);
+  --color-accent-soft: var(--kg-accent-soft);
+  --color-accent-text: var(--kg-accent-text);
+  --color-on-accent: var(--kg-on-accent);
   --color-live: var(--kg-live);
   --color-danger: var(--kg-danger);
   --color-danger-soft: var(--kg-danger-soft);
@@ -476,4 +487,21 @@
   --kg-info-soft: #172442;
   --kg-warning: #f5b052;
   --kg-warning-soft: #33250f;
+}
+
+/* UI v2 extras: the dark band's other shades (the panels' sidebar) and the focus ring, in the new values.
+   Not colours of their own, so they sit outside the three blocks tokens.test.ts compares with paletteV2. */
+[data-ui="v2"] {
+  --kg-band-2: #141c17;
+  --kg-band-muted: #a9b7af;
+  --kg-band-line: rgb(238 242 239 / 0.14);
+  --kg-focus: #00804a;
+}
+:root[data-theme="dark"] [data-ui="v2"] {
+  --kg-focus: #1fd17f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-ui="v2"] {
+    --kg-focus: #1fd17f;
+  }
 }

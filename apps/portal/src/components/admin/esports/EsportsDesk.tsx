@@ -17,7 +17,7 @@ import { Chip, Field, inputCls } from "../finance/shared";
 
 type Tab = "tournaments" | "disputes" | "bans";
 const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = { draft: "muted", review: "warn", scheduled: "muted", registration_open: "ok", registration_closed: "warn", check_in: "warn", live: "bad", results_pending: "warn", finalised: "ok", paid_out: "ok", cancelled: "bad" };
-const btn = "min-h-11 border-2 px-4 text-sm font-semibold disabled:opacity-50";
+const btn = "rounded-control min-h-11 border px-4 text-sm font-semibold disabled:opacity-50";
 
 /** What the shared desk parts call; the M22 organiser client leaves the staff-only actions out. */
 export type DeskClient = Pick<typeof esportsAdmin, "catalog" | "create" | "board" | "match" | "room" | "setRoom" | "rotate" | "enter" | "post" | "preview"> &
@@ -50,7 +50,7 @@ export function EsportsDesk() {
           <>
             <div role="tablist" aria-label={t("title")} className="mt-6 flex flex-wrap gap-2">
               {(["tournaments", "disputes", "bans"] as const).filter((k) => k === "tournaments" || canManage).map((k) => (
-                <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`min-h-11 border-2 px-4 text-sm font-bold ${tab === k ? "border-brand text-ink" : "border-line text-muted"}`}>
+                <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`rounded-control min-h-11 border px-4 text-sm font-bold ${tab === k ? "border-brand text-ink" : "border-line text-muted"}`}>
                   {t(`tab.${k}`)}
                 </button>
               ))}
@@ -159,7 +159,7 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
   }
 
   return (
-    <form onSubmit={submit} className="grid gap-4 border-2 border-line bg-surface p-5" data-testid="create-tournament">
+    <form onSubmit={submit} className="rounded-card grid gap-4 border border-line bg-surface p-5" data-testid="create-tournament">
       <h2 className="text-xl font-extrabold">{t("new")}</h2>
       <div className="grid gap-3 sm:grid-cols-3">
         <Field label={t("form.game")}>
@@ -229,7 +229,7 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
           <input value={f.maxPaidKills} onChange={(e) => set("maxPaidKills", e.target.value.replace(/[^0-9]/g, ""))} className={inputCls} inputMode="numeric" data-testid="max-paid-kills" />
         </Field>
       ) : null}
-      <fieldset className="border-2 border-line p-3">
+      <fieldset className="rounded-card border border-line p-3">
         <legend className="px-1 font-bold">{t("form.prizes")}</legend>
         <div className="flex flex-wrap gap-2">
           {prizes.map((p, i) => (
@@ -250,7 +250,7 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
         <p className="mt-2 text-xs text-muted">{t("form.prizesHelp")}</p>
       </fieldset>
       <DateTimePicker id="es-opens" label={t("form.opens")} value={f.opens} onChange={(v) => set("opens", v)} required />
-      <fieldset className="border-2 border-line p-3">
+      <fieldset className="rounded-card border border-line p-3">
         <legend className="px-1 font-bold">{t("form.matches")}</legend>
         {matches.map((m, i) => (
           <div key={i} className="mt-2 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
@@ -319,7 +319,7 @@ function TournamentPane({ id, canManage }: { id: string; canManage: boolean }) {
     await qc.invalidateQueries({ queryKey: ["esd-t", id] });
     await qc.invalidateQueries({ queryKey: ["esd-list"] });
   };
-  if (q.isPending) return <div className="h-60 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card h-60 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const d = q.data as typeof q.data & { settlement?: { collected: number; paid: number; subsidy: number; fee: number } | null; submissionId?: string | null };
   const run = async (fn: () => Promise<unknown>) => {
@@ -333,7 +333,7 @@ function TournamentPane({ id, canManage }: { id: string; canManage: boolean }) {
   };
 
   return (
-    <section className="border-2 border-line bg-surface p-5" data-testid="tournament-pane">
+    <section className="rounded-card border border-line bg-surface p-5" data-testid="tournament-pane">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="text-xl font-extrabold">{d.titleEn}</h2>
         <Chip tone={TONE[d.status] ?? "muted"}>{t(`status.${d.status}`)}</Chip>
@@ -439,7 +439,7 @@ export function CheckinBoard({ id, client = esportsAdmin }: { id: string; client
   return (
     <div>
       {msg ? <Notice tone="error">{msg}</Notice> : null}
-      <div className="overflow-x-auto border-2 border-line">
+      <div className="rounded-card overflow-x-auto border border-line">
         <table className="w-full min-w-[640px] text-sm" data-testid="checkin-board">
           <thead className="bg-surface-2 text-left text-xs uppercase tracking-wide text-muted">
             <tr>
@@ -537,7 +537,7 @@ export function MatchPanel({ id, canManage, onChange, client = esportsAdmin }: {
       setMsg({ text: problemOf(err)?.title ?? t("failed"), tone: "error" });
     }
   };
-  if (m.isPending) return <div className="mt-4 h-40 animate-pulse bg-surface-2" />;
+  if (m.isPending) return <div className="rounded-card mt-4 h-40 kg-shimmer bg-surface-2" />;
   if (m.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const data = m.data as unknown as { status: string; entries: (Entry & { name: string })[]; results: { registrationId: string; placement: number | null; players: { userId: string; kills: number }[]; status: string }[] };
   const editable = ["scheduled", "room_ready", "room_revealed", "live"].includes(data.status);
@@ -556,7 +556,7 @@ export function MatchPanel({ id, canManage, onChange, client = esportsAdmin }: {
   return (
     <div className="mt-4 space-y-6">
       {canManage ? (
-        <div className="border-2 border-line p-4" data-testid="room-panel">
+        <div className="rounded-card border border-line p-4" data-testid="room-panel">
           <h3 className="font-bold">{t("room.title")}</h3>
           <p className="mt-1 text-sm text-muted">
             {roomData?.current ? t("room.current", { version: roomData.current.version, status: t(`room.${roomData.current.status}`), at: formatDhaka(roomData.current.revealAt, locale) }) : t("room.none")} · {t("room.views", { n: roomData?.views ?? 0 })}
@@ -596,7 +596,7 @@ export function MatchPanel({ id, canManage, onChange, client = esportsAdmin }: {
 
       <div>
         <h3 className="font-bold">{t("results.title")}</h3>
-        <div className="mt-2 overflow-x-auto border-2 border-line">
+        <div className="rounded-card mt-2 overflow-x-auto border border-line">
           <table className="w-full min-w-[560px] text-sm" data-testid="results-table">
             <thead className="bg-surface-2 text-left text-xs uppercase tracking-wide text-muted">
               <tr>
@@ -665,7 +665,7 @@ export function Finalise({ id, status, onFinalise, client = esportsAdmin, totals
   const t = useTranslations("esportsDesk");
   const locale = useLocale();
   const q = useQuery({ queryKey: ["esd-preview", id], queryFn: () => client.preview(id) });
-  if (q.isPending) return <div className="h-32 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card h-32 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const p = q.data as unknown as { finalisable: boolean; awards: { registrationId: string; entry: { name: string } | null; kind: string; place: number | null; amount: { amount: number }; shares: { userId: string; amount: { amount: number } }[] }[]; totals: Record<string, { amount: number }> };
   return (
@@ -834,7 +834,7 @@ function Bans() {
         {q.data && !items.length ? <li className="py-4 text-muted">{t("bans.none")}</li> : null}
       </ul>
       <form
-        className="grid gap-3 border-2 border-line bg-surface p-4"
+        className="rounded-card grid gap-3 border border-line bg-surface p-4"
         onSubmit={async (e) => {
           e.preventDefault();
           setMsg(null);

@@ -12,7 +12,7 @@ import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
 
-const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
+const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 const SHOP_TYPES: ShopType[] = ["sports_gear", "supplements", "gym_gear"];
 
 /**
@@ -24,7 +24,7 @@ export function ShopDesk() {
   const t = useTranslations("vendorMarket");
   const q = useQuery({ queryKey: ["vendor-shop"], queryFn: () => shopDesk.profile(), retry: false });
   const problem = problemOf(q.error);
-  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   if (problem && ["ROLE_REQUIRED", "ROLE_PENDING", "KYC_REQUIRED", "KYC_PENDING"].includes(problem.code)) return <Gate />;
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-10">
@@ -121,7 +121,7 @@ function ShopForm() {
   const [busy, setBusy] = useState(false);
   return (
     <form
-      className="mt-6 grid gap-4 border-2 border-brand bg-surface p-5 md:grid-cols-2"
+      className="rounded-card mt-6 grid gap-4 border border-brand bg-surface p-5 md:grid-cols-2"
       data-testid="shop-form"
       onSubmit={async (e) => {
         e.preventDefault();
@@ -214,7 +214,7 @@ function ShopEditor({ shop }: { shop: Shop }) {
         </div>
       ) : null}
       <form
-        className="mt-6 grid gap-4 border-2 border-line bg-surface p-5 md:grid-cols-2"
+        className="rounded-card mt-6 grid gap-4 border border-line bg-surface p-5 md:grid-cols-2"
         onSubmit={(e) => {
           e.preventDefault();
           const patch: Partial<ShopInput> = { name: v.name, areaId: v.areaId, addressLine: v.addressLine, about: v.about };
@@ -232,7 +232,7 @@ function ShopEditor({ shop }: { shop: Shop }) {
         </div>
       </form>
       <form
-        className="mt-6 grid gap-4 border-2 border-line bg-surface p-5 md:grid-cols-3"
+        className="rounded-card mt-6 grid gap-4 border border-line bg-surface p-5 md:grid-cols-3"
         data-testid="stock-rules"
         onSubmit={(e) => {
           e.preventDefault();

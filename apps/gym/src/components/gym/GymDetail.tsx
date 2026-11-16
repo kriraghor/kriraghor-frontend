@@ -28,7 +28,7 @@ export function GymDetail({ slug }: { slug: string }) {
   const locale = useLocale();
   const q = useQuery({ queryKey: ["gym", slug], queryFn: () => gym.page(slug), retry: false });
   const [photo, setPhoto] = useState(0);
-  if (q.isPending) return <div data-theme="gym" className="min-h-[70dvh]"><div className="mx-auto h-96 max-w-[1320px] animate-pulse bg-surface-2" /></div>;
+  if (q.isPending) return <div data-theme="gym" className="min-h-[70dvh]"><div className="rounded-card mx-auto h-96 max-w-[1320px] kg-shimmer bg-surface-2" /></div>;
   if (q.isError || !q.data)
     return (
       <div data-theme="gym" className="min-h-[70dvh]">
@@ -80,7 +80,7 @@ export function GymDetail({ slug }: { slug: string }) {
                 <img src={g.photos[photo]?.url} alt={t("photoOf", { name: g.name, n: photo + 1 })} className="aspect-[16/9] w-full object-cover" data-testid="gym-photo" />
                 <div className="mt-2 flex gap-2 overflow-x-auto">
                   {g.photos.map((ph, i) => (
-                    <button key={ph.id} type="button" onClick={() => setPhoto(i)} aria-label={t("photoOf", { name: g.name, n: i + 1 })} aria-pressed={i === photo} className={`shrink-0 border-2 ${i === photo ? "border-brand" : "border-transparent"}`}>
+                    <button key={ph.id} type="button" onClick={() => setPhoto(i)} aria-label={t("photoOf", { name: g.name, n: i + 1 })} aria-pressed={i === photo} className={`rounded-card shrink-0 border ${i === photo ? "border-brand" : "border-transparent"}`}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={ph.url} alt="" className="h-16 w-24 object-cover" />
                     </button>
@@ -96,7 +96,7 @@ export function GymDetail({ slug }: { slug: string }) {
                 <h2 className="mt-8 text-2xl font-extrabold">{t("facilities")}</h2>
                 <ul className="mt-3 flex flex-wrap gap-2" data-testid="gym-facilities">
                   {g.facilities.map((f) => (
-                    <li key={f.id} className="border-2 border-line px-3 py-1 text-sm font-semibold">
+                    <li key={f.id} className="rounded-card border border-line px-3 py-1 text-sm font-semibold">
                       {name(f)}
                     </li>
                   ))}

@@ -176,7 +176,7 @@ export function GuestCard({ ctx, visit, today, onChanged }: { ctx: GymCtx; visit
     },
   };
   return (
-    <div className={cn("rounded-card border-2 p-3", v.status === "booked" && isToday ? "border-brand bg-brand/10" : v.status === "attended" ? "border-info bg-info-soft" : "border-line")} data-testid="desk-guest" data-status={v.status}>
+    <div className={cn("rounded-card border p-3", v.status === "booked" && isToday ? "border-brand bg-brand/10" : v.status === "attended" ? "border-info bg-info-soft" : "border-line")} data-testid="desk-guest" data-status={v.status}>
       <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("desk.guestTitle")}</p>
       <div className="mt-1 flex items-start gap-3">
         <Avatar name={v.guest.name ?? "?"} size={48} />

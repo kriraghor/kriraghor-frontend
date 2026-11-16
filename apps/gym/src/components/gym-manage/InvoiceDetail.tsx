@@ -61,7 +61,7 @@ function Body({ i }: { i: Invoice }) {
       ) : null}
       <article className="print-area relative overflow-hidden rounded-card border border-[#d9dbd2] bg-white p-5 text-[#111210] shadow-sm sm:p-8" data-testid="invoice">
         {i.status === "void" ? <div className="mb-4 rounded-control border-2 border-[#c62828] px-3 py-2 text-center font-bold uppercase tracking-wide text-[#c62828]">{t("invoice.status.void")}</div> : null}
-        {i.status === "paid" ? <div className="mb-4 rounded-control border-2 border-[#1f7a3a] px-3 py-2 text-center font-bold uppercase tracking-wide text-[#1f7a3a]">{t("invoice.paidStamp", { date: f.date(i.paidAt) })}</div> : null}
+        {i.status === "paid" ? <div className="mb-4 rounded-control border border-[#1f7a3a] px-3 py-2 text-center font-bold uppercase tracking-wide text-[#1f7a3a]">{t("invoice.paidStamp", { date: f.date(i.paidAt) })}</div> : null}
         <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[#d9dbd2] pb-4">
           <div>
             <p className="text-xl font-extrabold">Kriraghor</p>

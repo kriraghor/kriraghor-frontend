@@ -23,7 +23,7 @@ export function LinkQr({ value, label }: { value: string; label: string }) {
     };
   }, [value]);
   // eslint-disable-next-line @next/next/no-img-element
-  return src ? <img src={src} alt={label} className="aspect-square w-full max-w-[240px] rounded-control bg-white" data-testid="link-qr" /> : <span className="block aspect-square w-full max-w-[240px] animate-pulse rounded-control bg-white/80" />;
+  return src ? <img src={src} alt={label} className="aspect-square w-full max-w-[240px] rounded-control bg-white" data-testid="link-qr" /> : <span className="block aspect-square w-full max-w-[240px] kg-shimmer rounded-control bg-white/80" />;
 }
 
 /** "Online" with the provider charge and what the gym gets (owner only: the API leaves providerCharge out for staff). */

@@ -17,7 +17,7 @@ export function ShopPanel({ payload }: { payload: Record<string, unknown> }) {
   const t = useTranslations("marketAdmin");
   const id = String(payload.shopId);
   const q = useQuery({ queryKey: ["admin-shop", id], queryFn: () => marketAdmin.shop(id) });
-  if (q.isPending) return <div className="mt-4 h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mt-4 h-40 kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const s = q.data;
   const diff = payload.diff as { first: boolean; fields: { field: string; from: unknown; to: unknown }[] } | undefined;
@@ -54,7 +54,7 @@ export function ProductPanel({ payload }: { payload: Record<string, unknown> }) 
   const locale = useLocale();
   const id = String(payload.productId);
   const q = useQuery({ queryKey: ["admin-product", id], queryFn: () => marketAdmin.product(id) });
-  if (q.isPending) return <div className="mt-4 h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mt-4 h-40 kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const p = q.data;
   const money = (n: number) => formatTaka(n, locale);
@@ -99,7 +99,7 @@ export function ProductPanel({ payload }: { payload: Record<string, unknown> }) 
       <div className="grid grid-cols-3 gap-2">
         {(p.photos as Photo[]).map((ph, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={ph.id} src={ph.url} alt={t("photoN", { n: i + 1 })} className="aspect-square w-full border-2 border-line object-cover" />
+          <img key={ph.id} src={ph.url} alt={t("photoN", { n: i + 1 })} className="rounded-card aspect-square w-full border border-line object-cover" />
         ))}
       </div>
       <table className="w-full text-left text-sm">

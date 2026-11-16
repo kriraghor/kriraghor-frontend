@@ -115,7 +115,7 @@ export function EsportsCatalog() {
           {hasGame(table) ? (
             <label className="flex flex-col text-sm font-semibold text-muted">
               {t("game")}
-              <select value={gameId} onChange={(e) => setGameId(e.target.value)} className="min-h-11 border-2 border-line bg-surface px-3 text-ink">
+              <select value={gameId} onChange={(e) => setGameId(e.target.value)} className="rounded-control min-h-11 border border-line-strong/60 bg-surface px-3 text-ink">
                 <option value="">{t("allGames")}</option>
                 {(games.data ?? []).map((g) => (
                   <option key={g.id} value={g.id}>
@@ -138,7 +138,7 @@ export function EsportsCatalog() {
           </div>
         ) : null}
 
-        <div role="tabpanel" className="mt-4 overflow-x-auto border-2 border-line bg-surface">
+        <div role="tabpanel" className="rounded-card mt-4 overflow-x-auto border border-line bg-surface">
           {rows.isPending ? (
             <p className="p-5 text-muted" role="status">
               …
@@ -175,11 +175,11 @@ export function EsportsCatalog() {
                       <div className="flex items-center justify-end gap-2">
                         <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${item.isActive ? "bg-brand-soft text-brand-text" : "bg-surface-2 text-muted"}`}>{item.isActive ? t("active") : t("inactive")}</span>
                         {!("isLatest" in item) || item.isLatest ? (
-                          <button type="button" className="min-h-11 border-2 border-line px-3 text-xs font-semibold" onClick={() => setEditing(item)}>
+                          <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-xs font-semibold" onClick={() => setEditing(item)}>
                             {t("edit")}
                           </button>
                         ) : null}
-                        <button type="button" className="min-h-11 border-2 border-line px-3 text-xs font-semibold" onClick={() => void toggle(item)}>
+                        <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-xs font-semibold" onClick={() => void toggle(item)}>
                           {item.isActive ? t("deactivate") : t("reactivate")}
                         </button>
                       </div>
@@ -303,7 +303,7 @@ function EditDrawer({
           {!item && hasGame(table) ? (
             <label className="flex flex-col text-sm font-semibold text-muted">
               {t("game")}
-              <select value={values.gameId} onChange={(e) => setValues((v) => ({ ...v, gameId: e.target.value }))} className="min-h-11 border-2 border-line bg-surface px-3 text-ink">
+              <select value={values.gameId} onChange={(e) => setValues((v) => ({ ...v, gameId: e.target.value }))} className="rounded-control min-h-11 border border-line-strong/60 bg-surface px-3 text-ink">
                 {games.map((g) => (
                   <option key={g.id} value={g.id}>
                     {locale === "bn" ? g.nameBn : g.nameEn}
@@ -322,7 +322,7 @@ function EditDrawer({
                   {t(f.name)}
                 </label>
                 {f.kind === "select" ? (
-                  <select id={id} value={values[f.name]} onChange={(e) => setValues((v) => ({ ...v, [f.name]: e.target.value }))} className="min-h-11 border-2 border-line bg-surface px-3 text-ink">
+                  <select id={id} value={values[f.name]} onChange={(e) => setValues((v) => ({ ...v, [f.name]: e.target.value }))} className="rounded-control min-h-11 border border-line-strong/60 bg-surface px-3 text-ink">
                     {(f.options ?? []).map((o) => (
                       <option key={o}>{o}</option>
                     ))}
@@ -337,7 +337,7 @@ function EditDrawer({
                     aria-invalid={err ? true : undefined}
                     aria-describedby={err ? `${id}-error` : f.name === "key" ? `${id}-hint` : undefined}
                     onChange={(e) => setValues((v) => ({ ...v, [f.name]: e.target.value }))}
-                    className={`min-h-11 border-2 bg-surface px-3 text-ink disabled:bg-surface-2 ${err ? "border-danger" : "border-line"} ${f.name === "key" || f.name === "uidRegex" ? "font-mono" : ""}`}
+                    className={`rounded-control min-h-11 border bg-surface px-3 text-ink disabled:bg-surface-2 ${err ? "border-danger" : "border-line"} ${f.name === "key" || f.name === "uidRegex" ? "font-mono" : ""}`}
                   />
                 )}
                 {f.name === "key" ? (
@@ -363,7 +363,7 @@ function EditDrawer({
           </div>
         ) : null}
         <div className="mt-6 flex justify-end gap-2">
-          <button type="button" className="min-h-12 border-2 border-line px-4 font-semibold" onClick={onClose} disabled={busy}>
+          <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-semibold" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </button>
           <Button type="submit" busy={busy}>

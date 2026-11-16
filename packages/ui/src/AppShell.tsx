@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense, useState, type ReactNode } from "react";
+import { Suspense, useMemo, useState, type ReactNode } from "react";
 import { CaretDown, List, SidebarSimple } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "./i18n/navigation";
 import { cn } from "./cn";
 import { Sheet, Tooltip } from "./kit/Overlay";
 import { HEADER, setCollapsed, ShellLink, useCollapsed, type ShellItem } from "./shell-parts";
+import { JumpTo, type JumpItem } from "./JumpTo";
 
 export type { ShellItem };
 export type ShellGroup = {
@@ -22,7 +23,8 @@ export type ShellGroup = {
  * member area uses SectionShell): a grouped icon
  * sidebar that collapses to a 76px rail in one click (remembered per browser), and a slide-in sheet
  * on phones. `variant="dark"` is the portal's full-height dark panel (Claude Design "Panels"), with
- * `foot` for the signed-in person's card at the bottom.
+ * `foot` for the signed-in person's card at the bottom. "Jump to" (Ctrl+K) searches every page in the
+ * menu (UI v2); `jump={false}` leaves it out.
  */
 export function AppShell({
   groups,
@@ -31,6 +33,7 @@ export function AppShell({
   foot,
   context,
   variant = "light",
+  jump = true,
   children,
 }: {
   groups: ShellGroup[];
@@ -40,11 +43,14 @@ export function AppShell({
   /** Which one the page belongs to (a gym's name), shown beside the page name on phones. */
   context?: string | null;
   variant?: "light" | "dark";
+  jump?: boolean;
   children: ReactNode;
 }) {
   const t = useTranslations("kit");
   const collapsed = useCollapsed();
   const dark = variant === "dark";
+  // Every page in the menu, with its group's name to tell two "Settings" apart.
+  const jumpItems = useMemo<JumpItem[]>(() => groups.flatMap((g) => g.items.map((it) => ({ href: it.href, label: it.label, icon: it.icon, group: g.label }))), [groups]);
 
   return (
     <div
@@ -60,6 +66,11 @@ export function AppShell({
       <aside className={cn("hidden md:block", dark && "border-r border-band-line bg-band text-band-text")}>
         <div className={cn("sticky flex flex-col overflow-y-auto overflow-x-hidden py-6", dark && "px-3 py-5")} style={{ top: HEADER, [dark ? "height" : "maxHeight"]: `calc(100dvh - ${HEADER})` }}>
           {top ? <div className="mb-5">{top(collapsed)}</div> : null}
+          {jump ? (
+            <div className={cn("mb-5", collapsed && "flex justify-center")}>
+              <JumpTo items={jumpItems} rail={collapsed} dark={dark} />
+            </div>
+          ) : null}
           {/* The path is request data (Cache Components): only the highlight waits for it. */}
           <Suspense fallback={<NavList groups={groups} title={title} rail={collapsed} active={null} dark={dark} />}>
             <ActiveNav groups={groups} title={title} rail={collapsed} dark={dark} />
@@ -93,6 +104,11 @@ export function AppShell({
           <Suspense fallback={null}>
             <PhoneMenu groups={groups} title={title} top={top} context={context} />
           </Suspense>
+          {jump ? (
+            <div className="ml-auto">
+              <JumpTo items={jumpItems} compact hotkey={false} />
+            </div>
+          ) : null}
         </div>
         {children}
       </div>

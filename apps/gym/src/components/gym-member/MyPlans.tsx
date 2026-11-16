@@ -141,7 +141,7 @@ function PlanDay({ item, date, ticks, onTick }: { item: MyPlanItem; date: string
                         disabled={saving === ref}
                         onClick={() => void save(ref, !done, tick?.note ?? null)}
                         className={cn(
-                          "ml-auto inline-flex min-h-11 min-w-24 shrink-0 items-center justify-center gap-1.5 rounded-control border-2 px-3 font-bold",
+                          "ml-auto inline-flex min-h-11 min-w-24 shrink-0 items-center justify-center gap-1.5 rounded-control border px-3 font-bold",
                           done ? "border-brand bg-brand text-on-brand" : "border-line hover:border-brand",
                         )}
                         data-testid="plan-done"

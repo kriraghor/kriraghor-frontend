@@ -28,7 +28,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
 
   return (
     <html lang={locale} suppressHydrationWarning className={`${fontVariables} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+      {/* UI v2 (11 Nov 2026): the panels move first; data-ui="v2" switches the new values on (packages/tokens). */}
+      <body data-ui="v2" className="min-h-full flex flex-col">
         <ThemeScript />
         <Script src="/env.js" strategy="beforeInteractive" />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>

@@ -55,17 +55,17 @@ export function ProductsDesk() {
       {adding && shop.data ? <AddProduct shopType={shop.data.shopType} onClose={() => setAdding(false)} /> : null}
       <div role="tablist" aria-label={t("products.title")} className="mt-6 flex flex-wrap gap-2">
         {TABS.map((k) => (
-          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`min-h-11 border-2 px-3 text-sm font-bold ${tab === k ? "border-brand text-ink" : "border-line text-muted"}`}>
+          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`rounded-control min-h-11 border px-3 text-sm font-bold ${tab === k ? "border-brand text-ink" : "border-line text-muted"}`}>
             {t(`tab.${k}`)}
           </button>
         ))}
       </div>
-      {q.isPending && shop.data ? <div className="mt-6 h-48 animate-pulse bg-surface-2" /> : null}
-      {q.data && !items.length ? <p className="mt-8 border-2 border-dashed border-line p-8 text-center text-muted">{t("products.empty")}</p> : null}
+      {q.isPending && shop.data ? <div className="rounded-card mt-6 h-48 kg-shimmer bg-surface-2" /> : null}
+      {q.data && !items.length ? <p className="rounded-card mt-8 border border-dashed border-line p-8 text-center text-muted">{t("products.empty")}</p> : null}
       <ul className="mt-6 grid gap-4 sm:grid-cols-2" data-testid="my-products">
         {items.map((p) => (
           <li key={p.id}>
-            <Link href={`/vendor/products/${p.id}`} className="flex h-full gap-4 border-2 border-line bg-surface p-3 hover:border-brand">
+            <Link href={`/vendor/products/${p.id}`} className="rounded-card flex h-full gap-4 border border-line bg-surface p-3 hover:border-brand">
               {p.coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={p.coverUrl} alt="" className="h-24 w-24 shrink-0 object-cover" />
@@ -127,7 +127,7 @@ function AddProduct({ shopType, onClose }: { shopType: ShopType; onClose: () => 
   }
 
   return (
-    <form onSubmit={submit} className="mt-6 grid gap-4 border-2 border-brand bg-surface p-5 md:grid-cols-2" data-testid="add-product-form">
+    <form onSubmit={submit} className="rounded-card mt-6 grid gap-4 border border-brand bg-surface p-5 md:grid-cols-2" data-testid="add-product-form">
       <h2 className="text-xl font-extrabold md:col-span-2">{t("products.add")}</h2>
       <div className="md:col-span-2">
         <Field label={t("form.itemType")}>
@@ -170,7 +170,7 @@ function AddProduct({ shopType, onClose }: { shopType: ShopType; onClose: () => 
         <button type="submit" disabled={busy} className="min-h-12 bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="create-product">
           {t("form.create")}
         </button>
-        <button type="button" className="min-h-12 border-2 border-line px-5 font-bold" onClick={onClose}>
+        <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-5 font-bold" onClick={onClose}>
           {t("cancel")}
         </button>
       </div>

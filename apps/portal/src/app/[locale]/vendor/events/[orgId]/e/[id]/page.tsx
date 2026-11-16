@@ -13,7 +13,7 @@ async function Content({ params }: { params: PageProps<"/[locale]/vendor/events/
 // Params are request data (cacheComponents): read them inside Suspense.
 export default function Route({ params }: PageProps<"/[locale]/vendor/events/[orgId]/e/[id]">) {
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-96 max-w-[1200px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-card mx-auto mt-10 h-96 max-w-[1200px] kg-shimmer bg-surface-2" />}>
       <Content params={params} />
     </Suspense>
   );

@@ -11,7 +11,7 @@ import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 import { STATUS_TONE } from "./GroundsDesk";
 
-const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
+const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 type Msg = { text: string; tone: "info" | "error" } | null;
 
 /** Run an API call, refresh the ground, and report the result (problem title or a done message). */
@@ -45,7 +45,7 @@ export function GroundEditor({ id }: { id: string }) {
   const t = useTranslations("vendorGrounds");
   const q = useQuery({ queryKey: ["vendor-ground", id], queryFn: () => vendor.get(id) });
   const { msg, busy, run } = useRunner(id);
-  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   if (q.isError) return <p className="mx-auto max-w-[1100px] px-5 py-10 text-danger">{problemOf(q.error)?.title ?? t("loadFailed")}</p>;
   const g = q.data;
   const actions = nextActions(g.status, g.editStatus);
@@ -142,7 +142,7 @@ function Basics({ g, locked }: { g: OwnerGround; locked: boolean }) {
   const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((x) => ({ ...x, [k]: v }));
   return (
     <form
-      className="grid content-start gap-3 border-2 border-line bg-surface p-5"
+      className="rounded-card grid content-start gap-3 border border-line bg-surface p-5"
       onSubmit={(e) => {
         e.preventDefault();
         void run(
@@ -219,7 +219,7 @@ function Basics({ g, locked }: { g: OwnerGround; locked: boolean }) {
                   type="button"
                   aria-pressed={on}
                   onClick={() => set("facilityIds", on ? f.facilityIds.filter((v) => v !== x.id) : [...f.facilityIds, x.id])}
-                  className={`min-h-10 border-2 px-3 text-sm font-semibold ${on ? "border-brand bg-brand/10" : "border-line"}`}
+                  className={`rounded-control min-h-10 border px-3 text-sm font-semibold ${on ? "border-brand bg-brand/10" : "border-line"}`}
                 >
                   {x.nameEn}
                 </button>
@@ -249,24 +249,24 @@ function Photos({ g, locked }: { g: OwnerGround; locked: boolean }) {
     return run(() => vendor.orderPhotos(g.id, next));
   };
   return (
-    <div className="border-2 border-line bg-surface p-5" data-testid="ground-photos">
+    <div className="rounded-card border border-line bg-surface p-5" data-testid="ground-photos">
       <h2 className="text-xl font-extrabold">{t("photos")}</h2>
       <p className="mt-1 text-sm text-muted">{t("photosHelp", { n: g.photos.length })}</p>
       <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {g.photos.map((p, i) => (
-          <li key={p.id} className="border-2 border-line">
+          <li key={p.id} className="rounded-card border border-line">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={p.url} alt={i === 0 ? t("cover") : t("photoN", { n: i + 1 })} className="aspect-[4/3] w-full object-cover" />
             <div className="flex items-center gap-1 p-1">
               {i === 0 ? <span className="px-1 text-xs font-bold text-brand">{t("cover")}</span> : null}
               <span className="ml-auto flex gap-1">
-                <button type="button" disabled={locked || busy || i === 0} onClick={() => void move(i, -1)} className="min-h-9 min-w-9 border-2 border-line text-sm disabled:opacity-40" aria-label={t("moveLeft")}>
+                <button type="button" disabled={locked || busy || i === 0} onClick={() => void move(i, -1)} className="rounded-control min-h-9 min-w-9 border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveLeft")}>
                   ←
                 </button>
-                <button type="button" disabled={locked || busy || i === g.photos.length - 1} onClick={() => void move(i, 1)} className="min-h-9 min-w-9 border-2 border-line text-sm disabled:opacity-40" aria-label={t("moveRight")}>
+                <button type="button" disabled={locked || busy || i === g.photos.length - 1} onClick={() => void move(i, 1)} className="rounded-control min-h-9 min-w-9 border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveRight")}>
                   →
                 </button>
-                <button type="button" disabled={locked || busy} onClick={() => void run(() => vendor.removePhoto(g.id, p.id))} className="min-h-9 border-2 border-line px-2 text-xs font-semibold text-danger disabled:opacity-40">
+                <button type="button" disabled={locked || busy} onClick={() => void run(() => vendor.removePhoto(g.id, p.id))} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40">
                   {t("remove")}
                 </button>
               </span>
@@ -282,7 +282,7 @@ function Photos({ g, locked }: { g: OwnerGround; locked: boolean }) {
           multiple
           disabled={locked || busy}
           data-testid="photo-input"
-          className="mt-1 block min-h-12 w-full border-2 border-line bg-surface px-3 py-2 text-sm"
+          className="rounded-control mt-1 block min-h-12 w-full border border-line-strong/60 bg-surface px-3 py-2 text-sm"
           onChange={async (e) => {
             const files = [...(e.target.files ?? [])];
             e.target.value = "";
@@ -325,7 +325,7 @@ function SportPicker({ value, onChange, sports }: { value: string[]; onChange: (
       {sports.map((s) => {
         const on = value.includes(s.id);
         return (
-          <button key={s.id} type="button" aria-pressed={on} onClick={() => onChange(on ? value.filter((v) => v !== s.id) : [...value, s.id])} className={`min-h-10 border-2 px-3 text-sm font-semibold ${on ? "border-brand bg-brand/10" : "border-line"}`}>
+          <button key={s.id} type="button" aria-pressed={on} onClick={() => onChange(on ? value.filter((v) => v !== s.id) : [...value, s.id])} className={`rounded-control min-h-10 border px-3 text-sm font-semibold ${on ? "border-brand bg-brand/10" : "border-line"}`}>
             {s.nameEn}
           </button>
         );
@@ -340,7 +340,7 @@ function CourtForm({ groundId, sports, surfaces }: { groundId: string; sports: O
   const [f, setF] = useState({ name: "", sportIds: [] as string[], surfaceId: "", sizeText: "", capacityText: "", combinableGroup: "" });
   return (
     <form
-      className="grid gap-3 border-2 border-dashed border-line p-4 md:grid-cols-3"
+      className="rounded-card grid gap-3 border border-dashed border-line p-4 md:grid-cols-3"
       onSubmit={async (e) => {
         e.preventDefault();
         const ok = await run(
@@ -398,12 +398,12 @@ function CourtCard({ groundId, court, locked, sports, surfaces }: { groundId: st
   const times = halfHours();
   const setDay = (dow: number, patch: Partial<HoursRow>) => setHours((hs) => hs.map((h) => (h.dow === dow ? { ...h, ...patch } : h)));
   return (
-    <div className="border-2 border-line bg-surface p-4" data-testid="court-card">
+    <div className="rounded-card border border-line bg-surface p-4" data-testid="court-card">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="text-lg font-extrabold">{court.name}</h3>
         <Chip tone={court.status === "active" ? "ok" : "warn"}>{t(`courtStatus.${court.status}`)}</Chip>
         {!locked ? (
-          <button type="button" disabled={busy} className="ml-auto min-h-9 border-2 border-line px-3 text-xs font-semibold text-danger" onClick={() => void run(() => vendor.retireCourt(court.id), t("courtRetired"))}>
+          <button type="button" disabled={busy} className="rounded-control ml-auto min-h-9 border border-line-strong/60 px-3 text-xs font-semibold text-danger" onClick={() => void run(() => vendor.retireCourt(court.id), t("courtRetired"))}>
             {t("retire")}
           </button>
         ) : null}

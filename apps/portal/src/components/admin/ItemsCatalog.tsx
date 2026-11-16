@@ -33,7 +33,7 @@ type Row = {
 };
 const SHOP_TYPES = ["sports_gear", "supplements", "gym_gear"];
 const KINDS = ["select", "number", "text", "date"];
-const btn = "min-h-10 border-2 px-3 text-sm font-semibold disabled:opacity-50";
+const btn = "rounded-control min-h-10 border px-3 text-sm font-semibold disabled:opacity-50";
 
 async function call<T>(p: Promise<{ data?: T; error?: unknown }>): Promise<T> {
   const { data, error } = await p;
@@ -123,7 +123,7 @@ export function ItemsCatalog() {
 
 function Column({ title, testId, children }: { title: string; testId: string; children: React.ReactNode }) {
   return (
-    <section className="border-2 border-line bg-surface p-4" data-testid={testId}>
+    <section className="rounded-card border border-line bg-surface p-4" data-testid={testId}>
       <h2 className="text-lg font-extrabold">{title}</h2>
       <ul className="mt-3 space-y-2">{children}</ul>
     </section>
@@ -133,7 +133,7 @@ function Column({ title, testId, children }: { title: string; testId: string; ch
 function RowItem({ row, label, sub, active, onPick, onToggle, badge }: { row: Row; label: string; sub?: string; active?: boolean; onPick?: () => void; onToggle: () => void; badge?: string | null }) {
   const t = useTranslations("itemsCatalog");
   return (
-    <li className={`flex items-start gap-2 border-2 p-2 ${active ? "border-brand" : "border-line"} ${row.isActive ? "" : "opacity-60"}`}>
+    <li className={`rounded-card flex items-start gap-2 border p-2 ${active ? "border-brand" : "border-line"} ${row.isActive ? "" : "opacity-60"}`}>
       <button type="button" disabled={!onPick} onClick={onPick} className="min-h-10 flex-1 text-left disabled:cursor-default">
         <span className="block font-semibold">
           {label} <span className="text-xs text-muted">{row.key}</span>

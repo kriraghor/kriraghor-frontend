@@ -8,7 +8,7 @@ export default async function MyPassesPage({ params }: PageProps<"/[locale]/me/p
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-card mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />}>
       <MyPasses />
     </Suspense>
   );

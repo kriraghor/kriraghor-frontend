@@ -19,7 +19,7 @@ import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { formatDhaka } from "../../admin/useAdminMe";
 
-const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
+const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 const primary = `${btn} border-brand bg-brand text-white`;
 const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = {
   draft: "muted",
@@ -63,7 +63,7 @@ export function SportsHome() {
     if (usable.length === 1) router.replace(`/vendor/events/${usable[0].id}`);
   }, [usable, router]);
   if (status !== "signed_in") return <MePanel signInHref="/vendor/sign-in" />;
-  if (q.isPending) return <div className="mx-auto mt-10 h-40 max-w-3xl animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mx-auto mt-10 h-40 max-w-3xl kg-shimmer bg-surface-2" />;
   return (
     <section className="mx-auto max-w-3xl px-5 py-10">
       <h1 className="text-3xl font-extrabold">{t("title")}</h1>
@@ -71,14 +71,14 @@ export function SportsHome() {
         <ul className="mt-6 flex flex-col gap-3">
           {usable.map((o) => (
             <li key={o.id}>
-              <Link href={`/vendor/events/${o.id}`} className="flex items-center justify-between border-2 border-line p-4 font-bold hover:border-brand">
+              <Link href={`/vendor/events/${o.id}`} className="rounded-card flex items-center justify-between border border-line p-4 font-bold hover:border-brand">
                 {o.name}
               </Link>
             </li>
           ))}
         </ul>
       ) : (
-        <div className="mt-6 border-2 border-line p-5" data-testid="sports-apply-first">
+        <div className="rounded-card mt-6 border border-line p-5" data-testid="sports-apply-first">
           <p className="font-bold">{t("applyFirst")}</p>
           <p className="mt-1 text-sm text-muted">{t("applyHelp")}</p>
         </div>
@@ -107,11 +107,11 @@ export function SportsTournaments({ orgId }: { orgId: string }) {
       />
       {creating ? <NewTournament orgId={orgId} /> : null}
       <ul className="mt-6 flex flex-col gap-2" data-testid="sports-tournaments">
-        {q.isPending ? <li className="h-24 animate-pulse bg-surface-2" /> : null}
-        {q.data && !q.data.items.length ? <li className="border-2 border-dashed border-line p-6 text-muted">{t("none")}</li> : null}
+        {q.isPending ? <li className="rounded-card h-24 kg-shimmer bg-surface-2" /> : null}
+        {q.data && !q.data.items.length ? <li className="rounded-card border border-dashed border-line p-6 text-muted">{t("none")}</li> : null}
         {(q.data?.items ?? []).map((x) => (
           <li key={x.id}>
-            <Link href={`/vendor/events/${orgId}/e/${x.id}`} className="flex flex-wrap items-center gap-3 border-2 border-line p-3 hover:border-brand" data-testid="sports-tournament">
+            <Link href={`/vendor/events/${orgId}/e/${x.id}`} className="rounded-card flex flex-wrap items-center gap-3 border border-line p-3 hover:border-brand" data-testid="sports-tournament">
               <span className="min-w-0 flex-1">
                 <span className="block font-bold">{x.name}</span>
                 <span className="block text-sm text-muted">
@@ -244,7 +244,7 @@ function NewTournament({ orgId }: { orgId: string }) {
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   return (
     <form
-      className="mt-6 grid gap-4 border-2 border-line p-4 md:grid-cols-2"
+      className="rounded-card mt-6 grid gap-4 border border-line p-4 md:grid-cols-2"
       onSubmit={(e) => {
         e.preventDefault();
         create.mutate();
@@ -348,7 +348,7 @@ export function TournamentConsole({ orgId, id }: { orgId: string; id: string }) 
   const t = useTranslations("sportsConsole");
   const [tab, setTab] = useState<Tab>("overview");
   const q = useQuery({ queryKey: ["sports-tournament", orgId, id], queryFn: () => api.get(orgId, id), retry: false });
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1200px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mx-auto mt-10 h-96 max-w-[1200px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <p className="mx-auto max-w-3xl px-5 py-16">{t("notFound")}</p>;
   const x = q.data;
   return (
@@ -452,7 +452,7 @@ function OverviewTab({ orgId, x }: { orgId: string; x: Tournament }) {
             </ul>
           </>
         ) : (
-          <div className="h-40 animate-pulse bg-surface-2" />
+          <div className="rounded-card h-40 kg-shimmer bg-surface-2" />
         )}
       </div>
       <aside className="flex flex-col gap-3">
@@ -468,14 +468,14 @@ function OverviewTab({ orgId, x }: { orgId: string; x: Tournament }) {
           </button>
         ) : null}
         {x.status === "registration_closed" && x.matches === 0 ? (
-          <div className="flex flex-col gap-2 border-2 border-line p-3">
+          <div className="rounded-card flex flex-col gap-2 border border-line p-3">
             <DateTimePicker id="extend-at" label={t("extendTo")} value={closesAt} onChange={setClosesAt} />
             <button type="button" className={btn} onClick={() => act.mutate(() => api.extend(orgId, x.id, fromLocalInput(closesAt) ?? ""))}>
               {t("extend")}
             </button>
           </div>
         ) : null}
-        <div className="flex flex-col gap-2 border-2 border-line p-3">
+        <div className="rounded-card flex flex-col gap-2 border border-line p-3">
           <label className="text-sm font-semibold text-muted" htmlFor="console-reason">
             {t("reason")}
           </label>
@@ -538,7 +538,7 @@ function RulesTab({ orgId, x }: { orgId: string; x: Tournament }) {
   const [values, setValues] = useState<Record<string, number | string | boolean>>(x.rules.values);
   const editable = ["draft", "changes_requested"].includes(x.status) || Boolean(x.rulesUnlockedUntil && new Date(x.rulesUnlockedUntil) > new Date());
   const save = useMutation({ mutationFn: (body: Record<string, unknown>) => api.update(orgId, x.id, body), onSuccess: refresh });
-  if (!schema.data) return <div className="mt-6 h-40 animate-pulse bg-surface-2" />;
+  if (!schema.data) return <div className="rounded-card mt-6 h-40 kg-shimmer bg-surface-2" />;
   const groups = [...new Set(schema.data.fields.map((f) => f.group))];
   return (
     <div className="mt-6">
@@ -551,7 +551,7 @@ function RulesTab({ orgId, x }: { orgId: string; x: Tournament }) {
         ))}
       </div>
       {groups.map((g) => (
-        <fieldset key={g} className="mt-6 grid gap-3 border-2 border-line p-4 md:grid-cols-3">
+        <fieldset key={g} className="rounded-card mt-6 grid gap-3 border border-line p-4 md:grid-cols-3">
           <legend className="px-1 font-extrabold">{t(`ruleGroup.${g}`)}</legend>
           {schema.data.fields
             .filter((f) => f.group === g)
@@ -605,10 +605,10 @@ function TeamsTab({ orgId, x }: { orgId: string; x: Tournament }) {
         </div>
       ) : null}
       <ul className="mt-4 flex flex-col gap-2" data-testid="console-registrations">
-        {q.isPending ? <li className="h-24 animate-pulse bg-surface-2" /> : null}
-        {q.data && !q.data.items.length ? <li className="border-2 border-dashed border-line p-6 text-muted">{t("noRegistrations")}</li> : null}
+        {q.isPending ? <li className="rounded-card h-24 kg-shimmer bg-surface-2" /> : null}
+        {q.data && !q.data.items.length ? <li className="rounded-card border border-dashed border-line p-6 text-muted">{t("noRegistrations")}</li> : null}
         {(q.data?.items ?? []).map((r) => (
-          <li key={r.id} className="border-2 border-line p-3" data-testid="console-registration">
+          <li key={r.id} className="rounded-card border border-line p-3" data-testid="console-registration">
             <div className="flex flex-wrap items-center gap-3">
               <span className="min-w-0 flex-1">
                 <span className="block font-bold">{r.team?.name ?? "–"}</span>
@@ -714,7 +714,7 @@ function ResultForm({ orgId, m, engine, amend, onDone }: { orgId: string; m: Mat
     },
     onSuccess: onDone,
   });
-  const box = "min-h-11 w-20 border-2 border-line bg-surface px-2";
+  const box = "rounded-control min-h-11 w-20 border border-line-strong/60 bg-surface px-2";
   const nameA = m.teamA.team?.name ?? "A";
   const nameB = m.teamB.team?.name ?? "B";
   return (
@@ -795,7 +795,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
     <div className="mt-6 flex flex-col gap-6">
       {(act.error ?? dry.error) ? <Notice tone="error">{err(act.error ?? dry.error)}</Notice> : null}
       {canDraw ? (
-        <div className="grid gap-4 border-2 border-line p-4 md:grid-cols-2" data-testid="draw-panel">
+        <div className="rounded-card grid gap-4 border border-line p-4 md:grid-cols-2" data-testid="draw-panel">
           <div className="flex flex-col gap-2">
             <h2 className="font-extrabold">{t("drawTitle")}</h2>
             <select className={inputCls} value={seeding} onChange={(e) => setSeeding(e.target.value as Seeding)} data-testid="draw-seeding">
@@ -834,7 +834,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
         </div>
       ) : null}
       {drafts ? (
-        <div className="flex items-center gap-3 border-2 border-amber-500 p-3">
+        <div className="rounded-card flex items-center gap-3 border border-amber-500 p-3">
           <span className="flex-1">{t("draftsWaiting", { n: drafts })}</span>
           <button type="button" className={primary} disabled={act.isPending} onClick={() => act.mutate(() => api.publish(orgId, x.id))} data-testid="fixtures-publish">
             {t("publish")}

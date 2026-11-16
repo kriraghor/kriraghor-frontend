@@ -7,7 +7,7 @@ import { ArrowRight, Barbell, Check, Package, QrCode, ShoppingBag, SoccerBall, S
 import { api } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { publicEnv } from "@kriraghor/session/env";
-import { Badge, ButtonLink, Card, EmptyState, PageTitle, Skeleton, buttonClass, cn } from "@kriraghor/ui/kit";
+import { Badge, buttonClass, ButtonLink, Card, cn, EmptyState, PageTitle, SectionHeading, Skeleton } from "@kriraghor/ui/kit";
 import { checklist, dashboards, mergeActions, type ActionRole } from "@/lib/dashboard";
 import { BUSINESS_ROLES, businessView, type BusinessRole } from "@/lib/panel-nav";
 import { gymDesk } from "@/lib/vendor/gym";
@@ -69,7 +69,7 @@ export function VendorHome() {
       <PageTitle title={view === "all" ? t("title") : t(`sections.${view}`)} description={t("lead")} />
       {combined && actionRoles.length ? (
         <div className="mt-6" data-testid="combined-actions">
-          <h2 className="font-display text-xl font-bold">{t("actionsTitle")}</h2>
+          <SectionHeading title={t("actionsTitle")} />
           <div className="mt-3">{actionsLoading && !merged.length ? <Skeleton className="h-20 rounded-card" /> : <ActionList items={merged} />}</div>
         </div>
       ) : null}
@@ -84,7 +84,7 @@ export function VendorHome() {
       {working ? <StaffHome own /> : null}
       {view === "all" && notHeld.length ? (
         <div className="mt-12" data-testid="add-business">
-          <h2 className="font-display text-xl font-bold">{t("addMore")}</h2>
+          <SectionHeading title={t("addMore")} />
           <p className="mt-1 text-sm text-muted">{t("addMoreLead")}</p>
           <BusinessTypes me={me.data} roles={notHeld} />
         </div>
@@ -147,7 +147,7 @@ function SetupChecklist({ steps, testId }: { steps: Step[]; testId: string }) {
           const now = i === list.current;
           return (
             <li key={s.key} className={cn("flex flex-wrap items-center gap-3 rounded-control border px-3 py-3", now ? "border-brand/40 bg-brand-soft/40" : "border-line")} data-testid={`setup-${s.key}`} data-done={s.done || undefined}>
-              <span className={cn("grid size-8 shrink-0 place-items-center rounded-full text-sm font-bold", s.done ? "bg-brand text-on-brand" : now ? "border-2 border-brand text-brand-text" : "border border-line text-muted")}>
+              <span className={cn("grid size-8 shrink-0 place-items-center rounded-full text-sm font-bold", s.done ? "bg-brand text-on-brand" : now ? "rounded-card border border-brand text-brand-text" : "border border-line text-muted")}>
                 {s.done ? <Check size={16} weight="bold" aria-label={t("setup.done")} /> : i + 1}
               </span>
               <span className="min-w-0 flex-1">
@@ -174,7 +174,7 @@ function OwnActions({ role }: { role: ActionRole }) {
   const q = useQuery({ queryKey: ["owner-actions", role], enabled: status === "signed_in", queryFn: () => dashboards.ownerActions(role) });
   return (
     <div data-testid={`actions-${role}`}>
-      <h3 className="font-display text-lg font-bold">{t("actions.title")}</h3>
+      <SectionHeading as="h3" title={t("actions.title")} />
       <div className="mt-2">{q.data ? <ActionList items={q.data.items} /> : q.isError ? <p className="text-sm text-muted">{t("loadFailed")}</p> : <Skeleton className="h-16 rounded-card" />}</div>
     </div>
   );
@@ -280,7 +280,7 @@ function GymHome({ showActions }: { showActions: boolean }) {
       {showActions ? <OwnActions role="gym_owner" /> : null}
       <BusinessOverview role="gym_owner" />
       <div data-testid="gym-quick">
-        <h3 className="font-display text-lg font-bold">{t("gymQuick")}</h3>
+        <SectionHeading as="h3" title={t("gymQuick")} />
         {gyms.isPending ? (
           <Skeleton className="mt-2 h-20 rounded-card" />
         ) : !items.length ? (
@@ -337,7 +337,7 @@ function OrganiserHome({ showActions }: { showActions: boolean }) {
         <BusinessOverview key={o.id} role="organiser" orgId={o.id} title={t("organiser.numbers", { name: o.name })} />
       ))}
       <div data-testid="organiser-orgs">
-        <h3 className="font-display text-lg font-bold">{t("organiser.orgs")}</h3>
+        <SectionHeading as="h3" title={t("organiser.orgs")} />
         {orgs.isPending ? (
           <Skeleton className="mt-2 h-20 rounded-card" />
         ) : !sports.length ? (
@@ -448,7 +448,7 @@ function Onboarding({ me }: { me: Me | undefined }) {
           const now = i === current;
           return (
             <li key={s.key} className={cn("flex flex-wrap items-center gap-3 rounded-card border bg-surface px-4 py-3", now ? "border-brand/40" : "border-line")}>
-              <span className={cn("grid size-9 shrink-0 place-items-center rounded-full font-bold", s.done ? "bg-brand text-on-brand" : now ? "border-2 border-brand text-brand-text" : "border border-line text-muted")}>
+              <span className={cn("grid size-9 shrink-0 place-items-center rounded-full font-bold", s.done ? "bg-brand text-on-brand" : now ? "rounded-card border border-brand text-brand-text" : "border border-line text-muted")}>
                 {s.done ? <Check size={18} weight="bold" aria-label={t("setup.done")} /> : i + 1}
               </span>
               <span className="min-w-0 flex-1">
@@ -471,7 +471,7 @@ function Onboarding({ me }: { me: Me | undefined }) {
         })}
       </ol>
       <div id="business-types" className="mt-10 scroll-mt-24">
-        <h2 className="font-display text-xl font-bold">{t("types.title")}</h2>
+        <SectionHeading title={t("types.title")} />
         <BusinessTypes me={me} roles={BUSINESS_ROLES} />
       </div>
     </section>

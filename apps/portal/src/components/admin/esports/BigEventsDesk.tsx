@@ -14,7 +14,7 @@ import { formatDhaka, useAdminMe } from "../useAdminMe";
 import { DateTimePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls } from "../finance/shared";
 
-const btn = "min-h-11 border-2 px-4 text-sm font-semibold disabled:opacity-50";
+const btn = "rounded-control min-h-11 border px-4 text-sm font-semibold disabled:opacity-50";
 type Tab = "basics" | "stages" | "places" | "streams" | "sponsors" | "polls" | "feed";
 type Msg = { text: string; tone: "info" | "error" } | null;
 
@@ -101,11 +101,11 @@ function Pane({ id }: { id: string }) {
     await qc.invalidateQueries({ queryKey: ["bev", id] });
     await qc.invalidateQueries({ queryKey: ["bev-list"] });
   };
-  if (q.isPending) return <div className="h-64 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card h-64 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("failed")}</Notice>;
   const e = q.data;
   return (
-    <section className="border-2 border-line bg-surface p-5" data-testid="event-pane">
+    <section className="rounded-card border border-line bg-surface p-5" data-testid="event-pane">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="text-2xl font-extrabold">{e.event.titleEn}</h2>
         <Chip tone={e.event.status === "published" ? "ok" : e.event.status === "draft" ? "warn" : "muted"}>{t(`phase.${e.event.phase}`)}</Chip>
@@ -115,7 +115,7 @@ function Pane({ id }: { id: string }) {
       </div>
       <div role="tablist" className="mt-4 flex flex-wrap gap-2">
         {(["basics", "stages", "places", "streams", "sponsors", "polls", "feed"] as const).map((k) => (
-          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`min-h-11 border-2 px-3 text-sm font-bold ${tab === k ? "border-brand text-ink" : "border-line text-muted"}`}>
+          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`rounded-control min-h-11 border px-3 text-sm font-bold ${tab === k ? "border-brand text-ink" : "border-line text-muted"}`}>
             {t(`tab.${k}`)}
           </button>
         ))}
@@ -186,7 +186,7 @@ function Basics({ event, onSaved }: { event?: BigEvent; onSaved: (id: string) =>
         <DateTimePicker id="be-ends" label={t("f.endsAt")} value={f.endsAt} onChange={(v) => set("endsAt", v)} required />
         <Field label={t("f.accent")}>
           <span className="flex items-center gap-2">
-            <input type="color" value={f.accentHex} onChange={(x) => set("accentHex", x.target.value)} className="h-11 w-14 border-2 border-line" aria-label={t("f.accent")} />
+            <input type="color" value={f.accentHex} onChange={(x) => set("accentHex", x.target.value)} className="rounded-control h-11 w-14 border border-line-strong/60" aria-label={t("f.accent")} />
             <input value={f.accentHex} onChange={(x) => set("accentHex", x.target.value)} className={`${inputCls} w-32`} pattern="#[0-9a-fA-F]{6}" />
           </span>
         </Field>
@@ -257,7 +257,7 @@ function Stages({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) {
     <div className="space-y-3">
       <p className="text-sm text-muted">{t("stagesHelp")}</p>
       {rows.map((r, i) => (
-        <div key={i} className="grid gap-2 border-2 border-line p-3 md:grid-cols-[120px_minmax(0,1fr)_minmax(0,1fr)]" data-testid="stage-row">
+        <div key={i} className="rounded-card grid gap-2 border border-line p-3 md:grid-cols-[120px_minmax(0,1fr)_minmax(0,1fr)]" data-testid="stage-row">
           <select value={r.role} onChange={(x) => setRow(i, { role: x.target.value as Row["role"] })} className={inputCls} aria-label={t("s.role")}>
             <option value="final">{t("s.final")}</option>
             <option value="qualifier">{t("s.qualifier")}</option>
@@ -528,7 +528,7 @@ function Polls({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) {
   return (
     <div className="space-y-4">
       {e.polls.map((p) => (
-        <div key={p.id} className="border-2 border-line p-3" data-testid="admin-poll">
+        <div key={p.id} className="rounded-card border border-line p-3" data-testid="admin-poll">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-bold">{p.questionEn}</span>
             <Chip tone={p.status === "open" ? "ok" : "muted"}>{t(`poll.${p.status}`)}</Chip>

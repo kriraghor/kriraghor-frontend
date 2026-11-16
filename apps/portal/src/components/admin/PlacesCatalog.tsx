@@ -10,7 +10,7 @@ import { Chip, Field, inputCls } from "./finance/shared";
 type Table = "sports" | "areas" | "facilities" | "surfaces";
 const TABLES: Table[] = ["areas", "sports", "facilities", "surfaces"];
 type Row = { id: string; key: string; nameEn: string; nameBn: string; isActive: boolean; aliases?: string[]; serviceFlags?: number; isDhakaMetro?: boolean; lat?: number; lng?: number; districtId?: string };
-const btn = "min-h-10 border-2 px-3 text-sm font-semibold disabled:opacity-50";
+const btn = "rounded-control min-h-10 border px-3 text-sm font-semibold disabled:opacity-50";
 
 async function call<T>(p: Promise<{ data?: T; error?: unknown }>): Promise<T> {
   const { data, error } = await p;
@@ -49,7 +49,7 @@ export function PlacesCatalog() {
         <p className="mt-2 max-w-3xl text-muted">{t("intro")}</p>
         <div role="tablist" aria-label={t("title")} className="mt-6 flex flex-wrap gap-2">
           {TABLES.map((k) => (
-            <button key={k} type="button" role="tab" aria-selected={table === k} onClick={() => (setTable(k), setMsg(null))} className={`min-h-11 border-2 px-4 text-sm font-bold ${table === k ? "border-brand text-ink" : "border-line text-muted"}`}>
+            <button key={k} type="button" role="tab" aria-selected={table === k} onClick={() => (setTable(k), setMsg(null))} className={`rounded-control min-h-11 border px-4 text-sm font-bold ${table === k ? "border-brand text-ink" : "border-line text-muted"}`}>
               {t(`tab.${k}`)}
             </button>
           ))}
@@ -142,7 +142,7 @@ function AddPlace({ table, onAdd }: { table: "areas" | "facilities"; onAdd: (bod
   const [f, setF] = useState({ key: "", nameEn: "", nameBn: "", districtId: "", lat: "", lng: "", metro: true, zone: "north" });
   return (
     <form
-      className="mt-6 grid gap-3 border-2 border-dashed border-line p-4 sm:grid-cols-3"
+      className="rounded-card mt-6 grid gap-3 border border-dashed border-line p-4 sm:grid-cols-3"
       onSubmit={(e) => {
         e.preventDefault();
         const base = { key: f.key, nameEn: f.nameEn, nameBn: f.nameBn };

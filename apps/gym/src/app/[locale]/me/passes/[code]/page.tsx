@@ -12,7 +12,7 @@ async function Content({ params }: { params: PageProps<"/[locale]/me/passes/[cod
 
 export default function PassRoute({ params }: PageProps<"/[locale]/me/passes/[code]">) {
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-96 max-w-[640px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-card mx-auto mt-10 h-96 max-w-[640px] kg-shimmer bg-surface-2" />}>
       <Content params={params} />
     </Suspense>
   );

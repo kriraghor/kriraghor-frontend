@@ -16,7 +16,7 @@ export function GroundPanel({ payload }: { payload: Record<string, unknown> }) {
   const locale = useLocale();
   const id = String(payload.groundId);
   const q = useQuery({ queryKey: ["admin-ground", id], queryFn: () => groundsAdmin.get(id) });
-  if (q.isPending) return <div className="mt-4 h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mt-4 h-40 kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <Notice tone="error">{t("loadFailed")}</Notice>;
   const g = q.data;
   const lines = diffLines(payload.diff as ReviewDiff | undefined, (k, v) => t(k, v));
@@ -54,12 +54,12 @@ export function GroundPanel({ payload }: { payload: Record<string, unknown> }) {
       <div className="grid grid-cols-3 gap-2">
         {g.photos.map((p, i) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={p.id} src={p.url} alt={t("photoN", { n: i + 1 })} className="aspect-[4/3] w-full border-2 border-line object-cover" />
+          <img key={p.id} src={p.url} alt={t("photoN", { n: i + 1 })} className="rounded-card aspect-[4/3] w-full border border-line object-cover" />
         ))}
       </div>
       <ul className="space-y-2 text-sm">
         {g.courts.map((c) => (
-          <li key={c.id} className="border-2 border-line p-2">
+          <li key={c.id} className="rounded-card border border-line p-2">
             <p className="font-semibold">
               {c.name} <span className="font-normal text-muted">({t(`courtStatus.${c.status}`)})</span>
             </p>

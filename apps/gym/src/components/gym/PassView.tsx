@@ -24,7 +24,7 @@ function PassQr({ token, label }: { token: string; label: string }) {
     };
   }, [token]);
   // eslint-disable-next-line @next/next/no-img-element
-  return src ? <img src={src} alt={label} className="aspect-square w-full max-w-[320px] bg-white" data-testid="pass-qr" /> : <span className="block aspect-square w-full max-w-[320px] animate-pulse bg-white/80" />;
+  return src ? <img src={src} alt={label} className="aspect-square w-full max-w-[320px] bg-white" data-testid="pass-qr" /> : <span className="rounded-control block aspect-square w-full max-w-[320px] kg-shimmer bg-white/80" />;
 }
 
 /**
@@ -51,7 +51,7 @@ export function PassView({ code }: { code: string }) {
   const when = (iso: string | null) => (iso ? new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Dhaka" }).format(new Date(iso)) : "");
 
   if (status === "signed_out") return <SignedOutCard />;
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[640px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-card mx-auto mt-10 h-96 max-w-[640px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data)
     return (
       <section className="mx-auto max-w-[640px] px-5 py-16">
@@ -75,7 +75,7 @@ export function PassView({ code }: { code: string }) {
         <p className="text-center font-semibold">
           {p.gym?.name} · {t(`kind.${p.kind}`)} · {dates}
         </p>
-        <button type="button" onClick={() => setFull(false)} className="min-h-12 border-2 border-[#111210] px-6 font-bold">
+        <button type="button" onClick={() => setFull(false)} className="rounded-control min-h-12 border border-[#111210] px-6 font-bold">
           {t("close")}
         </button>
       </div>
@@ -97,7 +97,7 @@ export function PassView({ code }: { code: string }) {
             </h1>
             {p.gym?.addressLine ? <p className="text-muted">{p.gym.addressLine}</p> : null}
           </div>
-          <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[passTone(p.status)]}`} data-testid="pass-status">
+          <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[passTone(p.status)]}`} data-testid="pass-status">
             {t(`passStatus.${p.status}`)}
           </span>
         </div>
@@ -154,19 +154,19 @@ export function PassView({ code }: { code: string }) {
         {p.can.cancel ? (
           <div className="mt-6">
             {confirm ? (
-              <div className="border-2 border-danger p-4">
+              <div className="rounded-card border border-danger p-4">
                 <p className="font-semibold">{t("cancelConfirm", { price: formatTaka(p.money.price, locale) })}</p>
                 <div className="mt-3 flex gap-2">
                   <button type="button" onClick={() => cancel.mutate()} disabled={cancel.isPending} className="min-h-12 bg-danger px-5 font-bold text-white disabled:opacity-50" data-testid="pass-cancel-yes">
                     {t("cancelYes")}
                   </button>
-                  <button type="button" onClick={() => setConfirm(false)} className="min-h-12 border-2 border-line px-5 font-bold">
+                  <button type="button" onClick={() => setConfirm(false)} className="rounded-control min-h-12 border border-line-strong/60 px-5 font-bold">
                     {t("keepPass")}
                   </button>
                 </div>
               </div>
             ) : (
-              <button type="button" onClick={() => setConfirm(true)} className="min-h-12 border-2 border-line px-5 font-bold hover:border-danger" data-testid="pass-cancel">
+              <button type="button" onClick={() => setConfirm(true)} className="rounded-control min-h-12 border border-line-strong/60 px-5 font-bold hover:border-danger" data-testid="pass-cancel">
                 {t("cancelPass")}
               </button>
             )}

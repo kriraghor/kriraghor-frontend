@@ -130,12 +130,12 @@ export function JoinForm({ slug }: { slug: string }) {
           <legend className="text-sm font-semibold">
             {t("package")} <span className="font-normal text-muted">({t("optional")})</span>
           </legend>
-          <label className={`flex min-h-12 cursor-pointer items-center gap-3 border-2 px-4 ${packageId === "" ? "border-brand" : "border-line"}`}>
+          <label className={`rounded-control flex min-h-12 cursor-pointer items-center gap-3 border px-4 ${packageId === "" ? "border-brand" : "border-line"}`}>
             <input type="radio" name="package" value="" checked={packageId === ""} onChange={() => setPackageId("")} />
             <span>{t("noPackage")}</span>
           </label>
           {online.map((p) => (
-            <label key={p.id} className={`flex min-h-12 cursor-pointer items-center gap-3 border-2 px-4 py-2 ${packageId === p.id ? "border-brand" : "border-line"}`} data-testid="join-package">
+            <label key={p.id} className={`rounded-control flex min-h-12 cursor-pointer items-center gap-3 border px-4 py-2 ${packageId === p.id ? "border-brand" : "border-line"}`} data-testid="join-package">
               <input type="radio" name="package" value={p.id} checked={packageId === p.id} onChange={() => setPackageId(p.id)} />
               <span className="flex-1">
                 <span className="block font-bold">{p.title}</span>

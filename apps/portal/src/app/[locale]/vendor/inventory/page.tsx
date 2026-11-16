@@ -9,7 +9,7 @@ export default async function InventoryPage({ params }: PageProps<"/[locale]/ven
   setRequestLocale(locale);
   // The filter comes from the URL (?status=low), so the desk renders inside Suspense.
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-card mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />}>
       <InventoryDesk />
     </Suspense>
   );

@@ -16,7 +16,7 @@ export function TournamentPanel({ payload }: { payload: Record<string, unknown> 
   const locale = useLocale();
   const id = String(payload.tournamentId ?? "");
   const q = useQuery({ queryKey: ["admin-tournament", id], queryFn: () => tournamentsAdmin.get(id), enabled: Boolean(id) });
-  if (!q.data) return <div className="mt-6 h-32 animate-pulse bg-surface-2" />;
+  if (!q.data) return <div className="rounded-card mt-6 h-32 kg-shimmer bg-surface-2" />;
   const x = q.data;
   const elig = x.eligibility as { ageMin?: number; ageMax?: number; gender?: string };
   const row = (label: string, value: string) => (

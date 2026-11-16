@@ -9,7 +9,7 @@ export default async function EsportsDeskPage({ params }: PageProps<"/[locale]/a
   setRequestLocale(locale);
   // The desk reads ?tab= and ?id= (useSearchParams), so it renders inside Suspense.
   return (
-    <Suspense fallback={<div className="mx-auto mt-8 h-40 max-w-[1320px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-card mx-auto mt-8 h-40 max-w-[1320px] kg-shimmer bg-surface-2" />}>
       <EsportsDesk />
     </Suspense>
   );

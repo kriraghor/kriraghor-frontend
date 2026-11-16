@@ -22,7 +22,7 @@ type Row = components["schemas"]["OutboxEventItem"];
 export function EventsOps() {
   // The status filter lives in the URL (useSearchParams), so the desk renders inside Suspense.
   return (
-    <Suspense fallback={<div className="mx-auto mt-8 h-40 max-w-[1320px] animate-pulse rounded-card bg-surface-2" />}>
+    <Suspense fallback={<div className="mx-auto mt-8 h-40 max-w-[1320px] kg-shimmer rounded-card bg-surface-2" />}>
       <EventsDesk />
     </Suspense>
   );

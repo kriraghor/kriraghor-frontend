@@ -105,7 +105,7 @@ export function BookingsDesk() {
         </Link>
       </section>
     );
-  if (wp.pending || (ownerQuery && grounds.isPending)) return <div className="mx-auto mt-10 h-64 max-w-[1200px] animate-pulse bg-surface-2" />;
+  if (wp.pending || (ownerQuery && grounds.isPending)) return <div className="rounded-card mx-auto mt-10 h-64 max-w-[1200px] kg-shimmer bg-surface-2" />;
   // Staff with a venue to work at never see the owner's gate.
   const problem = choices.length ? null : problemOf(grounds.error);
   if (!choices.length && staffAtVenue && !live.length)
@@ -118,7 +118,7 @@ export function BookingsDesk() {
     return (
       <section className="mx-auto max-w-3xl px-5 py-10">
         <Notice tone="error">{problem.title ?? t("loadFailed")}</Notice>
-        <button type="button" onClick={() => void grounds.refetch()} className="mt-4 min-h-11 border-2 border-line px-4 font-semibold">
+        <button type="button" onClick={() => void grounds.refetch()} className="rounded-control mt-4 min-h-11 border border-line-strong/60 px-4 font-semibold">
           {t("retry")}
         </button>
       </section>
@@ -171,7 +171,7 @@ export function BookingsDesk() {
             </button>
           ) : null}
           {gid && perms === null ? (
-            <Link href={`/vendor/venues/${gid}/schedule`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-semibold">
+            <Link href={`/vendor/venues/${gid}/schedule`} className="rounded-control inline-flex min-h-11 items-center border border-line-strong/60 px-4 font-semibold">
               {t("schedule")}
             </Link>
           ) : null}
@@ -238,14 +238,14 @@ export function BookingsDesk() {
       {walkIn && gid && data ? <WalkIn groundId={gid} day={day} courts={data.courts} onClose={() => setWalkIn(false)} /> : null}
 
       {tl.isPending ? (
-        <div className="mt-6 h-64 animate-pulse bg-surface-2" />
+        <div className="rounded-card mt-6 h-64 kg-shimmer bg-surface-2" />
       ) : tl.isError || !data ? (
         <div className="mt-6">
           {deskAccessKey(problemOf(tl.error)?.code) ? <DeskAccessNotice error={tl.error} /> : <Notice tone="error">{problemOf(tl.error)?.title ?? t("loadFailed")}</Notice>}
         </div>
       ) : (
         <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-          <div className="overflow-x-auto border-2 border-line" data-testid="timeline">
+          <div className="rounded-card overflow-x-auto border border-line" data-testid="timeline">
             <div className="min-w-[1100px]">
               <div className="grid border-b-2 border-line text-[11px] font-semibold text-muted" style={{ gridTemplateColumns: `120px repeat(${SLOTS.length}, minmax(0, 1fr))` }}>
                 <span />
@@ -280,7 +280,7 @@ export function BookingsDesk() {
                           type="button"
                           onClick={() => setOpen(b.id)}
                           aria-pressed={open === b.id}
-                          className={`m-0.5 overflow-hidden border-2 px-1 text-left text-[11px] font-semibold ${TONE[b.status] ?? "bg-surface-2"} ${b.late ? "ring-2 ring-amber-400" : ""}`}
+                          className={`rounded-card m-0.5 overflow-hidden border px-1 text-left text-[11px] font-semibold ${TONE[b.status] ?? "bg-surface-2"} ${b.late ? "ring-2 ring-amber-400" : ""}`}
                           style={{ gridColumn: `${c.from + 1} / span ${c.span}`, gridRow: 1 }}
                           data-testid="timeline-booking"
                         >
@@ -360,7 +360,7 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
   const problem = act.error ? errorText(act.error, t("loadFailed")) : null;
 
   return (
-    <div className="border-2 border-line-strong p-4" data-testid="booking-panel">
+    <div className="rounded-card border border-line-strong p-4" data-testid="booking-panel">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-mono text-xs text-muted">{b.code}</p>
@@ -408,22 +408,22 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
           </button>
         ) : null}
         {actions.includes("extend") ? (
-          <button type="button" className="min-h-11 border-2 border-line px-4 font-semibold" onClick={() => act.mutate(() => desk.extend(b.id))}>
+          <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-4 font-semibold" onClick={() => act.mutate(() => desk.extend(b.id))}>
             {t("extend")}
           </button>
         ) : null}
         {actions.includes("no_show") ? (
-          <button type="button" className="min-h-11 border-2 border-danger px-4 font-semibold text-danger" onClick={() => act.mutate(() => desk.noShow(b.id))} data-testid="no-show">
+          <button type="button" className="rounded-control min-h-11 border border-danger px-4 font-semibold text-danger" onClick={() => act.mutate(() => desk.noShow(b.id))} data-testid="no-show">
             {t("noShow")}
           </button>
         ) : null}
         {actions.includes("move") ? (
-          <button type="button" className="min-h-11 border-2 border-line px-4 font-semibold" onClick={() => setConfirming("move")}>
+          <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-4 font-semibold" onClick={() => setConfirming("move")}>
             {t("move")}
           </button>
         ) : null}
         {actions.includes("cancel") ? (
-          <button type="button" className="min-h-11 border-2 border-danger px-4 font-semibold text-danger" onClick={() => setConfirming("cancel")}>
+          <button type="button" className="rounded-control min-h-11 border border-danger px-4 font-semibold text-danger" onClick={() => setConfirming("cancel")}>
             {t("cancel")}
           </button>
         ) : null}
@@ -442,7 +442,7 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
         </div>
       ) : null}
       {confirming === "cancel" ? (
-        <div className="mt-4 border-2 border-danger p-3" role="alertdialog" aria-label={t("cancelTitle")}>
+        <div className="rounded-card mt-4 border border-danger p-3" role="alertdialog" aria-label={t("cancelTitle")}>
           <p className="font-bold">{t("cancelTitle")}</p>
           <p className="mt-1 text-sm">{t("cancelHelp", { amount: money(b.money.paidOnline) })}</p>
           <Field label={t("reason")}>
@@ -458,22 +458,22 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
             <button type="button" className="min-h-11 bg-danger px-4 font-bold text-white" onClick={() => act.mutate(() => desk.cancel(b.id, reason))}>
               {t("confirmCancel", { amount: money(b.money.paidOnline) })}
             </button>
-            <button type="button" className="min-h-11 border-2 border-line px-4 font-semibold" onClick={() => setConfirming(null)}>
+            <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-4 font-semibold" onClick={() => setConfirming(null)}>
               {t("keep")}
             </button>
           </div>
         </div>
       ) : null}
       {confirming === "move" ? (
-        <div className="mt-4 border-2 border-line p-3">
+        <div className="rounded-card mt-4 border border-line p-3">
           <p className="font-bold">{t("moveTitle")}</p>
           {targets.isPending ? (
-            <div className="mt-2 h-12 animate-pulse bg-surface-2" />
+            <div className="rounded-control mt-2 h-12 kg-shimmer bg-surface-2" />
           ) : targets.data?.items.length ? (
             <ul className="mt-2 space-y-1">
               {targets.data.items.map((x) => (
                 <li key={x.courtId}>
-                  <button type="button" className="min-h-11 w-full border-2 border-line px-3 text-left text-sm font-semibold hover:border-brand" onClick={() => act.mutate(() => desk.move(b.id, x.courtId))}>
+                  <button type="button" className="rounded-control min-h-11 w-full border border-line-strong/60 px-3 text-left text-sm font-semibold hover:border-brand" onClick={() => act.mutate(() => desk.move(b.id, x.courtId))}>
                     {x.groundName} · {x.courtName} {x.sameGround ? "" : `(${t("otherGround")})`}
                   </button>
                 </li>
@@ -511,7 +511,7 @@ function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: str
   const problem = save.error ? errorText(save.error, t("loadFailed")) : null;
   return (
     <form
-      className="mt-5 grid gap-3 border-2 border-line-strong p-4 md:grid-cols-6"
+      className="rounded-card mt-5 grid gap-3 border border-line-strong p-4 md:grid-cols-6"
       onSubmit={(e) => {
         e.preventDefault();
         save.mutate();
@@ -553,7 +553,7 @@ function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: str
         <button type="submit" disabled={save.isPending} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50">
           {t("save")}
         </button>
-        <button type="button" onClick={onClose} className="min-h-11 border-2 border-line px-3 font-semibold">
+        <button type="button" onClick={onClose} className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold">
           {t("close")}
         </button>
       </div>

@@ -66,7 +66,7 @@ export function PayPage({ paymentId, signInHref, paymentsHref = null }: PayPageP
   if (status === "loading" || q.isPending) {
     return (
       <Shell>
-        <div className="h-40 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />
+        <div className="rounded-card h-40 kg-shimmer bg-surface-2" role="status" aria-label={t("loading")} />
       </Shell>
     );
   }
@@ -133,7 +133,7 @@ export function PayPage({ paymentId, signInHref, paymentsHref = null }: PayPageP
             <legend className="text-sm font-semibold text-muted">{t("chooseMethod")}</legend>
             <div className="mt-2 grid gap-2 sm:grid-cols-3">
               {METHODS.map((m) => (
-                <label key={m} className={`flex min-h-14 cursor-pointer items-center gap-3 border-2 px-4 font-bold ${method === m ? "border-brand bg-surface-2" : "border-line"}`}>
+                <label key={m} className={`rounded-control flex min-h-14 cursor-pointer items-center gap-3 border px-4 font-bold ${method === m ? "border-brand bg-surface-2" : "border-line"}`}>
                   <input type="radio" name="method" value={m} checked={method === m} onChange={() => setMethod(m)} className="size-5 accent-brand" />
                   {t(`methods.${m}`)}
                 </label>

@@ -6,14 +6,14 @@ import { useLocale, useTranslations } from "next-intl";
 import { bucketLabel, compactTaka, dashboards, downloadCsv, pct, type Period } from "@/lib/dashboard";
 import { ChartLine, ChartRank, ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
 import { Notice } from "@kriraghor/ui/primitives";
-import { ActionList } from "../vendor/OwnerDashboard";
+import { SectionHeading } from "@kriraghor/ui/kit";
 
 const PERIODS: Period[] = ["7w", "qtr", "yr"];
 
 /**
  * Admin home, platform overview (M19 §6.4): GTV with venue money (Q106), fee revenue from the ledger,
  * take rate, bookings, esports, members and the review queue; monthly volume, by vertical, top areas.
- * Masters and staff with view_analytics (Q104); everyone on staff sees "Needs your action".
+ * Masters and staff with view_analytics (Q104). "Needs your action" leads the admin home (AdminHome).
  */
 export function PlatformOverview({ canSee }: { canSee: boolean }) {
   const t = useTranslations("dashboard");
@@ -21,29 +21,25 @@ export function PlatformOverview({ canSee }: { canSee: boolean }) {
   const [period, setPeriod] = useState<Period>("yr");
   const [csvFailed, setCsvFailed] = useState(false);
   const d = useQuery({ queryKey: ["platform-overview", period], enabled: canSee, queryFn: () => dashboards.platform(period) });
-  const actions = useQuery({ queryKey: ["staff-actions"], queryFn: () => dashboards.staffActions() });
   const money = (n: number) => compactTaka(n, locale);
   const vs = t(`vs.${period}`);
+  if (!canSee) return null;
   return (
-    <div className="mt-8 space-y-6" data-testid="platform-overview">
-      <div>
-        <h2 className="text-lg font-extrabold">{t("actions.title")}</h2>
-        <div className="mt-2">{actions.data ? <ActionList items={actions.data.items} /> : <div className="h-12 animate-pulse bg-surface-2" />}</div>
-      </div>
-      {!canSee ? null : (
+    <div className="space-y-6" data-testid="platform-overview">
+      {(
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl font-extrabold">{t("platform")}</h2>
+            <SectionHeading title={t("platform")} />
             <div className="flex gap-1" role="tablist" aria-label={t("period")}>
               {PERIODS.map((p) => (
-                <button key={p} type="button" role="tab" aria-selected={p === period} onClick={() => setPeriod(p)} className={`min-h-11 border-2 px-3 text-sm font-semibold ${p === period ? "border-brand bg-brand text-white" : "border-line"}`}>
+                <button key={p} type="button" role="tab" aria-selected={p === period} onClick={() => setPeriod(p)} className={`rounded-control min-h-11 border px-3 text-sm font-semibold ${p === period ? "border-brand bg-brand text-on-brand" : "border-line-strong/60"}`}>
                   {t(`periods.${p}`)}
                 </button>
               ))}
             </div>
           </div>
           {d.isPending ? (
-            <div className="h-48 animate-pulse bg-surface-2" />
+            <div className="rounded-card h-48 kg-shimmer bg-surface-2" />
           ) : d.isError || !d.data ? (
             <Notice tone="error">{t("loadFailed")}</Notice>
           ) : (
@@ -64,7 +60,7 @@ export function PlatformOverview({ canSee }: { canSee: boolean }) {
                 <ChartRank title={t("charts.topAreas")} items={d.data.charts.topAreas.map((a) => ({ label: a.name, value: a.bookings }))} format={(n) => String(n)} empty={t("empty")} />
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <button type="button" className="min-h-11 border-2 border-line px-4 font-semibold" onClick={() => downloadCsv("admin", "/admin/analytics/export", { dataset: "platform_daily", period }).catch(() => setCsvFailed(true))}>
+                <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-4 font-semibold" onClick={() => downloadCsv("admin", "/admin/analytics/export", { dataset: "platform_daily", period }).catch(() => setCsvFailed(true))}>
                   {t("csv.platform")}
                 </button>
                 {d.data.asOf ? <span className="text-xs text-muted">{t("asOf", { time: new Date(d.data.asOf).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Dhaka" }) })}</span> : null}

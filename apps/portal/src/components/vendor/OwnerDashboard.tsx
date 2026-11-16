@@ -7,7 +7,7 @@ import { CaretRight, ChartLineUp, DownloadSimple } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { useAuth } from "@kriraghor/ui/auth";
-import { Badge, ButtonLink, Card, SegmentedControl, Skeleton } from "@kriraghor/ui/kit";
+import { Badge, ButtonLink, Card, SectionHeading, SegmentedControl, Skeleton } from "@kriraghor/ui/kit";
 import { bucketLabel, compactTaka, csvErrorKey, dashboards, deskHref, downloadCsv, hourLabel, pct, type OwnerDashboard as Data, type Period } from "@/lib/dashboard";
 import { analyticsHref, dayBars } from "@/lib/vendor/analytics";
 import { ownerTrust } from "@/lib/vendor/trust";
@@ -123,14 +123,14 @@ export function OwnerOverview({ showActions = true }: { showActions?: boolean })
   return (
     <div className="mt-6 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-display text-xl font-bold">{t("overview")}</h3>
+        <SectionHeading as="h3" title={t("overview")} />
         <PeriodSwitch period={period} onChange={setPeriod} />
       </div>
       {d.isPending ? <Skeleton className="h-36 rounded-card" /> : d.isError || !d.data ? <Notice tone="error">{t("loadFailed")}</Notice> : <OwnerTiles d={d.data} />}
       <OwnerReliability />
       {showActions ? (
         <div>
-          <h3 className="font-display text-lg font-bold">{t("actions.title")}</h3>
+          <SectionHeading as="h3" title={t("actions.title")} />
           <div className="mt-2">{actions.data ? <ActionList items={actions.data.items} /> : <Skeleton className="h-16 rounded-card" />}</div>
         </div>
       ) : null}
@@ -193,7 +193,7 @@ export function CsvButtons({ period, sets }: { period: Period; sets: CsvSet[] })
     <div className="space-y-3" data-testid="csv-exports">
       <div className="flex flex-wrap gap-3">
         {sets.map((s) => (
-          <button key={s.dataset} type="button" disabled={busy !== null} onClick={() => void run(s.dataset)} className="inline-flex min-h-11 items-center gap-2 border-2 border-line px-4 font-semibold disabled:opacity-60" data-testid={s.testId ?? `csv-${s.dataset}`}>
+          <button key={s.dataset} type="button" disabled={busy !== null} onClick={() => void run(s.dataset)} className="rounded-control inline-flex min-h-11 items-center gap-2 border border-line-strong/60 px-4 font-semibold disabled:opacity-60" data-testid={s.testId ?? `csv-${s.dataset}`}>
             <DownloadSimple size={18} aria-hidden />
             {busy === s.dataset ? t("csv.preparing") : s.label}
           </button>

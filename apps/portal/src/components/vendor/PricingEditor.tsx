@@ -10,7 +10,7 @@ import { dhakaIso, halfHours, nextDays, toPoisha, vendor, type Rules, type RuleI
 import { Notice } from "@kriraghor/ui/primitives";
 import { Field, inputCls } from "../admin/finance/shared";
 
-const btn = "min-h-11 border-2 px-4 text-sm font-bold disabled:opacity-50";
+const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2", high: "bg-amber-100 dark:bg-amber-900/40", peak: "bg-amber-300 dark:bg-amber-700/70" };
 const KEYS = ["basePricePoisha", "peakFromHour", "peakPct", "weekendPct", "earlyToHour", "earlyPct", "minBookingMin", "advancePct", "fullRefundHours", "halfRefundHours", "checkinGraceMin", "seriesDiscountPct"] as const;
 type Form = Record<(typeof KEYS)[number], string>;
@@ -63,7 +63,7 @@ export function PricingEditor({ id }: { id: string }) {
     }
   };
 
-  if (p.isPending || !form || !p.data) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (p.isPending || !form || !p.data) return <div className="rounded-card mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   const { limits, policy } = p.data;
   const set = (k: keyof Form, v: string) => setForm({ ...form, [k]: v });
   const num = (k: keyof Form, label: string, help?: string, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
@@ -86,7 +86,7 @@ export function PricingEditor({ id }: { id: string }) {
       <p className="mt-1 max-w-2xl text-muted">{t("pricingLead")}</p>
 
       <form
-        className="mt-6 grid gap-6 border-2 border-line bg-surface p-5"
+        className="rounded-card mt-6 grid gap-6 border border-line bg-surface p-5"
         data-testid="pricing-form"
         onSubmit={(e) => {
           e.preventDefault();
@@ -203,7 +203,7 @@ function QuoteBox({ id, courts, draft, allowFull }: { id: string; courts: { id: 
   });
   const money = (n: number) => formatTaka(n, locale);
   return (
-    <div className="border-2 border-line bg-surface p-5" data-testid="quote-box">
+    <div className="rounded-card border border-line bg-surface p-5" data-testid="quote-box">
       <h2 className="text-xl font-extrabold">{t("quote.title")}</h2>
       <div className="mt-3 grid grid-cols-2 gap-3">
         <Field label={t("quote.court")}>
@@ -280,7 +280,7 @@ function HeatmapBox({ id }: { id: string }) {
   const q = useQuery({ queryKey: ["vendor-heat", id, draft], queryFn: () => vendor.heatmap(id, draft), retry: false });
   const k = (n: number) => `${(n / 100000).toFixed(1)}k`;
   return (
-    <div className="border-2 border-line bg-surface p-5">
+    <div className="rounded-card border border-line bg-surface p-5">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="text-xl font-extrabold">{t("heat.title")}</h2>
         <label className="ml-auto flex items-center gap-2 text-sm">
@@ -319,7 +319,7 @@ function HeatmapBox({ id }: { id: string }) {
           <p className="mt-2 text-xs text-muted">{t("heat.legend")}</p>
         </div>
       ) : (
-        <div className="mt-3 h-40 animate-pulse bg-surface-2" />
+        <div className="rounded-card mt-3 h-40 kg-shimmer bg-surface-2" />
       )}
     </div>
   );

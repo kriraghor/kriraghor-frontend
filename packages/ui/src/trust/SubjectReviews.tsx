@@ -86,7 +86,7 @@ export function SubjectReviews({ subjectType, subjectId, action, testId = "subje
         </h2>
         {action}
       </div>
-      {q.isPending ? <div className="mt-4 h-32 animate-pulse bg-surface-2" /> : null}
+      {q.isPending ? <div className="rounded-card mt-4 h-32 kg-shimmer bg-surface-2" /> : null}
       {q.isError ? (
         <p className="mt-4 text-sm text-muted" role="status">
           {t("loadFailed")}{" "}
@@ -153,7 +153,7 @@ export function SubjectReviews({ subjectType, subjectId, action, testId = "subje
             </p>
           )}
           {q.hasNextPage ? (
-            <button type="button" disabled={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} className="mt-4 min-h-12 border-2 border-line px-5 font-bold hover:border-brand disabled:opacity-50" data-testid="reviews-more">
+            <button type="button" disabled={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} className="rounded-control mt-4 min-h-12 border border-line-strong/60 px-5 font-bold hover:border-brand disabled:opacity-50" data-testid="reviews-more">
               {t("more")}
             </button>
           ) : null}

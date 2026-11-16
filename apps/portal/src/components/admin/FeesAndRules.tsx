@@ -133,7 +133,7 @@ export function FeesAndRules() {
             const rows = settings.filter((s) => s.category === cat);
             if (!rows.length) return null;
             return (
-              <section key={cat} aria-labelledby={`cat-${cat}`} className="border-2 border-line bg-surface">
+              <section key={cat} aria-labelledby={`cat-${cat}`} className="rounded-card border border-line bg-surface">
                 <h2 id={`cat-${cat}`} className="border-b-2 border-line px-5 py-3 text-lg font-bold">
                   {tc(cat)}
                 </h2>
@@ -173,7 +173,7 @@ export function FeesAndRules() {
               {t("unsaved", { count: dirty })}
             </p>
             <div className="ml-auto flex gap-2">
-              <button type="button" className="min-h-12 border-2 border-line px-4 font-semibold" onClick={() => setDrafts({})}>
+              <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-semibold" onClick={() => setDrafts({})}>
                 {t("discard")}
               </button>
               <Button type="button" disabled={Object.keys(parsed.errors).length > 0 || parsed.changes.length === 0} onClick={() => setReviewOpen(true)}>
@@ -239,7 +239,7 @@ function SettingRow({
   const hint = rangeHint(s);
   const why = s.why ? (locale === "bn" ? s.why.bn || s.why.en : s.why.en) : null;
   const describedBy = [error ? `${id}-error` : null, hint ? `${id}-hint` : null].filter(Boolean).join(" ") || undefined;
-  const inputCls = `min-h-11 w-full border-2 bg-surface px-3 text-base text-ink focus:border-brand disabled:bg-surface-2 ${error ? "border-danger" : changed ? "border-brand" : "border-line"}`;
+  const inputCls = `rounded-control min-h-11 w-full border bg-surface px-3 text-base text-ink focus:border-brand disabled:bg-surface-2 ${error ? "border-danger" : changed ? "border-brand" : "border-line"}`;
 
   let control;
   if (s.valueType === "bool") {
@@ -253,7 +253,7 @@ function SettingRow({
         aria-labelledby={`${id}-label`}
         disabled={disabled}
         onClick={() => onChange(!on)}
-        className={`inline-flex min-h-11 min-w-24 items-center justify-center rounded-full border-2 px-4 text-sm font-bold disabled:opacity-60 ${on ? "border-brand bg-brand text-white" : "border-line bg-surface text-ink"}`}
+        className={`inline-flex min-h-11 min-w-24 items-center justify-center rounded-full border px-4 text-sm font-bold disabled:opacity-60 ${on ? "border-brand bg-brand text-white" : "border-line bg-surface text-ink"}`}
       >
         {on ? t("on") : t("off")}
       </button>
@@ -403,7 +403,7 @@ function ReviewDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={(e) => e.target === e.currentTarget && !busy && onClose()}>
-      <form role="dialog" aria-modal="true" aria-labelledby="review-title" onSubmit={submit} className="max-h-[90dvh] w-full max-w-2xl overflow-y-auto border-2 border-line-strong bg-surface p-6">
+      <form role="dialog" aria-modal="true" aria-labelledby="review-title" onSubmit={submit} className="rounded-card max-h-[90dvh] w-full max-w-2xl overflow-y-auto border border-line-strong bg-surface p-6">
         <h2 id="review-title" className="text-xl font-extrabold">
           {t("reviewTitle")}
         </h2>
@@ -452,7 +452,7 @@ function ReviewDialog({
         <label htmlFor="review-reason" className="mt-5 block text-sm font-semibold text-muted">
           {t("reason")}
         </label>
-        <textarea id="review-reason" ref={reasonRef} value={reason} onChange={(e) => setReason(e.target.value)} rows={3} className="mt-1 w-full border-2 border-line bg-surface p-3" aria-describedby="review-reason-hint" />
+        <textarea id="review-reason" ref={reasonRef} value={reason} onChange={(e) => setReason(e.target.value)} rows={3} className="rounded-card mt-1 w-full border border-line bg-surface p-3" aria-describedby="review-reason-hint" />
         <p id="review-reason-hint" className="text-xs text-muted">
           {t("reasonHint")}
         </p>
@@ -466,7 +466,7 @@ function ReviewDialog({
           onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
           inputMode="numeric"
           autoComplete="one-time-code"
-          className="mt-1 min-h-12 w-40 border-2 border-line bg-surface px-3 font-mono text-lg tracking-widest"
+          className="rounded-control mt-1 min-h-12 w-40 border border-line-strong/60 bg-surface px-3 font-mono text-lg tracking-widest"
           aria-describedby="review-code-hint"
         />
         <p id="review-code-hint" className="text-xs text-muted">
@@ -484,7 +484,7 @@ function ReviewDialog({
         ) : null}
 
         <div className="mt-6 flex justify-end gap-2">
-          <button type="button" className="min-h-12 border-2 border-line px-4 font-semibold" onClick={onClose} disabled={busy}>
+          <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-semibold" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </button>
           <Button type="submit" busy={busy} disabled={!valid}>
@@ -525,7 +525,7 @@ function PendingList({
       ) : (
         <ul className="mt-3 grid gap-3">
           {items.map((r) => (
-            <li key={r.id} className="border-2 border-line bg-surface p-4" data-testid="pending-item">
+            <li key={r.id} className="rounded-card border border-line bg-surface p-4" data-testid="pending-item">
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-900">{t(`status.${r.status}`)}</span>
                 <span className="text-muted">{t("proposedBy", { name: r.proposedBy?.displayName ?? "" })}</span>
@@ -591,7 +591,7 @@ function PendingActions({ request, mine, onDone }: { request: ChangeRequest; min
     return (
       <div className="mt-3 flex gap-2">
         {actions.map((a) => (
-          <button key={a} type="button" onClick={() => setAction(a)} className={`min-h-11 px-4 text-sm font-bold ${a === "approve" ? "bg-brand text-white hover:bg-brand-hover" : "border-2 border-line"}`}>
+          <button key={a} type="button" onClick={() => setAction(a)} className={`rounded-control min-h-11 px-4 text-sm font-bold ${a === "approve" ? "bg-brand text-white hover:bg-brand-hover" : "border border-line-strong/60"}`}>
             {t(a)}
           </button>
         ))}
@@ -605,11 +605,11 @@ function PendingActions({ request, mine, onDone }: { request: ChangeRequest; min
     <form onSubmit={run} className="mt-3 flex flex-wrap items-end gap-3">
       <label className="flex flex-col text-xs font-semibold text-muted">
         {t("note")}
-        <input value={note} onChange={(e) => setNote(e.target.value)} className="min-h-11 border-2 border-line bg-surface px-3 text-base text-ink" aria-describedby={needsNote ? `note-${request.id}` : undefined} />
+        <input value={note} onChange={(e) => setNote(e.target.value)} className="rounded-control min-h-11 border border-line-strong/60 bg-surface px-3 text-base text-ink" aria-describedby={needsNote ? `note-${request.id}` : undefined} />
       </label>
       <label className="flex flex-col text-xs font-semibold text-muted">
         {t("code")}
-        <input value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" autoComplete="one-time-code" className="min-h-11 w-32 border-2 border-line bg-surface px-3 font-mono text-base text-ink" />
+        <input value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" autoComplete="one-time-code" className="rounded-control min-h-11 w-32 border border-line-strong/60 bg-surface px-3 font-mono text-base text-ink" />
       </label>
       <Button type="submit" busy={busy} disabled={!valid}>
         {t(action)}
@@ -663,7 +663,7 @@ function HistoryDrawer({ setting, label, onClose }: { setting: Setting; label: (
           <h2 id="history-title" className="text-lg font-extrabold">
             {t("historyTitle", { label: label(setting) })}
           </h2>
-          <button ref={closeRef} type="button" className="ml-auto min-h-11 border-2 border-line px-3 text-sm font-semibold" onClick={onClose}>
+          <button ref={closeRef} type="button" className="rounded-control ml-auto min-h-11 border border-line-strong/60 px-3 text-sm font-semibold" onClick={onClose}>
             {t("close")}
           </button>
         </div>

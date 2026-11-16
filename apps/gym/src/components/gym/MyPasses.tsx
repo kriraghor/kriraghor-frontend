@@ -29,7 +29,7 @@ export function MyPasses() {
     <section className="mx-auto max-w-[1100px] px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-3xl font-extrabold">{t("myPasses")}</h1>
-        <Link href="/gyms" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+        <Link href="/gyms" className="rounded-control min-h-11 border border-line-strong/60 px-4 py-2 font-bold hover:border-brand">
           {t("findGym")}
         </Link>
       </div>
@@ -41,13 +41,13 @@ export function MyPasses() {
         ))}
       </div>
       {q.isPending ? (
-        <div className="mt-6 h-40 animate-pulse bg-surface-2" />
+        <div className="rounded-card mt-6 h-40 kg-shimmer bg-surface-2" />
       ) : q.isError ? (
         <div className="mt-6">
           <Notice tone="error">{t("error")}</Notice>
         </div>
       ) : !q.data.items.length ? (
-        <p className="mt-6 border-2 border-dashed border-line p-8 text-center font-semibold" data-testid="my-passes-empty">
+        <p className="rounded-card mt-6 border border-dashed border-line p-8 text-center font-semibold" data-testid="my-passes-empty">
           {t(`noPasses.${group}`)}
         </p>
       ) : (
@@ -64,7 +64,7 @@ export function MyPasses() {
                   </span>
                 </span>
                 <span className="font-bold tabular-nums">{formatTaka(p.money.price, locale)}</span>
-                <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[passTone(p.status)]}`}>{t(`passStatus.${p.status}`)}</span>
+                <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[passTone(p.status)]}`}>{t(`passStatus.${p.status}`)}</span>
               </Link>
             </li>
           ))}

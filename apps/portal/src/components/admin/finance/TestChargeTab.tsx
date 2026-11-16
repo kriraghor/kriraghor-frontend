@@ -30,7 +30,7 @@ function PersonPicker({ label, value, onChange }: { label: string; value: Person
   if (value) {
     return (
       <Field label={label}>
-        <span className="flex min-h-11 items-center gap-3 border-2 border-line px-3 text-ink">
+        <span className="rounded-control flex min-h-11 items-center gap-3 border border-line-strong/60 px-3 text-ink">
           {value.displayName}
           <button type="button" className="ml-auto text-sm underline" onClick={() => onChange(null)}>
             {t("change")}
@@ -43,12 +43,12 @@ function PersonPicker({ label, value, onChange }: { label: string; value: Person
     <Field label={label}>
       <span className="flex gap-2">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("searchPerson")} className={`${inputCls} w-56`} />
-        <button type="button" onClick={() => void search()} disabled={busy} className="min-h-11 border-2 border-line px-3 font-semibold">
+        <button type="button" onClick={() => void search()} disabled={busy} className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold">
           {t("find")}
         </button>
       </span>
       {found.length ? (
-        <ul className="mt-1 border-2 border-line">
+        <ul className="rounded-card mt-1 border border-line">
           {found.map((p) => (
             <li key={p.id}>
               <button type="button" className="min-h-10 w-full px-3 text-left text-ink hover:bg-surface-2" onClick={() => onChange(p)}>
@@ -107,7 +107,7 @@ export function TestChargeTab({ max, onCreated }: { max: number; onCreated: () =
       </Button>
       {error ? <Notice tone="error">{error}</Notice> : null}
       {result ? (
-        <div className="border-2 border-brand p-4" data-testid="test-charge-result">
+        <div className="rounded-card border border-brand p-4" data-testid="test-charge-result">
           <p className="font-bold">{t("testCreated", { code: result.code })}</p>
           <p className="mt-1 text-sm">{t("testLink")}</p>
           <a href={result.payUrl} className="mt-1 block break-all font-mono text-sm underline">
