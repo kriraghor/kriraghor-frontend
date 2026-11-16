@@ -20,7 +20,7 @@ import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { formatDhaka } from "../../admin/useAdminMe";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
-const primary = `${btn} border-brand bg-brand text-white`;
+const primary = `${btn} border-brand bg-brand text-on-brand`;
 const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = {
   draft: "muted",
   pending_review: "warn",
@@ -491,7 +491,7 @@ function OverviewTab({ orgId, x }: { orgId: string; x: Tournament }) {
             </button>
           ) : null}
         </div>
-        {x.rulesUnlockedUntil ? <p className="text-sm text-amber-700">{t("unlockedUntil", { at: formatDhaka(x.rulesUnlockedUntil, locale) })}</p> : null}
+        {x.rulesUnlockedUntil ? <p className="text-sm font-semibold text-warning">{t("unlockedUntil", { at: formatDhaka(x.rulesUnlockedUntil, locale) })}</p> : null}
         <a href={`${publicEnv().WEB_URL}/tournaments/${x.slug}`} className="text-sm font-semibold text-brand underline">
           {t("publicPage")}
         </a>
@@ -834,7 +834,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
         </div>
       ) : null}
       {drafts ? (
-        <div className="rounded-card flex items-center gap-3 border border-amber-500 p-3">
+        <div className="rounded-card flex items-center gap-3 border border-warning p-3">
           <span className="flex-1">{t("draftsWaiting", { n: drafts })}</span>
           <button type="button" className={primary} disabled={act.isPending} onClick={() => act.mutate(() => api.publish(orgId, x.id))} data-testid="fixtures-publish">
             {t("publish")}

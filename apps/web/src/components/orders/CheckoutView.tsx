@@ -11,6 +11,7 @@ import { orders, type Quote, type ShipTo } from "@/lib/orders";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
 import { Button, Field, Notice } from "@kriraghor/ui/primitives";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /**
  * /shop/checkout (M13 FR-03 to FR-07): the delivery address (any delivery area in Bangladesh), the
@@ -51,9 +52,7 @@ export function CheckoutView() {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-10" data-testid="checkout">
-      <Link href="/shop/cart" className="text-sm font-semibold text-brand underline">
-        ← {t("backToCart")}
-      </Link>
+      <BackLink href="/shop/cart">{t("backToCart")}</BackLink>
       <h1 className="mt-3 text-3xl font-extrabold">{t("checkoutTitle")}</h1>
       <form onSubmit={submit} className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
         <fieldset className="flex flex-col gap-4">
@@ -76,10 +75,10 @@ export function CheckoutView() {
           <p className="text-sm text-muted">{t("privacy")}</p>
         </fieldset>
 
-        <aside className="h-fit border-2 border-line p-5" data-testid="order-summary">
+        <aside className="rounded-card h-fit border border-line p-5" data-testid="order-summary">
           <h2 className="text-xl font-extrabold">{t("summary")}</h2>
           {!ship.areaId ? <p className="mt-3 text-sm text-muted">{t("pickAreaFirst")}</p> : null}
-          {quote.isFetching && !q ? <div className="mt-3 h-24 animate-pulse bg-surface-2" /> : null}
+          {quote.isFetching && !q ? <div className="rounded-control mt-3 h-24 kg-shimmer bg-surface-2" /> : null}
           {q ? (
             <>
               <ul className="mt-3 divide-y-2 divide-line">

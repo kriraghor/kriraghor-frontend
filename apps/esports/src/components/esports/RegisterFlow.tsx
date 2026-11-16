@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { useRouter } from "@kriraghor/ui/i18n/navigation";
 import { problemOf, type Problem } from "@kriraghor/api-client";
 import { esports, takaOf } from "@/lib/esports";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { Empty, LinkButton, Prize } from "./bits";
+import { BackLink } from "@kriraghor/ui/kit";
 
 type Member = { userId: string; profileId: string | null; ign: string | null; username: string | null; status: string; role: string };
 
@@ -30,7 +31,7 @@ export function RegisterFlow({ slug }: { slug: string }) {
   const [problem, setProblem] = useState<Problem | null>(null);
   const [waitlisted, setWaitlisted] = useState(false);
 
-  if (tq.isPending || profiles.isPending) return <div className="mx-auto mt-10 h-64 max-w-3xl animate-pulse bg-surface-2" />;
+  if (tq.isPending || profiles.isPending) return <div className="rounded-control mx-auto mt-10 h-64 max-w-3xl kg-shimmer bg-surface-2" />;
   if (tq.isError) return <p className="mx-auto max-w-3xl px-5 py-16 text-danger">{t("notFound")}</p>;
   const d = tq.data;
   const mine = (profiles.data?.items ?? []).find((p) => p.gameId === d.game?.id && p.status === "verified");
@@ -63,11 +64,9 @@ export function RegisterFlow({ slug }: { slug: string }) {
 
   return (
     <section className="mx-auto max-w-3xl px-5 py-10">
-      <Link href={`/events/${d.slug}`} className="text-sm font-semibold text-brand underline">
-        ← {locale === "bn" ? d.titleBn : d.titleEn}
-      </Link>
+      <BackLink href={`/events/${d.slug}`}>{locale === "bn" ? d.titleBn : d.titleEn}</BackLink>
       <h1 className="mt-3 text-3xl font-extrabold">{t("reg.title")}</h1>
-      <div className="glass-card mt-4 flex flex-wrap gap-6 p-4">
+      <div className="surface-card mt-4 flex flex-wrap gap-6 p-4">
         <div>
           <p className="text-xs uppercase text-muted">{t("entryFee")}</p>
           <p className="text-xl font-extrabold">{d.entryFee.amount === 0 ? t("free") : takaOf(d.entryFee, locale)}</p>
@@ -94,7 +93,7 @@ export function RegisterFlow({ slug }: { slug: string }) {
           <Empty title={t("reg.needUid")} body={t("reg.needUidBody")} action={<LinkButton href="/me/esports">{t("home.addUid")}</LinkButton>} />
         </div>
       ) : d.entryUnit === "player" ? (
-        <div className="mt-6 glass-card p-5">
+        <div className="mt-6 surface-card p-5">
           <p className="text-sm text-muted">{t("reg.playingAs")}</p>
           <p className="mt-1 text-xl font-extrabold">
             {mine.ign} <span className="font-mono text-base text-muted">{mine.uidMasked}</span>
@@ -118,7 +117,7 @@ export function RegisterFlow({ slug }: { slug: string }) {
                 </select>
               </label>
               {squad ? (
-                <fieldset className="border-2 border-line p-4">
+                <fieldset className="rounded-card border border-line p-4">
                   <legend className="px-1 font-bold">{t("reg.pick", { n: teamSize, subs: maxSubs })}</legend>
                   <ul className="divide-y divide-line">
                     {members.map((m) => {
@@ -130,11 +129,11 @@ export function RegisterFlow({ slug }: { slug: string }) {
                           <span className="font-semibold">{m.ign ?? m.username ?? "—"}</span>
                           {!id ? <span className="text-xs text-danger">{t("reg.noUid")}</span> : null}
                           <span className="ml-auto flex gap-2">
-                            <button type="button" disabled={!id} aria-pressed={isPlayer} onClick={() => (id ? (setSubs(subs.filter((x) => x !== id)), toggle(players, setPlayers, id, teamSize)) : null)} className={`min-h-11 border-2 px-3 text-sm font-bold disabled:opacity-40 ${isPlayer ? "border-brand bg-brand text-white" : "border-line"}`}>
+                            <button type="button" disabled={!id} aria-pressed={isPlayer} onClick={() => (id ? (setSubs(subs.filter((x) => x !== id)), toggle(players, setPlayers, id, teamSize)) : null)} className={`rounded-control min-h-11 border px-3 text-sm font-bold disabled:opacity-40 ${isPlayer ? "border-brand bg-brand text-on-brand" : "border-line"}`}>
                               {t("reg.player")}
                             </button>
                             {maxSubs > 0 ? (
-                              <button type="button" disabled={!id} aria-pressed={isSub} onClick={() => (id ? (setPlayers(players.filter((x) => x !== id)), toggle(subs, setSubs, id, maxSubs)) : null)} className={`min-h-11 border-2 px-3 text-sm font-bold disabled:opacity-40 ${isSub ? "border-line-strong bg-surface-2" : "border-line"}`}>
+                              <button type="button" disabled={!id} aria-pressed={isSub} onClick={() => (id ? (setPlayers(players.filter((x) => x !== id)), toggle(subs, setSubs, id, maxSubs)) : null)} className={`rounded-control min-h-11 border px-3 text-sm font-bold disabled:opacity-40 ${isSub ? "border-line-strong bg-surface-2" : "border-line"}`}>
                                 {t("reg.sub")}
                               </button>
                             ) : null}

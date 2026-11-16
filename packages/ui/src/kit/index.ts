@@ -4,6 +4,7 @@ export { Field, Select, Textarea, PasswordField, OtpInput, Checkbox, FieldShell,
 export { Dropdown, type DropdownOption } from "./Dropdown";
 export { Card, Badge, Chip, Avatar, Skeleton, SkeletonList, EmptyState, ErrorState, Notice, PageTitle, SectionHeading, Divider, Stat, type Tone } from "./Display";
 export { ActionTile, ActionGrid } from "./ActionTile";
+export { BackLink } from "./BackLink";
 export { Tabs, SegmentedControl } from "./Tabs";
 export { Dialog, DialogClose, Sheet, Tooltip, TooltipProvider, Menu } from "./Overlay";
 export { ToastProvider, useToast } from "./Toast";

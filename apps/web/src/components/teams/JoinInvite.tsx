@@ -29,7 +29,7 @@ export function JoinInvite({ token }: { token: string }) {
     },
   });
 
-  if (q.isPending) return <div className="mx-auto mt-10 h-72 max-w-[560px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-72 max-w-[560px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data)
     return (
       <section className="mx-auto max-w-[560px] px-5 py-16">
@@ -74,7 +74,7 @@ export function JoinInvite({ token }: { token: string }) {
       ) : status === "signed_out" ? (
         <div className="mt-6 flex flex-col gap-2">
           <p>{t("signInWith", { phone: inv.phoneMasked })}</p>
-          <Link href={`/sign-in?next=${encodeURIComponent(`/teams/join/${token}`)}`} className="inline-flex min-h-12 items-center justify-center bg-brand px-5 font-bold text-white" data-testid="join-sign-in">
+          <Link href={`/sign-in?next=${encodeURIComponent(`/teams/join/${token}`)}`} className="inline-flex min-h-12 items-center justify-center bg-brand px-5 font-bold text-on-brand" data-testid="join-sign-in">
             {t("signInToJoin")}
           </Link>
         </div>

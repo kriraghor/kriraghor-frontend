@@ -38,7 +38,7 @@ function RailCard({ href, photo, cover, tag, title, meta, stat, cta, testId }: {
       </span>
     </>
   );
-  const className = "rv group glass-card flex h-full flex-col overflow-hidden no-underline transition-colors hover:border-brand";
+  const className = "rv group surface-card flex h-full flex-col overflow-hidden no-underline transition-colors hover:border-brand";
   return isExternal(href) ? (
     <a href={href} className={className} data-testid={testId}>
       {body}

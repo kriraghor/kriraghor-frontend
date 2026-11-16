@@ -37,7 +37,7 @@ export function MyTournaments() {
     <section className="mx-auto max-w-[1100px] px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-3xl font-extrabold">{t("myTournaments")}</h1>
-        <Link href="/events" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+        <Link href="/events" className="rounded-control min-h-11 border border-line-strong/60 px-4 py-2 font-bold hover:border-brand">
           {t("findTournament")}
         </Link>
       </div>
@@ -47,17 +47,17 @@ export function MyTournaments() {
         </div>
       ) : null}
       {q.isPending ? (
-        <div className="mt-6 h-40 animate-pulse bg-surface-2" />
+        <div className="rounded-control mt-6 h-40 kg-shimmer bg-surface-2" />
       ) : q.isError ? (
         <div className="mt-6">
           <Notice tone="error">{t("failed")}</Notice>
         </div>
       ) : !q.data.items.length ? (
-        <p className="mt-6 border-2 border-dashed border-line p-8 text-center font-semibold" data-testid="my-registrations-empty">
+        <p className="rounded-card mt-6 border border-dashed border-line p-8 text-center font-semibold" data-testid="my-registrations-empty">
           {t("noRegistrations")}
         </p>
       ) : (
-        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-registrations">
+        <ul className="mt-6 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-registrations">
           {q.data.items.map((r) => (
             <li key={r.id} className="flex flex-wrap items-center gap-3 py-4" data-testid="my-registration">
               <span className="min-w-0 flex-1">
@@ -71,16 +71,16 @@ export function MyTournaments() {
                   {r.reason ? ` · ${r.reason}` : ""}
                 </span>
               </span>
-              <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[statusTone(r.status)]}`} data-testid="registration-status">
+              <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[statusTone(r.status)]}`} data-testid="registration-status">
                 {t(`regStatus.${r.status}`)}
               </span>
               {r.payment ? (
-                <a href={r.payment.payUrl} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white hover:bg-brand-hover">
+                <a href={r.payment.payUrl} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-on-brand hover:bg-brand-hover">
                   {t("payEntry", { fee: formatTaka(r.feePoisha, locale) })}
                 </a>
               ) : null}
               {r.status === "offered" ? (
-                <button type="button" className="min-h-11 bg-brand px-4 font-bold text-white" onClick={() => offer.mutate(r.id)}>
+                <button type="button" className="min-h-11 bg-brand px-4 font-bold text-on-brand" onClick={() => offer.mutate(r.id)}>
                   {t("takePlace")}
                 </button>
               ) : null}
@@ -95,7 +95,7 @@ export function MyTournaments() {
                     </button>
                   </span>
                 ) : (
-                  <button type="button" className="min-h-11 border-2 border-line px-3 text-sm font-bold hover:border-danger" onClick={() => setConfirm(r.id)}>
+                  <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-danger" onClick={() => setConfirm(r.id)}>
                     {t("withdraw")}
                   </button>
                 )

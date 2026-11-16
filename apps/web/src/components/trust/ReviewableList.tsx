@@ -17,7 +17,7 @@ export function ReviewableList() {
   const locale = useLocale();
   const q = useReviewable();
   const items = q.data?.items ?? [];
-  if (q.isPending) return <div className="h-24 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control h-24 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("reviewable.loadFailed")}</Notice>;
   if (!items.length) return <p className="text-muted" data-testid="reviewable-empty">{t("reviewable.none")}</p>;
   return (
@@ -27,7 +27,7 @@ export function ReviewableList() {
         const href = sourceHref(x);
         const label = t(`reviewable.source.${x.sourceType}`, { ref: x.ref });
         return (
-          <li key={`${x.sourceType}-${x.sourceId}`} className="glass-card flex flex-col gap-3 p-4" data-testid="reviewable-item">
+          <li key={`${x.sourceType}-${x.sourceId}`} className="surface-card flex flex-col gap-3 p-4" data-testid="reviewable-item">
             <div className="min-w-0">
               <p className="text-xs font-bold uppercase tracking-wide text-muted">{t(`subjects.${x.subjectType}`)}</p>
               <p className="mt-0.5 truncate text-lg font-extrabold">{name}</p>

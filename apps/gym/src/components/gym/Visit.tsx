@@ -163,7 +163,7 @@ export function VisitForm({ slug }: { slug: string }) {
                   data-testid="visit-time"
                 >
                   {tm}
-                  {ladies ? <span className="block text-[10px] font-bold uppercase">{tg("womenOnly")}</span> : null}
+                  {ladies ? <span className="block text-xs font-bold uppercase">{tg("womenOnly")}</span> : null}
                 </button>
               );
             })}

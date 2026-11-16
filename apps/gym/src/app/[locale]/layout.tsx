@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { notFound } from "next/navigation";
+import { Big_Shoulders } from "next/font/google";
 import { fontVariables } from "@kriraghor/ui/fonts";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -14,6 +15,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { APP } from "@/app.config";
 import { siteUrl } from "@/lib/seo";
 import "../globals.css";
+
+// The gym wordmark face (font-gym, the home page title), as on kriraghor.com's gym band. Only the two heavy
+// weights, not preloaded: it is fetched when a heading uses it.
+const shoulders = Big_Shoulders({ subsets: ["latin"], variable: "--font-shoulders", weight: ["800", "900"], preload: false, adjustFontFallback: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -41,7 +46,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} suppressHydrationWarning className={`${fontVariables} h-full antialiased`}>
+    <html lang={locale} suppressHydrationWarning className={`${fontVariables} ${shoulders.variable} h-full antialiased`}>
       <body data-theme="gym" className="flex min-h-full flex-col">
         {/* Theme before paint; the logo splash once per session (kriraghor-docs 09 §8). */}
         <ThemeScript fallback="dark" />

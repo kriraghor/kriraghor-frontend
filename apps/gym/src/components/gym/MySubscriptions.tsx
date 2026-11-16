@@ -97,11 +97,11 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
       <div className="mt-3 flex flex-wrap gap-3">
         {s.can.pay ? (
           s.payment ? (
-            <a href={s.payment.payUrl} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white hover:bg-brand-hover" data-testid="my-sub-pay">
+            <a href={s.payment.payUrl} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-on-brand hover:bg-brand-hover" data-testid="my-sub-pay">
               {t("payMonth", { price: money(due?.price ?? s.price) })}
             </a>
           ) : (
-            <button type="button" onClick={() => renew.mutate()} disabled={renew.isPending} className="min-h-11 bg-brand px-4 font-bold text-white hover:bg-brand-hover disabled:opacity-50" data-testid="my-sub-renew">
+            <button type="button" onClick={() => renew.mutate()} disabled={renew.isPending} className="min-h-11 bg-brand px-4 font-bold text-on-brand hover:bg-brand-hover disabled:opacity-50" data-testid="my-sub-renew">
               {t("payMonth", { price: money(s.price) })}
             </button>
           )
@@ -143,10 +143,10 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
           <label htmlFor={`problem-${s.id}`} className="text-sm font-semibold">
             {t("problemLabel")}
           </label>
-          <textarea id={`problem-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="glass-card p-2" />
+          <textarea id={`problem-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="surface-card p-2" />
           <p className="text-sm text-muted">{t("problemHint")}</p>
           <div className="flex gap-2">
-            <button type="submit" disabled={problem.isPending || statement.trim().length < 10} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50">
+            <button type="submit" disabled={problem.isPending || statement.trim().length < 10} className="min-h-11 bg-brand px-4 font-bold text-on-brand disabled:opacity-50">
               {t("sendProblem")}
             </button>
             <button type="button" onClick={() => setReporting(false)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold">

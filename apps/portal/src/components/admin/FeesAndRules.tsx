@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "@phosphor-icons/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -253,7 +254,7 @@ function SettingRow({
         aria-labelledby={`${id}-label`}
         disabled={disabled}
         onClick={() => onChange(!on)}
-        className={`inline-flex min-h-11 min-w-24 items-center justify-center rounded-full border px-4 text-sm font-bold disabled:opacity-60 ${on ? "border-brand bg-brand text-white" : "border-line bg-surface text-ink"}`}
+        className={`inline-flex min-h-11 min-w-24 items-center justify-center rounded-full border px-4 text-sm font-bold disabled:opacity-60 ${on ? "border-brand bg-brand text-on-brand" : "border-line bg-surface text-ink"}`}
       >
         {on ? t("on") : t("off")}
       </button>
@@ -317,7 +318,7 @@ function SettingRow({
           <code className="font-mono">{s.key}</code>
           <span>{t("version", { version: s.version })}</span>
           {s.updatedAt && s.version > 1 ? <span>{t("changed", { date: formatDhaka(s.updatedAt, locale) })}</span> : null}
-          {s.approval === "four_eyes" ? <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-900">{t("fourEyes")}</span> : null}
+          {s.approval === "four_eyes" ? <span className="rounded-pill bg-warning-soft px-2 py-0.5 font-semibold text-warning">{t("fourEyes")}</span> : null}
           {s.isPublic ? <span className="rounded-full bg-brand-soft px-2 py-0.5 font-semibold text-brand-text">{t("public")}</span> : null}
           <button type="button" className="min-h-8 underline" onClick={onHistory}>
             {t("history")}
@@ -426,7 +427,7 @@ function ReviewDialog({
                 <tr key={c.key} className="border-b border-line">
                   <th scope="row" className="py-2 pr-3 font-semibold">
                     {label(s)}
-                    {s.approval === "four_eyes" ? <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-900">{t("fourEyes")}</span> : null}
+                    {s.approval === "four_eyes" ? <span className="ml-2 rounded-pill bg-warning-soft px-2 py-0.5 text-xs font-semibold text-warning">{t("fourEyes")}</span> : null}
                   </th>
                   <td className="py-2 pr-3 text-muted line-through">{display(s, s.value)}</td>
                   <td className="py-2 font-bold">{display(s, c.to)}</td>
@@ -527,7 +528,7 @@ function PendingList({
           {items.map((r) => (
             <li key={r.id} className="rounded-card border border-line bg-surface p-4" data-testid="pending-item">
               <div className="flex flex-wrap items-center gap-2 text-sm">
-                <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-900">{t(`status.${r.status}`)}</span>
+                <span className="rounded-pill bg-warning-soft px-2 py-0.5 font-semibold text-warning">{t(`status.${r.status}`)}</span>
                 <span className="text-muted">{t("proposedBy", { name: r.proposedBy?.displayName ?? "" })}</span>
                 <span className="text-muted">· {formatDhaka(r.effectiveAt, locale)}</span>
               </div>
@@ -536,7 +537,7 @@ function PendingList({
                   const s = settings.get(c.key);
                   return (
                     <li key={c.key}>
-                      <span className="font-semibold">{s ? label(s) : c.key}</span>: {s ? display(s, c.from) : String(c.from)} → <strong>{s ? display(s, c.to) : String(c.to)}</strong>
+                      <span className="font-semibold">{s ? label(s) : c.key}</span>: {s ? display(s, c.from) : String(c.from)} <ArrowRight size={16} aria-hidden className="inline align-[-3px]" /> <strong>{s ? display(s, c.to) : String(c.to)}</strong>
                     </li>
                   );
                 })}
@@ -591,7 +592,7 @@ function PendingActions({ request, mine, onDone }: { request: ChangeRequest; min
     return (
       <div className="mt-3 flex gap-2">
         {actions.map((a) => (
-          <button key={a} type="button" onClick={() => setAction(a)} className={`rounded-control min-h-11 px-4 text-sm font-bold ${a === "approve" ? "bg-brand text-white hover:bg-brand-hover" : "border border-line-strong/60"}`}>
+          <button key={a} type="button" onClick={() => setAction(a)} className={`rounded-control min-h-11 px-4 text-sm font-bold ${a === "approve" ? "bg-brand text-on-brand hover:bg-brand-hover" : "border border-line-strong/60"}`}>
             {t(a)}
           </button>
         ))}

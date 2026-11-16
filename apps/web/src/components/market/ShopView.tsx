@@ -8,6 +8,7 @@ import { publicEnv } from "@kriraghor/session/env";
 import { market } from "@/lib/market";
 import { RatingLine, ReportButton, SubjectReviews } from "@kriraghor/ui/trust";
 import { ProductCard } from "./ProductCard";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /** /shop/s/[slug]: a verified shop, its area and about text, and its products. */
 export function ShopView({ slug }: { slug: string }) {
@@ -20,7 +21,7 @@ export function ShopView({ slug }: { slug: string }) {
     getNextPageParam: (last) => last.nextCursor ?? undefined,
     retry: false,
   });
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[1320px] kg-shimmer bg-surface-2" />;
   const s = q.data?.pages[0];
   if (q.isError || !s)
     return (
@@ -35,9 +36,7 @@ export function ShopView({ slug }: { slug: string }) {
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-8">
-      <Link href="/shop" className="text-sm font-semibold text-brand underline">
-        ← {t("title")}
-      </Link>
+      <BackLink href="/shop">{t("title")}</BackLink>
       <h1 className="mt-4 text-4xl font-extrabold" data-testid="shop-name">
         {s.name}
       </h1>
@@ -61,7 +60,7 @@ export function ShopView({ slug }: { slug: string }) {
         <p className="mt-4 text-muted">{t("shopEmpty")}</p>
       )}
       {q.hasNextPage ? (
-        <button type="button" disabled={q.isFetchingNextPage} className="mt-6 min-h-12 border-2 border-line px-5 font-bold disabled:opacity-50" onClick={() => void q.fetchNextPage()}>
+        <button type="button" disabled={q.isFetchingNextPage} className="rounded-control mt-6 min-h-12 border border-line-strong/60 px-5 font-bold disabled:opacity-50" onClick={() => void q.fetchNextPage()}>
           {t("more")}
         </button>
       ) : null}

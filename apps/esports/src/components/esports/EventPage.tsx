@@ -37,7 +37,7 @@ export function EventPage({ slug }: { slug: string }) {
     "esports_event.phase_changed": refetch,
   });
 
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[1320px] kg-shimmer bg-surface-2" />;
   if (q.isError) return <p className="mx-auto max-w-[1320px] px-5 py-16 text-danger">{t("notFound")}</p>;
   const b = q.data;
   const e = b.event;
@@ -68,7 +68,7 @@ export function EventPage({ slug }: { slug: string }) {
             <p className="mt-3 text-sm text-band-text/70">
               {dhakaTime(e.startsAt, locale, { dateStyle: "medium" })} – {dhakaTime(e.endsAt, locale, { dateStyle: "medium" })}
             </p>
-            {e.phase === "cancelled" && e.cancelReason ? <p className="mt-3 font-semibold text-amber-300">{t("cancelled", { reason: e.cancelReason })}</p> : null}
+            {e.phase === "cancelled" && e.cancelReason ? <p className="mt-3 font-semibold text-accent">{t("cancelled", { reason: e.cancelReason })}</p> : null}
           </div>
           <div className="flex flex-col items-start gap-3 md:items-end">
             <div className="md:text-right">
@@ -133,7 +133,7 @@ export function EventPage({ slug }: { slug: string }) {
                     </>
                   );
                   return (
-                    <li key={s.id} className={`border-2 p-3 text-center ${s.tier === "title" ? "col-span-2 border-[var(--event-accent)]" : "border-line"}`}>
+                    <li key={s.id} className={`rounded-card border p-3 text-center ${s.tier === "title" ? "col-span-2 border-[var(--event-accent)]" : "border-line"}`}>
                       {s.url ? (
                         <a href={s.url} target="_blank" rel="sponsored noopener noreferrer" className="block">
                           {body}
@@ -173,7 +173,7 @@ function FollowButton({ id, slug, signedIn, following, followers }: { id: string
       </Link>
     );
   return (
-    <button type="button" onClick={() => m.mutate()} disabled={m.isPending} aria-pressed={following} className={`inline-flex min-h-11 items-center px-5 font-bold ${following ? "border-2 border-band-text/40" : "bg-[var(--event-accent)] text-black"}`} data-testid="event-follow">
+    <button type="button" onClick={() => m.mutate()} disabled={m.isPending} aria-pressed={following} className={`rounded-control inline-flex min-h-11 items-center px-5 font-bold ${following ? "border border-band-text/40" : "bg-[var(--event-accent)] text-black"}`} data-testid="event-follow">
       {following ? t("following") : t("follow")} · {followers}
     </button>
   );
@@ -199,13 +199,13 @@ function Standings({ bundle }: { bundle: EventBundle }) {
       </h2>
       <div role="tablist" className="mt-3 flex flex-wrap gap-2">
         {tabs.map((s) => (
-          <button key={s.id} type="button" role="tab" aria-selected={s.id === current?.id} onClick={() => setActive(s.tournament!.id)} className={`min-h-11 border-2 px-4 text-sm font-bold ${s.id === current?.id ? "border-brand bg-brand text-white" : "border-line"}`}>
+          <button key={s.id} type="button" role="tab" aria-selected={s.id === current?.id} onClick={() => setActive(s.tournament!.id)} className={`rounded-control min-h-11 border px-4 text-sm font-bold ${s.id === current?.id ? "border-brand bg-brand text-on-brand" : "border-line"}`}>
             {locale === "bn" ? s.labelBn : s.labelEn}
           </button>
         ))}
       </div>
       {current ? (
-        <div className="mt-3 border-2 border-line" role="tabpanel">
+        <div className="rounded-card mt-3 border border-line" role="tabpanel">
           <div className="flex flex-wrap items-center gap-2 border-b-2 border-line bg-surface-2 px-3 py-2 text-sm">
             <Link href={`/events/${current.tournament!.slug}`} className="font-bold underline">
               {locale === "bn" ? current.tournament!.titleBn : current.tournament!.titleEn}
@@ -264,7 +264,7 @@ function Road({ bundle }: { bundle: EventBundle }) {
           <div key={f.id} className="mt-4 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <ol className="space-y-2">
               {feeders.map((s) => (
-                <li key={s.id} className="flex flex-wrap items-center gap-2 border-2 border-line p-3">
+                <li key={s.id} className="rounded-card flex flex-wrap items-center gap-2 border border-line p-3">
                   <Link href={`/events/${s.tournament!.slug}`} className="font-bold underline">
                     {locale === "bn" ? s.labelBn : s.labelEn}
                   </Link>
@@ -272,7 +272,7 @@ function Road({ bundle }: { bundle: EventBundle }) {
                   <span className="ml-auto text-sm text-muted">{t("topN", { n: s.qualifyCount ?? 0 })}</span>
                 </li>
               ))}
-              <li className="flex flex-wrap items-center gap-2 border-2 border-[var(--event-accent)] p-3">
+              <li className="rounded-card flex flex-wrap items-center gap-2 border border-[var(--event-accent)] p-3">
                 <Link href={`/events/${f.tournament!.slug}`} className="font-extrabold underline">
                   {locale === "bn" ? f.labelBn : f.labelEn}
                 </Link>
@@ -283,7 +283,7 @@ function Road({ bundle }: { bundle: EventBundle }) {
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-muted">{t("qualified", { n: list.filter((x) => x.status !== "missed").length })}</h3>
               {list.length ? (
-                <ul className="mt-2 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="event-qualified">
+                <ul className="mt-2 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="event-qualified">
                   {list.map((x) => (
                     <li key={x.id} className="flex items-center gap-2 py-2 text-sm">
                       <span className="font-semibold">{x.entry.name}</span>
@@ -355,7 +355,7 @@ function Poll({ eventId, poll, myVote, signedIn, slug }: { eventId: string; poll
   const results = vote.data?.results ?? poll.results;
   const pct = (id: string) => results.items.find((r) => r.optionId === id)?.pct ?? 0;
   return (
-    <section className="border-2 border-line p-4" data-testid="event-poll">
+    <section className="rounded-card border border-line p-4" data-testid="event-poll">
       <div className="flex items-start gap-2">
         <h2 className="flex-1 font-extrabold">{locale === "bn" ? poll.questionBn : poll.questionEn}</h2>
         {poll.status === "closed" ? <Chip>{t("pollClosed")}</Chip> : null}
@@ -364,7 +364,7 @@ function Poll({ eventId, poll, myVote, signedIn, slug }: { eventId: string; poll
         {poll.options.map((o) => (
           <li key={o.id}>
             {showResults ? (
-              <div className="relative overflow-hidden border-2 border-line px-3 py-2 text-sm">
+              <div className="rounded-card relative overflow-hidden border border-line px-3 py-2 text-sm">
                 <span className="absolute inset-y-0 left-0 bg-[color-mix(in_srgb,var(--event-accent)_30%,transparent)]" style={{ width: `${pct(o.id)}%` }} aria-hidden />
                 <span className="relative flex items-center gap-2 font-semibold">
                   {locale === "bn" ? o.labelBn : o.labelEn}
@@ -373,11 +373,11 @@ function Poll({ eventId, poll, myVote, signedIn, slug }: { eventId: string; poll
                 </span>
               </div>
             ) : signedIn ? (
-              <button type="button" disabled={vote.isPending} onClick={() => vote.mutate(o.id)} className="min-h-11 w-full border-2 border-line px-3 text-left text-sm font-semibold hover:border-brand">
+              <button type="button" disabled={vote.isPending} onClick={() => vote.mutate(o.id)} className="rounded-control min-h-11 w-full border border-line-strong/60 px-3 text-left text-sm font-semibold hover:border-brand">
                 {locale === "bn" ? o.labelBn : o.labelEn}
               </button>
             ) : (
-              <Link href={`/sign-in?next=/showcases/${slug}`} className="flex min-h-11 items-center border-2 border-line px-3 text-sm font-semibold">
+              <Link href={`/sign-in?next=/showcases/${slug}`} className="rounded-control flex min-h-11 items-center border border-line-strong/60 px-3 text-sm font-semibold">
                 {locale === "bn" ? o.labelBn : o.labelEn}
               </Link>
             )}

@@ -17,7 +17,7 @@ export default function NotFound() {
   ];
   return (
     <section className="mx-auto grid max-w-[1320px] gap-10 px-5 py-16 md:grid-cols-[1fr_40%] md:items-center" data-testid="not-found">
-      <div className="relative order-last aspect-[16/10] overflow-hidden rounded-[24px] bg-surface-2 shadow-lg">
+      <div className="relative order-last aspect-[16/10] overflow-hidden rounded-card bg-surface-2 shadow-lg">
         <Image src={PHOTOS.groundsFloodlit} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" />
       </div>
       <div>
@@ -29,13 +29,13 @@ export default function NotFound() {
       <ul className="mt-8 flex flex-wrap gap-3">
         {links.map((l) => (
           <li key={l.href}>
-            <Link href={l.href} className="inline-flex min-h-12 items-center border-2 border-line-strong px-5 font-bold hover:bg-surface-2">
+            <Link href={l.href} className="rounded-control inline-flex min-h-12 items-center border border-line-strong px-5 font-bold hover:bg-surface-2">
               {l.label}
             </Link>
           </li>
         ))}
         <li>
-          <a href={esportsHref("/events")} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+          <a href={esportsHref("/events")} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover">
             {t("esports")}
           </a>
         </li>

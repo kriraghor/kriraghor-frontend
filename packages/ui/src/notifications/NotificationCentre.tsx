@@ -87,7 +87,7 @@ export function NotificationCentre({ settingsHref, signInHref }: { settingsHref?
         </div>
       </div>
 
-      <div className="mt-4 glass-card">
+      <div className="mt-4 surface-card">
         {q.isPending ? (
           <p className="p-5 text-muted" role="status">
             {t("loading")}

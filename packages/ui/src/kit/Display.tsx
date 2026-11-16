@@ -163,11 +163,12 @@ export function PageTitle({ title, eyebrow, description, actions, back, classNam
  * A section's heading (UI v2): the slanted orange mark taken from the logo's K, the title in the heading
  * face, and an optional action on the right ("See all"). The mark is decoration only.
  */
-export function SectionHeading({ title, action, id, as: Tag = "h2", className }: { title: ReactNode; action?: ReactNode; id?: string; as?: "h2" | "h3"; className?: string }) {
+export function SectionHeading({ title, action, id, as: Tag = "h2", size, className }: { title: ReactNode; action?: ReactNode; id?: string; as?: "h2" | "h3"; /** "display": the public sites' bigger section titles. */ size?: "display"; className?: string }) {
+  const big = size === "display";
   return (
     <div className={cn("flex flex-wrap items-center justify-between gap-x-3 gap-y-1", className)}>
-      <Tag id={id} className={cn("flex items-center gap-2.5 font-display font-bold", Tag === "h2" ? "text-xl" : "text-lg")}>
-        <span aria-hidden className={cn("inline-block shrink-0 -skew-x-[18deg] rounded-[2px] bg-accent", Tag === "h2" ? "h-5 w-[7px]" : "h-4 w-1.5")} />
+      <Tag id={id} className={cn("flex items-center gap-2.5 font-display font-bold", big ? "gap-3 text-2xl font-extrabold md:text-3xl" : Tag === "h2" ? "text-xl" : "text-lg")}>
+        <span aria-hidden className={cn("inline-block shrink-0 -skew-x-[18deg] rounded-[2px] bg-accent", big ? "h-6 w-2 md:h-7" : Tag === "h2" ? "h-5 w-[7px]" : "h-4 w-1.5")} />
         {title}
       </Tag>
       {action}

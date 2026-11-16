@@ -18,7 +18,7 @@ export function CartLink() {
     <Link href="/shop/cart" className="relative inline-flex size-11 items-center justify-center rounded-control text-ink no-underline transition-colors hover:bg-surface-2" data-testid="cart-link" aria-label={t("cartCount", { n })}>
       <ShoppingCart size={22} aria-hidden />
       {n > 0 ? (
-        <span className="absolute right-0.5 top-0.5 min-w-5 rounded-pill bg-brand px-1 text-center text-[11px] font-bold leading-5 text-on-brand tabular-nums ring-2 ring-surface" data-testid="cart-count">
+        <span className="absolute right-0.5 top-0.5 min-w-5 rounded-pill bg-brand px-1 text-center text-xs font-bold leading-5 text-on-brand tabular-nums ring-2 ring-surface" data-testid="cart-count">
           {n}
         </span>
       ) : null}

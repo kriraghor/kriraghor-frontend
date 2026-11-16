@@ -54,10 +54,10 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
   const can = j.can ?? {};
   const when = (iso: string | null | undefined) => (iso ? new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Dhaka" }).format(new Date(iso)) : "");
   const money = (n: number) => formatTaka(n, locale);
-  const ghost = "min-h-12 border-2 border-line px-4 font-bold hover:border-brand disabled:opacity-50";
+  const ghost = "rounded-control min-h-12 border border-line-strong/60 px-4 font-bold hover:border-brand disabled:opacity-50";
 
   return (
-    <article className="border-2 border-line" data-testid="hire-job">
+    <article className="rounded-card border border-line" data-testid="hire-job">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-line px-4 py-3">
         <div>
           <p className="font-extrabold">
@@ -69,7 +69,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
             {j.code} · {j.venue.text}
           </p>
         </div>
-        <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[jobTone(j.status)]}`} data-testid="hire-job-status">
+        <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[jobTone(j.status)]}`} data-testid="hire-job-status">
           {t(`jobStatus.${j.status}`)}
           {j.late ? ` · ${t("late")}` : ""}
         </span>
@@ -142,12 +142,12 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           </button>
         ) : null}
         {can.cancel && open !== "cancel" ? (
-          <button type="button" disabled={preview.isPending} className="min-h-12 border-2 border-danger px-4 font-bold text-danger disabled:opacity-50" onClick={() => preview.mutate()} data-testid="hire-cancel">
+          <button type="button" disabled={preview.isPending} className="rounded-control min-h-12 border border-danger px-4 font-bold text-danger disabled:opacity-50" onClick={() => preview.mutate()} data-testid="hire-cancel">
             {t("cancelJob")}
           </button>
         ) : null}
         {can.withdraw && open !== "withdraw" ? (
-          <button type="button" className="min-h-12 border-2 border-danger px-4 font-bold text-danger" onClick={() => setOpen("withdraw")} data-testid="hire-withdraw-job">
+          <button type="button" className="rounded-control min-h-12 border border-danger px-4 font-bold text-danger" onClick={() => setOpen("withdraw")} data-testid="hire-withdraw-job">
             {t("withdrawJob")}
           </button>
         ) : null}
@@ -162,7 +162,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
         <div className="flex flex-col gap-3 border-t-2 border-line px-4 py-4" data-testid="hire-cancel-plan">
           <p className="font-semibold">{plan.cancelFee ? t(`cancelTier.${plan.tier}`, { pct: plan.pct, fee: money(plan.cancelFee), refund: money(plan.refund) }) : t("cancelFree", { refund: money(plan.refund) })}</p>
           <div className="flex gap-3">
-            <button type="button" disabled={act.isPending} className="min-h-12 border-2 border-danger bg-danger px-4 font-bold text-white disabled:opacity-50" onClick={() => act.mutate("cancel")} data-testid="hire-cancel-confirm">
+            <button type="button" disabled={act.isPending} className="rounded-control min-h-12 border border-danger bg-danger px-4 font-bold text-white disabled:opacity-50" onClick={() => act.mutate("cancel")} data-testid="hire-cancel-confirm">
               {t("cancelConfirm")}
             </button>
             <button type="button" className={ghost} onClick={() => setOpen(null)}>
@@ -187,7 +187,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           ) : null}
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("workNote")}
-            <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} rows={3} className="glass-card p-3 text-base text-ink" />
+            <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} rows={3} className="surface-card p-3 text-base text-ink" />
           </label>
           <p className="text-sm text-muted">{t("completeNote")}</p>
           <div>
@@ -217,7 +217,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           </label>
           <p className="text-sm text-muted">{t("withdrawNote")}</p>
           <div>
-            <button type="submit" disabled={act.isPending} className="min-h-12 border-2 border-danger bg-danger px-4 font-bold text-white disabled:opacity-50">
+            <button type="submit" disabled={act.isPending} className="rounded-control min-h-12 border border-danger bg-danger px-4 font-bold text-white disabled:opacity-50">
               {t("withdrawJob")}
             </button>
           </div>
@@ -234,7 +234,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           <label htmlFor={`hd-${j.id}`} className="font-semibold">
             {open === "no-show" ? t("noShowWhat") : t("problemWhat")}
           </label>
-          <textarea id={`hd-${j.id}`} value={text} onChange={(e) => setText(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="glass-card p-3" data-testid="hire-dispute-text" />
+          <textarea id={`hd-${j.id}`} value={text} onChange={(e) => setText(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="surface-card p-3" data-testid="hire-dispute-text" />
           <p className="text-sm text-muted">{t("disputeNote")}</p>
           <div>
             <Button busy={report.isPending} data-testid="hire-dispute-send">

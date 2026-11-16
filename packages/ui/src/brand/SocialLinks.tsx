@@ -24,7 +24,7 @@ export function SocialLinks({ label, className }: { label: string; className?: s
             aria-label={name}
             title={name}
             data-testid={`social-${key}`}
-            className="inline-flex size-11 items-center justify-center rounded-control transition-[transform,background-color,color] duration-200 ease-out hover:bg-white/10 hover:text-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-95"
+            className="inline-flex size-11 items-center justify-center rounded-control transition-[transform,background-color,color] duration-200 ease-out hover:bg-white/10 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-95"
           >
             <Icon size={22} aria-hidden />
           </a>

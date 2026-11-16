@@ -37,7 +37,7 @@ export function MyReports() {
       <div className="mt-6">
         <Gate next="/me/reports">
           {q.data && !q.data.items.length ? <p className="text-muted">{t("noReports")}</p> : null}
-          <ul className="glass-card divide-y divide-[var(--glass-edge)] px-4">
+          <ul className="surface-card divide-y divide-[var(--glass-edge)] px-4">
             {q.data?.items.map((r) => (
               <li key={r.code} className="flex flex-wrap justify-between gap-3 py-3">
                 <span>
@@ -77,10 +77,10 @@ export function MyReviews() {
             <ReviewableList />
           </div>
           <h2 className="mt-10 text-xl font-extrabold">{t("yourReviews")}</h2>
-          {q.isPending && status === "signed_in" ? <div className="mt-3 h-24 animate-pulse bg-surface-2" /> : null}
+          {q.isPending && status === "signed_in" ? <div className="rounded-control mt-3 h-24 kg-shimmer bg-surface-2" /> : null}
           {q.data && !q.data.items.length ? <p className="mt-2 text-muted">{t("noReviewsYet")}</p> : null}
           {q.data?.items.length ? (
-            <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-reviews">
+            <ul className="mt-3 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-reviews">
               {q.data.items.map((r) => (
                 <li key={r.id} className="py-4">
                   <p className="text-xs font-bold uppercase tracking-wide text-muted">{t(`subjects.${r.subjectType}`)}</p>
@@ -88,7 +88,7 @@ export function MyReviews() {
                   <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
                     <Stars value={r.stars} label={t("reviews.starsOf", { stars: r.stars })} />
                     <span className="text-sm text-muted">{whenLabel(r.createdAt, locale)}</span>
-                    <span className="border-2 border-line px-2 text-sm font-bold">{t.has(`reviewStatus.${r.status}`) ? t(`reviewStatus.${r.status}`) : r.status}</span>
+                    <span className="rounded-card border border-line px-2 text-sm font-bold">{t.has(`reviewStatus.${r.status}`) ? t(`reviewStatus.${r.status}`) : r.status}</span>
                   </div>
                   {r.text ? <p className="mt-2 max-w-[65ch] whitespace-pre-line">{r.text}</p> : null}
                   {r.reply ? (

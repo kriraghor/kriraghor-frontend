@@ -31,7 +31,7 @@ export default async function BusinessPage({ params }: PageProps<"/[locale]/busi
   const t = await getTranslations("bizHome");
   return (
     <div className="mx-auto max-w-wide px-3 pb-16 pt-4 sm:px-5 sm:pt-6" data-testid="business-page">
-      <section className="relative overflow-hidden rounded-[28px] bg-band p-6 text-white sm:p-10">
+      <section className="relative overflow-hidden rounded-card bg-band p-6 text-white sm:p-10">
         <Image src={PHOTOS.gym} alt="" fill priority sizes="(min-width: 1320px) 1320px, 100vw" className="object-cover opacity-40" />
         <span className="absolute inset-0 bg-gradient-to-r from-band via-band/85 to-band/40" aria-hidden />
         <div className="relative">
@@ -50,7 +50,7 @@ export default async function BusinessPage({ params }: PageProps<"/[locale]/busi
 
       <ul className="mt-6 grid gap-4 px-2 sm:grid-cols-2 sm:px-0 lg:grid-cols-4">
         {CARDS.map((c) => (
-          <li key={c.key} className="glass-card flex flex-col overflow-hidden" data-testid={`biz-${c.key}`}>
+          <li key={c.key} className="surface-card flex flex-col overflow-hidden" data-testid={`biz-${c.key}`}>
             <span className="relative block h-36 shrink-0 bg-surface-2">
               <Image src={c.photo} alt="" fill sizes="(min-width: 1180px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
             </span>
@@ -93,7 +93,7 @@ export default async function BusinessPage({ params }: PageProps<"/[locale]/busi
         </h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {OTHERS.map((o) => (
-            <Link key={o.key} href={o.href} className="glass-card flex flex-col gap-1 p-5 no-underline transition-colors hover:border-brand">
+            <Link key={o.key} href={o.href} className="surface-card flex flex-col gap-1 p-5 no-underline transition-colors hover:border-brand">
               <b className="text-lg">{t(`${o.key}.title`)}</b>
               <span className="text-muted">{t(`${o.key}.body`)}</span>
               <span className="mt-2 inline-flex items-center gap-1 font-bold text-brand-text">

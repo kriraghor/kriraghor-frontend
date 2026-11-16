@@ -33,7 +33,7 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
   const due = s.next?.status === "pending_payment" ? s.next : cur?.status === "pending_payment" ? cur : null;
 
   return (
-    <li className="border-2 border-line p-4" data-testid="my-sub">
+    <li className="rounded-card border border-line p-4" data-testid="my-sub">
       <div className="flex flex-wrap items-center gap-3">
         <span className="min-w-0 flex-1">
           <span className="block text-xs font-bold uppercase tracking-wide text-muted">{s.code}</span>
@@ -44,7 +44,7 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
             {t("perMonth", { price: money(s.price) })} · {s.sessionsPerMonth ? t("sessions", { n: s.sessionsPerMonth }) : t("sessionsAgreed")}
           </span>
         </span>
-        <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[subscriptionTone(s.phase)]}`} data-testid="my-sub-phase">
+        <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[subscriptionTone(s.phase)]}`} data-testid="my-sub-phase">
           {t(`phase.${s.phase}`)}
         </span>
       </div>
@@ -60,22 +60,22 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
       <div className="mt-3 flex flex-wrap gap-3">
         {s.can.pay ? (
           s.payment ? (
-            <a href={s.payment.payUrl} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white hover:bg-brand-hover" data-testid="my-sub-pay">
+            <a href={s.payment.payUrl} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-on-brand hover:bg-brand-hover" data-testid="my-sub-pay">
               {t("payMonth", { price: money(due?.price ?? s.price) })}
             </a>
           ) : (
-            <button type="button" onClick={() => renew.mutate()} disabled={renew.isPending} className="min-h-11 bg-brand px-4 font-bold text-white hover:bg-brand-hover disabled:opacity-50" data-testid="my-sub-renew">
+            <button type="button" onClick={() => renew.mutate()} disabled={renew.isPending} className="min-h-11 bg-brand px-4 font-bold text-on-brand hover:bg-brand-hover disabled:opacity-50" data-testid="my-sub-renew">
               {t("payMonth", { price: money(s.price) })}
             </button>
           )
         ) : null}
         {s.can.cancel && !confirm ? (
-          <button type="button" onClick={() => setConfirm(true)} className="min-h-11 border-2 border-line px-4 font-bold hover:border-danger" data-testid="my-sub-cancel">
+          <button type="button" onClick={() => setConfirm(true)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold hover:border-danger" data-testid="my-sub-cancel">
             {t("cancelSubscription")}
           </button>
         ) : null}
         {s.can.problem && !reporting ? (
-          <button type="button" onClick={() => setReporting(true)} className="min-h-11 border-2 border-line px-4 font-bold" data-testid="my-sub-problem">
+          <button type="button" onClick={() => setReporting(true)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold" data-testid="my-sub-problem">
             {t("reportProblem")}
           </button>
         ) : null}
@@ -83,13 +83,13 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
       </div>
 
       {confirm ? (
-        <div className="mt-3 border-2 border-danger p-3">
+        <div className="rounded-card mt-3 border border-danger p-3">
           <p className="font-semibold">{s.can.refundOnCancel ? t("cancelRefund", { price: money(cur?.price ?? s.price) }) : t("cancelAtEnd")}</p>
           <div className="mt-3 flex gap-2">
             <button type="button" onClick={() => cancel.mutate()} disabled={cancel.isPending} className="min-h-11 bg-danger px-4 font-bold text-white disabled:opacity-50" data-testid="my-sub-cancel-yes">
               {t("cancelYes")}
             </button>
-            <button type="button" onClick={() => setConfirm(false)} className="min-h-11 border-2 border-line px-4 font-bold">
+            <button type="button" onClick={() => setConfirm(false)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold">
               {t("keepSubscription")}
             </button>
           </div>
@@ -106,13 +106,13 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
           <label htmlFor={`problem-${s.id}`} className="text-sm font-semibold">
             {t("problemLabel")}
           </label>
-          <textarea id={`problem-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="glass-card p-2" />
+          <textarea id={`problem-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="surface-card p-2" />
           <p className="text-sm text-muted">{t("problemHint")}</p>
           <div className="flex gap-2">
-            <button type="submit" disabled={problem.isPending || statement.trim().length < 10} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50">
+            <button type="submit" disabled={problem.isPending || statement.trim().length < 10} className="min-h-11 bg-brand px-4 font-bold text-on-brand disabled:opacity-50">
               {t("sendProblem")}
             </button>
-            <button type="button" onClick={() => setReporting(false)} className="min-h-11 border-2 border-line px-4 font-bold">
+            <button type="button" onClick={() => setReporting(false)} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold">
               {t("close")}
             </button>
           </div>

@@ -20,7 +20,7 @@ export function AddToCart({ variantId, qty, open }: { variantId: string | null; 
   });
   if (status === "signed_out")
     return (
-      <Link href="/sign-in" className="inline-flex min-h-12 flex-1 items-center justify-center bg-brand px-5 font-bold text-white" data-testid="add-to-cart-sign-in">
+      <Link href="/sign-in" className="inline-flex min-h-12 flex-1 items-center justify-center bg-brand px-5 font-bold text-on-brand" data-testid="add-to-cart-sign-in">
         {t("signInToBuy")}
       </Link>
     );
@@ -31,7 +31,7 @@ export function AddToCart({ variantId, qty, open }: { variantId: string | null; 
         type="button"
         disabled={!open || !variantId || add.isPending}
         onClick={() => add.mutate()}
-        className="min-h-12 bg-brand px-5 font-bold text-white hover:bg-brand-hover disabled:opacity-60"
+        className="min-h-12 bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover disabled:opacity-60"
         data-testid="add-to-cart"
       >
         {add.isPending ? t("adding") : t("addToCart")}

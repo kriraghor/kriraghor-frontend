@@ -15,7 +15,7 @@ export function PublicPlayerView({ handle }: { handle: string }) {
   const q = useQuery({ queryKey: ["player", handle], queryFn: () => teams.player(handle), retry: false });
   const bn = locale === "bn";
 
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[900px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[900px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data)
     return (
       <section className="mx-auto max-w-[640px] px-5 py-16">
@@ -59,7 +59,7 @@ export function PublicPlayerView({ handle }: { handle: string }) {
         <div>
           <h2 className="text-xl font-extrabold">{t("teams")}</h2>
           {p.teams.length ? (
-            <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="player-teams">
+            <ul className="mt-3 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="player-teams">
               {p.teams.map((team) => (
                 <li key={team.id} className="flex items-center gap-3 py-2">
                   <span className="min-w-0 flex-1 font-bold">{team.name}</span>
@@ -78,12 +78,12 @@ export function PublicPlayerView({ handle }: { handle: string }) {
       {p.hireProfiles.length || p.esports ? (
         <nav className="mt-8 flex flex-wrap gap-3" aria-label={t("elsewhere")}>
           {p.hireProfiles.map((h) => (
-            <Link key={h.slug} href={`/hiring/${h.slug}`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand">
+            <Link key={h.slug} href={`/hiring/${h.slug}`} className="rounded-control inline-flex min-h-11 items-center border border-line-strong/60 px-4 font-bold hover:border-brand">
               {t("hireMe")}
             </Link>
           ))}
           {p.esports ? (
-            <a href={`${publicEnv().ESPORTS_URL}/p/${p.esports.handle}`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand">
+            <a href={`${publicEnv().ESPORTS_URL}/p/${p.esports.handle}`} className="rounded-control inline-flex min-h-11 items-center border border-line-strong/60 px-4 font-bold hover:border-brand">
               {t("esportsProfile")}
             </a>
           ) : null}

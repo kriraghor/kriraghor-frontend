@@ -49,7 +49,7 @@ export function TrainerPlans({ profileId, slug }: { profileId: string; slug: str
       <ul className="mt-3 grid gap-2">
         {offer.items.map((p) => (
           <li key={p.id}>
-            <label className={`flex cursor-pointer flex-col border-2 p-3 ${p.id === plan.id ? "border-brand" : "border-line"}`}>
+            <label className={`rounded-card flex cursor-pointer flex-col border p-3 ${p.id === plan.id ? "border-brand" : "border-line"}`}>
               <span className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-2 font-bold">
                   <input type="radio" name="plan" checked={p.id === plan.id} onChange={() => choose(() => setPlanId(p.id))} />
@@ -66,7 +66,7 @@ export function TrainerPlans({ profileId, slug }: { profileId: string; slug: str
         ))}
       </ul>
       {status !== "signed_in" ? (
-        <Link href={`/sign-in?next=/hiring/${slug}`} className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+        <Link href={`/sign-in?next=/hiring/${slug}`} className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover">
           {t("signInToSubscribe")}
         </Link>
       ) : (

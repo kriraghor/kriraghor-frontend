@@ -31,7 +31,7 @@ export function AddPhone({ onDone }: { onDone?: () => void }) {
   return (
     <form
       id="phone"
-      className="flex flex-col gap-3 glass-card p-4"
+      className="flex flex-col gap-3 surface-card p-4"
       data-testid="add-phone"
       onSubmit={(e) => {
         e.preventDefault();

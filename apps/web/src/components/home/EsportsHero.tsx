@@ -40,10 +40,10 @@ export function NextUp() {
   const now = useNowSeconds();
   const money = (n: number) => formatTaka(n, locale);
 
-  if (open.isPending) return <div className="h-[340px] animate-pulse rounded-[28px] bg-band-2" role="status" aria-label={t("loading")} />;
+  if (open.isPending) return <div className="h-[340px] kg-shimmer rounded-card bg-band-2" role="status" aria-label={t("loading")} />;
   if (!next) {
     return (
-      <article className="glass-band flex flex-col gap-4 rounded-[28px] p-6" data-testid="next-up-empty">
+      <article className="glass-band flex flex-col gap-4 rounded-card p-6" data-testid="next-up-empty">
         <h2 className="text-2xl font-extrabold">{t("noneTitle")}</h2>
         <p className="text-band-muted">{t("noneBody")}</p>
         <a href={esportsHref("/events")} className="inline-flex min-h-12 w-fit items-center bg-prize px-5 font-bold text-prize-ink">
@@ -61,7 +61,7 @@ export function NextUp() {
   const free = next.entryFee.amount === 0;
 
   return (
-    <article className="rv glass-band flex flex-col gap-5 rounded-[28px] p-6 shadow-lg" aria-labelledby="next-title" data-testid="next-up">
+    <article className="rv glass-band flex flex-col gap-5 rounded-card p-6 shadow-lg" aria-labelledby="next-title" data-testid="next-up">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm text-band-muted">{[t("nextUp"), nameOf(next.game, locale), nameOf(next.mode, locale), nameOf(map, locale)].filter(Boolean).join(" · ")}</p>

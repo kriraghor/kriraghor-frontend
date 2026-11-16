@@ -39,11 +39,35 @@
   --ambient-green: rgb(25 153 95 / 0.1);
   --ambient-amber: rgb(242 163 58 / 0.05);
 }
+/* UI v2: the page wash takes the new green and the logo's orange; the dark glass sits on the new near-black. */
+[data-ui="v2"] {
+  --ambient-green: rgb(0 128 74 / 0.06);
+  --ambient-amber: rgb(242 106 27 / 0.06);
+}
+:root[data-theme="dark"] [data-ui="v2"] {
+  --ambient-green: rgb(31 209 127 / 0.07);
+  --ambient-amber: rgb(255 122 47 / 0.06);
+  --glass-bg: rgb(16 23 19 / 0.62);
+  --glass-strong-bg: rgb(12 18 14 / 0.86);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-ui="v2"] {
+    --ambient-green: rgb(31 209 127 / 0.07);
+    --ambient-amber: rgb(255 122 47 / 0.06);
+    --glass-bg: rgb(16 23 19 / 0.62);
+    --glass-strong-bg: rgb(12 18 14 / 0.86);
+  }
+}
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   :root {
     --glass-bg: var(--kg-surface);
     --glass-strong-bg: var(--kg-surface);
     --glass-band-bg: var(--kg-band);
+  }
+  /* !important: beats the v2 dark glass above, which is more specific. */
+  [data-ui="v2"] {
+    --glass-bg: var(--kg-surface) !important;
+    --glass-strong-bg: var(--kg-surface) !important;
   }
 }
 @media (prefers-reduced-transparency: reduce) {
@@ -52,6 +76,11 @@
     --glass-strong-bg: var(--kg-surface);
     --glass-band-bg: var(--kg-band);
     --glass-blur: none;
+  }
+  /* !important: beats the v2 dark glass above, which is more specific. */
+  [data-ui="v2"] {
+    --glass-bg: var(--kg-surface) !important;
+    --glass-strong-bg: var(--kg-surface) !important;
   }
 }
 
@@ -77,13 +106,8 @@
   border: 1px solid var(--glass-band-edge);
   color: var(--kg-band-text);
 }
-/* A content card (the kit's Card): solid surface, 1px line, the card radius. */
-@utility glass-card {
-  background: var(--kg-surface);
-  border: 1px solid var(--kg-line);
-  border-radius: var(--radius-card);
-  box-shadow: var(--kg-shadow-sm);
-}
+/* A content card is `surface-card` (tokens.css): one name for the one card look since UI v2 round 3
+   (glass-card, the old name of the same thing, is gone). */
 /* Inputs and selects written by hand (the kit's controlClass is the same look). */
 @utility field {
   background: var(--kg-surface);
@@ -120,10 +144,10 @@
   :where(a, button)[class~="min-h-12"]:active {
     transform: scale(0.98);
   }
-  :where(a).glass-card {
+  :where(a).surface-card {
     transition: transform 200ms var(--ease-kg), box-shadow 200ms, border-color 200ms;
   }
-  :where(a).glass-card:hover {
+  :where(a).surface-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--kg-shadow-md);
   }

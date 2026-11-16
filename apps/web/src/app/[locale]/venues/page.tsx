@@ -9,7 +9,7 @@ export default async function GroundsPage({ params }: PageProps<"/[locale]/venue
   setRequestLocale(locale);
   // The filters live in the URL (useSearchParams), so the list renders inside Suspense.
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-control mx-auto mt-10 h-96 max-w-[1320px] kg-shimmer bg-surface-2" />}>
       <GroundsBrowse />
     </Suspense>
   );

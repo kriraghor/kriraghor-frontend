@@ -63,7 +63,7 @@ export function Pricing() {
         <>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="tiers">
             {tiersInOrder(pricing.data.tiers).map((tier) => (
-              <li key={tier.key} className="glass-card flex flex-col gap-2 p-5" data-testid={`tier-${tier.key}`}>
+              <li key={tier.key} className="surface-card flex flex-col gap-2 p-5" data-testid={`tier-${tier.key}`}>
                 <span className="text-sm font-bold uppercase tracking-wide text-muted">{tg(`tier.${tier.key}`)}</span>
                 <span className="text-3xl font-extrabold tabular-nums">{tier.pricePoisha ? t("perMonth", { price: formatTaka(tier.pricePoisha, locale) }) : t("free")}</span>
                 <span className="text-sm">{tier.maxMembers ? t("upTo", { n: n.format(tier.maxMembers) }) : t("unlimited")}</span>
@@ -88,7 +88,7 @@ export function Pricing() {
           </Link>
         </>
       ) : (
-        <div className="glass-card mt-6 flex flex-col items-start gap-3 p-6 md:flex-row md:items-center md:justify-between" data-testid="early-access">
+        <div className="surface-card mt-6 flex flex-col items-start gap-3 p-6 md:flex-row md:items-center md:justify-between" data-testid="early-access">
           <div className="flex items-start gap-3">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-pill bg-brand-soft text-brand-text">
               <Sparkle size={24} weight="fill" aria-hidden />

@@ -233,7 +233,7 @@ function RoleForm({ row, onSave, onCancel }: { row?: Row; onSave: (body: Record<
         </label>
       </div>
       <div className="flex gap-2 sm:col-span-2">
-        <button type="submit" disabled={busy} className={`${btn} border-brand bg-brand text-white`}>
+        <button type="submit" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`}>
           {t("save")}
         </button>
         <button type="button" className={`${btn} border-line`} onClick={onCancel}>

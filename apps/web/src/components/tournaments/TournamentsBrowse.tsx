@@ -52,11 +52,11 @@ export function TournamentsBrowse() {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <button type="button" aria-pressed={!sport} onClick={() => go({ sport: "" })} className={`min-h-11 border-2 px-3 text-sm font-bold ${!sport ? "border-brand bg-brand text-white" : "border-line hover:border-brand"}`}>
+        <button type="button" aria-pressed={!sport} onClick={() => go({ sport: "" })} className={`rounded-control min-h-11 border px-3 text-sm font-bold ${!sport ? "border-brand bg-brand text-on-brand" : "border-line hover:border-brand"}`}>
           {t("allSports")}
         </button>
         {teamSports(sports.data ?? []).map((s) => (
-          <button key={s.key} type="button" aria-pressed={sport === s.key} onClick={() => go({ sport: s.key })} className={`min-h-11 border-2 px-3 text-sm font-bold ${sport === s.key ? "border-brand bg-brand text-white" : "border-line hover:border-brand"}`}>
+          <button key={s.key} type="button" aria-pressed={sport === s.key} onClick={() => go({ sport: s.key })} className={`rounded-control min-h-11 border px-3 text-sm font-bold ${sport === s.key ? "border-brand bg-brand text-on-brand" : "border-line hover:border-brand"}`}>
             {locale === "bn" ? s.nameBn : s.nameEn}
           </button>
         ))}
@@ -80,8 +80,8 @@ export function TournamentsBrowse() {
         </div>
       ) : (
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="tournament-list">
-          {q.isPending ? [0, 1, 2].map((i) => <li key={i} className="h-48 animate-pulse bg-surface-2" />) : q.data.items.map((x) => <li key={x.id}><TournamentCard t={x} /></li>)}
-          {!q.isPending && !q.data.items.length ? <li className="border-2 border-dashed border-line p-8 text-center font-semibold sm:col-span-2 lg:col-span-3">{t(`none.${status}`)}</li> : null}
+          {q.isPending ? [0, 1, 2].map((i) => <li key={i} className="rounded-control h-48 kg-shimmer bg-surface-2" />) : q.data.items.map((x) => <li key={x.id}><TournamentCard t={x} /></li>)}
+          {!q.isPending && !q.data.items.length ? <li className="rounded-card border border-dashed border-line p-8 text-center font-semibold sm:col-span-2 lg:col-span-3">{t(`none.${status}`)}</li> : null}
         </ul>
       )}
     </section>

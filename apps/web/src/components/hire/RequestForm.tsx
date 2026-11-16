@@ -80,7 +80,7 @@ export function RequestForm({ profile, pick, unavailableDays, onDateChange }: { 
       <div>
         <h2 className="text-xl font-extrabold">{t("hireTitle", { name: profile.name })}</h2>
         <p className="mt-2 text-sm text-muted">{t("signInToHire")}</p>
-        <Link href={`/sign-in?next=/hiring/${profile.slug}`} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+        <Link href={`/sign-in?next=/hiring/${profile.slug}`} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover">
           {t("signIn")}
         </Link>
       </div>
@@ -101,7 +101,7 @@ export function RequestForm({ profile, pick, unavailableDays, onDateChange }: { 
           <legend className="text-sm font-bold">{t("hiredBy")}</legend>
           <div className="mt-2 flex gap-2">
             {units.map((u) => (
-              <button key={u} type="button" aria-pressed={unit === u} onClick={() => setUnit(u)} className={`min-h-11 border-2 px-4 font-bold ${unit === u ? "border-brand bg-brand/10" : "border-line"}`}>
+              <button key={u} type="button" aria-pressed={unit === u} onClick={() => setUnit(u)} className={`rounded-control min-h-11 border px-4 font-bold ${unit === u ? "border-brand bg-brand/10" : "border-line"}`}>
                 {t(`unit.${u}`)}
               </button>
             ))}
@@ -110,7 +110,7 @@ export function RequestForm({ profile, pick, unavailableDays, onDateChange }: { 
       ) : null}
       <ol className="flex flex-col gap-4">
         {rows.map((r, i) => (
-          <li key={i} className="border-2 border-line p-3" data-testid="hire-engagement" onFocusCapture={() => setActive(i)}>
+          <li key={i} className="rounded-card border border-line p-3" data-testid="hire-engagement" onFocusCapture={() => setActive(i)}>
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold">{unit === "match" ? t("matchN", { n: i + 1 }) : t("sessionN", { n: i + 1 })}</span>
               {rows.length > 1 ? (
@@ -180,13 +180,13 @@ export function RequestForm({ profile, pick, unavailableDays, onDateChange }: { 
         ))}
       </ol>
       {rows.length < MAX_ROWS ? (
-        <button type="button" className="min-h-11 self-start border-2 border-line px-4 text-sm font-bold hover:border-brand" onClick={() => setRows([...rows, { ...rows[rows.length - 1], date: dhakaDay(new Date(new Date(`${rows[rows.length - 1].date}T12:00:00Z`).getTime() + 7 * 86400000)) }])}>
+        <button type="button" className="rounded-control min-h-11 self-start border border-line-strong/60 px-4 text-sm font-bold hover:border-brand" onClick={() => setRows([...rows, { ...rows[rows.length - 1], date: dhakaDay(new Date(new Date(`${rows[rows.length - 1].date}T12:00:00Z`).getTime() + 7 * 86400000)) }])}>
           {unit === "match" ? t("addMatch") : t("addSession")}
         </button>
       ) : null}
       <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
         {t("note")}
-        <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} placeholder={t("noteHint")} className="glass-card p-3 text-base text-ink" />
+        <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} placeholder={t("noteHint")} className="surface-card p-3 text-base text-ink" />
       </label>
       <div className="flex items-baseline justify-between border-t-2 border-line pt-3">
         <span className="font-semibold">{t("total")}</span>

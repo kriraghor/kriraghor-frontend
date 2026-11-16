@@ -163,7 +163,7 @@ function WeekEditor({ firstDay, data, now, today, onDirty }: { firstDay: string;
     const kinds = Array.from({ length: HOURS }, (_, h) => kindOf(d * HOURS + h)).filter((k) => k !== "past" && k !== "horizon");
     const st = stateOfHours(kinds.map((k) => k !== "free"));
     return st ? (
-      <span className="mt-0.5 flex items-center justify-center gap-1 text-[11px] font-semibold leading-tight text-muted" data-day-state={st}>
+      <span className="mt-0.5 flex items-center justify-center gap-1 text-xs font-semibold leading-tight text-muted" data-day-state={st}>
         <DayStateIcon state={st} size={12} />
         {th(`dayState.${st}`)}
       </span>

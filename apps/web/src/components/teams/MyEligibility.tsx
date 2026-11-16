@@ -33,7 +33,7 @@ export function MyEligibility() {
   });
 
   if (status === "signed_out") return <MePanel />;
-  if (q.isPending || me.isPending) return <div className="mx-auto mt-10 h-96 max-w-[760px] animate-pulse bg-surface-2" />;
+  if (q.isPending || me.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[760px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <p className="mx-auto max-w-[760px] px-5 py-10">{t("failed")}</p>;
   const p = problemOf(save.error);
 
@@ -42,13 +42,13 @@ export function MyEligibility() {
       <h1 className="text-3xl font-extrabold">{t("eligibility")}</h1>
       <p className="mt-1 text-muted">{t("eligibilityIntro")}</p>
 
-      <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="readiness">
+      <ul className="mt-6 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="readiness">
         {q.data.readiness.map((c) => {
           const href = fixHref(c.fix);
           return (
             <li key={c.key} className="flex flex-wrap items-center gap-3 py-3" data-testid={`ready-${c.key}`}>
               <span className="min-w-0 flex-1 font-bold">{t(`check.${c.key}`)}</span>
-              <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[checkTone(c.status)]}`}>{t(`status.${c.status}`)}</span>
+              <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[checkTone(c.status)]}`}>{t(`status.${c.status}`)}</span>
               {href ? (
                 <Link href={href} className="font-semibold text-brand underline">
                   {t(`fix.${c.fix}`)}
@@ -65,7 +65,7 @@ export function MyEligibility() {
         </div>
       ) : null}
 
-      <div id="gender" className="mt-8 border-2 border-line p-4">
+      <div id="gender" className="rounded-card mt-8 border border-line p-4">
         <h2 className="text-lg font-extrabold">{t("gender")}</h2>
         <p className="text-sm text-muted">{t("genderPrivacy")}</p>
         {me.data?.gender ? (

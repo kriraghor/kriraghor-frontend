@@ -38,7 +38,7 @@ export function HireBrowse() {
   const cat = tax.data?.items.find((c) => c.key === f.category);
   const active = Boolean(f.category || f.role || f.exp?.length || f.unit || f.areaId || f.q);
   const toggleExp = (l: Level) => (f.exp?.includes(l) ? f.exp.filter((x) => x !== l) : [...(f.exp ?? []), l]);
-  const chip = (on: boolean) => `min-h-10 border-2 px-3 text-sm font-semibold ${on ? "border-brand bg-brand/10" : "border-line"}`;
+  const chip = (on: boolean) => `rounded-control min-h-10 border px-3 text-sm font-semibold ${on ? "border-brand bg-brand/10" : "border-line"}`;
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-10">
@@ -50,10 +50,10 @@ export function HireBrowse() {
             </h1>
             <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
           </div>
-          <Link href="/me/hire" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+          <Link href="/me/hire" className="rounded-control min-h-11 border border-line-strong/60 px-4 py-2 font-bold hover:border-brand">
             {t("myHires")}
           </Link>
-          <Link href="/pro" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+          <Link href="/pro" className="rounded-control min-h-11 border border-line-strong/60 px-4 py-2 font-bold hover:border-brand">
             {t("getHired")}
           </Link>
         </div>
@@ -62,7 +62,7 @@ export function HireBrowse() {
       <nav aria-label={t("categories")} className="mt-8">
         <ul className="flex gap-2 overflow-x-auto pb-1">
           <li>
-            <button type="button" aria-pressed={!f.category} onClick={() => go({ ...f, category: undefined, role: undefined })} className={`min-h-11 whitespace-nowrap border-2 px-4 font-bold ${!f.category ? "border-brand bg-brand/10" : "border-line"}`}>
+            <button type="button" aria-pressed={!f.category} onClick={() => go({ ...f, category: undefined, role: undefined })} className={`rounded-control min-h-11 whitespace-nowrap border px-4 font-bold ${!f.category ? "border-brand bg-brand/10" : "border-line"}`}>
               {t("everyone")}
             </button>
           </li>
@@ -72,7 +72,7 @@ export function HireBrowse() {
                 type="button"
                 aria-pressed={f.category === c.key}
                 onClick={() => go({ ...f, category: f.category === c.key ? undefined : c.key, role: undefined })}
-                className={`min-h-11 whitespace-nowrap border-2 px-4 font-bold ${f.category === c.key ? "border-brand bg-brand/10" : "border-line"}`}
+                className={`rounded-control min-h-11 whitespace-nowrap border px-4 font-bold ${f.category === c.key ? "border-brand bg-brand/10" : "border-line"}`}
                 data-testid={`hire-category-${c.key}`}
               >
                 {name(c)} {first?.counts?.[c.key] !== undefined ? <span className="font-semibold text-muted">({first.counts[c.key]})</span> : null}
@@ -97,7 +97,7 @@ export function HireBrowse() {
             </label>
             <div className="flex">
               <input id="hire-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("searchHint")} className="min-h-12 w-full field px-3 text-base text-ink focus:border-brand" />
-              <button type="submit" className="min-h-12 border-2 border-l-0 border-line px-3 font-bold">
+              <button type="submit" className="rounded-control min-h-12 border border-l-0 border-line-strong/60 px-3 font-bold">
                 {t("go")}
               </button>
             </div>
@@ -181,18 +181,18 @@ export function HireBrowse() {
           {list.isPending ? (
             <ul className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {[0, 1, 2].map((i) => (
-                <li key={i} className="h-48 animate-pulse bg-surface-2" />
+                <li key={i} className="rounded-control h-48 kg-shimmer bg-surface-2" />
               ))}
             </ul>
           ) : list.isError ? (
-            <div className="mt-6 border-2 border-danger p-6">
+            <div className="rounded-card mt-6 border border-danger p-6">
               <p className="font-bold">{t("error")}</p>
-              <button type="button" className="mt-3 min-h-11 border-2 border-line px-4 font-bold" onClick={() => void list.refetch()}>
+              <button type="button" className="rounded-control mt-3 min-h-11 border border-line-strong/60 px-4 font-bold" onClick={() => void list.refetch()}>
                 {t("retry")}
               </button>
             </div>
           ) : !items.length ? (
-            <div className="mt-6 border-2 border-dashed border-line p-10 text-center" data-testid="hire-empty">
+            <div className="rounded-card mt-6 border border-dashed border-line p-10 text-center" data-testid="hire-empty">
               <p className="text-lg font-bold">{t("empty")}</p>
               {active ? (
                 <button
@@ -215,7 +215,7 @@ export function HireBrowse() {
             </ul>
           )}
           {list.hasNextPage ? (
-            <button type="button" disabled={list.isFetchingNextPage} className="mt-6 min-h-12 border-2 border-line px-5 font-bold disabled:opacity-50" onClick={() => void list.fetchNextPage()}>
+            <button type="button" disabled={list.isFetchingNextPage} className="rounded-control mt-6 min-h-12 border border-line-strong/60 px-5 font-bold disabled:opacity-50" onClick={() => void list.fetchNextPage()}>
               {t("more")}
             </button>
           ) : null}

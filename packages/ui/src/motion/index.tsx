@@ -186,6 +186,50 @@ export function FlipTicker<T>({
   );
 }
 
+/**
+ * Scroll reveal: children marked `.rv` rise in as they enter the viewport, 40 ms apart (styles/motion.css).
+ * Content is visible without JavaScript and under reduce motion; the classes are added after hydration
+ * only, so server and client HTML match. Cards that arrive later (live lists) are picked up as they render.
+ */
+export function Reveal({ children, className }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined" || window.matchMedia(REDUCE).matches) return;
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const n = e.target as HTMLElement;
+          n.classList.add("is-in");
+          io.unobserve(n);
+          // The stagger is for the entrance only; a hover lift afterwards answers at once.
+          window.setTimeout(() => (n.style.transitionDelay = ""), 900);
+        }),
+      { rootMargin: "0px 0px -8% 0px" }
+    );
+    const watch = () =>
+      el.querySelectorAll<HTMLElement>(".rv:not(.is-in):not([data-rv])").forEach((n, i) => {
+        n.dataset.rv = "";
+        n.style.transitionDelay = `${(i % 8) * 40}ms`;
+        io.observe(n);
+      });
+    el.classList.add("js-reveal");
+    watch();
+    const mo = new MutationObserver(watch);
+    mo.observe(el, { childList: true, subtree: true });
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
+  }, []);
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  );
+}
+
 /** Wraps a value that changes live (slots taken, a score, a prize pool): a green glint when it does. */
 export function Flash({ value, children, className }: { value: unknown; children: ReactNode; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);

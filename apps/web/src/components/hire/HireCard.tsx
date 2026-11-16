@@ -20,7 +20,7 @@ export function HireCard({ card }: { card: Card }) {
   const accepts = percent(card.acceptanceRate, locale);
   return (
     <li>
-      <Link href={`/hiring/${card.slug}`} className="flex h-full flex-col glass-card p-4 hover:border-brand" data-testid="hire-card">
+      <Link href={`/hiring/${card.slug}`} className="flex h-full flex-col surface-card p-4 hover:border-brand" data-testid="hire-card">
         <span className="flex items-start gap-3">
           <Avatar name={card.name} src={card.avatarUrl} size={48} />
           <span className="min-w-0 flex-1">

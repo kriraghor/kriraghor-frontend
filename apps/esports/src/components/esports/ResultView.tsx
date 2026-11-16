@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { dhakaTime, esports, useRoom } from "@/lib/esports";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { Chip, Countdown } from "./bits";
+import { BackLink } from "@kriraghor/ui/kit";
 
 type ResultRow = { registrationId: string; entry: { name: string } | null; placement: number | null; kills: number; placementPoints: number; killPoints: number; totalPoints: number };
 
@@ -26,7 +26,7 @@ export function ResultView({ matchId }: { matchId: string }) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
 
-  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-3xl animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-64 max-w-3xl kg-shimmer bg-surface-2" />;
   if (q.isError) return <p className="mx-auto max-w-3xl px-5 py-16 text-danger">{t("notFound")}</p>;
   const m = q.data as unknown as { seq: number; status: string; disputeClosesAt: string | null; finalisedAt: string | null; results: ResultRow[] };
   const windowOpen = ["results_pending", "disputed"].includes(m.status) && m.disputeClosesAt && new Date(m.disputeClosesAt) > new Date();
@@ -56,9 +56,7 @@ export function ResultView({ matchId }: { matchId: string }) {
 
   return (
     <section className="mx-auto max-w-3xl px-5 py-10">
-      <Link href="/me/matches" className="text-sm font-semibold text-brand underline">
-        ← {t("myMatches")}
-      </Link>
+      <BackLink href="/me/matches">{t("myMatches")}</BackLink>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-extrabold">{t("match", { n: m.seq })}</h1>
         <Chip tone={m.status === "final" ? "ok" : m.status === "disputed" ? "bad" : "warn"}>{t(`matchStatus.${m.status}`)}</Chip>
@@ -71,7 +69,7 @@ export function ResultView({ matchId }: { matchId: string }) {
         <p className="mt-2 text-sm text-muted">{t("result.finalAt", { when: dhakaTime(m.finalisedAt, locale) })}</p>
       ) : null}
       {m.results.length ? (
-        <div className="mt-6 overflow-x-auto border-2 border-line">
+        <div className="rounded-card mt-6 overflow-x-auto border border-line">
           <table className="w-full min-w-[480px] text-sm" data-testid="results">
             <thead className="bg-surface-2 text-left text-xs uppercase tracking-wide text-muted">
               <tr>
@@ -97,11 +95,11 @@ export function ResultView({ matchId }: { matchId: string }) {
         <p className="mt-6 text-muted">{t("result.notYet")}</p>
       )}
       {windowOpen ? (
-        <form onSubmit={dispute} className="mt-8 grid gap-3 glass-card p-5" data-testid="dispute-form">
+        <form onSubmit={dispute} className="mt-8 grid gap-3 surface-card p-5" data-testid="dispute-form">
           <p className="font-bold">{t("result.disputeTitle")}</p>
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("result.reason")}
-            <textarea value={reason} onChange={(e) => setReason(e.target.value)} minLength={5} maxLength={500} required className="min-h-24 glass-card p-3 text-base text-ink" />
+            <textarea value={reason} onChange={(e) => setReason(e.target.value)} minLength={5} maxLength={500} required className="min-h-24 surface-card p-3 text-base text-ink" />
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
             {t("result.screenshot")}

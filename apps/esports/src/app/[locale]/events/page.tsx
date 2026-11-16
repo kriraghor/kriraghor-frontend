@@ -7,5 +7,5 @@ export const metadata = { title: "Tournaments" };
 export default async function Page({ params }: PageProps<"/[locale]/events">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1320px] animate-pulse bg-surface-2" />}><TournamentList /></Suspense>;
+  return <Suspense fallback={<div className="rounded-control mx-auto mt-10 h-64 max-w-[1320px] kg-shimmer bg-surface-2" />}><TournamentList /></Suspense>;
 }

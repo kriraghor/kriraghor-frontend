@@ -3,15 +3,15 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, toPoisha, vendor, type Rules, type RuleInput } from "@/lib/vendor/grounds";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Field, inputCls } from "../admin/finance/shared";
+import { BackLink } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
-const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2", high: "bg-amber-100 dark:bg-amber-900/40", peak: "bg-amber-300 dark:bg-amber-700/70" };
+const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2", high: "bg-accent-soft", peak: "bg-accent/45" };
 const KEYS = ["basePricePoisha", "peakFromHour", "peakPct", "weekendPct", "earlyToHour", "earlyPct", "minBookingMin", "advancePct", "fullRefundHours", "halfRefundHours", "checkinGraceMin", "seriesDiscountPct"] as const;
 type Form = Record<(typeof KEYS)[number], string>;
 
@@ -79,9 +79,7 @@ export function PricingEditor({ id }: { id: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-8">
-      <Link href={`/vendor/venues/${id}`} className="text-sm font-semibold text-brand underline">
-        ← {ground.data?.name ?? t("title")}
-      </Link>
+      <BackLink href={`/vendor/venues/${id}`}>{ground.data?.name ?? t("title")}</BackLink>
       <h1 className="mt-3 text-3xl font-extrabold">{t("pricingTitle")}</h1>
       <p className="mt-1 max-w-2xl text-muted">{t("pricingLead")}</p>
 
@@ -145,7 +143,7 @@ export function PricingEditor({ id }: { id: string }) {
           </button>
           {p.data.draft ? (
             <>
-              <button type="button" disabled={busy || dirty} className={`${btn} border-brand bg-brand text-white`} onClick={() => void act(() => vendor.publish(id, applyToAll), t("published"), true)} data-testid="publish">
+              <button type="button" disabled={busy || dirty} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void act(() => vendor.publish(id, applyToAll), t("published"), true)} data-testid="publish">
                 {t("publish")}
               </button>
               <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void act(() => vendor.discard(id), t("discarded"), true)}>

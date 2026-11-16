@@ -35,7 +35,7 @@ export function Leaderboards() {
       <h1 className="text-3xl font-extrabold">{t("lb.title")}</h1>
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label={t("list.game")}>
         {gameList.map((g) => (
-          <button key={g.key} type="button" role="tab" aria-selected={game === g.key} onClick={() => set("game", g.key)} className={`min-h-11 border-2 px-4 text-sm font-bold ${game === g.key ? "border-line-strong bg-line-strong text-bg" : "border-line text-muted"}`}>
+          <button key={g.key} type="button" role="tab" aria-selected={game === g.key} onClick={() => set("game", g.key)} className={`rounded-control min-h-11 border px-4 text-sm font-bold ${game === g.key ? "border-line-strong bg-line-strong text-bg" : "border-line text-muted"}`}>
             {locale === "bn" ? g.nameBn : g.nameEn}
           </button>
         ))}
@@ -56,14 +56,14 @@ export function Leaderboards() {
           </select>
         ) : null}
       </div>
-      {q.isPending && game ? <div className="mt-6 h-64 animate-pulse bg-surface-2" /> : null}
+      {q.isPending && game ? <div className="rounded-control mt-6 h-64 kg-shimmer bg-surface-2" /> : null}
       {data?.items.length ? (
-        <ol className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="leaderboard">
+        <ol className="mt-6 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="leaderboard">
           {data.items.map((r) => {
             const row = r as typeof r & { username: string | null; displayName: string | null; ign: string | null; tournaments: number };
             return (
               <li key={row.userId} className="flex items-center gap-4 py-3">
-                <span className={`w-10 font-display text-2xl font-extrabold tabular-nums ${row.rank <= 3 ? "text-amber-700 dark:text-amber-400" : "text-muted"}`}>{row.rank}</span>
+                <span className={`w-10 font-display text-2xl font-extrabold tabular-nums ${row.rank <= 3 ? "text-accent-text" : "text-muted"}`}>{row.rank}</span>
                 <div>
                   <Link href={`/p/${row.username ?? row.userId}`} className="font-bold underline-offset-2 hover:underline">
                     {row.ign ?? row.displayName ?? "—"}
@@ -81,7 +81,7 @@ export function Leaderboards() {
         </div>
       ) : null}
       {data?.formula ? (
-        <details className="mt-8 glass-card p-4">
+        <details className="mt-8 surface-card p-4">
           <summary className="cursor-pointer font-bold">{t("lb.how")}</summary>
           <p className="mt-2 text-sm text-muted">{t("lb.formula", { half: data.formula.halfLifeDays, min: data.formula.minTournaments })}</p>
         </details>
@@ -95,7 +95,7 @@ export function PlayerProfile({ handle }: { handle: string }) {
   const t = useTranslations("esports");
   const locale = useLocale();
   const q = useQuery({ queryKey: ["es-player", handle], queryFn: () => esports.player(handle) });
-  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-3xl animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-64 max-w-3xl kg-shimmer bg-surface-2" />;
   if (q.isError) return <p className="mx-auto max-w-3xl px-5 py-16 text-danger">{t("notFound")}</p>;
   const p = q.data as unknown as { username: string | null; userId: string; displayName: string | null; tournaments: number; wins: number; kills: number; games: { game: { key: string; nameEn: string; nameBn: string } | null; ign: string; uidMasked: string; rank: number | null; tournaments: number; wins: number; kills: number }[] };
   return (
@@ -112,7 +112,7 @@ export function PlayerProfile({ handle }: { handle: string }) {
           testId="player-share"
         />
       </div>
-      <dl className="glass-card mt-6 grid grid-cols-3 gap-4 p-4 text-center">
+      <dl className="surface-card mt-6 grid grid-cols-3 gap-4 p-4 text-center">
         {(["tournaments", "wins", "kills"] as const).map((k) => (
           <div key={k}>
             <dt className="text-xs uppercase tracking-wide text-muted">{t(`player.${k}`)}</dt>
@@ -122,7 +122,7 @@ export function PlayerProfile({ handle }: { handle: string }) {
       </dl>
       <ul className="mt-6 space-y-3">
         {p.games.map((g) => (
-          <li key={g.game?.key ?? g.ign} className="flex flex-wrap items-center gap-3 glass-card p-4">
+          <li key={g.game?.key ?? g.ign} className="flex flex-wrap items-center gap-3 surface-card p-4">
             <span className="font-bold">{g.game ? (locale === "bn" ? g.game.nameBn : g.game.nameEn) : ""}</span>
             <span>{g.ign}</span>
             <span className="font-mono text-sm text-muted">{g.uidMasked}</span>

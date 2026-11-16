@@ -53,7 +53,7 @@ export function MyTeams() {
       <h1 className="text-3xl font-extrabold">{t("myTeams")}</h1>
 
       {pending.length ? (
-        <div className="mt-6 border-2 border-brand bg-surface p-4" data-testid="team-invites">
+        <div className="rounded-card mt-6 border border-brand bg-surface p-4" data-testid="team-invites">
           <h2 className="text-lg font-extrabold">{t("invitesForYou")}</h2>
           <ul className="mt-2 divide-y-2 divide-line">
             {pending.map((i) => (
@@ -67,7 +67,7 @@ export function MyTeams() {
                 <Button type="button" busy={answer.isPending} onClick={() => answer.mutate({ id: i.id, yes: true })} data-testid="accept-invite">
                   {t("accept")}
                 </Button>
-                <button type="button" className="min-h-12 border-2 border-line px-4 font-bold hover:border-danger" onClick={() => answer.mutate({ id: i.id, yes: false })}>
+                <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-bold hover:border-danger" onClick={() => answer.mutate({ id: i.id, yes: false })}>
                   {t("decline")}
                 </button>
               </li>
@@ -80,23 +80,23 @@ export function MyTeams() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">
         <div>
           {list.isPending ? (
-            <div className="h-40 animate-pulse bg-surface-2" />
+            <div className="rounded-control h-40 kg-shimmer bg-surface-2" />
           ) : list.isError ? (
             <Notice tone="error">{t("failed")}</Notice>
           ) : !list.data.items.length ? (
-            <p className="border-2 border-dashed border-line p-8 text-center font-semibold" data-testid="my-teams-empty">
+            <p className="rounded-card border border-dashed border-line p-8 text-center font-semibold" data-testid="my-teams-empty">
               {t("noTeams")}
             </p>
           ) : (
-            <ul className="glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-teams">
+            <ul className="surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-teams">
               {list.data.items.map((team) => (
                 <li key={team.id}>
                   <Link href={`/me/teams/${team.id}`} className="flex items-center gap-3 py-3 hover:bg-surface-2" data-testid="my-team">
                     {team.logoUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={team.logoUrl} alt="" className="size-12 border-2 border-line object-cover" />
+                      <img src={team.logoUrl} alt="" className="rounded-card size-12 border border-line object-cover" />
                     ) : (
-                      <span className="grid size-12 place-items-center border-2 border-line font-extrabold" aria-hidden>
+                      <span className="rounded-card grid size-12 place-items-center border border-line font-extrabold" aria-hidden>
                         {team.shortCode ?? team.name.slice(0, 2).toUpperCase()}
                       </span>
                     )}
@@ -106,8 +106,8 @@ export function MyTeams() {
                         {name(team.sport)} · {t("membersCount", { n: team.members ?? 0 })}
                       </span>
                     </span>
-                    {team.myRole ? <span className="border-2 border-line px-2 py-0.5 text-sm font-bold">{t(`role.${team.myRole}`)}</span> : null}
-                    {team.status === "archived" ? <span className="border-2 border-line px-2 py-0.5 text-sm font-bold text-muted">{t("archived")}</span> : null}
+                    {team.myRole ? <span className="rounded-pill border border-line px-2 py-0.5 text-sm font-bold">{t(`role.${team.myRole}`)}</span> : null}
+                    {team.status === "archived" ? <span className="rounded-pill border border-line px-2 py-0.5 text-sm font-bold text-muted">{t("archived")}</span> : null}
                   </Link>
                 </li>
               ))}
@@ -120,7 +120,7 @@ export function MyTeams() {
             <AddPhone />
           ) : (
             <form
-              className="flex flex-col gap-3 glass-card p-4"
+              className="flex flex-col gap-3 surface-card p-4"
               data-testid="create-team"
               onSubmit={(e) => {
                 e.preventDefault();

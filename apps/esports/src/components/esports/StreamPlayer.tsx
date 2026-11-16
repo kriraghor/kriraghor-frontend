@@ -59,7 +59,7 @@ export function StreamPlayer({ streams, testId = "stream-player" }: { streams: S
                 type="button"
                 onClick={() => setChosenId(s.id)}
                 aria-pressed={current?.id === s.id}
-                className={`inline-flex min-h-11 items-center gap-2 border-2 px-4 text-sm font-semibold ${current?.id === s.id ? "border-brand" : "border-line hover:border-line-strong"}`}
+                className={`rounded-control inline-flex min-h-11 items-center gap-2 border px-4 text-sm font-semibold ${current?.id === s.id ? "border-brand" : "border-line hover:border-line-strong"}`}
               >
                 {s.isLive ? <Chip tone="live">{t("live")}</Chip> : null}
                 {s.title}
@@ -68,7 +68,7 @@ export function StreamPlayer({ streams, testId = "stream-player" }: { streams: S
           ))}
           {links.map((s) => (
             <li key={s.id}>
-              <a href={s.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 border-2 border-line px-4 text-sm font-semibold hover:border-line-strong">
+              <a href={s.url} target="_blank" rel="noopener noreferrer" className="rounded-control inline-flex min-h-11 items-center gap-2 border border-line-strong/60 px-4 text-sm font-semibold hover:border-line-strong">
                 {s.isLive ? <Chip tone="live">{t("live")}</Chip> : null}
                 {s.title} <span aria-hidden>↗</span>
                 <span className="sr-only">{t("player.opensElsewhere", { platform: s.platform })}</span>

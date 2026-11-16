@@ -63,7 +63,7 @@ export function Finder() {
   const named = (items: (Named | Area)[] | undefined, value: "key" | "id") => (items ?? []).map((x) => ({ value: (x as Record<string, string>)[value], label: nameOf(x, locale) }));
 
   return (
-    <section className="glass-strong relative z-10 -mt-16 overflow-hidden rounded-[28px]" aria-label={t("label")} data-testid="finder">
+    <section className="glass-strong relative z-10 -mt-16 overflow-hidden rounded-card" aria-label={t("label")} data-testid="finder">
       {/* The four tabs, centred; the chosen one is a filled green pill. */}
       <div className="flex justify-center border-b border-[var(--glass-edge)] px-2 py-3">
       <div role="tablist" aria-label={t("tabsLabel")} className="grid w-full max-w-xl grid-cols-4 gap-1 rounded-pill bg-surface-2 p-1">

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf, type Problem } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
@@ -11,6 +10,7 @@ import { dhakaIso, halfHours, nextDays, vendor } from "@/lib/vendor/grounds";
 import { desk, hhmm, type ClosureReason, type SeriesInput } from "@/lib/vendor/bookings";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
+import { BackLink } from "@kriraghor/ui/kit";
 
 const REASONS: ClosureReason[] = ["maintenance", "re_turfing", "floodlight_repair", "private_event", "waterlogged"];
 type Clash = { kind: string; code?: string; label: string; start: string; end: string };
@@ -34,9 +34,7 @@ export function GroundSchedule({ groundId }: { groundId: string }) {
   const courts = g.data.courts.filter((k) => k.status === "active");
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-8">
-      <Link href="/vendor/bookings" className="text-sm font-semibold text-brand underline">
-        ← {t("back")}
-      </Link>
+      <BackLink href="/vendor/bookings">{t("back")}</BackLink>
       <h1 className="mt-3 text-3xl font-extrabold">{t("title", { name: g.data.name })}</h1>
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <Closures groundId={groundId} courts={courts} />
@@ -134,7 +132,7 @@ function Closures({ groundId, courts }: { groundId: string; courts: { id: string
           </div>
           <p className="mt-1 text-xs text-muted">{t("allCourts")}</p>
         </fieldset>
-        <button type="submit" disabled={create.isPending} className="col-span-2 min-h-12 bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="create-closure">
+        <button type="submit" disabled={create.isPending} className="col-span-2 min-h-12 bg-brand px-5 font-bold text-on-brand disabled:opacity-50" data-testid="create-closure">
           {t("close")}
         </button>
       </form>
@@ -254,7 +252,7 @@ function SeriesPanel({ groundId, courts }: { groundId: string; courts: { id: str
               </li>
             ))}
           </ul>
-          <button type="button" onClick={() => create.mutate(clashes > 0)} disabled={create.isPending} className="mt-3 min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50" data-testid="series-create">
+          <button type="button" onClick={() => create.mutate(clashes > 0)} disabled={create.isPending} className="mt-3 min-h-11 bg-brand px-4 font-bold text-on-brand disabled:opacity-50" data-testid="series-create">
             {clashes ? t("bookSkipping", { n: clashes }) : t("book", { total: formatTaka(p.total, locale) })}
           </button>
         </div>

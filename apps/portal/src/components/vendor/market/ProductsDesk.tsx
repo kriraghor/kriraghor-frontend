@@ -43,7 +43,7 @@ export function ProductsDesk() {
           <h1 className="text-3xl font-extrabold">{t("products.title")}</h1>
           <p className="mt-1 max-w-2xl text-muted">{t("products.lead")}</p>
         </div>
-        <button type="button" className="min-h-12 bg-brand px-5 font-bold text-white hover:bg-brand-hover disabled:opacity-50" disabled={!shop.data} onClick={() => setAdding(true)} data-testid="add-product">
+        <button type="button" className="min-h-12 bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover disabled:opacity-50" disabled={!shop.data} onClick={() => setAdding(true)} data-testid="add-product">
           {t("products.add")}
         </button>
       </div>
@@ -167,7 +167,7 @@ function AddProduct({ shopType, onClose }: { shopType: ShopType; onClose: () => 
         </div>
       ) : null}
       <div className="flex gap-2 md:col-span-2">
-        <button type="submit" disabled={busy} className="min-h-12 bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="create-product">
+        <button type="submit" disabled={busy} className="min-h-12 bg-brand px-5 font-bold text-on-brand disabled:opacity-50" data-testid="create-product">
           {t("form.create")}
         </button>
         <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-5 font-bold" onClick={onClose}>

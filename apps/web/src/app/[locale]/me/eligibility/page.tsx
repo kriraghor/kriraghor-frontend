@@ -8,7 +8,7 @@ export default async function EligibilityPage({ params }: PageProps<"/[locale]/m
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-96 max-w-[760px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-control mx-auto mt-10 h-96 max-w-[760px] kg-shimmer bg-surface-2" />}>
       <MyEligibility />
     </Suspense>
   );

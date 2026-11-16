@@ -29,7 +29,7 @@ function HireColumn({ category, title, delay, interval }: { category: "officials
   const pros = useQuery({ queryKey: ["home-hire", category], queryFn: () => hire.list({ category }) });
   const people = ((pros.data?.items ?? []) as unknown as HireCard[]).slice(0, RAIL_MAX);
   return (
-    <div className="glass-card min-w-0 p-5">
+    <div className="surface-card min-w-0 p-5">
       {pros.isPending ? (
         <SkeletonList rows={PER_PAGE} />
       ) : !people.length ? (
@@ -108,7 +108,7 @@ export function GymSection() {
           <div className="relative min-h-52 overflow-hidden rounded-card bg-surface-2">
             <Image src={PHOTOS.gym} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" />
           </div>
-          <div className="glass-card min-w-0 p-5">
+          <div className="surface-card min-w-0 p-5">
             {gyms.isPending ? (
               <SkeletonList rows={PER_PAGE} />
             ) : !list.length ? (

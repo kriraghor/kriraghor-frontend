@@ -8,7 +8,7 @@ export default async function Page({ params }: PageProps<"/[locale]/me/events">)
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-control mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />}>
       <MyTournaments />
     </Suspense>
   );

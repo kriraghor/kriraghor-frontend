@@ -209,7 +209,7 @@ export function profileTone(status: string): Tone {
 
 export const TONE: Record<Tone, string> = {
   ok: "border-brand text-brand",
-  warn: "border-amber-500 text-ink",
+  warn: "border-warning text-ink",
   muted: "border-line text-muted",
   error: "border-danger text-danger",
 };

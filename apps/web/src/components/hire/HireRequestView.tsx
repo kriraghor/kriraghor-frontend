@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { hire, minutesLeft, requestTone, TONE, type RequestResult } from "@/lib/hire";
@@ -12,6 +11,7 @@ import { RateSourceButtons } from "@kriraghor/ui/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { JobCard } from "./JobCard";
 import { Thread } from "./Thread";
+import { BackLink } from "@kriraghor/ui/kit";
 
 type QuotedLine = { start: string; format: string | null; venueText: string; total: number };
 
@@ -42,7 +42,7 @@ export function HireRequestView({ code }: { code: string }) {
   const err = [pay, withdraw].map((m) => (m.error ? problemOf(m.error) : null)).find(Boolean);
 
   if (status === "signed_out") return <MePanel />;
-  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data)
     return (
       <section className="mx-auto max-w-[1100px] px-5 py-10">
@@ -55,9 +55,7 @@ export function HireRequestView({ code }: { code: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-10" data-testid="hire-request">
-      <Link href={hirer ? "/me/hire" : "/pro/requests"} className="text-sm font-semibold text-brand underline">
-        ← {hirer ? t("myHires") : t("desk.requests")}
-      </Link>
+      <BackLink href={hirer ? "/me/hire" : "/pro/requests"}>{hirer ? t("myHires") : t("desk.requests")}</BackLink>
       <div className="mt-3 flex flex-wrap items-baseline justify-between gap-3">
         <div>
           <h1 className="text-3xl font-extrabold">{t("requestTitle", { code: r.code })}</h1>
@@ -65,7 +63,7 @@ export function HireRequestView({ code }: { code: string }) {
             {name(r.profile.role)} · {r.profile.headline}
           </p>
         </div>
-        <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[requestTone(r.status)]}`} data-testid="hire-request-status">
+        <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[requestTone(r.status)]}`} data-testid="hire-request-status">
           {t(`requestStatus.${r.status}`)}
         </span>
       </div>
@@ -102,7 +100,7 @@ export function HireRequestView({ code }: { code: string }) {
         ) : null}
       </dl>
       {payment ? (
-        <div className="mt-4 flex flex-wrap items-center gap-3 border-2 border-amber-400 p-4" data-testid="hire-pay-box">
+        <div className="rounded-card mt-4 flex flex-wrap items-center gap-3 border border-warning p-4" data-testid="hire-pay-box">
           <p className="font-semibold">{t("accepted", { time: when(r.payBy), min: minutesLeft(r.payBy) })}</p>
           <Button busy={pay.isPending} onClick={() => pay.mutate()} data-testid="hire-pay">
             {t("payTotal", { total: money(r.money.total) })}
@@ -110,7 +108,7 @@ export function HireRequestView({ code }: { code: string }) {
         </div>
       ) : null}
       {hirer && ["pending", "accepted_unpaid"].includes(r.status) ? (
-        <button type="button" disabled={withdraw.isPending} onClick={() => withdraw.mutate()} className="mt-4 min-h-12 border-2 border-danger px-4 font-bold text-danger disabled:opacity-50" data-testid="hire-withdraw-request">
+        <button type="button" disabled={withdraw.isPending} onClick={() => withdraw.mutate()} className="rounded-control mt-4 min-h-12 border border-danger px-4 font-bold text-danger disabled:opacity-50" data-testid="hire-withdraw-request">
           {t("withdrawRequest")}
         </button>
       ) : null}
@@ -131,7 +129,7 @@ export function HireRequestView({ code }: { code: string }) {
           {r.jobs.length ? (
             r.jobs.map((j) => <JobCard key={j.id} job={j} side={hirer ? "hirer" : "pro"} onChange={refresh} />)
           ) : (
-            <ul className="divide-y-2 divide-line border-2 border-line" data-testid="hire-quote-lines">
+            <ul className="rounded-card divide-y-2 divide-line border border-line" data-testid="hire-quote-lines">
               {((r.quote as { lines?: QuotedLine[] }).lines ?? []).map((l) => (
                 <li key={l.start} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
                   <span>

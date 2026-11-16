@@ -12,6 +12,7 @@ import { formatTaka } from "@/lib/payments";
 import { ReportButton } from "@kriraghor/ui/trust";
 import { SaveButton } from "./SaveButton";
 import { AddToCart } from "../orders/AddToCart";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /**
  * /shop/p/[slug] (M12 §4): gallery, variant-aware price, stock note ("Low stock", "Ships in N days",
@@ -26,7 +27,7 @@ export function ProductView({ slug }: { slug: string }) {
   const [photo, setPhoto] = useState(0);
   const [picked, setPicked] = useState<Record<string, string>>({});
   const [qty, setQty] = useState(1);
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[1320px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) {
     const gone = problemOf(q.error)?.code === "PRODUCT_GONE";
     return (
@@ -50,9 +51,7 @@ export function ProductView({ slug }: { slug: string }) {
 
   return (
     <section className="mx-auto max-w-[1320px] px-5 py-8">
-      <Link href="/shop" className="text-sm font-semibold text-brand underline">
-        ← {t("title")}
-      </Link>
+      <BackLink href="/shop">{t("title")}</BackLink>
       <div className="mt-4 grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px]">
         <div>
           {p.photos.length ? (
@@ -61,7 +60,7 @@ export function ProductView({ slug }: { slug: string }) {
               <img src={p.photos[photo]?.url} alt={t("photoOf", { name: p.title, n: photo + 1 })} className="aspect-square w-full object-cover sm:aspect-[4/3]" data-testid="product-photo" />
               <div className="mt-2 flex gap-2 overflow-x-auto">
                 {p.photos.map((ph, i) => (
-                  <button key={ph.id} type="button" onClick={() => setPhoto(i)} aria-label={t("photoOf", { name: p.title, n: i + 1 })} aria-pressed={i === photo} className={`shrink-0 border-2 ${i === photo ? "border-brand" : "border-transparent"}`}>
+                  <button key={ph.id} type="button" onClick={() => setPhoto(i)} aria-label={t("photoOf", { name: p.title, n: i + 1 })} aria-pressed={i === photo} className={`rounded-card shrink-0 border ${i === photo ? "border-brand" : "border-transparent"}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={ph.url} alt="" className="h-16 w-16 object-cover" />
                   </button>
@@ -86,7 +85,7 @@ export function ProductView({ slug }: { slug: string }) {
             </>
           ) : null}
           {p.supplement ? (
-            <div className="mt-8 max-w-2xl border-2 border-line p-4" data-testid="supplement-info">
+            <div className="rounded-card mt-8 max-w-2xl border border-line p-4" data-testid="supplement-info">
               <h2 className="font-extrabold">{t("supplementTitle")}</h2>
               <p className="mt-1 text-sm">{p.supplement.importer ? t("importer", { name: p.supplement.importer }) : null}</p>
               <p className="text-sm">{p.supplement.bstiRegNo ? t("bsti", { no: p.supplement.bstiRegNo }) : null}</p>
@@ -126,7 +125,7 @@ export function ProductView({ slug }: { slug: string }) {
                       aria-pressed={on}
                       disabled={!available}
                       onClick={() => setPicked({ ...picked, [axis.key]: option.value })}
-                      className={`min-h-11 min-w-12 border-2 px-3 font-semibold disabled:cursor-not-allowed disabled:text-muted disabled:line-through ${on ? "border-brand bg-brand/10" : "border-line"}`}
+                      className={`rounded-control min-h-11 min-w-12 border px-3 font-semibold disabled:cursor-not-allowed disabled:text-muted disabled:line-through ${on ? "border-brand bg-brand/10" : "border-line"}`}
                       data-testid={`option-${axis.key}-${option.value}`}
                     >
                       {label(option)}
@@ -156,7 +155,7 @@ export function ProductView({ slug }: { slug: string }) {
             <ShareButton url={`${publicEnv().WEB_URL}/shop/p/${encodeURIComponent(slug)}`} title={p.brand ? `${p.title} (${p.brand})` : p.title} text={price} testId="product-share" />
           </div>
 
-          <div className="border-2 border-line p-4" data-testid="seller">
+          <div className="rounded-card border border-line p-4" data-testid="seller">
             <p className="text-sm text-muted">{t("soldBy")}</p>
             <Link href={`/shop/s/${p.shop.slug}`} className="text-lg font-extrabold hover:underline">
               {p.shop.name}

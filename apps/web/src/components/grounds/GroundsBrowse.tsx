@@ -118,7 +118,7 @@ export function GroundsBrowse() {
                   className={cn("flex min-h-12 min-w-14 shrink-0 flex-col items-start justify-center rounded-control border px-2.5 text-left leading-tight transition-colors", on ? "border-band-text bg-band-text text-band" : "border-band-line hover:border-band-text/60")}
                   data-testid={`day-${d}`}
                 >
-                  <span className="text-[11px] font-semibold opacity-80">{p.week}</span>
+                  <span className="text-xs font-semibold opacity-80">{p.week}</span>
                   <span className="font-display text-lg font-bold tabular">{p.num}</span>
                 </button>
               );
@@ -409,7 +409,7 @@ function VenueCard({ g, name, money }: { g: GroundCard; name: (x: { nameEn: stri
   const t = useTranslations("grounds");
   return (
     <li>
-      <Link href={`/venues/${g.slug}`} className="group flex h-full flex-col overflow-hidden glass-card no-underline" data-testid="ground-card">
+      <Link href={`/venues/${g.slug}`} className="group flex h-full flex-col overflow-hidden surface-card no-underline" data-testid="ground-card">
         <span className="relative block aspect-[16/10] w-full overflow-hidden bg-surface-2">
           {g.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element

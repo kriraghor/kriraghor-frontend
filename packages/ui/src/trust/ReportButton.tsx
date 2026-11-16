@@ -72,11 +72,11 @@ export function ReportButton({ subjectType, subjectId, label }: { subjectType: S
         <label htmlFor={`${id}-note`} className="text-sm font-semibold text-muted">
           {t("note")}
         </label>
-        <textarea id={`${id}-note`} value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} className="glass-card px-3 py-2" />
+        <textarea id={`${id}-note`} value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={3} className="surface-card px-3 py-2" />
       </div>
       {problem ? <Notice tone="error">{problem.code === "REPORT_SELF" ? t("self") : problem.code === "REPORT_RATE_LIMITED" ? t("limit") : t("failed")}</Notice> : null}
       <div className="flex flex-wrap gap-3">
-        <button type="submit" disabled={send.isPending} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white disabled:opacity-50" data-testid="send-report">
+        <button type="submit" disabled={send.isPending} className="inline-flex min-h-11 items-center bg-brand px-4 font-bold text-on-brand disabled:opacity-50" data-testid="send-report">
           {t("send")}
         </button>
         <button type="button" onClick={() => setOpen(false)} className="rounded-control inline-flex min-h-11 items-center border border-line-strong/60 px-4 font-semibold">
