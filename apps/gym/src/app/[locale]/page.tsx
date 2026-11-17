@@ -40,7 +40,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
             </Link>
           </div>
         </div>
-        <div className="relative order-first h-56 overflow-hidden rounded-[24px] bg-surface-2 shadow-lg md:order-last md:h-auto md:aspect-[4/3]">
+        <div className="relative order-first h-56 overflow-hidden rounded-card bg-surface-2 shadow-lg md:order-last md:h-auto md:aspect-[4/3]">
           <Image src="/images/gym-training.jpg" alt="" fill sizes="(min-width: 900px) 45vw, 100vw" className="object-cover" priority />
         </div>
       </section>
@@ -52,7 +52,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <p className="mt-2 max-w-2xl text-muted">{t("featuresLead")}</p>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="features">
           {features.map(({ key, icon: Icon }) => (
-            <li key={key} className="glass-card flex flex-col gap-3 p-5">
+            <li key={key} className="surface-card flex flex-col gap-3 p-5">
               <span className="flex size-11 items-center justify-center rounded-pill bg-brand-soft text-brand-text">
                 <Icon size={24} aria-hidden />
               </span>
@@ -66,7 +66,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       <Pricing />
 
       <section className="mx-auto max-w-[1320px] px-5 py-10" aria-labelledby="members-title">
-        <div className="glass-card flex flex-col items-start gap-4 p-6 md:flex-row md:items-center md:justify-between">
+        <div className="surface-card flex flex-col items-start gap-4 p-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 id="members-title" className="text-2xl font-extrabold">
               {t("membersTitle")}

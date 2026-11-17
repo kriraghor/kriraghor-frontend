@@ -86,7 +86,7 @@ export function statusTone(status: string): Tone {
   if (["rejected", "removed", "cancelled"].includes(status)) return "error";
   return "muted";
 }
-export const TONE: Record<Tone, string> = { ok: "border-brand text-brand", warn: "border-amber-500 text-ink", muted: "border-line text-muted", error: "border-danger text-danger" };
+export const TONE: Record<Tone, string> = { ok: "border-brand text-brand", warn: "border-warning text-ink", muted: "border-line text-muted", error: "border-danger text-danger" };
 
 /** Squad choice is valid within the tournament's limits. */
 export const squadOk = (count: number, min: number, max: number) => count >= min && count <= max;

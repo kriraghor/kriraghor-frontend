@@ -10,6 +10,7 @@ import { whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { disputes, evidenceTypeOk, type PartyCase } from "@/lib/trust";
 import { Notice } from "@kriraghor/ui/primitives";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /**
  * /me/disputes/[code] (M17 FR-05 to FR-08): what the case is about and what is held, both sides'
@@ -47,7 +48,7 @@ export function DisputeDetail({ code }: { code: string }) {
         </Notice>
       </Shell>
     );
-  if (q.isPending) return <Shell>{<div className="h-64 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />}</Shell>;
+  if (q.isPending) return <Shell>{<div className="rounded-control h-64 kg-shimmer bg-surface-2" role="status" aria-label={t("loading")} />}</Shell>;
   if (q.isError || !q.data)
     return (
       <Shell>
@@ -59,9 +60,7 @@ export function DisputeDetail({ code }: { code: string }) {
 
   return (
     <Shell>
-      <Link href="/me/disputes" className="text-sm font-semibold text-brand underline">
-        ← {t("myDisputes")}
-      </Link>
+      <BackLink href="/me/disputes">{t("myDisputes")}</BackLink>
       <p className="mt-4 font-mono text-sm text-muted">{d.code}</p>
       <h1 className="text-3xl font-extrabold">{t(`category.${d.category}`)}</h1>
       {src?.groundName ? (
@@ -78,7 +77,7 @@ export function DisputeDetail({ code }: { code: string }) {
           ) : null}
         </p>
       ) : null}
-      <p className="mt-3 inline-block border-2 border-line px-3 py-1 text-sm font-bold" data-testid="dispute-status">
+      <p className="rounded-card mt-3 inline-block border border-line px-3 py-1 text-sm font-bold" data-testid="dispute-status">
         {t(`status.${d.status}`)}
       </p>
 
@@ -136,7 +135,7 @@ export function DisputeDetail({ code }: { code: string }) {
       </ol>
 
       {can.addEvidence ? (
-        <div className="mt-8 space-y-4 border-2 border-line p-4">
+        <div className="rounded-card mt-8 space-y-4 border border-line p-4">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -147,9 +146,9 @@ export function DisputeDetail({ code }: { code: string }) {
             <label htmlFor="add-statement" className="font-bold">
               {can.respond ? t("yourSide") : t("addStatement")}
             </label>
-            <textarea id="add-statement" required minLength={2} maxLength={2000} rows={4} value={text} onChange={(e) => setText(e.target.value)} className="w-full glass-card px-3 py-2" />
+            <textarea id="add-statement" required minLength={2} maxLength={2000} rows={4} value={text} onChange={(e) => setText(e.target.value)} className="w-full surface-card px-3 py-2" />
             {say.error ? <Notice tone="error">{err(say.error)}</Notice> : null}
-            <button type="submit" disabled={say.isPending || text.trim().length < 2} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="send-statement">
+            <button type="submit" disabled={say.isPending || text.trim().length < 2} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand disabled:opacity-50" data-testid="send-statement">
               {can.respond ? t("sendAnswer") : t("send")}
             </button>
           </form>
@@ -171,7 +170,7 @@ export function DisputeDetail({ code }: { code: string }) {
                 upload.mutate(f);
               }}
             />
-            <label htmlFor="evidence-file" className={`mt-2 inline-flex min-h-12 cursor-pointer items-center border-2 border-line-strong px-5 font-semibold ${can.filesLeft ? "" : "pointer-events-none opacity-50"}`} data-testid="add-file">
+            <label htmlFor="evidence-file" className={`rounded-control mt-2 inline-flex min-h-12 cursor-pointer items-center border border-line-strong px-5 font-semibold ${can.filesLeft ? "" : "pointer-events-none opacity-50"}`} data-testid="add-file">
               {upload.isPending ? t("uploading") : t("chooseFile")}
             </label>
             {fileProblem ? <Notice tone="error">{fileProblem}</Notice> : null}
@@ -183,11 +182,11 @@ export function DisputeDetail({ code }: { code: string }) {
       {can.withdraw ? (
         <div className="mt-6">
           {!withdrawing ? (
-            <button type="button" onClick={() => setWithdrawing(true)} className="inline-flex min-h-12 items-center border-2 border-danger px-5 font-bold text-danger" data-testid="withdraw">
+            <button type="button" onClick={() => setWithdrawing(true)} className="rounded-control inline-flex min-h-12 items-center border border-danger px-5 font-bold text-danger" data-testid="withdraw">
               {t("withdraw")}
             </button>
           ) : (
-            <div className="border-2 border-danger p-4" role="alertdialog" aria-labelledby="withdraw-title">
+            <div className="rounded-card border border-danger p-4" role="alertdialog" aria-labelledby="withdraw-title">
               <p id="withdraw-title" className="font-bold">
                 {t("withdrawTitle")}
               </p>
@@ -196,7 +195,7 @@ export function DisputeDetail({ code }: { code: string }) {
                 <button type="button" onClick={() => withdraw.mutate()} disabled={withdraw.isPending} className="inline-flex min-h-12 items-center bg-danger px-5 font-bold text-white disabled:opacity-50" data-testid="confirm-withdraw">
                   {t("confirmWithdraw")}
                 </button>
-                <button type="button" onClick={() => setWithdrawing(false)} className="inline-flex min-h-12 items-center border-2 border-line px-5 font-semibold">
+                <button type="button" onClick={() => setWithdrawing(false)} className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-semibold">
                   {t("keepOpen")}
                 </button>
               </div>

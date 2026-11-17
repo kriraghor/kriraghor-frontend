@@ -29,7 +29,7 @@ export function MyBookings() {
       <h1 className="text-3xl font-extrabold">{t("myBookings")}</h1>
       <div className="mt-4 flex gap-2" role="tablist">
         {(["upcoming", "past"] as const).map((s) => (
-          <button key={s} type="button" role="tab" aria-selected={scope === s} onClick={() => setScope(s)} className={`min-h-11 border-2 px-4 font-semibold ${scope === s ? "border-brand bg-brand text-white" : "border-line"}`}>
+          <button key={s} type="button" role="tab" aria-selected={scope === s} onClick={() => setScope(s)} className={`rounded-control min-h-11 border px-4 font-semibold ${scope === s ? "border-brand bg-brand text-on-brand" : "border-line"}`}>
             {t(`scope.${s}`)}
           </button>
         ))}
@@ -46,7 +46,7 @@ export function MyBookings() {
       ) : q.isPending ? (
         <div className="mt-6 space-y-2" role="status" aria-label={t("loading")}>
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-20 animate-pulse bg-surface-2" />
+            <div key={i} className="rounded-control h-20 kg-shimmer bg-surface-2" />
           ))}
         </div>
       ) : q.isError ? (
@@ -56,12 +56,12 @@ export function MyBookings() {
       ) : !items.length ? (
         <div className="mt-6">
           <p className="text-muted">{t(`empty.${scope}`)}</p>
-          <Link href="/venues" className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
+          <Link href="/venues" className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand">
             {t("findGround")}
           </Link>
         </div>
       ) : (
-        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-bookings">
+        <ul className="mt-6 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-bookings">
           {items.map((b) => (
             <li key={b.id}>
               <Link href={`/me/bookings/${b.id}`} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 hover:bg-surface-2">
@@ -78,7 +78,7 @@ export function MyBookings() {
         </ul>
       )}
       {q.hasNextPage ? (
-        <button type="button" onClick={() => q.fetchNextPage()} className="mt-4 min-h-12 border-2 border-line px-5 font-semibold">
+        <button type="button" onClick={() => q.fetchNextPage()} className="rounded-control mt-4 min-h-12 border border-line-strong/60 px-5 font-semibold">
           {t("more")}
         </button>
       ) : null}

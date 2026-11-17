@@ -7,7 +7,7 @@
 
 /* Surface styles the shared components (packages/ui) ask for. */
 @utility btn-primary-finish {
-  @apply shadow-[0_6px_18px_-10px_rgb(11_122_75/0.7)];
+  @apply shadow-[0_6px_18px_-10px_var(--kg-brand)];
 }
 @utility notice-surface {
   @apply rounded-control bg-surface;
@@ -25,18 +25,6 @@ body {
   background-attachment: fixed;
 }
 
-/* home-v3 scroll reveal: only when JS has run and motion is welcome (Reveal.tsx adds .is-in). */
-@media (prefers-reduced-motion: no-preference) {
-  .js-reveal .rv {
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.5s var(--ease-kg), transform 0.5s var(--ease-kg);
-  }
-  .js-reveal .rv.is-in {
-    opacity: 1;
-    transform: none;
-  }
-}
 @media print {
   header,
   footer,

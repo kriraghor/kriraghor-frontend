@@ -72,7 +72,7 @@ export function HomeSection({ section, icon, allHref, extra, state = "ready", bo
     <section id={section} className="mx-auto max-w-wide scroll-mt-24 px-5 pt-24" aria-labelledby={`${section}-title`} data-testid={`home-section-${section}`}>
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div className="flex items-center gap-3">
-          <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-text">{icon}</span>
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-control bg-brand-soft text-brand-text">{icon}</span>
           <div>
             <h2 id={`${section}-title`} className="text-[clamp(26px,3vw,36px)] font-extrabold uppercase leading-tight">
               {t("title")}

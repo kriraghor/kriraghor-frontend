@@ -74,7 +74,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
     holdIt.reset();
   };
 
-  if (grid.isPending) return <div className="h-72 animate-pulse rounded-card bg-surface-2" role="status" aria-label={t("loading")} />;
+  if (grid.isPending) return <div className="h-72 kg-shimmer rounded-card bg-surface-2" role="status" aria-label={t("loading")} />;
   if (grid.isError || !a) return <Notice tone="error">{t("gridFailed")}</Notice>;
   if (!a.bookable) return <p className="font-bold">{t("notTaking")}</p>;
 
@@ -135,7 +135,7 @@ export function BookingWidget({ groundId, slug, initial }: { groundId: string; s
             {timeLabel(selected.start, locale)} · {t("minutes", { n: length })} · {court?.name}
           </p>
           {quote.isPending ? (
-            <div className="mt-2 h-24 animate-pulse rounded-control bg-surface-2" />
+            <div className="mt-2 h-24 kg-shimmer rounded-control bg-surface-2" />
           ) : quote.isError ? (
             <Notice tone="error">{problemOf(quote.error)?.title ?? t("quoteFailed")}</Notice>
           ) : (

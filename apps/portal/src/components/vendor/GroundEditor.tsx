@@ -1,5 +1,6 @@
 "use client";
 
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -10,6 +11,7 @@ import { halfHours, nextActions, vendor, type Court, type HoursRow, type OwnerGr
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 import { STATUS_TONE } from "./GroundsDesk";
+import { BackLink } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 type Msg = { text: string; tone: "info" | "error" } | null;
@@ -54,9 +56,7 @@ export function GroundEditor({ id }: { id: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-8">
-      <Link href="/vendor/venues" className="text-sm font-semibold text-brand underline">
-        ← {t("title")}
-      </Link>
+      <BackLink href="/vendor/venues">{t("title")}</BackLink>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-extrabold">{g.name}</h1>
         <Chip tone={STATUS_TONE[g.status] ?? "muted"}>{t(`status.${g.status}`)}</Chip>
@@ -74,12 +74,12 @@ export function GroundEditor({ id }: { id: string }) {
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2" data-testid="ground-actions">
         {actions.includes("submit") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-white`} onClick={() => void run(() => vendor.submit(id), t("sent"))} data-testid="submit-ground">
+          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => vendor.submit(id), t("sent"))} data-testid="submit-ground">
             {t("submit")}
           </button>
         ) : null}
         {actions.includes("submit_edit") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-white`} onClick={() => void run(() => vendor.submit(id), t("sent"))} data-testid="submit-edit">
+          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => vendor.submit(id), t("sent"))} data-testid="submit-edit">
             {t("submitEdit")}
           </button>
         ) : null}
@@ -260,11 +260,11 @@ function Photos({ g, locked }: { g: OwnerGround; locked: boolean }) {
             <div className="flex items-center gap-1 p-1">
               {i === 0 ? <span className="px-1 text-xs font-bold text-brand">{t("cover")}</span> : null}
               <span className="ml-auto flex gap-1">
-                <button type="button" disabled={locked || busy || i === 0} onClick={() => void move(i, -1)} className="rounded-control min-h-9 min-w-9 border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveLeft")}>
-                  ←
+                <button type="button" disabled={locked || busy || i === 0} onClick={() => void move(i, -1)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveLeft")}>
+                  <CaretLeft size={16} weight="bold" aria-hidden />
                 </button>
-                <button type="button" disabled={locked || busy || i === g.photos.length - 1} onClick={() => void move(i, 1)} className="rounded-control min-h-9 min-w-9 border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveRight")}>
-                  →
+                <button type="button" disabled={locked || busy || i === g.photos.length - 1} onClick={() => void move(i, 1)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveRight")}>
+                  <CaretRight size={16} weight="bold" aria-hidden />
                 </button>
                 <button type="button" disabled={locked || busy} onClick={() => void run(() => vendor.removePhoto(g.id, p.id))} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40">
                   {t("remove")}

@@ -12,12 +12,12 @@ export function TournamentCard({ t: x }: { t: Card }) {
   const locale = useLocale();
   const sport = locale === "bn" ? x.sport.nameBn : x.sport.nameEn;
   return (
-    <Link href={`/events/${x.slug}`} className="flex h-full flex-col glass-card p-4 hover:border-brand" data-testid="tournament-card">
+    <Link href={`/events/${x.slug}`} className="flex h-full flex-col surface-card p-4 hover:border-brand" data-testid="tournament-card">
       <span className="flex items-start justify-between gap-3">
         <span className="text-xs font-bold uppercase tracking-wide text-muted">
           {sport} · {t(`format.${x.format}`)}
         </span>
-        <span className={`shrink-0 border-2 px-2 py-0.5 text-xs font-bold ${TONE[statusTone(x.status)]}`}>{t(`status.${x.status}`)}</span>
+        <span className={`rounded-pill shrink-0 border px-2 py-0.5 text-xs font-bold ${TONE[statusTone(x.status)]}`}>{t(`status.${x.status}`)}</span>
       </span>
       <span className="mt-2 text-lg font-extrabold leading-snug">{x.name}</span>
       {x.organisation ? <span className="text-sm text-muted">{t("by", { org: x.organisation.name })}</span> : null}

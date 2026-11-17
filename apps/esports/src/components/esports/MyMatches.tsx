@@ -45,14 +45,14 @@ export function MyMatches() {
   return (
     <section className="mx-auto max-w-[1000px] px-5 py-10">
       <h1 className="text-3xl font-extrabold">{t("myMatches")}</h1>
-      {q.isPending ? <div className="mt-6 h-48 animate-pulse bg-surface-2" /> : null}
+      {q.isPending ? <div className="rounded-control mt-6 h-48 kg-shimmer bg-surface-2" /> : null}
       {q.data && !items.length ? <Empty title={t("mine.empty")} action={<LinkButton href="/events">{t("home.browse")}</LinkButton>} /> : null}
       <ul className="mt-6 space-y-4" data-testid="my-entries">
         {items.map((r) => {
           const tt = r.tournament;
           const open = ["confirmed", "checked_in"].includes(r.status);
           return (
-            <li key={r.id} className="glass-card p-5">
+            <li key={r.id} className="surface-card p-5">
               <div className="flex flex-wrap items-center gap-2">
                 <Link href={`/events/${tt.slug}`} className="text-lg font-extrabold underline-offset-2 hover:underline">
                   {locale === "bn" ? tt.titleBn : tt.titleEn}
@@ -63,7 +63,7 @@ export function MyMatches() {
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {r.status === "pending_payment" && r.payment ? (
-                  <a href={r.payment.payUrl} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+                  <a href={r.payment.payUrl} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover">
                     {t("payNow", { amount: takaOf(r.amount, locale) })}
                   </a>
                 ) : null}

@@ -1,5 +1,6 @@
 "use client";
 
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -14,6 +15,7 @@ import { DatePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
 import { SpecFields } from "./SpecFields";
+import { BackLink } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 type Msg = { text: string; tone: "info" | "error" } | null;
@@ -65,9 +67,7 @@ export function ProductEditor({ id }: { id: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-8">
-      <Link href="/vendor/products" className="text-sm font-semibold text-brand underline">
-        ← {t("products.title")}
-      </Link>
+      <BackLink href="/vendor/products">{t("products.title")}</BackLink>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-extrabold" data-testid="product-name">
           {p.title}
@@ -88,7 +88,7 @@ export function ProductEditor({ id }: { id: string }) {
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2" data-testid="product-actions">
         {actions.includes("submit") || actions.includes("submit_edit") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-white`} onClick={() => void run(() => shopDesk.submitProduct(id), t("sent"))} data-testid="submit-product">
+          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => shopDesk.submitProduct(id), t("sent"))} data-testid="submit-product">
             {actions.includes("submit") ? t("submit") : t("submitEdit")}
           </button>
         ) : null}
@@ -233,11 +233,11 @@ function Photos({ p, locked }: { p: Product; locked: boolean }) {
             <div className="flex items-center gap-1 p-1">
               {i === 0 ? <span className="px-1 text-xs font-bold text-brand">{t("cover")}</span> : null}
               <span className="ml-auto flex gap-1">
-                <button type="button" disabled={locked || busy || i === 0} onClick={() => void move(i, -1)} className="rounded-control min-h-9 min-w-9 border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveLeft")}>
-                  ←
+                <button type="button" disabled={locked || busy || i === 0} onClick={() => void move(i, -1)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveLeft")}>
+                  <CaretLeft size={16} weight="bold" aria-hidden />
                 </button>
-                <button type="button" disabled={locked || busy || i === p.photos.length - 1} onClick={() => void move(i, 1)} className="rounded-control min-h-9 min-w-9 border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveRight")}>
-                  →
+                <button type="button" disabled={locked || busy || i === p.photos.length - 1} onClick={() => void move(i, 1)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveRight")}>
+                  <CaretRight size={16} weight="bold" aria-hidden />
                 </button>
                 <button type="button" disabled={locked || busy} onClick={() => void run(() => shopDesk.removePhoto(p.id, ph.id))} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40">
                   {t("remove")}

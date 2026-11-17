@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@kriraghor/api-client";
 import { useLocale, useTranslations } from "next-intl";
-import { List, SignOut, Translate, UserCircle, X } from "@phosphor-icons/react";
+import { List, SignOut, Translate, UserCircle } from "@phosphor-icons/react";
 import { Link, usePathname, useRouter } from "./i18n/navigation";
 import { useSwitchLocale } from "./i18n/switch-locale";
 import { useAuth } from "./auth";
 import { isExternal } from "@kriraghor/session/links";
 import { NotificationBell } from "./notifications/NotificationBell";
 import { ButtonLink } from "./kit/Button";
-import { Menu } from "./kit/Overlay";
+import { Menu, Sheet } from "./kit/Overlay";
 import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "./kit/Display";
 import { cn } from "./cn";
@@ -36,16 +36,16 @@ export type HeaderConfig = {
 };
 
 /** A nav link: in-app routes through next-intl, the /go/ redirects and other sites as plain links. */
-function NavLink({ href, className, current, children, onClick }: { href: string; className: string; current?: boolean; children: ReactNode; onClick?: () => void }) {
+function NavLink({ href, className, current, children, onClick, style }: { href: string; className: string; current?: boolean; children: ReactNode; onClick?: () => void; style?: CSSProperties }) {
   if (isExternal(href)) {
     return (
-      <a href={href} className={className} onClick={onClick}>
+      <a href={href} className={className} onClick={onClick} style={style}>
         {children}
       </a>
     );
   }
   return (
-    <Link href={href} className={className} aria-current={current ? "page" : undefined} onClick={onClick}>
+    <Link href={href} className={className} aria-current={current ? "page" : undefined} onClick={onClick} style={style}>
       {children}
     </Link>
   );
@@ -82,39 +82,14 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const menuOpen = menuFor === pathname;
   const closeMenu = () => setMenuFor(null);
-  const header = useRef<HTMLElement>(null);
-  const menuButton = useRef<HTMLButtonElement>(null);
-  const panel = useRef<HTMLDivElement>(null);
-  // Where the top bar ends: the panel and its scrim start there, so the bar stays in reach.
-  const [menuTop, setMenuTop] = useState(0);
-  const toggleMenu = () => {
-    setMenuTop(header.current?.getBoundingClientRect().bottom ?? 0);
-    setMenuFor(menuOpen ? null : pathname);
-  };
+  // Wide enough for the desktop nav: the phone menu closes, so nothing stays locked behind it.
   useEffect(() => {
     if (!menuOpen) return;
-    const page = document.documentElement;
-    const overflow = page.style.overflow;
-    page.style.overflow = "hidden";
-    panel.current?.querySelector<HTMLElement>("a, button")?.focus({ preventScroll: true });
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      setMenuFor(null);
-      menuButton.current?.focus();
-    };
-    const onResize = () => {
-      // Wide enough for the desktop nav: the panel is hidden, so nothing should stay locked.
-      if (panel.current && getComputedStyle(panel.current).display === "none") setMenuFor(null);
-      else setMenuTop(header.current?.getBoundingClientRect().bottom ?? 0);
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("resize", onResize);
-    return () => {
-      page.style.overflow = overflow;
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [menuOpen]);
+    const wide = window.matchMedia(roomy ? "(min-width: 1180px)" : "(min-width: 900px)");
+    const onChange = () => wide.matches && setMenuFor(null);
+    wide.addEventListener("change", onChange);
+    return () => wide.removeEventListener("change", onChange);
+  }, [menuOpen, roomy]);
   const isCurrent = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
   const switchLanguage = () => switchLocale(locale === "en" ? "bn" : "en");
   // On the sign-in and sign-up pages the header doesn't offer what the page already is.
@@ -122,10 +97,10 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
 
   return (
     <>
-    <header ref={header} className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150">
+    <header className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150">
       <div className="flex h-1" aria-hidden>
         <span className="w-[72%] bg-brand" />
-        <span className="flex-1 bg-amber-500" />
+        <span className="flex-1 bg-accent" />
       </div>
       {/* Desktop: logo left, the links centred, actions right (three columns). */}
       <div className={cn("mx-auto grid h-16 grid-cols-[minmax(0,1fr)_auto]", full ? "max-w-none" : "max-w-wide", "items-center gap-2 px-3 sm:px-5", roomy ? "lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-4" : "md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6")}>
@@ -180,44 +155,50 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
               {t("nav.signIn")}
             </ButtonLink>
           ) : null}
-          <button ref={menuButton} type="button" className={cn(iconBtn, roomy ? "lg:hidden" : "md:hidden")} aria-expanded={menuOpen} aria-controls="site-menu" onClick={toggleMenu} data-testid="menu-button">
-            {menuOpen ? <X size={22} aria-hidden /> : <List size={22} aria-hidden />}
-            <span className="sr-only">{t(menuOpen ? "nav.closeMenu" : "nav.menu")}</span>
-          </button>
+          {/* The phone menu is the kit's Sheet (a Radix dialog): focus stays inside while it is open, Escape and the
+              scrim close it, and focus goes back to this button (its trigger). The panel is portalled to <body>, out
+              of the header (whose backdrop-filter would pin a fixed child to it). */}
+          <Sheet
+            open={menuOpen}
+            onOpenChange={(o) => setMenuFor(o ? pathname : null)}
+            side="right"
+            title={t("nav.menu")}
+            testId="site-menu"
+            className={cn("w-[min(340px,88vw)] pb-[env(safe-area-inset-bottom)]", roomy ? "lg:hidden" : "md:hidden")}
+            trigger={
+              <button type="button" className={cn(iconBtn, roomy ? "lg:hidden" : "md:hidden")} data-testid="menu-button">
+                <List size={22} aria-hidden />
+                <span className="sr-only">{t("nav.menu")}</span>
+              </button>
+            }
+          >
+            <nav id="site-menu" aria-label={t("nav.main")} className="flex flex-col gap-1 px-3 pb-4">
+              {nav.map((item, i) => (
+                <NavLink key={item.href} href={item.href} current={isCurrent(item.href)} onClick={closeMenu} className={cn("flex min-h-12 animate-[kg-slide-in-up_320ms_var(--ease-kg)_both] items-center rounded-control px-3 text-[17px] font-semibold no-underline transition-colors motion-reduce:animate-none", isCurrent(item.href) ? "bg-brand-soft text-brand-text" : "hover:bg-surface-2")} style={{ animationDelay: `${60 + i * 40}ms` }}>
+                  {t(`nav.${item.key}`)}
+                </NavLink>
+              ))}
+              {status === "signed_in" ? (
+                <>
+                  <hr className="my-2 border-line" />
+                  <Link href={meHref} onClick={closeMenu} className="flex min-h-12 items-center gap-3 rounded-control px-3 text-[17px] font-semibold no-underline hover:bg-surface-2">
+                    <AccountGlyph size={22} />
+                    {t("nav.me")}
+                  </Link>
+                  <button type="button" onClick={() => (closeMenu(), void signOut())} className="flex min-h-12 items-center gap-3 rounded-control px-3 text-left text-[17px] font-semibold hover:bg-surface-2">
+                    <SignOut size={22} aria-hidden />
+                    {t("nav.signOut")}
+                  </button>
+                </>
+              ) : null}
+              <div className="mt-2 border-t border-line px-1 pt-3">
+                <ThemeToggle withLabel />
+              </div>
+            </nav>
+          </Sheet>
         </div>
       </div>
     </header>
-      {/* Beside the header, not in it: its backdrop-filter would make a fixed child fixed to the header. */}
-      {menuOpen ? (
-        <>
-        <div aria-hidden className={cn("fixed inset-x-0 bottom-0 z-[45] animate-[kg-fade-in_200ms_var(--ease-kg)] bg-scrim motion-reduce:animate-none", roomy ? "lg:hidden" : "md:hidden")} style={{ top: menuTop }} onClick={closeMenu} data-testid="site-menu-scrim" />
-        <div ref={panel} id="site-menu" className={cn("fixed bottom-0 right-0 z-[45] w-[min(320px,86vw)] animate-[kg-slide-in-right_260ms_var(--ease-kg)] overflow-y-auto border-l border-line bg-surface pb-[env(safe-area-inset-bottom)] shadow-lg motion-reduce:animate-none", roomy ? "lg:hidden" : "md:hidden")} style={{ top: menuTop }} data-testid="site-menu">
-          <nav aria-label={t("nav.main")} className="flex flex-col gap-0.5 px-3 py-3">
-            {nav.map((item) => (
-              <NavLink key={item.href} href={item.href} current={isCurrent(item.href)} onClick={closeMenu} className={cn("flex min-h-12 items-center rounded-control px-3 text-[17px] font-semibold no-underline", isCurrent(item.href) ? "bg-brand-soft text-brand-text" : "hover:bg-surface-2")}>
-                {t(`nav.${item.key}`)}
-              </NavLink>
-            ))}
-            {status === "signed_in" ? (
-              <>
-                <hr className="my-2 border-line" />
-                <Link href={meHref} onClick={closeMenu} className="flex min-h-12 items-center gap-3 rounded-control px-3 text-[17px] font-semibold no-underline hover:bg-surface-2">
-                  <AccountGlyph size={22} />
-                  {t("nav.me")}
-                </Link>
-                <button type="button" onClick={() => (closeMenu(), void signOut())} className="flex min-h-12 items-center gap-3 rounded-control px-3 text-left text-[17px] font-semibold hover:bg-surface-2">
-                  <SignOut size={22} aria-hidden />
-                  {t("nav.signOut")}
-                </button>
-              </>
-            ) : null}
-            <div className="mt-2 border-t border-line px-1 pt-3">
-              <ThemeToggle withLabel />
-            </div>
-          </nav>
-        </div>
-        </>
-      ) : null}
     </>
   );
 }

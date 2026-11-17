@@ -9,10 +9,10 @@ import type { ReactNode } from "react";
 export function PageHeader({ photo, children, className = "" }: { photo: string; children: ReactNode; className?: string }) {
   return (
     <div className={`grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,40%)] md:items-center ${className}`}>
-      <div className="relative order-first h-36 overflow-hidden rounded-[24px] bg-surface-2 shadow-lg md:order-last md:h-auto md:aspect-[16/10]">
+      <div className="relative order-first h-36 overflow-hidden rounded-card bg-surface-2 shadow-lg md:order-last md:h-auto md:aspect-[16/10]">
         <Image src={photo} alt="" fill sizes="(min-width: 900px) 40vw, 100vw" className="object-cover" priority />
       </div>
-      <div className="glass-card min-w-0 p-6">{children}</div>
+      <div className="surface-card min-w-0 p-6">{children}</div>
     </div>
   );
 }

@@ -31,14 +31,14 @@ export function MyDisputes() {
           </Notice>
         </div>
       ) : null}
-      {q.isPending && status === "signed_in" ? <div className="mt-6 h-40 animate-pulse bg-surface-2" /> : null}
+      {q.isPending && status === "signed_in" ? <div className="rounded-control mt-6 h-40 kg-shimmer bg-surface-2" /> : null}
       {q.isError ? (
         <div className="mt-6">
           <Notice tone="error">{t("loadFailed")}</Notice>
         </div>
       ) : null}
       {q.data && !items.length ? (
-        <div className="mt-6 border-2 border-dashed border-line p-6">
+        <div className="rounded-card mt-6 border border-dashed border-line p-6">
           <p className="font-bold">{t("emptyTitle")}</p>
           <p className="mt-1 text-sm text-muted">{t("emptyHelp")}</p>
           <Link href="/me/bookings" className="mt-3 inline-block font-semibold text-brand underline">
@@ -46,7 +46,7 @@ export function MyDisputes() {
           </Link>
         </div>
       ) : null}
-      <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-disputes">
+      <ul className="mt-6 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-disputes">
         {items.map((d) => (
           <li key={d.code}>
             <Link href={`/me/disputes/${d.code}`} className="flex flex-wrap items-center justify-between gap-3 py-4 hover:bg-surface-2">
@@ -57,7 +57,7 @@ export function MyDisputes() {
                 </span>
               </span>
               <span className="text-right">
-                <span className="block border-2 border-line px-2 py-0.5 text-sm font-bold">{t(`status.${d.status}`)}</span>
+                <span className="rounded-pill block border border-line px-2 py-0.5 text-sm font-bold">{t(`status.${d.status}`)}</span>
                 {d.money ? <span className="mt-1 block text-sm tabular-nums text-muted">{d.status === "resolved" ? t("refundedShort", { amount: formatTaka(d.refund ?? 0, locale) }) : t("heldShort", { amount: formatTaka(d.held, locale) })}</span> : null}
               </span>
             </Link>

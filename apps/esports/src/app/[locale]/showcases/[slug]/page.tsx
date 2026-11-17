@@ -19,7 +19,7 @@ async function Content({ params }: { params: PageProps<"/[locale]/showcases/[slu
 // M23: a big event (its slug, or its id from a notification link).
 export default function EventRoute({ params }: PageProps<"/[locale]/showcases/[slug]">) {
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-control mx-auto mt-10 h-96 max-w-[1320px] kg-shimmer bg-surface-2" />}>
       <Content params={params} />
     </Suspense>
   );

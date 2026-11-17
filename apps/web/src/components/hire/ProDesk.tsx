@@ -37,20 +37,20 @@ export function ProShell({ children }: { children: ReactNode }) {
     },
   });
   if (status === "signed_out") return <MePanel />;
-  if (status === "loading" || me.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (status === "loading" || me.isPending) return <div className="rounded-control mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   const roles = (me.data?.roles ?? []).filter((r) => ["player", "pro"].includes(r.role) && OPEN_ROLE.includes(r.status));
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-10" data-testid="pro-desk">
       <h1 className="text-3xl font-extrabold">{t("desk.title")}</h1>
       <p className="mt-2 max-w-2xl text-muted">{t("desk.lead")}</p>
       {!roles.length ? (
-        <div className="mt-6 border-2 border-line p-5" data-testid="pro-apply">
+        <div className="rounded-card mt-6 border border-line p-5" data-testid="pro-apply">
           <p className="font-bold">{t("desk.applyFirst")}</p>
           <div className="mt-3 flex flex-wrap gap-3">
-            <Link href="/account/business?as=pro" className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+            <Link href="/account/business?as=pro" className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover">
               {t("desk.applyPro")}
             </Link>
-            <Link href="/account/business?as=player" className="inline-flex min-h-12 items-center border-2 border-line px-5 font-bold hover:border-brand">
+            <Link href="/account/business?as=player" className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-bold hover:border-brand">
               {t("desk.applyPlayer")}
             </Link>
           </div>
@@ -75,23 +75,23 @@ export function ProProfiles() {
   const [photo, setPhoto] = useState(false);
   // Credentials and the police clearance are sent under the business role the person holds.
   const as = (me.data?.roles ?? []).some((r) => r.role === "pro" && OPEN_ROLE.includes(r.status)) ? "pro" : "player";
-  if (q.isPending) return <div className="h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control h-40 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("error")}</Notice>;
   return (
     <div>
-      <Link href="/pro/profiles/new" className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="pro-new-profile">
+      <Link href="/pro/profiles/new" className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover" data-testid="pro-new-profile">
         {t("desk.newProfile")}
       </Link>
-      {!q.data.items.length ? <p className="mt-6 border-2 border-dashed border-line p-8 text-center font-semibold">{t("desk.noProfiles")}</p> : null}
+      {!q.data.items.length ? <p className="rounded-card mt-6 border border-dashed border-line p-8 text-center font-semibold">{t("desk.noProfiles")}</p> : null}
       <ul className="mt-6 flex flex-col gap-4">
         {q.data.items.map((p) => (
-          <li key={p.id} className="border-2 border-line p-4" data-testid="pro-profile">
+          <li key={p.id} className="rounded-card border border-line p-4" data-testid="pro-profile">
             <div className="flex flex-wrap items-center gap-3">
               <span className="min-w-0 flex-1">
                 <span className="block text-xs font-bold uppercase tracking-wide text-muted">{p.role ? name(p.role) : ""}</span>
                 <span className="block text-lg font-extrabold">{p.headline}</span>
               </span>
-              <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[profileTone(p.status)]}`} data-testid="pro-profile-status">
+              <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[profileTone(p.status)]}`} data-testid="pro-profile-status">
                 {t(`profileStatus.${p.status}`)}
                 {p.editStatus === "pending_review" ? ` · ${t("desk.editInReview")}` : ""}
               </span>
@@ -116,7 +116,7 @@ export function ProProfiles() {
               />
             ) : null}
             <div className="mt-3 flex flex-wrap gap-3">
-              <Link href={`/pro/profiles/${p.id}`} className="inline-flex min-h-11 items-center border-2 border-line px-4 font-bold hover:border-brand">
+              <Link href={`/pro/profiles/${p.id}`} className="rounded-control inline-flex min-h-11 items-center border border-line-strong/60 px-4 font-bold hover:border-brand">
                 {t("desk.edit")}
               </Link>
               {["live", "paused"].includes(p.status) ? (
@@ -125,7 +125,7 @@ export function ProProfiles() {
                 </Link>
               ) : null}
               {p.status === "live" || p.status === "paused" ? (
-                <button type="button" disabled={pause.isPending} onClick={() => pause.mutate({ id: p.id, on: p.status === "live" })} className="min-h-11 border-2 border-line px-4 font-bold disabled:opacity-50">
+                <button type="button" disabled={pause.isPending} onClick={() => pause.mutate({ id: p.id, on: p.status === "live" })} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold disabled:opacity-50">
                   {p.status === "live" ? t("desk.pause") : t("desk.resume")}
                 </button>
               ) : null}
@@ -146,10 +146,10 @@ export function ProProfiles() {
 export function ProRequests() {
   const t = useTranslations("hire");
   const q = useQuery({ queryKey: ["pro-requests"], queryFn: () => hire.requests(), refetchInterval: 30_000 });
-  if (q.isPending) return <div className="h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control h-40 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("error")}</Notice>;
   const items = [...q.data.items].sort((a, b) => Number(b.request.status === "pending") - Number(a.request.status === "pending"));
-  if (!items.length) return <p className="border-2 border-dashed border-line p-8 text-center font-semibold">{t("desk.noRequests")}</p>;
+  if (!items.length) return <p className="rounded-card border border-dashed border-line p-8 text-center font-semibold">{t("desk.noRequests")}</p>;
   return (
     <ul className="flex flex-col gap-4" data-testid="pro-requests">
       {items.map((x) => (
@@ -176,7 +176,7 @@ function ProRequest({ x }: { x: RequestResult }) {
   const failed = (x.checks ?? []).filter((c) => !c.ok);
 
   return (
-    <li className="border-2 border-line" data-testid="pro-request">
+    <li className="rounded-card border border-line" data-testid="pro-request">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-line px-4 py-3">
         <div>
           <p className="font-extrabold">
@@ -187,7 +187,7 @@ function ProRequest({ x }: { x: RequestResult }) {
             {r.status === "pending" && r.replyBy ? ` · ${t("replyWithin", { min: minutesLeft(r.replyBy) })}` : ""}
           </p>
         </div>
-        <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[requestTone(r.status)]}`}>{t(`requestStatus.${r.status}`)}</span>
+        <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[requestTone(r.status)]}`}>{t(`requestStatus.${r.status}`)}</span>
       </header>
       <ul className="divide-y-2 divide-line px-4 text-sm">
         {lines.map((l) => (
@@ -203,7 +203,7 @@ function ProRequest({ x }: { x: RequestResult }) {
       {x.checks ? (
         <ul className="flex flex-wrap gap-2 border-t-2 border-line px-4 py-3" aria-label={t("checks")} data-testid="pro-checks">
           {x.checks.map((c) => (
-            <li key={c.key} className={`border-2 px-2 py-0.5 text-xs font-bold ${c.ok ? "border-brand text-brand" : "border-danger text-danger"}`}>
+            <li key={c.key} className={`rounded-pill border px-2 py-0.5 text-xs font-bold ${c.ok ? "border-brand text-brand" : "border-danger text-danger"}`}>
               {c.ok ? "✓" : "✕"} {t(`check.${c.key}`)}
             </li>
           ))}
@@ -216,7 +216,7 @@ function ProRequest({ x }: { x: RequestResult }) {
               {t("accept")}
             </Button>
             {!declining ? (
-              <button type="button" className="min-h-12 border-2 border-line px-4 font-bold hover:border-brand" onClick={() => setDeclining(true)} data-testid="pro-decline">
+              <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-bold hover:border-brand" onClick={() => setDeclining(true)} data-testid="pro-decline">
                 {t("decline")}
               </button>
             ) : null}
@@ -244,7 +244,7 @@ function ProRequest({ x }: { x: RequestResult }) {
               ))}
             </select>
           </label>
-          <button type="submit" disabled={decline.isPending} className="min-h-12 border-2 border-danger px-4 font-bold text-danger disabled:opacity-50">
+          <button type="submit" disabled={decline.isPending} className="rounded-control min-h-12 border border-danger px-4 font-bold text-danger disabled:opacity-50">
             {t("decline")}
           </button>
         </form>
@@ -263,9 +263,9 @@ export function ProJobs() {
   const t = useTranslations("hire");
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["pro-jobs"], queryFn: () => hire.jobs(), refetchInterval: 60_000 });
-  if (q.isPending) return <div className="h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control h-40 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("error")}</Notice>;
-  if (!q.data.items.length) return <p className="border-2 border-dashed border-line p-8 text-center font-semibold">{t("desk.noJobs")}</p>;
+  if (!q.data.items.length) return <p className="rounded-card border border-dashed border-line p-8 text-center font-semibold">{t("desk.noJobs")}</p>;
   return (
     <div className="flex flex-col gap-4" data-testid="pro-jobs">
       {q.data.items.map((j) => (

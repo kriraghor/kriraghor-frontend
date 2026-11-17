@@ -37,6 +37,7 @@
     "./brand/logo-spinner": "./src/brand/LogoSpinner.tsx",
     "./styles/motion.css": "./styles/motion.css",
     "./motion": "./src/motion/index.tsx",
+    "./page-transition": "./src/motion/PageTransition.tsx",
     "./theme-toggle": "./src/ThemeToggle.tsx",
     "./brand/theme-script": "./src/brand/ThemeScript.tsx",
     "./brand/route-loading": "./src/brand/RouteLoading.tsx",

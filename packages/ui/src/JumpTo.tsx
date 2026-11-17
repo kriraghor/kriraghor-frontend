@@ -123,7 +123,7 @@ export function JumpTo({ items, rail = false, dark = false, compact = false, hot
       {rail || compact ? null : (
         <>
           <span className="flex-1 text-left">{t("open")}</span>
-          <kbd className={cn("rounded-[6px] px-1.5 font-sans text-[11px] font-semibold", dark ? "bg-band-text/10" : "bg-surface-2")}>{shortcut}</kbd>
+          <kbd className={cn("rounded-[6px] px-1.5 font-sans text-xs font-semibold", dark ? "bg-band-text/10" : "bg-surface-2")}>{shortcut}</kbd>
         </>
       )}
     </button>
@@ -169,7 +169,7 @@ export function JumpTo({ items, rail = false, dark = false, compact = false, hot
               className="min-h-14 flex-1 bg-transparent text-base outline-none placeholder:text-muted"
               data-testid="jump-input"
             />
-            <kbd className="hidden rounded-[6px] bg-surface-2 px-1.5 text-[11px] font-semibold text-muted sm:block">Esc</kbd>
+            <kbd className="hidden rounded-[6px] bg-surface-2 px-1.5 text-xs font-semibold text-muted sm:block">Esc</kbd>
           </div>
           <ul id={listId} role="listbox" aria-label={t("results")} className="min-h-0 flex-1 overflow-y-auto p-2">
             {results.length ? (

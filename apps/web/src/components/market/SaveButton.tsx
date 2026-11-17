@@ -29,7 +29,7 @@ export function SaveButton({ productId }: { productId: string }) {
     );
   return (
     <div>
-      <button type="button" aria-pressed={isSaved} disabled={toggle.isPending || saved.isPending} onClick={() => toggle.mutate()} className="min-h-11 border-2 border-line px-4 font-bold hover:border-brand disabled:opacity-50" data-testid="save-button">
+      <button type="button" aria-pressed={isSaved} disabled={toggle.isPending || saved.isPending} onClick={() => toggle.mutate()} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold hover:border-brand disabled:opacity-50" data-testid="save-button">
         {isSaved ? t("saved") : t("save")}
       </button>
       {code ? (

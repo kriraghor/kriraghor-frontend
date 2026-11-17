@@ -199,7 +199,7 @@ export function OrganiserAnalytics({ d }: { d: OrganiserDashboard }) {
       <OrganiserTiles d={d} />
       <div className="grid gap-4 lg:grid-cols-2">
         <ChartLine title={t("charts.registrations")} points={regs.points} compare={regs.compare} legend={{ current: t("legend.registered"), compare: t("legend.approved") }} format={(v) => String(v)} labelOf={(k) => bucketLabel(k, locale)} />
-        <figure className="min-w-0 glass-card p-4" data-testid="fees-by-event">
+        <figure className="min-w-0 surface-card p-4" data-testid="fees-by-event">
           <figcaption className="font-bold">{t("charts.feesByEvent")}</figcaption>
           {d.charts.feesByEvent.length ? (
             <ul className="mt-3 divide-y divide-line">

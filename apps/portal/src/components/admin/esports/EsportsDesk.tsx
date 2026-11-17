@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -459,7 +460,7 @@ export function CheckinBoard({ id, client = esportsAdmin }: { id: string; client
                       <span className={p.checkedIn ? "font-semibold" : "text-muted"}>{p.ign ?? p.username ?? "—"}</span>
                       {p.isSubstitute ? <span className="text-xs text-muted">({t("board.sub")})</span> : null}
                       {p.checkedIn ? (
-                        <span aria-label={t("board.in")}>✓</span>
+                        <span role="img" aria-label={t("board.in")} className="inline-flex text-brand"><Check size={16} weight="bold" aria-hidden /></span>
                       ) : client.staffCheckIn && ["confirmed", "no_show"].includes(r.status) ? (
                         <button type="button" className="text-xs font-semibold text-brand underline" onClick={() => void run(() => client.staffCheckIn!(r.id, p.userId))}>
                           {t("board.checkIn")}

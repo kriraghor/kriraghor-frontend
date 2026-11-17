@@ -13,6 +13,7 @@ import { MePanel } from "../MePanel";
 import { RateSourceButtons } from "@kriraghor/ui/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { TONE } from "./MyOrders";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /**
  * /me/orders/[code] (M13 FR-13, FR-14): each shop's part of the order with its progress, the items,
@@ -35,7 +36,7 @@ export function OrderView({ code }: { code: string }) {
   const money = (n: number) => formatTaka(n, locale);
 
   if (status === "signed_out") return <MePanel />;
-  if (q.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data)
     return (
       <section className="mx-auto max-w-[1100px] px-5 py-10">
@@ -45,9 +46,7 @@ export function OrderView({ code }: { code: string }) {
   const { order, payment } = q.data;
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-10" data-testid="order">
-      <Link href="/me/orders" className="text-sm font-semibold text-brand underline">
-        ← {t("myOrders")}
-      </Link>
+      <BackLink href="/me/orders">{t("myOrders")}</BackLink>
       <div className="mt-3 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="text-3xl font-extrabold">{t("orderTitle", { code: order.code })}</h1>
         <span className="text-lg font-bold">{money(order.money.total)}</span>
@@ -56,7 +55,7 @@ export function OrderView({ code }: { code: string }) {
         {t("shipToLine", { name: order.shipTo.name, line: order.shipTo.line, last4: order.shipTo.phoneLast4 })}
       </p>
       {payment ? (
-        <div className="mt-4 flex flex-wrap items-center gap-3 border-2 border-amber-400 p-4">
+        <div className="rounded-card mt-4 flex flex-wrap items-center gap-3 border border-warning p-4">
           <p className="font-semibold">{t("unpaid", { time: when(order.payBy) })}</p>
           <Button busy={pay.isPending} onClick={() => pay.mutate()} data-testid="pay-order">
             {t("payTotal", { total: money(order.money.total) })}
@@ -86,13 +85,13 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
   const label = (l: { variantLabelEn: string; variantLabelBn: string }) => (locale === "bn" ? l.variantLabelBn : l.variantLabelEn);
 
   return (
-    <article className="border-2 border-line" data-testid="sub-order">
+    <article className="rounded-card border border-line" data-testid="sub-order">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-line px-4 py-3">
         <div>
           <p className="font-extrabold">{s.shop?.name}</p>
           <p className="text-xs text-muted">{s.code}</p>
         </div>
-        <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[statusTone(s.status)]}`} data-testid="sub-status">
+        <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[statusTone(s.status)]}`} data-testid="sub-status">
           {t(`status.${s.status}`)}
         </span>
       </header>
@@ -172,12 +171,12 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
           </Button>
         ) : null}
         {s.can.notReceived && !reporting ? (
-          <button type="button" onClick={() => setReporting(true)} className="min-h-12 border-2 border-line px-4 font-bold hover:border-brand" data-testid="not-received">
+          <button type="button" onClick={() => setReporting(true)} className="rounded-control min-h-12 border border-line-strong/60 px-4 font-bold hover:border-brand" data-testid="not-received">
             {t("notReceived")}
           </button>
         ) : null}
         {s.can.cancel ? (
-          <button type="button" disabled={cancel.isPending} onClick={() => cancel.mutate()} className="min-h-12 border-2 border-danger px-4 font-bold text-danger disabled:opacity-50" data-testid="cancel-sub">
+          <button type="button" disabled={cancel.isPending} onClick={() => cancel.mutate()} className="rounded-control min-h-12 border border-danger px-4 font-bold text-danger disabled:opacity-50" data-testid="cancel-sub">
             {s.status === "accepted" ? t("cancelLate") : t("cancel")}
           </button>
         ) : null}
@@ -200,7 +199,7 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
           <label htmlFor={`nr-${s.id}`} className="font-semibold">
             {t("notReceivedWhat")}
           </label>
-          <textarea id={`nr-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="glass-card p-3" data-testid="not-received-text" />
+          <textarea id={`nr-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="surface-card p-3" data-testid="not-received-text" />
           <p className="text-sm text-muted">{t("notReceivedNote", { closes: when(s.notReceivedClosesAt) || t("untilResolved") })}</p>
           <div>
             <Button busy={report.isPending} data-testid="not-received-send">

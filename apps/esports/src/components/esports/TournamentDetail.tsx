@@ -32,7 +32,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
     "esports.standings_updated": () => void qc.invalidateQueries({ queryKey: ["es-standings", id] }),
   });
 
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[1320px] kg-shimmer bg-surface-2" />;
   if (q.isError) return <p className="mx-auto max-w-[1320px] px-5 py-16 text-danger">{t("notFound")}</p>;
   const d = q.data;
   const entry = (mine.data?.items ?? []).find((r) => r.tournamentId === d.id && !["withdrawn", "cancelled", "refunded"].includes(r.status)) ?? null;
@@ -76,7 +76,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
             <h2 id="prizes-h" className="text-xl font-extrabold">
               {t("prizes")}
             </h2>
-            <ol className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="prize-table">
+            <ol className="mt-3 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="prize-table">
               {d.prizes.map((p) => (
                 <li key={p.place} className="flex items-center justify-between py-3">
                   <span className="font-bold">{t("place", { n: p.place })}</span>
@@ -97,7 +97,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
             <h2 id="schedule-h" className="text-xl font-extrabold">
               {t("schedule")}
             </h2>
-            <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4">
+            <ul className="mt-3 surface-card divide-y divide-[var(--glass-edge)] px-4">
               {d.matches.map((m) => (
                 <li key={m.id} className="flex flex-wrap items-center gap-3 py-3">
                   <span className="font-bold">{t("match", { n: m.seq })}</span>
@@ -126,7 +126,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
               {t("standings")}
             </h2>
             {standings.data?.items.length ? (
-              <div className="mt-3 overflow-x-auto border-2 border-line">
+              <div className="rounded-card mt-3 overflow-x-auto border border-line">
                 <table className="w-full min-w-[480px] text-sm" data-testid="standings">
                   <thead className="bg-surface-2 text-left text-xs uppercase tracking-wide text-muted">
                     <tr>
@@ -167,7 +167,7 @@ export function TournamentDetail({ slug }: { slug: string }) {
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="glass-strong rounded-[24px] p-5" data-testid="entry-box">
+          <div className="glass-strong rounded-card p-5" data-testid="entry-box">
             <p className="text-xs font-bold uppercase tracking-wide text-muted">{t("prizePool")}</p>
             <Prize money={d.prizePool} className="text-4xl" />
             <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">

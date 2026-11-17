@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { useRouter } from "@kriraghor/ui/i18n/navigation";
 import { api, problemOf, type Problem } from "@kriraghor/api-client";
 import { hire, LEVELS, limitKey, poishaToTaka, profileTone, rateOf, takaToPoisha, TONE, type Format, type Level, type OwnerProfile, type ProfileBody, type RateCardBody, type Unit } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { BackLink } from "@kriraghor/ui/kit";
 
 const EDITABLE = ["draft", "changes_requested", "rejected", "live", "paused"];
 const input = "min-h-12 field px-3 text-base text-ink";
@@ -28,7 +29,7 @@ export function ProfileEditor({ id }: { id: string }) {
   const t = useTranslations("hire");
   const q = useQuery({ queryKey: ["pro-profile", id], queryFn: () => hire.myProfile(id), enabled: id !== "new", retry: false });
   if (id === "new") return <NewProfile />;
-  if (q.isPending) return <div className="h-64 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control h-64 kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <Notice tone="error">{t("desk.profileNotFound")}</Notice>;
   return <ExistingProfile p={q.data} />;
 }
@@ -58,9 +59,7 @@ function NewProfile() {
       }}
       data-testid="pro-new"
     >
-      <Link href="/pro" className="text-sm font-semibold text-brand underline">
-        ← {t("desk.profiles")}
-      </Link>
+      <BackLink href="/pro">{t("desk.profiles")}</BackLink>
       <h2 className="text-2xl font-extrabold">{t("desk.newProfile")}</h2>
       <label className={label}>
         {t("role")}
@@ -129,7 +128,7 @@ function ProfileFields({ values, onChange }: { values: Omit<ProfileBody, "roleKe
       </div>
       <label className={label}>
         {t("desk.bio")}
-        <textarea id="pro-bio" value={values.bio ?? ""} onChange={(e) => set({ bio: e.target.value || undefined })} maxLength={2000} rows={4} className="glass-card scroll-mt-28 p-3 text-base text-ink" />
+        <textarea id="pro-bio" value={values.bio ?? ""} onChange={(e) => set({ bio: e.target.value || undefined })} maxLength={2000} rows={4} className="surface-card scroll-mt-28 p-3 text-base text-ink" />
       </label>
       <label className="flex min-h-11 items-center gap-3 font-semibold">
         <input type="checkbox" checked={values.worksWithU16} onChange={(e) => set({ worksWithU16: e.target.checked })} className="h-5 w-5" />
@@ -162,12 +161,10 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
 
   return (
     <div className="flex max-w-3xl flex-col gap-6" data-testid="pro-editor">
-      <Link href="/pro" className="text-sm font-semibold text-brand underline">
-        ← {t("desk.profiles")}
-      </Link>
+      <BackLink href="/pro">{t("desk.profiles")}</BackLink>
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="mr-auto text-2xl font-extrabold">{p.role ? name(p.role) : ""}</h2>
-        <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[profileTone(p.status)]}`} data-testid="pro-editor-status">
+        <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[profileTone(p.status)]}`} data-testid="pro-editor-status">
           {t(`profileStatus.${p.status}`)}
           {p.editStatus === "pending_review" ? ` · ${t("desk.editInReview")}` : ""}
         </span>
@@ -242,7 +239,7 @@ function RateCardEditor({ p, disabled, onSaved }: { p: OwnerProfile; disabled: b
   return (
     <form
       id="pro-rates"
-      className="flex scroll-mt-28 flex-col gap-4 border-2 border-line p-4"
+      className="rounded-card flex scroll-mt-28 flex-col gap-4 border border-line p-4"
       onSubmit={(e) => {
         e.preventDefault();
         save.mutate();

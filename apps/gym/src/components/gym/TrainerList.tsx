@@ -51,7 +51,7 @@ export function TrainerList() {
           <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" data-testid="gym-trainers">
             {trainers.data.items.map((tr) => (
               <li key={tr.id}>
-                <a href={webHref(`/hiring/${tr.slug}`)} className="flex h-full flex-col glass-card p-5 hover:border-brand" data-testid="trainer-card">
+                <a href={webHref(`/hiring/${tr.slug}`)} className="flex h-full flex-col surface-card p-5 hover:border-brand" data-testid="trainer-card">
                   <span className="flex items-center gap-3">
                     {tr.avatarUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element

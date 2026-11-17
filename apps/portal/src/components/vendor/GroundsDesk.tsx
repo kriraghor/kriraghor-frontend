@@ -41,7 +41,7 @@ export function GroundsDesk() {
           <h1 className="text-3xl font-extrabold">{t("title")}</h1>
           <p className="mt-1 max-w-2xl text-muted">{t("lead")}</p>
         </div>
-        <button type="button" className="min-h-12 bg-brand px-5 font-bold text-white hover:bg-brand-hover" onClick={() => setAdding(true)} data-testid="add-ground">
+        <button type="button" className="min-h-12 bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover" onClick={() => setAdding(true)} data-testid="add-ground">
           {t("add")}
         </button>
       </div>
@@ -162,7 +162,7 @@ function AddGround({ onClose }: { onClose: () => void }) {
         </div>
       ) : null}
       <div className="flex gap-2 md:col-span-2">
-        <button type="submit" disabled={busy} className="min-h-12 bg-brand px-5 font-bold text-white disabled:opacity-50">
+        <button type="submit" disabled={busy} className="min-h-12 bg-brand px-5 font-bold text-on-brand disabled:opacity-50">
           {t("form.create")}
         </button>
         <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-5 font-bold" onClick={onClose}>

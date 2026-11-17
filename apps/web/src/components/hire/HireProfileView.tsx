@@ -36,7 +36,7 @@ export function HireProfileView({ slug }: { slug: string }) {
   const [days] = useState(() => nextDays(14));
   const busy = q.data?.busy;
   const unavailable = useMemo(() => (busy ? days.filter((d) => dayState(busy, d) === "unavailable") : []), [busy, days]);
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[1320px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data)
     return (
       <section className="mx-auto max-w-[1320px] px-5 py-16">
@@ -71,7 +71,7 @@ export function HireProfileView({ slug }: { slug: string }) {
             {p.years ? <span className="bg-surface-2 px-2 py-1">{t("years", { n: p.years })}</span> : null}
             {p.area ? <span className="bg-surface-2 px-2 py-1">{t("basedIn", { area: name(p.area) })}</span> : null}
             {credential ? (
-              <span className="inline-flex items-center gap-1 border-2 border-brand px-2 py-0.5 text-brand-text" data-testid="hire-credential">
+              <span className="rounded-pill inline-flex items-center gap-1 border border-brand px-2 py-0.5 text-brand-text" data-testid="hire-credential">
                 <SealCheck size={16} weight="fill" aria-hidden />
                 {t("verifiedCredential", { label: credential })}
               </span>
@@ -107,11 +107,11 @@ export function HireProfileView({ slug }: { slug: string }) {
         <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
           {/* M20: a fitness trainer also sells monthly plans. */}
           {p.role.key === "fitness_trainer" ? (
-            <div className="glass-card p-5">
+            <div className="surface-card p-5">
               <TrainerPlans profileId={p.id} slug={slug} />
             </div>
           ) : null}
-          <div className="glass-card p-5">
+          <div className="surface-card p-5">
             {p.taking ? <RequestForm profile={p} pick={pick} unavailableDays={unavailable} onDateChange={setPicked} /> : <p className="font-bold">{t("notTaking")}</p>}
           </div>
         </aside>
@@ -161,7 +161,7 @@ function ShortlistButton({ profileId, on, slug }: { profileId: string; on: boole
   const code = toggle.error ? problemOf(toggle.error)?.code : null;
   return (
     <div>
-      <button type="button" aria-pressed={on} disabled={toggle.isPending} onClick={() => toggle.mutate()} className="min-h-11 border-2 border-line px-4 font-bold hover:border-brand disabled:opacity-50" data-testid="hire-shortlist">
+      <button type="button" aria-pressed={on} disabled={toggle.isPending} onClick={() => toggle.mutate()} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold hover:border-brand disabled:opacity-50" data-testid="hire-shortlist">
         {on ? t("shortlisted") : t("shortlist")}
       </button>
       {code ? (

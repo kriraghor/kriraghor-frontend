@@ -11,7 +11,7 @@ export function SignedIn({ children }: { children: ReactNode }) {
   const t = useTranslations("esports");
   const { status } = useAuth();
   const pathname = usePathname();
-  if (status === "loading") return <div className="mx-auto mt-10 h-40 max-w-3xl animate-pulse bg-surface-2" />;
+  if (status === "loading") return <div className="rounded-control mx-auto mt-10 h-40 max-w-3xl kg-shimmer bg-surface-2" />;
   if (status === "signed_out")
     return (
       <section className="mx-auto max-w-xl px-5 py-16 text-center">

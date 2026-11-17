@@ -22,7 +22,7 @@ export function ProPlans() {
   const q = useQuery({ queryKey: ["pro-plans"], queryFn: () => trainer.myPlans() });
   const subs = useQuery({ queryKey: ["pro-subscribers"], queryFn: () => trainer.subscribers() });
   const retire = useMutation({ mutationFn: (id: string) => trainer.retirePlan(id), onSuccess: () => qc.invalidateQueries({ queryKey: ["pro-plans"] }) });
-  if (q.isPending) return <div className="h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control h-40 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("error")}</Notice>;
   const { profiles, items } = q.data;
   const live = profiles.filter((p) => ["live", "paused"].includes(p.status));
@@ -30,7 +30,7 @@ export function ProPlans() {
   return (
     <div className="flex flex-col gap-8" data-testid="pro-plans">
       {!profiles.length ? (
-        <p className="border-2 border-dashed border-line p-8 text-center font-semibold">{t("desk.trainerOnly")}</p>
+        <p className="rounded-card border border-dashed border-line p-8 text-center font-semibold">{t("desk.trainerOnly")}</p>
       ) : (
         <>
           <section>
@@ -38,16 +38,16 @@ export function ProPlans() {
             {!items.length ? <p className="mt-3 text-muted">{t("desk.noPlans")}</p> : null}
             <ul className="mt-3 flex flex-col gap-3">
               {items.map((p) => (
-                <li key={p.id} className="flex flex-wrap items-center gap-3 border-2 border-line p-4" data-testid="pro-plan">
+                <li key={p.id} className="rounded-card flex flex-wrap items-center gap-3 border border-line p-4" data-testid="pro-plan">
                   <span className="min-w-0 flex-1">
                     <span className="block font-bold">{p.title}</span>
                     <span className="block text-sm text-muted">
                       {t("perMonth", { price: formatTaka(p.price, locale) })} · {p.sessionsPerMonth ? t("sessions", { n: p.sessionsPerMonth }) : t("sessionsAgreed")} · {t(`where.${p.where}`)}
                     </span>
                   </span>
-                  <span className="border-2 border-line px-2 py-0.5 text-sm font-bold">{t(`planStatus.${p.status}`)}</span>
+                  <span className="rounded-pill border border-line px-2 py-0.5 text-sm font-bold">{t(`planStatus.${p.status}`)}</span>
                   {p.status === "active" ? (
-                    <button type="button" onClick={() => retire.mutate(p.id)} disabled={retire.isPending} className="min-h-11 border-2 border-line px-4 font-bold disabled:opacity-50">
+                    <button type="button" onClick={() => retire.mutate(p.id)} disabled={retire.isPending} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold disabled:opacity-50">
                       {t("desk.retire")}
                     </button>
                   ) : null}
@@ -61,7 +61,7 @@ export function ProPlans() {
       <section>
         <h2 className="text-2xl font-extrabold">{t("desk.subscribers")}</h2>
         {subs.isPending ? (
-          <div className="mt-3 h-24 animate-pulse bg-surface-2" />
+          <div className="rounded-control mt-3 h-24 kg-shimmer bg-surface-2" />
         ) : !subs.data?.items.length ? (
           <p className="mt-3 text-muted">{t("desk.noSubscribers")}</p>
         ) : (
@@ -116,7 +116,7 @@ function NewPlan({ profiles }: { profiles: { id: string; headline: string }[] })
 
   return (
     <form
-      className="flex max-w-xl flex-col gap-4 border-2 border-line p-5"
+      className="rounded-card flex max-w-xl flex-col gap-4 border border-line p-5"
       onSubmit={(e) => {
         e.preventDefault();
         create.mutate();
@@ -146,7 +146,7 @@ function NewPlan({ profiles }: { profiles: { id: string; headline: string }[] })
         <legend className="text-sm font-semibold">{t("desk.planWhere")}</legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {(["gym", "home", "online"] as const).map((w) => (
-            <label key={w} className={`flex min-h-11 cursor-pointer items-center gap-2 border-2 px-3 ${where === w ? "border-brand" : "border-line"}`}>
+            <label key={w} className={`rounded-control flex min-h-11 cursor-pointer items-center gap-2 border px-3 ${where === w ? "border-brand" : "border-line"}`}>
               <input type="radio" name="where" checked={where === w} onChange={() => setWhere(w)} />
               {t(`where.${w}`)}
             </label>

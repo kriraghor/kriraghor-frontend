@@ -25,22 +25,22 @@ export function MyHires() {
     <section className="mx-auto max-w-[1100px] px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-3xl font-extrabold">{t("myHires")}</h1>
-        <Link href="/hiring" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+        <Link href="/hiring" className="rounded-control min-h-11 border border-line-strong/60 px-4 py-2 font-bold hover:border-brand">
           {t("findSomeone")}
         </Link>
       </div>
       {q.isPending ? (
-        <div className="mt-6 h-40 animate-pulse bg-surface-2" />
+        <div className="rounded-control mt-6 h-40 kg-shimmer bg-surface-2" />
       ) : q.isError ? (
         <div className="mt-6">
           <Notice tone="error">{t("error")}</Notice>
         </div>
       ) : !q.data?.items.length ? (
-        <p className="mt-6 border-2 border-dashed border-line p-8 text-center font-semibold" data-testid="my-hires-empty">
+        <p className="rounded-card mt-6 border border-dashed border-line p-8 text-center font-semibold" data-testid="my-hires-empty">
           {t("noHires")}
         </p>
       ) : (
-        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-hires">
+        <ul className="mt-6 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-hires">
           {q.data.items.map(({ request: r }) => (
             <li key={r.id}>
               <Link href={`/me/hire/${r.code}`} className="flex flex-wrap items-center gap-3 py-3 hover:bg-surface-2">
@@ -53,7 +53,7 @@ export function MyHires() {
                   </span>
                 </span>
                 <span className="font-bold tabular-nums">{formatTaka(r.money.total, locale)}</span>
-                <span className={`border-2 px-2 py-0.5 text-sm font-bold ${TONE[requestTone(r.status)]}`}>{t(`requestStatus.${r.status}`)}</span>
+                <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${TONE[requestTone(r.status)]}`}>{t(`requestStatus.${r.status}`)}</span>
               </Link>
             </li>
           ))}

@@ -64,7 +64,7 @@ export function BusinessPage() {
   const tabs = (
     <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label={t("pickRole")}>
       {BUSINESS_ROLES.map((r) => (
-        <button key={r} type="button" aria-pressed={role === r} onClick={() => pick(r)} className={`min-h-11 border-2 px-4 font-bold ${role === r ? "border-brand bg-brand/10" : "border-line"}`} data-testid={`role-${r}`}>
+        <button key={r} type="button" aria-pressed={role === r} onClick={() => pick(r)} className={`rounded-control min-h-11 border px-4 font-bold ${role === r ? "border-brand bg-brand/10" : "border-line"}`} data-testid={`role-${r}`}>
           {t(`role.${r}.tab`)}
         </button>
       ))}
@@ -83,7 +83,7 @@ export function BusinessPage() {
       </Shell>
     );
   }
-  if (q.isPending) return <Shell role={role}>{tabs}{<div className="mt-6 h-40 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />}</Shell>;
+  if (q.isPending) return <Shell role={role}>{tabs}{<div className="rounded-control mt-6 h-40 kg-shimmer bg-surface-2" role="status" aria-label={t("loading")} />}</Shell>;
   if (q.isError || !q.data) return <Shell role={role}>{tabs}{<Notice tone="error">{t("loadFailed")}</Notice>}</Shell>;
   const v = q.data;
   const vendorUrl = `${publicEnv().VENDOR_URL}/vendor`;
@@ -101,7 +101,7 @@ export function BusinessPage() {
           </Notice>
         </div>
       ) : !v.roleStatus || v.roleStatus === "withdrawn" ? (
-        <div className="mt-6 glass-card p-5" data-testid="business-apply">
+        <div className="mt-6 surface-card p-5" data-testid="business-apply">
           <p className="font-bold">{t(`role.${role}.applyTitle`)}</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">
             {v.unlocks.map((u) => (
@@ -136,15 +136,15 @@ export function BusinessPage() {
         </div>
       ) : (
         <>
-          <div className={`mt-6 border-2 p-4 ${v.roleStatus === "active" ? "border-brand" : "border-line"}`} data-testid="business-status">
+          <div className={`rounded-card mt-6 border p-4 ${v.roleStatus === "active" ? "border-brand" : "border-line"}`} data-testid="business-status">
             <p className="font-bold">{v.roleStatus === "active" ? t(`role.${role}.active`) : t(`roleStatus.${v.roleStatus}`)}</p>
             <p className="text-sm text-muted">{t("progress", { done: v.progress.approved, total: v.progress.total })}</p>
             {v.roleStatus === "active" && isPerson(role) ? (
-              <Link href="/pro" className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-pro-desk">
+              <Link href="/pro" className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover" data-testid="open-pro-desk">
                 {t("openProDesk")}
               </Link>
             ) : v.roleStatus === "active" && role !== "organiser" ? (
-              <a href={vendorUrl} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover" data-testid="open-vendor">
+              <a href={vendorUrl} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover" data-testid="open-vendor">
                 {t("openDesk")}
               </a>
             ) : null}
@@ -244,7 +244,7 @@ function DocItem({
   }
 
   return (
-    <li className="glass-card p-4" data-testid={`business-item-${item.key}`}>
+    <li className="surface-card p-4" data-testid={`business-item-${item.key}`}>
       <div className="flex flex-wrap items-center gap-3">
         <span className="font-bold">{item.label}</span>
         {item.required === "optional" ? <span className="text-xs text-muted">{t("optional")}</span> : null}
@@ -271,7 +271,7 @@ function DocItem({
       ) : null}
       {doc?.expiresOn ? <p className="text-sm text-muted">{t("validUntil", { date: doc.expiresOn })}</p> : null}
       {canSend && !open ? (
-        <button type="button" className="mt-3 min-h-11 border-2 border-brand px-4 text-sm font-bold" onClick={() => setOpen(true)}>
+        <button type="button" className="rounded-control mt-3 min-h-11 border border-brand px-4 text-sm font-bold" onClick={() => setOpen(true)}>
           {isCredential ? t("addCredential") : item.status === "missing" ? t("send") : t("sendAgain")}
         </button>
       ) : null}
@@ -352,7 +352,7 @@ function DocItem({
             <Button type="submit" busy={busy} disabled={!consentReady(consent, consentText?.version)}>
               {t("submit")}
             </Button>
-            <button type="button" className="min-h-12 border-2 border-line px-4 font-bold" onClick={() => setOpen(false)}>
+            <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-bold" onClick={() => setOpen(false)}>
               {t("cancel")}
             </button>
           </div>

@@ -118,7 +118,7 @@ function PanelCard({ rail, icon, label }: { rail: boolean; icon: ReactNode; labe
       <div className={cn("flex items-center gap-3 rounded-control bg-band-text/8 px-3 py-2.5", rail && "justify-center px-0")} data-testid="panel-card">
         <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-prize text-prize-ink">{icon}</span>
         <span className={cn("min-w-0 leading-tight", rail && "sr-only")}>
-          <span className="block text-[11px] font-semibold uppercase tracking-wider text-band-muted">{t("viewing")}</span>
+          <span className="block text-xs font-semibold uppercase tracking-wider text-band-muted">{t("viewing")}</span>
           <span className="block truncate font-display font-bold">{label}</span>
         </span>
       </div>

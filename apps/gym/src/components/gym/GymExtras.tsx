@@ -33,7 +33,7 @@ function Timetable({ items }: { items: Awaited<ReturnType<typeof gymOps2.timetab
       <h2 className="mt-8 text-2xl font-extrabold">{t("page.classes")}</h2>
       <div className="mt-3 grid gap-3 sm:grid-cols-2" data-testid="gym-timetable">
         {byDay(items).map((d) => (
-          <div key={d.date} className="glass-card p-4">
+          <div key={d.date} className="surface-card p-4">
             <p className="text-sm font-bold">{f.date(d.date)}</p>
             <ul className="mt-2 flex flex-col gap-1.5 text-sm">
               {d.items.map((s) => (

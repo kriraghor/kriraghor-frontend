@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { dhakaTime, esports, useUserEvents, type Room } from "@/lib/esports";
 import { Notice } from "@kriraghor/ui/primitives";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /**
  * /me/matches/[matchId]/room: the room ID and password for checked-in players, from the reveal time.
@@ -34,18 +34,16 @@ export function RoomView({ matchId }: { matchId: string }) {
   const problem = q.error ? problemOf(q.error) : null;
   return (
     <section className="mx-auto max-w-xl px-5 py-10">
-      <Link href="/me/matches" className="text-sm font-semibold text-brand underline">
-        ← {t("myMatches")}
-      </Link>
+      <BackLink href="/me/matches">{t("myMatches")}</BackLink>
       <h1 className="mt-3 text-3xl font-extrabold">{t("room.title")}</h1>
-      {q.isPending ? <div className="mt-6 h-48 animate-pulse bg-surface-2" /> : null}
+      {q.isPending ? <div className="rounded-control mt-6 h-48 kg-shimmer bg-surface-2" /> : null}
       {problem ? (
         <div className="mt-6">
           <Notice tone={problem.code === "ESPORTS_ROOM_NOT_REVEALED" ? "info" : "error"}>{problem.code === "ESPORTS_ROOM_NOT_REVEALED" ? t("room.notYet") : problem.title}</Notice>
         </div>
       ) : null}
       {q.data ? (
-        <div className="mt-6 glass-strong rounded-[24px] p-6" data-testid="room-card">
+        <div className="mt-6 glass-strong rounded-card p-6" data-testid="room-card">
           {rotated ? (
             <div className="mb-4">
               <Notice>{t("room.updated")}</Notice>
@@ -83,7 +81,7 @@ function Secret({ label, value, testId }: { label: string; value: string; testId
       </div>
       <button
         type="button"
-        className="min-h-11 border-2 border-line-strong px-3 text-sm font-bold"
+        className="rounded-control min-h-11 border border-line-strong px-3 text-sm font-bold"
         onClick={async () => {
           await navigator.clipboard?.writeText(value);
           setCopied(true);

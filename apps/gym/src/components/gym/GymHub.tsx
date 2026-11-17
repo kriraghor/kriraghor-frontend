@@ -220,7 +220,7 @@ export function GymHub() {
           </>
         )}
 
-        <div className="glass-card mt-10 flex flex-col items-start gap-3 p-6 md:flex-row md:items-center md:justify-between" data-testid="gym-gear">
+        <div className="surface-card mt-10 flex flex-col items-start gap-3 p-6 md:flex-row md:items-center md:justify-between" data-testid="gym-gear">
           <div>
             <h2 className="text-2xl font-extrabold">{t("gearTitle")}</h2>
             <p className="mt-1 max-w-2xl text-muted">{t("gearLead")}</p>

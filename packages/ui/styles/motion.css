@@ -393,3 +393,49 @@ html[data-splash="on"] .kg-slide-in > .kg-slide-line {
     background-image: none;
   }
 }
+
+/* ---------------------------------------------------------------- scroll reveal (Reveal) */
+/* Children marked .rv rise in as they enter the viewport, staggered by Reveal (40 ms). Only when JavaScript
+   has run (Reveal adds .js-reveal) and motion is welcome, so the content is always there without them. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Only the waiting state is set here, so a revealed card keeps its own hover lift. */
+  .js-reveal .rv {
+    transition:
+      opacity 0.5s var(--ease-kg),
+      transform 0.5s var(--ease-kg),
+      box-shadow 200ms,
+      border-color 200ms;
+  }
+  .js-reveal .rv:not(.is-in) {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* ---------------------------------------------------------------- page to page (PageTransition) */
+/* React's <ViewTransition> names the page; the old one fades out quickly, the new one rises in. The header
+   and the tab bar are outside it, so they stay put. */
+::view-transition-old(.kg-page-out) {
+  animation: kg-page-out 120ms ease-in both;
+}
+::view-transition-new(.kg-page-in) {
+  animation: kg-page-in 260ms var(--ease-kg) both;
+}
+@keyframes kg-page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes kg-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

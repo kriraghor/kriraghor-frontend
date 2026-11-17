@@ -22,7 +22,7 @@ import { Chip, Field, inputCls } from "../admin/finance/shared";
 const TONE: Record<string, string> = {
   pending_payment: "bg-surface-2 border-dashed text-muted",
   confirmed: "bg-brand/15 border-brand text-ink",
-  checked_in: "bg-brand text-white border-brand",
+  checked_in: "bg-brand text-on-brand border-brand",
   completed: "bg-surface-2 border-line text-muted",
   no_show: "bg-red-100 border-danger text-danger dark:bg-red-950/40",
 };
@@ -137,7 +137,7 @@ export function BookingsDesk() {
       <section className="mx-auto max-w-3xl px-5 py-10">
         <h1 className="text-3xl font-extrabold">{t("title")}</h1>
         <p className="mt-3 text-muted">{t("noLive")}</p>
-        <Link href="/vendor/venues" className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
+        <Link href="/vendor/venues" className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand">
           {t("toGrounds")}
         </Link>
       </section>
@@ -166,7 +166,7 @@ export function BookingsDesk() {
             </select>
           </Field>
           {deskCan(perms, "bookings.walk_in") ? (
-            <button type="button" onClick={() => setWalkIn(true)} className="min-h-11 bg-brand px-4 font-bold text-white" data-testid="add-walk-in">
+            <button type="button" onClick={() => setWalkIn(true)} className="min-h-11 bg-brand px-4 font-bold text-on-brand" data-testid="add-walk-in">
               {t("walkIn")}
             </button>
           ) : null}
@@ -403,7 +403,7 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2">
         {actions.includes("check_in") ? (
-          <button type="button" className="min-h-11 bg-brand px-4 font-bold text-white" onClick={() => act.mutate(() => desk.checkIn(b.id))} data-testid="check-in">
+          <button type="button" className="min-h-11 bg-brand px-4 font-bold text-on-brand" onClick={() => act.mutate(() => desk.checkIn(b.id))} data-testid="check-in">
             {t("checkIn")}
           </button>
         ) : null}
@@ -436,7 +436,7 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
               <option value="bkash_venue">{t("bkash")}</option>
             </select>
           </Field>
-          <button type="button" className="min-h-11 bg-brand px-4 font-bold text-white" onClick={() => act.mutate(() => desk.collect(b.id, method, b.money.dueAtVenue))} data-testid="collect">
+          <button type="button" className="min-h-11 bg-brand px-4 font-bold text-on-brand" onClick={() => act.mutate(() => desk.collect(b.id, method, b.money.dueAtVenue))} data-testid="collect">
             {t("collect", { amount: money(b.money.dueAtVenue) })}
           </button>
         </div>
@@ -550,7 +550,7 @@ function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: str
         <input className={inputCls} value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="off" />
       </Field>
       <div className="flex items-end gap-2">
-        <button type="submit" disabled={save.isPending} className="min-h-11 bg-brand px-4 font-bold text-white disabled:opacity-50">
+        <button type="submit" disabled={save.isPending} className="min-h-11 bg-brand px-4 font-bold text-on-brand disabled:opacity-50">
           {t("save")}
         </button>
         <button type="button" onClick={onClose} className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold">

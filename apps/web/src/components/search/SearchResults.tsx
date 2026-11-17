@@ -40,7 +40,7 @@ export function SearchResults() {
         key={asked}
         role="search"
         action="/search"
-        className="glass-card mt-5 flex max-w-2xl gap-2 p-3"
+        className="surface-card mt-5 flex max-w-2xl gap-2 p-3"
         onSubmit={(e) => {
           e.preventDefault();
           const q = String(new FormData(e.currentTarget).get("q") ?? "").trim();

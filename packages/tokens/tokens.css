@@ -505,3 +505,12 @@
     --kg-focus: #1fd17f;
   }
 }
+/* v2 dark: the danger red is light (#ff7b72), so a danger button's white text would be about 2.4:1. */
+:root[data-theme="dark"] [data-ui="v2"] .bg-danger.text-white {
+  color: #1a0605;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-ui="v2"] .bg-danger.text-white {
+    color: #1a0605;
+  }
+}

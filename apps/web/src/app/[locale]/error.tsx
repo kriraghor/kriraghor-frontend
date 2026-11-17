@@ -14,10 +14,10 @@ export default function PageError({ error, reset }: { error: Error & { digest?: 
       <h1 className="max-w-[20ch] text-4xl font-extrabold">{t("title")}</h1>
       <p className="mt-4 max-w-[52ch] text-lg text-muted">{t("body")}</p>
       <div className="mt-8 flex flex-wrap gap-3">
-        <button type="button" onClick={reset} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white hover:bg-brand-hover">
+        <button type="button" onClick={reset} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand hover:bg-brand-hover">
           {t("retry")}
         </button>
-        <Link href="/" className="inline-flex min-h-12 items-center border-2 border-line-strong px-5 font-bold">
+        <Link href="/" className="rounded-control inline-flex min-h-12 items-center border border-line-strong px-5 font-bold">
           {t("home")}
         </Link>
       </div>

@@ -34,7 +34,7 @@ export function ProReviews() {
     return p?.role ? (locale === "bn" ? p.role.nameBn : p.role.nameEn) : null;
   };
 
-  if (q.isPending) return <div className="h-40 animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control h-40 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("owner.loadFailed")}</Notice>;
   return (
     <div data-testid="pro-reviews">
@@ -44,7 +44,7 @@ export function ProReviews() {
       ) : (
         <ul className="mt-6 flex flex-col gap-4">
           {items.map((r) => (
-            <li key={r.id} className="border-2 border-line p-4" data-testid="pro-review">
+            <li key={r.id} className="rounded-card border border-line p-4" data-testid="pro-review">
               {many ? <p className="text-xs font-bold uppercase tracking-wide text-muted">{subjectNameOf(r) ?? roleOf(r.subjectId) ?? t("subjects.hire_profile")}</p> : null}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Stars value={r.stars} label={t("reviews.starsOf", { stars: localNumber(r.stars, locale) })} />
@@ -68,7 +68,7 @@ export function ProReviews() {
         </ul>
       )}
       {q.hasNextPage ? (
-        <button type="button" disabled={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} className="mt-4 min-h-12 border-2 border-line px-5 font-bold hover:border-brand disabled:opacity-50">
+        <button type="button" disabled={q.isFetchingNextPage} onClick={() => void q.fetchNextPage()} className="rounded-control mt-4 min-h-12 border border-line-strong/60 px-5 font-bold hover:border-brand disabled:opacity-50">
           {t("reviews.more")}
         </button>
       ) : null}

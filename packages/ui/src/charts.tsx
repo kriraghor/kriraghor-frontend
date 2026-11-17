@@ -39,7 +39,7 @@ export function Sparkline({ points, label }: { points: (number | null)[]; label:
 export function KpiTile({ label, value, delta, spark, note, help, testId }: { label: string; value: ReactNode; delta?: ReactNode; spark?: (number | null)[] | null; note?: string | null; help?: string; testId?: string }) {
   // Two tiles share a row on phones (390px), so the padding and the figure shrink there.
   return (
-    <div className="flex min-w-0 flex-col gap-1 glass-card p-4 sm:p-5" data-testid={testId}>
+    <div className="flex min-w-0 flex-col gap-1 surface-card p-4 sm:p-5" data-testid={testId}>
       <p className="text-sm font-semibold text-muted" title={help}>
         {label}
       </p>
@@ -102,7 +102,7 @@ export function ChartLine({
   const many = points.length > 7;
   const rows: [string, string][] = points.map((p, i) => [labelOf(p.key), compare && legend?.compare ? `${format(p.value)} (${legend.compare}: ${format(compare[i] ?? 0)})` : format(p.value)]);
   return (
-    <figure className="min-w-0 glass-card p-4">
+    <figure className="min-w-0 surface-card p-4">
       <figcaption className="font-bold">{title}</figcaption>
       {legend ? (
         <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted" aria-hidden="true">
@@ -124,7 +124,7 @@ export function ChartLine({
       </svg>
       <div className="relative mt-1 h-4" aria-hidden="true">
         {points.map((p, i) => (
-          <span key={p.key} className={`absolute top-0 -translate-x-1/2 whitespace-nowrap text-[11px] text-muted ${many && i % 2 ? "hidden sm:block" : ""}`} style={{ left: `${(x(i) / w) * 100}%` }}>
+          <span key={p.key} className={`absolute top-0 -translate-x-1/2 whitespace-nowrap text-xs text-muted ${many && i % 2 ? "hidden sm:block" : ""}`} style={{ left: `${(x(i) / w) * 100}%` }}>
             {labelOf(p.key)}
           </span>
         ))}
@@ -142,14 +142,14 @@ export function ChartLine({
 export function ChartBars({ title, bars, format, values = true }: { title: string; bars: { label: string; value: number; tick?: string }[]; format: (n: number) => string; values?: boolean }) {
   const max = Math.max(1, ...bars.map((b) => b.value));
   return (
-    <figure className="min-w-0 glass-card p-4">
+    <figure className="min-w-0 surface-card p-4">
       <figcaption className="font-bold">{title}</figcaption>
       <div className={`mt-3 flex h-40 items-end ${bars.length > 12 ? "gap-px sm:gap-0.5" : "gap-1"}`} aria-hidden="true">
         {bars.map((b) => (
           <div key={b.label} className="flex min-w-0 flex-1 flex-col items-center gap-1" title={`${b.label}: ${format(b.value)}`}>
-            {values ? <span className="text-[11px] tabular-nums text-muted">{b.value ? format(b.value) : ""}</span> : null}
+            {values ? <span className="text-xs tabular-nums text-muted">{b.value ? format(b.value) : ""}</span> : null}
             <span className="w-full bg-brand" style={{ height: `${Math.max(2, (b.value / max) * 120)}px` }} />
-            <span className={`h-4 text-[11px] text-muted ${b.tick === undefined ? "max-w-full truncate" : "whitespace-nowrap"}`}>{b.tick ?? b.label}</span>
+            <span className={`h-4 text-xs text-muted ${b.tick === undefined ? "max-w-full truncate" : "whitespace-nowrap"}`}>{b.tick ?? b.label}</span>
           </div>
         ))}
       </div>
@@ -161,7 +161,7 @@ export function ChartBars({ title, bars, format, values = true }: { title: strin
 export function ChartRank({ title, items, format, empty }: { title: string; items: { label: string; value: number }[]; format: (n: number) => string; empty: string }) {
   const max = Math.max(1, ...items.map((i) => i.value));
   return (
-    <figure className="min-w-0 glass-card p-4">
+    <figure className="min-w-0 surface-card p-4">
       <figcaption className="font-bold">{title}</figcaption>
       {items.length ? (
         <ol className="mt-3 space-y-2">
@@ -185,7 +185,7 @@ const SPLIT = ["var(--color-brand)", "#d97706", "#2563eb", "#7c3aed", "#0891b2",
 export function ChartSplit({ title, parts, format, empty }: { title: string; parts: { label: string; value: number }[]; format: (n: number) => string; empty: string }) {
   const total = parts.reduce((n, p) => n + p.value, 0);
   return (
-    <figure className="min-w-0 glass-card p-4">
+    <figure className="min-w-0 surface-card p-4">
       <figcaption className="font-bold">{title}</figcaption>
       {total > 0 ? (
         <>

@@ -26,7 +26,7 @@ export function CartView() {
   const money = (n: number) => formatTaka(n, locale);
 
   if (status === "signed_out") return <MePanel />;
-  if (cart.isPending) return <div className="mx-auto mt-10 h-64 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (cart.isPending) return <div className="rounded-control mx-auto mt-10 h-64 max-w-[1100px] kg-shimmer bg-surface-2" />;
   if (cart.isError) return <section className="mx-auto max-w-[1100px] px-5 py-10"><Notice tone="error">{t("failed")}</Notice></section>;
   const c = cart.data;
   const empty = c.shops.length === 0 && c.unavailable.length === 0;
@@ -46,7 +46,7 @@ export function CartView() {
         <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="flex flex-col gap-6">
             {c.shops.map((g) => (
-              <div key={g.shop.id} className="border-2 border-line" data-testid="cart-shop">
+              <div key={g.shop.id} className="rounded-card border border-line" data-testid="cart-shop">
                 <div className="flex items-baseline justify-between border-b-2 border-line px-4 py-3">
                   <Link href={`/shop/s/${g.shop.slug}`} className="font-extrabold hover:underline">
                     {g.shop.name}
@@ -99,7 +99,7 @@ export function CartView() {
               </div>
             ))}
             {c.unavailable.length ? (
-              <div className="border-2 border-line p-4">
+              <div className="rounded-card border border-line p-4">
                 <p className="font-semibold">{t("noLonger")}</p>
                 <ul className="mt-2">
                   {c.unavailable.map((l) => (
@@ -114,14 +114,14 @@ export function CartView() {
               </div>
             ) : null}
           </div>
-          <aside className="h-fit border-2 border-line p-5">
+          <aside className="rounded-card h-fit border border-line p-5">
             <div className="flex justify-between text-lg font-extrabold">
               <span>{t("subtotal", { n: c.count })}</span>
               <span data-testid="cart-items">{money(c.items)}</span>
             </div>
             <p className="mt-2 text-sm text-muted">{t("deliveryNote")}</p>
             {c.ready ? (
-              <Link href="/shop/checkout" className="mt-5 flex min-h-12 items-center justify-center bg-brand font-bold text-white hover:bg-brand-hover" data-testid="go-checkout">
+              <Link href="/shop/checkout" className="mt-5 flex min-h-12 items-center justify-center bg-brand font-bold text-on-brand hover:bg-brand-hover" data-testid="go-checkout">
                 {t("checkout")}
               </Link>
             ) : (

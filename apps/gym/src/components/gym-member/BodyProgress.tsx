@@ -223,7 +223,7 @@ function BodyChart({ title, series, ...text }: { title: string; series: { date: 
       <figcaption className="sr-only">{title}</figcaption>
       <Plot title={title} series={series} w={340} h={190} shown={on ?? last} onShow={setOn} className="sm:hidden" {...text} />
       <Plot title={title} series={series} w={600} h={200} shown={on ?? last} onShow={setOn} className="hidden sm:block" {...text} />
-      <div className="mt-1 flex justify-between text-[11px] tabular-nums text-muted" aria-hidden>
+      <div className="mt-1 flex justify-between text-xs tabular-nums text-muted" aria-hidden>
         <span>{text.shortDate(series[0]!.date)}</span>
         <span>{text.shortDate(series[last]!.date)}</span>
       </div>
@@ -263,10 +263,10 @@ function Plot({ title, series, w, h, shown, onShow, className, valueText, dateTe
           </g>
         ))}
       </svg>
-      <span className="pointer-events-none absolute left-0 top-0 text-[11px] tabular-nums text-muted" aria-hidden>
+      <span className="pointer-events-none absolute left-0 top-0 text-xs tabular-nums text-muted" aria-hidden>
         {valueText(range.max)}
       </span>
-      <span className="pointer-events-none absolute bottom-0 left-0 text-[11px] tabular-nums text-muted" aria-hidden>
+      <span className="pointer-events-none absolute bottom-0 left-0 text-xs tabular-nums text-muted" aria-hidden>
         {valueText(range.min)}
       </span>
       <span

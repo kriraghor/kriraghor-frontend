@@ -12,7 +12,7 @@ import { risk } from "@/lib/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { DatePicker } from "@kriraghor/ui/date";
 
-const BADGE_CLS = { fully_verified: "border-brand text-brand", documents_in_review: "border-amber-500 text-ink", verification_needed: "border-danger text-danger" } as const;
+const BADGE_CLS = { fully_verified: "border-brand text-brand", documents_in_review: "border-warning text-ink", verification_needed: "border-danger text-danger" } as const;
 const STATUS_CLS: Record<string, string> = { approved: "text-brand", in_review: "text-ink", changes_requested: "text-danger", rejected: "text-danger", missing: "text-muted" };
 
 /**
@@ -62,7 +62,7 @@ export function VerificationPage() {
           </Notice>
         </div>
       ) : q.isPending ? (
-        <div className="mt-6 h-40 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />
+        <div className="rounded-control mt-6 h-40 kg-shimmer bg-surface-2" role="status" aria-label={t("loading")} />
       ) : q.isError ? (
         <div className="mt-6">
           <Notice tone="error">{t("loadFailed")}</Notice>
@@ -70,16 +70,16 @@ export function VerificationPage() {
       ) : (
         <>
           <div className="mt-6 flex flex-wrap items-center gap-3" data-testid="kyc-badge">
-            <span className={`border-2 px-3 py-1 text-sm font-bold ${BADGE_CLS[q.data.badge]}`}>{t(`badge.${q.data.badge}`)}</span>
+            <span className={`rounded-card border px-3 py-1 text-sm font-bold ${BADGE_CLS[q.data.badge]}`}>{t(`badge.${q.data.badge}`)}</span>
             <span className="text-sm text-muted">{t("progress", { approved: q.data.progress.approved, total: q.data.progress.total })}</span>
           </div>
-          <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="kyc-items">
+          <ul className="mt-6 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="kyc-items">
             {q.data.items.map((i) => (
               <ItemRow key={i.key} item={i} />
             ))}
           </ul>
           {canSubmit && !editing ? (
-            <button type="button" onClick={() => setEditing(true)} className="mt-6 min-h-12 border-2 border-ink px-5 font-bold" data-testid="start-nid">
+            <button type="button" onClick={() => setEditing(true)} className="rounded-control mt-6 min-h-12 border border-ink px-5 font-bold" data-testid="start-nid">
               {nid.status === "missing" ? t("start") : t("again")}
             </button>
           ) : null}
@@ -216,7 +216,7 @@ function NidForm({
 
   return (
     <form
-      className="mt-6 space-y-5 border-2 border-line-strong p-5"
+      className="rounded-card mt-6 space-y-5 border border-line-strong p-5"
       onSubmit={async (e) => {
         e.preventDefault();
         if (!ready) return;
@@ -271,7 +271,7 @@ function NidForm({
           {SLOTS.map((slot) => {
             const u = uploads[slot];
             return (
-              <label key={slot} className={`flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 border-2 border-dashed p-3 text-center text-sm ${u?.id ? "border-brand" : u?.error ? "border-danger" : "border-line"}`}>
+              <label key={slot} className={`rounded-control flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 border border-dashed p-3 text-center text-sm ${u?.id ? "border-brand" : u?.error ? "border-danger" : "border-line"}`}>
                 <span className="font-bold">{t(`slot.${slot}`)}</span>
                 {u?.preview ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -318,7 +318,7 @@ function NidForm({
         <Button type="submit" busy={busy} disabled={!ready}>
           {t("submit")}
         </Button>
-        <button type="button" onClick={onCancel} className="min-h-12 border-2 border-line px-5 font-semibold" disabled={busy}>
+        <button type="button" onClick={onCancel} className="rounded-control min-h-12 border border-line-strong/60 px-5 font-semibold" disabled={busy}>
           {t("cancel")}
         </button>
       </div>

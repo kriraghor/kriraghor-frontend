@@ -68,7 +68,7 @@ export function TournamentList() {
       </form>
       <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label={t("list.game")}>
         {[{ key: "", nameEn: t("list.allGames"), nameBn: t("list.allGames") }, ...gameList].map((g) => (
-          <button key={g.key || "all"} type="button" role="tab" aria-selected={game === g.key} onClick={() => set("game", g.key)} className={`min-h-11 border-2 px-4 text-sm font-bold ${game === g.key ? "border-line-strong bg-line-strong text-bg" : "border-line text-muted hover:border-line-strong"}`}>
+          <button key={g.key || "all"} type="button" role="tab" aria-selected={game === g.key} onClick={() => set("game", g.key)} className={`rounded-control min-h-11 border px-4 text-sm font-bold ${game === g.key ? "border-line-strong bg-line-strong text-bg" : "border-line text-muted hover:border-line-strong"}`}>
             {locale === "bn" ? g.nameBn : g.nameEn}
           </button>
         ))}
@@ -86,7 +86,7 @@ export function TournamentList() {
       {q.isError ? <p className="mt-6 text-danger">{t("loadFailed")}</p> : null}
       {q.data && !items.length ? <Empty title={t("list.empty")} body={t("list.emptyBody")} /> : null}
       {q.hasNextPage ? (
-        <button type="button" onClick={() => void q.fetchNextPage()} disabled={q.isFetchingNextPage} className="mt-6 min-h-12 border-2 border-line-strong px-5 font-bold disabled:opacity-50">
+        <button type="button" onClick={() => void q.fetchNextPage()} disabled={q.isFetchingNextPage} className="rounded-control mt-6 min-h-12 border border-line-strong px-5 font-bold disabled:opacity-50">
           {t("more")}
         </button>
       ) : null}

@@ -84,7 +84,7 @@ export default async function HowItWorksPage({ params }: PageProps<"/[locale]/ho
                 ))}
               </ol>
               {p.owners ? (
-                <p className="glass-card mt-5 p-4 text-sm">
+                <p className="surface-card mt-5 p-4 text-sm">
                   <b>{t("forOwners")}</b> {t(`${p.key}.owners`)}{" "}
                   <Link href="/business" className="font-bold text-brand-text underline">
                     {t("seeBusiness")}
@@ -102,7 +102,7 @@ export default async function HowItWorksPage({ params }: PageProps<"/[locale]/ho
         </h2>
         <dl className="mt-5 grid gap-4 md:grid-cols-3">
           {TRUST.map((x) => (
-            <div key={x.key} className="glass-card p-5">
+            <div key={x.key} className="surface-card p-5">
               <dt className="flex items-center gap-2 text-lg font-extrabold">
                 <span className="text-brand-text">{x.icon}</span>
                 {t(`money.${x.key}.title`)}

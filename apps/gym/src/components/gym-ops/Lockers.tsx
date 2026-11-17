@@ -87,7 +87,7 @@ function Body({ ctx }: { ctx: GymCtx }) {
                       data-testid={`locker-${l.number}`}
                     >
                       <span className="font-display text-xl font-extrabold">{l.number}</span>
-                      <span className="max-w-full truncate text-[11px] font-semibold">{l.rental ? l.rental.member.memberCode : t(`lockers.state.${l.state}`)}</span>
+                      <span className="max-w-full truncate text-xs font-semibold">{l.rental ? l.rental.member.memberCode : t(`lockers.state.${l.state}`)}</span>
                     </button>
                   </li>
                 ))}

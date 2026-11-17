@@ -256,7 +256,7 @@ export function NotificationBell({ centreHref, settingsHref, here }: { centreHre
           <Bell size={22} weight={open ? "fill" : "regular"} aria-hidden />
         </span>
         {badge ? (
-          <span className="absolute right-0.5 top-0.5 min-w-5 rounded-pill bg-live px-1 text-center text-[11px] font-bold leading-5 text-white tabular-nums ring-2 ring-surface" data-testid="notification-badge">
+          <span className="absolute right-0.5 top-0.5 min-w-5 rounded-pill bg-live px-1 text-center text-xs font-bold leading-5 text-white tabular-nums ring-2 ring-surface" data-testid="notification-badge">
             {badge}
           </span>
         ) : null}

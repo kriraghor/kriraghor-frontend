@@ -10,6 +10,7 @@ import { bookings, timeLabel, whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { Notice } from "@kriraghor/ui/primitives";
 import { BookingTrust } from "../trust/BookingTrust";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /**
  * /me/bookings/[id] (M10 FR-10 to FR-12): the booking, what was paid and what is due at the venue,
@@ -47,7 +48,7 @@ export function BookingDetail({ id }: { id: string }) {
         </Notice>
       </Shell>
     );
-  if (q.isPending) return <Shell>{<div className="h-64 animate-pulse bg-surface-2" role="status" aria-label={t("loading")} />}</Shell>;
+  if (q.isPending) return <Shell>{<div className="rounded-control h-64 kg-shimmer bg-surface-2" role="status" aria-label={t("loading")} />}</Shell>;
   if (q.isError || !q.data)
     return (
       <Shell>
@@ -59,15 +60,13 @@ export function BookingDetail({ id }: { id: string }) {
 
   return (
     <Shell>
-      <Link href="/me/bookings" className="text-sm font-semibold text-brand underline">
-        ← {t("myBookings")}
-      </Link>
+      <BackLink href="/me/bookings">{t("myBookings")}</BackLink>
       <p className="mt-4 font-mono text-sm text-muted">{b.code}</p>
       <h1 className="text-3xl font-extrabold" data-testid="booking-when">
         {whenLabel(b.start, locale)}–{timeLabel(b.end, locale)}
       </h1>
       <p className="mt-1 text-muted">{b.courts.map((k) => k.name).join(", ")}</p>
-      <p className="mt-3 inline-block border-2 border-line px-3 py-1 text-sm font-bold" data-testid="booking-status">
+      <p className="rounded-card mt-3 inline-block border border-line px-3 py-1 text-sm font-bold" data-testid="booking-status">
         {t(`status.${b.status}`)}
       </p>
 
@@ -90,10 +89,10 @@ export function BookingDetail({ id }: { id: string }) {
 
       {b.status === "pending_payment" ? (
         <div className="mt-6 flex flex-wrap gap-3">
-          <button type="button" onClick={() => pay.mutate()} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
+          <button type="button" onClick={() => pay.mutate()} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand">
             {t("payNow")}
           </button>
-          <button type="button" onClick={() => release.mutate()} className="inline-flex min-h-12 items-center border-2 border-line px-5 font-semibold">
+          <button type="button" onClick={() => release.mutate()} className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-semibold">
             {t("releaseHold")}
           </button>
         </div>
@@ -102,11 +101,11 @@ export function BookingDetail({ id }: { id: string }) {
       {terms?.allowed ? (
         <div className="mt-6">
           {!confirming ? (
-            <button type="button" onClick={() => setConfirming(true)} className="inline-flex min-h-12 items-center border-2 border-danger px-5 font-bold text-danger" data-testid="cancel-booking">
+            <button type="button" onClick={() => setConfirming(true)} className="rounded-control inline-flex min-h-12 items-center border border-danger px-5 font-bold text-danger" data-testid="cancel-booking">
               {t("cancel")}
             </button>
           ) : (
-            <div className="border-2 border-danger p-4" role="alertdialog" aria-labelledby="cancel-title">
+            <div className="rounded-card border border-danger p-4" role="alertdialog" aria-labelledby="cancel-title">
               <p id="cancel-title" className="font-bold">
                 {t("cancelTitle")}
               </p>
@@ -121,7 +120,7 @@ export function BookingDetail({ id }: { id: string }) {
                 <button type="button" onClick={() => cancel.mutate(terms.refund)} disabled={cancel.isPending} className="inline-flex min-h-12 items-center bg-danger px-5 font-bold text-white disabled:opacity-50" data-testid="confirm-cancel">
                   {t("confirmCancel")}
                 </button>
-                <button type="button" onClick={() => setConfirming(false)} className="inline-flex min-h-12 items-center border-2 border-line px-5 font-semibold">
+                <button type="button" onClick={() => setConfirming(false)} className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-semibold">
                   {t("keep")}
                 </button>
               </div>

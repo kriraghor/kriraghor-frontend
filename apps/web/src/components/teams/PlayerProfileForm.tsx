@@ -24,7 +24,7 @@ export function PlayerProfileForm() {
   const q = useQuery({ queryKey: ["my-player-profile"], queryFn: teams.profile, enabled: status === "signed_in" });
 
   if (status === "signed_out") return <MePanel />;
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[760px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[760px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data) return <p className="mx-auto max-w-[760px] px-5 py-10">{t("failed")}</p>;
   return <Editor initial={q.data} />;
 }
@@ -74,7 +74,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
         />
       ) : null}
 
-      <div className="mt-6 border-2 border-line p-4">
+      <div className="rounded-card mt-6 border border-line p-4">
         {username ? (
           <p>
             {t("publicPage")}{" "}
@@ -106,7 +106,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
           save.mutate();
         }}
       >
-        <fieldset id="player-sports" className="scroll-mt-28 border-2 border-line p-4">
+        <fieldset id="player-sports" className="rounded-card scroll-mt-28 border border-line p-4">
           <legend className="px-1 font-extrabold">{t("sportsAndPositions")}</legend>
           <ul className="flex flex-col gap-4">
             {all.map((s) => {
@@ -127,7 +127,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
                       {(s.positions ?? []).map((pos) => {
                         const on = pick.positions.includes(pos.key);
                         return (
-                          <button key={pos.key} type="button" aria-pressed={on} onClick={() => setPicks(togglePosition(picks, s.key, pos.key))} className={`min-h-11 border-2 px-3 text-sm font-bold ${on ? "border-brand bg-brand text-white" : "border-line hover:border-brand"}`}>
+                          <button key={pos.key} type="button" aria-pressed={on} onClick={() => setPicks(togglePosition(picks, s.key, pos.key))} className={`rounded-control min-h-11 border px-3 text-sm font-bold ${on ? "border-brand bg-brand text-on-brand" : "border-line hover:border-brand"}`}>
                             {label(pos)}
                           </button>
                         );
@@ -144,7 +144,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
           <label htmlFor="player-bio" className="text-sm font-semibold text-muted">
             {t("bio")}
           </label>
-          <textarea id="player-bio" rows={3} maxLength={500} value={bio} onChange={(e) => setBio(e.target.value)} className="glass-card scroll-mt-28 p-3" />
+          <textarea id="player-bio" rows={3} maxLength={500} value={bio} onChange={(e) => setBio(e.target.value)} className="surface-card scroll-mt-28 p-3" />
         </div>
 
         <fieldset className="flex flex-col gap-2">

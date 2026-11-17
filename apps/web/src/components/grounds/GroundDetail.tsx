@@ -17,7 +17,7 @@ import { PHOTOS } from "@/lib/photos";
 import { BookingWidget } from "./BookingWidget";
 import { GroundReviews } from "../trust/GroundReviews";
 
-const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2", high: "bg-amber-100 dark:bg-amber-900/40", peak: "bg-amber-300 dark:bg-amber-700/70" };
+const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2", high: "bg-accent-soft", peak: "bg-accent/45" };
 
 const WIDE = "(min-width: 1024px)";
 /** True on desktop widths, where booking sits in the side panel; phones book from a sheet. */

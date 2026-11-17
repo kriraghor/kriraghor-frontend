@@ -13,7 +13,7 @@ async function Pay({ params }: { params: PageProps<"/[locale]/pay/[paymentId]">[
 
 export default function PayRoute({ params }: PageProps<"/[locale]/pay/[paymentId]">) {
   return (
-    <Suspense fallback={<div className="mx-auto mt-10 h-40 max-w-xl animate-pulse bg-surface-2" />}>
+    <Suspense fallback={<div className="rounded-control mx-auto mt-10 h-40 max-w-xl kg-shimmer bg-surface-2" />}>
       <Pay params={params} />
     </Suspense>
   );

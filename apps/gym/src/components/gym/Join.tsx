@@ -7,8 +7,8 @@ import { UserPlus } from "@phosphor-icons/react";
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard, useMe } from "@kriraghor/ui/account";
 import { formatTaka } from "@kriraghor/ui/format";
-import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
-import { Button, ButtonLink, Notice, Skeleton, Textarea } from "@kriraghor/ui/kit";
+import { useRouter } from "@kriraghor/ui/i18n/navigation";
+import { Button, ButtonLink, Notice, Skeleton, Textarea, BackLink } from "@kriraghor/ui/kit";
 import { gym, type GymPage } from "@/lib/gym";
 import { gymMe } from "@/lib/gym-manage";
 import { webHref } from "@/lib/links";
@@ -90,9 +90,7 @@ export function JoinForm({ slug }: { slug: string }) {
   const shell = (body: React.ReactNode) => (
     <div data-theme="gym" className="min-h-[70dvh]">
       <section className="mx-auto w-full max-w-[640px] px-4 py-8 sm:px-6" data-testid="join-page">
-        <Link href={`/gyms/${encodeURIComponent(slug)}`} className="text-sm font-semibold text-brand underline">
-          ← {q.data?.name ?? tg("back")}
-        </Link>
+        <BackLink href={`/gyms/${encodeURIComponent(slug)}`}>{q.data?.name ?? tg("back")}</BackLink>
         {body}
       </section>
     </div>

@@ -28,7 +28,7 @@ export function Thread({ requestId }: { requestId: string }) {
   const time = (iso: string) => new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Dhaka" }).format(new Date(iso));
 
   return (
-    <section className="flex flex-col border-2 border-line" aria-labelledby={`thread-${requestId}`} data-testid="hire-thread">
+    <section className="rounded-card flex flex-col border border-line" aria-labelledby={`thread-${requestId}`} data-testid="hire-thread">
       <h2 id={`thread-${requestId}`} className="border-b-2 border-line px-4 py-3 text-lg font-extrabold">
         {t("messages")}
       </h2>
@@ -56,9 +56,9 @@ export function Thread({ requestId }: { requestId: string }) {
         <label htmlFor={`msg-${requestId}`} className="sr-only">
           {t("message")}
         </label>
-        <textarea id={`msg-${requestId}`} value={body} onChange={(e) => setBody(e.target.value)} maxLength={1000} rows={2} placeholder={t("messageHint")} className="glass-card p-3 text-base text-ink" data-testid="hire-message-input" />
+        <textarea id={`msg-${requestId}`} value={body} onChange={(e) => setBody(e.target.value)} maxLength={1000} rows={2} placeholder={t("messageHint")} className="surface-card p-3 text-base text-ink" data-testid="hire-message-input" />
         {problem ? <Notice tone="error">{problem.code === "CONTACT_NOT_ALLOWED" ? t("contactRefused") : problem.code === "MESSAGES_RATE_LIMITED" ? t("tooMany") : problem.title}</Notice> : null}
-        <button type="submit" disabled={send.isPending || !body.trim()} className="min-h-11 self-end bg-brand px-4 font-bold text-white hover:bg-brand-hover disabled:opacity-50" data-testid="hire-message-send">
+        <button type="submit" disabled={send.isPending || !body.trim()} className="min-h-11 self-end bg-brand px-4 font-bold text-on-brand hover:bg-brand-hover disabled:opacity-50" data-testid="hire-message-send">
           {t("sendMessage")}
         </button>
       </form>

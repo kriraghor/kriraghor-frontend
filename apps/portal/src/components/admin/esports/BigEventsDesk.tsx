@@ -212,7 +212,7 @@ function Basics({ event, onSaved }: { event?: BigEvent; onSaved: (id: string) =>
               <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={async (x) => x.target.files?.[0] && (await act.run(() => bigEvents.banner(e.id, x.target.files![0]), t("bannerSaved"))) && onSaved(e.id)} />
             </label>
             {e.status === "draft" ? (
-              <button type="button" className={`${btn} border-brand bg-brand text-white`} onClick={async () => (await act.run(() => bigEvents.publish(e.id), t("published"))) && onSaved(e.id)} data-testid="publish-event">
+              <button type="button" className={`${btn} border-brand bg-brand text-on-brand`} onClick={async () => (await act.run(() => bigEvents.publish(e.id), t("published"))) && onSaved(e.id)} data-testid="publish-event">
                 {t("publish")}
               </button>
             ) : null}

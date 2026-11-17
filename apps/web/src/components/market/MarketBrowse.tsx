@@ -50,7 +50,7 @@ export function MarketBrowse() {
             </h1>
             <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
           </div>
-          <Link href="/shop/saved" className="min-h-11 border-2 border-line px-4 py-2 font-bold hover:border-brand">
+          <Link href="/shop/saved" className="rounded-control min-h-11 border border-line-strong/60 px-4 py-2 font-bold hover:border-brand">
             {t("savedLink")}
           </Link>
         </div>
@@ -59,7 +59,7 @@ export function MarketBrowse() {
       <nav aria-label={t("categories")} className="mt-8">
         <ul className="flex gap-2 overflow-x-auto pb-1">
           <li>
-            <button type="button" aria-pressed={!f.category} onClick={() => go({ ...f, category: undefined, types: undefined })} className={`min-h-11 whitespace-nowrap border-2 px-4 font-bold ${!f.category ? "border-brand bg-brand/10" : "border-line"}`}>
+            <button type="button" aria-pressed={!f.category} onClick={() => go({ ...f, category: undefined, types: undefined })} className={`rounded-control min-h-11 whitespace-nowrap border px-4 font-bold ${!f.category ? "border-brand bg-brand/10" : "border-line"}`}>
               {t("everything")}
             </button>
           </li>
@@ -69,7 +69,7 @@ export function MarketBrowse() {
                 type="button"
                 aria-pressed={f.category === c.key}
                 onClick={() => go({ ...f, category: f.category === c.key ? undefined : c.key, types: undefined })}
-                className={`min-h-11 whitespace-nowrap border-2 px-4 font-bold ${f.category === c.key ? "border-brand bg-brand/10" : "border-line"}`}
+                className={`rounded-control min-h-11 whitespace-nowrap border px-4 font-bold ${f.category === c.key ? "border-brand bg-brand/10" : "border-line"}`}
                 data-testid={`category-${c.key}`}
               >
                 {name(c)} {counts.has(c.key) ? <span className="font-semibold text-muted">({counts.get(c.key)})</span> : null}
@@ -94,7 +94,7 @@ export function MarketBrowse() {
             </label>
             <div className="flex">
               <input id="market-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("searchHint")} className="min-h-12 w-full field px-3 text-base text-ink focus:border-brand" />
-              <button type="submit" className="min-h-12 border-2 border-l-0 border-line px-3 font-bold">
+              <button type="submit" className="rounded-control min-h-12 border border-l-0 border-line-strong/60 px-3 font-bold">
                 {t("go")}
               </button>
             </div>
@@ -104,7 +104,7 @@ export function MarketBrowse() {
               <legend className="text-sm font-bold">{t("itemType")}</legend>
               <div className="mt-2 flex flex-wrap gap-2">
                 {first.facets.itemTypes.map((x) => (
-                  <button key={x.key} type="button" aria-pressed={Boolean(f.types?.includes(x.key))} onClick={() => go({ ...f, types: toggleType(x.key) })} className={`min-h-10 border-2 px-3 text-sm font-semibold ${f.types?.includes(x.key) ? "border-brand bg-brand/10" : "border-line"}`}>
+                  <button key={x.key} type="button" aria-pressed={Boolean(f.types?.includes(x.key))} onClick={() => go({ ...f, types: toggleType(x.key) })} className={`rounded-control min-h-10 border px-3 text-sm font-semibold ${f.types?.includes(x.key) ? "border-brand bg-brand/10" : "border-line"}`}>
                     {name(x)} <span className="text-muted">({x.count})</span>
                   </button>
                 ))}
@@ -114,11 +114,11 @@ export function MarketBrowse() {
           <fieldset>
             <legend className="text-sm font-bold">{t("price")}</legend>
             <div className="mt-2 flex flex-wrap gap-2">
-              <button type="button" aria-pressed={!band && f.priceMin === undefined && f.priceMax === undefined} onClick={() => go({ ...f, priceMin: undefined, priceMax: undefined })} className={`min-h-10 border-2 px-3 text-sm font-semibold ${!band && f.priceMin === undefined && f.priceMax === undefined ? "border-brand bg-brand/10" : "border-line"}`}>
+              <button type="button" aria-pressed={!band && f.priceMin === undefined && f.priceMax === undefined} onClick={() => go({ ...f, priceMin: undefined, priceMax: undefined })} className={`rounded-control min-h-10 border px-3 text-sm font-semibold ${!band && f.priceMin === undefined && f.priceMax === undefined ? "border-brand bg-brand/10" : "border-line"}`}>
                 {t("anyPrice")}
               </button>
               {PRICE_BANDS.map((b) => (
-                <button key={b.key} type="button" aria-pressed={band === b.key} onClick={() => go({ ...f, priceMin: "min" in b ? b.min : undefined, priceMax: "max" in b ? b.max : undefined })} className={`min-h-10 border-2 px-3 text-sm font-semibold ${band === b.key ? "border-brand bg-brand/10" : "border-line"}`}>
+                <button key={b.key} type="button" aria-pressed={band === b.key} onClick={() => go({ ...f, priceMin: "min" in b ? b.min : undefined, priceMax: "max" in b ? b.max : undefined })} className={`rounded-control min-h-10 border px-3 text-sm font-semibold ${band === b.key ? "border-brand bg-brand/10" : "border-line"}`}>
                   {t(`band.${b.key}`)}
                 </button>
               ))}
@@ -166,18 +166,18 @@ export function MarketBrowse() {
           {list.isPending ? (
             <ul className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
               {[0, 1, 2, 3].map((i) => (
-                <li key={i} className="h-72 animate-pulse bg-surface-2" />
+                <li key={i} className="rounded-control h-72 kg-shimmer bg-surface-2" />
               ))}
             </ul>
           ) : list.isError ? (
-            <div className="mt-6 border-2 border-danger p-6">
+            <div className="rounded-card mt-6 border border-danger p-6">
               <p className="font-bold">{t("error")}</p>
-              <button type="button" className="mt-3 min-h-11 border-2 border-line px-4 font-bold" onClick={() => void list.refetch()}>
+              <button type="button" className="rounded-control mt-3 min-h-11 border border-line-strong/60 px-4 font-bold" onClick={() => void list.refetch()}>
                 {t("retry")}
               </button>
             </div>
           ) : !items.length ? (
-            <div className="mt-6 border-2 border-dashed border-line p-10 text-center" data-testid="market-empty">
+            <div className="rounded-card mt-6 border border-dashed border-line p-10 text-center" data-testid="market-empty">
               <p className="text-lg font-bold">{t("empty")}</p>
               {active ? (
                 <button
@@ -200,7 +200,7 @@ export function MarketBrowse() {
             </ul>
           )}
           {list.hasNextPage ? (
-            <button type="button" disabled={list.isFetchingNextPage} className="mt-6 min-h-12 border-2 border-line px-5 font-bold disabled:opacity-50" onClick={() => void list.fetchNextPage()}>
+            <button type="button" disabled={list.isFetchingNextPage} className="rounded-control mt-6 min-h-12 border border-line-strong/60 px-5 font-bold disabled:opacity-50" onClick={() => void list.fetchNextPage()}>
               {t("more")}
             </button>
           ) : null}

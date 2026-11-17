@@ -19,7 +19,7 @@ export type PayResultProps = {
   paymentsHref?: string | null;
 };
 
-const TONE = { brand: "bg-brand text-white", amber: "bg-amber-300 text-band" } as const;
+const TONE = { brand: "bg-brand text-on-brand", amber: "bg-accent text-on-accent" } as const;
 
 /**
  * /pay/[paymentId]/result (M06 §4), on kriraghor.com and gym.kriraghor.com: asks the server to verify
@@ -110,7 +110,7 @@ export function PayResult({ paymentId, signInHref, backLink, paymentsHref = null
           <>
             <h1 className="text-2xl font-extrabold">{outcome === "expired" ? t("expired") : t("result.failed")}</h1>
             {outcome === "failed" ? (
-              <Link href={`/pay/${paymentId}`} className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
+              <Link href={`/pay/${paymentId}`} className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand">
                 {t("tryAgain")}
               </Link>
             ) : null}

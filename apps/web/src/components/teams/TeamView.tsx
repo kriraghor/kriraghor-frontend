@@ -9,6 +9,7 @@ import { useAuth } from "@kriraghor/ui/auth";
 import { sortMembers, teams, whatsappUrl, type Team } from "@/lib/teams";
 import { MePanel } from "../MePanel";
 import { Button, Field, Notice } from "@kriraghor/ui/primitives";
+import { BackLink } from "@kriraghor/ui/kit";
 
 const LOGO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_LOGO = 2 * 1024 * 1024;
@@ -70,7 +71,7 @@ export function TeamView({ id }: { id: string }) {
   });
 
   if (status === "signed_out") return <MePanel />;
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1100px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[1100px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data)
     return (
       <section className="mx-auto max-w-[640px] px-5 py-16">
@@ -94,15 +95,13 @@ export function TeamView({ id }: { id: string }) {
 
   return (
     <section className="mx-auto max-w-[1100px] px-5 py-10">
-      <Link href="/me/teams" className="text-sm font-semibold text-brand underline">
-        ← {t("myTeams")}
-      </Link>
+      <BackLink href="/me/teams">{t("myTeams")}</BackLink>
       <div className="mt-4 flex flex-wrap items-center gap-4">
         {team.logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={team.logoUrl} alt={t("logoOf", { team: team.name })} className="size-20 border-2 border-line object-cover" />
+          <img src={team.logoUrl} alt={t("logoOf", { team: team.name })} className="rounded-card size-20 border border-line object-cover" />
         ) : (
-          <span className="grid size-20 place-items-center border-2 border-line text-2xl font-extrabold" aria-hidden>
+          <span className="rounded-card grid size-20 place-items-center border border-line text-2xl font-extrabold" aria-hidden>
             {team.shortCode ?? team.name.slice(0, 2).toUpperCase()}
           </span>
         )}
@@ -116,7 +115,7 @@ export function TeamView({ id }: { id: string }) {
           </h1>
           <p className="text-sm text-muted">{t("yourRole", { role: t(`role.${team.myRole}`) })}</p>
         </div>
-        {team.status === "archived" ? <span className="border-2 border-line px-2 py-0.5 font-bold text-muted">{t("archived")}</span> : null}
+        {team.status === "archived" ? <span className="rounded-pill border border-line px-2 py-0.5 font-bold text-muted">{t("archived")}</span> : null}
       </div>
 
       {failure ? (
@@ -128,10 +127,10 @@ export function TeamView({ id }: { id: string }) {
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">
         <div>
           <h2 className="text-xl font-extrabold">{t("members")}</h2>
-          <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="team-members">
+          <ul className="mt-3 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="team-members">
             {sortMembers(team.members).map((m) => (
               <li key={m.userId} className="flex flex-wrap items-center gap-3 py-3" data-testid="team-member">
-                <span className="grid size-10 place-items-center border-2 border-line font-mono font-bold tabular-nums" aria-label={t("jersey")}>
+                <span className="rounded-card grid size-10 place-items-center border border-line font-mono font-bold tabular-nums" aria-label={t("jersey")}>
                   {m.jerseyNo ?? "–"}
                 </span>
                 <span className="min-w-0 flex-1">
@@ -140,17 +139,17 @@ export function TeamView({ id }: { id: string }) {
                     {t(`role.${m.role}`)} · {t("joined", { date: date(m.joinedAt) })}
                   </span>
                 </span>
-                <span className={`border-2 px-2 py-0.5 text-sm font-bold ${m.nidVerified ? "border-brand text-brand" : "border-line text-muted"}`} data-testid="member-nid">
+                <span className={`rounded-pill border px-2 py-0.5 text-sm font-bold ${m.nidVerified ? "border-brand text-brand" : "border-line text-muted"}`} data-testid="member-nid">
                   {m.nidVerified ? t("nidVerified") : t("nidNotVerified")}
                 </span>
                 {team.can.manage && m.role !== "captain" ? (
                   <span className="flex flex-wrap gap-2">
-                    <button type="button" className="min-h-11 border-2 border-line px-3 text-sm font-bold hover:border-brand" onClick={() => act.mutate(() => teams.setMember(id, m.userId, { role: m.role === "vice_captain" ? "player" : "vice_captain" }))}>
+                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand" onClick={() => act.mutate(() => teams.setMember(id, m.userId, { role: m.role === "vice_captain" ? "player" : "vice_captain" }))}>
                       {m.role === "vice_captain" ? t("makePlayer") : t("makeVice")}
                     </button>
                     <button
                       type="button"
-                      className="min-h-11 border-2 border-line px-3 text-sm font-bold hover:border-brand"
+                      className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand"
                       onClick={() => {
                         const raw = window.prompt(t("jerseyPrompt", { name: m.displayName }), m.jerseyNo?.toString() ?? "");
                         if (raw === null) return;
@@ -161,13 +160,13 @@ export function TeamView({ id }: { id: string }) {
                     >
                       {t("setJersey")}
                     </button>
-                    <button type="button" className="min-h-11 border-2 border-line px-3 text-sm font-bold hover:border-brand" onClick={() => setConfirm({ handOver: m.userId, name: m.displayName })}>
+                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand" onClick={() => setConfirm({ handOver: m.userId, name: m.displayName })}>
                       {t("handOver")}
                     </button>
                   </span>
                 ) : null}
                 {team.can.invite && m.role !== "captain" && !(m.role === "vice_captain" && !isCaptain) ? (
-                  <button type="button" className="min-h-11 border-2 border-line px-3 text-sm font-bold hover:border-danger" onClick={() => act.mutate(() => teams.remove(id, m.userId))}>
+                  <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-danger" onClick={() => act.mutate(() => teams.remove(id, m.userId))}>
                     {t("remove")}
                   </button>
                 ) : null}
@@ -176,7 +175,7 @@ export function TeamView({ id }: { id: string }) {
           </ul>
 
           {typeof confirm === "object" && confirm ? (
-            <div className="mt-4 border-2 border-amber-500 p-4" role="dialog" aria-label={t("handOver")}>
+            <div className="rounded-card mt-4 border border-warning p-4" role="dialog" aria-label={t("handOver")}>
               <p className="font-semibold">{t("handOverConfirm", { name: confirm.name })}</p>
               <div className="mt-3 flex gap-3">
                 <Button type="button" busy={act.isPending} onClick={() => act.mutate(() => teams.handOver(id, confirm.handOver))}>
@@ -192,17 +191,17 @@ export function TeamView({ id }: { id: string }) {
           {team.can.invite && team.invites.length ? (
             <>
               <h2 className="mt-8 text-xl font-extrabold">{t("pendingInvites")}</h2>
-              <ul className="mt-3 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="team-pending">
+              <ul className="mt-3 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="team-pending">
                 {team.invites.map((i) => (
                   <li key={i.id} className="flex flex-wrap items-center gap-3 py-3">
                     <span className="min-w-0 flex-1">
                       <span className="block font-mono font-bold">{i.phoneMasked}</span>
                       <span className="block text-sm text-muted">{t("expires", { date: date(i.expiresAt) })}</span>
                     </span>
-                    <button type="button" className="min-h-11 border-2 border-line px-3 text-sm font-bold hover:border-brand" onClick={() => inviteAct.mutate({ inviteId: i.id, kind: "resend" })}>
+                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand" onClick={() => inviteAct.mutate({ inviteId: i.id, kind: "resend" })}>
                       {t("resend")}
                     </button>
-                    <button type="button" className="min-h-11 border-2 border-line px-3 text-sm font-bold hover:border-danger" onClick={() => inviteAct.mutate({ inviteId: i.id, kind: "cancel" })}>
+                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-danger" onClick={() => inviteAct.mutate({ inviteId: i.id, kind: "cancel" })}>
                       {t("cancelInvite")}
                     </button>
                   </li>
@@ -215,7 +214,7 @@ export function TeamView({ id }: { id: string }) {
         <aside className="flex flex-col gap-6">
           {team.can.invite ? (
             <form
-              className="flex flex-col gap-3 glass-card p-4"
+              className="flex flex-col gap-3 surface-card p-4"
               data-testid="invite-form"
               onSubmit={(e) => {
                 e.preventDefault();
@@ -230,11 +229,11 @@ export function TeamView({ id }: { id: string }) {
               {share ? (
                 <div className="flex flex-col gap-2 border-t-2 border-line pt-3" data-testid="share-link">
                   <p className="text-sm font-semibold">{t("shareThis")}</p>
-                  <input readOnly value={share} aria-label={t("shareLink")} className="min-h-11 border-2 border-line bg-surface-2 px-2 font-mono text-sm" data-testid="share-url" onFocus={(e) => e.currentTarget.select()} />
+                  <input readOnly value={share} aria-label={t("shareLink")} className="rounded-control min-h-11 border border-line-strong/60 bg-surface-2 px-2 font-mono text-sm" data-testid="share-url" onFocus={(e) => e.currentTarget.select()} />
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
-                      className="min-h-11 border-2 border-line px-3 text-sm font-bold hover:border-brand"
+                      className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand"
                       onClick={() => navigator.clipboard?.writeText(share).then(() => setCopied(true), () => setCopied(false))}
                     >
                       {copied ? t("copied") : t("copy")}
@@ -249,7 +248,7 @@ export function TeamView({ id }: { id: string }) {
           ) : null}
 
           {team.can.manage ? (
-            <div className="flex flex-col gap-3 border-2 border-line p-4">
+            <div className="rounded-card flex flex-col gap-3 border border-line p-4">
               <h2 className="text-lg font-extrabold">{t("captainTools")}</h2>
               {edit ? (
                 <form
@@ -271,11 +270,11 @@ export function TeamView({ id }: { id: string }) {
                   </div>
                 </form>
               ) : (
-                <button type="button" className="min-h-11 border-2 border-line px-3 text-left font-bold hover:border-brand" onClick={() => setEdit({ name: team.name, shortCode: team.shortCode ?? "" })}>
+                <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-left font-bold hover:border-brand" onClick={() => setEdit({ name: team.name, shortCode: team.shortCode ?? "" })}>
                   {t("editTeam")}
                 </button>
               )}
-              <label className="flex min-h-11 cursor-pointer items-center border-2 border-line px-3 font-bold hover:border-brand">
+              <label className="rounded-control flex min-h-11 cursor-pointer items-center border border-line-strong/60 px-3 font-bold hover:border-brand">
                 {t("uploadLogo")}
                 <input
                   type="file"
@@ -294,7 +293,7 @@ export function TeamView({ id }: { id: string }) {
               </label>
               {logoError ? <Notice tone="error">{logoError}</Notice> : null}
               {confirm === "archive" ? (
-                <div className="border-2 border-danger p-3">
+                <div className="rounded-card border border-danger p-3">
                   <p className="font-semibold">{t("archiveConfirm")}</p>
                   <div className="mt-3 flex gap-3">
                     <button type="button" className="min-h-12 bg-danger px-4 font-bold text-white" onClick={() => act.mutate(() => teams.archive(id))}>
@@ -306,7 +305,7 @@ export function TeamView({ id }: { id: string }) {
                   </div>
                 </div>
               ) : (
-                <button type="button" className="min-h-11 border-2 border-line px-3 text-left font-bold text-danger hover:border-danger" onClick={() => setConfirm("archive")}>
+                <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-left font-bold text-danger hover:border-danger" onClick={() => setConfirm("archive")}>
                   {t("archive")}
                 </button>
               )}
@@ -315,7 +314,7 @@ export function TeamView({ id }: { id: string }) {
 
           {team.can.leave ? (
             confirm === "leave" ? (
-              <div className="border-2 border-danger p-3">
+              <div className="rounded-card border border-danger p-3">
                 <p className="font-semibold">{isCaptain ? t("captainLeave") : t("leaveConfirm")}</p>
                 <div className="mt-3 flex gap-3">
                   {!isCaptain || team.members.length === 1 ? (
@@ -329,7 +328,7 @@ export function TeamView({ id }: { id: string }) {
                 </div>
               </div>
             ) : (
-              <button type="button" className="min-h-11 border-2 border-line px-3 text-left font-bold hover:border-danger" onClick={() => setConfirm("leave")}>
+              <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-left font-bold hover:border-danger" onClick={() => setConfirm("leave")}>
                 {t("leave")}
               </button>
             )

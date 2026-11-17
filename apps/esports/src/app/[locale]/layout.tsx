@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { notFound } from "next/navigation";
 import { fontVariables } from "@kriraghor/ui/fonts";
@@ -26,6 +26,9 @@ export const metadata: Metadata = {
   twitter: { card: "summary" },
 };
 
+// Esports is dark first (UI v2): the browser bar matches until the visitor picks light.
+export const viewport: Viewport = { themeColor: "#0a0f0c" };
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -37,9 +40,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
 
   return (
     <html lang={locale} suppressHydrationWarning className={`${fontVariables} h-full antialiased`}>
-      <body className="flex min-h-full flex-col pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0">
+      {/* data-ui="v2": the new look's colours (UI v2, ADR-011). Dark first: the header toggle switches to light,
+          remembered on this site. */}
+      <body data-ui="v2" className="flex min-h-full flex-col pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0">
         {/* Theme before paint; the logo splash once per session (kriraghor-docs 09 §8). */}
-        <ThemeScript />
+        <ThemeScript fallback="dark" />
         <BootSplash word={locale === "bn" ? "ক্রীড়াঘর ই-স্পোর্টস" : "Kriraghor Esports"} />
         {/* Runtime config (ADR-003): window.__ENV before any client code runs. */}
         <Script src="/env.js" strategy="beforeInteractive" />

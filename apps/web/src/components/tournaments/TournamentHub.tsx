@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckCircle } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
@@ -41,7 +42,7 @@ function MatchRow({ m, hub }: { m: Match; hub: Hub }) {
         </span>
       </span>
       <span className="text-right">
-        {scoreLine(m) ? <span className="font-bold tabular-nums">{scoreLine(m)}</span> : <span className={`border-2 px-2 py-0.5 text-xs font-bold ${TONE[statusTone(m.status)]}`}>{t(`matchStatus.${m.status}`)}</span>}
+        {scoreLine(m) ? <span className="font-bold tabular-nums">{scoreLine(m)}</span> : <span className={`rounded-pill border px-2 py-0.5 text-xs font-bold ${TONE[statusTone(m.status)]}`}>{t(`matchStatus.${m.status}`)}</span>}
       </span>
     </li>
   );
@@ -57,7 +58,7 @@ export function TournamentHub({ slug }: { slug: string }) {
   const tab: Tab = TABS.includes(params.get("tab") as Tab) ? (params.get("tab") as Tab) : "overview";
   const q = useQuery({ queryKey: ["tournament", slug], queryFn: () => tournaments.hub(slug), retry: false, refetchInterval: (query) => (query.state.data?.status === "live" ? 30_000 : false) });
 
-  if (q.isPending) return <div className="mx-auto mt-10 h-96 max-w-[1320px] animate-pulse bg-surface-2" />;
+  if (q.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[1320px] kg-shimmer bg-surface-2" />;
   if (q.isError || !q.data)
     return (
       <section className="mx-auto max-w-[640px] px-5 py-16">
@@ -93,13 +94,13 @@ export function TournamentHub({ slug }: { slug: string }) {
               {h.name}
             </h1>
             {h.organisation ? <p className="mt-1 text-muted">{t("by", { org: h.organisation.name })}</p> : null}
-            <span className={`mt-3 inline-block border-2 px-2 py-0.5 text-sm font-bold ${TONE[statusTone(h.status)]}`} data-testid="hub-status">
+            <span className={`rounded-pill mt-3 inline-block border px-2 py-0.5 text-sm font-bold ${TONE[statusTone(h.status)]}`} data-testid="hub-status">
               {t(`status.${h.status}`)}
             </span>
           </div>
           <div className="flex flex-col items-start gap-2 lg:items-end">
             {canRegister ? (
-              <Link href={`/events/${h.slug}/register`} className="inline-flex min-h-12 items-center bg-brand px-6 font-bold text-white hover:bg-brand-hover" data-testid="hub-register">
+              <Link href={`/events/${h.slug}/register`} className="inline-flex min-h-12 items-center bg-brand px-6 font-bold text-on-brand hover:bg-brand-hover" data-testid="hub-register">
                 {t("registerTeam")}
               </Link>
             ) : h.window === "not_yet" && h.registrationOpensAt ? (
@@ -139,7 +140,7 @@ export function TournamentHub({ slug }: { slug: string }) {
               </p>
             </div>
             <aside className="flex flex-col gap-4">
-              <div className="border-2 border-line p-4">
+              <div className="rounded-card border border-line p-4">
                 <h2 className="font-extrabold">{t("eligibility")}</h2>
                 <ul className="mt-2 flex flex-col gap-1 text-sm">
                   <li>{t("elig.nid")}</li>
@@ -148,7 +149,7 @@ export function TournamentHub({ slug }: { slug: string }) {
                 </ul>
               </div>
               {h.prizeSplit.length ? (
-                <div className="border-2 border-line p-4">
+                <div className="rounded-card border border-line p-4">
                   <h2 className="font-extrabold">{t("prizes")}</h2>
                   <ul className="mt-2 flex flex-col gap-1 text-sm">
                     {h.prizeSplit.map((p) => (
@@ -167,13 +168,13 @@ export function TournamentHub({ slug }: { slug: string }) {
 
         {tab === "fixtures" ? (
           !leagueMatches.length && !rounds.length ? (
-            <p className="mt-6 border-2 border-dashed border-line p-8 text-center font-semibold">{t("noFixtures")}</p>
+            <p className="rounded-card mt-6 border border-dashed border-line p-8 text-center font-semibold">{t("noFixtures")}</p>
           ) : (
             <div className="mt-6 flex flex-col gap-6" data-testid="hub-fixtures">
               {byDay(h.fixtures.matches).map((d) => (
                 <div key={d.day ?? "tbc"}>
                   <h3 className="font-extrabold">{d.day ? dayLabel(d.day, locale) : t("dateTbc")}</h3>
-                  <ul className="mt-2 glass-card divide-y divide-[var(--glass-edge)] px-4">
+                  <ul className="mt-2 surface-card divide-y divide-[var(--glass-edge)] px-4">
                     {d.matches.map((m) => (
                       <MatchRow key={m.id} m={m} hub={h} />
                     ))}
@@ -208,7 +209,7 @@ export function TournamentHub({ slug }: { slug: string }) {
                         <td className="py-2 pr-2 font-bold tabular-nums">{r.position}</td>
                         <td className="py-2 font-semibold">
                           {r.team?.name ?? "–"}
-                          {r.needsLots ? <span className="ml-2 text-xs text-amber-600">{t("lots")}</span> : null}
+                          {r.needsLots ? <span className="ml-2 text-xs font-semibold text-warning">{t("lots")}</span> : null}
                         </td>
                         <td className="py-2 text-right tabular-nums">{r.played}</td>
                         <td className="py-2 text-right tabular-nums">{r.won}</td>
@@ -231,7 +232,7 @@ export function TournamentHub({ slug }: { slug: string }) {
               <div key={r.name} className="flex min-w-[240px] flex-col gap-3">
                 <h3 className="font-extrabold">{t(`round.${r.name}`, { n: r.name.replace("round_of_", "") })}</h3>
                 {r.matches.map((m) => (
-                  <div key={m.id} className="glass-card p-3 text-sm">
+                  <div key={m.id} className="surface-card p-3 text-sm">
                     <p className="font-mono text-xs text-muted">M{m.matchNo}</p>
                     <p>
                       <Side side={m.teamA} bold={m.result?.winnerTeamId === m.teamA.team?.id} />
@@ -251,14 +252,14 @@ export function TournamentHub({ slug }: { slug: string }) {
           h.teams.length ? (
             <ul className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3" data-testid="hub-teams">
               {h.teams.map((x) => (
-                <li key={x.teamId} className="border-2 border-line p-4">
+                <li key={x.teamId} className="rounded-card border border-line p-4">
                   <p className="font-extrabold">{x.name}</p>
                   <p className="text-sm text-muted">{t("verifiedOf", { verified: x.verified, players: x.players })}</p>
                   <ul className="mt-2 text-sm">
                     {x.roster.map((p, i) => (
                       <li key={`${p.displayName}-${i}`} className="flex justify-between gap-2">
                         <span>{p.username ? <Link href={`/players/${p.username}`}>{p.displayName}</Link> : p.displayName}</span>
-                        {p.nidVerified ? <span className="text-brand">✓</span> : null}
+                        {p.nidVerified ? <CheckCircle size={16} weight="fill" aria-hidden className="inline align-[-3px] text-brand" /> : null}
                       </li>
                     ))}
                   </ul>
@@ -266,7 +267,7 @@ export function TournamentHub({ slug }: { slug: string }) {
               ))}
             </ul>
           ) : (
-            <p className="mt-6 border-2 border-dashed border-line p-8 text-center font-semibold">{t("noTeams")}</p>
+            <p className="rounded-card mt-6 border border-dashed border-line p-8 text-center font-semibold">{t("noTeams")}</p>
           )
         ) : null}
       </section>

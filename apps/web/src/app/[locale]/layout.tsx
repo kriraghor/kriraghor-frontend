@@ -34,8 +34,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3f5f3" },
-    { media: "(prefers-color-scheme: dark)", color: "#0c120f" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f4f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0f0c" },
   ],
 };
 
@@ -50,8 +50,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
 
   return (
     <html lang={locale} suppressHydrationWarning className={`${fontVariables} ${shoulders.variable} h-full antialiased`}>
-      {/* Room for the floating phone tab bar (56px + its 8px gap + 8px air + the home indicator) under 900px. */}
-      <body className="flex min-h-full flex-col pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0">
+      {/* Room for the floating phone tab bar (56px + its 8px gap + 8px air + the home indicator) under 900px.
+          data-ui="v2": the new look's colours (UI v2, ADR-011), on <body> so dialogs portalled into it match. */}
+      <body data-ui="v2" className="flex min-h-full flex-col pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0">
         {/* Theme before paint; the logo splash once per session (kriraghor-docs 09 §8). */}
         <ThemeScript />
         <BootSplash word={locale === "bn" ? "ক্রীড়াঘর" : "Kriraghor"} />

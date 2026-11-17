@@ -373,7 +373,7 @@ export function HomeNetwork() {
       <div ref={box} className="relative mx-auto mt-6 h-[clamp(460px,70vw,640px)] max-w-[1100px] touch-pan-y select-none">
         <canvas ref={canvas} className="absolute inset-0 h-full w-full" aria-hidden />
         <div ref={hubEl} className="group absolute left-0 top-0 grid justify-items-center gap-1" data-flash="off" aria-hidden>
-          <span className="grid size-[clamp(64px,9vw,84px)] place-items-center rounded-full border-2 border-brand bg-bg shadow-[0_0_0_6px_color-mix(in_oklab,var(--kg-brand)_12%,transparent)] transition-transform duration-300 group-data-[flash=on]:scale-105">
+          <span className="grid size-[clamp(64px,9vw,84px)] place-items-center rounded-full border border-brand bg-bg shadow-[0_0_0_6px_color-mix(in_oklab,var(--kg-brand)_12%,transparent)] transition-transform duration-300 group-data-[flash=on]:scale-105">
             <LogoMark size={44} />
           </span>
           <span className="font-display text-sm font-extrabold uppercase tracking-wide">{t("hub")}</span>
@@ -397,7 +397,7 @@ export function HomeNetwork() {
             data-testid={`net-${key}`}
           >
             <b className={cn("font-display text-[13px] font-extrabold uppercase leading-tight transition-colors sm:text-[15px]", hot === i ? "text-brand" : "text-ink", "group-data-[flash=on]:text-brand")}>{t(`${key}.title`)}</b>
-            <span className="text-[11px] leading-snug text-muted sm:text-[13px]">{t(`${key}.sub`)}</span>
+            <span className="text-xs leading-snug text-muted sm:text-[13px]">{t(`${key}.sub`)}</span>
           </a>
         ))}
       </div>

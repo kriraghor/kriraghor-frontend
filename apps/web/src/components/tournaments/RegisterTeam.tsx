@@ -11,6 +11,7 @@ import { formatTaka } from "@/lib/payments";
 import { safeNext, teams as teamsApi } from "@/lib/teams";
 import { squadOk, tournaments } from "@/lib/tournaments";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /**
  * /tournaments/[slug]/register (M14 §4.7): pick a team I captain or vice-captain in this sport, pick
@@ -44,12 +45,12 @@ export function RegisterTeam({ slug }: { slug: string }) {
     return (
       <section className="mx-auto max-w-[640px] px-5 py-16">
         <p>{t("signInToRegister")}</p>
-        <Link href={`/sign-in?next=${encodeURIComponent(safeNext(`/events/${slug}/register`))}`} className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white">
+        <Link href={`/sign-in?next=${encodeURIComponent(safeNext(`/events/${slug}/register`))}`} className="mt-4 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand">
           {t("signIn")}
         </Link>
       </section>
     );
-  if (hub.isPending || mine.isPending) return <div className="mx-auto mt-10 h-96 max-w-[760px] animate-pulse bg-surface-2" />;
+  if (hub.isPending || mine.isPending) return <div className="rounded-control mx-auto mt-10 h-96 max-w-[760px] kg-shimmer bg-surface-2" />;
   if (hub.isError || !hub.data) return <p className="mx-auto max-w-[760px] px-5 py-16">{t("notFound")}</p>;
   const h = hub.data;
   if (h.window !== "open")
@@ -65,9 +66,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
 
   return (
     <section className="mx-auto max-w-[760px] px-5 py-10" data-testid="register-team">
-      <Link href={`/events/${h.slug}`} className="text-sm font-semibold text-brand underline">
-        ← {h.name}
-      </Link>
+      <BackLink href={`/events/${h.slug}`}>{h.name}</BackLink>
       <h1 className="mt-4 text-3xl font-extrabold">{t("registerTeam")}</h1>
       <p className="mt-1 text-muted">{t("registerLead", { min: h.squadMin, max: h.squadMax })}</p>
 
@@ -76,7 +75,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
         <ul className="mt-2 flex flex-col gap-2">
           {mineHere.map((x) => (
             <li key={x.id}>
-              <label className={`flex min-h-12 cursor-pointer items-center gap-3 border-2 px-3 ${teamId === x.id ? "border-brand" : "border-line"}`}>
+              <label className={`rounded-control flex min-h-12 cursor-pointer items-center gap-3 border px-3 ${teamId === x.id ? "border-brand" : "border-line"}`}>
                 <input type="radio" name="team" className="size-5" checked={teamId === x.id} onChange={() => (setTeamId(x.id), setPicked(null))} data-testid="pick-team" />
                 <span className="font-bold">{x.name}</span>
                 <span className="text-sm text-muted">{t(`role.${x.myRole}`)}</span>
@@ -85,7 +84,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
           ))}
         </ul>
       ) : (
-        <div className="mt-2 border-2 border-dashed border-line p-4">
+        <div className="rounded-card mt-2 border border-dashed border-line p-4">
           <p>{t("noTeamOfSport", { sport: locale === "bn" ? h.sport.nameBn : h.sport.nameEn })}</p>
           <Link href="/me/teams" className="mt-2 inline-block font-semibold text-brand underline">
             {t("createTeam")}
@@ -96,7 +95,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
       {teamId && team.data ? (
         <>
           <h2 className="mt-8 text-lg font-extrabold">{t("step.squad", { n: squad.length })}</h2>
-          <ul className="mt-2 glass-card divide-y divide-[var(--glass-edge)] px-4">
+          <ul className="mt-2 surface-card divide-y divide-[var(--glass-edge)] px-4">
             {team.data.members.map((m) => {
               const on = (picked ?? []).includes(m.userId);
               return (
@@ -104,7 +103,7 @@ export function RegisterTeam({ slug }: { slug: string }) {
                   <label className="flex min-h-12 cursor-pointer items-center gap-3 py-2">
                     <input type="checkbox" className="size-5" checked={on} onChange={() => setPicked(on ? squad.filter((x) => x !== m.userId) : [...squad, m.userId])} data-testid="pick-player" />
                     <span className="min-w-0 flex-1 font-semibold">{m.displayName}</span>
-                    <span className={`border-2 px-2 py-0.5 text-xs font-bold ${m.nidVerified ? "border-brand text-brand" : "border-line text-muted"}`}>{m.nidVerified ? t("nid") : t("noNid")}</span>
+                    <span className={`rounded-pill border px-2 py-0.5 text-xs font-bold ${m.nidVerified ? "border-brand text-brand" : "border-line text-muted"}`}>{m.nidVerified ? t("nid") : t("noNid")}</span>
                   </label>
                 </li>
               );

@@ -13,6 +13,7 @@ import { Notice } from "@kriraghor/ui/primitives";
 import { CheckinBoard, CreateForm, Finalise, Matches } from "../../admin/esports/EsportsDesk";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { formatDhaka } from "../../admin/useAdminMe";
+import { BackLink } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = {
@@ -206,7 +207,7 @@ export function OrgTournaments({ orgId }: { orgId: string }) {
   });
   return (
     <div>
-      <button type="button" className={`${btn} border-brand bg-brand text-white`} onClick={() => setAdding(!adding)} data-testid="org-new-tournament">
+      <button type="button" className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => setAdding(!adding)} data-testid="org-new-tournament">
         {t("tour.new")}
       </button>
       {adding ? (
@@ -242,7 +243,7 @@ function FundBox({ orgId, id, fund, onChange }: { orgId: string; id: string; fun
   const state = fundState(fund);
   void onChange;
   return (
-    <div className={`rounded-card border p-4 ${state === "funded" ? "border-brand" : "border-amber-500"}`} data-testid="fund-box">
+    <div className={`rounded-card border p-4 ${state === "funded" ? "border-brand" : "border-warning"}`} data-testid="fund-box">
       <h3 className="font-bold">{t("fund.title")}</h3>
       <p className="mt-1 text-sm">
         {t("fund.line", {
@@ -252,7 +253,7 @@ function FundBox({ orgId, id, fund, onChange }: { orgId: string; id: string; fun
       </p>
       <p className="mt-1 text-sm text-muted">{t(`fund.${state}`)}</p>
       {state === "needs" ? (
-        <button type="button" className={`${btn} mt-3 border-brand bg-brand text-white`} disabled={pay.isPending} onClick={() => pay.mutate()} data-testid="fund-now">
+        <button type="button" className={`${btn} mt-3 border-brand bg-brand text-on-brand`} disabled={pay.isPending} onClick={() => pay.mutate()} data-testid="fund-now">
           {t("fund.now", { amount: formatTaka(fund.toDeposit, locale) })}
         </button>
       ) : null}
@@ -296,9 +297,7 @@ export function OrgTournament({ orgId, id }: { orgId: string; id: string }) {
   return (
     <div className="space-y-6" data-testid="org-tournament">
       <div className="flex flex-wrap items-center gap-3">
-        <Link href={`/vendor/esports/${orgId}/events`} className="text-sm font-semibold text-brand underline">
-          ← {t("tab.tournaments")}
-        </Link>
+        <BackLink href={`/vendor/esports/${orgId}/events`}>{t("tab.tournaments")}</BackLink>
         <h2 className="text-2xl font-extrabold">{x.titleEn}</h2>
         <Chip tone={TONE[x.status] ?? "muted"}>{t(`status.${x.status}`)}</Chip>
       </div>
@@ -381,7 +380,7 @@ export function OrgTournament({ orgId, id }: { orgId: string; id: string }) {
                       data-testid="finalise-code"
                     />
                   </Field>
-                  <button type="submit" className={`${btn} border-brand bg-brand text-white`} disabled={code.length < 4}>
+                  <button type="submit" className={`${btn} border-brand bg-brand text-on-brand`} disabled={code.length < 4}>
                     {t("tour.confirmFinalise")}
                   </button>
                 </form>
@@ -447,7 +446,7 @@ export function OrgBilling({ orgId }: { orgId: string }) {
               <span className="font-bold tabular-nums">{formatTaka(i.total, locale)}</span>
               <Chip tone={TONE[i.status] ?? "muted"}>{t(`invoiceStatus.${i.status}`)}</Chip>
               {["issued", "overdue"].includes(i.status) ? (
-                <button type="button" className={`${btn} border-brand bg-brand text-white`} disabled={pay.isPending} onClick={() => pay.mutate(i.id)}>
+                <button type="button" className={`${btn} border-brand bg-brand text-on-brand`} disabled={pay.isPending} onClick={() => pay.mutate(i.id)}>
                   {t("bill.pay")}
                 </button>
               ) : null}

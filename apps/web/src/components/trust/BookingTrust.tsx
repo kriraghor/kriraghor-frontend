@@ -1,5 +1,6 @@
 "use client";
 
+import { Star } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -46,13 +47,13 @@ export function BookingTrust({ bookingId }: { bookingId: string }) {
         </Notice>
       ) : null}
       {opts.data?.items.length ? (
-        <div className="border-2 border-line p-4" data-testid="dispute-options">
+        <div className="rounded-card border border-line p-4" data-testid="dispute-options">
           <p className="font-bold">{t("dispute.title")}</p>
           <p className="mt-1 text-sm text-muted">{t("dispute.help")}</p>
           {category === null ? (
             <div className="mt-3 flex flex-wrap gap-3">
               {opts.data.items.map((o) => (
-                <button key={o.category} type="button" onClick={() => setCategory(o.category as Category)} className="inline-flex min-h-12 items-center border-2 border-line-strong px-4 font-semibold" data-testid={`dispute-${o.category}`}>
+                <button key={o.category} type="button" onClick={() => setCategory(o.category as Category)} className="rounded-control inline-flex min-h-12 items-center border border-line-strong px-4 font-semibold" data-testid={`dispute-${o.category}`}>
                   {t(`dispute.open.${o.category}`)}
                 </button>
               ))}
@@ -77,15 +78,15 @@ export function BookingTrust({ bookingId }: { bookingId: string }) {
                 <label htmlFor="dispute-statement" className="text-sm font-semibold text-muted">
                   {t("dispute.statement")}
                 </label>
-                <textarea id="dispute-statement" required minLength={2} maxLength={2000} rows={4} value={statement} onChange={(e) => setStatement(e.target.value)} className="glass-card px-3 py-2" />
+                <textarea id="dispute-statement" required minLength={2} maxLength={2000} rows={4} value={statement} onChange={(e) => setStatement(e.target.value)} className="surface-card px-3 py-2" />
                 <p className="text-sm text-muted">{t("dispute.statementHint")}</p>
               </div>
               {problem ? <Notice tone="error">{t.has(`errors.${problem.code}`) ? t(`errors.${problem.code}`) : problem.title}</Notice> : null}
               <div className="flex flex-wrap gap-3">
-                <button type="submit" disabled={open.isPending || statement.trim().length < 2} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="submit-dispute">
+                <button type="submit" disabled={open.isPending || statement.trim().length < 2} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand disabled:opacity-50" data-testid="submit-dispute">
                   {t("dispute.submit")}
                 </button>
-                <button type="button" onClick={() => setCategory(null)} className="inline-flex min-h-12 items-center border-2 border-line px-5 font-semibold">
+                <button type="button" onClick={() => setCategory(null)} className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-semibold">
                   {t("cancel")}
                 </button>
               </div>
@@ -113,7 +114,7 @@ function RateGround({ bookingId, onDone }: { bookingId: string; onDone: (status:
   const post = useMutation({ mutationFn: () => reviews.post({ bookingId, stars, text: text.trim() || undefined }), onSuccess: (r) => onDone(r.review.status) });
   return (
     <form
-      className="border-2 border-line p-4"
+      className="rounded-card border border-line p-4"
       onSubmit={(e) => {
         e.preventDefault();
         post.mutate();
@@ -124,8 +125,8 @@ function RateGround({ bookingId, onDone }: { bookingId: string; onDone: (status:
         <legend className="font-bold">{t("title")}</legend>
         <div className="mt-3 flex gap-1" role="radiogroup" aria-label={t("stars")}>
           {[1, 2, 3, 4, 5].map((s) => (
-            <button key={s} type="button" role="radio" aria-checked={stars === s} aria-label={t("starN", { n: s })} onClick={() => setStars(s)} className={`flex h-12 w-12 items-center justify-center border-2 ${s <= stars ? "border-brand bg-brand text-white" : "border-line"}`} data-testid={`star-${s}`}>
-              ★
+            <button key={s} type="button" role="radio" aria-checked={stars === s} aria-label={t("starN", { n: s })} onClick={() => setStars(s)} className={`rounded-control flex h-12 w-12 items-center justify-center border ${s <= stars ? "border-brand bg-brand text-on-brand" : "border-line"}`} data-testid={`star-${s}`}>
+              <Star size={22} weight="fill" aria-hidden />
             </button>
           ))}
         </div>
@@ -134,11 +135,11 @@ function RateGround({ bookingId, onDone }: { bookingId: string; onDone: (status:
         <label htmlFor="review-text" className="text-sm font-semibold text-muted">
           {t("text")}
         </label>
-        <textarea id="review-text" maxLength={1000} rows={3} value={text} onChange={(e) => setText(e.target.value)} className="glass-card px-3 py-2" />
+        <textarea id="review-text" maxLength={1000} rows={3} value={text} onChange={(e) => setText(e.target.value)} className="surface-card px-3 py-2" />
         <p className="text-sm text-muted">{t("hint")}</p>
       </div>
       {post.error ? <Notice tone="error">{t("failed")}</Notice> : null}
-      <button type="submit" disabled={!stars || post.isPending} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="submit-review">
+      <button type="submit" disabled={!stars || post.isPending} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand disabled:opacity-50" data-testid="submit-review">
         {t("submit")}
       </button>
     </form>

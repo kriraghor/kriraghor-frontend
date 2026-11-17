@@ -145,7 +145,7 @@ function ShopForm() {
         </div>
       ) : null}
       <div className="md:col-span-2">
-        <button type="submit" disabled={busy} className="min-h-12 bg-brand px-5 font-bold text-white disabled:opacity-50" data-testid="create-shop">
+        <button type="submit" disabled={busy} className="min-h-12 bg-brand px-5 font-bold text-on-brand disabled:opacity-50" data-testid="create-shop">
           {t("shop.create")}
         </button>
       </div>
@@ -178,7 +178,7 @@ function ShopEditor({ shop }: { shop: Shop }) {
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2" data-testid="shop-actions">
         {actions.includes("submit") || actions.includes("submit_edit") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-white`} onClick={() => void run(() => shopDesk.submit(), t("sent"))} data-testid="submit-shop">
+          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => shopDesk.submit(), t("sent"))} data-testid="submit-shop">
             {actions.includes("submit") ? t("submit") : t("submitEdit")}
           </button>
         ) : null}

@@ -31,7 +31,7 @@ export function MePanel({ children, signInHref = "/sign-in" }: { children?: Reac
     return (
       <section className="mx-auto max-w-xl px-5 py-12">
         <p data-testid="signed-out">{t("me.signedOut")}</p>
-        <Link href={signInHref} className="mt-4 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-white">
+        <Link href={signInHref} className="mt-4 inline-flex min-h-11 items-center bg-brand px-4 font-bold text-on-brand">
           {t("nav.signIn")}
         </Link>
       </section>

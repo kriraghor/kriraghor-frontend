@@ -90,7 +90,7 @@ export function ShellLink({
       <Icon size={22} weight={active ? "fill" : "regular"} aria-hidden className="shrink-0" />
       <span className={cn("min-w-0 flex-1 truncate", rail && "sr-only")}>{item.label}</span>
       {badge ? (
-        <span className={cn("tabular rounded-pill px-1.5 text-xs font-bold leading-5", dark ? "bg-prize text-prize-ink" : "bg-brand text-on-brand", rail && "absolute right-2 top-1.5 min-w-5 text-center text-[10px] leading-4")}>{badge}</span>
+        <span className={cn("tabular rounded-pill px-1.5 text-xs font-bold leading-5", dark ? "bg-prize text-prize-ink" : "bg-brand text-on-brand", rail && "absolute right-2 top-1.5 min-w-5 text-center text-xs leading-4")}>{badge}</span>
       ) : null}
     </>
   );

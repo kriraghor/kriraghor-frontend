@@ -48,7 +48,7 @@ export function MemberOverview() {
         <SegmentedControl size="sm" label={t("period")} value={period} onChange={setPeriod} options={(["7w", "qtr", "yr"] as Period[]).map((p) => ({ value: p, label: t(`periods.${p}`) }))} />
       </div>
       {actions.data?.items.length ? (
-        <ul className="glass-card divide-y divide-line overflow-hidden" data-testid="member-actions">
+        <ul className="surface-card divide-y divide-line overflow-hidden" data-testid="member-actions">
           {actions.data.items.map((a) => (
             <li key={`${a.key}-${a.href}`}>
               <Link href={a.href} className="group flex min-h-12 items-center gap-3 px-4 py-2 no-underline transition-colors hover:bg-surface-2">

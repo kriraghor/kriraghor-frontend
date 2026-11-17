@@ -39,7 +39,7 @@ export function MyPayments() {
       ) : q.isPending ? (
         <div className="mt-6 space-y-2" role="status" aria-label={t("loading")}>
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-20 animate-pulse bg-surface-2" />
+            <div key={i} className="rounded-control h-20 kg-shimmer bg-surface-2" />
           ))}
         </div>
       ) : q.isError ? (
@@ -49,7 +49,7 @@ export function MyPayments() {
       ) : !items.length ? (
         <p className="mt-6 text-muted">{t("empty")}</p>
       ) : (
-        <ul className="mt-6 glass-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-payments">
+        <ul className="mt-6 surface-card divide-y divide-[var(--glass-edge)] px-4" data-testid="my-payments">
           {items.map((p) => {
             const outcome = outcomeOf(p.status);
             return (

@@ -12,6 +12,7 @@ import { SignedOutCard } from "@kriraghor/ui/account";
 import { gym, passTone, TONE } from "@/lib/gym";
 import { RatePassButton } from "@kriraghor/ui/trust";
 import { Notice } from "@kriraghor/ui/primitives";
+import { BackLink } from "@kriraghor/ui/kit";
 
 /** The QR, drawn on the device from the signed token (never fetched as an image, so it stays private). */
 function PassQr({ token, label }: { token: string; label: string }) {
@@ -84,9 +85,7 @@ export function PassView({ code }: { code: string }) {
   return (
     <div data-theme="gym" className="min-h-[70dvh]">
       <section className="mx-auto max-w-[640px] px-5 py-10">
-        <Link href="/me/passes" className="text-sm font-semibold text-brand underline">
-          ← {t("myPasses")}
-        </Link>
+        <BackLink href="/me/passes">{t("myPasses")}</BackLink>
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-muted">
@@ -103,7 +102,7 @@ export function PassView({ code }: { code: string }) {
         </div>
 
         {p.token ? (
-          <div className="mt-6 flex flex-col items-center gap-4 glass-card p-6">
+          <div className="mt-6 flex flex-col items-center gap-4 surface-card p-6">
             <button type="button" onClick={() => setFull(true)} aria-label={t("showAtDesk")} className="w-full max-w-[320px]">
               <PassQr token={p.token} label={t("qrOf", { code: p.code })} />
             </button>
@@ -117,7 +116,7 @@ export function PassView({ code }: { code: string }) {
             <p className="text-center text-sm text-muted">{t("deskHint")}</p>
           </div>
         ) : p.status === "pending_payment" && payment ? (
-          <div className="mt-6 glass-card p-6">
+          <div className="mt-6 surface-card p-6">
             <p className="font-semibold">{t("awaitingPayment")}</p>
             <a href={payment.payUrl} className="mt-3 inline-flex min-h-12 items-center bg-brand px-5 font-bold hover:bg-brand-hover">
               {t("payNow", { price: formatTaka(p.money.price, locale) })}
