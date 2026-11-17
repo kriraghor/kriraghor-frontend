@@ -24,6 +24,7 @@ Shared packages (TypeScript source; the apps compile them with `transpilePackage
 
 Apps never import another app, and nobody imports a package's internal files (eslint enforces both). Surface styles that differ per site (`field`, `glass-card`, `popover-surface`, `btn-primary-finish`, `notice-surface`) are defined in each app's `globals.css`, so the portal stays flat.
 
+
 - **CI:** `.github/workflows/<app>.yml` runs when that app's folder, `packages/` or the root manifests change, using the reusable workflow in [kriraghor-infrastructure](https://github.com/kriraghor/kriraghor-infrastructure) with `app-dir`.
 - **Docker:** build from the root, `docker build -f apps/web/Dockerfile .`
 - **Vercel:** one project per app, with its Root Directory set to `apps/web`, `apps/esports`, `apps/portal` or `apps/gym` and files outside the Root Directory included. Settings and environment variables: [VERCEL-SETUP.md](VERCEL-SETUP.md).
