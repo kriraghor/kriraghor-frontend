@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Archive, CalendarBlank, ClockUser, IdentificationBadge, Money, Wrench, ChatCircleText, Gift, Megaphone, ArrowSquareOut, BellRinging, Barbell, CashRegister, ChartBar, ChartLineUp, ChartPieSlice, ClipboardText, CreditCard, DoorOpen, Gear, Lockers, Package, PencilSimple, PresentationChart, QrCode, Receipt, ShoppingCart, Star, Ticket, Tray, UploadSimple, UsersThree, Vault, Wallet } from "@phosphor-icons/react";
+import { Archive, CalendarBlank, ClockUser, IdentificationBadge, Money, Wrench, ChatCircleText, Gift, Megaphone, ArrowSquareOut, BellRinging, LockKey, Barbell, CashRegister, ChartBar, ChartLineUp, ChartPieSlice, ClipboardText, CreditCard, DoorOpen, Gear, Lockers, Package, PencilSimple, PresentationChart, QrCode, Receipt, ShoppingCart, Star, Ticket, Tray, UploadSimple, UsersThree, Vault, Wallet } from "@phosphor-icons/react";
 import { publicEnv } from "@kriraghor/session/env";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
@@ -12,6 +12,10 @@ import { useWorkplaces } from "@kriraghor/ui/desk";
 import { useManageGyms } from "@/components/gym-manage/common";
 import { currentGym, gymFromPath, gymSections, manageGroups, workplaceGyms, type ManageGroup, type ManageGymRef, type ManageItem } from "@/lib/manage-nav";
 import { GymSwitcher } from "./GymSwitcher";
+import { DeskBar } from "./desk/DeskBar";
+import { DeskLock } from "./desk/DeskLock";
+import { useDeskKeepAlive, useDeskPageMark, useDeskState } from "./desk/useDesk";
+import type { OpenDesk } from "@/lib/desk";
 
 const ICON: Record<ManageItem["key"], typeof Barbell> = {
   gyms: Barbell,
@@ -48,6 +52,7 @@ const ICON: Record<ManageItem["key"], typeof Barbell> = {
   payroll: Money,
   equipment: Wrench,
   mywork: ClockUser,
+  deskmode: LockKey,
 };
 const EXACT = new Set<ManageItem["key"]>(["gyms", "dashboard", "fees"]);
 
@@ -70,12 +75,18 @@ const onStorage = (cb: () => void) => {
  * gyms first, then the gyms worked at), that gym's pages by section, shown by role and permission
  * (lib/manage-nav), then My gyms, Billing, Payouts and All-gyms reports. The team, shared with venues and
  * shops, stays on the business panel, one link away. Signed out, the sign-in prompt comes back here after signing in.
+ * Desk mode (M24 §21): while this device is in desk mode and locked, the lock screen is the whole page; unlocked,
+ * the menu is the desk gym's pages without the owner-only ones, and the person at the desk shows in the foot.
  */
 export function ManageShell({ children }: { children: ReactNode }) {
   const t = useTranslations("manage");
   const { status } = useAuth();
   const wp = useWorkplaces();
-  const gyms = useManageGyms(status === "signed_in");
+  const deskQ = useDeskState(status === "signed_in");
+  const deskOn = deskQ.data?.open ? deskQ.data : null;
+  const gyms = useManageGyms(status === "signed_in" && !(deskOn && !deskOn.unlocked));
+  useDeskPageMark(Boolean(deskOn));
+  useDeskKeepAlive(deskOn?.unlocked ?? null);
 
   if (status === "signed_out")
     return (
@@ -83,6 +94,8 @@ export function ManageShell({ children }: { children: ReactNode }) {
         <SignInHere />
       </Suspense>
     );
+
+  if (deskOn && !deskOn.unlocked) return <DeskLock state={deskOn} />;
 
   const names = new Map(wp.named.map((w) => [w.businessId, w.business.name] as const));
   const refs: ManageGymRef[] = gyms.data ? gyms.data.items.map((g) => ({ id: g.id, name: g.name, role: g.role, permissions: g.permissions, listingStatus: g.listingStatus })) : workplaceGyms(wp.refs, names);
@@ -96,16 +109,18 @@ export function ManageShell({ children }: { children: ReactNode }) {
         </AppShell>
       }
     >
-      <OneGymShell refs={refs}>{children}</OneGymShell>
+      <OneGymShell refs={refs} desk={deskOn}>
+        {children}
+      </OneGymShell>
     </Suspense>
   );
 }
 
-function OneGymShell({ refs, children }: { refs: ManageGymRef[]; children: ReactNode }) {
+function OneGymShell({ refs, desk, children }: { refs: ManageGymRef[]; desk: OpenDesk | null; children: ReactNode }) {
   const t = useTranslations("manage");
   const pathname = usePathname();
   const last = useSyncExternalStore(onStorage, readLastGym, () => null);
-  const [overview, ...gyms] = manageGroups({ gyms: refs });
+  const [overview, ...gyms] = manageGroups({ gyms: refs, deskGymId: desk?.gym.id ?? null });
   const current = currentGym(gyms, pathname, last);
   const inUrl = gyms.some((g) => g.gymId === gymFromPath(pathname)) ? gymFromPath(pathname) : null;
 
@@ -123,7 +138,7 @@ function OneGymShell({ refs, children }: { refs: ManageGymRef[]; children: React
     ...(current ? gymSections(current.items).map((s) => ({ label: t(`section.${s.key}`), items: toItems(current, s.items), collapsible: true, defaultOpen: s.key === "today" })) : []),
     { label: current ? t("section.allGyms") : undefined, items: toItems(overview, overview.items), collapsible: Boolean(current) },
   ];
-  if (refs.some((g) => g.role === "owner")) {
+  if (!desk && refs.some((g) => g.role === "owner")) {
     const vendor = publicEnv().VENDOR_URL.replace(/\/+$/, "");
     groups.push({
       label: t("business"),
@@ -132,7 +147,7 @@ function OneGymShell({ refs, children }: { refs: ManageGymRef[]; children: React
     });
   }
   return (
-    <AppShell groups={groups} title={t("menu")} context={current?.name} top={current ? (collapsed) => <GymSwitcher gyms={gyms} current={current} pathname={pathname} collapsed={collapsed} /> : undefined}>
+    <AppShell groups={groups} title={t("menu")} context={current?.name} foot={desk ? (collapsed) => <DeskBar state={desk} collapsed={collapsed} /> : undefined} top={current ? (collapsed) => <GymSwitcher gyms={gyms} current={current} pathname={pathname} collapsed={collapsed} /> : undefined}>
       {children}
     </AppShell>
   );

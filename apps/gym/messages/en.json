@@ -277,7 +277,8 @@
       "staff": "Staff attendance",
       "payroll": "Payroll",
       "equipment": "Equipment",
-      "mywork": "My work"
+      "mywork": "My work",
+      "deskmode": "Desk mode"
     },
     "section": {
       "today": "Today",
@@ -3454,6 +3455,82 @@
       "overdue": "Fee overdue",
       "receipt": "Payment receipt",
       "pay_link": "Payment link"
+    }
+  },
+  "gd": {
+    "lock": {
+      "title": "The desk is locked",
+      "lead": "Pick your name and type your own desk PIN.",
+      "who": "Who is at the desk?",
+      "owner": "Owner",
+      "staff": "Staff",
+      "back": "Back",
+      "pinFor": "PIN for {name}",
+      "wrong": "That PIN is not right. {left, plural, one {# try} other {# tries}} left.",
+      "personLocked": "Too many wrong tries for {name}. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
+      "deviceLocked": "Too many wrong PINs on this device. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
+      "noPin": "{name} has no desk PIN now. They set one from their own sign-in, on Desk mode.",
+      "nobody": "Nobody at this gym has a desk PIN yet. Each person sets their own from their own sign-in, on Desk mode.",
+      "failed": "That did not work. Check the connection and try again.",
+      "end": "End desk mode",
+      "endLead": "Any desk PIN of this gym ends desk mode. This device is then signed out.",
+      "endFor": "End desk mode with the PIN of {name}",
+      "ended": "Desk mode ended. Signing out…",
+      "keypad": "PIN keypad",
+      "clear": "Delete the last digit",
+      "digits": "{count} of 4 digits typed"
+    },
+    "bar": {
+      "at": "At the desk",
+      "lock": "Lock",
+      "hint": "Locks by itself after {minutes} minutes without use."
+    },
+    "page": {
+      "title": "Desk mode",
+      "lead": "One device at the front desk for everyone: each person unlocks it with their own 4-digit PIN, and everything they do there is recorded as them.",
+      "myPin": "My desk PIN",
+      "pinSet": "Set on {date}.",
+      "pinNone": "You have no desk PIN at this gym yet.",
+      "pinLocked": "Too many wrong tries: your PIN waits until {time}.",
+      "newPin": "New PIN",
+      "confirmPin": "Type it again",
+      "save": "Save PIN",
+      "change": "Change my PIN",
+      "saved": "Your desk PIN is saved.",
+      "mismatch": "The two PINs are not the same.",
+      "never": "Nobody can see your PIN, not even the owner. If you forget it, set a new one here.",
+      "problem": {
+        "format": "Use four digits.",
+        "repeat": "Not one digit four times.",
+        "run": "Not a run like 1234 or 9876.",
+        "phone": "Not the last four digits of your phone."
+      },
+      "device": "This device",
+      "deviceLead": "Switch desk mode on here to leave this device at the front desk. From then on it does nothing until someone unlocks it with their PIN; it locks itself when nobody uses it for a few minutes; owner-only pages never open on it. Ending desk mode signs this device out.",
+      "switchOn": "Use this device as the front desk",
+      "needPin": "Set your own PIN first.",
+      "tierLocked": "Desk mode comes with the Basic plan and above.",
+      "people": "Desk PINs at this gym",
+      "state": {
+        "set": "PIN set",
+        "none": "No PIN yet",
+        "cleared": "PIN cleared"
+      },
+      "lockedUntil": "Waiting until {time}",
+      "reset": "Clear PIN",
+      "resetTitle": "Clear {name}’s desk PIN?",
+      "resetBody": "They can no longer unlock the desk until they set a new PIN from their own sign-in. If they are at the desk now, it locks.",
+      "resetDone": "PIN cleared.",
+      "desks": "Devices in desk mode",
+      "noDesks": "No device is in desk mode now.",
+      "openedBy": "Switched on by {name}, {time}",
+      "atDesk": "{name} is at the desk",
+      "lockedNow": "Locked",
+      "endAll": "End desk mode on these devices",
+      "endTitle": "End desk mode on every device at this gym?",
+      "endBody": "Each device is signed out at once. Use this if a desk device is lost or left unattended.",
+      "endedAll": "{count, plural, one {# device} other {# devices}} signed out.",
+      "cancel": "Cancel"
     }
   }
 }

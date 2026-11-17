@@ -97,7 +97,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
 
   return (
     <>
-    <header className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150">
+    <header data-site-header className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150">
       <div className="flex h-1" aria-hidden>
         <span className="w-[72%] bg-brand" />
         <span className="flex-1 bg-accent" />
