@@ -7,6 +7,7 @@ import { ArrowRight, CaretLeft, CaretRight, Pause, Play } from "@phosphor-icons/
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { cn } from "@kriraghor/ui/cn";
 import { useMotionOk } from "@kriraghor/ui/motion";
+import { isExternal } from "@/lib/links";
 
 export type HeroSlide = {
   key: string;
@@ -22,6 +23,9 @@ export type HeroSlide = {
 };
 
 const DWELL = 6500;
+
+const CTA_CLASS =
+  "inline-flex min-h-12 items-center gap-3 rounded-control bg-prize px-6 font-bold text-prize-ink no-underline shadow-[0_10px_30px_-12px_rgb(242_163_58/0.7)] transition-[background-color,transform] duration-200 hover:brightness-105 active:translate-y-px";
 
 /**
  * The home hero, rebuilt from the Claude Design: full-bleed photo slides that cross-fade (1.2 s)
@@ -110,10 +114,18 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 )}
                 <p className="kg-slide-line max-w-[46ch] text-base text-band-muted sm:text-lg">{s.sub}</p>
                 <div className="kg-slide-line">
-                  <Link href={s.href} tabIndex={on ? 0 : -1} className="inline-flex min-h-12 items-center gap-3 rounded-control bg-prize px-6 font-bold text-prize-ink no-underline shadow-[0_10px_30px_-12px_rgb(242_163_58/0.7)] transition-[background-color,transform] duration-200 hover:brightness-105 active:translate-y-px">
-                    {s.cta}
-                    <ArrowRight size={18} weight="bold" aria-hidden />
-                  </Link>
+                  {/* Esports and gym are other sites (/go/…): a plain link, so Next never prefetches the cross-origin redirect. */}
+                  {isExternal(s.href) ? (
+                    <a href={s.href} tabIndex={on ? 0 : -1} className={CTA_CLASS}>
+                      {s.cta}
+                      <ArrowRight size={18} weight="bold" aria-hidden />
+                    </a>
+                  ) : (
+                    <Link href={s.href} tabIndex={on ? 0 : -1} className={CTA_CLASS}>
+                      {s.cta}
+                      <ArrowRight size={18} weight="bold" aria-hidden />
+                    </Link>
+                  )}
                 </div>
               </div>
               {s.aside ? <div className={cn("hidden self-center md:block", on && "kg-slide-in")}><div className="kg-slide-line">{s.aside}</div></div> : null}

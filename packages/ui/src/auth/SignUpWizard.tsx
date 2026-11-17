@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import type { Icon } from "@phosphor-icons/react";
 import { ArrowLeft, ArrowRight, Barbell, CheckCircle, Flag, GameController, SoccerBall, Storefront, Trophy, UserCircleGear } from "@phosphor-icons/react";
 import { api, problemOf } from "@kriraghor/api-client";
+import { isExternal } from "@kriraghor/session/links";
 import { Link, useRouter } from "../i18n/navigation";
 import { useAuth } from "../auth";
 import { useToast } from "../kit/Toast";
@@ -280,14 +281,29 @@ export function SignUpWizard({ next = "/me", roles = [], nextSteps, signInHref =
         <div className="flex flex-col gap-4" data-testid="signup-done">
           <h2 className="text-lg font-semibold">{t("signup.next")}</h2>
           <ul className="flex flex-col gap-2">
-            {nextSteps(role).map((s) => (
-              <li key={s.href}>
-                <Link href={s.href} className="group flex min-h-14 items-center gap-3 rounded-control border border-line bg-surface px-4 py-3 font-semibold no-underline transition-colors hover:border-brand">
+            {nextSteps(role).map((s) => {
+              const cls = "group flex min-h-14 items-center gap-3 rounded-control border border-line bg-surface px-4 py-3 font-semibold no-underline transition-colors hover:border-brand";
+              const body = (
+                <>
                   <span className="flex-1">{s.label}</span>
                   <ArrowRight size={20} aria-hidden className="text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-brand" />
-                </Link>
-              </li>
-            ))}
+                </>
+              );
+              return (
+                <li key={s.href}>
+                  {/* A step on another site (/go/…) is a plain link, so Next never prefetches the cross-origin redirect. */}
+                  {isExternal(s.href) ? (
+                    <a href={s.href} className={cls}>
+                      {body}
+                    </a>
+                  ) : (
+                    <Link href={s.href} className={cls}>
+                      {body}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
           <ButtonLink href={next} size="lg" block>
             {t("signup.goAccount")}

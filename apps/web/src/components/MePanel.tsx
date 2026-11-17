@@ -10,7 +10,7 @@ import { Card, ErrorState } from "@kriraghor/ui/kit";
 import { AccountHeader, DashboardSkeleton, SignedOutCard, WinningsCard, useMe } from "@kriraghor/ui/account";
 import { MemberOverview } from "./MemberOverview";
 import { MyReliability } from "./trust/MyReliability";
-import { esportsHref } from "@/lib/links";
+import { esportsHref, isExternal } from "@/lib/links";
 import { formatTaka } from "@/lib/payments";
 
 /**
@@ -94,19 +94,36 @@ function SetupChecklist({ phoneVerified, emailVerified, kycVerified }: { phoneVe
                 <span className="line-through decoration-line-strong/60">{s.label}</span>
               </div>
             ) : (
-              <Link href={s.href} className="group flex min-h-12 items-center gap-3 rounded-control px-2 py-2 no-underline transition-colors hover:bg-surface-2">
+              <StepLink href={s.href}>
                 {s.pending ? <Hourglass size={22} className="shrink-0 text-warning" aria-hidden /> : <Circle size={22} className="shrink-0 text-line-strong" aria-hidden />}
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold">{s.label}</span>
                   {s.hint ? <span className="block text-sm text-muted">{s.hint}</span> : null}
                 </span>
                 <ArrowRight size={18} className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5" aria-hidden />
-              </Link>
+              </StepLink>
             )}
           </li>
         ))}
       </ul>
     </Card>
+  );
+}
+
+const STEP_CLASS = "group flex min-h-12 items-center gap-3 rounded-control px-2 py-2 no-underline transition-colors hover:bg-surface-2";
+const QUICK_CLASS =
+  "group flex min-h-24 flex-col justify-between gap-3 rounded-card border border-line bg-surface p-4 no-underline shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md";
+
+/** A checklist step's link: a plain <a> for another site (/go/…), so Next never prefetches the cross-origin redirect. */
+function StepLink({ href, children }: { href: string; children: ReactNode }) {
+  return isExternal(href) ? (
+    <a href={href} className={STEP_CLASS}>
+      {children}
+    </a>
+  ) : (
+    <Link href={href} className={STEP_CLASS}>
+      {children}
+    </Link>
   );
 }
 
@@ -124,12 +141,23 @@ function QuickActions() {
         {t("title")}
       </h2>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {items.map((it) => (
-          <Link key={it.href} href={it.href} className="group flex min-h-24 flex-col justify-between gap-3 rounded-card border border-line bg-surface p-4 no-underline shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-md">
-            <span className="flex size-10 items-center justify-center rounded-pill bg-brand-soft text-brand-text [&>svg]:size-5">{it.icon}</span>
-            <span className="font-semibold">{it.label}</span>
-          </Link>
-        ))}
+        {items.map((it) => {
+          const body = (
+            <>
+              <span className="flex size-10 items-center justify-center rounded-pill bg-brand-soft text-brand-text [&>svg]:size-5">{it.icon}</span>
+              <span className="font-semibold">{it.label}</span>
+            </>
+          );
+          return isExternal(it.href) ? (
+            <a key={it.href} href={it.href} className={QUICK_CLASS}>
+              {body}
+            </a>
+          ) : (
+            <Link key={it.href} href={it.href} className={QUICK_CLASS}>
+              {body}
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
