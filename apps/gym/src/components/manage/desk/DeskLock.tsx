@@ -8,7 +8,10 @@ import { useAuth } from "@kriraghor/ui/auth";
 import { useRouter } from "@kriraghor/ui/i18n/navigation";
 import { Avatar, Button, Notice } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
-import { desk, minutesUntil, type DeskPerson, type OpenDesk } from "@/lib/desk";
+import { CloudSlash } from "@phosphor-icons/react";
+import { desk, minutesUntil, type DeskPerson } from "@/lib/desk";
+import { isNetworkError } from "@/lib/desk-offline";
+import { checkPinOffline, rememberPin, unlockOffline, type EffectiveDesk } from "./deskLocal";
 import { PinPad } from "./PinPad";
 import { deskProblem, refreshAsNewPerson } from "./useDesk";
 
@@ -18,9 +21,12 @@ type Step = { mode: "unlock" | "close"; person: DeskPerson | null };
  * The locked desk (M24 §21): the whole page until someone picks their name and types their own PIN. The
  * gym's work then opens as them. "End desk mode" asks for any valid PIN of the gym and signs the device out.
  * Wrong tries are counted by the server; this screen only says what it answered.
+ * Without a connection (M24 §22) a PIN is checked on this device, only for people who unlocked this desk
+ * online since the page opened; their work is marked "PIN checked on the device" for the owner.
  */
-export function DeskLock({ state }: { state: OpenDesk }) {
+export function DeskLock({ state }: { state: EffectiveDesk }) {
   const t = useTranslations("gd.lock");
+  const tOff = useTranslations("off.lock");
   const qc = useQueryClient();
   const router = useRouter();
   const { signOut } = useAuth();
@@ -55,7 +61,9 @@ export function DeskLock({ state }: { state: OpenDesk }) {
     setMessage(null);
     try {
       if (step.mode === "unlock") {
-        refreshAsNewPerson(qc, await desk.unlock(person.userId, pin));
+        const next = await desk.unlock(person.userId, pin);
+        void rememberPin(state.deskId, person.userId, pin);
+        refreshAsNewPerson(qc, next);
       } else {
         await desk.close(person.userId, pin);
         setEnded(true);
@@ -65,6 +73,16 @@ export function DeskLock({ state }: { state: OpenDesk }) {
         router.replace("/sign-in");
       }
     } catch (e) {
+      if (isNetworkError(e)) {
+        if (step.mode === "close") setMessage(tOff("needsConnection"));
+        else {
+          const r = await checkPinOffline(person.userId, pin, state.pinFailLimit);
+          if (r.result === "ok") return unlockOffline(person, state.idleMinutes);
+          setMessage(r.result === "unknown" ? tOff("offlineUnknown", { name: person.displayName ?? "" }) : r.left > 0 ? tOff("offlineWrong", { left: r.left }) : tOff("offlineGone", { name: person.displayName ?? "" }));
+          setShake((n) => n + 1);
+        }
+        return;
+      }
       setMessage(explain(e, person.displayName ?? ""));
       setShake((n) => n + 1);
       void qc.invalidateQueries({ queryKey: ["desk-mode"] });
@@ -84,6 +102,16 @@ export function DeskLock({ state }: { state: OpenDesk }) {
         <h1 className="mt-1 text-center text-3xl sm:text-4xl">{step.mode === "close" ? t("end") : t("title")}</h1>
         <p className="mt-2 max-w-[42ch] text-center text-muted">{step.mode === "close" ? t("endLead") : t("lead")}</p>
 
+        {state.offline ? (
+          <div className="mt-6 w-full">
+            <Notice tone="warning" title={tOff("offline")}>
+              <span className="inline-flex items-start gap-1.5">
+                <CloudSlash size={16} aria-hidden className="mt-0.5 shrink-0" />
+                {tOff("offlineLead")}
+              </span>
+            </Notice>
+          </div>
+        ) : null}
         <div className="mt-8 w-full">
           {ended ? (
             <Notice tone="info">{t("ended")}</Notice>

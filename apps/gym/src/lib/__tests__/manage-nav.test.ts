@@ -25,6 +25,7 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
       "/manage/g1/plans",
       "/manage/g1/fees",
       "/manage/g1/fees/closing",
+      "/manage/g1/offline-items",
       "/manage/g1/reports",
       "/manage/g1/reminders",
       "/manage/g1/packages",
@@ -186,5 +187,16 @@ describe("/manage one gym at a time", () => {
     expect(switchGymHref("/manage/g1/settings", g1, g3)).toBe("/manage/g3");
     expect(switchGymHref("/manage/billing", g1, g2)).toBe("/manage/g2");
     expect(switchGymHref("/manage/g1/members", null, g2)).toBe("/manage/g2");
+  });
+});
+
+describe("offline items (M24 §22)", () => {
+  it("are for the owner and fees.adjust, in Money after Cash closing, also at a desk", () => {
+    expect(pages(["fees.collect"])).not.toContain("offline");
+    expect(pages(["fees.adjust"])).toContain("offline");
+    expect(gymItems("g1", null).map((i) => i.key)).toContain("offline");
+    expect(gymItems("g1", null, { desk: true }).find((i) => i.key === "offline")).toEqual({ key: "offline", href: "/manage/g1/offline-items" });
+    const money = gymSections(gymItems("g1", null)).find((x) => x.key === "money");
+    expect(money?.items.map((i) => i.key).slice(0, 3)).toEqual(["fees", "closing", "offline"]);
   });
 });

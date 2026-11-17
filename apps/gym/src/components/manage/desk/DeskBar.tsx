@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { LockKey } from "@phosphor-icons/react";
 import { Avatar, Button } from "@kriraghor/ui/kit";
 import { desk, type OpenDesk } from "@/lib/desk";
+import { isNetworkError } from "@/lib/desk-offline";
+import { lockOffline } from "./deskLocal";
 import { refreshAsNewPerson } from "./useDesk";
 
 function useLock() {
@@ -15,8 +17,10 @@ function useLock() {
     setBusy(true);
     try {
       refreshAsNewPerson(qc, await desk.lock());
-    } catch {
-      void qc.invalidateQueries({ queryKey: ["desk-mode"] });
+    } catch (e) {
+      // No connection (M24 §22): lock on this device; the server locks by itself when the idle time runs out.
+      if (isNetworkError(e)) lockOffline();
+      else void qc.invalidateQueries({ queryKey: ["desk-mode"] });
     } finally {
       setBusy(false);
     }

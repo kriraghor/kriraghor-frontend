@@ -10,7 +10,7 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  *  - Members and Requests: members.view (Members also members.trainer);
  *  - Plans (workout plans and diet charts, M24-FR-62): plans.manage;
  *  - Reviews (M17 reviews of the gym with replies): the owner only;
- *  - Fees and Closing: fees.collect;
+ *  - Fees and Closing: fees.collect; Offline items (M24 §22, flagged and parked ones to check): fees.adjust;
  *  - Passes sold: passes.view;
  *  - Reports: reports.view (its CSV exports are the owner's); Reminders: the owner only (prompt 2);
  *  - Packages, Import, Settings and the listing editor: the owner only.
@@ -58,7 +58,8 @@ export type ManageKey =
   | "payroll"
   | "equipment"
   | "mywork"
-  | "deskmode";
+  | "deskmode"
+  | "offline";
 /** The owner-wide pages (not one gym's). */
 export type OverviewKey = "gyms" | "billing" | "payouts" | "allReports";
 export type GymPageKey = Exclude<ManageKey, OverviewKey>;
@@ -107,10 +108,12 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   mywork: ["clock.in"],
   // M24 §21: my own desk PIN and switching this device to desk mode (the owner also clears PINs there).
   deskmode: [],
+  // M24 §22: offline items the server flagged or parked, for the owner and fees.adjust.
+  offline: ["fees.adjust"],
 };
 /** Pages for staff only: the owner does not clock in or get payslips. */
 const STAFF_ONLY = new Set<GymPageKey>(["mywork"]);
-const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads", "staff", "payroll", "equipment", "mywork", "deskmode"];
+const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "offline", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads", "staff", "payroll", "equipment", "mywork", "deskmode"];
 const PATH: Record<GymPageKey, string> = {
   dashboard: "",
   desk: "/desk",
@@ -143,6 +146,7 @@ const PATH: Record<GymPageKey, string> = {
   equipment: "/equipment",
   mywork: "/my-work",
   deskmode: "/desk-mode",
+  offline: "/offline-items",
 };
 
 /** May someone with these permissions (null = the owner) open this page? */
@@ -208,7 +212,7 @@ const SECTIONS: { key: GymSectionKey; pages: GymPageKey[] }[] = [
   { key: "people", pages: ["members", "plans", "reviews"] },
   { key: "engage", pages: ["classes", "rewards", "notices", "leads"] },
   { key: "counter", pages: ["sell", "stock", "lockers"] },
-  { key: "money", pages: ["fees", "closing", "cash", "expenses", "pnl", "passes", "reports"] },
+  { key: "money", pages: ["fees", "closing", "offline", "cash", "expenses", "pnl", "passes", "reports"] },
   { key: "team", pages: ["staff", "payroll", "equipment"] },
   { key: "setup", pages: ["edit", "packages", "reminders", "import", "settings", "deskmode"] },
 ];

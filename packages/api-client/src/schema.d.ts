@@ -39283,6 +39283,365 @@ export interface paths {
         };
         trace?: never;
     };
+    "/manage/gyms/{gymId}/desk/snapshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The desk copy for working without a connection (attendance.mark, plan feature attendance; no-store): members with today’s entry decision and, with fees.collect, the open dues; stamped and signed, good for that Dhaka day (M24-FR-144) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymDeskSnapshot"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, GYM_TIER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SETUP_REQUIRED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/desk/offline-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Offline items: `review` (default) the flagged and parked ones waiting, oldest first; `all` newest first (the owner and fees.adjust; M24-FR-150) */
+        get: {
+            parameters: {
+                query?: {
+                    state?: "review" | "all";
+                    cursor?: string;
+                };
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymOfflineItems"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Send one item the desk took offline (attendance.mark for a check-in, fees.collect for a cash fee; Idempotency-Key = clientId). Never refused when well formed: applied, flagged or parked. 201 new; 200 already received (M24-FR-146 to FR-149) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
+                    "idempotency-key": string;
+                };
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /**
+                         * Format: uuid
+                         * @description Made by the device; equals the Idempotency-Key
+                         */
+                        clientId: string;
+                        /** @enum {string} */
+                        kind: "checkin" | "cash_fee";
+                        /** Format: uuid */
+                        memberId: string;
+                        /** @enum {string} */
+                        method?: "desk" | "member_qr";
+                        /** Format: uuid */
+                        dueId?: string;
+                        amountPoisha?: number;
+                        slipNo?: string;
+                        stamp: string;
+                        /** @description Time that passed on the device between the copy arriving and the item being taken */
+                        elapsedMs: number;
+                        /**
+                         * Format: uuid
+                         * @description Who the device says took it
+                         */
+                        takenBy: string;
+                        /**
+                         * Format: uuid
+                         * @description The desk unlock that was live when it was taken (desk mode)
+                         */
+                        unlockId?: string | null;
+                        /** @description The PIN was checked on the device, without a connection */
+                        pinOnDevice?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description Already received */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymOfflineItemResult"];
+                    };
+                };
+                /** @description Received */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymOfflineItemResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, GYM_OFFLINE_STAMP_INVALID, GYM_OFFLINE_ITEM_INVALID */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/desk/offline-items/{itemId}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resolve an offline item: checked; apply parked cash to another open due of the member (receipt now, dated the day taken); returned, with a note (fees.adjust; M24-FR-150) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                    itemId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        action: "checked" | "apply" | "returned";
+                        /** Format: uuid */
+                        dueId?: string;
+                        note?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymOfflineItemResult"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_OFFLINE_ITEM_STATE, GYM_DUE_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED, GYM_PAYMENT_EXCEEDS_DUE */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/manage/gyms/{gymId}/desk/search": {
         parameters: {
             query?: never;
@@ -74439,6 +74798,8 @@ export interface components {
             };
             /** @description gym_manage.desk_idle_minutes: without real input the desk locks after this */
             idleMinutes: number;
+            /** @description gym_manage.desk_pin_fail_limit: also the wrong PINs a device allows a person while it has no connection (M24 §22) */
+            pinFailLimit: number;
             /**
              * Format: date-time
              * @description Too many wrong PINs on this device: no tries until then
@@ -74447,6 +74808,11 @@ export interface components {
             unlocked: {
                 /** Format: uuid */
                 userId: string;
+                /**
+                 * Format: uuid
+                 * @description This unlock; offline items taken under it send it back (M24 §22)
+                 */
+                unlockId: string;
                 displayName: string | null;
                 /** @enum {string} */
                 role: "owner" | "staff";
@@ -74645,6 +75011,148 @@ export interface components {
             /** Format: date-time */
             importConsentUntil: string | null;
             nextMemberCode: string | null;
+        };
+        GymDeskSnapshot: {
+            /** Format: uuid */
+            gymId: string;
+            /**
+             * Format: date
+             * @description The Dhaka day the copy is good for
+             */
+            date: string;
+            /** Format: date-time */
+            serverTime: string;
+            /** @description Signed gym and server time; each offline item sends it back with the time that passed on the device */
+            stamp: string;
+            /** @description gym_manage.desk_snapshot_refresh_minutes */
+            refreshMinutes: number;
+            /** @description gym_manage.desk_offline_max_hours: items sent later are flagged late */
+            maxHours: number;
+            /** @enum {string} */
+            policy: "allow" | "warn" | "block";
+            members: {
+                /** Format: uuid */
+                id: string;
+                memberCode: string;
+                displayName: string;
+                phoneLast4: string | null;
+                package: {
+                    title: string;
+                    /** Format: date */
+                    endsOn: string;
+                    /** @enum {string} */
+                    status: "active" | "frozen";
+                } | null;
+                flags: string[];
+                reasons: string[];
+                /** @enum {string} */
+                decision: "allow" | "warn" | "block";
+                /** @description Already has a counted check-in today */
+                inToday: boolean;
+            }[];
+            /** @description Open dues, only with fees.collect */
+            dues: {
+                /** Format: uuid */
+                id: string;
+                /** Format: uuid */
+                memberId: string;
+                title: string | null;
+                /** Format: date */
+                dueOn: string;
+                outstandingPoisha: number;
+            }[] | null;
+        };
+        GymOfflineItemResult: {
+            item: components["schemas"]["GymOfflineItem"];
+        };
+        GymOfflineItem: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            clientId: string;
+            /** @enum {string} */
+            kind: "checkin" | "cash_fee";
+            member: {
+                /** Format: uuid */
+                id: string;
+                memberCode?: string;
+                displayName?: string;
+                phoneLast4?: string;
+                /** @enum {string|null} */
+                gender?: "male" | "female" | "other" | null;
+                /** @enum {string} */
+                status?: "new" | "active" | "frozen" | "expired" | "left" | "removed";
+                /** @enum {string} */
+                source?: "desk" | "platform" | "import" | "pass";
+                linked?: boolean;
+                /** Format: date */
+                joinedOn?: string;
+                /** @description API path under /api/v1 (fetch with the bearer token); the photo is private */
+                photoPath?: string | null;
+            };
+            /** Format: uuid */
+            dueId: string | null;
+            amountPoisha: number | null;
+            slipNo: string | null;
+            /** @enum {string} */
+            method: "desk" | "member_qr";
+            /** Format: date-time */
+            takenAt: string;
+            /** Format: date */
+            takenOn: string;
+            takenBy: {
+                /** Format: uuid */
+                userId: string;
+                displayName: string | null;
+            } | null;
+            recordedAs: {
+                /** Format: uuid */
+                userId: string;
+                displayName: string | null;
+            } | null;
+            sentBy: {
+                /** Format: uuid */
+                userId: string;
+                displayName: string | null;
+            } | null;
+            /** Format: date-time */
+            sentAt: string;
+            pinOnDevice: boolean;
+            /** @enum {string} */
+            outcome: "applied" | "flagged" | "parked";
+            flags: ("would_block" | "time_adjusted" | "late" | "drawer_closed" | "pin_on_device" | "unverified_taker")[];
+            /** @enum {string|null} */
+            parkReason: "due_paid" | "due_changed" | "due_void" | "member_removed" | "member_left" | null;
+            /** Format: uuid */
+            attendanceId: string | null;
+            receipt: {
+                /** Format: uuid */
+                feePaymentId: string;
+                receiptNo: string;
+                url: string;
+            } | null;
+            /** @enum {string|null} */
+            resolution: "checked" | "applied_to_due" | "returned" | null;
+            resolvedBy: {
+                /** Format: uuid */
+                userId: string;
+                displayName: string | null;
+            } | null;
+            /** Format: date-time */
+            resolvedAt: string | null;
+            resolutionNote: string | null;
+            resolutionReceipt: {
+                /** Format: uuid */
+                feePaymentId: string;
+                receiptNo: string;
+                url: string;
+            } | null;
+        };
+        GymOfflineItems: {
+            /** @description Flagged and parked items nobody has resolved */
+            toCheck: number;
+            items: components["schemas"]["GymOfflineItem"][];
+            nextCursor: string | null;
         };
         GymDeskSearch: {
             items: components["schemas"]["GymDeskCard"][];

@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useSyncExternalStore, type ReactNode } from "react";
+import { Suspense, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Archive, CalendarBlank, ClockUser, IdentificationBadge, Money, Wrench, ChatCircleText, Gift, Megaphone, ArrowSquareOut, BellRinging, LockKey, Barbell, CashRegister, ChartBar, ChartLineUp, ChartPieSlice, ClipboardText, CreditCard, DoorOpen, Gear, Lockers, Package, PencilSimple, PresentationChart, QrCode, Receipt, ShoppingCart, Star, Ticket, Tray, UploadSimple, UsersThree, Vault, Wallet } from "@phosphor-icons/react";
+import { Archive, CalendarBlank, ClockUser, IdentificationBadge, Money, Wrench, ChatCircleText, CloudSlash, Gift, Megaphone, ArrowSquareOut, BellRinging, LockKey, Barbell, CashRegister, ChartBar, ChartLineUp, ChartPieSlice, ClipboardText, CreditCard, DoorOpen, Gear, Lockers, Package, PencilSimple, PresentationChart, QrCode, Receipt, ShoppingCart, Star, Ticket, Tray, UploadSimple, UsersThree, Vault, Wallet } from "@phosphor-icons/react";
 import { publicEnv } from "@kriraghor/session/env";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
@@ -15,7 +15,9 @@ import { GymSwitcher } from "./GymSwitcher";
 import { DeskBar, DeskPhoneLock } from "./desk/DeskBar";
 import { DeskLock } from "./desk/DeskLock";
 import { useDeskKeepAlive, useDeskPageMark, useDeskState } from "./desk/useDesk";
-import type { OpenDesk } from "@/lib/desk";
+import { backOnline, bindDesk, localVersion, offlineView, subscribe as subscribeDeskLocal, type EffectiveDesk } from "./desk/deskLocal";
+import { OfflineBanner } from "./offline/OfflineDesk";
+import { DeskContext, useOffline } from "./offline/useOffline";
 
 const ICON: Record<ManageItem["key"], typeof Barbell> = {
   gyms: Barbell,
@@ -53,6 +55,7 @@ const ICON: Record<ManageItem["key"], typeof Barbell> = {
   equipment: Wrench,
   mywork: ClockUser,
   deskmode: LockKey,
+  offline: CloudSlash,
 };
 const EXACT = new Set<ManageItem["key"]>(["gyms", "dashboard", "fees"]);
 
@@ -83,10 +86,26 @@ export function ManageShell({ children }: { children: ReactNode }) {
   const { status } = useAuth();
   const wp = useWorkplaces();
   const deskQ = useDeskState(status === "signed_in");
-  const deskOn = deskQ.data?.open ? deskQ.data : null;
+  const serverDesk = deskQ.data?.open ? deskQ.data : null;
+  // M24 §22: without a connection the desk keeps working from what this device knows (deskLocal).
+  const offline = useOffline();
+  useSyncExternalStore(subscribeDeskLocal, localVersion, localVersion);
+  const deskId = serverDesk?.deskId ?? null;
+  useEffect(() => bindDesk(deskId), [deskId]);
+  useEffect(() => {
+    if (!offline) backOnline();
+  }, [offline]);
+  // The clock is read only offline (never while the page is prerendered on the server).
+  const [now, setNow] = useState(0);
+  useEffect(() => {
+    if (!offline || !deskId) return;
+    const tick = window.setInterval(() => setNow(Date.now()), 5_000);
+    return () => window.clearInterval(tick);
+  }, [offline, deskId]);
+  const deskOn: EffectiveDesk | null = serverDesk ? (offline ? offlineView(serverDesk, now || undefined) : { ...serverDesk, offline: false, pinOnDevice: false }) : null;
   const gyms = useManageGyms(status === "signed_in" && !(deskOn && !deskOn.unlocked));
   useDeskPageMark(Boolean(deskOn));
-  useDeskKeepAlive(deskOn?.unlocked ?? null);
+  useDeskKeepAlive(deskOn?.unlocked ?? null, deskOn?.idleMinutes ?? 0);
 
   if (status === "signed_out")
     return (
@@ -109,14 +128,16 @@ export function ManageShell({ children }: { children: ReactNode }) {
         </AppShell>
       }
     >
-      <OneGymShell refs={refs} desk={deskOn}>
-        {children}
-      </OneGymShell>
+      <DeskContext.Provider value={deskOn}>
+        <OneGymShell refs={refs} desk={deskOn}>
+          {children}
+        </OneGymShell>
+      </DeskContext.Provider>
     </Suspense>
   );
 }
 
-function OneGymShell({ refs, desk, children }: { refs: ManageGymRef[]; desk: OpenDesk | null; children: ReactNode }) {
+function OneGymShell({ refs, desk, children }: { refs: ManageGymRef[]; desk: EffectiveDesk | null; children: ReactNode }) {
   const t = useTranslations("manage");
   const pathname = usePathname();
   const router = useRouter();
@@ -142,6 +163,9 @@ function OneGymShell({ refs, desk, children }: { refs: ManageGymRef[]; desk: Ope
     }
   }, [inUrl]);
 
+  // M24 §22: what waits on this device for the gym on screen, sent as this person.
+  const here = refs.find((g) => g.id === current?.gymId);
+  const perms = here ? (here.role === "owner" ? null : (here.permissions ?? [])) : [];
   const toItems = (g: ManageGroup, items: ManageItem[]) => items.map((it) => ({ href: it.href, label: t(`nav.${it.key}`), icon: ICON[it.key], match: EXACT.has(it.key) ? ("exact" as const) : undefined, testId: `manage-${it.key}${g.gymId ? `-${g.gymId}` : ""}` }));
   const groups: ShellGroup[] = [
     ...(current ? gymSections(current.items).map((s) => ({ label: t(`section.${s.key}`), items: toItems(current, s.items), collapsible: true, defaultOpen: s.key === "today" })) : []),
@@ -159,6 +183,7 @@ function OneGymShell({ refs, desk, children }: { refs: ManageGymRef[]; desk: Ope
   return (
     <>
       <AppShell groups={groups} title={t("menu")} context={current?.name} top={desk ? (collapsed) => <DeskBar state={desk} collapsed={collapsed} /> : current ? (collapsed) => <GymSwitcher gyms={gyms} current={current} pathname={pathname} collapsed={collapsed} /> : undefined}>
+      {current?.gymId ? <OfflineBanner gymId={current.gymId} perms={perms} /> : null}
       {children}
     </AppShell>
       {desk ? <DeskPhoneLock state={desk} /> : null}
