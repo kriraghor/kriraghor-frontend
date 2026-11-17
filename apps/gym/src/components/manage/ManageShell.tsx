@@ -7,12 +7,12 @@ import { publicEnv } from "@kriraghor/session/env";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard } from "@kriraghor/ui/account";
-import { usePathname } from "@kriraghor/ui/i18n/navigation";
+import { usePathname, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { useWorkplaces } from "@kriraghor/ui/desk";
 import { useManageGyms } from "@/components/gym-manage/common";
 import { currentGym, gymFromPath, gymSections, manageGroups, workplaceGyms, type ManageGroup, type ManageGymRef, type ManageItem } from "@/lib/manage-nav";
 import { GymSwitcher } from "./GymSwitcher";
-import { DeskBar } from "./desk/DeskBar";
+import { DeskBar, DeskPhoneLock } from "./desk/DeskBar";
 import { DeskLock } from "./desk/DeskLock";
 import { useDeskKeepAlive, useDeskPageMark, useDeskState } from "./desk/useDesk";
 import type { OpenDesk } from "@/lib/desk";
@@ -119,10 +119,19 @@ export function ManageShell({ children }: { children: ReactNode }) {
 function OneGymShell({ refs, desk, children }: { refs: ManageGymRef[]; desk: OpenDesk | null; children: ReactNode }) {
   const t = useTranslations("manage");
   const pathname = usePathname();
+  const router = useRouter();
   const last = useSyncExternalStore(onStorage, readLastGym, () => null);
   const [overview, ...gyms] = manageGroups({ gyms: refs, deskGymId: desk?.gym.id ?? null });
   const current = currentGym(gyms, pathname, last);
   const inUrl = gyms.some((g) => g.gymId === gymFromPath(pathname)) ? gymFromPath(pathname) : null;
+
+  // At a desk (M24 §21): the desk gym's pages only, and never Desk mode itself (it is for your own sign-in);
+  // anywhere else opens the front desk.
+  const deskGym = desk?.gym.id ?? null;
+  const astray = Boolean(deskGym) && (gymFromPath(pathname) !== deskGym || pathname.endsWith("/desk-mode"));
+  useEffect(() => {
+    if (astray && deskGym) router.replace(`/manage/${deskGym}/desk`);
+  }, [astray, deskGym, router]);
 
   useEffect(() => {
     if (!inUrl) return;
@@ -136,7 +145,8 @@ function OneGymShell({ refs, desk, children }: { refs: ManageGymRef[]; desk: Ope
   const toItems = (g: ManageGroup, items: ManageItem[]) => items.map((it) => ({ href: it.href, label: t(`nav.${it.key}`), icon: ICON[it.key], match: EXACT.has(it.key) ? ("exact" as const) : undefined, testId: `manage-${it.key}${g.gymId ? `-${g.gymId}` : ""}` }));
   const groups: ShellGroup[] = [
     ...(current ? gymSections(current.items).map((s) => ({ label: t(`section.${s.key}`), items: toItems(current, s.items), collapsible: true, defaultOpen: s.key === "today" })) : []),
-    { label: current ? t("section.allGyms") : undefined, items: toItems(overview, overview.items), collapsible: Boolean(current) },
+    // A desk device stays in its gym: no "All gyms" pages there.
+    ...(desk ? [] : [{ label: current ? t("section.allGyms") : undefined, items: toItems(overview, overview.items), collapsible: Boolean(current) }]),
   ];
   if (!desk && refs.some((g) => g.role === "owner")) {
     const vendor = publicEnv().VENDOR_URL.replace(/\/+$/, "");
@@ -147,9 +157,12 @@ function OneGymShell({ refs, desk, children }: { refs: ManageGymRef[]; desk: Ope
     });
   }
   return (
-    <AppShell groups={groups} title={t("menu")} context={current?.name} foot={desk ? (collapsed) => <DeskBar state={desk} collapsed={collapsed} /> : undefined} top={current ? (collapsed) => <GymSwitcher gyms={gyms} current={current} pathname={pathname} collapsed={collapsed} /> : undefined}>
+    <>
+      <AppShell groups={groups} title={t("menu")} context={current?.name} top={desk ? (collapsed) => <DeskBar state={desk} collapsed={collapsed} /> : current ? (collapsed) => <GymSwitcher gyms={gyms} current={current} pathname={pathname} collapsed={collapsed} /> : undefined}>
       {children}
     </AppShell>
+      {desk ? <DeskPhoneLock state={desk} /> : null}
+    </>
   );
 }
 
