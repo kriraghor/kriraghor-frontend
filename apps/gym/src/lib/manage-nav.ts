@@ -57,7 +57,8 @@ export type ManageKey =
   | "staff"
   | "payroll"
   | "equipment"
-  | "mywork";
+  | "mywork"
+  | "deskmode";
 /** The owner-wide pages (not one gym's). */
 export type OverviewKey = "gyms" | "billing" | "payouts" | "allReports";
 export type GymPageKey = Exclude<ManageKey, OverviewKey>;
@@ -104,10 +105,12 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   payroll: null,
   equipment: ["assets.manage", "reports.view"],
   mywork: ["clock.in"],
+  // M24 §21: my own desk PIN and switching this device to desk mode (the owner also clears PINs there).
+  deskmode: [],
 };
 /** Pages for staff only: the owner does not clock in or get payslips. */
 const STAFF_ONLY = new Set<GymPageKey>(["mywork"]);
-const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads", "staff", "payroll", "equipment", "mywork"];
+const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads", "staff", "payroll", "equipment", "mywork", "deskmode"];
 const PATH: Record<GymPageKey, string> = {
   dashboard: "",
   desk: "/desk",
@@ -139,6 +142,7 @@ const PATH: Record<GymPageKey, string> = {
   payroll: "/payroll",
   equipment: "/equipment",
   mywork: "/my-work",
+  deskmode: "/desk-mode",
 };
 
 /** May someone with these permissions (null = the owner) open this page? */
@@ -149,13 +153,16 @@ export function canOpen(page: GymPageKey, permissions: readonly string[] | null)
   return needs.length === 0 || needs.some((p) => permissions.includes(p));
 }
 
-/** The pages one person may open at one gym, in menu order. */
-export function gymItems(gymId: string, permissions: readonly string[] | null): ManageItem[] {
-  return ORDER.filter((k) => canOpen(k, permissions)).map((key) => ({ key, href: `/manage/${gymId}${PATH[key]}` }));
+/**
+ * The pages one person may open at one gym, in menu order. At a desk in desk mode (M24 §21) the owner-only
+ * pages are left out even for the owner (they need the owner's own sign-in), and so is the Desk mode page.
+ */
+export function gymItems(gymId: string, permissions: readonly string[] | null, { desk = false }: { desk?: boolean } = {}): ManageItem[] {
+  return ORDER.filter((k) => canOpen(k, permissions) && !(desk && (PAGE_NEEDS[k] === null || k === "deskmode"))).map((key) => ({ key, href: `/manage/${gymId}${PATH[key]}` }));
 }
 
 /** The desks one staff member may open at one gym (the workplace cards; the dashboard is left out there). */
-export const staffItems = (gymId: string, permissions: readonly string[]): ManageItem[] => gymItems(gymId, permissions).filter((i) => i.key !== "dashboard");
+export const staffItems = (gymId: string, permissions: readonly string[]): ManageItem[] => gymItems(gymId, permissions).filter((i) => i.key !== "dashboard" && i.key !== "deskmode");
 
 /** Round B3 workplaces as menu gyms (when GET /manage/gyms is not available, e.g. while it loads). */
 export const workplaceGyms = (workplaces: readonly WorkplaceRef[], names?: ReadonlyMap<string, string | null>): ManageGymRef[] =>
@@ -171,16 +178,18 @@ const OWNER_OVERVIEW: ManageItem[] = [
  * The sidebar groups: "My gyms" (and, for owners, Billing, Payouts and All-gyms reports) first, then one group per gym: owned gyms
  * first, then gyms worked at that open at least one desk besides the dashboard.
  */
-export function manageGroups(input: { gyms: readonly ManageGymRef[] }): ManageGroup[] {
-  const owner = input.gyms.some((g) => g.role === "owner");
+export function manageGroups(input: { gyms: readonly ManageGymRef[]; deskGymId?: string | null }): ManageGroup[] {
+  const desk = Boolean(input.deskGymId);
+  const owner = !desk && input.gyms.some((g) => g.role === "owner");
   const groups: ManageGroup[] = [{ key: "overview", gymId: null, name: null, staff: false, items: [{ key: "gyms", href: "/manage" }, ...(owner ? OWNER_OVERVIEW : [])] }];
   const seen = new Set<string>();
   const sorted = [...input.gyms].sort((a, b) => (a.role === b.role ? 0 : a.role === "owner" ? -1 : 1));
   for (const g of sorted) {
-    if (seen.has(g.id)) continue;
+    if (seen.has(g.id) || (desk && g.id !== input.deskGymId)) continue;
     const perms = g.role === "owner" ? null : (g.permissions ?? []);
-    const items = gymItems(g.id, perms);
-    if (perms && !items.some((i) => i.key !== "dashboard")) continue;
+    const items = gymItems(g.id, perms, { desk });
+    // The dashboard and Desk mode (my own PIN) are for everyone there; they alone do not make a desk.
+    if (perms && !items.some((i) => i.key !== "dashboard" && i.key !== "deskmode")) continue;
     seen.add(g.id);
     groups.push({ key: `${g.role === "owner" ? "own" : "work"}:${g.id}`, gymId: g.id, name: g.name, staff: g.role === "staff", listingStatus: g.listingStatus ?? null, items });
   }
@@ -201,7 +210,7 @@ const SECTIONS: { key: GymSectionKey; pages: GymPageKey[] }[] = [
   { key: "counter", pages: ["sell", "stock", "lockers"] },
   { key: "money", pages: ["fees", "closing", "cash", "expenses", "pnl", "passes", "reports"] },
   { key: "team", pages: ["staff", "payroll", "equipment"] },
-  { key: "setup", pages: ["edit", "packages", "reminders", "import", "settings"] },
+  { key: "setup", pages: ["edit", "packages", "reminders", "import", "settings", "deskmode"] },
 ];
 /** The /manage pages that are not one gym's. */
 const NOT_A_GYM = new Set(["billing", "payouts", "reports"]);
