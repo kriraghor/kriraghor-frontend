@@ -11,9 +11,11 @@ export function MobileTabBar() {
   const pathname = usePathname();
   const on = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
   const item = (href: string, label: string, icon: ReactNode) => (
-    <Link key={href} href={href} aria-current={on(href) ? "page" : undefined} className={`my-1 flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 truncate rounded-2xl text-xs font-semibold transition-colors ${on(href) ? "bg-brand-soft text-brand-text" : "text-muted hover:text-ink"}`}>
+    // flex-auto: each tab takes its label's width plus an equal share of the rest, so "Tournaments" fits beside
+    // four short labels at 12 px; on the narrowest phones a label ends in "…" rather than running into the next.
+    <Link key={href} href={href} aria-current={on(href) ? "page" : undefined} className={`my-1 flex min-w-0 flex-auto flex-col items-center justify-center gap-0.5 rounded-control px-1.5 text-xs font-semibold tracking-tight transition-colors ${on(href) ? "bg-brand-soft text-brand-text" : "text-muted hover:text-ink"}`}>
       {icon}
-      {label}
+      <span className="max-w-full truncate">{label}</span>
     </Link>
   );
   return (
