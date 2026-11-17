@@ -7,6 +7,7 @@ import { Link } from "@kriraghor/ui/i18n/navigation";
 import { api } from "@kriraghor/api-client";
 import type { components } from "@kriraghor/api-client/schema";
 import { formatTaka } from "@/lib/payments";
+import { isExternal } from "@/lib/links";
 import { ChartSplit, DeltaBadge, KpiTile } from "@kriraghor/ui/charts";
 import { ArrowRight, DownloadSimple } from "@phosphor-icons/react";
 import { Button, Notice, SegmentedControl, Skeleton } from "@kriraghor/ui/kit";
@@ -49,15 +50,30 @@ export function MemberOverview() {
       </div>
       {actions.data?.items.length ? (
         <ul className="surface-card divide-y divide-line overflow-hidden" data-testid="member-actions">
-          {actions.data.items.map((a) => (
-            <li key={`${a.key}-${a.href}`}>
-              <Link href={a.href} className="group flex min-h-12 items-center gap-3 px-4 py-2 no-underline transition-colors hover:bg-surface-2">
+          {actions.data.items.map((a) => {
+            const body = (
+              <>
                 <span className={`size-2.5 shrink-0 rounded-pill ${a.severity === "high" ? "bg-danger" : "bg-brand"}`} aria-hidden="true" />
                 <span className="flex-1">{t(`actions.${a.key}`, { n: a.count })}</span>
                 <ArrowRight size={18} aria-hidden className="text-muted transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </li>
-          ))}
+              </>
+            );
+            const cls = "group flex min-h-12 items-center gap-3 px-4 py-2 no-underline transition-colors hover:bg-surface-2";
+            return (
+              <li key={`${a.key}-${a.href}`}>
+                {/* An action on another site (/go/…) is a plain link, so Next never prefetches the cross-origin redirect. */}
+                {isExternal(a.href) ? (
+                  <a href={a.href} className={cls}>
+                    {body}
+                  </a>
+                ) : (
+                  <Link href={a.href} className={cls}>
+                    {body}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
         </ul>
       ) : null}
       {d.isPending ? (
