@@ -278,7 +278,8 @@
       "payroll": "Payroll",
       "equipment": "Equipment",
       "mywork": "My work",
-      "deskmode": "Desk mode"
+      "deskmode": "Desk mode",
+      "offline": "Offline items"
     },
     "section": {
       "today": "Today",
@@ -3531,6 +3532,128 @@
       "endBody": "Each device is signed out at once. Use this if a desk device is lost or left unattended.",
       "endedAll": "{count, plural, one {# device} other {# devices}} signed out.",
       "cancel": "Cancel"
+    }
+  },
+  "off": {
+    "banner": {
+      "offlineTitle": "Working offline",
+      "offlineBody": "No connection. The front desk works from its copy of today's members: check-ins and cash fees wait on this device and are sent when the connection is back.",
+      "noCopy": "No connection, and this device has no copy of today's members yet. Keep the front desk open while online so it can work offline next time.",
+      "waitingTitle": "Waiting on this device",
+      "checkins": "{n, plural, one {# check-in} other {# check-ins}}",
+      "payments": "{n, plural, one {# cash payment} other {# cash payments}}",
+      "sendNow": "Send now",
+      "blocked": "They are sent when someone who may send them is at the desk.",
+      "memoryOnly": "This browser cannot keep them if the page closes. Keep this page open until they are sent.",
+      "sent": "{n, plural, one {# offline item sent} other {# offline items sent}}.",
+      "toCheck": "{n, plural, one {# needs} other {# need}} a check: see Offline items.",
+      "refusedTitle": "Not accepted",
+      "refusedBody": "The server did not accept these, so they were not recorded. Check them, then remove them from this device.",
+      "remove": "Remove",
+      "removeTitle": "Remove this item from this device?",
+      "removeBody": "It was not recorded. Removing it cannot be undone."
+    },
+    "member": {
+      "copy": "Offline copy",
+      "blocked": "The gym's rules block this member. Letting them in needs a connection.",
+      "inToday": "Already checked in today",
+      "takeCash": "Take cash · {amount} owed",
+      "qr": "Read from the QR without the server",
+      "noTaker": "Who is at the desk is not known yet. Wait for the connection."
+    },
+    "checkedIn": {
+      "title": "Checked in, offline",
+      "body": "Saved on this device. It is sent when the connection is back."
+    },
+    "cash": {
+      "title": "Take cash from {name}",
+      "due": "{title} · due {date}",
+      "left": "Still owed: {amount}",
+      "amount": "Amount (cash only)",
+      "note": "Without a connection only cash can be taken. The member gets a temporary slip now; the receipt with its number comes when it is sent.",
+      "save": "Take cash and give a slip",
+      "tooMuch": "More than is owed ({amount})."
+    },
+    "slip": {
+      "title": "Temporary slip",
+      "number": "Slip number",
+      "member": "Member",
+      "amount": "Cash received",
+      "for": "For",
+      "takenBy": "Taken by",
+      "at": "Time",
+      "body": "Give this number to the member. The receipt with its real number comes when the connection is back.",
+      "print": "Print"
+    },
+    "pay": {
+      "offer": "No connection. Take this as cash with a temporary slip; it is sent when the connection is back.",
+      "save": "Take cash offline"
+    },
+    "drawer": {
+      "waiting": "This device still has {n, plural, one {# offline item} other {# offline items}} to send. Send them before closing the day."
+    },
+    "lock": {
+      "offline": "No connection",
+      "offlineLead": "Only people who unlocked this desk since this page opened can unlock it now. What they do is marked for the owner to check.",
+      "offlineUnknown": "{name} has not unlocked this desk since this page opened. Wait for the connection.",
+      "offlineWrong": "That PIN is not right. {left, plural, one {# try} other {# tries}} left without a connection.",
+      "offlineGone": "Too many wrong tries. {name} waits for the connection.",
+      "needsConnection": "Ending desk mode needs a connection."
+    },
+    "review": {
+      "title": "Offline items",
+      "lead": "What the front desk took without a connection and the server could not simply record. Check each one.",
+      "toCheck": "To check",
+      "all": "All",
+      "empty": "Nothing to check.",
+      "emptyAll": "Nothing was taken offline yet.",
+      "kind": {
+        "checkin": "Check-in",
+        "cash_fee": "Cash fee"
+      },
+      "outcome": {
+        "applied": "Recorded",
+        "flagged": "Recorded, to check",
+        "parked": "Not recorded"
+      },
+      "flag": {
+        "would_block": "The gym's rules would have blocked this member",
+        "time_adjusted": "The device's clock was ahead: the time it arrived is used",
+        "late": "Sent long after it was taken",
+        "drawer_closed": "That day's cash drawer was already closed",
+        "pin_on_device": "PIN checked on the device, without a connection",
+        "unverified_taker": "The person named could not be confirmed"
+      },
+      "park": {
+        "due_paid": "The due was already paid",
+        "due_changed": "The member now owes less than this",
+        "due_void": "The due was cancelled",
+        "member_removed": "The member was removed",
+        "member_left": "The member has left"
+      },
+      "takenBy": "Taken by {name}",
+      "recordedAs": "Recorded for {name}",
+      "sentBy": "Sent by {name}",
+      "slip": "Slip {no}",
+      "receipt": "Receipt {no}",
+      "checked": "Mark checked",
+      "checkedTitle": "Mark this item as checked?",
+      "checkedBody": "Add a note if something was done about it.",
+      "apply": "Put on another due",
+      "applyTitle": "Put {amount} on another due of {name}",
+      "applyBody": "A receipt is made now, dated the day the cash was taken.",
+      "due": "Due",
+      "noOtherDue": "{name} has no other open due. Add a package first, or record that the cash went back.",
+      "returned": "Cash given back",
+      "returnedTitle": "Record that the cash went back",
+      "returnedNote": "How it went back",
+      "note": "Note",
+      "resolved": {
+        "checked": "Checked by {name}",
+        "applied_to_due": "Put on another due by {name}",
+        "returned": "Cash given back, recorded by {name}"
+      },
+      "someone": "someone"
     }
   }
 }

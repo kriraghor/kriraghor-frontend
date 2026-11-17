@@ -17,6 +17,10 @@ import { Upsell, useFmt, useGymCtx, useGymError } from "@/components/gym-manage/
 import { canScan, useQrScanner } from "@/components/QrScanner";
 import type { GymVisit } from "@/lib/gym-visits";
 import { GuestCard, GuestsList } from "./GuestDesk";
+import { put as keepOffline } from "@/lib/desk-db";
+import { copyUsable, dueLeft, memberOfToken, newItem, newSlipNo, offlineEntry, searchCopy, type CopyDue, type CopyMember, type WaitingItem } from "@/lib/desk-offline";
+import { OfflineCashDialog, OfflineCheckedIn, OfflineMemberCard, OfflineSlip } from "./offline/OfflineDesk";
+import { reportNetwork, useDeskCopy, useOffline, useTaker, useWaiting } from "./offline/useOffline";
 
 type PassResult = { ok: true; a: Admission } | { ok: false; code: string; title: string; at?: string; validFrom?: string; validTo?: string };
 type MemberResult = { ok: true; card: DeskCard } | { ok: false; code: string; title: string; reasons: string[]; canOverride: boolean; body: { memberId: string } | { token: string }; name?: string };
@@ -28,6 +32,9 @@ type MemberResult = { ok: true; card: DeskCard } | { ok: false; code: string; ti
  * (checks in) or a pass QR (admits). The search box keeps focus after each check-in; today's
  * check-ins and admissions follow. Staff with only desk.admit keep the pass code entry. Free trial visits
  * (M24-FR-113, FR-114, 9 Nov 2026): a guest's QR or code shows the guest card, and the day's guests are listed.
+ * Without a connection (M24 §22): the search and the member QR work on the desk copy (fetched while online);
+ * members the copy lets in are checked in on this device, and cash for a due in the copy is taken with a
+ * temporary slip; both are sent when the connection is back. Passes and guests need the connection.
  */
 export function FrontDesk({ id }: { id: string }) {
   const t = useTranslations("vendorGym");
@@ -76,6 +83,18 @@ export function FrontDesk({ id }: { id: string }) {
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [offline, setOffline] = useState(false);
+  // M24 §22: the desk copy, what waits on this device, and who is taking items.
+  const tOff = useTranslations("off");
+  const netDown = useOffline();
+  const canCollect = Boolean(ctx) && has("fees.collect");
+  const copyOn = canCheckIn && !attendanceLocked;
+  const copy = useDeskCopy(copyOn ? id : null, { fetch: copyOn });
+  const waiting = useWaiting(id);
+  const taker = useTaker();
+  const [offFound, setOffFound] = useState<{ q: string; items: CopyMember[] } | null>(null);
+  const [offResult, setOffResult] = useState<WaitingItem | null>(null);
+  const [cashFor, setCashFor] = useState<{ member: CopyMember; due: CopyDue } | null>(null);
+  const [slip, setSlip] = useState<WaitingItem | null>(null);
   const [found, setFound] = useState<{ items: DeskCard[]; pass: DeskPass | null; visit: GymVisit | null; q: string } | null>(null);
   const [passResult, setPassResult] = useState<PassResult | null>(null);
   const [memberResult, setMemberResult] = useState<MemberResult | null>(null);
@@ -85,6 +104,50 @@ export function FrontDesk({ id }: { id: string }) {
   const input = useRef<HTMLInputElement>(null);
   const focus = () => setTimeout(() => input.current?.focus(), 0);
   const isNetwork = (err: unknown) => err instanceof TypeError || (err as { name?: string })?.name === "TypeError";
+  /** The copy when it is still good (today's, in memory); read at the moment of use. */
+  const usableCopy = () => (copyOn && copyUsable(copy, performance.now()) ? copy : null);
+  const clearOffline = () => {
+    setOffFound(null);
+    setOffResult(null);
+    setSlip(null);
+  };
+  /** No connection: search the copy, or say the desk has none. */
+  const searchOffline = (q: string) => {
+    reportNetwork(false);
+    const c = usableCopy();
+    if (!c) return setOffline(true);
+    setFound(null);
+    setMemberResult(null);
+    setPassResult(null);
+    setOffResult(null);
+    setSlip(null);
+    setOffline(false);
+    setOffFound({ q, items: searchCopy(c, q) });
+  };
+  /** Check a member in on this device; it is sent when the connection is back. */
+  const checkInOffline = async (member: CopyMember, method: "desk" | "member_qr") => {
+    const c = usableCopy();
+    if (!c) return setOffline(true);
+    if (!taker) return toast.show(tOff("member.noTaker"), "error");
+    const item = newItem({ copy: c, nowPerf: performance.now(), kind: "checkin", member, taker, method });
+    await keepOffline(item);
+    setOffFound(null);
+    setSlip(null);
+    setMemberResult(null);
+    setOffResult(item);
+    setText("");
+    focus();
+  };
+  const takeCashOffline = async (amountPoisha: number) => {
+    const c = usableCopy();
+    if (!c || !cashFor) return setOffline(true);
+    if (!taker) return toast.show(tOff("member.noTaker"), "error");
+    const item = newItem({ copy: c, nowPerf: performance.now(), kind: "cash_fee", member: cashFor.member, taker, due: cashFor.due, amountPoisha, slipNo: newSlipNo() });
+    await keepOffline(item);
+    setOffFound(null);
+    setOffResult(null);
+    setSlip(item);
+  };
 
   const admit = useCallback(
     async (inp: { token: string } | { code: string }) => {
@@ -92,6 +155,8 @@ export function FrontDesk({ id }: { id: string }) {
       setMemberResult(null);
       try {
         const a = await gymDesk.redeem(id, inp);
+        reportNetwork(true);
+        clearOffline();
         setPassResult({ ok: true, a });
         setCode("");
         setText("");
@@ -100,7 +165,10 @@ export function FrontDesk({ id }: { id: string }) {
         setListDate(todayDate);
         await qc.invalidateQueries({ queryKey: ["gym-admissions", id] });
       } catch (err) {
-        if (isNetwork(err)) setOffline(true);
+        if (isNetwork(err)) {
+          reportNetwork(false);
+          setOffline(true);
+        }
         // The API spreads the problem meta on the body: `at` (the earlier admission), validFrom and validTo.
         const p = problemOf(err) as (ReturnType<typeof problemOf> & { at?: string; validFrom?: string; validTo?: string }) | null;
         setPassResult({ ok: false, code: p?.code ?? "UNKNOWN", title: errorText(err, t("failed")) ?? t("failed"), at: p?.at, validFrom: p?.validFrom, validTo: p?.validTo });
@@ -118,6 +186,8 @@ export function FrontDesk({ id }: { id: string }) {
       setPassResult(null);
       try {
         const card = await gymManage.checkIn(id, body, override);
+        reportNetwork(true);
+        clearOffline();
         setMemberResult({ ok: true, card });
         setText("");
         setFound(null);
@@ -128,6 +198,21 @@ export function FrontDesk({ id }: { id: string }) {
         await qc.invalidateQueries({ queryKey: ["gm-overview", id] });
         return true;
       } catch (err) {
+        // No connection (M24 §22): the member from the copy, checked in here when the copy lets them in.
+        if (isNetwork(err) && !override) {
+          reportNetwork(false);
+          const c = usableCopy();
+          const memberId = "token" in body ? memberOfToken(body.token) : body.memberId;
+          const m = c?.members.find((x) => x.id === memberId);
+          if (m && offlineEntry(m) !== "blocked") {
+            await checkInOffline(m, "token" in body ? "member_qr" : "desk");
+            return true;
+          }
+          if (c && m) {
+            setOffFound({ q: m.memberCode, items: [m] });
+            return false;
+          }
+        }
         if (isNetwork(err)) setOffline(true);
         const p = problemOf(err) as (ReturnType<typeof problemOf> & { reasons?: string[]; canOverride?: boolean }) | null;
         if (override) {
@@ -141,7 +226,8 @@ export function FrontDesk({ id }: { id: string }) {
         focus();
       }
     },
-    [id, qc, todayDate, gymErr],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the offline helpers read the copy at the moment of use
+    [id, qc, todayDate, gymErr, copy, taker],
   );
 
   const submitText = useCallback(
@@ -152,21 +238,26 @@ export function FrontDesk({ id }: { id: string }) {
       // A trial-visit guest's QR (9 Nov 2026) is looked up like a search: the guest card follows.
       const d = d0.kind === "visit" ? { kind: "search" as const, q: d0.token } : d0;
       if (d.kind === "pass") return void (canAdmit ? admit({ token: d.token }) : undefined);
+      // Already offline: the copy answers at once.
+      if (netDown && usableCopy()) return searchOffline(d.q);
       setBusy(true);
       setPassResult(null);
       setMemberResult(null);
+      clearOffline();
       try {
         const r = await gymManage.search(id, d.q);
+        reportNetwork(true);
         setFound({ items: r.items, pass: r.pass, visit: r.visit ?? null, q: d.q });
         setOffline(false);
       } catch (err) {
-        if (isNetwork(err)) setOffline(true);
+        if (isNetwork(err)) return searchOffline(d.q);
         setMemberResult({ ok: false, code: problemOf(err)?.code ?? "UNKNOWN", title: gymErr(err), reasons: [], canOverride: false, body: { memberId: "" } });
       } finally {
         setBusy(false);
       }
     },
-    [admit, canAdmit, checkIn, gymErr, id],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the offline helpers read the copy at the moment of use
+    [admit, canAdmit, checkIn, gymErr, id, netDown, copy],
   );
 
   // The camera loop (components/QrScanner): one scan, one request.
@@ -201,7 +292,7 @@ export function FrontDesk({ id }: { id: string }) {
       {ctx && !canCheckIn && !canAdmit ? <DeskAccessNotice code="PERMISSION_REQUIRED" className="mt-4" /> : null}
       {offline ? (
         <Notice tone="error" className="mt-4" title={tg("desk.offline")}>
-          {tg("desk.offlineBody")}
+          {copyOn ? tOff("banner.noCopy") : tg("desk.offlineBody")}
         </Notice>
       ) : null}
       {canCheckIn && attendanceLocked ? <Upsell feature="attendance" owner={Boolean(ctx?.owner)} className="mt-4" /> : null}
@@ -292,6 +383,29 @@ export function FrontDesk({ id }: { id: string }) {
           </div>
 
           <div aria-live="polite" className="flex flex-col gap-3" data-testid="desk-result">
+            {offResult ? <OfflineCheckedIn item={offResult} /> : null}
+            {slip ? <OfflineSlip item={slip} /> : null}
+            {offFound ? (
+              <div className="flex flex-col gap-2" data-testid="offline-found">
+                {offFound.items.map((m) => (
+                  <OfflineMemberCard
+                    key={m.id}
+                    member={m}
+                    dues={(copy?.dues ?? []).filter((d) => d.memberId === m.id)}
+                    waiting={waiting}
+                    canCollect={canCollect}
+                    busy={busy}
+                    onCheckIn={() => void checkInOffline(m, "desk")}
+                    onCash={(due) => setCashFor({ member: m, due })}
+                  />
+                ))}
+                {!offFound.items.length ? (
+                  <p className="rounded-card border border-dashed border-line p-6 text-center text-muted" data-testid="desk-none">
+                    {tg("desk.noMatch", { q: offFound.q })}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
             {memberResult?.ok ? <CheckedIn card={memberResult.card} /> : null}
             {memberResult && !memberResult.ok ? (
               <div className="rounded-card border-4 border-danger p-4" role="alert" data-testid="desk-blocked">
@@ -341,7 +455,7 @@ export function FrontDesk({ id }: { id: string }) {
                 {!found.items.length && !found.pass && !found.visit ? <p className="rounded-card border border-dashed border-line p-6 text-center text-muted" data-testid="desk-none">{tg("desk.noMatch", { q: found.q })}</p> : null}
               </div>
             ) : null}
-            {!found && !memberResult && !passResult ? <p className="rounded-card border border-dashed border-line p-6 text-center text-muted">{canCheckIn ? tg("desk.waiting") : t("desk.waiting")}</p> : null}
+            {!found && !memberResult && !passResult && !offFound && !offResult && !slip ? <p className="rounded-card border border-dashed border-line p-6 text-center text-muted">{canCheckIn ? tg("desk.waiting") : t("desk.waiting")}</p> : null}
           </div>
         </div>
       ) : null}
@@ -438,6 +552,14 @@ export function FrontDesk({ id }: { id: string }) {
         </>
       ) : null}
 
+      <OfflineCashDialog
+        open={Boolean(cashFor)}
+        onOpenChange={(o) => !o && setCashFor(null)}
+        member={cashFor?.member ?? null}
+        due={cashFor?.due ?? null}
+        left={cashFor ? dueLeft(cashFor.due, waiting) : 0}
+        onSave={(amount) => void takeCashOffline(amount)}
+      />
       <ReasonDialog
         open={Boolean(overriding)}
         onOpenChange={(o) => !o && setOverriding(null)}

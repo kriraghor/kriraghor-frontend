@@ -11,6 +11,7 @@ import { cn } from "@kriraghor/ui/cn";
 import { dhakaToday, takaToPoisha } from "@/lib/gym-manage";
 import { drawerTone, gymOps, type Drawer } from "@/lib/gym-ops";
 import { GymPage, Row, useFmt, useGymError, type GymCtx } from "../gym-manage/common";
+import { useWaitingCount } from "../manage/offline/OfflineDesk";
 
 /**
  * /manage/[gymId]/cash (M27-FR-06 to FR-09): today's cash drawer. The cashier opens it with a float and
@@ -164,6 +165,9 @@ function CloseForm({ ctx, d }: { ctx: GymCtx; d: Drawer }) {
   const err = useGymError();
   const toast = useToast();
   const refresh = useRefresh(ctx.gymId);
+  const tOff = useTranslations("off.drawer");
+  // M24 §22: the day cannot be closed while this device still has offline items to send.
+  const waiting = useWaitingCount(ctx.gymId);
   const [taka, setTaka] = useState("");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
@@ -173,6 +177,7 @@ function CloseForm({ ctx, d }: { ctx: GymCtx; d: Drawer }) {
   const tone = drawerTone(diff);
   const close = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (waiting) return setProblem(tOff("waiting", { n: waiting }));
     if (counted == null) return setProblem(t("amountBad"));
     if (diff !== 0 && !note.trim()) return setProblem(t("drawer.noteNeeded"));
     setBusy(true);
@@ -192,6 +197,11 @@ function CloseForm({ ctx, d }: { ctx: GymCtx; d: Drawer }) {
       <form onSubmit={close} className="flex flex-col gap-3" data-testid="drawer-close-form">
         <h2 className="font-display text-lg font-bold">{t("drawer.closeTitle")}</h2>
         <p className="text-sm text-muted">{t("drawer.closeHint")}</p>
+        {waiting ? (
+          <Notice tone="warning" data-testid="drawer-offline-waiting">
+            {tOff("waiting", { n: waiting })}
+          </Notice>
+        ) : null}
         <Field id="drawer-counted" label={t("drawer.counted")} inputMode="decimal" leading="৳" value={taka} onChange={(e) => setTaka(e.target.value)} data-testid="drawer-counted" />
         {tone ? (
           <p className={cn("text-sm font-semibold", tone === "balanced" ? "text-brand-text" : tone === "short" ? "text-danger" : "text-warning")} aria-live="polite">
@@ -204,7 +214,7 @@ function CloseForm({ ctx, d }: { ctx: GymCtx; d: Drawer }) {
             {problem}
           </p>
         ) : null}
-        <Button type="submit" busy={busy} data-testid="drawer-close">
+        <Button type="submit" busy={busy} disabled={waiting > 0} data-testid="drawer-close">
           {t("drawer.close")}
         </Button>
       </form>

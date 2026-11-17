@@ -4,6 +4,9 @@ import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { problemOf, type Problem } from "@kriraghor/api-client";
 import { desk, touchDue, type DeskState } from "@/lib/desk";
+import { isNetworkError } from "@/lib/desk-offline";
+import { reportNetwork } from "../offline/useOffline";
+import { noteInput } from "./deskLocal";
 
 export const DESK_KEY = ["desk-mode"] as const;
 
@@ -20,8 +23,12 @@ export function useDeskState(enabled: boolean) {
     queryKey: DESK_KEY,
     queryFn: async (): Promise<DeskState> => {
       try {
-        return await desk.state();
+        const s = await desk.state();
+        reportNetwork(true);
+        return s;
       } catch (e) {
+        // No connection (M24 §22): keep the last state; the shell shows the offline view of it.
+        if (isNetworkError(e)) reportNetwork(false);
         // Signed out (desk mode ended, or ended elsewhere): no desk on this device any more.
         if (deskProblem(e)?.status === 401) return { open: false };
         throw e;
@@ -38,8 +45,9 @@ export function useDeskState(enabled: boolean) {
 /**
  * While unlocked: real input (a tap, a key, a scroll) keeps the desk awake, at most one touch per 30 s,
  * and the screen locks when the time runs out. The page refreshing itself never keeps it awake (FR-136).
+ * Without a connection the same input keeps it awake on this device (M24 §22, deskLocal).
  */
-export function useDeskKeepAlive(unlocked: { userId: string; expiresAt: string } | null) {
+export function useDeskKeepAlive(unlocked: { userId: string; expiresAt: string } | null, idleMinutes: number) {
   const qc = useQueryClient();
   const lastSent = useRef(0);
   const expiresAt = unlocked?.expiresAt ?? null;
@@ -48,13 +56,14 @@ export function useDeskKeepAlive(unlocked: { userId: string; expiresAt: string }
   useEffect(() => {
     if (!expiresAt) return;
     const onInput = () => {
+      noteInput(idleMinutes);
       const now = Date.now();
       if (!touchDue(lastSent.current, now)) return;
       lastSent.current = now;
       desk
         .touch()
         .then((r) => qc.setQueryData<DeskState>(DESK_KEY, (d) => (d && d.open && d.unlocked ? { ...d, unlocked: { ...d.unlocked, expiresAt: r.expiresAt } } : d)))
-        .catch(() => void qc.invalidateQueries({ queryKey: DESK_KEY }));
+        .catch((e) => (isNetworkError(e) ? reportNetwork(false) : void qc.invalidateQueries({ queryKey: DESK_KEY })));
     };
     const events = ["pointerdown", "keydown", "wheel", "touchstart"] as const;
     events.forEach((e) => window.addEventListener(e, onInput, { passive: true }));
@@ -64,7 +73,7 @@ export function useDeskKeepAlive(unlocked: { userId: string; expiresAt: string }
       events.forEach((e) => window.removeEventListener(e, onInput));
       window.clearTimeout(id);
     };
-  }, [expiresAt, userId, qc]);
+  }, [expiresAt, userId, qc, idleMinutes]);
 }
 
 /** A person was unlocked or the desk locked: everything on screen is read again as the new person. */

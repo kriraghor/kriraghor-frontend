@@ -8,6 +8,10 @@ import { DatePicker } from "@kriraghor/ui/date";
 import { Button, Dialog, Field, Notice, Select, Textarea, useToast } from "@kriraghor/ui/kit";
 import { dhakaToday, gymManage, PAY_METHODS, poishaToTakaText, receiptPath, takaToPoisha, type PayMethod, type Payment } from "@/lib/gym-manage";
 import { useFmt, useGymError } from "./common";
+import { put as keepOffline } from "@/lib/desk-db";
+import { copyUsable, dueLeft, isNetworkError, newItem, newSlipNo, type WaitingItem } from "@/lib/desk-offline";
+import { OfflineSlip } from "@/components/manage/offline/OfflineDesk";
+import { useDeskCopy, useTaker, useWaiting } from "@/components/manage/offline/useOffline";
 
 /** A receipt link that opens the public receipt page (/r/<token>) in a new tab. */
 export function ReceiptLink({ url, label, testId }: { url: string | null | undefined; label?: string; testId?: string }) {
@@ -65,7 +69,10 @@ export function PaymentFields({ id, value, onChange, backdate, max, error }: { i
   );
 }
 
-/** Record a counter payment on one due (M24-FR-33): amount up to the outstanding, method, receipt. */
+/**
+ * Record a counter payment on one due (M24-FR-33): amount up to the outstanding, method, receipt. Without a
+ * connection (M24 §22), cash for a due in the desk copy can be taken with a temporary slip instead.
+ */
 export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, onDone }: { gymId: string; due: { id: string; outstandingPoisha?: number }; canAdjust: boolean; title?: string; open: boolean; onOpenChange: (o: boolean) => void; onDone: () => void }) {
   const t = useTranslations("gm");
   const err = useGymError();
@@ -76,6 +83,12 @@ export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, on
   const [problem, setProblem] = useState<string | null>(null);
   const [amountError, setAmountError] = useState<string>();
   const [receipt, setReceipt] = useState<{ no: string; url: string } | null>(null);
+  const tOff = useTranslations("off.pay");
+  const copy = useDeskCopy(gymId, { fetch: false });
+  const waiting = useWaiting(gymId);
+  const taker = useTaker();
+  const [offlineOffer, setOfflineOffer] = useState(false);
+  const [slip, setSlip] = useState<WaitingItem | null>(null);
   const close = (o: boolean) => {
     if (!o) {
       setDraft(emptyPayment(due.outstandingPoisha));
@@ -83,8 +96,24 @@ export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, on
       setProblem(null);
       setAmountError(undefined);
       setReceipt(null);
+      setOfflineOffer(false);
+      setSlip(null);
     }
     onOpenChange(o);
+  };
+  /** The due in the desk copy, when the copy is good and the person at the desk is known. */
+  const copyDue = () => (copyUsable(copy, performance.now()) && taker ? (copy.dues?.find((d) => d.id === due.id) ?? null) : null);
+  const saveOffline = async () => {
+    const body = paymentBody(draft, false);
+    const d = copyDue();
+    const member = d ? copy?.members.find((m) => m.id === d.memberId) : null;
+    if (!body.ok) return setAmountError(t("money.badAmount"));
+    if (!d || !member || !copy || !taker) return setProblem(tOff("offer"));
+    if (body.payment.amountPoisha > dueLeft(d, waiting)) return setAmountError(t("err.GYM_PAYMENT_EXCEEDS_DUE"));
+    const item = newItem({ copy, nowPerf: performance.now(), kind: "cash_fee", member, taker, due: d, amountPoisha: body.payment.amountPoisha, slipNo: newSlipNo() });
+    await keepOffline(item);
+    setOfflineOffer(false);
+    setSlip(item);
   };
   const submit = async () => {
     const body = paymentBody(draft, canAdjust);
@@ -99,7 +128,8 @@ export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, on
       toast.show(t("money.recorded", { no: r.receipt.receiptNo }));
       onDone();
     } catch (e) {
-      setProblem(err(e));
+      if (isNetworkError(e) && draft.method === "cash" && copyDue()) setOfflineOffer(true);
+      else setProblem(err(e));
     } finally {
       setBusy(false);
     }
@@ -110,7 +140,7 @@ export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, on
       onOpenChange={close}
       title={title ?? t("money.collect")}
       footer={
-        receipt ? (
+        receipt || slip ? (
           <Button type="button" onClick={() => close(false)}>
             {t("done")}
           </Button>
@@ -119,15 +149,23 @@ export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, on
             <Button type="button" variant="ghost" onClick={() => close(false)} disabled={busy}>
               {t("cancel")}
             </Button>
-            <Button type="button" onClick={submit} busy={busy} data-testid="pay-submit">
-              {t("money.record")}
-            </Button>
+            {offlineOffer ? (
+              <Button type="button" onClick={() => void saveOffline()} data-testid="pay-offline">
+                {tOff("save")}
+              </Button>
+            ) : (
+              <Button type="button" onClick={submit} busy={busy} data-testid="pay-submit">
+                {t("money.record")}
+              </Button>
+            )}
           </>
         )
       }
     >
       <div data-testid="pay-dialog">
-        {receipt ? (
+        {slip ? (
+          <OfflineSlip item={slip} />
+        ) : receipt ? (
           <div className="flex flex-col gap-2" data-testid="pay-done">
             <Notice tone="success">{t("money.recorded", { no: receipt.no })}</Notice>
             <ReceiptLink url={receipt.url} label={t("money.openReceipt")} />
@@ -135,6 +173,11 @@ export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, on
         ) : (
           <>
             <PaymentFields id="pay" value={draft} onChange={setDraft} backdate={canAdjust} max={due.outstandingPoisha} error={amountError} />
+            {offlineOffer ? (
+              <Notice tone="warning" className="mt-3">
+                {tOff("offer")}
+              </Notice>
+            ) : null}
             {problem ? (
               <p role="alert" className="mt-3 text-sm text-danger">
                 {problem}
