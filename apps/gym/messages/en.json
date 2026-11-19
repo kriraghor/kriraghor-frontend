@@ -23,7 +23,8 @@
     "main": "Main",
     "menu": "Menu",
     "closeMenu": "Close menu",
-    "quick": "Quick links"
+    "quick": "Quick links",
+    "shop": "Shop"
   },
   "errors": {
     "generic": "Something went wrong. Try again.",
@@ -107,7 +108,8 @@
     "privacy": "Privacy",
     "kriraghor": "Kriraghor.com",
     "legal": "© 2026 Kriraghor, Dhaka.",
-    "social": "Kriraghor on social media"
+    "social": "Kriraghor on social media",
+    "partner": "Partner with us"
   },
   "landing": {
     "kicker": "For gym owners in Bangladesh",
@@ -164,7 +166,8 @@
       "foundingCta": "Become a founding partner"
     },
     "membersTitle": "Looking for a gym?",
-    "membersLead": "Browse verified gyms by area, see women-only hours, and buy a monthly or longer subscription online."
+    "membersLead": "Browse verified gyms by area, see women-only hours, and buy a monthly or longer subscription online.",
+    "openPanel": "Open my gym panel"
   },
   "start": {
     "kicker": "Start free",
@@ -3792,5 +3795,31 @@
       "applyAsk": "Put {amount} on another due of {name}?",
       "returnedAsk": "Record that the {amount} cash went back?"
     }
+  },
+  "gymHome": {
+    "kicker": "Gyms in Bangladesh",
+    "title": "Find your gym, <em>train your way</em>",
+    "lead": "Monthly subscriptions at verified gyms, trainers with monthly plans, and check-in with your phone.",
+    "perksTitle": "What you get",
+    "perks": {
+      "near": {
+        "title": "Gyms near you",
+        "body": "Compare verified gyms by distance, hours and monthly price."
+      },
+      "checkIn": {
+        "title": "Check in with your phone",
+        "body": "Show your QR at the front desk; no card to carry."
+      },
+      "plans": {
+        "title": "Plans from trainers",
+        "body": "Workout plans and diet charts you tick off each day."
+      },
+      "gear": {
+        "title": "Gym gear",
+        "body": "Supplements, gloves and more in the Kriraghor shop."
+      }
+    },
+    "findGym": "Find a gym",
+    "findTrainer": "Find a trainer"
   }
 }

@@ -69,7 +69,7 @@ export function HomeSection({ section, icon, allHref, extra, state = "ready", bo
   );
   const allClass = "inline-flex min-h-11 items-center gap-1 font-bold text-brand-text underline-offset-4 hover:underline";
   return (
-    <section id={section} className="mx-auto max-w-wide scroll-mt-24 px-5 pt-24" aria-labelledby={`${section}-title`} data-testid={`home-section-${section}`}>
+    <section id={section} className="mx-auto max-w-wide scroll-mt-24 px-5 pt-14 md:pt-16" aria-labelledby={`${section}-title`} data-testid={`home-section-${section}`}>
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div className="flex items-center gap-3">
           <span className="flex size-12 shrink-0 items-center justify-center rounded-control bg-brand-soft text-brand-text">{icon}</span>

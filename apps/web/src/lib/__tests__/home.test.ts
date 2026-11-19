@@ -50,6 +50,8 @@ describe("home", () => {
   it("builds finder links with only the filters each page supports", () => {
     expect(finderUrl("tournaments", { game: "free_fire" })).toBe("/go/esports/events?game=free_fire");
     expect(finderUrl("tournaments", {})).toBe("/go/esports/events");
+    expect(finderUrl("events", { sport: "cricket", q: " Dhaka cup " })).toBe("/events?sport=cricket&q=Dhaka+cup");
+    expect(finderUrl("events", {})).toBe("/events");
     expect(finderUrl("grounds", { sport: "football", areaId: "a1" })).toBe("/venues?sport=football&area=a1");
     expect(finderUrl("shop", { q: "  whey protein " })).toBe("/shop?q=whey+protein");
     expect(finderUrl("shop", { q: "   " })).toBe("/shop");

@@ -15,11 +15,14 @@ test("runtime config is served without secrets (ADR-003)", async ({ request }) =
   expect(body).not.toMatch(/SECRET|PASSWORD/);
 });
 
-test("home renders, says what the system does and links to start and sign-in", async ({ page }) => {
+test("home is for members; Partner with us says what the system does and links to start", async ({ page }) => {
+  await page.goto("/partner");
+  await expect(page.getByTestId("partner-title")).toBeVisible();
+  await expect(page.getByTestId("start-free")).toHaveAttribute("href", /\/start$/);
   await page.goto("/");
   await expect(page.getByTestId("home-title")).toBeVisible();
-  await expect(page.getByTestId("start-free")).toHaveAttribute("href", /\/start$/);
   await expect(page.getByTestId("find-gym")).toHaveAttribute("href", /\/gyms$/);
+  await expect(page.getByTestId("start-free")).toHaveCount(0);
   await page.getByRole("link", { name: /sign in/i }).first().click();
   await expect(page).toHaveURL(/\/sign-in$/);
   // Password first since 30 Oct 2026; the code is one tap away.

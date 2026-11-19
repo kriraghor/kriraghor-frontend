@@ -67,7 +67,8 @@ export const searchGroups = (q: string | null | undefined) => {
 
 // ---------------- the finder ----------------
 
-export type FinderTab = "tournaments" | "grounds" | "shop" | "hire";
+// "tournaments" is esports (esports.kriraghor.com); "events" is sports tournaments (M14, /events here; 19 Nov 2026).
+export type FinderTab = "tournaments" | "events" | "grounds" | "shop" | "hire";
 export type FinderValues = { game?: string; sport?: string; areaId?: string; q?: string; category?: string };
 
 /** Where a finder search goes: only filters the destination page really supports are sent. */
@@ -81,6 +82,8 @@ export function finderUrl(tab: FinderTab, v: FinderValues): string {
   switch (tab) {
     case "tournaments":
       return esportsHref(`/events${qs([["game", v.game]])}`);
+    case "events":
+      return `/events${qs([["sport", v.sport], ["q", v.q]])}`;
     case "grounds":
       return `/venues${qs([["sport", v.sport], ["area", v.areaId]])}`;
     case "shop":

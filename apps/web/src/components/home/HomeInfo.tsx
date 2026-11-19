@@ -10,7 +10,7 @@ export async function HomeInfo() {
     { key: "help", href: "/help" },
   ];
   return (
-    <section className="mx-auto grid max-w-wide gap-4 px-5 pb-20 pt-24 md:grid-cols-2" data-testid="home-info">
+    <section className="mx-auto grid max-w-wide gap-4 px-5 pb-16 pt-14 md:pt-16 md:grid-cols-2" data-testid="home-info">
       {boxes.map((b) => (
         <div key={b.key} className="rv surface-card flex flex-col items-start gap-2 p-6">
           <h2 className="text-xl font-extrabold">{t(`${b.key}.title`)}</h2>

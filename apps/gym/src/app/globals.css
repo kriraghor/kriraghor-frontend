@@ -83,6 +83,7 @@
 /* M24 §21 desk mode: a device at the front desk shows the gym's panel only, not the site's header (account, bell)
    or footer; the panel's own menu and the desk bar take their place. */
 html[data-desk="on"] [data-site-header],
+html[data-desk="on"] [data-site-nav],
 html[data-desk="on"] [data-testid="site-footer"] {
   display: none;
 }

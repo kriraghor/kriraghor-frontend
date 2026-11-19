@@ -2132,7 +2132,8 @@
       "label": "Find what you need",
       "tabsLabel": "What are you looking for?",
       "tab": {
-        "tournaments": "Tournaments",
+        "tournaments": "Esports",
+        "events": "Tournaments",
         "grounds": "Venues",
         "shop": "Shop",
         "hire": "Hire"
@@ -2148,11 +2149,14 @@
       "need": "I need",
       "anyone": "Anyone",
       "go": {
-        "tournaments": "Find tournaments",
+        "tournaments": "Find esports",
+        "events": "Find a tournament",
         "grounds": "Find a venue",
         "shop": "Search the shop",
         "hire": "Browse talent"
-      }
+      },
+      "eventSearch": "Tournament name",
+      "eventPlaceholder": "Dhaka futsal cup"
     },
     "carousel": {
       "label": "Highlights",
