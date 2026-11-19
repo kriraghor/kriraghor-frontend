@@ -18,6 +18,7 @@ import { publicLimit, usePublicSettings } from "@/lib/public-settings";
  */
 export function AvatarControl({ me, onDone }: { me: Me; onDone?: () => void }) {
   const t = useTranslations("accountSettings.photo");
+  const a = useTranslations("ask");
   const toast = useToast();
   const qc = useQueryClient();
   const inputId = useId();
@@ -70,7 +71,7 @@ export function AvatarControl({ me, onDone }: { me: Me; onDone?: () => void }) {
         <div className="flex flex-wrap gap-2">
           {file ? (
             <>
-              <Button type="button" icon={<UploadSimple size={18} aria-hidden />} busy={upload.isPending} onClick={() => upload.mutate(file)} data-testid="avatar-save">
+              <Button type="button" icon={<UploadSimple size={18} aria-hidden />} busy={upload.isPending} confirm="save" onClick={() => upload.mutate(file)} data-testid="avatar-save">
                 {t("save")}
               </Button>
               <Button type="button" variant="secondary" onClick={clear} disabled={upload.isPending}>
@@ -83,7 +84,7 @@ export function AvatarControl({ me, onDone }: { me: Me; onDone?: () => void }) {
                 {me.avatarUrl ? t("change") : t("choose")}
               </Button>
               {me.avatarUrl ? (
-                <Button type="button" variant="ghost" icon={<Trash size={18} aria-hidden />} busy={remove.isPending} onClick={() => remove.mutate()} data-testid="avatar-remove">
+                <Button type="button" variant="ghost" icon={<Trash size={18} aria-hidden />} busy={remove.isPending} confirm={{ kind: "remove", title: a("removePhoto") }} onClick={() => remove.mutate()} data-testid="avatar-remove">
                   {t("remove")}
                 </Button>
               ) : null}

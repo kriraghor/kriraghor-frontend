@@ -10,7 +10,7 @@ import { bookings, timeLabel, whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { Notice } from "@kriraghor/ui/primitives";
 import { BookingTrust } from "../trust/BookingTrust";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, useConfirm } from "@kriraghor/ui/kit";
 
 /**
  * /me/bookings/[id] (M10 FR-10 to FR-12): the booking, what was paid and what is due at the venue,
@@ -23,6 +23,8 @@ export function BookingDetail({ id }: { id: string }) {
   const { status } = useAuth();
   const qc = useQueryClient();
   const [confirming, setConfirming] = useState(false);
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const q = useQuery({ queryKey: ["my-booking", id], queryFn: () => bookings.get(id), enabled: status === "signed_in" });
   const pay = useMutation({ mutationFn: () => bookings.pay(id), onSuccess: (r) => r.payment && window.location.assign(r.payment.payUrl) });
   const release = useMutation({ mutationFn: () => bookings.release(id), onSuccess: () => qc.invalidateQueries({ queryKey: ["my-booking", id] }) });
@@ -92,7 +94,7 @@ export function BookingDetail({ id }: { id: string }) {
           <button type="button" onClick={() => pay.mutate()} className="inline-flex min-h-12 items-center bg-brand px-5 font-bold text-on-brand">
             {t("payNow")}
           </button>
-          <button type="button" onClick={() => release.mutate()} className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-semibold">
+          <button type="button" onClick={() => void ask({ kind: "remove", title: a("releaseHold"), body: a("releaseHoldBody"), confirmLabel: t("releaseHold") }).then((ok) => ok && release.mutate())} className="rounded-control inline-flex min-h-12 items-center border border-line-strong/60 px-5 font-semibold">
             {t("releaseHold")}
           </button>
         </div>

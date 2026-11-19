@@ -15,6 +15,7 @@ import { Button, Notice } from "@kriraghor/ui/primitives";
  */
 export function JoinInvite({ token }: { token: string }) {
   const t = useTranslations("teams");
+  const a = useTranslations("ask");
   const locale = useLocale();
   const { status } = useAuth();
   const qc = useQueryClient();
@@ -62,7 +63,7 @@ export function JoinInvite({ token }: { token: string }) {
       ) : status === "signed_in" ? (
         <div className="mt-6 flex flex-col gap-3">
           {err ? <Notice tone="error">{err}</Notice> : null}
-          <Button type="button" busy={accept.isPending} onClick={() => accept.mutate()} data-testid="join-accept">
+          <Button type="button" busy={accept.isPending} confirm={{ kind: "add", title: a("joinTeam", { team: inv.team?.name ?? "–" }), confirmLabel: t("joinTeam") }} onClick={() => accept.mutate()} data-testid="join-accept">
             {t("joinTeam")}
           </Button>
           {p?.code === "INVITE_NOT_YOURS" || p?.code === "PHONE_REQUIRED" ? (

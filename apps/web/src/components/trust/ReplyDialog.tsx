@@ -40,7 +40,7 @@ export function ReplyDialog({ reviewId, current, open, onOpenChange, onDone }: {
           <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
             {t("cancel")}
           </Button>
-          <Button type="submit" form={formId} disabled={!replyOk(text)} busy={send.isPending} data-testid="send-reply">
+          <Button type="submit" form={formId} disabled={!replyOk(text)} busy={send.isPending} confirm={current ? "save" : "send"} data-testid="send-reply">
             {current ? t("save") : t("send")}
           </Button>
         </>

@@ -11,7 +11,7 @@ import { RateSourceButtons } from "@kriraghor/ui/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { JobCard } from "./JobCard";
 import { Thread } from "./Thread";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, useConfirm } from "@kriraghor/ui/kit";
 
 type QuotedLine = { start: string; format: string | null; venueText: string; total: number };
 
@@ -29,6 +29,8 @@ export function HireRequestView({ code }: { code: string }) {
   const locale = useLocale();
   const { status } = useAuth();
   const qc = useQueryClient();
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const q = useQuery({ queryKey: ["hire-request", code], queryFn: () => hire.one(code), enabled: status === "signed_in", retry: false, refetchInterval: 30_000 });
   const set = (r: RequestResult) => {
     qc.setQueryData(["hire-request", code], r);
@@ -108,7 +110,7 @@ export function HireRequestView({ code }: { code: string }) {
         </div>
       ) : null}
       {hirer && ["pending", "accepted_unpaid"].includes(r.status) ? (
-        <button type="button" disabled={withdraw.isPending} onClick={() => withdraw.mutate()} className="rounded-control mt-4 min-h-12 border border-danger px-4 font-bold text-danger disabled:opacity-50" data-testid="hire-withdraw-request">
+        <button type="button" disabled={withdraw.isPending} onClick={() => void ask({ kind: "remove", title: a("withdrawRequest"), body: a("withdrawRequestBody"), confirmLabel: t("withdrawRequest") }).then((ok) => ok && withdraw.mutate())} className="rounded-control mt-4 min-h-12 border border-danger px-4 font-bold text-danger disabled:opacity-50" data-testid="hire-withdraw-request">
           {t("withdrawRequest")}
         </button>
       ) : null}

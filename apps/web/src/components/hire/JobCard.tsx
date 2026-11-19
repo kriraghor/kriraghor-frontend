@@ -9,6 +9,7 @@ import { newKey } from "@/lib/bookings";
 import { hire, jobTone, TONE, WITHDRAW_REASONS, type CancelPlan, type Job } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 
 type Open = null | "cancel" | "no-show" | "problem" | "complete" | "withdraw";
 
@@ -23,6 +24,8 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
   const t = useTranslations("hire");
   const locale = useLocale();
   const router = useRouter();
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const [open, setOpen] = useState<Open>(null);
   const [text, setText] = useState("");
   const [result, setResult] = useState("");
@@ -112,12 +115,12 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
       </dl>
       <div className="flex flex-wrap gap-3 border-t-2 border-line px-4 py-3 empty:hidden">
         {can.checkIn ? (
-          <Button busy={act.isPending} onClick={() => act.mutate("checkIn")} data-testid="hire-check-in">
+          <Button busy={act.isPending} confirm={{ kind: "save", title: a("checkIn"), confirmLabel: t("checkIn") }} onClick={() => act.mutate("checkIn")} data-testid="hire-check-in">
             {t("checkIn")}
           </Button>
         ) : null}
         {can.start ? (
-          <Button busy={act.isPending} onClick={() => act.mutate("start")} data-testid="hire-start">
+          <Button busy={act.isPending} confirm={{ kind: "save", title: a("startJob"), confirmLabel: t("start") }} onClick={() => act.mutate("start")} data-testid="hire-start">
             {t("start")}
           </Button>
         ) : null}
@@ -127,7 +130,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           </Button>
         ) : null}
         {can.confirm ? (
-          <Button busy={act.isPending} onClick={() => act.mutate("confirm")} data-testid="hire-confirm">
+          <Button busy={act.isPending} confirm={{ kind: "money", title: a("releasePay"), body: a("releasePayBody", { amount: money(j.money.quote) }), confirmLabel: a("release") }} onClick={() => act.mutate("confirm")} data-testid="hire-confirm">
             {t("confirmWork", { amount: money(j.money.quote) })}
           </Button>
         ) : null}
@@ -191,7 +194,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           </label>
           <p className="text-sm text-muted">{t("completeNote")}</p>
           <div>
-            <Button busy={act.isPending} data-testid="hire-complete-send">
+            <Button busy={act.isPending} confirm={{ kind: "send", title: a("markComplete"), confirmLabel: t("markComplete") }} data-testid="hire-complete-send">
               {t("markComplete")}
             </Button>
           </div>
@@ -202,7 +205,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           className="flex flex-col gap-3 border-t-2 border-line px-4 py-4"
           onSubmit={(e) => {
             e.preventDefault();
-            act.mutate("withdraw");
+            void ask({ kind: "remove", title: a("withdrawJob"), body: a("withdrawJobBody"), confirmLabel: t("withdrawJob") }).then((ok) => ok && act.mutate("withdraw"));
           }}
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">
@@ -237,7 +240,7 @@ export function JobCard({ job: j, side, onChange }: { job: Job; side: "hirer" | 
           <textarea id={`hd-${j.id}`} value={text} onChange={(e) => setText(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="surface-card p-3" data-testid="hire-dispute-text" />
           <p className="text-sm text-muted">{t("disputeNote")}</p>
           <div>
-            <Button busy={report.isPending} data-testid="hire-dispute-send">
+            <Button busy={report.isPending} confirm={{ kind: "send", title: a("sendReport") }} data-testid="hire-dispute-send">
               {t("sendReport")}
             </Button>
           </div>

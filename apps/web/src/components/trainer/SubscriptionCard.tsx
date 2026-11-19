@@ -8,6 +8,7 @@ import { dayLabel, newKey } from "@/lib/bookings";
 import { subscriptionTone, TONE, trainer, type Subscription } from "@/lib/trainer";
 import { formatTaka } from "@/lib/payments";
 import { Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 
 /**
  * A trainer subscription (M20 §6): the month it is in, when the next payment is due, pay, cancel and
@@ -22,6 +23,8 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
   const [reporting, setReporting] = useState(false);
   const [statement, setStatement] = useState("");
   const [key] = useState(newKey);
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const done = () => qc.invalidateQueries({ queryKey: ["my-subscriptions"] });
   const renew = useMutation({ mutationFn: () => trainer.renew(s.id), onSuccess: (r) => (r.payment ? window.location.assign(r.payment.payUrl) : done()) });
   const cancel = useMutation({ mutationFn: () => trainer.cancelSubscription(s.id), onSuccess: () => (setConfirm(false), done()) });
@@ -100,7 +103,7 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
           className="mt-3 flex flex-col gap-2"
           onSubmit={(e) => {
             e.preventDefault();
-            problem.mutate();
+            void ask({ kind: "send", title: a("sendReport") }).then((ok) => ok && problem.mutate());
           }}
         >
           <label htmlFor={`problem-${s.id}`} className="text-sm font-semibold">

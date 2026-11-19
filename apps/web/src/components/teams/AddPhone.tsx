@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { problemOf } from "@kriraghor/api-client";
 import { teams } from "@/lib/teams";
 import { Button, Field, Notice } from "@kriraghor/ui/primitives";
+import { bdMobile, PhoneField } from "@kriraghor/ui/kit";
 
 /**
  * Add and verify a phone (M01, for accounts without one, e.g. a Google sign-up). Teams need a
@@ -13,8 +14,11 @@ import { Button, Field, Notice } from "@kriraghor/ui/primitives";
  */
 export function AddPhone({ onDone }: { onDone?: () => void }) {
   const t = useTranslations("teams");
+  const tp = useTranslations("kit.phone");
   const qc = useQueryClient();
   const [phone, setPhone] = useState("");
+  // Set when a send was refused because the number is not a Bangladesh mobile (no API call is made).
+  const [checked, setChecked] = useState(false);
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
   const start = useMutation({ mutationFn: () => teams.startPhone(phone), onSuccess: () => setSent(true) });
@@ -36,12 +40,13 @@ export function AddPhone({ onDone }: { onDone?: () => void }) {
       onSubmit={(e) => {
         e.preventDefault();
         if (sent) verify.mutate();
+        else if (!bdMobile.valid(phone)) setChecked(true);
         else start.mutate();
       }}
     >
       <h2 className="text-lg font-extrabold">{t("addPhone")}</h2>
       <p className="text-sm text-muted">{t("addPhoneWhy")}</p>
-      <Field id="add-phone-number" label={t("phone")} type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required disabled={sent} placeholder="01XXXXXXXXX" />
+      <PhoneField id="add-phone-number" label={t("phone")} value={phone} onChange={setPhone} required disabled={sent} placeholder="01XXXXXXXXX" error={checked && !bdMobile.valid(phone) ? tp("invalid") : undefined} />
       {sent ? <Field id="add-phone-code" label={t("code")} inputMode="numeric" autoComplete="one-time-code" value={code} onChange={(e) => setCode(e.target.value)} required hint={t("codeSent")} /> : null}
       {message ? <Notice tone="error">{message}</Notice> : null}
       <div className="flex flex-wrap gap-3">

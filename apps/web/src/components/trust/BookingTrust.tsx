@@ -10,6 +10,7 @@ import { newKey, whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { disputes, reviews, type Category } from "@/lib/trust";
 import { Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 
 /**
  * The M17 part of /me/bookings/[id]: open a dispute while the window is open (contest a no-show, a
@@ -26,6 +27,8 @@ export function BookingTrust({ bookingId }: { bookingId: string }) {
   const [category, setCategory] = useState<Category | null>(null);
   const [statement, setStatement] = useState("");
   const [key] = useState(newKey);
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const open = useMutation({
     mutationFn: () => disputes.open({ sourceId: bookingId, category: category!, statement: statement.trim() }, key),
     onSuccess: (r) => router.push(`/me/disputes/${r.dispute.code}`),
@@ -63,7 +66,7 @@ export function BookingTrust({ bookingId }: { bookingId: string }) {
               className="mt-3 space-y-3"
               onSubmit={(e) => {
                 e.preventDefault();
-                open.mutate();
+                void ask({ kind: "send", title: a("sendReport") }).then((ok) => ok && open.mutate());
               }}
             >
               {(() => {
@@ -111,13 +114,15 @@ function RateGround({ bookingId, onDone }: { bookingId: string; onDone: (status:
   const t = useTranslations("trust.rate");
   const [stars, setStars] = useState(0);
   const [text, setText] = useState("");
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const post = useMutation({ mutationFn: () => reviews.post({ bookingId, stars, text: text.trim() || undefined }), onSuccess: (r) => onDone(r.review.status) });
   return (
     <form
       className="rounded-card border border-line p-4"
       onSubmit={(e) => {
         e.preventDefault();
-        post.mutate();
+        void ask({ kind: "send", title: a("postReview") }).then((ok) => ok && post.mutate());
       }}
       data-testid="rate-ground"
     >
