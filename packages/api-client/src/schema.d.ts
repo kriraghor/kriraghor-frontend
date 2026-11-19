@@ -32706,6 +32706,8 @@ export interface paths {
                         /** Format: uuid */
                         baseAreaId: string;
                         bio?: string;
+                        /** @description YouTube, Vimeo, Facebook, Google Drive, OneDrive (embed link), Dropbox, or an https .mp4/.webm/.m4v/.m3u8 link; never uploaded */
+                        introVideoUrl?: string | null;
                         /** @default false */
                         worksWithU16?: boolean;
                     };
@@ -32869,6 +32871,8 @@ export interface paths {
                         /** Format: uuid */
                         baseAreaId?: string;
                         bio?: string;
+                        /** @description YouTube, Vimeo, Facebook, Google Drive, OneDrive (embed link), Dropbox, or an https .mp4/.webm/.m4v/.m3u8 link; never uploaded */
+                        introVideoUrl?: string | null;
                         /** @default false */
                         worksWithU16?: boolean;
                     };
@@ -33039,7 +33043,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Send for review (M05 kind hire_profile) */
+        /** Send for review (M05 kind hire_profile); needs a rate card and a profile photo (M11-FR-17) */
         post: {
             parameters: {
                 query?: never;
@@ -33087,7 +33091,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: PROFILE_IN_REVIEW, PROFILE_STATE, RATE_CARD_REQUIRED, NOTHING_TO_REVIEW */
+                /** @description Error. Codes: PROFILE_IN_REVIEW, PROFILE_STATE, RATE_CARD_REQUIRED, PHOTO_REQUIRED, NOTHING_TO_REVIEW */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -73705,6 +73709,8 @@ export interface components {
             availableToday: boolean;
             avatarUrl: string | null;
             shortlisted: boolean;
+            /** @description The reviewed profile has an intro video (M11-FR-16) */
+            hasIntroVideo: boolean;
         };
         HireProfilePage: {
             /** Format: uuid */
@@ -73748,7 +73754,10 @@ export interface components {
             availableToday: boolean;
             avatarUrl: string | null;
             shortlisted: boolean;
+            /** @description The reviewed profile has an intro video (M11-FR-16) */
+            hasIntroVideo: boolean;
             bio: string | null;
+            introVideo: components["schemas"]["HireIntroVideo"];
             sportKeys: string[];
             worksWithU16: boolean;
             taking: boolean;
@@ -73767,6 +73776,19 @@ export interface components {
                 end: string;
             }[];
         };
+        /** @description M11-FR-16: an intro video given as a link, never uploaded to Kriraghor */
+        HireIntroVideo: {
+            /** @description The link as given */
+            url: string;
+            /** @enum {string} */
+            provider: "youtube" | "vimeo" | "facebook" | "google_drive" | "onedrive" | "dropbox" | "video_file" | "hls";
+            /**
+             * @description iframe: embed playUrl; file: <video src=playUrl>; hls: an HLS playlist
+             * @enum {string}
+             */
+            kind: "iframe" | "file" | "hls";
+            playUrl: string;
+        } | null;
         HireRateCard: {
             version: number;
             nightPct: number;
@@ -74023,6 +74045,20 @@ export interface components {
             /** Format: uuid */
             baseAreaId: string | null;
             bio: string | null;
+            introVideoUrl: string | null;
+            /** @description How the link in the working copy plays */
+            introVideo: {
+                /** @description The link as given */
+                url: string;
+                /** @enum {string} */
+                provider: "youtube" | "vimeo" | "facebook" | "google_drive" | "onedrive" | "dropbox" | "video_file" | "hls";
+                /**
+                 * @description iframe: embed playUrl; file: <video src=playUrl>; hls: an HLS playlist
+                 * @enum {string}
+                 */
+                kind: "iframe" | "file" | "hls";
+                playUrl: string;
+            } | null;
             worksWithU16: boolean | null;
             live: ({
                 version: number;
@@ -74207,6 +74243,20 @@ export interface components {
             /** Format: uuid */
             baseAreaId: string | null;
             bio: string | null;
+            introVideoUrl: string | null;
+            /** @description How the link in the working copy plays */
+            introVideo: {
+                /** @description The link as given */
+                url: string;
+                /** @enum {string} */
+                provider: "youtube" | "vimeo" | "facebook" | "google_drive" | "onedrive" | "dropbox" | "video_file" | "hls";
+                /**
+                 * @description iframe: embed playUrl; file: <video src=playUrl>; hls: an HLS playlist
+                 * @enum {string}
+                 */
+                kind: "iframe" | "file" | "hls";
+                playUrl: string;
+            } | null;
             worksWithU16: boolean | null;
             live: ({
                 version: number;
@@ -74239,6 +74289,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 displayName: string | null;
+                avatarUrl: string | null;
             };
             credential: {
                 /** @enum {string} */
@@ -74524,6 +74575,8 @@ export interface components {
             availableToday: boolean;
             avatarUrl: string | null;
             shortlisted: boolean;
+            /** @description The reviewed profile has an intro video (M11-FR-16) */
+            hasIntroVideo: boolean;
             planFrom: number | null;
             plans: number;
         };

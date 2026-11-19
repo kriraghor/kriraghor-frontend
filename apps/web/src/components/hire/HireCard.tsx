@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { Play } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Avatar, Badge } from "@kriraghor/ui/kit";
 import type { Card } from "@/lib/hire";
@@ -38,6 +39,12 @@ export function HireCard({ card }: { card: Card }) {
           <span className="bg-surface-2 px-2 py-0.5">{t(`level.${card.experienceLevel}`)}</span>
           {card.years ? <span className="bg-surface-2 px-2 py-0.5">{t("years", { n: card.years })}</span> : null}
           {card.area ? <span className="bg-surface-2 px-2 py-0.5">{name(card.area)}</span> : null}
+          {card.hasIntroVideo ? (
+            <span className="inline-flex items-center gap-1 bg-brand-soft px-2 py-0.5 text-brand-text" data-testid="hire-card-video">
+              <Play size={12} weight="fill" aria-hidden />
+              {t("video.badge")}
+            </span>
+          ) : null}
         </span>
         <span className="mt-2 text-sm text-muted">
           {card.ratingAvg !== null ? t("rating", { avg: card.ratingAvg.toFixed(1), n: card.ratingCount }) : t("noRating")} · {t("jobsDone", { n: card.jobsDone })}

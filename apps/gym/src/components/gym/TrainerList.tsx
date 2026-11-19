@@ -2,7 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { Play } from "@phosphor-icons/react";
 import { formatTaka } from "@kriraghor/ui/format";
+import { Avatar } from "@kriraghor/ui/kit";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { PageHeader } from "@kriraghor/ui/page-header";
 import { gym } from "@/lib/gym";
@@ -53,10 +55,8 @@ export function TrainerList() {
               <li key={tr.id}>
                 <a href={webHref(`/hiring/${tr.slug}`)} className="flex h-full flex-col surface-card p-5 hover:border-brand" data-testid="trainer-card">
                   <span className="flex items-center gap-3">
-                    {tr.avatarUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={tr.avatarUrl} alt="" loading="lazy" className="size-12 shrink-0 rounded-pill object-cover" />
-                    ) : null}
+                    {/* Every trainer has a face (tester feedback, 19 Nov 2026): the photo, else the initials. */}
+                    <Avatar name={tr.name} src={tr.avatarUrl} size={56} />
                     <span className="min-w-0">
                       <span className="block text-xs font-bold uppercase tracking-wide text-brand">{t("verifiedCoach")}</span>
                       <span className="block text-xl font-extrabold">{tr.name}</span>
@@ -68,7 +68,17 @@ export function TrainerList() {
                     {tr.area ? ` · ${name(tr.area)}` : ""}
                     {tr.ratingAvg !== null ? ` · ★ ${tr.ratingAvg.toFixed(1)}` : ""}
                   </span>
-                  {tr.availableToday ? <span className="mt-1 text-sm font-semibold text-brand">{tp("availableToday")}</span> : null}
+                  {tr.availableToday || tr.hasIntroVideo ? (
+                    <span className="mt-2 flex flex-wrap gap-2 text-sm font-semibold">
+                      {tr.availableToday ? <span className="text-brand">{tp("availableToday")}</span> : null}
+                      {tr.hasIntroVideo ? (
+                        <span className="inline-flex items-center gap-1 rounded-pill bg-brand-soft px-2 py-0.5 text-xs text-brand-text" data-testid="trainer-video">
+                          <Play size={12} weight="fill" aria-hidden />
+                          {tp("video")}
+                        </span>
+                      ) : null}
+                    </span>
+                  ) : null}
                   <span className="mt-auto pt-4 text-lg font-extrabold tabular-nums">
                     {tr.planFrom !== null ? t("planFrom", { price: formatTaka(tr.planFrom, locale) }) : tr.rateFrom !== null ? t("sessionFrom", { price: formatTaka(tr.rateFrom, locale) }) : ""}
                   </span>

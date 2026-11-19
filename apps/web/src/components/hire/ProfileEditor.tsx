@@ -8,7 +8,10 @@ import { api, problemOf, type Problem } from "@kriraghor/api-client";
 import { hire, LEVELS, limitKey, poishaToTaka, profileTone, rateOf, takaToPoisha, TONE, type Format, type Level, type OwnerProfile, type ProfileBody, type RateCardBody, type Unit } from "@/lib/hire";
 import { formatTaka } from "@/lib/payments";
 import { Button, Notice } from "@kriraghor/ui/primitives";
-import { BackLink } from "@kriraghor/ui/kit";
+import { Avatar, BackLink } from "@kriraghor/ui/kit";
+import { useMe } from "@kriraghor/ui/account";
+import { AvatarControl } from "@/components/account/AvatarControl";
+import { IntroVideo } from "./IntroVideo";
 
 const EDITABLE = ["draft", "changes_requested", "rejected", "live", "paused"];
 const input = "min-h-12 field px-3 text-base text-ink";
@@ -24,6 +27,8 @@ const problemText = (p: Problem | null, fallback: string) => (p ? (p.errors?.len
  * - travel by zone (Dhaka north, south, outside);
  * - jobs per day.
  * Then it goes to review on the Moderation desk. A live profile stays up while an edit is reviewed.
+ * Tester feedback (19 Nov 2026): the photo (the account photo, shown on every profile) is set here and is
+ * needed to send for review (M11-FR-17); an intro video is a link, never uploaded (M11-FR-16).
  */
 export function ProfileEditor({ id }: { id: string }) {
   const t = useTranslations("hire");
@@ -130,6 +135,13 @@ function ProfileFields({ values, onChange }: { values: Omit<ProfileBody, "roleKe
         {t("desk.bio")}
         <textarea id="pro-bio" value={values.bio ?? ""} onChange={(e) => set({ bio: e.target.value || undefined })} maxLength={2000} rows={4} className="surface-card scroll-mt-28 p-3 text-base text-ink" />
       </label>
+      <label className={label}>
+        <span>
+          {t("desk.video")} <span className="font-normal">({t("optional")})</span>
+        </span>
+        <input id="pro-video" type="url" inputMode="url" value={values.introVideoUrl ?? ""} onChange={(e) => set({ introVideoUrl: e.target.value })} maxLength={500} placeholder="https://youtu.be/…" autoComplete="off" className={`${input} scroll-mt-28`} data-testid="pro-video" />
+        <span className="text-xs font-normal leading-relaxed">{t("desk.videoHint")}</span>
+      </label>
       <label className="flex min-h-11 items-center gap-3 font-semibold">
         <input type="checkbox" checked={values.worksWithU16} onChange={(e) => set({ worksWithU16: e.target.checked })} className="h-5 w-5" />
         {t("desk.u16")}
@@ -150,10 +162,13 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
     years: p.years ?? 0,
     baseAreaId: p.baseAreaId ?? "",
     bio: p.bio ?? undefined,
+    introVideoUrl: p.introVideoUrl ?? "",
     worksWithU16: Boolean(p.worksWithU16),
   });
+  const { me } = useMe();
+  const hasPhoto = Boolean(me.data?.avatarUrl);
   const set = (r: OwnerProfile) => qc.setQueryData(["pro-profile", p.id], r);
-  const save = useMutation({ mutationFn: () => hire.updateProfile(p.id, { ...values, specialisation: values.specialisation || undefined }), onSuccess: set });
+  const save = useMutation({ mutationFn: () => hire.updateProfile(p.id, { ...values, specialisation: values.specialisation || undefined, introVideoUrl: values.introVideoUrl?.trim() || null }), onSuccess: set });
   const submit = useMutation({ mutationFn: () => hire.submit(p.id), onSuccess: (r) => (set(r), qc.invalidateQueries({ queryKey: ["pro-profiles"] })) });
   const editable = EDITABLE.includes(p.status) && p.editStatus !== "pending_review";
   const err = [save, submit].map((m) => (m.error ? problemOf(m.error) : null)).find(Boolean);
@@ -172,6 +187,7 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
       </div>
       {p.reviewReason ? <Notice tone="error">{p.reviewReason.text ?? p.reviewReason.code}</Notice> : null}
       {p.status === "live" ? <Notice>{t("desk.liveNote")}</Notice> : null}
+      <PhotoCard profileId={p.id} />
       <form
         className="flex flex-col gap-4"
         onSubmit={(e) => {
@@ -190,11 +206,24 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
           </div>
         ) : null}
       </form>
+      {p.introVideo ? (
+        <div data-testid="pro-video-preview">
+          <h3 className="text-lg font-extrabold">{t("desk.videoPreview")}</h3>
+          <IntroVideo video={p.introVideo} title={t("video.title", { name: p.headline ?? "" })} testId="pro-intro-video" />
+        </div>
+      ) : null}
       <RateCardEditor p={p} disabled={!editable} onSaved={set} />
-      {err ? <Notice tone="error">{err.code === "RATE_CARD_REQUIRED" ? t("desk.ratesFirst") : problemText(err, t("failed"))}</Notice> : null}
+      {err ? <Notice tone="error">{err.code === "RATE_CARD_REQUIRED" ? t("desk.ratesFirst") : err.code === "PHOTO_REQUIRED" ? t("desk.photoFirst") : problemText(err, t("failed"))}</Notice> : null}
       {editable ? (
         <div className="border-t-2 border-line pt-4">
-          <Button busy={submit.isPending} disabled={!p.rateCard} confirm={{ kind: "send", title: a("submitProfile"), confirmLabel: t("desk.submit") }} onClick={() => submit.mutate()} data-testid="pro-submit">
+          {me.data && !hasPhoto ? (
+            <p className="mb-3 text-sm font-semibold text-danger" data-testid="pro-photo-needed">
+              <a href="#pro-photo" className="underline underline-offset-4">
+                {t("desk.photoFirst")}
+              </a>
+            </p>
+          ) : null}
+          <Button busy={submit.isPending} disabled={!p.rateCard || (Boolean(me.data) && !hasPhoto)} confirm={{ kind: "send", title: a("submitProfile"), confirmLabel: t("desk.submit") }} onClick={() => submit.mutate()} data-testid="pro-submit">
             {t("desk.submit")}
           </Button>
           <p className="mt-2 text-sm text-muted">{t("desk.submitNote")}</p>
@@ -305,5 +334,28 @@ function RateCardEditor({ p, disabled, onSaved }: { p: OwnerProfile; disabled: b
         </div>
       ) : null}
     </form>
+  );
+}
+
+/**
+ * M11-FR-17: the person's photo, set right here. It is the account photo, so it shows on every hire profile,
+ * the gym trainer cards and the account; it is needed to send a profile for review.
+ */
+function PhotoCard({ profileId }: { profileId: string }) {
+  const t = useTranslations("hire");
+  const qc = useQueryClient();
+  const { me } = useMe();
+  if (!me.data) return <div className="rounded-card h-28 kg-shimmer bg-surface-2" />;
+  return (
+    <section id="pro-photo" className="rounded-card flex scroll-mt-28 flex-col gap-3 border border-line p-4" data-testid="pro-photo">
+      <div className="flex items-center gap-3">
+        <Avatar name={me.data.displayName} src={me.data.avatarUrl ?? null} size={56} />
+        <div className="min-w-0">
+          <h3 className="text-xl font-extrabold">{t("desk.photo")}</h3>
+          <p className="text-sm text-muted">{t("desk.photoLead")}</p>
+        </div>
+      </div>
+      <AvatarControl me={me.data} onDone={() => void qc.invalidateQueries({ queryKey: ["pro-profile", profileId] })} />
+    </section>
   );
 }

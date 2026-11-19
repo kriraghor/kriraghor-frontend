@@ -18,6 +18,7 @@ import { TrainerPlans } from "../trainer/TrainerPlans";
 import { SubjectReviews } from "@kriraghor/ui/trust";
 import { RequestForm, type DatePick } from "./RequestForm";
 import { AvailabilityDays } from "./AvailabilityDays";
+import { IntroVideo } from "./IntroVideo";
 
 /**
  * /hiring/[slug] (M11 FR-05, FR-06): who they are, the verified credential level, the rate card
@@ -81,6 +82,8 @@ export function HireProfileView({ slug }: { slug: string }) {
             {p.ratingAvg !== null ? t("rating", { avg: p.ratingAvg.toFixed(1), n: p.ratingCount }) : t("noRating")} · {t("jobsDone", { n: p.jobsDone })}
           </p>
           {p.bio ? <p className="mt-6 max-w-[65ch] whitespace-pre-line leading-relaxed">{p.bio}</p> : null}
+          {/* M11-FR-16: the intro video, played from where it lives. */}
+          {p.introVideo ? <IntroVideo video={p.introVideo} title={t("video.title", { name: p.name })} /> : null}
 
           <Rates p={p} />
           <AvailabilityDays
