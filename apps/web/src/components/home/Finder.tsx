@@ -67,7 +67,7 @@ export function Finder() {
     <section className="glass-strong relative z-10 -mt-16 overflow-hidden rounded-card" aria-label={t("label")} data-testid="finder">
       {/* The five tabs, centred; the chosen one is a filled green pill. */}
       <div className="flex justify-center border-b border-[var(--glass-edge)] px-2 py-3">
-      <div role="tablist" aria-label={t("tabsLabel")} className="grid w-full max-w-2xl grid-cols-5 gap-1 rounded-pill bg-surface-2 p-1">
+      <div role="tablist" aria-label={t("tabsLabel")} className="flex w-full max-w-2xl snap-x gap-1 overflow-x-auto rounded-pill bg-surface-2 p-1 [scrollbar-width:none] sm:grid sm:grid-cols-5 sm:overflow-visible [&::-webkit-scrollbar]:hidden">
         {TABS.map((x, i) => (
           <button
             key={x.key}
@@ -83,7 +83,7 @@ export function Finder() {
             onClick={() => setTab(x.key)}
             onKeyDown={(e) => onKey(e, i)}
             className={cn(
-              "flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 rounded-pill px-1 text-xs font-bold transition-[background-color,color,box-shadow] duration-200 sm:flex-row sm:gap-2 sm:px-4 sm:text-sm",
+              "flex min-h-12 min-w-[4.75rem] shrink-0 snap-start flex-col items-center justify-center gap-0.5 rounded-pill px-2.5 text-xs sm:min-w-0 sm:shrink font-bold transition-[background-color,color,box-shadow] duration-200 sm:flex-row sm:gap-2 sm:px-4 sm:text-sm",
               tab === x.key ? "bg-brand text-on-brand shadow-[0_6px_18px_-8px_rgb(11_122_75/0.7)]" : "text-muted hover:bg-surface hover:text-ink",
             )}
           >
