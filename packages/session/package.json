@@ -8,6 +8,7 @@
     "./env-route": "./src/env-route.ts",
     "./cookies": "./src/cookies.ts",
     "./auth": "./src/auth.ts",
+    "./uploads": "./src/uploads.ts",
     "./links": "./src/links.ts",
     "./redirects": "./src/redirects.ts"
   },

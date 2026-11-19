@@ -86,6 +86,52 @@
       "results": "Pages",
       "none": "No page with that name in your menu.",
       "help": "Arrow keys to move, Enter to open, Esc to close. Ctrl+K opens this from anywhere."
+    },
+    "confirm": {
+      "cancel": "Cancel",
+      "save": {
+        "title": "Save these changes?",
+        "body": "Check the details before you save.",
+        "yes": "Save"
+      },
+      "add": {
+        "title": "Add this?",
+        "body": "Check the details before you add it.",
+        "yes": "Add"
+      },
+      "remove": {
+        "title": "Remove this?",
+        "body": "This can't be undone.",
+        "yes": "Remove"
+      },
+      "money": {
+        "title": "Record this payment?",
+        "body": "Check the amount before you record it.",
+        "yes": "Record"
+      },
+      "send": {
+        "title": "Send this now?",
+        "body": "It goes out as soon as you confirm.",
+        "yes": "Send"
+      }
+    },
+    "upload": {
+      "uploading": "Uploading the {kind}",
+      "done": "{kind} uploaded",
+      "failed": "The {kind} did not upload",
+      "cancelled": "Upload cancelled",
+      "progress": "{pct}% · {loaded} of {total}",
+      "cancel": "Cancel",
+      "close": "Close",
+      "kind": {
+        "photo": "photo",
+        "document": "document",
+        "file": "file"
+      }
+    },
+    "phone": {
+      "invalid": "Enter an 11-digit mobile number that starts with 01, for example 01712345678.",
+      "hint": "11 digits, starting with 01"
     }
   },
   "auth": {

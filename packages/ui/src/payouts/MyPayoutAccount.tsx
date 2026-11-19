@@ -12,6 +12,7 @@ import { Button, ButtonLink } from "../kit/Button";
 import { Badge, Card, EmptyState, Notice, PageTitle, Skeleton, type Tone } from "../kit/Display";
 import { Checkbox, Field } from "../kit/Form";
 import { Dialog } from "../kit/Overlay";
+import { PhoneField } from "../kit/PhoneField";
 import { SegmentedControl } from "../kit/Tabs";
 import { addAccount, isWalletNumber, listAccounts, sendAccountCode, type PayoutAccount, type Wallet } from "./client";
 
@@ -155,7 +156,15 @@ function AddDialog({ open, onOpenChange, onDone }: { open: boolean; onOpenChange
           <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button type="submit" form="payout-account-form" busy={busy} disabled={!numberOk || !declared || (codeSent && code.length !== 6)} data-testid="payout-account-submit">
+          <Button
+            type="submit"
+            form="payout-account-form"
+            busy={busy}
+            disabled={!numberOk || !declared || (codeSent && code.length !== 6)}
+            // Tester feedback (19 Nov 2026): saving a new payout account asks first (it pauses payouts for 48 hours).
+            confirm={codeSent ? "save" : undefined}
+            data-testid="payout-account-submit"
+          >
             {codeSent ? t("save") : t("sendCode")}
           </Button>
         </>
@@ -166,6 +175,8 @@ function AddDialog({ open, onOpenChange, onDone }: { open: boolean; onOpenChange
         className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
+          // A wallet number that is not a Bangladesh mobile is never sent (the field shows why).
+          if (!numberOk) return;
           if (!codeSent)
             void run(async () => {
               await sendAccountCode();
@@ -195,16 +206,15 @@ function AddDialog({ open, onOpenChange, onDone }: { open: boolean; onOpenChange
             />
           )}
         </div>
-        <Field
+        <PhoneField
           id="payout-wallet-number"
           label={t("number")}
           value={accountNo}
-          onChange={(e) => setAccountNo(e.target.value)}
-          inputMode="tel"
-          autoComplete="off"
+          onChange={setAccountNo}
           placeholder="01712345678"
           inputClassName="font-mono text-lg"
-          error={accountNo.length > 0 && !numberOk ? t("numberInvalid") : undefined}
+          // A full-length number that is not a mobile is flagged at once; a short one when the field is left.
+          error={accountNo.length >= 11 && !numberOk ? t("numberInvalid") : undefined}
           hint={t("numberHelp")}
           disabled={codeSent}
           required

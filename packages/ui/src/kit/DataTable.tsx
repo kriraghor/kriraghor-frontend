@@ -4,12 +4,13 @@ import { Fragment, useState, type KeyboardEvent, type MouseEvent, type ReactNode
 import { useTranslations } from "next-intl";
 import { CaretDown, CaretUp, CaretUpDown, DotsThree, Tray } from "@phosphor-icons/react";
 import { cn } from "../cn";
+import type { ConfirmSpec } from "./Confirm";
 import { Button } from "./Button";
 import { EmptyState, ErrorState, Skeleton } from "./Display";
 import { Menu, Tooltip } from "./Overlay";
 import { MD, useMinWidth } from "./media";
 
-export type MenuItem = { label: ReactNode; icon?: ReactNode; onSelect: () => void; danger?: boolean } | "separator";
+export type MenuItem = { label: ReactNode; icon?: ReactNode; onSelect: () => void; danger?: boolean; confirm?: ConfirmSpec } | "separator";
 
 export type Column<T> = {
   id: string;

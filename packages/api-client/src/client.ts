@@ -2,6 +2,7 @@ import createClient from "openapi-fetch";
 import type { paths } from "./schema";
 import { publicEnv } from "@kriraghor/session/env";
 import { createAuthFetch, type Audience } from "@kriraghor/session/auth";
+import { createUploadFetch } from "@kriraghor/session/uploads";
 
 /**
  * Typed API client generated from kriraghor-backend/openapi.json (ADR-002).
@@ -14,7 +15,8 @@ export function api(audience: Audience = "api") {
     clients[audience] = createClient<paths>({
       baseUrl: publicEnv().API_URL,
       credentials: "include",
-      fetch: createAuthFetch(audience),
+      // File bodies report their progress to the upload tray (tester feedback, 19 Nov 2026).
+      fetch: createAuthFetch(audience, createUploadFetch() as typeof fetch),
     });
   }
   return clients[audience]!;

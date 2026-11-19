@@ -24,7 +24,10 @@ export type FilterSelect = {
 export type FilterBarProps = {
   /** Debounced free text (300 ms); `value` is what the list filters on. */
   search?: { value: string; onChange: (v: string) => void; label: string; placeholder?: string; testId?: string };
-  /** One-of chips with counts, e.g. statuses. "" is "all". */
+  /**
+   * One-of chips with counts, e.g. statuses. "" is "all". More than CHIPS_MAX options show as a dropdown
+   * in the filter row instead of a scrolling row of chips (tester feedback, 19 Nov 2026).
+   */
   chips?: { value: string; onChange: (v: string) => void; label: string; options: { value: string; label: string; count?: number }[]; testId?: string };
   selects?: FilterSelect[];
   /** Extra controls (a checkbox, a date range) placed with the selects. */
@@ -43,6 +46,8 @@ export const SEARCH_DEBOUNCE_MS = 300;
  * active filters as removable chips and "Clear filters". Values live with the caller (the URL).
  * On phones the dropdowns and extra fields fold into a "Filters (n)" sheet, so the rows come first.
  */
+const CHIPS_MAX = 4;
+
 export function FilterBar({ search, chips, selects = [], extra, onClear, actions, className }: FilterBarProps) {
   const t = useTranslations("kit.filters");
   const active = selects.filter((s) => s.value);
@@ -50,6 +55,21 @@ export function FilterBar({ search, chips, selects = [], extra, onClear, actions
   const wide = useMinWidth(MD);
   const [sheet, setSheet] = useState(false);
   const fold = !wide && (selects.length > 0 || Boolean(extra));
+  const chipDropdown = chips && chips.options.length > CHIPS_MAX ? chips : null;
+  const allOption = chipDropdown?.options.find((o) => o.value === "");
+  const chipField = chipDropdown ? (
+    <div className="w-full min-w-44 sm:w-56" data-testid={chipDropdown.testId}>
+      <Dropdown
+        id="filter-view"
+        label={chipDropdown.label}
+        value={chipDropdown.value}
+        onChange={chipDropdown.onChange}
+        options={chipDropdown.options.filter((o) => o.value !== "").map((o) => ({ value: o.value, label: o.count != null ? `${o.label} (${o.count})` : o.label }))}
+        anyLabel={allOption ? (allOption.count != null ? `${allOption.label} (${allOption.count})` : allOption.label) : t("any")}
+        testId="filter-view"
+      />
+    </div>
+  ) : null;
   const fields = (
     <>
       {selects.map((s) => (
@@ -62,7 +82,7 @@ export function FilterBar({ search, chips, selects = [], extra, onClear, actions
   );
   return (
     <div className={cn("flex flex-col gap-3", className)}>
-      {chips ? (
+      {chips && !chipDropdown ? (
         <div role="group" aria-label={chips.label} className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none]" data-testid={chips.testId}>
           {chips.options.map((o) => (
             <Chip key={o.value || "all"} active={chips.value === o.value} count={o.count} onClick={() => chips.onChange(o.value)} className="min-h-10 shrink-0" data-testid={`chip-${o.value || "all"}`}>
@@ -71,8 +91,9 @@ export function FilterBar({ search, chips, selects = [], extra, onClear, actions
           ))}
         </div>
       ) : null}
-      {search || selects.length || extra || actions ? (
+      {search || selects.length || extra || actions || chipField ? (
         <div className="flex flex-wrap items-end gap-2">
+          {chipField}
           {search ? <SearchBox {...search} /> : null}
           {fold ? (
             <Button type="button" variant="secondary" icon={<Faders size={18} aria-hidden />} onClick={() => setSheet(true)} data-testid="filters-open">
