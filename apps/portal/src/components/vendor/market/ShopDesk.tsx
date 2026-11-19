@@ -11,6 +11,7 @@ import { shopDesk, type Shop, type ShopInput, type ShopType } from "@/lib/vendor
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
+import { useConfirm, type ConfirmSpec } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 const SHOP_TYPES: ShopType[] = ["sports_gear", "supplements", "gym_gear"];
@@ -48,12 +49,15 @@ export function Gate() {
   );
 }
 
+/** Run a shop call and report it; with `confirm` the owner is asked first (tester feedback, 19 Nov 2026). */
 function useRun() {
   const qc = useQueryClient();
   const t = useTranslations("vendorMarket");
+  const ask = useConfirm();
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
   const [busy, setBusy] = useState(false);
-  const run = async (fn: () => Promise<unknown>, done?: string) => {
+  const run = async (fn: () => Promise<unknown>, done?: string, confirm?: ConfirmSpec) => {
+    if (confirm && !(await ask(confirm))) return false;
     setMsg(null);
     setBusy(true);
     try {
@@ -119,12 +123,14 @@ function ShopForm() {
   const [v, setV] = useState<ShopInput>({ shopType: "sports_gear", name: "", areaId: "", addressLine: "", about: null });
   const [problem, setProblem] = useState<Problem | null>(null);
   const [busy, setBusy] = useState(false);
+  const ask = useConfirm();
   return (
     <form
       className="rounded-card mt-6 grid gap-4 border border-brand bg-surface p-5 md:grid-cols-2"
       data-testid="shop-form"
       onSubmit={async (e) => {
         e.preventDefault();
+        if (!(await ask("add"))) return;
         setProblem(null);
         setBusy(true);
         try {
@@ -178,22 +184,22 @@ function ShopEditor({ shop }: { shop: Shop }) {
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2" data-testid="shop-actions">
         {actions.includes("submit") || actions.includes("submit_edit") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => shopDesk.submit(), t("sent"))} data-testid="submit-shop">
+          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => shopDesk.submit(), t("sent"), { kind: "send", title: t("ask.submitShop") })} data-testid="submit-shop">
             {actions.includes("submit") ? t("submit") : t("submitEdit")}
           </button>
         ) : null}
         {actions.includes("withdraw") ? (
-          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => shopDesk.withdraw(), t("withdrawn"))}>
+          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => shopDesk.withdraw(), t("withdrawn"), { kind: "save", title: t("ask.withdrawShop") })}>
             {t("withdraw")}
           </button>
         ) : null}
         {actions.includes("pause") ? (
-          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => shopDesk.pause(), t("paused"))}>
+          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => shopDesk.pause(), t("paused"), { kind: "save", title: t("ask.pauseShop") })}>
             {t("pause")}
           </button>
         ) : null}
         {actions.includes("resume") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand`} onClick={() => void run(() => shopDesk.resume(), t("resumed"))}>
+          <button type="button" disabled={busy} className={`${btn} border-brand`} onClick={() => void run(() => shopDesk.resume(), t("resumed"), { kind: "save", title: t("ask.resumeShop") })}>
             {t("resume")}
           </button>
         ) : null}
@@ -219,7 +225,7 @@ function ShopEditor({ shop }: { shop: Shop }) {
           e.preventDefault();
           const patch: Partial<ShopInput> = { name: v.name, areaId: v.areaId, addressLine: v.addressLine, about: v.about };
           if (!published) patch.shopType = v.shopType;
-          void run(() => shopDesk.update(patch), t("saved"));
+          void run(() => shopDesk.update(patch), t("saved"), "save");
         }}
       >
         <h3 className="text-lg font-extrabold md:col-span-2">{t("shop.details")}</h3>
@@ -236,7 +242,7 @@ function ShopEditor({ shop }: { shop: Shop }) {
         data-testid="stock-rules"
         onSubmit={(e) => {
           e.preventDefault();
-          void run(() => shopDesk.stockRules(rules), t("saved"));
+          void run(() => shopDesk.stockRules(rules), t("saved"), "save");
         }}
       >
         <h3 className="text-lg font-extrabold md:col-span-3">{t("rules.title")}</h3>

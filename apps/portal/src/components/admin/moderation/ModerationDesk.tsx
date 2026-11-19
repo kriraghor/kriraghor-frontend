@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { decisionProblem, hardFailures, HEARTBEAT_MS, moderation, QUEUE_POLL_MS, QUEUE_STATUSES, type Claimed, type Decision, type Detail, type Status } from "@/lib/admin/moderation";
 import { stepUp } from "@/lib/admin/stepUp";
 import { problemOf, type Problem } from "@kriraghor/api-client";
-import { Badge, Button, Checkbox, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, Select, Skeleton, cn, type Column } from "@kriraghor/ui/kit";
+import { Badge, Button, Checkbox, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, Select, Skeleton, cn, useConfirm, type Column } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { StatusBadge } from "../../StatusBadge";
 import { CodeDialog } from "../CodeDialog";
@@ -171,6 +171,7 @@ export function ModerationDesk() {
 function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean; onChanged: () => void }) {
   const t = useTranslations("moderation");
   const tk = useTranslations("kyc");
+  const ask = useConfirm();
   const locale = useLocale();
   const qc = useQueryClient();
   const d = useQuery({ queryKey: ["mod-detail", id], queryFn: () => moderation.get(id) });
@@ -230,7 +231,7 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
     }
   }
 
-  function decide(decision: Decision) {
+  async function decide(decision: Decision) {
     const local = decisionProblem(decision, { missing, failing, reason, reasonText, override: decision === "approve" ? override : "" });
     if (local) {
       setProblem({ code: local, title: t(`problem.${local}`), status: 0 });
@@ -240,6 +241,9 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
       setDialog("override");
       return;
     }
+    // Tester feedback (19 Nov 2026): every decision asks first.
+    const spec = decision === "approve" ? { kind: "save" as const, title: t("confirm.approve"), confirmLabel: t("approve") } : decision === "reject" ? { kind: "remove" as const, title: t("confirm.reject"), confirmLabel: t("reject") } : { kind: "send" as const, title: t("confirm.askChanges"), confirmLabel: t("askChanges") };
+    if (!(await ask(spec))) return;
     void run(() => moderation.decide(id, decision === "approve" ? { decision } : { decision, reasonCode, reasonText: reasonText.trim() || undefined }));
   }
 
@@ -277,7 +281,7 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
             <>
               <Badge>{t("lockedBy", { name: s.claim.name ?? t("someone") })}</Badge>
               {isMaster ? (
-                <Button type="button" variant="danger" size="sm" disabled={busy} onClick={() => void run(() => moderation.release(id, true))}>
+                <Button type="button" variant="danger" size="sm" disabled={busy} confirm={{ kind: "remove", title: t("confirm.forceRelease"), confirmLabel: t("forceRelease") }} onClick={() => void run(() => moderation.release(id, true))}>
                   {t("forceRelease")}
                 </Button>
               ) : null}
@@ -335,13 +339,13 @@ function ReviewPane({ id, isMaster, onChanged }: { id: string; isMaster: boolean
           {failing.length && isMaster ? <Field id="mod-override" className="mt-4" label={t("overrideLabel")} hint={t("overrideHelp")} value={override} onChange={(e) => setOverride(e.target.value)} maxLength={500} /> : null}
           {problemNotice}
           <div className="mt-4 flex flex-wrap gap-2">
-            <Button type="button" disabled={busy} onClick={() => decide("approve")} data-testid="mod-approve">
+            <Button type="button" disabled={busy} onClick={() => void decide("approve")} data-testid="mod-approve">
               {failing.length && isMaster ? t("approveOverride") : t("approve")}
             </Button>
-            <Button type="button" variant="secondary" disabled={busy} onClick={() => decide("request_changes")}>
+            <Button type="button" variant="secondary" disabled={busy} onClick={() => void decide("request_changes")}>
               {t("askChanges")}
             </Button>
-            <Button type="button" variant="danger" disabled={busy} onClick={() => decide("reject")}>
+            <Button type="button" variant="danger" disabled={busy} onClick={() => void decide("reject")}>
               {t("reject")}
             </Button>
           </div>

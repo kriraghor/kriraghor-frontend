@@ -102,7 +102,7 @@ export function TestChargeTab({ max, onCreated }: { max: number; onCreated: () =
       <Field label={t("amountTaka")}>
         <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" className={`${inputCls} w-36 tabular-nums`} />
       </Field>
-      <Button type="submit" busy={busy} disabled={!payer || !payee || !poisha}>
+      <Button type="submit" busy={busy} disabled={!payer || !payee || !poisha} confirm={{ kind: "money", title: t("ask.testCharge"), confirmLabel: t("createTestCharge") }}>
         {t("createTestCharge")}
       </Button>
       {error ? <Notice tone="error">{error}</Notice> : null}

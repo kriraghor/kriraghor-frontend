@@ -227,7 +227,7 @@ function CasePane({ code, isMaster, onChanged }: { code: string; isMaster: boole
       {active ? (
         <div className="mt-5 space-y-4 border-t border-line pt-4">
           {!held || !claimMine ? (
-            <Button type="button" onClick={() => claim.mutate()} busy={claim.isPending} disabled={Boolean(held) && !claimMine} data-testid="claim-case">
+            <Button type="button" confirm={{ kind: "save", confirmLabel: t("claim") }} onClick={() => claim.mutate()} busy={claim.isPending} disabled={Boolean(held) && !claimMine} data-testid="claim-case">
               {held && !claimMine ? t("claimedBy", { name: held.by?.displayName ?? "" }) : t("claim")}
             </Button>
           ) : (
@@ -241,7 +241,7 @@ function CasePane({ code, isMaster, onChanged }: { code: string; isMaster: boole
             className="flex items-end gap-2"
           >
             <Field id="dispute-note" className="flex-1" label={t("note")} value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("notePlaceholder")} />
-            <Button type="submit" variant="secondary" disabled={note.trim().length < 2} busy={addNote.isPending} className="min-h-12">
+            <Button type="submit" variant="secondary" disabled={note.trim().length < 2} busy={addNote.isPending} className="min-h-12" confirm="add">
               {t("addNote")}
             </Button>
           </form>
@@ -267,10 +267,10 @@ function CasePane({ code, isMaster, onChanged }: { code: string; isMaster: boole
               <div className="flex flex-wrap gap-3 pt-1">
                 {staffCanDecide && !isMaster ? (
                   <>
-                    <Button type="button" disabled={!outcome || reason.trim().length < 2} busy={decide.isPending} onClick={() => decide.mutate()} data-testid="decide">
+                    <Button type="button" disabled={!outcome || reason.trim().length < 2} busy={decide.isPending} confirm={{ kind: "money", title: t("ask.decide"), body: plan && d.money ? t("planLine", { refund: money(plan.refund), net: money(plan.net), fee: money(plan.fee) }) : undefined, confirmLabel: t("decide") }} onClick={() => decide.mutate()} data-testid="decide">
                       {t("decide")}
                     </Button>
-                    <Button type="button" variant="secondary" disabled={reason.trim().length < 2} busy={escalate.isPending} onClick={() => escalate.mutate()} data-testid="escalate">
+                    <Button type="button" variant="secondary" disabled={reason.trim().length < 2} busy={escalate.isPending} confirm={{ kind: "send", confirmLabel: t("escalate") }} onClick={() => escalate.mutate()} data-testid="escalate">
                       {t("escalate")}
                     </Button>
                   </>

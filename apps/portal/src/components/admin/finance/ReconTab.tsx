@@ -72,7 +72,7 @@ export function ReconTab({ me }: { me: DeskMe }) {
       {me.isMaster ? (
         <form onSubmit={reconcile} className="flex flex-wrap items-end gap-3">
           <DatePicker id="recon-day" className="w-full sm:w-56" label={t("businessDay")} value={day} onChange={setDay} />
-          <Button type="submit" busy={busy}>
+          <Button type="submit" busy={busy} confirm={{ kind: "save", confirmLabel: t("reconcile") }}>
             {t("reconcile")}
           </Button>
         </form>
@@ -172,10 +172,10 @@ function Resolution({ item, canResolve }: { item: Item; canResolve: boolean }) {
         maxLength={500}
         className="min-h-9 w-56 rounded-control border border-line-strong/70 bg-surface px-3 text-sm text-ink placeholder:text-muted/70 focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/15"
       />
-      <Button type="button" size="sm" disabled={busy || short} onClick={() => void resolve("resolved")}>
+      <Button type="button" size="sm" disabled={busy || short} confirm={{ kind: "save", confirmLabel: t("resolve") }} onClick={() => void resolve("resolved")}>
         {t("resolve")}
       </Button>
-      <Button type="button" size="sm" variant="secondary" disabled={busy || short} onClick={() => void resolve("ignored")}>
+      <Button type="button" size="sm" variant="secondary" disabled={busy || short} confirm={{ kind: "save", confirmLabel: t("ignore") }} onClick={() => void resolve("ignored")}>
         {t("ignore")}
       </Button>
       {error ? <span className="text-xs text-danger">{error}</span> : null}

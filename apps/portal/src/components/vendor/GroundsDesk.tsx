@@ -12,6 +12,7 @@ import { Chip, Field, inputCls } from "../admin/finance/shared";
 
 // A listing's review state as a desk colour, shared with the gym editor on gym.kriraghor.com.
 import { STATUS_TONE } from "@kriraghor/ui/desk/access";
+import { useConfirm } from "@kriraghor/ui/kit";
 export { STATUS_TONE };
 const TABS = ["all", "live", "pending_review", "changes_requested", "draft", "paused", "rejected"] as const;
 
@@ -93,6 +94,7 @@ function AddGround({ onClose }: { onClose: () => void }) {
   const [f, setF] = useState({ name: "", areaId: "", addressLine: "", lat: "", lng: "", price: "2400", isIndoor: false });
   const [problem, setProblem] = useState<Problem | null>(null);
   const [busy, setBusy] = useState(false);
+  const ask = useConfirm();
   const set = (k: keyof typeof f, v: string | boolean) => setF((x) => ({ ...x, [k]: v }));
   const area = areas.data?.items.find((a) => a.id === f.areaId);
 
@@ -101,6 +103,7 @@ function AddGround({ onClose }: { onClose: () => void }) {
     setProblem(null);
     const base = toPoisha(f.price);
     if (base === null) return setProblem({ code: "VALIDATION_FAILED", title: t("form.badPrice"), status: 422 });
+    if (!(await ask("add"))) return;
     setBusy(true);
     try {
       const g = await vendor.create({

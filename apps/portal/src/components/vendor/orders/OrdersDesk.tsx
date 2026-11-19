@@ -252,7 +252,7 @@ function OrderPanel({ id, perms }: { id: string; perms: readonly string[] | null
         {s.status === "placed" && !rejecting && (can.includes("accept") || can.includes("reject")) ? (
           <div className="flex flex-wrap gap-2">
             {can.includes("accept") ? (
-              <Button type="button" busy={busy} onClick={() => run(() => shopOrders.accept(id), t("accepted"))} data-testid="accept-order">
+              <Button type="button" busy={busy} confirm={{ kind: "save", title: t("ask.accept") }} onClick={() => run(() => shopOrders.accept(id), t("accepted"))} data-testid="accept-order">
                 {t("accept")}
               </Button>
             ) : null}
@@ -292,7 +292,7 @@ function OrderPanel({ id, perms }: { id: string; perms: readonly string[] | null
           >
             <Field id="courier" label={t("courierName")} value={courier} onChange={(e) => setCourier(e.target.value)} required minLength={2} maxLength={60} placeholder="Pathao, Steadfast, RedX" data-testid="courier" />
             <Field id="tracking" label={t("trackingNo")} value={tracking} onChange={(e) => setTracking(e.target.value)} required pattern="[A-Za-z0-9/\-]{4,40}" data-testid="tracking" />
-            <Button type="submit" busy={busy} className="self-start" data-testid="ship-order">
+            <Button type="submit" busy={busy} className="self-start" confirm={{ kind: "save", title: t("ask.ship") }} data-testid="ship-order">
               {t("ship")}
             </Button>
           </form>
@@ -305,7 +305,7 @@ function OrderPanel({ id, perms }: { id: string; perms: readonly string[] | null
               </label>
               <input id="proof" type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setProof(e.target.files?.[0] ?? null)} className="text-sm file:mr-3 file:min-h-9 file:rounded-control file:border file:border-line-strong/60 file:bg-surface file:px-3 file:font-semibold" />
             </div>
-            <Button type="button" busy={busy} className="self-start" onClick={() => run(() => shopOrders.delivered(id, proof), t("deliveredDone"))} data-testid="mark-delivered">
+            <Button type="button" busy={busy} className="self-start" confirm={{ kind: "save", title: t("ask.delivered") }} onClick={() => run(() => shopOrders.delivered(id, proof), t("deliveredDone"))} data-testid="mark-delivered">
               {t("markDelivered")}
             </Button>
           </div>

@@ -7,6 +7,7 @@ import { api, problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { parseOptions } from "@/lib/admin/market";
 import { Notice } from "@kriraghor/ui/primitives";
+import { useConfirm, type ConfirmSpec } from "@kriraghor/ui/kit";
 import { Chip, Field, inputCls } from "./finance/shared";
 
 type Table = "item-categories" | "item-types" | "item-type-fields";
@@ -63,7 +64,11 @@ export function ItemsCatalog() {
   const types = useQuery({ queryKey: ["items", "types", catId], queryFn: () => listOf("item-types", { categoryId: catId! }), enabled: Boolean(catId) });
   const fields = useQuery({ queryKey: ["items", "fields", typeId], queryFn: () => listOf("item-type-fields", { itemTypeId: typeId! }), enabled: Boolean(typeId) });
   const name = (r: Row) => (locale === "bn" ? r.nameBn ?? r.labelBn : r.nameEn ?? r.labelEn) ?? r.key;
-  const run = async (fn: () => Promise<unknown>, done: string) => {
+  const ask = useConfirm();
+  // Tester feedback (19 Nov 2026): every add, edit and (de)activation asks first.
+  const flip = (r: Row): ConfirmSpec => (r.isActive ? { kind: "remove", title: t("confirm.deactivate"), body: t("confirm.deactivateBody"), confirmLabel: t("deactivate") } : { kind: "save", title: t("confirm.reactivate"), confirmLabel: t("reactivate") });
+  const run = async (fn: () => Promise<unknown>, done: string, confirm: ConfirmSpec) => {
+    if (!(await ask(confirm))) return false;
     setMsg(null);
     try {
       await fn();
@@ -90,17 +95,17 @@ export function ItemsCatalog() {
         <div className="mt-6 grid gap-6 lg:grid-cols-3">
           <Column title={t("categories")} testId="item-categories">
             {(cats.data?.items ?? []).map((c) => (
-              <RowItem key={c.id} active={catId === c.id} row={c} label={name(c)} sub={(c.shopTypes ?? []).map((s) => t(`shopType.${s}`)).join(", ")} onPick={() => (setCatId(c.id), setTypeId(null))} onToggle={() => void run(() => toggle("item-categories", c.id, !c.isActive), t("saved"))} badge={c.isSupplement ? t("supplement") : null} />
+              <RowItem key={c.id} active={catId === c.id} row={c} label={name(c)} sub={(c.shopTypes ?? []).map((s) => t(`shopType.${s}`)).join(", ")} onPick={() => (setCatId(c.id), setTypeId(null))} onToggle={() => void run(() => toggle("item-categories", c.id, !c.isActive), t("saved"), flip(c))} badge={c.isSupplement ? t("supplement") : null} />
             ))}
-            <AddCategory onAdd={(body) => run(() => create("item-categories", body), t("added"))} />
+            <AddCategory onAdd={(body) => run(() => create("item-categories", body), t("added"), "add")} />
           </Column>
           <Column title={t("types")} testId="item-types">
             {!catId ? <p className="text-sm text-muted">{t("pickCategory")}</p> : null}
             {(types.data?.items ?? []).map((ty) => (
-              <RowItem key={ty.id} active={typeId === ty.id} row={ty} label={name(ty)} sub={`${formatTaka(ty.priceFloorPoisha ?? 0, locale)} – ${formatTaka(ty.priceCeilingPoisha ?? 0, locale)}`} onPick={() => setTypeId(ty.id)} onToggle={() => void run(() => toggle("item-types", ty.id, !ty.isActive), t("saved"))} />
+              <RowItem key={ty.id} active={typeId === ty.id} row={ty} label={name(ty)} sub={`${formatTaka(ty.priceFloorPoisha ?? 0, locale)} – ${formatTaka(ty.priceCeilingPoisha ?? 0, locale)}`} onPick={() => setTypeId(ty.id)} onToggle={() => void run(() => toggle("item-types", ty.id, !ty.isActive), t("saved"), flip(ty))} />
             ))}
-            {catId ? <AddType onAdd={(body) => run(() => create("item-types", { ...body, categoryId: catId }), t("added"))} /> : null}
-            {typeId ? <PriceRange row={(types.data?.items ?? []).find((x) => x.id === typeId)} onSave={(body) => run(() => patch("item-types", typeId, body), t("saved"))} /> : null}
+            {catId ? <AddType onAdd={(body) => run(() => create("item-types", { ...body, categoryId: catId }), t("added"), "add")} /> : null}
+            {typeId ? <PriceRange row={(types.data?.items ?? []).find((x) => x.id === typeId)} onSave={(body) => run(() => patch("item-types", typeId, body), t("saved"), "save")} /> : null}
           </Column>
           <Column title={t("fields")} testId="item-fields">
             {!typeId ? <p className="text-sm text-muted">{t("pickType")}</p> : null}
@@ -110,10 +115,10 @@ export function ItemsCatalog() {
                 row={f}
                 label={name(f)}
                 sub={[t(`kind.${f.kind}`), f.isVariantAxis ? t("axis") : null, f.required ? t("required") : null, f.options?.length ? t("optionsN", { n: f.options.length }) : null, f.unit].filter(Boolean).join(" · ")}
-                onToggle={() => void run(() => toggle("item-type-fields", f.id, !f.isActive), t("saved"))}
+                onToggle={() => void run(() => toggle("item-type-fields", f.id, !f.isActive), t("saved"), flip(f))}
               />
             ))}
-            {typeId ? <AddField onAdd={(body) => run(() => create("item-type-fields", { ...body, itemTypeId: typeId }), t("added"))} /> : null}
+            {typeId ? <AddField onAdd={(body) => run(() => create("item-type-fields", { ...body, itemTypeId: typeId }), t("added"), "add")} /> : null}
           </Column>
         </div>
       </div>

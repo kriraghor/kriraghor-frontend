@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ArrowCounterClockwise, FilePdf, Prohibit } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { DatePicker } from "@kriraghor/ui/date";
-import { Button, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, ReasonDialog, Select, Skeleton, Textarea, buttonClass, cn, type Column } from "@kriraghor/ui/kit";
+import { Button, DataTable, DetailLayout, Field, FilterBar, Notice, PageTitle, ReasonDialog, Select, Skeleton, Textarea, buttonClass, cn, useConfirm, type Column } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
 import { contractBody, organisersAdmin, type Contract, type Invoice, type OrgStatus } from "@/lib/admin/organisers";
 import { stepUp } from "@/lib/admin/stepUp";
@@ -113,6 +113,7 @@ function OrgDetail({ id, external }: { id: string; external: boolean }) {
   const [orgAction, setOrgAction] = useState<"suspend" | "restore" | null>(null);
   const [orgBusy, setOrgBusy] = useState(false);
   const [orgError, setOrgError] = useState<string | null>(null);
+  const ask = useConfirm();
   const canManage = Boolean(me && (me.isMaster || me.permissions.includes("manage_organisers" as never)));
   const refresh = async () => {
     for (const k of ["admin-org", "admin-org-contracts", "admin-org-invoices", "admin-orgs"]) await qc.invalidateQueries({ queryKey: [k] });
@@ -195,10 +196,10 @@ function OrgDetail({ id, external }: { id: string; external: boolean }) {
                           type="file"
                           accept="application/pdf"
                           className="sr-only"
-                          onChange={(e) => {
+                          onChange={async (e) => {
                             const file = e.target.files?.[0];
                             e.target.value = "";
-                            if (file) void run(() => organisersAdmin.attachDocument(k.id, file), t("pdfSaved"));
+                            if (file && (await ask("save"))) await run(() => organisersAdmin.attachDocument(k.id, file), t("pdfSaved"));
                           }}
                         />
                       </label>
@@ -250,7 +251,7 @@ function OrgDetail({ id, external }: { id: string; external: boolean }) {
               <DatePicker id="contract-starts" label={t("startsOn")} value={form.startsOn} onChange={(v) => setForm({ ...form, startsOn: v })} required />
               <DatePicker id="contract-ends" label={t("endsOn")} value={form.endsOn} onChange={(v) => setForm({ ...form, endsOn: v })} />
               <div className="flex items-end sm:col-span-2">
-                <Button type="submit" disabled={!body}>
+                <Button type="submit" disabled={!body} confirm="add">
                   {t("createContract")}
                 </Button>
               </div>

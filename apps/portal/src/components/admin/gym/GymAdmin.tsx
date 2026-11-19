@@ -3,11 +3,11 @@
 import { Suspense, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowCounterClockwise, MagnifyingGlass, Prohibit } from "@phosphor-icons/react";
+import { ArrowCounterClockwise, MagnifyingGlass, Prohibit, Trash } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
-import { Badge, Button, Card, DataTable, Field, FilterBar, Notice, PageTitle, ReasonDialog, Skeleton, Tabs, Textarea, type Column, type MenuItem } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, DataTable, Dialog, Field, FilterBar, Notice, PageTitle, ReasonDialog, Skeleton, Tabs, Textarea, type Column, type MenuItem } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
-import { gymAdmin, heldOf, type GymStatus, type StaffPass, type StaffSubscription } from "@/lib/admin/gym";
+import { gymAdmin, heldOf, removalSummary, type GymRemoved, type GymStatus, type StaffPass, type StaffSubscription } from "@/lib/admin/gym";
 import { stepUp } from "@/lib/admin/stepUp";
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { StatusBadge } from "../../StatusBadge";
@@ -22,8 +22,8 @@ const GYM_STATUSES = ["pending_review", "live", "paused", "suspended", "changes_
 const TABS = ["gyms", "passes", "subscriptions"] as const;
 
 /**
- * /admin/gym (M20): gyms (suspend with manage_users, restore for masters, with a reason; the review
- * itself is on the Moderation desk), a pass by its code with its escrow hold and a master's platform
+ * /admin/gym (M20): gyms (suspend with manage_users, restore for masters, with a reason; a master
+ * removes any gym with a reason and a step-up code (M20-FR-15); the review itself is on the Moderation desk), a pass by its code with its escrow hold and a master's platform
  * cancel (refunds what is held; step-up escrow.manage), and a trainer subscription by its code.
  */
 export function GymAdmin() {
@@ -60,7 +60,10 @@ function Gyms() {
   const { values, set, clear } = useUrlFilters({ status: { default: "", allowed: ["", ...GYM_STATUSES] }, q: { default: "" } });
   const status = values.status as (typeof GYM_STATUSES)[number] | "";
   const search = values.q;
-  const [acting, setActing] = useState<{ id: string; name: string; action: "suspend" | "restore" } | null>(null);
+  const [acting, setActing] = useState<{ id: string; name: string; action: "suspend" | "restore" | "remove" } | null>(null);
+  // Remove (M20-FR-15): the reason first, then the master's authenticator code, then what it did.
+  const [removing, setRemoving] = useState<{ id: string; name: string; reason: string } | null>(null);
+  const [removed, setRemoved] = useState<(GymRemoved & { name: string }) | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const list = useQuery({ queryKey: ["admin-gyms", status, search], queryFn: () => gymAdmin.gyms({ status: (status || undefined) as GymStatus | undefined, q: search || undefined }), enabled: ready });
@@ -70,6 +73,11 @@ function Gyms() {
 
   async function act(reason: string) {
     if (!acting) return;
+    if (acting.action === "remove") {
+      setRemoving({ id: acting.id, name: acting.name, reason });
+      setActing(null);
+      return;
+    }
     setError(null);
     setBusy(true);
     try {
@@ -113,6 +121,7 @@ function Gyms() {
     const items: MenuItem[] = [];
     if (canSuspend && (g.status === "live" || g.status === "paused")) items.push({ label: t("suspend"), icon: <Prohibit />, danger: true, onSelect: () => setActing({ id: g.id, name: g.name, action: "suspend" }) });
     if (g.status === "suspended" && isMaster) items.push({ label: t("restore"), icon: <ArrowCounterClockwise />, onSelect: () => setActing({ id: g.id, name: g.name, action: "restore" }) });
+    if (isMaster && g.status !== "removed") items.push({ label: t("remove"), icon: <Trash />, danger: true, onSelect: () => setActing({ id: g.id, name: g.name, action: "remove" }) });
     return items;
   };
 
@@ -143,17 +152,74 @@ function Gyms() {
             setError(null);
           }
         }}
-        title={acting ? t(acting.action === "suspend" ? "suspendTitle" : "restoreTitle", { name: acting.name }) : ""}
+        title={acting ? t(`${acting.action}Title`, { name: acting.name }) : ""}
+        description={acting?.action === "remove" ? t("removeHelp") : undefined}
         label={t("reason")}
         confirmLabel={acting ? t(acting.action) : ""}
-        danger={acting?.action === "suspend"}
+        danger={acting?.action === "suspend" || acting?.action === "remove"}
         minLength={5}
         maxLength={300}
         busy={busy}
         error={error}
         onConfirm={(reason) => void act(reason)}
+        testId={acting?.action === "remove" ? "gym-remove" : undefined}
       />
+      {removing ? (
+        <CodeDialog
+          title={t("removeCodeTitle", { name: removing.name })}
+          help={t("removeCodeHelp")}
+          confirmLabel={t("remove")}
+          onClose={() => setRemoving(null)}
+          onConfirm={async (c) => {
+            const token = await stepUp(c, "escrow.manage");
+            const res = await gymAdmin.remove(removing.id, removing.reason, token);
+            setRemoving(null);
+            setRemoved({ ...res, name: removing.name });
+            await qc.invalidateQueries({ queryKey: ["admin-gyms"] });
+          }}
+        />
+      ) : null}
+      <RemovedDialog result={removed} onClose={() => setRemoved(null)} />
     </div>
+  );
+}
+
+/** What a master's remove did: how many running subscriptions were refunded, and what support settles with the owner. */
+function RemovedDialog({ result, onClose }: { result: (GymRemoved & { name: string }) | null; onClose: () => void }) {
+  const t = useTranslations("gymAdmin");
+  const locale = useLocale();
+  const sum = result ? removalSummary(result) : null;
+  return (
+    <Dialog
+      open={Boolean(result)}
+      onOpenChange={(o) => (o ? undefined : onClose())}
+      title={result ? t("removedTitle", { name: result.name }) : ""}
+      footer={
+        <Button type="button" onClick={onClose} data-testid="gym-removed-close">
+          {t("close")}
+        </Button>
+      }
+    >
+      {result && sum ? (
+        <div className="flex flex-col gap-3 px-6 pb-4 text-sm" data-testid="gym-removed">
+          <p>{t("removedRefunded", { count: sum.refundedCount, amount: formatTaka(sum.refundedTotal, locale) })}</p>
+          {result.paidToGym.length ? (
+            <Notice tone="warning">
+              <p>{t("removedPaidToGym", { amount: formatTaka(sum.paidToGymTotal, locale) })}</p>
+              <ul className="mt-2 flex flex-col gap-1">
+                {result.paidToGym.map((p) => (
+                  <li key={p.code} className="tabular">
+                    <span className="font-mono">{p.code}</span> · {t("removedPaidLine", { paid: formatTaka(p.paidToGym, locale), held: formatTaka(p.heldBefore, locale) })}
+                  </li>
+                ))}
+              </ul>
+            </Notice>
+          ) : (
+            <p className="text-muted">{t("removedNothingPaid")}</p>
+          )}
+        </div>
+      ) : null}
+    </Dialog>
   );
 }
 

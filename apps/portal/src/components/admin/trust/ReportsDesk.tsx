@@ -171,12 +171,12 @@ function SubjectPane({ type, subjectId, reports, onDone }: { type: SubjectType; 
       ) : null}
       <div className="mt-3 flex flex-wrap gap-2">
         {q.data.actions.map((a) => (
-          <Button key={a} type="button" size="sm" variant={a === "no_violation" ? "secondary" : "primary"} disabled={note.trim().length < 2 || resolve.isPending} onClick={() => resolve.mutate(a as ReportAction)} data-testid={`resolve-${a}`}>
+          <Button key={a} type="button" size="sm" variant={a === "no_violation" ? "secondary" : "primary"} disabled={note.trim().length < 2 || resolve.isPending} confirm={{ kind: "save", confirmLabel: t(`action.${a}`), danger: a === "content_removed" || a === "user_suspended" }} onClick={() => resolve.mutate(a as ReportAction)} data-testid={`resolve-${a}`}>
             {t(`action.${a}`)}
           </Button>
         ))}
         {count && !q.data.items.every((r) => (r as { status: string }).status === "escalated") ? (
-          <Button type="button" size="sm" variant="secondary" disabled={note.trim().length < 2} busy={escalate.isPending} onClick={() => escalate.mutate()}>
+          <Button type="button" size="sm" variant="secondary" disabled={note.trim().length < 2} busy={escalate.isPending} confirm={{ kind: "send", confirmLabel: t("escalate") }} onClick={() => escalate.mutate()}>
             {t("escalate")}
           </Button>
         ) : null}
@@ -239,11 +239,11 @@ function Reviews() {
       align: "end",
       cell: (r) =>
         status === "held" ? (
-          <Button type="button" size="sm" busy={act.isPending && act.variables?.id === r.id && act.variables.action === "publish"} onClick={() => act.mutate({ id: r.id, action: "publish" })} data-testid="publish-review">
+          <Button type="button" size="sm" busy={act.isPending && act.variables?.id === r.id && act.variables.action === "publish"} confirm={{ kind: "save", confirmLabel: t("publish") }} onClick={() => act.mutate({ id: r.id, action: "publish" })} data-testid="publish-review">
             {t("publish")}
           </Button>
         ) : status === "hidden" ? (
-          <Button type="button" size="sm" variant="secondary" busy={act.isPending && act.variables?.id === r.id && act.variables.action === "restore"} onClick={() => act.mutate({ id: r.id, action: "restore" })}>
+          <Button type="button" size="sm" variant="secondary" busy={act.isPending && act.variables?.id === r.id && act.variables.action === "restore"} confirm={{ kind: "save", confirmLabel: t("restore") }} onClick={() => act.mutate({ id: r.id, action: "restore" })}>
             {t("restore")}
           </Button>
         ) : null,

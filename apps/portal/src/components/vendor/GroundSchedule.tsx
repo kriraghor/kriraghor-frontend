@@ -10,7 +10,7 @@ import { dhakaIso, halfHours, nextDays, vendor } from "@/lib/vendor/grounds";
 import { desk, hhmm, type ClosureReason, type SeriesInput } from "@/lib/vendor/bookings";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, PhoneField, bdMobile, useConfirm } from "@kriraghor/ui/kit";
 
 const REASONS: ClosureReason[] = ["maintenance", "re_turfing", "floodlight_repair", "private_event", "waterlogged"];
 type Clash = { kind: string; code?: string; label: string; start: string; end: string };
@@ -75,6 +75,7 @@ function Closures({ groundId, courts }: { groundId: string; courts: { id: string
   const [to, setTo] = useState("12:00");
   const [reason, setReason] = useState<ClosureReason>("maintenance");
   const [picked, setPicked] = useState<string[]>([]);
+  const ask = useConfirm();
   const list = useQuery({ queryKey: ["closures", groundId], queryFn: () => desk.closures(groundId, "upcoming") });
   const body = () => ({ start: dhakaIso(day, from), end: dhakaIso(day, to), reason, ...(picked.length ? { courtIds: picked } : {}) });
   const create = useMutation({ mutationFn: () => desk.createClosure(groundId, body()), onSuccess: () => qc.invalidateQueries({ queryKey: ["closures", groundId] }) });
@@ -85,9 +86,9 @@ function Closures({ groundId, courts }: { groundId: string; courts: { id: string
       <p className="mt-1 text-sm text-muted">{t("closuresLead")}</p>
       <form
         className="mt-4 grid grid-cols-2 gap-3"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          create.mutate();
+          if (await ask({ kind: "add", title: t("ask.close") })) create.mutate();
         }}
       >
         <Field label={t("day")}>
@@ -146,12 +147,24 @@ function Closures({ groundId, courts }: { groundId: string; courts: { id: string
             <Chip tone="muted">{t(`reasons.${x.reason}`)}</Chip>
             <span className="ml-auto flex gap-2">
               {x.phase === "upcoming" ? (
-                <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold" onClick={() => act.mutate(() => desk.reopen(x.id))}>
+                <button
+                  type="button"
+                  className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold"
+                  onClick={async () => {
+                    if (await ask({ kind: "save", title: t("ask.reopen") })) act.mutate(() => desk.reopen(x.id));
+                  }}
+                >
                   {t("reopen")}
                 </button>
               ) : null}
               {x.phase === "in_progress" ? (
-                <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold" onClick={() => act.mutate(() => desk.endNow(x.id))}>
+                <button
+                  type="button"
+                  className="rounded-control min-h-11 border border-line-strong/60 px-3 font-semibold"
+                  onClick={async () => {
+                    if (await ask({ kind: "save", title: t("ask.endNow") })) act.mutate(() => desk.endNow(x.id));
+                  }}
+                >
                   {t("endNow")}
                 </button>
               ) : null}
@@ -166,11 +179,20 @@ function Closures({ groundId, courts }: { groundId: string; courts: { id: string
 
 function SeriesPanel({ groundId, courts }: { groundId: string; courts: { id: string; name: string }[] }) {
   const t = useTranslations("vendorSchedule");
+  const tk = useTranslations("kit.phone");
   const locale = useLocale();
   const qc = useQueryClient();
   const days = nextDays(30);
   const [form, setForm] = useState<SeriesInput>({ courtId: courts[0]?.id ?? "", teamName: "", dow: new Date(`${days[1]}T12:00:00Z`).getUTCDay(), startTime: "19:00", lengthMin: 60, weeks: 8, firstDate: days[1] });
   const set = (patch: Partial<SeriesInput>) => setForm((f) => ({ ...f, ...patch }));
+  const ask = useConfirm();
+  // An optional Bangladesh mobile (tester feedback, 19 Nov 2026): a wrong one stops Check and Book before any call.
+  const [phoneTried, setPhoneTried] = useState(false);
+  const phoneBad = Boolean(form.phone) && !bdMobile.valid(form.phone ?? "");
+  const phoneOk = () => {
+    setPhoneTried(true);
+    return !phoneBad;
+  };
   const list = useQuery({ queryKey: ["series", groundId], queryFn: () => desk.series(groundId) });
   const preview = useMutation({ mutationFn: () => desk.seriesPreview(groundId, form) });
   const create = useMutation({
@@ -191,9 +213,7 @@ function SeriesPanel({ groundId, courts }: { groundId: string; courts: { id: str
         <Field label={t("team")}>
           <input className={inputCls} value={form.teamName} onChange={(e) => set({ teamName: e.target.value })} maxLength={80} />
         </Field>
-        <Field label={t("phoneOptional")}>
-          <input className={inputCls} value={form.phone ?? ""} onChange={(e) => set({ phone: e.target.value || undefined })} inputMode="tel" autoComplete="off" />
-        </Field>
+        <PhoneField id="series-phone" label={t("phoneOptional")} value={form.phone ?? ""} onChange={(v) => set({ phone: v || undefined })} error={phoneTried && phoneBad ? tk("invalid") : undefined} />
         <Field label={t("court")}>
           <select className={inputCls} value={form.courtId} onChange={(e) => set({ courtId: e.target.value })}>
             {courts.map((k) => (
@@ -236,7 +256,7 @@ function SeriesPanel({ groundId, courts }: { groundId: string; courts: { id: str
           </select>
         </Field>
         <div className="flex items-end">
-          <button type="button" disabled={form.teamName.trim().length < 2 || preview.isPending} onClick={() => preview.mutate()} className="rounded-control min-h-11 w-full border border-brand px-4 font-bold text-brand disabled:opacity-50" data-testid="series-preview">
+          <button type="button" disabled={form.teamName.trim().length < 2 || preview.isPending} onClick={() => phoneOk() && preview.mutate()} className="rounded-control min-h-11 w-full border border-brand px-4 font-bold text-brand disabled:opacity-50" data-testid="series-preview">
             {t("check")}
           </button>
         </div>
@@ -252,7 +272,15 @@ function SeriesPanel({ groundId, courts }: { groundId: string; courts: { id: str
               </li>
             ))}
           </ul>
-          <button type="button" onClick={() => create.mutate(clashes > 0)} disabled={create.isPending} className="mt-3 min-h-11 bg-brand px-4 font-bold text-on-brand disabled:opacity-50" data-testid="series-create">
+          <button
+            type="button"
+            onClick={async () => {
+              if (phoneOk() && (await ask("add"))) create.mutate(clashes > 0);
+            }}
+            disabled={create.isPending}
+            className="mt-3 min-h-11 bg-brand px-4 font-bold text-on-brand disabled:opacity-50"
+            data-testid="series-create"
+          >
             {clashes ? t("bookSkipping", { n: clashes }) : t("book", { total: formatTaka(p.total, locale) })}
           </button>
         </div>
@@ -266,7 +294,13 @@ function SeriesPanel({ groundId, courts }: { groundId: string; courts: { id: str
             </span>
             <Chip tone={s.status === "active" ? "ok" : "muted"}>{t(`seriesStatus.${s.status}`)}</Chip>
             {s.status === "active" ? (
-              <button type="button" className="rounded-control ml-auto min-h-11 border border-danger px-3 font-semibold text-danger" onClick={() => end.mutate(s.id)}>
+              <button
+                type="button"
+                className="rounded-control ml-auto min-h-11 border border-danger px-3 font-semibold text-danger"
+                onClick={async () => {
+                  if (await ask({ kind: "remove", title: t("ask.endSeries", { team: s.teamName }) })) end.mutate(s.id);
+                }}
+              >
                 {t("end")}
               </button>
             ) : null}

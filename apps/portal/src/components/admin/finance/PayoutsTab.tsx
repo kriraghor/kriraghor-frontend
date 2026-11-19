@@ -372,7 +372,7 @@ function ActionForm({ action, payoutId, holdId, onClose, onDone }: { action: For
         <Button type="button" variant="ghost" onClick={onClose} disabled={busy}>
           {t("cancelForm")}
         </Button>
-        <Button type="submit" variant={action === "cancel" ? "danger" : "primary"} busy={busy}>
+        <Button type="submit" variant={action === "cancel" ? "danger" : "primary"} busy={busy} confirm={action === "markPaid" ? { kind: "money", confirmLabel: t(`submit.${action}`) } : undefined}>
           {t(`submit.${action}`)}
         </Button>
       </div>

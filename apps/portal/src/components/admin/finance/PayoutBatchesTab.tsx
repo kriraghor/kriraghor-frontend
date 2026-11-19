@@ -63,7 +63,7 @@ export function PayoutBatchesTab({ me }: { me: DeskMe }) {
               </option>
             ))}
           </Select>
-          <Button type="submit" busy={busy} data-testid="run-batch">
+          <Button type="submit" busy={busy} data-testid="run-batch" confirm={{ kind: "money", title: t("ask.runBatch"), confirmLabel: t("runNow") }}>
             {t("runNow")}
           </Button>
         </form>
