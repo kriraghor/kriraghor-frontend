@@ -3118,7 +3118,23 @@
     "removedRefunded": "{count, plural, =0 {No running subscription needed a refund.} one {# running subscription was refunded ({amount}).} other {# running subscriptions were refunded ({amount} in all).}}",
     "removedPaidToGym": "Already paid to the gym ({amount} in all). Support settles these with the owner:",
     "removedPaidLine": "{paid} paid to the gym (held before: {held})",
-    "removedNothingPaid": "Nothing had been paid to the gym yet."
+    "removedNothingPaid": "Nothing had been paid to the gym yet.",
+    "suspendScope": {
+      "gym": "Only this gym",
+      "gymHelp": "Everything at this gym stops: staff are shut out, the owner can only look, members cannot check in, pay or book, and booked visits are cancelled. The owner's other gyms carry on.",
+      "owner": "The owner's account",
+      "ownerHelp": "The owner is locked out and sees how to contact support. Every gym they own is suspended, and their venues, shops and profiles are paused. Restoring the account brings the gyms back.",
+      "suspendOwner": "Suspend the account",
+      "cancel": "Cancel",
+      "reasonHint": "At least 5 characters. Kept in the audit log.",
+      "restoreOwner": "Restore the owner's account",
+      "restoreOwnerTitle": "Restore the account behind {name}?",
+      "restoreOwnerHelp": "The owner can sign in again and every gym suspended with the account goes back to what it was. Gyms Kriraghor suspended on their own stay suspended.",
+      "cause": {
+        "staff": "By Kriraghor",
+        "owner_account": "With the owner's account"
+      }
+    }
   },
   "gymManageDesk": {
     "title": "Gym system",

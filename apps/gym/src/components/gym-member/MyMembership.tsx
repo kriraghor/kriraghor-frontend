@@ -81,6 +81,12 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
   const payable = new Map((myDues.data?.items ?? []).map((x) => [x.dueId, x] as const));
   return (
     <div className="mt-2 flex flex-col gap-4">
+      {/* Kriraghor suspended the gym (19 Nov 2026): nothing works there for now. */}
+      {m.gym?.suspended ? (
+        <Notice tone="warning" title={t("me.gymClosed")}>
+          {t("me.gymClosedBody")}
+        </Notice>
+      ) : null}
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h1 className="font-display text-3xl font-extrabold">{m.gym?.name ?? t("me.gym")}</h1>

@@ -954,7 +954,8 @@
       "GYM_RENEW_TOO_EARLY": "It is too early to renew this package.",
       "GYM_BODY_EMPTY": "Enter at least one measurement.",
       "GYM_BODY_RANGE": "One of the measurements is outside what can be recorded.",
-      "GYM_BODY_ENTRY_STATE": "This entry cannot be removed here."
+      "GYM_BODY_ENTRY_STATE": "This entry cannot be removed here.",
+      "GYM_SUSPENDED": "Kriraghor has suspended this gym. Nothing can be done here until it is restored."
     },
     "gyms": {
       "title": "My gyms",
@@ -1730,7 +1731,9 @@
       "payAskBody": "You go to the payment page to pay with bKash, Nagad or a card.",
       "acceptAsk": "Link your account to {gym}?",
       "acceptAskBody": "The gym will see the details listed on this request.",
-      "declineAsk": "Decline the request from {gym}?"
+      "declineAsk": "Decline the request from {gym}?",
+      "gymClosed": "This gym is closed on Kriraghor for now",
+      "gymClosedBody": "Kriraghor has suspended this gym, so check-ins, payments, renewals, classes and visits are stopped. Your records stay. Ask the gym, or contact Kriraghor support."
     },
     "online": {
       "badge": "Online",

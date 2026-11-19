@@ -7,7 +7,7 @@ import { ArrowLeft, LockKey } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@kriraghor/ui/format";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Badge, ButtonLink, Card, ErrorState, Notice, Skeleton, type Tone } from "@kriraghor/ui/kit";
+import { Badge, ButtonLink, Card, ErrorState, GymSuspendedNotice, Notice, Skeleton, type Tone } from "@kriraghor/ui/kit";
 import { DeskAccessNotice, deskAccessKey, useDeskErrorText, useWorkplaces } from "@kriraghor/ui/desk";
 import { cn } from "@kriraghor/ui/cn";
 import { featureLocked, gymManage, minTierFor, type Feature, type ManageGym, type MemberSummary } from "@/lib/gym-manage";
@@ -150,7 +150,9 @@ export function GymPage({
         {q.isPending || wp.pending ? (
           <Skeleton className="h-64 rounded-card" />
         ) : q.isError ? (
-          deskAccessKey(problemOf(q.error)?.code) ? (
+          problemOf(q.error)?.code === "GYM_SUSPENDED" ? (
+            <GymSuspendedNotice owner={false} />
+          ) : deskAccessKey(problemOf(q.error)?.code) ? (
             <DeskAccessNotice error={q.error} />
           ) : (
             <ErrorState title={err(q.error)} onRetry={() => void q.refetch()} />
@@ -159,10 +161,19 @@ export function GymPage({
           <Notice tone="warning" title={t("noGym.title")}>
             {t("noGym.body")}
           </Notice>
+        ) : ctx.gym.listingStatus === "suspended" && !ctx.owner ? (
+          // A suspended gym is a total freeze (19 Nov 2026): staff see why, and nothing else.
+          <GymSuspendedNotice owner={false} />
         ) : !canOpen(page, ctx.perms) ? (
           <DeskAccessNotice code="PERMISSION_REQUIRED" />
         ) : feature && featureLocked(ctx.gym.features, feature) ? (
           <Upsell feature={feature} owner={ctx.owner} />
+        ) : ctx.gym.listingStatus === "suspended" ? (
+          // The owner may look at the records; every change answers GYM_SUSPENDED.
+          <div className="flex flex-col gap-4">
+            <GymSuspendedNotice owner />
+            {children(ctx)}
+          </div>
         ) : (
           children(ctx)
         )}

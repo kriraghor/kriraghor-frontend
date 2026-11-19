@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { REASON_CODES, usersAdmin, type ReasonCode } from "@/lib/admin/users";
 import { ArrowCounterClockwise, MagnifyingGlass, Prohibit, Trash } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { Badge, Button, Card, DataTable, Dialog, Field, FilterBar, Notice, PageTitle, ReasonDialog, Skeleton, Tabs, Textarea, type Column, type MenuItem } from "@kriraghor/ui/kit";
@@ -20,6 +21,8 @@ type Period = StaffSubscription["periods"][number];
 // "draft" is a private gym (M24 §4.4: managed on gym.kriraghor.com, never listed): the "Private (management only)" filter.
 const GYM_STATUSES = ["pending_review", "live", "paused", "suspended", "changes_requested", "rejected", "draft"] as const;
 const TABS = ["gyms", "passes", "subscriptions"] as const;
+// Any gym that is not removed, rejected or withdrawn can be suspended, private gyms (drafts) included (19 Nov 2026).
+const SUSPENDABLE = ["draft", "pending_review", "changes_requested", "live", "paused"] as const;
 
 /**
  * /admin/gym (M20): gyms (suspend with manage_users, restore for masters, with a reason; a master
@@ -60,7 +63,9 @@ function Gyms() {
   const { values, set, clear } = useUrlFilters({ status: { default: "", allowed: ["", ...GYM_STATUSES] }, q: { default: "" } });
   const status = values.status as (typeof GYM_STATUSES)[number] | "";
   const search = values.q;
-  const [acting, setActing] = useState<{ id: string; name: string; action: "suspend" | "restore" | "remove" } | null>(null);
+  const [acting, setActing] = useState<{ id: string; name: string; action: "restore" | "remove" | "restoreOwner"; ownerId?: string } | null>(null);
+  // Suspend (19 Nov 2026): this gym only, or the owner's account (every gym, venue, shop and profile).
+  const [suspending, setSuspending] = useState<Row | null>(null);
   // Remove (M20-FR-15): the reason first, then the master's authenticator code, then what it did.
   const [removing, setRemoving] = useState<{ id: string; name: string; reason: string } | null>(null);
   const [removed, setRemoved] = useState<(GymRemoved & { name: string }) | null>(null);
@@ -81,7 +86,8 @@ function Gyms() {
     setError(null);
     setBusy(true);
     try {
-      await (acting.action === "suspend" ? gymAdmin.suspend(acting.id, reason) : gymAdmin.restore(acting.id, reason));
+      if (acting.action === "restoreOwner" && acting.ownerId) await usersAdmin.restore(acting.ownerId, reason);
+      else await gymAdmin.restore(acting.id, reason);
       setActing(null);
       await qc.invalidateQueries({ queryKey: ["admin-gyms"] });
     } catch (err) {
@@ -110,17 +116,23 @@ function Gyms() {
       header: t("status"),
       sort: (g) => g.status,
       cell: (g) => (
-        <StatusBadge status={g.status} domain="gym">
-          {g.status === "draft" ? t("private") : t(`gymStatus.${g.status}`)}
-        </StatusBadge>
+        <>
+          <StatusBadge status={g.status} domain="gym">
+            {g.status === "draft" ? t("private") : t(`gymStatus.${g.status}`)}
+          </StatusBadge>
+          {g.status === "suspended" && g.suspendCause ? <span className="mt-0.5 block text-xs font-normal text-muted">{t(`suspendScope.cause.${g.suspendCause}`)}</span> : null}
+        </>
       ),
     },
   ];
 
   const actions = (g: Row): MenuItem[] => {
     const items: MenuItem[] = [];
-    if (canSuspend && (g.status === "live" || g.status === "paused")) items.push({ label: t("suspend"), icon: <Prohibit />, danger: true, onSelect: () => setActing({ id: g.id, name: g.name, action: "suspend" }) });
-    if (g.status === "suspended" && isMaster) items.push({ label: t("restore"), icon: <ArrowCounterClockwise />, onSelect: () => setActing({ id: g.id, name: g.name, action: "restore" }) });
+    if (canSuspend && SUSPENDABLE.includes(g.status as (typeof SUSPENDABLE)[number])) items.push({ label: t("suspend"), icon: <Prohibit />, danger: true, onSelect: () => setSuspending(g) });
+    // A gym suspended with its owner's account comes back with the account (users desk rights); others by a master.
+    if (g.status === "suspended" && g.suspendCause === "owner_account" && canSuspend)
+      items.push({ label: t("suspendScope.restoreOwner"), icon: <ArrowCounterClockwise />, onSelect: () => setActing({ id: g.id, name: g.name, action: "restoreOwner", ownerId: g.ownerId }) });
+    else if (g.status === "suspended" && isMaster) items.push({ label: t("restore"), icon: <ArrowCounterClockwise />, onSelect: () => setActing({ id: g.id, name: g.name, action: "restore" }) });
     if (isMaster && g.status !== "removed") items.push({ label: t("remove"), icon: <Trash />, danger: true, onSelect: () => setActing({ id: g.id, name: g.name, action: "remove" }) });
     return items;
   };
@@ -152,11 +164,11 @@ function Gyms() {
             setError(null);
           }
         }}
-        title={acting ? t(`${acting.action}Title`, { name: acting.name }) : ""}
-        description={acting?.action === "remove" ? t("removeHelp") : undefined}
+        title={acting ? (acting.action === "restoreOwner" ? t("suspendScope.restoreOwnerTitle", { name: acting.name }) : t(`${acting.action}Title`, { name: acting.name })) : ""}
+        description={acting?.action === "remove" ? t("removeHelp") : acting?.action === "restoreOwner" ? t("suspendScope.restoreOwnerHelp") : undefined}
         label={t("reason")}
-        confirmLabel={acting ? t(acting.action) : ""}
-        danger={acting?.action === "suspend" || acting?.action === "remove"}
+        confirmLabel={acting ? (acting.action === "restoreOwner" ? t("suspendScope.restoreOwner") : t(acting.action)) : ""}
+        danger={acting?.action === "remove"}
         minLength={5}
         maxLength={300}
         busy={busy}
@@ -180,6 +192,16 @@ function Gyms() {
         />
       ) : null}
       <RemovedDialog result={removed} onClose={() => setRemoved(null)} />
+      {suspending ? (
+        <SuspendDialog
+          gym={suspending}
+          onClose={() => setSuspending(null)}
+          onDone={async () => {
+            setSuspending(null);
+            await qc.invalidateQueries({ queryKey: ["admin-gyms"] });
+          }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -346,5 +368,86 @@ function Subscriptions() {
         </Card>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * Suspend (tester feedback, 19 Nov 2026): this gym only (a total freeze: staff shut out, the owner may only
+ * read, members refused, booked visits cancelled), or the owner's account (the person is locked out and
+ * every gym, venue, shop and profile they own is suspended or paused; restoring the account brings the
+ * gyms back). The account needs a reason code and a note, as on the users desk.
+ */
+function SuspendDialog({ gym, onClose, onDone }: { gym: Row; onClose: () => void; onDone: () => Promise<void> }) {
+  const t = useTranslations("gymAdmin");
+  const tu = useTranslations("usersDesk");
+  const [scope, setScope] = useState<"gym" | "owner">("gym");
+  const [reason, setReason] = useState("");
+  const [code, setCode] = useState<ReasonCode | "">("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const ok = reason.trim().length >= 5 && reason.trim().length <= (scope === "gym" ? 300 : 2000) && (scope === "gym" || Boolean(code));
+  async function submit() {
+    if (!ok) return;
+    setBusy(true);
+    setError(null);
+    try {
+      if (scope === "gym") await gymAdmin.suspend(gym.id, reason.trim());
+      else if (gym.ownerId) await usersAdmin.suspend(gym.ownerId, { reasonCode: code as ReasonCode, note: reason.trim() });
+      await onDone();
+    } catch (err) {
+      setError(problemOf(err)?.title ?? t("failed"));
+    } finally {
+      setBusy(false);
+    }
+  }
+  const option = (value: "gym" | "owner") => (
+    <label className={`flex cursor-pointer gap-3 rounded-control border p-3 ${scope === value ? "border-danger bg-danger/5" : "border-line"}`}>
+      <input type="radio" name="suspend-scope" className="mt-1" checked={scope === value} onChange={() => setScope(value)} data-testid={`suspend-scope-${value}`} />
+      <span className="text-sm">
+        <span className="block font-semibold">{t(`suspendScope.${value}`)}</span>
+        <span className="block text-muted">{t(`suspendScope.${value}Help`)}</span>
+      </span>
+    </label>
+  );
+  return (
+    <Dialog
+      open
+      onOpenChange={(o) => !o && !busy && onClose()}
+      title={t("suspendTitle", { name: gym.name })}
+      footer={
+        <>
+          <Button type="button" variant="ghost" onClick={onClose} disabled={busy}>
+            {t("suspendScope.cancel")}
+          </Button>
+          <Button type="button" variant="danger" busy={busy} disabled={!ok} onClick={() => void submit()} data-testid="suspend-confirm">
+            {scope === "gym" ? t("suspend") : t("suspendScope.suspendOwner")}
+          </Button>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-3" data-testid="gym-suspend">
+        {option("gym")}
+        {gym.ownerId ? option("owner") : null}
+        {scope === "owner" ? (
+          <label className="flex flex-col gap-1 text-sm font-semibold">
+            {tu("reasonCode")}
+            <select className="min-h-11 rounded-control border border-line bg-surface px-3" value={code} onChange={(e) => setCode(e.target.value as ReasonCode)} data-testid="suspend-reason-code">
+              <option value="">{tu("pickReason")}</option>
+              {REASON_CODES.map((r) => (
+                <option key={r} value={r}>
+                  {tu(`reasons.${r}`)}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+        <Textarea id="suspend-reason" label={t("reason")} value={reason} maxLength={scope === "gym" ? 300 : 2000} onChange={(e) => setReason(e.target.value)} hint={t("suspendScope.reasonHint")} />
+        {error ? (
+          <p role="alert" className="text-sm text-danger">
+            {error}
+          </p>
+        ) : null}
+      </div>
+    </Dialog>
   );
 }

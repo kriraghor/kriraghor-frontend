@@ -37654,7 +37654,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Suspend a gym (manage_users) */
+        /** Suspend a gym (manage_users): any gym that is not removed, rejected or withdrawn, private gyms included; a total freeze (staff shut out, the owner may only read, members refused with 423 GYM_SUSPENDED, booked visits cancelled) */
         post: {
             parameters: {
                 query?: never;
@@ -37683,6 +37683,8 @@ export interface paths {
                             id: string;
                             /** @enum {string} */
                             status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                            /** @enum {string|null} */
+                            suspendCause: "staff" | "owner_account" | null;
                         };
                     };
                 };
@@ -37822,7 +37824,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Restore a suspended gym (masters) */
+        /** Restore a suspended gym to the status it had (masters); a gym suspended with its owner’s account comes back only when the account is restored */
         post: {
             parameters: {
                 query?: never;
@@ -37851,6 +37853,8 @@ export interface paths {
                             id: string;
                             /** @enum {string} */
                             status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+                            /** @enum {string|null} */
+                            suspendCause: "staff" | "owner_account" | null;
                         };
                     };
                 };
@@ -37872,7 +37876,7 @@ export interface paths {
                         "application/problem+json": components["schemas"]["Problem"];
                     };
                 };
-                /** @description Error. Codes: GYM_STATE */
+                /** @description Error. Codes: GYM_STATE, GYM_OWNER_SUSPENDED */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -74687,6 +74691,11 @@ export interface components {
             slug: string;
             /** @enum {string} */
             status: "draft" | "pending_review" | "changes_requested" | "live" | "paused" | "rejected" | "withdrawn" | "suspended" | "removed";
+            /**
+             * @description Why the gym is suspended: by Kriraghor (staff) or with its owner’s account (restored with the account)
+             * @enum {string|null}
+             */
+            suspendCause: "staff" | "owner_account" | null;
             editStatus: string | null;
             liveVersion: number;
             name: string;
@@ -76561,6 +76570,8 @@ export interface components {
                     id: string;
                     name: string;
                     slug: string;
+                    /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                    suspended?: boolean;
                 } | null;
                 memberCode: string | null;
                 /** @description The name the gym typed */
@@ -76599,6 +76610,8 @@ export interface components {
                     id: string;
                     name: string;
                     slug: string;
+                    /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                    suspended?: boolean;
                 } | null;
                 memberCode: string;
                 /** @enum {string} */
@@ -76645,6 +76658,8 @@ export interface components {
                     id: string;
                     name: string;
                     slug: string;
+                    /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                    suspended?: boolean;
                 } | null;
                 healthNote?: string | null;
                 /** Format: date-time */
@@ -76680,6 +76695,8 @@ export interface components {
                     id: string;
                     name: string;
                     slug: string;
+                    /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                    suspended?: boolean;
                 } | null;
                 memberCode?: string;
             }[];
@@ -76811,6 +76828,8 @@ export interface components {
                     id: string;
                     name: string;
                     slug: string;
+                    /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                    suspended?: boolean;
                 } | null;
                 memberCode?: string;
             }[];
@@ -77850,6 +77869,8 @@ export interface components {
                     id: string;
                     name: string;
                     slug: string;
+                    /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                    suspended?: boolean;
                 } | null;
                 memberCode: string | null;
                 /** @description The name the gym typed */
@@ -77894,6 +77915,8 @@ export interface components {
                     id: string;
                     name: string;
                     slug: string;
+                    /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                    suspended?: boolean;
                 } | null;
                 /** @enum {string} */
                 kind: "workout" | "diet";
@@ -77935,6 +77958,8 @@ export interface components {
                 id: string;
                 name: string;
                 slug: string;
+                /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                suspended?: boolean;
             } | null;
             /** @enum {string} */
             kind: "workout" | "diet";
@@ -77996,6 +78021,8 @@ export interface components {
                 id: string;
                 name: string;
                 slug: string;
+                /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                suspended?: boolean;
             } | null;
             member: {
                 /** Format: uuid */
@@ -78029,6 +78056,8 @@ export interface components {
                 id: string;
                 name: string;
                 slug: string;
+                /** @description Kriraghor has suspended the gym: nothing can be done there (19 Nov 2026) */
+                suspended?: boolean;
             } | null;
             member: {
                 /** Format: uuid */

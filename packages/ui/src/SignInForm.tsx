@@ -10,6 +10,7 @@ import { useAuth } from "./auth";
 import { Button } from "./kit/Button";
 import { Field, PasswordField } from "./kit/Form";
 import { Divider, Notice } from "./kit/Display";
+import { AccountLocked } from "./kit/Support";
 import { GoogleButton } from "./auth/GoogleButton";
 import { CodeStep } from "./auth/CodeStep";
 import { handoffFrom, identifierKind, saveHandoff, type AuthBody, type SignupHandoff } from "./auth/flow";
@@ -44,8 +45,11 @@ export function SignInForm({ next = "/me", passwordReset = false, signUpHref = "
 
   const withNext = (href: string) => (next === "/me" ? href : `${href}?next=${encodeURIComponent(next)}`);
 
+  // The account is suspended (ACCOUNT_SUSPENDED): the locked panel with Kriraghor support (19 Nov 2026).
+  const [locked, setLocked] = useState(false);
   const fail = (err: unknown) => {
     const p = problemOf(err);
+    if (p?.code === "ACCOUNT_SUSPENDED") return setLocked(true);
     setHint(p?.code === "INVALID_CREDENTIALS" ? "noPasswordHint" : p?.code === "AUTH_LOCKED" ? "lockedHint" : null);
     setError(p?.code === "STAFF_USE_ADMIN_PORTAL" ? t("staffUseAdmin") : (p?.detail ?? p?.title ?? te("generic")));
   };
@@ -127,6 +131,15 @@ export function SignInForm({ next = "/me", passwordReset = false, signUpHref = "
   };
   const resetHref = passwordReset ? null : `${publicEnv().WEB_URL}/sign-in/reset`;
   const forgotClass = "-mt-1 w-fit text-sm font-semibold text-brand-text underline-offset-4 hover:underline";
+
+  if (locked) {
+    return (
+      <div className="flex flex-col gap-6" data-testid="sign-in">
+        <h1 className="text-3xl sm:text-4xl">{t("signInTitle")}</h1>
+        <AccountLocked />
+      </div>
+    );
+  }
 
   if (step.kind === "code") {
     return (

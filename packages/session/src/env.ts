@@ -14,6 +14,11 @@ export const PUBLIC_ENV_KEYS = [
   "COOKIE_PREFIX",
   "GOOGLE_CLIENT_ID",
   "APP_ENV",
+  // Kriraghor support, shown on a suspended account or gym (19 Nov 2026). Empty: only the Help page.
+  "SUPPORT_PHONE",
+  "SUPPORT_EMAIL",
+  "SUPPORT_WHATSAPP",
+  "SUPPORT_URL",
 ] as const;
 
 export type PublicEnvKey = (typeof PUBLIC_ENV_KEYS)[number];
@@ -30,6 +35,10 @@ const DEFAULTS: PublicEnv = {
   COOKIE_PREFIX: "kg",
   GOOGLE_CLIENT_ID: "",
   APP_ENV: "local",
+  SUPPORT_PHONE: "",
+  SUPPORT_EMAIL: "",
+  SUPPORT_WHATSAPP: "",
+  SUPPORT_URL: "",
 };
 
 declare global {

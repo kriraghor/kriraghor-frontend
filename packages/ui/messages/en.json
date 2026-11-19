@@ -132,6 +132,16 @@
     "phone": {
       "invalid": "Enter an 11-digit mobile number that starts with 01, for example 01712345678.",
       "hint": "11 digits, starting with 01"
+    },
+    "support": {
+      "title": "Contact Kriraghor support",
+      "contact": "Contact page",
+      "whatsapp": "WhatsApp",
+      "lockedTitle": "Your account is suspended",
+      "lockedBody": "Kriraghor has suspended this account, and everything under it (gyms, venues, shops, profiles) is paused. To have it looked at and reactivated, contact Kriraghor support.",
+      "gymTitle": "Kriraghor has suspended this gym",
+      "gymOwner": "Nothing can be changed here until Kriraghor restores it: no check-ins, fees, members or messages. You can still look at your records. Contact Kriraghor support to have it restored.",
+      "gymStaff": "Kriraghor has suspended this gym, so its desk and pages are closed. The owner can contact Kriraghor support."
     }
   },
   "auth": {

@@ -46,6 +46,10 @@ The apps read these at request time through `/env.js` (see `packages/session/src
 | `APP_ENV` | ✔ | ✔ | ✔ | ✔ | `production` |
 | `APP_NAME` | optional | optional | optional | optional | Defaults to Kriraghor |
 | `PORTAL_DEFAULT_AREA` | – | – | optional | – | `admin` (only used on hosts that are neither admin.* nor vendor.*) |
+| `SUPPORT_PHONE` | ✔ | ✔ | ✔ | ✔ | Kriraghor support's phone as people should read it, e.g. `+880 1XXX-XXXXXX` (shown to a suspended account or gym, 19 Nov 2026) |
+| `SUPPORT_WHATSAPP` | ✔ | ✔ | ✔ | ✔ | Support's WhatsApp number (any format; the link uses the digits) |
+| `SUPPORT_EMAIL` | ✔ | ✔ | ✔ | ✔ | Support's email address |
+| `SUPPORT_URL` | optional | optional | optional | optional | The contact page; empty means kriraghor.com `/help` |
 
 None of these is a secret: they are all public URLs or IDs, and the apps only ever expose the keys listed in `packages/session/src/env.ts`.
 
