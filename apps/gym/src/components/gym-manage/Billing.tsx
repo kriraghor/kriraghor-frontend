@@ -98,7 +98,7 @@ export function Billing() {
                         {current ? (
                           <Badge tone="brand">{t("billing.yourPlan")}</Badge>
                         ) : (
-                          <Button type="button" size="sm" block variant="secondary" busy={busy === tier.key} onClick={() => void choose(tier.key)} data-testid={`choose-${tier.key}`}>
+                          <Button type="button" size="sm" block variant="secondary" busy={busy === tier.key} confirm={{ kind: "money", title: t("billing.chooseAsk", { tier: t(`tier.${tier.key}`) }), body: t("billing.chooseAskBody"), confirmLabel: t("billing.choose", { tier: t(`tier.${tier.key}`) }) }} onClick={() => void choose(tier.key)} data-testid={`choose-${tier.key}`}>
                             {t("billing.choose", { tier: t(`tier.${tier.key}`) })}
                           </Button>
                         )}

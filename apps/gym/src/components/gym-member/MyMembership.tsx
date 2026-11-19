@@ -263,7 +263,7 @@ function MyBody({ memberId, health }: { memberId: string; health: Health }) {
       </div>
       <Textarea id="my-medical" label={t("health.medical")} optional={t("optional")} hint={t("health.mineMedicalHint")} value={d.medical} maxLength={500} onChange={(e) => setD({ ...d, medical: e.target.value })} />
       {problem ? <p role="alert" className="text-sm text-danger">{problem}</p> : null}
-      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} className="self-start" data-testid="body-save">
+      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} confirm="save" className="self-start" data-testid="body-save">
         {t("save")}
       </Button>
     </Card>
@@ -298,7 +298,7 @@ function HealthNote({ memberId, note, at }: { memberId: string; note: string | n
       <p className="text-sm text-muted">{t("me.healthNoteBody")}</p>
       <Textarea id="health-note" label={t("me.healthNoteLabel")} value={text} maxLength={500} onChange={(e) => setText(e.target.value)} hint={at ? t("me.healthNoteAt", { date: f.date(at) }) : undefined} />
       {problem ? <p role="alert" className="text-sm text-danger">{problem}</p> : null}
-      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} className="self-start" data-testid="health-save">
+      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} confirm="save" className="self-start" data-testid="health-save">
         {t("save")}
       </Button>
     </Card>

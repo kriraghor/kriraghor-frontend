@@ -139,21 +139,27 @@ function LeadDialog({ ctx, lead, onClose }: { ctx: GymCtx; lead: Lead; onClose: 
         ) : null}
         <div className="flex flex-wrap gap-2">
           {can.joined ? (
-            <Button onClick={() => void update("joined")} disabled={!member} busy={busy === "joined"} data-testid="lead-joined">
+            <Button
+              onClick={() => void update("joined")}
+              disabled={!member}
+              busy={busy === "joined"}
+              confirm={{ kind: "save", title: t("leads.joinedAsk", { name: lead.name, member: member?.displayName ?? "" }), confirmLabel: t("leads.markJoined") }}
+              data-testid="lead-joined"
+            >
               {t("leads.markJoined")}
             </Button>
           ) : null}
           {can.contacted ? (
-            <Button variant="secondary" onClick={() => void update("contacted")} busy={busy === "contacted"}>
+            <Button variant="secondary" onClick={() => void update("contacted")} busy={busy === "contacted"} confirm={{ kind: "save", title: t("leads.contactedAsk", { name: lead.name }), confirmLabel: t("leads.markContacted") }}>
               {t("leads.markContacted")}
             </Button>
           ) : null}
           {can.lost ? (
-            <Button variant="ghost" onClick={() => void update("lost")} busy={busy === "lost"}>
+            <Button variant="ghost" onClick={() => void update("lost")} busy={busy === "lost"} confirm={{ kind: "save", title: t("leads.lostAsk", { name: lead.name }), confirmLabel: t("leads.markLost") }}>
               {t("leads.markLost")}
             </Button>
           ) : null}
-          <Button variant="ghost" onClick={() => void update()} busy={busy === "note"}>
+          <Button variant="ghost" onClick={() => void update()} busy={busy === "note"} confirm="save">
             {t("leads.saveNote")}
           </Button>
         </div>

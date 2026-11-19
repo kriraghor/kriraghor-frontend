@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Plus, Trash } from "@phosphor-icons/react";
-import { Button, Card, Dialog, Field, IconButton, Notice, SegmentedControl } from "@kriraghor/ui/kit";
+import { Button, Card, Dialog, Field, IconButton, Notice, Select } from "@kriraghor/ui/kit";
 import { DatePicker, addDaysYmd, dhakaToday } from "@kriraghor/ui/date";
 import { newKey } from "@kriraghor/ui/format";
 import { BODY_FIELDS, BODY_UNIT, bodyValues, chartPoints, chartRange, emptyDraft, fieldsWithData, seriesOf, type BodyDraft, type BodyEntry, type BodyField, type BodyInput, type BodyProgress } from "@/lib/gym-progress";
@@ -76,10 +76,17 @@ export function BodyProgressView({
         </p>
       ) : (
         <>
-          {have.length > 1 ? (
-            <SegmentedControl size="sm" label={t("show")} value={field} onChange={setPicked} options={have.map((k) => ({ value: k, label: t(`field.${k}`) }))} />
-          ) : null}
-          <p className="text-sm" data-testid="progress-change">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            {have.length > 1 ? (
+              <Select id={`${testId}-field`} label={t("show")} value={field} onChange={(e) => setPicked(e.target.value as BodyField)} className="w-full sm:w-56" data-testid="progress-field">
+                {have.map((k) => (
+                  <option key={k} value={k}>
+                    {t(`field.${k}`)}
+                  </option>
+                ))}
+              </Select>
+            ) : null}
+          <p className="text-sm sm:text-right" data-testid="progress-change">
             {change ? (
               <>
                 <span className="font-bold tabular-nums">{t(change.delta > 0 ? "up" : change.delta < 0 ? "down" : "same", { amount: unit(field, Math.abs(change.delta)) })}</span>{" "}
@@ -89,23 +96,35 @@ export function BodyProgressView({
               <span className="text-muted">{t("oneEntry")}</span>
             )}
           </p>
+          </div>
           <BodyChart title={t(`field.${field}`)} series={seriesOf(data.entries, field)} valueText={(n) => unit(field, n)} dateText={f.date} shortDate={f.short} />
-          <ul className="divide-y divide-line" data-testid="progress-entries">
+          {/* Each entry: the date and who recorded it on one line, then one small tile per measurement. */}
+          <ul className="flex flex-col gap-2" data-testid="progress-entries">
             {newestFirst.map((e) => (
-              <li key={e.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-2 text-sm">
-                <span className="w-28 shrink-0 font-semibold tabular-nums">{f.date(e.measuredOn)}</span>
-                <span className="min-w-0 flex-1 tabular-nums">
-                  {BODY_FIELDS.filter((k) => e[k] != null)
-                    .map((k) => `${t(`short.${k}`)} ${unit(k, e[k] as number)}`)
-                    .join(" · ")}
-                  {e.bmi != null ? <span className="text-muted"> · {t("bmi", { n: f.n(e.bmi) })}</span> : null}
-                </span>
-                {e.byRole === "staff" ? <span className="text-xs text-muted">{t("byGym")}</span> : null}
-                {canRemove(e) ? (
-                  <IconButton label={t("remove")} className="text-danger" onClick={() => (setProblem(null), setRemoving(e))}>
-                    <Trash size={18} aria-hidden />
-                  </IconButton>
-                ) : null}
+              <li key={e.id} className="rounded-control border border-line p-3 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold tabular-nums">{f.date(e.measuredOn)}</span>
+                  {e.byRole === "staff" ? <span className="text-xs text-muted">· {t("byGym")}</span> : null}
+                  {canRemove(e) ? (
+                    <IconButton label={t("remove")} className="-my-2 ml-auto text-danger" onClick={() => (setProblem(null), setRemoving(e))}>
+                      <Trash size={18} aria-hidden />
+                    </IconButton>
+                  ) : null}
+                </div>
+                <dl className="mt-2 grid grid-cols-[repeat(auto-fill,minmax(88px,1fr))] gap-1.5">
+                  {BODY_FIELDS.filter((k) => e[k] != null).map((k) => (
+                    <div key={k} className={`rounded-[8px] px-2 py-1.5 ${k === field ? "bg-brand/10" : "bg-surface-2"}`}>
+                      <dt className="text-[11px] text-muted">{t(`short.${k}`)}</dt>
+                      <dd className="font-semibold tabular-nums">{unit(k, e[k] as number)}</dd>
+                    </div>
+                  ))}
+                  {e.bmi != null ? (
+                    <div className="rounded-[8px] bg-surface-2 px-2 py-1.5">
+                      <dt className="text-[11px] text-muted">BMI</dt>
+                      <dd className="font-semibold tabular-nums">{f.n(e.bmi)}</dd>
+                    </div>
+                  ) : null}
+                </dl>
               </li>
             ))}
           </ul>
@@ -197,7 +216,7 @@ function AddForm({ data, onAdd, onDone }: { data: BodyProgress; onAdd: (body: Bo
           {problem}
         </p>
       ) : null}
-      <Button type="submit" busy={busy} data-testid="progress-save">
+      <Button type="submit" busy={busy} confirm="add" data-testid="progress-save">
         {t("save")}
       </Button>
     </form>

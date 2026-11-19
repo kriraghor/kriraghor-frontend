@@ -225,7 +225,12 @@ function AssetDialog({ ctx, asset, onClose }: { ctx: GymCtx; asset?: Asset; onCl
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy} data-testid="asset-save">
+          <Button
+            onClick={() => void save()}
+            busy={busy}
+            confirm={!asset ? "add" : d.status === "retired" && asset.status !== "retired" ? { kind: "remove", title: t("eq.retireAsk", { name: d.name.trim() || asset.name }), body: t("eq.retireWarn") } : "save"}
+            data-testid="asset-save"
+          >
             {t("save")}
           </Button>
         </div>
@@ -271,6 +276,7 @@ function HistoryDialog({ ctx, asset, onClose }: { ctx: GymCtx; asset: Asset; onC
     }
   };
   const a = q.data?.asset ?? asset;
+  const spend = kind !== "note" && asExpense && cost.trim() ? toPoisha(cost) : null;
   return (
     <Dialog open onOpenChange={(o) => !o && !busy && onClose()} title={a.name} description={[t(`eq.status.${a.status}`), a.nextServiceOn ? t("eq.nextService", { date: f.date(a.nextServiceOn) }) : null].filter(Boolean).join(" · ")} className="max-w-2xl">
       <div className="flex flex-col gap-4 px-6 pb-5">
@@ -304,7 +310,13 @@ function HistoryDialog({ ctx, asset, onClose }: { ctx: GymCtx; asset: Asset; onC
                 {problem}
               </p>
             ) : null}
-            <Button className="self-start" onClick={() => void save()} busy={busy} data-testid="asset-log-save">
+            <Button
+              className="self-start"
+              onClick={() => void save()}
+              busy={busy}
+              confirm={spend ? { kind: "money", title: t("eq.logSpendAsk", { amount: f.taka(spend) }), body: t("eq.logSpendBody", { method: t(`method.${method}`) }) } : "add"}
+              data-testid="asset-log-save"
+            >
               <Wrench size={18} aria-hidden />
               {t("eq.log")}
             </Button>

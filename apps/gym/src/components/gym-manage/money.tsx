@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Receipt as ReceiptIcon } from "@phosphor-icons/react";
 import { newKey } from "@kriraghor/ui/format";
 import { DatePicker } from "@kriraghor/ui/date";
-import { Button, Dialog, Field, Notice, Select, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Button, Dialog, Field, Notice, Select, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { dhakaToday, gymManage, PAY_METHODS, poishaToTakaText, receiptPath, takaToPoisha, type PayMethod, type Payment } from "@/lib/gym-manage";
 import { useFmt, useGymError } from "./common";
 import { put as keepOffline } from "@/lib/desk-db";
@@ -84,6 +84,8 @@ export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, on
   const [amountError, setAmountError] = useState<string>();
   const [receipt, setReceipt] = useState<{ no: string; url: string } | null>(null);
   const tOff = useTranslations("off.pay");
+  const f = useFmt();
+  const ask = useConfirm();
   const copy = useDeskCopy(gymId, { fetch: false });
   const waiting = useWaiting(gymId);
   const taker = useTaker();
@@ -121,6 +123,8 @@ export function PayDialog({ gymId, due, canAdjust, title, open, onOpenChange, on
     if (due.outstandingPoisha !== undefined && body.payment.amountPoisha > due.outstandingPoisha) return setAmountError(t("err.GYM_PAYMENT_EXCEEDS_DUE"));
     setAmountError(undefined);
     setProblem(null);
+    // Asks once the amount is valid, naming the amount and method (tester feedback, 19 Nov 2026).
+    if (!(await ask({ kind: "money", title: t("money.recordAsk", { amount: f.taka(body.payment.amountPoisha), method: t(`method.${body.payment.method}`) }), confirmLabel: t("money.record") }))) return;
     setBusy(true);
     try {
       const r = await gymManage.pay(gymId, due.id, body.payment, key);
@@ -195,6 +199,8 @@ export function WaiveDialog({ gymId, due, open, onOpenChange, onDone }: { gymId:
   const t = useTranslations("gm");
   const err = useGymError();
   const toast = useToast();
+  const f = useFmt();
+  const ask = useConfirm();
   const [taka, setTaka] = useState(poishaToTakaText(due.outstandingPoisha ?? null));
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
@@ -203,6 +209,7 @@ export function WaiveDialog({ gymId, due, open, onOpenChange, onDone }: { gymId:
     const amountPoisha = takaToPoisha(taka);
     if (amountPoisha === null) return setProblem(t("money.badAmount"));
     if (reason.trim().length < 2) return setProblem(t("money.reasonNeeded"));
+    if (!(await ask({ kind: "money", title: t("money.waiveAsk", { amount: f.taka(amountPoisha) }), body: t("money.waiveAskBody"), confirmLabel: t("money.waive") }))) return;
     setBusy(true);
     setProblem(null);
     try {

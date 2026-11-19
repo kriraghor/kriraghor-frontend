@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { DownloadSimple, UploadSimple } from "@phosphor-icons/react";
 import { newKey } from "@kriraghor/ui/format";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Badge, Button, Card, Checkbox, Notice, Skeleton, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, Checkbox, Notice, Skeleton, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
 import { countdown, gymManage, importPreview, importTemplateCsv, secondsLeft, type GymImport } from "@/lib/gym-manage";
@@ -153,22 +153,22 @@ function ImportView({ imp, busy, onApply, onUndo, onDiscard, onInvites }: { imp:
       {imp.invitesSentAt ? <p className="text-sm text-muted">{t("import.invitesSentAt", { date: f.short(imp.invitesSentAt) })}</p> : null}
       <div className="flex flex-wrap gap-2">
         {imp.can.apply ? (
-          <Button type="button" onClick={onApply} busy={busy === "apply"} disabled={!imp.rowsOk} data-testid="import-apply">
+          <Button type="button" onClick={onApply} busy={busy === "apply"} disabled={!imp.rowsOk} confirm={{ kind: "add", title: t("import.applyAsk", { n: imp.rowsOk }) }} data-testid="import-apply">
             {t("import.apply", { n: imp.rowsOk })}
           </Button>
         ) : null}
         {imp.can.undo ? (
-          <Button type="button" variant="secondary" onClick={onUndo} busy={busy === "undo"} data-testid="import-undo">
+          <Button type="button" variant="secondary" onClick={onUndo} busy={busy === "undo"} confirm={{ kind: "remove", title: t("import.undoAsk"), body: t("import.undoBody") }} data-testid="import-undo">
             {t("import.undo")}
           </Button>
         ) : null}
         {imp.can.sendInvites ? (
-          <Button type="button" variant="secondary" onClick={onInvites} busy={busy === "invites"} data-testid="import-invites">
+          <Button type="button" variant="secondary" onClick={onInvites} busy={busy === "invites"} confirm={{ kind: "send", title: t("import.invitesAsk") }} data-testid="import-invites">
             {t("import.sendInvites")}
           </Button>
         ) : null}
         {imp.can.discard ? (
-          <Button type="button" variant="ghost" onClick={onDiscard} busy={busy === "discard"} data-testid="import-discard">
+          <Button type="button" variant="ghost" onClick={onDiscard} busy={busy === "discard"} confirm={{ kind: "remove", title: t("import.discardAsk") }} data-testid="import-discard">
             {t("import.discard")}
           </Button>
         ) : null}
@@ -261,7 +261,9 @@ function Consent({ ctx }: { ctx: GymCtx }) {
   const [now] = useState(() => Date.now());
   const until = s.data?.importConsentUntil ?? null;
   const on = Boolean(until && Date.parse(until) > now);
+  const ask = useConfirm();
   const toggle = async (grant: boolean) => {
+    if (!(await ask(grant ? { kind: "save", title: t("import.consentAskOn"), body: t("import.consentBody") } : { kind: "save", title: t("import.consentAskOff") }))) return;
     setBusy(true);
     setProblem(null);
     try {

@@ -484,7 +484,11 @@
     "gearTitle": "Gym gear",
     "gearLead": "Dumbbells, supplements and gym wear from verified shops, in the Kriraghor shop.",
     "closedToday": "Closed today: {title}",
-    "specialDays": "Holidays and special hours"
+    "specialDays": "Holidays and special hours",
+    "payMonthAsk": "Pay {price} for the next month with {name}?",
+    "payMonthAskBody": "You go to the payment page to finish paying.",
+    "problemAsk": "Send this problem report?",
+    "problemAskBody": "Kriraghor looks into it before the trainer is paid."
   },
   "vendorGym": {
     "gate": "Gyms are for approved gym owners. Apply as a gym owner first.",
@@ -734,8 +738,19 @@
         "GYM_SPECIAL_DAY_LIMIT": "This gym has the most holidays and special hours allowed. Remove one first.",
         "GYM_SPECIAL_DAY_DATES": "Choose days from today on, within the range allowed.",
         "GYM_SPECIAL_DAY_HOURS": "Check the hours: each must close after it opens."
-      }
-    }
+      },
+      "saveAsk": "Save these special hours?"
+    },
+    "submitAsk": "Send the gym for review?",
+    "submitAskBody": "Kriraghor staff check the details and photos, usually within a day.",
+    "pauseAsk": "Pause sales at this gym?",
+    "pauseAskBody": "No new packages are sold online until you resume. Packages already sold keep working.",
+    "resumeAsk": "Start selling at this gym again?",
+    "removePhotoAsk": "Remove this photo?",
+    "removePhotoBody": "It leaves the gym's page at once.",
+    "uploadAsk": "{n, plural, one {Add this photo to the gym?} other {Add these # photos to the gym?}}",
+    "sellOnlineAsk": "Sell {title} online too?",
+    "sellOnlineBody": "Members can then buy it on the gym's page. Its price stays the same."
   },
   "gm": {
     "myGyms": "My gyms",
@@ -1231,7 +1246,12 @@
       "cancelled": "Cancelled: {reason}",
       "daysLeft": "{n, plural, one {# day left} other {# days left}}",
       "frozenDays": "{n} frozen days ({count, plural, one {# freeze} other {# freezes}})",
-      "byMember": "Renewed in the app"
+      "byMember": "Renewed in the app",
+      "assignAsk": "Start this package?",
+      "renewAsk": "Renew this membership?",
+      "changeAsk": "Change the package?",
+      "freezeAsk": "Freeze this membership?",
+      "withPayBody": "The payment is recorded and a receipt is made."
     },
     "msStatus": {
       "upcoming": "Upcoming",
@@ -1289,7 +1309,10 @@
       "amountDue": "Due",
       "paid": "Paid",
       "waivedLabel": "Waived",
-      "outstandingLabel": "Outstanding"
+      "outstandingLabel": "Outstanding",
+      "recordAsk": "Record {amount} paid by {method}?",
+      "waiveAsk": "Waive {amount}?",
+      "waiveAskBody": "The member will no longer owe this amount. It stays on record with your reason."
     },
     "leftReason": {
       "price": "Price",
@@ -1326,7 +1349,8 @@
       "cancel": "Cancel invite",
       "cancelled": "Invite cancelled",
       "empty": "Nothing here",
-      "emptyBody": "Invite a member to link their account from their profile."
+      "emptyBody": "Invite a member to link their account from their profile.",
+      "cancelAsk": "Cancel this invite?"
     },
     "requestStatus": {
       "pending": "Waiting",
@@ -1370,7 +1394,9 @@
         "duplicate_kind": "Only one package of each kind (custom packages can repeat).",
         "too_many_custom": "At most {max} custom packages."
       },
-      "onlineNeeded": "One package sold online is needed to list the gym."
+      "onlineNeeded": "One package sold online is needed to list the gym.",
+      "saveAsk": "Save the packages?",
+      "saveAskBody": "Saving replaces the list. A package you took out stops selling; running memberships keep their price."
     },
     "kind": {
       "day": "Day pass",
@@ -1504,7 +1530,13 @@
         "amount_invalid": "not an amount",
         "end_before_start": "before the start",
         "too_long": "longer than a year"
-      }
+      },
+      "applyAsk": "Import {n, plural, one {# member} other {# members}}?",
+      "undoAsk": "Undo the import?",
+      "invitesAsk": "Send app invites to the imported members?",
+      "discardAsk": "Discard this upload?",
+      "consentAskOn": "Let Kriraghor upload your list?",
+      "consentAskOff": "Take back Kriraghor's permission to upload?"
     },
     "importStatus": {
       "previewed": "Preview",
@@ -1594,7 +1626,9 @@
       "freeStarts": "Your free months start with your first paid plan.",
       "discountUntil": "Then {pct}% off until {date}",
       "placesLeft": "{n, plural, one {# founding place} other {# founding places}} left: free months, then {pct}% off. Ask Kriraghor.",
-      "placesFull": "All founding partner places are taken."
+      "placesFull": "All founding partner places are taken.",
+      "chooseAsk": "Switch to the {tier} plan?",
+      "chooseAskBody": "It covers all your gyms. Each month is billed at the highest plan you chose in it."
     },
     "receipt": {
       "title": "Money receipt",
@@ -1691,7 +1725,12 @@
         "role": "This gym doesn't take fees online yet.",
         "tier": "This gym doesn't take fees online.",
         "restricted": "Online payment is paused for this gym."
-      }
+      },
+      "payAsk": "Pay {amount} online?",
+      "payAskBody": "You go to the payment page to pay with bKash, Nagad or a card.",
+      "acceptAsk": "Link your account to {gym}?",
+      "acceptAskBody": "The gym will see the details listed on this request.",
+      "declineAsk": "Decline the request from {gym}?"
     },
     "online": {
       "badge": "Online",
@@ -1742,7 +1781,13 @@
         "released": "This payment was already released to you",
         "refunded": "Nothing is left to refund on this payment"
       },
-      "windowClosed": "Return the money to the member directly and record a reversal on the counter payment."
+      "windowClosed": "Return the money to the member directly and record a reversal on the counter payment.",
+      "cancelAsk": "Cancel this payment link?",
+      "cancelAskBody": "The member can no longer pay with it.",
+      "createAsk": "Create a payment link for {amount}?",
+      "createSendBody": "It goes to the member as soon as you confirm.",
+      "createQrBody": "It is not sent: you show the QR at the counter.",
+      "refundAsk": "Refund {amount}?"
     },
     "payLink": {
       "notFound": "This link isn't valid",
@@ -1831,7 +1876,9 @@
         "off": "Switched off",
         "no_contact": "No contact",
         "nothing": "Nothing to report"
-      }
+      },
+      "onAsk": "Turn on “{kind}”?",
+      "offAsk": "Turn off “{kind}”?"
     },
     "reports": {
       "title": "Reports",
@@ -1932,7 +1979,9 @@
       "subtotal": "Subtotal",
       "vat": "VAT",
       "total": "Total",
-      "footer": "Kriraghor · kriraghor.com"
+      "footer": "Kriraghor · kriraghor.com",
+      "payAsk": "Pay this invoice of {amount}?",
+      "payAskBody": "You go to the payment page to finish paying."
     },
     "payouts": {
       "lead": "Online fees and subscription sales reach you with the weekly payout. Each line shows Kriraghor's fee, the payment provider's charge and what you get."
@@ -1953,7 +2002,8 @@
       "activePasses": "{n, plural, one {# member still has a paid online package} other {# members still have paid online packages}} at this gym. Wait until they end or cancel them, then remove the gym.",
       "cancel": "Keep the gym",
       "confirm": "Remove for good",
-      "done": "{name} was removed"
+      "done": "{name} was removed",
+      "suspended": "Kriraghor has suspended this gym, so it can't be removed from here. Contact Kriraghor support to remove it."
     },
     "health": {
       "bloodGroup": "Blood group",
@@ -2005,7 +2055,11 @@
       "keep": "Keep it",
       "cancelled": "Renewal cancelled.",
       "later": "You can renew from {date}.",
-      "desk": "This gym takes renewals at the front desk."
+      "desk": "This gym takes renewals at the front desk.",
+      "askOnline": "Renew with {title} and pay {amount} online?",
+      "askOnlineBody": "You go to the payment page to finish paying.",
+      "askCounter": "Renew with {title}?",
+      "askCounterBody": "You pay {amount} at the front desk."
     },
     "body": {
       "title": "Body progress",
@@ -2083,6 +2137,29 @@
       "quickFees": "Take a fee in cash, bKash or by card.",
       "quickImport": "Bring your member list in from a spreadsheet.",
       "todayTitle": "Today at a glance"
+    },
+    "check": {
+      "fix": "Some details need fixing. Check the fields marked in red.",
+      "required": "Fill this in.",
+      "name": "Use 2 to 80 characters, with letters.",
+      "email": "Enter an email like name@example.com.",
+      "phone": "Enter an 11-digit mobile number that starts with 01, for example 01712345678.",
+      "birthDate": "The member must be between 5 and 100 years old.",
+      "ecBoth": "Add the emergency contact's name and phone together.",
+      "photoType": "Choose a JPEG, PNG or WebP photo.",
+      "photoSize": "Choose a photo under 10 MB.",
+      "photoHint": "JPEG, PNG or WebP, up to 10 MB.",
+      "amount": "Enter an amount in taka, like 2500 or 2500.50.",
+      "amountRange": "Enter an amount above 0.",
+      "whole": "Enter a whole number.",
+      "range": "That number is outside the allowed range."
+    },
+    "photo": {
+      "choose": "Upload a photo",
+      "change": "Change",
+      "remove": "Remove the photo",
+      "rules": "JPEG, PNG or WebP, up to 10 MB. It uploads when you save.",
+      "ready": "{size} · uploads when you save"
     }
   },
   "gp": {
@@ -2136,7 +2213,8 @@
       "sentOn": "Sent {date}",
       "asked": "Asked for: {title}",
       "declinedBody": "The gym declined this request.",
-      "cancel": "Cancel request"
+      "cancel": "Cancel request",
+      "cancelAsk": "Cancel your join request to {gym}?"
     },
     "trainers": {
       "title": "Fitness trainers",
@@ -2308,7 +2386,10 @@
       "alreadyOn": "already on it",
       "startsOn": "Start date",
       "endsOn": "End date",
-      "replaceNote": "If a member already has an active one, this {kind} replaces it."
+      "replaceNote": "If a member already has an active one, this {kind} replaces it.",
+      "endAsk": "End this plan for the member?",
+      "endAskBody": "It moves to their earlier plans. Their ticks stay.",
+      "assignAsk": "Assign this plan to {n, plural, one {# member} other {# members}}?"
     },
     "plan": {
       "kind": {
@@ -2386,7 +2467,8 @@
       "saveReply": "Save reply",
       "replyPosted": "Reply posted",
       "replyChanged": "Reply updated",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "replyAsk": "Post this reply publicly?"
     },
     "memberPlans": {
       "title": "Plans",
@@ -2416,7 +2498,8 @@
       "noPlans": "No active plan of this kind yet.",
       "writeOne": "Write one",
       "endsHint": "Optional",
-      "assigned": "Plan assigned"
+      "assigned": "Plan assigned",
+      "assignAsk": "Assign this plan?"
     }
   },
   "go": {
@@ -2483,7 +2566,8 @@
       "voidTitle": "Void this expense?",
       "voidBody": "{amount} for {category} stays on record as void and leaves the totals.",
       "voidBecause": "void: {reason}",
-      "voided": "Expense voided"
+      "voided": "Expense voided",
+      "addAsk": "Record {amount} spent on {category}?"
     },
     "drawer": {
       "title": "Cash drawer",
@@ -2519,7 +2603,10 @@
       "closed": "Drawer closed",
       "closedToday": "Today's drawer is closed. Cash sales and cash paid out wait until tomorrow; other methods still work.",
       "notOpened": "The drawer was not opened that day.",
-      "readOnly": "You can read this day. Only today can be opened or closed."
+      "readOnly": "You can read this day. Only today can be opened or closed.",
+      "openAsk": "Open the drawer with a {amount} float?",
+      "closeAsk": "Close the day with {amount} counted?",
+      "closeAskBody": "After closing, no more cash can be taken today. The count and any difference are kept."
     },
     "pnl": {
       "title": "Profit and loss",
@@ -2577,7 +2664,8 @@
       "reverse": "Reverse sale",
       "reverseTitle": "Reverse this sale?",
       "reverseBody": "The money goes back and the stock returns. The sale stays on record as reversed.",
-      "reversedToast": "Sale reversed"
+      "reversedToast": "Sale reversed",
+      "ask": "Take {amount} by {method} for this sale?"
     },
     "receipt": {
       "title": "Receipt {no}",
@@ -2649,7 +2737,11 @@
       "unitCost": "Cost of one",
       "newBatch": "A new batch (number and best-before date)",
       "noteNeeded": "Say why (counted, damaged, expired…).",
-      "stockSaved": "Stock saved · {n} in stock"
+      "stockSaved": "Stock saved · {n} in stock",
+      "photo": "Photo",
+      "addAsk": "Add “{name}” to the shop?",
+      "retireAsk": "Stop selling “{name}”?",
+      "retireBody": "It leaves the counter. You can sell it again later from Retired."
     },
     "lockers": {
       "title": "Lockers",
@@ -2705,7 +2797,14 @@
       "outOfService": "Mark out of service",
       "outOfServiceDone": "Marked out of service",
       "backToService": "Back in service",
-      "backInService": "Back in service"
+      "backInService": "Back in service",
+      "takeFeeAsk": "Take {amount} for locker {number}?",
+      "takeFeeBody": "It is recorded as paid by {name} in {method}.",
+      "backAsk": "Put locker {number} back in service?",
+      "outAsk": "Mark locker {number} out of service?",
+      "outBody": "It can't be rented until you put it back in service.",
+      "rentAsk": "Rent locker {number} to {name}?",
+      "rentPayBody": "The fee of {amount} is recorded as paid in {method}."
     },
     "ending": {
       "title": "Ending soon",
@@ -2811,7 +2910,10 @@
       "cancelSession": "Cancel session",
       "cancelSessionTitle": "Cancel this session?",
       "cancelSessionBody": "Everyone booked or waiting gets a notice with your reason.",
-      "sessionCancelled": "Session cancelled"
+      "sessionCancelled": "Session cancelled",
+      "cancelBookingAsk": "Cancel {name}'s booking?",
+      "cancelBookingBody": "The place goes to the next person on the waitlist.",
+      "bookAsk": "Book {name} into this session?"
     },
     "rewards": {
       "title": "Reward points",
@@ -2863,7 +2965,10 @@
       "retire": "Stop offering",
       "restore": "Offer again",
       "rowBad": "Check the reward \"{title}\": points and a value are needed.",
-      "saved": "Rewards saved"
+      "saved": "Rewards saved",
+      "redeemAsk": "Redeem “{title}” for {n} points?",
+      "redeemBody": "The points come off {name}'s balance.",
+      "redeemYes": "Redeem"
     },
     "notices": {
       "title": "Notices",
@@ -2894,7 +2999,9 @@
       "noSms": "Members with the app get a push; others with an email get an email. No SMS.",
       "history": "Sent notices",
       "none": "No notices sent yet",
-      "toN": "To {n}"
+      "toN": "To {n}",
+      "sendAsk": "Send this notice to {n} members?",
+      "sendBody": "It goes out in the app and by email at once and can't be taken back."
     },
     "leads": {
       "title": "Enquiries",
@@ -2922,7 +3029,10 @@
       "markContacted": "Mark contacted",
       "markLost": "Mark lost",
       "saveNote": "Save note",
-      "saved": "Enquiry updated"
+      "saved": "Enquiry updated",
+      "joinedAsk": "Mark {name} as joined, as member {member}?",
+      "contactedAsk": "Mark {name} as contacted?",
+      "lostAsk": "Mark {name} as lost?"
     },
     "my": {
       "classesTitle": "Classes",
@@ -2942,7 +3052,11 @@
       "waitingToast": "You are on the waitlist; we tell you if a place frees up",
       "pointsTitle": "My points",
       "howToEarn": "{checkin} points a visit, {bonus} bonus for {days} days in a row, {referral} when a friend you bring pays.",
-      "redeemAtDesk": "Ask at the front desk to redeem a reward."
+      "redeemAtDesk": "Ask at the front desk to redeem a reward.",
+      "bookAsk": "Book a place in {name}?",
+      "waitlistAsk": "Join the waitlist for {name}?",
+      "cancelAsk": "Cancel your place in {name}?",
+      "cancelAskBody": "Your place goes to the next person on the waitlist."
     },
     "page": {
       "classes": "Class timetable",
@@ -3115,7 +3229,9 @@
       "lateCol": "Late",
       "missedCol": "Missed",
       "left": "left",
-      "reportHint": "A clock-in that closed by itself after many hours counts no time. Today's shifts count once the day is over."
+      "reportHint": "A clock-in that closed by itself after many hours counts no time. Today's shifts count once the day is over.",
+      "clockInAsk": "Clock {name} in now?",
+      "clockOutAsk": "Clock {name} out now?"
     },
     "my": {
       "title": "My work",
@@ -3204,7 +3320,12 @@
       "method": "Paid by",
       "fromDrawer": "Paid from today's cash drawer",
       "markPaid": "Mark paid",
-      "paidToast": "{name} marked paid"
+      "paidToast": "{name} marked paid",
+      "draftAsk": "Draft the payroll for {month}?",
+      "recalcAsk": "Recalculate the draft with the latest numbers?",
+      "approveAsk": "Approve the {month} payroll of {total}?",
+      "approveAskBody": "The amounts are frozen and each person can then be paid. Bonuses and deductions can't be changed after this.",
+      "payAsk": "Mark {amount} paid to {name} by {method}?"
     },
     "payslip": {
       "title": "Payslip",
@@ -3286,7 +3407,10 @@
       "logged": "Saved to the history",
       "noHistory": "Nothing logged yet.",
       "statusTo": "Status: {status}",
-      "inExpenses": "in the expenses"
+      "inExpenses": "in the expenses",
+      "retireAsk": "Retire “{name}”?",
+      "logSpendAsk": "Save this and record {amount} as an expense?",
+      "logSpendBody": "The expense is paid by {method}."
     }
   },
   "gv": {
@@ -3379,7 +3503,9 @@
       "dayList": "Guests ({n})",
       "off": "Visits off",
       "none": "No guests booked.",
-      "noneOff": "Free visits are off. Switch them on in Settings."
+      "noneOff": "Free visits are off. Switch them on in Settings.",
+      "makeMemberAsk": "Make {name} a member?",
+      "makeMemberBody": "They are added to your member list. Add a package from their profile."
     },
     "dash": {
       "guestsToday": "Guests today"
@@ -3456,7 +3582,13 @@
       "overdue": "Fee overdue",
       "receipt": "Payment receipt",
       "pay_link": "Payment link"
-    }
+    },
+    "onAsk": "Switch the SMS add-on on?",
+    "buyAsk": "Buy {n} SMS for {price}?",
+    "buyYes": "Go to payment",
+    "kindOnAsk": "Send “{kind}” by SMS too?",
+    "kindOnAskBody": "Each message uses SMS from your balance.",
+    "kindOffAsk": "Stop sending “{kind}” by SMS?"
   },
   "gd": {
     "lock": {
@@ -3653,7 +3785,9 @@
         "applied_to_due": "Put on another due by {name}",
         "returned": "Cash given back, recorded by {name}"
       },
-      "someone": "someone"
+      "someone": "someone",
+      "applyAsk": "Put {amount} on another due of {name}?",
+      "returnedAsk": "Record that the {amount} cash went back?"
     }
   }
 }

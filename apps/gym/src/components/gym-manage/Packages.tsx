@@ -124,7 +124,7 @@ function Rows({ ctx, g }: { ctx: GymCtx; g: OwnerGym }) {
         <Button type="button" variant="secondary" icon={<Plus size={16} aria-hidden />} onClick={() => setRows([...rows, blankRow(nextKind, t(`kindTitle.${nextKind}`), defaultChannel)])} data-testid="package-add">
           {t("packages.add")}
         </Button>
-        <Button type="button" onClick={save} busy={busy} data-testid="packages-save">
+        <Button type="button" onClick={save} busy={busy} confirm={packagesPayload(rows, g.limits.maxCustomPackages).ok ? { kind: "save", title: t("packages.saveAsk"), body: t("packages.saveAskBody") } : undefined} data-testid="packages-save">
           {t("packages.save")}
         </Button>
       </div>

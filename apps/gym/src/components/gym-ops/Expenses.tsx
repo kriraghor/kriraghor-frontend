@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CaretLeft, CaretRight, DotsThreeVertical, Plus, Tag, Wallet } from "@phosphor-icons/react";
-import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Menu, Notice, ReasonDialog, Select, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Menu, Notice, ReasonDialog, Select, SkeletonList, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { DatePicker } from "@kriraghor/ui/date";
 import { newKey } from "@kriraghor/ui/format";
 import { cn } from "@kriraghor/ui/cn";
@@ -226,6 +226,8 @@ function AddExpense({ ctx, categories, onClose, onDone }: { ctx: GymCtx; categor
   const err = useGymError();
   const toast = useToast();
   const today = dhakaToday();
+  const f = useFmt();
+  const ask = useConfirm();
   const [key] = useState(newKey);
   const [d, setD] = useState({ categoryId: categories[0]?.id ?? "", taka: "", spentOn: today, method: "cash" as ExpenseMethod, fromDrawer: true, payee: "", note: "" });
   const [busy, setBusy] = useState(false);
@@ -235,6 +237,9 @@ function AddExpense({ ctx, categories, onClose, onDone }: { ctx: GymCtx; categor
     setProblem(null);
     if (!d.categoryId) return setProblem(t("expenses.pickCategory"));
     if (amount == null) return setProblem(t("amountBad"));
+    const fromDrawer = d.method === "cash" && d.spentOn === today && d.fromDrawer;
+    const category = categories.find((c) => c.id === d.categoryId)?.name ?? "";
+    if (!(await ask({ kind: "money", title: t("expenses.addAsk", { amount: f.taka(amount), category }), body: fromDrawer ? t("expenses.fromDrawer") : undefined }))) return;
     setBusy(true);
     try {
       await gymOps.addExpense(
@@ -335,7 +340,7 @@ function CategoriesDialog({ ctx, categories, onClose, onDone }: { ctx: GymCtx; c
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy}>
+          <Button onClick={() => void save()} busy={busy} confirm="save">
             {t("save")}
           </Button>
         </>

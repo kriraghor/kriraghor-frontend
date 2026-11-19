@@ -128,7 +128,7 @@ function Fields({ ctx, s }: { ctx: GymCtx; s: GymSettings }) {
       <Visits ctx={ctx} s={s} d={d} setD={setD} />
       {problem ? <Notice tone="error">{problem}</Notice> : null}
       <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit" busy={busy} data-testid="settings-save">
+        <Button type="submit" busy={busy} confirm={codeOk && Object.keys(settingsPatch(s, d)).length ? "save" : undefined} data-testid="settings-save">
           {t("save")}
         </Button>
         <Link href={`/manage/${ctx.gymId}/packages`} className="text-sm font-semibold underline">

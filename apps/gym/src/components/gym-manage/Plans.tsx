@@ -185,7 +185,7 @@ function NewForm({ ctx, kind }: { ctx: GymCtx; kind: PlanKind }) {
       </Card>
       <PlanEditor value={content} onChange={setContent} problems={shown} />
       <SaveBar problem={problem}>
-        <Button type="button" onClick={save} busy={busy} data-testid="plan-save">
+        <Button type="button" onClick={save} busy={busy} confirm={title.trim().length >= 2 && !planProblems(content).length ? "add" : undefined} data-testid="plan-save">
           {t("create")}
         </Button>
       </SaveBar>
@@ -310,7 +310,7 @@ function EditForm({ ctx, plan }: { ctx: GymCtx; plan: PlanDetail }) {
           <Button type="button" variant="ghost" disabled={!changed || Boolean(busy)} onClick={() => (setContent(plan.content), setTitle(plan.title), setIsTemplate(plan.isTemplate), setShown([]), setProblem(null))}>
             {t("undo")}
           </Button>
-          <Button type="button" onClick={() => void save()} busy={busy === "save"} disabled={!changed} data-testid="plan-save">
+          <Button type="button" onClick={() => void save()} busy={busy === "save"} disabled={!changed} confirm={title.trim().length < 2 || (contentChanged && (planProblems(content).length > 0 || plan.activeAssignments > 0)) ? undefined : "save"} data-testid="plan-save">
             {contentChanged ? t("saveVersion", { n: plan.currentVersion + 1 }) : t("save")}
           </Button>
         </SaveBar>
@@ -794,7 +794,7 @@ function Adherence({ ctx, plan, onChange }: { ctx: GymCtx; plan: PlanDetail; onC
       header: "",
       label: t("end"),
       cell: (a) => (
-        <Button type="button" size="sm" variant="ghost" busy={busy === a.id} onClick={() => void end(a.id)} data-testid="plan-end">
+        <Button type="button" size="sm" variant="ghost" busy={busy === a.id} onClick={() => void end(a.id)} confirm={{ kind: "remove", title: t("endAsk"), body: t("endAskBody") }} data-testid="plan-end">
           {t("end")}
         </Button>
       ),
@@ -863,7 +863,7 @@ function AssignDialog({ ctx, plan, onClose, onDone }: { ctx: GymCtx; plan: PlanD
           <Button type="button" variant="ghost" onClick={onClose}>
             {t("cancel")}
           </Button>
-          <Button type="button" onClick={submit} busy={busy} disabled={!picked.size} data-testid="plan-assign-submit">
+          <Button type="button" onClick={submit} busy={busy} disabled={!picked.size} confirm={{ kind: "add", title: t("assignAsk", { n: picked.size }) }} data-testid="plan-assign-submit">
             {t("assignN", { n: picked.size })}
           </Button>
         </>

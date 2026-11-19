@@ -134,7 +134,13 @@ function Body({ ctx }: { ctx: GymCtx }) {
             {problem}
           </p>
         ) : null}
-        <Button onClick={() => void send()} busy={busy} disabled={!reachable || capped} data-testid="notice-send">
+        <Button
+          onClick={() => void send()}
+          busy={busy}
+          disabled={!reachable || capped}
+          confirm={segment && title.trim() && body.trim() ? { kind: "send", title: t("notices.sendAsk", { n: f.n(reachable) }), body: t("notices.sendBody") } : undefined}
+          data-testid="notice-send"
+        >
           <Megaphone size={18} aria-hidden />
           {t("notices.send", { n: f.n(reachable) })}
         </Button>

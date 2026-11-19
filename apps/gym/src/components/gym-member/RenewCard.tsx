@@ -178,7 +178,19 @@ function RenewForm({ memberId, r, onDone }: { memberId: string; r: MyRenewal; on
           {problem}
         </p>
       ) : null}
-      <Button type="submit" busy={busy} disabled={!chosen} data-testid="renew-send">
+      <Button
+        type="submit"
+        busy={busy}
+        disabled={!chosen}
+        confirm={
+          chosen
+            ? pay === "online"
+              ? { kind: "money", title: t("askOnline", { title: chosen.title, amount: f.taka(chosen.pricePoisha) }), body: t("askOnlineBody"), confirmLabel: t("sendOnline", { amount: f.taka(chosen.pricePoisha) }) }
+              : { kind: "add", title: t("askCounter", { title: chosen.title }), body: t("askCounterBody", { amount: f.taka(chosen.pricePoisha) }), confirmLabel: t("sendCounter") }
+            : undefined
+        }
+        data-testid="renew-send"
+      >
         {chosen ? (pay === "online" ? t("sendOnline", { amount: f.taka(chosen.pricePoisha) }) : t("sendCounter")) : t("open")}
       </Button>
     </form>

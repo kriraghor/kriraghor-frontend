@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { BellRinging, ChatText } from "@phosphor-icons/react";
-import { Badge, Card, EmptyState, Notice, Skeleton, useToast } from "@kriraghor/ui/kit";
+import { Badge, Card, EmptyState, Notice, Skeleton, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { gymManage } from "@/lib/gym-manage";
@@ -43,7 +43,9 @@ function Page({ ctx, r }: { ctx: GymCtx; r: RemindersPage }) {
   const toast = useToast();
   const [busy, setBusy] = useState<ReminderKind | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
+  const ask = useConfirm();
   const flip = async (kind: ReminderKind, on: boolean) => {
+    if (!(await ask({ kind: "save", title: t(on ? "reminders.onAsk" : "reminders.offAsk", { kind: t(`reminders.kind.${kind}`) }) }))) return;
     setBusy(kind);
     setProblem(null);
     try {
@@ -175,7 +177,9 @@ function SmsKinds({ ctx, r }: { ctx: GymCtx; r: RemindersPage }) {
   const qc = useQueryClient();
   const toast = useToast();
   const [busy, setBusy] = useState<string | null>(null);
+  const ask = useConfirm();
   const flip = async (kind: string, on: boolean) => {
+    if (!(await ask(on ? { kind: "save", title: t("kindOnAsk", { kind: t(`kinds.${kind}`) }), body: t("kindOnAskBody") } : { kind: "save", title: t("kindOffAsk", { kind: t(`kinds.${kind}`) }) }))) return;
     setBusy(kind);
     try {
       await gymManage.saveSettings(ctx.gymId, { smsKinds: smsKindsAfter(r.sms.kinds, r.sms.choosable, kind, on) as SmsKind[] });

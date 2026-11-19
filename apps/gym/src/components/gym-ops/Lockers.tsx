@@ -139,7 +139,7 @@ function AddLockers({ ctx, onClose, onDone }: { ctx: GymCtx; onClose: () => void
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy} data-testid="lockers-save">
+          <Button onClick={() => void save()} busy={busy} confirm="add" data-testid="lockers-save">
             {list ? t("lockers.addN", { n: list.length }) : t("lockers.add")}
           </Button>
         </>
@@ -225,7 +225,12 @@ function LockerDialog({ ctx, locker, onClose, onDone }: { ctx: GymCtx; locker: L
                       </option>
                     ))}
                   </Select>
-                  <Button onClick={() => void run(() => gymOps.collect(ctx.gymId, r.id, method, collectKey), t("lockers.feeTaken"))} busy={busy} data-testid="locker-collect">
+                  <Button
+                    onClick={() => void run(() => gymOps.collect(ctx.gymId, r.id, method, collectKey), t("lockers.feeTaken"))}
+                    busy={busy}
+                    confirm={{ kind: "money", title: t("lockers.takeFeeAsk", { amount: f.taka(r.feePoisha), number: locker.number }), body: t("lockers.takeFeeBody", { name: r.member.displayName, method: t(`method.${method}`) }) }}
+                    data-testid="locker-collect"
+                  >
                     {t("lockers.takeFee", { amount: f.taka(r.feePoisha) })}
                   </Button>
                 </div>
@@ -235,13 +240,13 @@ function LockerDialog({ ctx, locker, onClose, onDone }: { ctx: GymCtx; locker: L
               </Button>
             </>
           ) : locker.status === "out_of_service" ? (
-            <Button onClick={() => void toggleService()} busy={busy}>
+            <Button onClick={() => void toggleService()} busy={busy} confirm={{ kind: "save", title: t("lockers.backAsk", { number: locker.number }) }}>
               {t("lockers.backToService")}
             </Button>
           ) : (
             <>
               <RentForm ctx={ctx} locker={locker} onDone={onDone} onClose={onClose} />
-              <Button variant="ghost" onClick={() => void toggleService()} disabled={busy} className="self-start">
+              <Button variant="ghost" onClick={() => void toggleService()} disabled={busy} className="self-start" confirm={{ kind: "save", title: t("lockers.outAsk", { number: locker.number }), body: t("lockers.outBody") }}>
                 {t("lockers.outOfService")}
               </Button>
             </>
@@ -284,6 +289,7 @@ function RentForm({ ctx, locker, onDone, onClose }: { ctx: GymCtx; locker: Locke
   const [method, setMethod] = useState<SaleMethod>("cash");
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
+  const feeNow = takaToPoisha(shownFee || "0", { allowZero: true });
   const rent = async () => {
     if (!member) return setProblem(t("lockers.pickMember"));
     const feePoisha = takaToPoisha(shownFee || "0", { allowZero: true });
@@ -323,7 +329,16 @@ function RentForm({ ctx, locker, onDone, onClose }: { ctx: GymCtx; locker: Locke
           {problem}
         </p>
       ) : null}
-      <Button onClick={() => void rent()} busy={busy} data-testid="locker-rent">
+      <Button
+        onClick={() => void rent()}
+        busy={busy}
+        confirm={
+          member && feeNow != null
+            ? { kind: collectNow && feeNow > 0 ? "money" : "add", title: t("lockers.rentAsk", { number: locker.number, name: member.displayName }), body: collectNow && feeNow > 0 ? t("lockers.rentPayBody", { amount: f.taka(feeNow), method: t(`method.${method}`) }) : undefined }
+            : undefined
+        }
+        data-testid="locker-rent"
+      >
         {t("lockers.rent")}
       </Button>
     </div>

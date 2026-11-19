@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowsClockwise, CheckCircle, Money, PencilSimple, Receipt } from "@phosphor-icons/react";
-import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, SegmentedControl, Select, SkeletonList, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, SegmentedControl, Select, SkeletonList, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { newKey } from "@kriraghor/ui/format";
 import { dhakaToday } from "@/lib/gym-manage";
 import { bpsToPct, gymStaff, hoursText, PAY_METHODS, pctToBps, shiftMonth, thisMonth, type PayMethod, type PayrollLine, type PayrollRun, type PayTerms } from "@/lib/gym-staff";
@@ -138,7 +138,7 @@ function TermsDialog({ ctx, item, limits, onClose }: { ctx: GymCtx; item: PayTer
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy} data-testid="terms-save">
+          <Button onClick={() => void save()} busy={busy} confirm="save" data-testid="terms-save">
             {t("save")}
           </Button>
         </div>
@@ -189,7 +189,7 @@ function Months({ ctx }: { ctx: GymCtx }) {
             );
           })}
         </Select>
-        <Button onClick={() => void draft()} busy={busy} data-testid="payroll-draft">
+        <Button onClick={() => void draft()} busy={busy} confirm={{ kind: "add", title: t("payroll.draftAsk", { month: f.month(period) }), confirmLabel: t("payroll.draft") }} data-testid="payroll-draft">
           <Money size={18} aria-hidden />
           {t("payroll.draft")}
         </Button>
@@ -277,11 +277,11 @@ function RunView({ ctx, runId, onBack }: { ctx: GymCtx; runId: string; onBack: (
         <div className="flex flex-wrap gap-2">
           {r.status === "draft" ? (
             <>
-              <Button variant="secondary" busy={busy === "recalc"} onClick={() => void act("recalc", () => gymStaff.recalculate(ctx.gymId, runId), t("payroll.recalculated"))}>
+              <Button variant="secondary" busy={busy === "recalc"} confirm={{ kind: "save", title: t("payroll.recalcAsk"), body: t("payroll.draftNotice"), confirmLabel: t("payroll.recalculate") }} onClick={() => void act("recalc", () => gymStaff.recalculate(ctx.gymId, runId), t("payroll.recalculated"))}>
                 <ArrowsClockwise size={18} aria-hidden />
                 {t("payroll.recalculate")}
               </Button>
-              <Button busy={busy === "approve"} onClick={() => void act("approve", () => gymStaff.approve(ctx.gymId, runId), t("payroll.approved"))} data-testid="payroll-approve">
+              <Button busy={busy === "approve"} confirm={{ kind: "money", title: t("payroll.approveAsk", { month: f.month(r.period), total: f.taka(r.totalNetPoisha) }), body: t("payroll.approveAskBody"), confirmLabel: t("payroll.approve") }} onClick={() => void act("approve", () => gymStaff.approve(ctx.gymId, runId), t("payroll.approved"))} data-testid="payroll-approve">
                 <CheckCircle size={18} aria-hidden />
                 {t("payroll.approve")}
               </Button>
@@ -415,7 +415,7 @@ function LineDialog({ ctx, runId, line, onDone, onClose }: { ctx: GymCtx; runId:
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy} data-testid="line-save">
+          <Button onClick={() => void save()} busy={busy} confirm="save" data-testid="line-save">
             {t("save")}
           </Button>
         </div>
@@ -429,12 +429,15 @@ function PayDialog({ ctx, runId, line, onDone, onClose }: { ctx: GymCtx; runId: 
   const f = useFmt();
   const err = useGymError();
   const toast = useToast();
+  const ask = useConfirm();
   const [method, setMethod] = useState<PayMethod>("cash");
   const [fromDrawer, setFromDrawer] = useState(false);
   const [key] = useState(newKey);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const pay = async () => {
+    const drawer = method === "cash" && fromDrawer;
+    if (!(await ask({ kind: "money", title: t("payroll.payAsk", { name: line.staff.name ?? "–", amount: f.taka(line.netPoisha), method: t(`method.${method}`) }), body: drawer ? t("payroll.fromDrawer") : t("payroll.payHint"), confirmLabel: t("payroll.markPaid") }))) return;
     setBusy(true);
     setProblem(null);
     try {

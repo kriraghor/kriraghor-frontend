@@ -132,6 +132,11 @@ function GymCard({ g }: { g: ManageGym }) {
             {t("nav.members")}
           </ButtonLink>
         ) : null}
+        {g.role === "owner" ? (
+          <ButtonLink href={`/manage/${g.id}/settings#gm-remove`} size="sm" variant="ghost" className="ml-auto text-danger" data-testid="gym-remove-link">
+            {t("remove.open")}
+          </ButtonLink>
+        ) : null}
       </div>
     </Card>
   );
@@ -191,7 +196,7 @@ function AddGym({ onClose }: { onClose: () => void }) {
         </div>
       ) : null}
       <div className="flex gap-2 md:col-span-2">
-        <Button type="submit" busy={busy}>
+        <Button type="submit" busy={busy} confirm="add">
           {tv("form.create")}
         </Button>
         <Button type="button" variant="secondary" onClick={onClose}>

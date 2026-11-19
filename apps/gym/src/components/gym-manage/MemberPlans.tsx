@@ -134,7 +134,7 @@ function Current({ ctx, kind, item, manage, onAssign }: { ctx: GymCtx; kind: Pla
           <Button type="button" size="sm" variant="secondary" onClick={onAssign} data-testid={`member-plan-change-${kind}`}>
             {t("change")}
           </Button>
-          <Button type="button" size="sm" variant="ghost" busy={busy} onClick={() => void end()} data-testid={`member-plan-end-${kind}`}>
+          <Button type="button" size="sm" variant="ghost" busy={busy} onClick={() => void end()} confirm={{ kind: "remove", title: tp("endAsk"), body: tp("endAskBody") }} data-testid={`member-plan-end-${kind}`}>
             {tp("end")}
           </Button>
         </div>
@@ -204,7 +204,7 @@ function AssignDialog({ ctx, memberId, kind, replacing, onClose }: { ctx: GymCtx
           <Button type="button" variant="ghost" onClick={onClose}>
             {tp("cancel")}
           </Button>
-          <Button type="button" onClick={() => void submit()} busy={busy} disabled={!planId} data-testid="member-plan-assign-submit">
+          <Button type="button" onClick={() => void submit()} busy={busy} disabled={!planId} confirm={{ kind: "add", title: t("assignAsk"), body: replacing ? t("replaces", { title: replacing.title }) : undefined }} data-testid="member-plan-assign-submit">
             {t("assign")}
           </Button>
         </>

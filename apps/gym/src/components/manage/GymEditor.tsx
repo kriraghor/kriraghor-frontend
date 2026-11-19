@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, Check, ImageSquare, Trash } from "@phosphor-icons/react";
-import { Button, ButtonLink, Card, Chip, ChecklistCard, IconButton, Notice, type ChecklistStep } from "@kriraghor/ui/kit";
+import { Button, ButtonLink, Card, Chip, ChecklistCard, IconButton, Notice, useConfirm, type ChecklistStep } from "@kriraghor/ui/kit";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@kriraghor/ui/format";
@@ -130,17 +130,23 @@ export function GymEditor({ id }: { id: string }) {
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2" data-testid="gym-actions">
         {canSend ? (
-          <Button type="button" busy={busy} onClick={() => act(() => gymDesk.submit(id), t("sent"))} data-testid="submit-gym">
+          <Button
+            type="button"
+            busy={busy}
+            confirm={{ kind: "send", title: t("submitAsk"), body: t("submitAskBody"), confirmLabel: actions.includes("submit") ? t("submit") : t("submitEdit") }}
+            onClick={() => act(() => gymDesk.submit(id), t("sent"))}
+            data-testid="submit-gym"
+          >
             {actions.includes("submit") ? t("submit") : t("submitEdit")}
           </Button>
         ) : null}
         {actions.includes("pause") ? (
-          <Button type="button" variant="secondary" disabled={busy} onClick={() => act(() => gymDesk.pause(id), t("paused"))}>
+          <Button type="button" variant="secondary" disabled={busy} confirm={{ kind: "save", title: t("pauseAsk"), body: t("pauseAskBody"), confirmLabel: t("pause") }} onClick={() => act(() => gymDesk.pause(id), t("paused"))}>
             {t("pause")}
           </Button>
         ) : null}
         {actions.includes("resume") ? (
-          <Button type="button" variant="secondary" disabled={busy} onClick={() => act(() => gymDesk.resume(id), t("resumed"))}>
+          <Button type="button" variant="secondary" disabled={busy} confirm={{ kind: "save", title: t("resumeAsk"), confirmLabel: t("resume") }} onClick={() => act(() => gymDesk.resume(id), t("resumed"))}>
             {t("resume")}
           </Button>
         ) : null}
@@ -259,7 +265,7 @@ function Basics({ g, locked }: { g: OwnerGym; locked: boolean }) {
         </fieldset>
         <Said msg={msg} />
         <div>
-          <Button type="submit" variant="secondary" disabled={locked} busy={busy}>
+          <Button type="submit" variant="secondary" disabled={locked} busy={busy} confirm="save">
             {t("save")}
           </Button>
         </div>
@@ -271,6 +277,7 @@ function Basics({ g, locked }: { g: OwnerGym; locked: boolean }) {
 function Photos({ g, locked }: { g: OwnerGym; locked: boolean }) {
   const t = useTranslations("vendorGym");
   const { msg, busy, run } = useRunner(g.id);
+  const ask = useConfirm();
   const ids = g.photos.map((p) => p.id);
   const full = g.photos.length >= g.limits.maxPhotos;
   const move = (i: number, d: number) => {
@@ -296,7 +303,11 @@ function Photos({ g, locked }: { g: OwnerGym; locked: boolean }) {
                 <IconButton label={t("moveRight")} disabled={locked || busy || i === g.photos.length - 1} className="disabled:opacity-40" onClick={() => void move(i, 1)}>
                   <ArrowRight size={18} aria-hidden />
                 </IconButton>
-                <IconButton label={t("remove")} disabled={locked || busy} className="text-danger disabled:opacity-40" onClick={() => void run(() => gymDesk.removePhoto(g.id, p.id))}>
+                <IconButton label={t("remove")} disabled={locked || busy} className="text-danger disabled:opacity-40" onClick={async () => {
+                    if (!(await ask({ kind: "remove", title: t("removePhotoAsk"), body: t("removePhotoBody") }))) return;
+                    void run(() => gymDesk.removePhoto(g.id, p.id));
+                  }}
+                >
                   <Trash size={18} aria-hidden />
                 </IconButton>
               </span>
@@ -318,6 +329,7 @@ function Photos({ g, locked }: { g: OwnerGym; locked: boolean }) {
             onChange={async (e) => {
               const files = [...(e.target.files ?? [])];
               e.target.value = "";
+              if (!files.length || !(await ask({ kind: "add", title: t("uploadAsk", { n: files.length }) }))) return;
               for (const file of files) if (!(await run(() => gymDesk.uploadPhoto(g.id, file)))) break;
             }}
           />
@@ -393,7 +405,7 @@ function WeekHours({ g, locked }: { g: OwnerGym; locked: boolean }) {
           })}
         </fieldset>
         <Said msg={msg} />
-        <Button type="submit" variant="secondary" className="mt-3" disabled={locked || problems.length > 0} busy={busy}>
+        <Button type="submit" variant="secondary" className="mt-3" disabled={locked || problems.length > 0} busy={busy} confirm="save">
           {t("saveHours")}
         </Button>
       </form>
@@ -446,7 +458,15 @@ function Packages({ g, locked }: { g: OwnerGym; locked: boolean }) {
       {state === "desk" && toSell ? (
         <div className="mt-3" data-testid="online-desk-only">
           <Notice tone="warning">{t("onlineDesk")}</Notice>
-          <Button type="button" className="mt-3" disabled={locked} busy={busy} onClick={sellOnline} data-testid="sell-online">
+          <Button
+            type="button"
+            className="mt-3"
+            disabled={locked}
+            busy={busy}
+            confirm={{ kind: "save", title: t("sellOnlineAsk", { title: toSell.title }), body: t("sellOnlineBody") }}
+            onClick={sellOnline}
+            data-testid="sell-online"
+          >
             {t("sellOnline", { title: toSell.title })}
           </Button>
         </div>

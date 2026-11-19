@@ -77,7 +77,7 @@ function Off({ addon }: { addon: SmsAddon }) {
         {addon.included ? <span className="text-muted"> · {t("included", { n: f.n(addon.included) })}</span> : null}
       </p>
       {s.problem ? <Notice tone="error">{s.problem}</Notice> : null}
-      <Button type="button" className="self-start" busy={s.busy} onClick={() => void s.run(true)} data-testid="sms-on">
+      <Button type="button" className="self-start" busy={s.busy} onClick={() => void s.run(true)} confirm={{ kind: "save", title: t("onAsk"), body: t("billedNote"), confirmLabel: t("switchOn") }} data-testid="sms-on">
         {t("switchOn")}
       </Button>
       <p className="text-xs text-muted">{t("billedNote")}</p>
@@ -155,7 +155,7 @@ function On({ addon }: { addon: SmsAddon }) {
             <IconButton label={t("more")} variant="secondary" onClick={() => setBundles(clampBundles(bundles + 1))} disabled={bundles >= 20}>
               <Plus size={16} aria-hidden />
             </IconButton>
-            <Button type="button" busy={buying} onClick={() => void buy()} data-testid="sms-buy-go">
+            <Button type="button" busy={buying} onClick={() => void buy()} confirm={{ kind: "money", title: t("buyAsk", { n: f.n(bundles * addon.bundle.size), price: f.taka(bundles * addon.bundle.pricePoisha) }), body: t("buyNote", { days: f.n(addon.bundle.validDays) }), confirmLabel: t("buyYes") }} data-testid="sms-buy-go">
               {t("buy", { n: f.n(bundles * addon.bundle.size), price: f.taka(bundles * addon.bundle.pricePoisha) })}
             </Button>
           </div>

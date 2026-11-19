@@ -96,6 +96,10 @@ export function PaymentLinkDialog({ gymId, due, owner, tierLocked, title, open, 
     await qc.invalidateQueries({ queryKey: ["gm-links", gymId, due.id] });
     onDone?.();
   };
+  // Asks first (19 Nov 2026): the amount, and whether it goes out to the member now.
+  const askAmount = takaToPoisha(taka);
+  const sending = linkChannels(inApp, email, smsOn && bySms).length > 0;
+  const linkAsk = askAmount === null || (due.outstandingPoisha !== undefined && askAmount > due.outstandingPoisha) ? undefined : { kind: sending ? ("send" as const) : ("add" as const), title: t("online.createAsk", { amount: f.taka(askAmount) }), body: sending ? t("online.createSendBody") : t("online.createQrBody") };
   const create = async () => {
     const amountPoisha = takaToPoisha(taka);
     if (amountPoisha === null) return setProblem({ text: t("money.badAmount") });
@@ -146,7 +150,7 @@ export function PaymentLinkDialog({ gymId, due, owner, tierLocked, title, open, 
       footer={
         current ? (
           <>
-            <Button type="button" variant="ghost" onClick={() => void cancel(current)} busy={busy} data-testid="link-cancel">
+            <Button type="button" variant="ghost" onClick={() => void cancel(current)} busy={busy} confirm={{ kind: "remove", title: t("online.cancelAsk"), body: t("online.cancelAskBody") }} data-testid="link-cancel">
               {t("online.cancelLink")}
             </Button>
             <Button type="button" onClick={() => onOpenChange(false)}>
@@ -158,7 +162,7 @@ export function PaymentLinkDialog({ gymId, due, owner, tierLocked, title, open, 
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={busy}>
               {t("cancel")}
             </Button>
-            <Button type="button" onClick={() => void create()} busy={busy} disabled={links.isPending || Boolean(problem?.reason)} data-testid="link-create">
+            <Button type="button" onClick={() => void create()} busy={busy} disabled={links.isPending || Boolean(problem?.reason)} confirm={linkAsk} data-testid="link-create">
               {t("online.create")}
             </Button>
           </>
@@ -231,6 +235,8 @@ export function RefundDialog({ gymId, payment, open, onOpenChange, onDone }: { g
   const [key] = useState(newKey);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
+  const askAmount = takaToPoisha(taka);
+  const refundAsk = !state.can || askAmount === null || askAmount > state.refundable || reason.trim().length < 2 ? undefined : { kind: "money" as const, danger: true, title: t("online.refundAsk", { amount: f.taka(askAmount) }), body: t("online.refundLead"), confirmLabel: t("online.refund") };
   const submit = async () => {
     if (!state.can) return;
     const amountPoisha = takaToPoisha(taka);
@@ -261,7 +267,7 @@ export function RefundDialog({ gymId, payment, open, onOpenChange, onDone }: { g
           <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button type="button" variant="danger" onClick={() => void submit()} busy={busy} disabled={!state.can || links.isPending} data-testid="refund-submit">
+          <Button type="button" variant="danger" onClick={() => void submit()} busy={busy} disabled={!state.can || links.isPending} confirm={refundAsk} data-testid="refund-submit">
             {t("online.refund")}
           </Button>
         </>

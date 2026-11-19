@@ -119,7 +119,7 @@ function JoinRequestCard({ r }: { r: MyRequest }) {
       {r.canCancel || r.memberId ? (
         <div className="flex flex-wrap gap-2">
           {r.canCancel ? (
-            <Button type="button" variant="secondary" onClick={() => void cancel()} busy={busy} data-testid="me-join-cancel">
+            <Button type="button" variant="secondary" onClick={() => void cancel()} busy={busy} confirm={{ kind: "remove", title: tj("cancelAsk", { gym: r.gym?.name ?? t("me.gym") }) }} data-testid="me-join-cancel">
               {tj("cancel")}
             </Button>
           ) : null}
@@ -182,10 +182,10 @@ function RequestCard({ r }: { r: MyRequest }) {
       {problem ? deskAccessKey(problemOf(problem)?.code) ? <DeskAccessNotice error={problem} /> : <Notice tone="error">{err(problem)}</Notice> : null}
       {r.status === "pending" ? (
         <div className="flex flex-wrap gap-2">
-          <Button type="button" onClick={() => void act("accept")} busy={busy === "accept"} disabled={Boolean(busy)} data-testid="me-accept">
+          <Button type="button" confirm={{ kind: "add", title: t("me.acceptAsk", { gym: r.gym?.name ?? t("me.gym") }), body: t("me.acceptAskBody"), confirmLabel: t("me.accept") }} onClick={() => void act("accept")} busy={busy === "accept"} disabled={Boolean(busy)} data-testid="me-accept">
             {t("me.accept")}
           </Button>
-          <Button type="button" variant="secondary" onClick={() => void act("decline")} busy={busy === "decline"} disabled={Boolean(busy)} data-testid="me-decline">
+          <Button type="button" variant="secondary" confirm={{ kind: "remove", title: t("me.declineAsk", { gym: r.gym?.name ?? t("me.gym") }), confirmLabel: t("me.decline") }} onClick={() => void act("decline")} busy={busy === "decline"} disabled={Boolean(busy)} data-testid="me-decline">
             {t("me.decline")}
           </Button>
         </div>

@@ -124,11 +124,12 @@ function ReviewCard({ review: r, gymId }: { review: Review; gymId: string }) {
           <Textarea id={`reply-${r.id}`} label={r.reply ? t("editReply") : t("writeReply")} hint={t("replyHint")} value={text} onChange={(e) => setText(e.target.value)} rows={3} minLength={2} maxLength={1000} />
           {reply.isError ? <Notice tone="error">{err(reply.error)}</Notice> : null}
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" disabled={!replyOk(text)} busy={reply.isPending} data-testid="send-reply">
+            <Button type="submit" disabled={!replyOk(text)} busy={reply.isPending} confirm={r.reply ? "save" : { kind: "send", title: t("replyAsk") }} data-testid="send-reply">
               <ChatCircleText size={16} aria-hidden /> {r.reply ? t("saveReply") : t("reply")}
             </Button>
             {r.reply ? (
               <Button
+                type="button"
                 variant="ghost"
                 onClick={() => {
                   setText(r.reply?.text ?? "");
