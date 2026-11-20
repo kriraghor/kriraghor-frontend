@@ -6,6 +6,7 @@ import { Phone, WhatsappLogo } from "@phosphor-icons/react";
 import { Badge, Card, IconButton, useToast } from "@kriraghor/ui/kit";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { cn } from "@kriraghor/ui/cn";
+import { SplitBar } from "@kriraghor/ui/charts";
 import { gymManage, type Overview } from "@/lib/gym-manage";
 import { telUrl, whatsappUrl } from "@/lib/gym-ops";
 import { useFmt, useGymError, type GymCtx } from "../gym-manage/common";
@@ -84,34 +85,8 @@ export function EndingSoon({ ctx, items }: { ctx: GymCtx; items: Ending[] }) {
 export function MemberMix({ mix }: { mix: Mix }) {
   const t = useTranslations("go");
   const f = useFmt();
-  const parts: { key: keyof Mix; cls: string }[] = [
-    { key: "active", cls: "bg-brand" },
-    { key: "new", cls: "bg-info" },
-    { key: "frozen", cls: "bg-line-strong" },
-    { key: "expired", cls: "bg-warning" },
-    { key: "left", cls: "bg-danger" },
-  ];
-  const total = parts.reduce((n, p) => n + mix[p.key], 0);
-  return (
-    <Card className="flex flex-col gap-3" data-testid="dash-mix">
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 className="font-display text-lg font-bold">{t("mix.title")}</h2>
-        <span className="text-sm text-muted">{t("mix.total", { n: f.n(total) })}</span>
-      </div>
-      {total > 0 ? (
-        <div className="flex h-3 overflow-hidden rounded-pill bg-surface-2" role="img" aria-label={parts.map((p) => `${t(`mix.${p.key}`)} ${mix[p.key]}`).join(", ")}>
-          {parts.map((p) => (mix[p.key] ? <span key={p.key} className={p.cls} style={{ width: `${(mix[p.key] / total) * 100}%` }} /> : null))}
-        </div>
-      ) : null}
-      <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-3">
-        {parts.map((p) => (
-          <li key={p.key} className="flex items-center gap-2">
-            <span className={cn("size-2.5 shrink-0 rounded-full", p.cls)} aria-hidden />
-            <span className="text-muted">{t(`mix.${p.key}`)}</span>
-            <span className="ml-auto font-semibold tabular-nums">{f.n(mix[p.key])}</span>
-          </li>
-        ))}
-      </ul>
-    </Card>
-  );
+  // A fixed order, so each status keeps its colour whatever its size (kriraghor-docs design, charts).
+  const keys: (keyof Mix)[] = ["active", "new", "frozen", "expired", "left"];
+  const total = keys.reduce((n, k) => n + mix[k], 0);
+  return <SplitBar title={t("mix.title")} subtitle={t("mix.total", { n: f.n(total) })} parts={keys.map((k) => ({ key: k, label: t(`mix.${k}`), value: mix[k] }))} format={f.n} locale={f.locale} testId="dash-mix" />;
 }

@@ -7,17 +7,19 @@ import { UserCircleMinus } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Button, Card, Field, Notice, Select, Skeleton } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
+import { RangePicker, lastOfMonth, periodFromParams, periodParams } from "@kriraghor/ui/charts";
 import { dhakaToday } from "@/lib/gym-manage";
-import { gymMoney, monthParam } from "@/lib/gym-money";
+import { gymMoney } from "@/lib/gym-money";
 import { GymPage, useFmt, useGymError, type GymCtx } from "./common";
-import { ExportButtons, MonthPicker, ReportFigures } from "./report-parts";
+import { ExportButtons, ReportFigures } from "./report-parts";
 import { ConversionCard } from "../gym-ops/Conversion";
 
-const SPEC = { month: { default: "" } };
+const SPEC = { month: { default: "" }, from: { default: "" }, to: { default: "" } };
 
 /**
  * /manage/[gymId]/reports (reports.view; feature reports, Standard and up; M24-FR-71 to FR-73): the
- * month in the URL (?month=YYYY-MM, the monthly report links here), members, money and attendance,
+ * period in the URL (?month=YYYY-MM, the monthly report links here, or ?from=&to=; dashboards,
+ * M24-FR-154), members, money and attendance with the change against the period before,
  * where members come from (enquiries, trial visits, join requests; M27-FR-87), the overdue list, members
  * not seen lately (members.view) and, for the owner, CSV exports.
  */
@@ -35,23 +37,25 @@ function Body({ ctx }: { ctx: GymCtx }) {
   const err = useGymError();
   const { values, set } = useUrlFilters(SPEC);
   const today = dhakaToday();
-  const max = today.slice(0, 7);
-  const month = monthParam(values.month, today);
-  const q = useQuery({ queryKey: ["gm-report", ctx.gymId, month], queryFn: () => gymMoney.report(ctx.gymId, { month }), retry: false });
+  const period = periodFromParams(values, today);
+  const span = "month" in period ? { from: `${period.month}-01`, to: lastOfMonth(period.month) } : period;
+  const q = useQuery({ queryKey: ["gm-report", ctx.gymId, period], queryFn: () => gymMoney.report(ctx.gymId, period), retry: false, placeholderData: (prev) => prev });
   return (
-    <div className="flex flex-col gap-4">
-      <MonthPicker month={month} max={max} onChange={(m) => set({ month: m === max ? null : m })} />
+    <div className="flex flex-col gap-5">
+      <RangePicker value={period} today={today} onChange={(p) => set(periodParams(p, today))} className="sticky top-0 z-[5] -mx-1 bg-bg/90 px-1 py-2 backdrop-blur" />
       {q.isPending ? (
         <Skeleton className="h-96 rounded-card" />
       ) : q.isError ? (
         <Notice tone="error">{err(q.error)}</Notice>
       ) : (
-        <ReportFigures r={q.data} gymId={ctx.gymId} testId="report-figures" />
+        <div className={q.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
+          <ReportFigures r={q.data} previous={q.data.previous} period={span} today={today} gymId={ctx.gymId} testId="report-figures" />
+        </div>
       )}
-      <ConversionCard gymId={ctx.gymId} month={month} owner={ctx.owner} />
+      {"month" in period ? <ConversionCard gymId={ctx.gymId} month={period.month} owner={ctx.owner} /> : <Notice tone="info">{t("reports.conversionMonthOnly")}</Notice>}
       <div className="grid gap-3 lg:grid-cols-2">
         {ctx.can("members.view") ? <Absent gymId={ctx.gymId} /> : null}
-        {ctx.owner ? <ExportButtons gymId={ctx.gymId} month={month} /> : null}
+        {ctx.owner ? <ExportButtons gymId={ctx.gymId} period={period} /> : null}
       </div>
       {!ctx.owner ? <p className="text-xs text-muted">{t("reports.exportsOwner")}</p> : null}
     </div>

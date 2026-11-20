@@ -145,6 +145,40 @@
     },
     "header": {
       "partner": "Partner with us"
+    },
+    "charts": {
+      "showTable": "Show as a table",
+      "showChart": "Show as a chart",
+      "csv": "Download CSV",
+      "loading": "Loading the chart",
+      "error": "This chart didn't load.",
+      "retry": "Try again",
+      "empty": "Nothing to show for this period yet.",
+      "soFar": "So far: this period isn't over",
+      "when": "When",
+      "item": "Item",
+      "value": "Value",
+      "share": "Share",
+      "step": "Step",
+      "ofPrevious": "Of the step before",
+      "ofPreviousShort": "{share} of the step before",
+      "moreItems": "And {n} more in the table view",
+      "whatIs": "What is {label}?",
+      "heatFewer": "Fewer",
+      "heatMore": "More",
+      "range": {
+        "label": "Period",
+        "thisMonth": "This month",
+        "lastMonth": "Last month",
+        "last7": "Last 7 days",
+        "last30": "Last 30 days",
+        "month": "Pick a month",
+        "custom": "Pick dates",
+        "from": "From",
+        "to": "To",
+        "prev": "Previous month",
+        "next": "Next month"
+      }
     }
   },
   "auth": {
