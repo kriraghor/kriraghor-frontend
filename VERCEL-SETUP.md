@@ -12,7 +12,7 @@ How the four Next.js apps in this repo are deployed on Vercel (gym joined on 25 
 | Framework preset | Next.js | Next.js | Next.js | Next.js |
 | Install command | default (Vercel runs `npm install` at the repo root for the workspace) | default | default | default |
 | Build command | `npm run build` | `npm run build` | `npm run build` | `npm run build` |
-| Domains | `kriraghor.com` (redirects to `www`), `www.kriraghor.com` | `esports.kriraghor.com` | `admin.kriraghor.com`, `vendor.kriraghor.com` (one app, routed by host) | `gym.kriraghor.com` |
+| Domains | `kriraghor.com` (redirects to `www`), `www.kriraghor.com` | `esports.kriraghor.com` | `admin.kriraghor.com`, `console.kriraghor.com` (one app, routed by host; `vendor.kriraghor.com` still routes to it) | `gym.kriraghor.com` |
 | Node.js version | 24.x | 24.x | 24.x | 24.x |
 
 Set the Root Directory in **Settings → Build and Deployment**, and turn **on** "Include files outside the Root Directory in the Build Step". The repo is an npm workspace: the apps import `packages/*` and there is one `package-lock.json` at the root, so Vercel must see the whole repo. Leave the Install Command on its default (Vercel detects the workspace and installs from the root).
@@ -40,7 +40,7 @@ The apps read these at request time through `/env.js` (see `packages/session/src
 | `ESPORTS_URL` | ✔ | ✔ | ✔ | ✔ | `https://esports.kriraghor.com` |
 | `GYM_URL` | ✔ | ✔ | ✔ | ✔ | `https://gym.kriraghor.com` (the /go/gym links and the old-URL redirects on web and vendor read it at request time) |
 | `ADMIN_URL` | ✔ | ✔ | ✔ | ✔ | `https://admin.kriraghor.com` |
-| `VENDOR_URL` | ✔ | ✔ | ✔ | ✔ | `https://vendor.kriraghor.com` |
+| `VENDOR_URL` | ✔ | ✔ | ✔ | ✔ | `https://console.kriraghor.com` |
 | `COOKIE_PREFIX` | ✔ | ✔ | ✔ | ✔ | `kg` (staging: `kgstg`) |
 | `GOOGLE_CLIENT_ID` | ✔ | ✔ | ✔ | ✔ | The web client ID from Google Cloud (public, not a secret) |
 | `APP_ENV` | ✔ | ✔ | ✔ | ✔ | `production` |

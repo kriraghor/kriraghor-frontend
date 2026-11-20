@@ -18,7 +18,7 @@ export const LEGAL_VERSION = { version: "0.2", updated: "2026-10-25" };
 const en: Record<LegalKey, LegalDoc> = {
   terms: {
     title: "Terms of use",
-    intro: "These terms apply when you use kriraghor.com, esports.kriraghor.com, vendor.kriraghor.com and the Kriraghor app. By creating an account or paying through Kriraghor you agree to them.",
+    intro: "These terms apply when you use kriraghor.com, esports.kriraghor.com, console.kriraghor.com and the Kriraghor app. By creating an account or paying through Kriraghor you agree to them.",
     sections: [
       {
         id: "about",
@@ -361,7 +361,7 @@ const en: Record<LegalKey, LegalDoc> = {
 const bn: Record<LegalKey, LegalDoc> = {
   terms: {
     title: "ব্যবহারের শর্তাবলি",
-    intro: "kriraghor.com, esports.kriraghor.com, vendor.kriraghor.com এবং ক্রীড়াঘর অ্যাপ ব্যবহারে এই শর্তগুলো প্রযোজ্য। অ্যাকাউন্ট খুললে বা ক্রীড়াঘরের মাধ্যমে পেমেন্ট করলে আপনি এগুলো মেনে নিচ্ছেন।",
+    intro: "kriraghor.com, esports.kriraghor.com, console.kriraghor.com এবং ক্রীড়াঘর অ্যাপ ব্যবহারে এই শর্তগুলো প্রযোজ্য। অ্যাকাউন্ট খুললে বা ক্রীড়াঘরের মাধ্যমে পেমেন্ট করলে আপনি এগুলো মেনে নিচ্ছেন।",
     sections: [
       {
         id: "about",

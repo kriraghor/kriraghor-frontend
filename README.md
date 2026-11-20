@@ -5,7 +5,7 @@ The Kriraghor web apps in one repository (four since 25 Oct 2026: web, esports, 
 |---|---|---|---|
 | `apps/web` | Public site: venues, shop, hire (with trainers' monthly plans), events, account | kriraghor.com | Next.js (App Router, TypeScript) |
 | `apps/esports` | Esports events, room reveal, results, leaderboards | esports.kriraghor.com | Next.js, PWA |
-| `apps/portal` | Admin and vendor desks, routed by host | admin.kriraghor.com · vendor.kriraghor.com | Next.js |
+| `apps/portal` | Admin and vendor desks, routed by host | admin.kriraghor.com · console.kriraghor.com | Next.js |
 | `apps/gym` | Gyms, passes, trainer plans, managing a gym (`/manage`), the gym system's landing page and `/start` (since 25 Oct 2026) | gym.kriraghor.com | Next.js |
 
 ```bash
