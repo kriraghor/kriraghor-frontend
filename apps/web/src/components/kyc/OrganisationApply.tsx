@@ -29,6 +29,7 @@ const SENDABLE = ["draft", "changes_requested", "rejected"];
  */
 export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
   const t = useTranslations("business.org");
+  const a = useTranslations("ask");
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["my-organisations"], queryFn: () => orgs.mine() });
   const [name, setName] = useState("");
@@ -67,7 +68,7 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
                 ) : (
                   <div className="mt-3 flex flex-wrap gap-3">
                     {SENDABLE.includes(o.status) ? (
-                      <Button type="button" busy={submit.isPending} disabled={!roleActive} onClick={() => submit.mutate(o.id)} data-testid="org-submit">
+                      <Button type="button" busy={submit.isPending} disabled={!roleActive} confirm={{ kind: "send", title: a("sendForReview") }} onClick={() => submit.mutate(o.id)} data-testid="org-submit">
                         {t("submit")}
                       </Button>
                     ) : null}
@@ -97,7 +98,7 @@ export function OrganisationApply({ roleActive }: { roleActive: boolean }) {
           <Textarea id="org-about" label={t("about")} value={about} onChange={(e) => setAbout(e.target.value)} maxLength={1000} rows={3} />
           <Field id="org-email" type="email" label={t("email")} value={email} onChange={(e) => setEmail(e.target.value)} maxLength={160} autoComplete="email" />
           <div>
-            <Button type="submit" busy={create.isPending} data-testid="org-create">
+            <Button type="submit" busy={create.isPending} confirm="add" data-testid="org-create">
               {t("create")}
             </Button>
           </div>

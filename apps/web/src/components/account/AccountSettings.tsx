@@ -202,7 +202,7 @@ function ProfileCard({ me }: { me: Me }) {
         </div>
         {save.error ? <Notice tone="error">{problemText(save.error)}</Notice> : null}
         <div>
-          <Button type="submit" busy={save.isPending} disabled={!nameOk || !changed} data-testid="save-profile">
+          <Button type="submit" busy={save.isPending} disabled={!nameOk || !changed} confirm="save" data-testid="save-profile">
             {t("save")}
           </Button>
         </div>
@@ -561,6 +561,7 @@ function DevicesCard() {
   const qc = useQueryClient();
   const problemText = useProblemText();
   const q = useQuery({ queryKey: ["my-sessions"], queryFn: listSessions });
+  const a = useTranslations("ask");
   const end = useMutation({
     mutationFn: (id: string) => endSession(id),
     onSuccess: async () => {
@@ -591,7 +592,7 @@ function DevicesCard() {
                 </p>
               </div>
               {s.current ? null : (
-                <Button type="button" variant="secondary" size="sm" icon={<SignOut size={16} aria-hidden />} busy={end.isPending && end.variables === s.id} onClick={() => end.mutate(s.id)} aria-label={t("signOutNamed", { device: s.device ?? t("unknown") })}>
+                <Button type="button" variant="secondary" size="sm" icon={<SignOut size={16} aria-hidden />} busy={end.isPending && end.variables === s.id} confirm={{ kind: "remove", title: a("endSession"), body: s.device ?? t("unknown"), confirmLabel: t("signOut") }} onClick={() => end.mutate(s.id)} aria-label={t("signOutNamed", { device: s.device ?? t("unknown") })}>
                   {t("signOut")}
                 </Button>
               )}

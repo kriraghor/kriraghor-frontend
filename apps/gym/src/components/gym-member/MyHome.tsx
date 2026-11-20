@@ -107,6 +107,11 @@ function GymCard({ m }: { m: MyMembershipCard }) {
           </div>
           <MemberStatus status={m.status} />
         </div>
+        {m.gym?.suspended ? (
+          <Notice tone="warning">
+            {t("me.gymClosed")}
+          </Notice>
+        ) : null}
         {m.current ? (
           <div>
             <p className="font-semibold">{m.current.title}</p>

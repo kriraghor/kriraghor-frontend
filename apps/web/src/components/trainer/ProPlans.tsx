@@ -7,6 +7,7 @@ import { problemOf } from "@kriraghor/api-client";
 import { trainer } from "@/lib/trainer";
 import { formatTaka } from "@/lib/payments";
 import { Button, Field, Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 import { SubscriptionCard } from "./SubscriptionCard";
 
 type Where = "gym" | "home" | "online";
@@ -22,6 +23,8 @@ export function ProPlans() {
   const q = useQuery({ queryKey: ["pro-plans"], queryFn: () => trainer.myPlans() });
   const subs = useQuery({ queryKey: ["pro-subscribers"], queryFn: () => trainer.subscribers() });
   const retire = useMutation({ mutationFn: (id: string) => trainer.retirePlan(id), onSuccess: () => qc.invalidateQueries({ queryKey: ["pro-plans"] }) });
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   if (q.isPending) return <div className="rounded-control h-40 kg-shimmer bg-surface-2" />;
   if (q.isError) return <Notice tone="error">{t("error")}</Notice>;
   const { profiles, items } = q.data;
@@ -47,7 +50,7 @@ export function ProPlans() {
                   </span>
                   <span className="rounded-pill border border-line px-2 py-0.5 text-sm font-bold">{t(`planStatus.${p.status}`)}</span>
                   {p.status === "active" ? (
-                    <button type="button" onClick={() => retire.mutate(p.id)} disabled={retire.isPending} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold disabled:opacity-50">
+                    <button type="button" onClick={() => void ask({ kind: "remove", title: a("retirePlan"), body: a("retirePlanBody"), confirmLabel: t("desk.retire") }).then((ok) => ok && retire.mutate(p.id))} disabled={retire.isPending} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold disabled:opacity-50">
                       {t("desk.retire")}
                     </button>
                   ) : null}
@@ -183,7 +186,7 @@ function NewPlan({ profiles }: { profiles: { id: string; headline: string }[] })
         </label>
       ) : null}
       {problem && !(problem as { errors?: unknown[] }).errors?.length ? <Notice tone="error">{problem.title}</Notice> : null}
-      <Button type="submit" busy={create.isPending} data-testid="pro-plan-save">
+      <Button type="submit" busy={create.isPending} confirm="add" data-testid="pro-plan-save">
         {t("desk.savePlan")}
       </Button>
     </form>

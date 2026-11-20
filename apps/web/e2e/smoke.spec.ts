@@ -16,8 +16,7 @@ test("runtime config is served without secrets (ADR-003)", async ({ request }) =
 
 test("home has the hero and finder, then the sections in order, with no search per section", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByTestId("home-network")).toBeVisible();
-  for (const key of ["esports", "gym", "venues", "shop", "hire", "events"]) await expect(page.getByTestId(`net-${key}`)).toHaveAttribute("href", `#${key}`);
+  await expect(page.getByTestId("home-network")).toHaveCount(0);
   const order = await page.locator('[data-testid^="home-section-"]').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.testid));
   expect(order).toEqual(["esports", "gym", "venues", "shop", "hire", "events"].map((k) => `home-section-${k}`));
   await expect(page.getByTestId("home-info")).toBeVisible();

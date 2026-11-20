@@ -105,7 +105,10 @@ function Today({ ctx }: { ctx: GymCtx }) {
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-muted">{t("staff.workedToday", { time: hoursText(s.minutes, (k, v) => t(`time.${k}`, v)) })}</span>
                 {canClock ? (
-                  <Button size="sm" variant={s.clockedIn ? "secondary" : "primary"} busy={busy === s.staff.id} onClick={() => void clock(s.staff.id, s.clockedIn ? "out" : "in")} data-testid={`staff-clock-${s.staff.id}`}>
+                  <Button size="sm" variant={s.clockedIn ? "secondary" : "primary"} busy={busy === s.staff.id}
+                    confirm={{ kind: "save", title: t(s.clockedIn ? "staff.clockOutAsk" : "staff.clockInAsk", { name: s.staff.name ?? "–" }), confirmLabel: s.clockedIn ? t("staff.clockOut") : t("staff.clockIn") }}
+                    onClick={() => void clock(s.staff.id, s.clockedIn ? "out" : "in")}
+                    data-testid={`staff-clock-${s.staff.id}`}>
                     {s.clockedIn ? <SignOut size={16} aria-hidden /> : <SignIn size={16} aria-hidden />}
                     {s.clockedIn ? t("staff.clockOut") : t("staff.clockIn")}
                   </Button>
@@ -240,7 +243,7 @@ function ShiftDialog({ ctx, item, onClose }: { ctx: GymCtx; item: StaffShifts["i
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy} data-testid="shifts-save">
+          <Button onClick={() => void save()} busy={busy} confirm="save" data-testid="shifts-save">
             {t("save")}
           </Button>
         </div>

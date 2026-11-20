@@ -102,7 +102,11 @@ function GuestButtons({ v, ctx, a, isToday, onCancel, size = "sm" }: { v: GymVis
         </Button>
       ) : null}
       {v.status === "attended" && !v.memberId && canMember ? (
-        <Button type="button" size={size} variant={size === "lg" ? "primary" : "secondary"} icon={<UserPlus size={18} aria-hidden />} busy={a.busy === `member:${v.id}`} onClick={() => void a.convert(v)} data-testid="guest-make-member">
+        <Button type="button" size={size} variant={size === "lg" ? "primary" : "secondary"} icon={<UserPlus size={18} aria-hidden />} busy={a.busy === `member:${v.id}`}
+          confirm={{ kind: "add", title: t("desk.makeMemberAsk", { name: v.guest.name ?? t("desk.guest") }), body: t("desk.makeMemberBody"), confirmLabel: t("desk.makeMember") }}
+          onClick={() => void a.convert(v)}
+          data-testid="guest-make-member"
+        >
           {t("desk.makeMember")}
         </Button>
       ) : null}

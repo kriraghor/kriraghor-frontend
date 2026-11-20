@@ -13,7 +13,7 @@ import { MePanel } from "../MePanel";
 import { RateSourceButtons } from "@kriraghor/ui/trust";
 import { Button, Notice } from "@kriraghor/ui/primitives";
 import { TONE } from "./MyOrders";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, useConfirm } from "@kriraghor/ui/kit";
 
 /**
  * /me/orders/[code] (M13 FR-13, FR-14): each shop's part of the order with its progress, the items,
@@ -77,6 +77,8 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
   const router = useRouter();
   const [reporting, setReporting] = useState(false);
   const [statement, setStatement] = useState("");
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const cancel = useMutation({ mutationFn: () => orders.cancel(s.id), onSuccess: onChange });
   const received = useMutation({ mutationFn: () => orders.received(s.id), onSuccess: onChange });
   const report = useMutation({ mutationFn: () => orders.notReceived(s.id, statement, newKey()), onSuccess: (r: { dispute?: { code?: string } }) => r.dispute?.code && router.push(`/me/disputes/${r.dispute.code}`) });
@@ -166,7 +168,7 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
       </dl>
       <div className="flex flex-wrap gap-3 border-t-2 border-line px-4 py-3">
         {s.can.received ? (
-          <Button busy={received.isPending} onClick={() => received.mutate()} data-testid="received">
+          <Button busy={received.isPending} confirm={{ kind: "money", title: a("orderReceived"), body: a("orderReceivedBody"), confirmLabel: t("received") }} onClick={() => received.mutate()} data-testid="received">
             {t("received")}
           </Button>
         ) : null}
@@ -176,7 +178,7 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
           </button>
         ) : null}
         {s.can.cancel ? (
-          <button type="button" disabled={cancel.isPending} onClick={() => cancel.mutate()} className="rounded-control min-h-12 border border-danger px-4 font-bold text-danger disabled:opacity-50" data-testid="cancel-sub">
+          <button type="button" disabled={cancel.isPending} onClick={() => void ask({ kind: "remove", title: a("cancelOrder"), confirmLabel: a("yesCancel") }).then((ok) => ok && cancel.mutate())} className="rounded-control min-h-12 border border-danger px-4 font-bold text-danger disabled:opacity-50" data-testid="cancel-sub">
             {s.status === "accepted" ? t("cancelLate") : t("cancel")}
           </button>
         ) : null}
@@ -202,7 +204,7 @@ function SubOrderCard({ s, when, money, onChange }: { s: SubOrder; when: (iso: s
           <textarea id={`nr-${s.id}`} value={statement} onChange={(e) => setStatement(e.target.value)} minLength={10} maxLength={2000} required rows={4} className="surface-card p-3" data-testid="not-received-text" />
           <p className="text-sm text-muted">{t("notReceivedNote", { closes: when(s.notReceivedClosesAt) || t("untilResolved") })}</p>
           <div>
-            <Button busy={report.isPending} data-testid="not-received-send">
+            <Button busy={report.isPending} confirm={{ kind: "send", title: a("sendReport") }} data-testid="not-received-send">
               {t("sendReport")}
             </Button>
           </div>

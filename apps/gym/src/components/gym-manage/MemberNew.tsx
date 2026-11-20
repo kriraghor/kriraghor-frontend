@@ -8,8 +8,9 @@ import { problemOf } from "@kriraghor/api-client";
 import { newKey } from "@kriraghor/ui/format";
 import { DatePicker } from "@kriraghor/ui/date";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Button, ButtonLink, Card, Checkbox, Field, Notice, Select, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Button, ButtonLink, Card, Checkbox, Field, Notice, PhoneField, Select, Textarea, useToast } from "@kriraghor/ui/kit";
 import { dhakaToday, gymManage, takaToPoisha, type MemberInput } from "@/lib/gym-manage";
+import { birthRange, memberProblems } from "@/lib/validate";
 import { GymPage, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 import { emptyPayment, PaymentFields, paymentBody, ReceiptLink } from "./money";
 
@@ -17,7 +18,8 @@ import { emptyPayment, PaymentFields, paymentBody, ReceiptLink } from "./money";
  * /manage/[gymId]/members/new (M24-FR-10, FR-25, FR-26, FR-33): the person (name, phone, gender, date
  * of birth, photo, email, emergency contact, a first note), optionally a package from a start date
  * (admission fee and a discount with fees.adjust) and the first payment (fees.collect), in one request
- * with an Idempotency-Key. A phone already on the list opens that member instead.
+ * with an Idempotency-Key. A phone already on the list opens that member instead. Every field is checked
+ * before sending (an 11-digit 01 mobile, a real email, a birth date 5 to 100 years ago; 19 Nov 2026).
  */
 export function MemberNew({ gymId }: { gymId: string }) {
   const t = useTranslations("gm");
@@ -52,6 +54,11 @@ function Form({ ctx }: { ctx: GymCtx }) {
   const [problem, setProblem] = useState<{ text: string; memberId?: string } | null>(null);
   const [done, setDone] = useState<{ id: string; name: string; code: string; receiptUrl: string | null } | null>(null);
   const set = (k: keyof Draft, v: string) => setD((x) => ({ ...x, [k]: v }));
+  // Field messages show once Add was tried, then follow every change.
+  const [tried, setTried] = useState(false);
+  const today = dhakaToday();
+  const problems = memberProblems(d, today, photo);
+  const shown = (k: string) => (tried && problems[k] ? t(`check.${problems[k]}`) : undefined);
   const pkg = packages.desk.find((p) => p.id === ms.packageId);
   const discount = ms.discountTaka.trim() ? takaToPoisha(ms.discountTaka, { allowZero: true }) : 0;
   const expected = pkg ? Math.max(0, pkg.price + (ms.admission ? pkg.admissionFee : 0) - (discount ?? 0)) : undefined;
@@ -60,6 +67,8 @@ function Form({ ctx }: { ctx: GymCtx }) {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setProblem(null);
+    setTried(true);
+    if (Object.keys(problems).length) return setProblem({ text: t("check.fix") });
     const body: MemberInput = { displayName: d.displayName.trim(), phone: d.phone.trim() };
     if (d.gender) body.gender = d.gender;
     if (d.birthDate) body.birthDate = d.birthDate;
@@ -132,8 +141,8 @@ function Form({ ctx }: { ctx: GymCtx }) {
     <form onSubmit={submit} className="flex flex-col gap-4" data-testid="member-form">
       <Card className="grid gap-3 sm:grid-cols-2">
         <h2 className="font-display text-lg font-bold sm:col-span-2">{t("new.person")}</h2>
-        <Field id="m-name" label={t("member.name")} value={d.displayName} onChange={(e) => set("displayName", e.target.value)} required minLength={2} maxLength={80} autoComplete="off" data-testid="m-name" />
-        <Field id="m-phone" label={t("member.phone")} type="tel" inputMode="tel" value={d.phone} onChange={(e) => set("phone", e.target.value)} required placeholder="01XXXXXXXXX" autoComplete="off" data-testid="m-phone" />
+        <Field id="m-name" label={t("member.name")} value={d.displayName} onChange={(e) => set("displayName", e.target.value)} required minLength={2} maxLength={80} autoComplete="off" error={shown("displayName")} data-testid="m-name" />
+        <PhoneField id="m-phone" label={t("member.phone")} value={d.phone} onChange={(v) => set("phone", v)} required placeholder="01XXXXXXXXX" error={shown("phone")} data-testid="m-phone" />
         <Select id="m-gender" label={t("member.gender")} optional={t("optional")} value={d.gender} onChange={(e) => set("gender", e.target.value)}>
           <option value="">–</option>
           {(["male", "female", "other"] as const).map((g) => (
@@ -142,11 +151,11 @@ function Form({ ctx }: { ctx: GymCtx }) {
             </option>
           ))}
         </Select>
-        <DatePicker id="m-birth" label={t("member.birthDate")} optional={t("optional")} value={d.birthDate} max={dhakaToday()} onChange={(v) => set("birthDate", v)} />
-        <Field id="m-email" type="email" label={t("member.email")} optional={t("optional")} value={d.email} onChange={(e) => set("email", e.target.value)} />
-        <Field id="m-photo" type="file" accept="image/jpeg,image/png,image/webp" label={t("member.photo")} optional={t("optional")} onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} />
-        <Field id="m-ec-name" label={t("member.ecName")} optional={t("optional")} value={d.ecName} onChange={(e) => set("ecName", e.target.value)} maxLength={80} />
-        <Field id="m-ec-phone" type="tel" label={t("member.ecPhone")} optional={t("optional")} value={d.ecPhone} onChange={(e) => set("ecPhone", e.target.value)} maxLength={20} />
+        <DatePicker id="m-birth" label={t("member.birthDate")} optional={t("optional")} value={d.birthDate} min={birthRange(today).min} max={birthRange(today).max} error={shown("birthDate")} onChange={(v) => set("birthDate", v)} />
+        <Field id="m-email" type="email" label={t("member.email")} optional={t("optional")} value={d.email} maxLength={120} error={shown("email")} onChange={(e) => set("email", e.target.value)} />
+        <Field id="m-photo" type="file" accept="image/jpeg,image/png,image/webp" label={t("member.photo")} optional={t("optional")} hint={t("check.photoHint")} error={shown("photo")} onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} />
+        <Field id="m-ec-name" label={t("member.ecName")} optional={t("optional")} value={d.ecName} onChange={(e) => set("ecName", e.target.value)} maxLength={80} error={shown("ecName")} />
+        <PhoneField id="m-ec-phone" label={t("member.ecPhone")} optional={t("optional")} value={d.ecPhone} onChange={(v) => set("ecPhone", v)} error={shown("ecPhone")} />
         <Textarea id="m-notes" label={t("member.firstNote")} optional={t("optional")} hint={t("member.noteHint")} value={d.notes} onChange={(e) => set("notes", e.target.value)} maxLength={2000} className="sm:col-span-2" />
       </Card>
 
@@ -201,7 +210,7 @@ function Form({ ctx }: { ctx: GymCtx }) {
         </Notice>
       ) : null}
       <div className="flex flex-wrap gap-2">
-        <Button type="submit" busy={busy} data-testid="m-submit">
+        <Button type="submit" busy={busy} confirm={Object.keys(problems).length ? undefined : "add"} data-testid="m-submit">
           {t("new.submit")}
         </Button>
         <ButtonLink href={`/manage/${gymId}/members`} variant="ghost">

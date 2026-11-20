@@ -11,6 +11,7 @@ import { stepUp } from "@/lib/admin/stepUp";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 import { CodeDialog } from "../CodeDialog";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 import { DateTimePicker } from "@kriraghor/ui/date";
@@ -121,6 +122,7 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
   const [prizes, setPrizes] = useState(["1000", "600", "300"]);
   const [matches, setMatches] = useState([{ mapId: "", at: "" }]);
   const [error, setError] = useState<string | null>(null);
+  const ask = useConfirm();
   const set = (k: keyof typeof f, v: string | boolean) => setF((x) => ({ ...x, [k]: v }));
 
   async function submit(e: React.FormEvent) {
@@ -150,6 +152,7 @@ export function CreateForm({ onCreated, client = esportsAdmin, organiser = false
       // M23: a big event's final admits only qualified or invited entries (Kriraghor's own tournaments only).
       ...(organiser ? {} : { entryPolicy: f.inviteOnly ? ("invite" as const) : ("open" as const) }),
     };
+    if (!(await ask("add"))) return;
     try {
       const created = await client.create(body);
       await qc.invalidateQueries({ queryKey: ["esd-list"] });
@@ -316,6 +319,7 @@ function TournamentPane({ id, canManage }: { id: string; canManage: boolean }) {
   const [problem, setProblem] = useState<string | null>(null);
   const [dialog, setDialog] = useState<"cancel" | "finalise" | null>(null);
   const [reason, setReason] = useState("");
+  const ask = useConfirm();
   const refresh = async () => {
     await qc.invalidateQueries({ queryKey: ["esd-t", id] });
     await qc.invalidateQueries({ queryKey: ["esd-list"] });
@@ -345,7 +349,7 @@ function TournamentPane({ id, canManage }: { id: string; canManage: boolean }) {
       {canManage ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {d.status === "draft" ? (
-            <button type="button" className={`${btn} border-brand`} onClick={() => void run(() => esportsAdmin.submit(id))} data-testid="submit-review">
+            <button type="button" className={`${btn} border-brand`} onClick={async () => (await ask({ kind: "send", confirmLabel: t("submit") })) && (await run(() => esportsAdmin.submit(id)))} data-testid="submit-review">
               {t("submit")}
             </button>
           ) : null}
@@ -427,6 +431,7 @@ export function CheckinBoard({ id, client = esportsAdmin }: { id: string; client
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["esd-board", id], queryFn: () => client.board(id), refetchInterval: 15_000 });
   const [msg, setMsg] = useState<string | null>(null);
+  const ask = useConfirm();
   const run = async (fn: () => Promise<unknown>) => {
     setMsg(null);
     try {
@@ -462,7 +467,7 @@ export function CheckinBoard({ id, client = esportsAdmin }: { id: string; client
                       {p.checkedIn ? (
                         <span role="img" aria-label={t("board.in")} className="inline-flex text-brand"><Check size={16} weight="bold" aria-hidden /></span>
                       ) : client.staffCheckIn && ["confirmed", "no_show"].includes(r.status) ? (
-                        <button type="button" className="text-xs font-semibold text-brand underline" onClick={() => void run(() => client.staffCheckIn!(r.id, p.userId))}>
+                        <button type="button" className="text-xs font-semibold text-brand underline" onClick={async () => (await ask({ kind: "save", confirmLabel: t("board.checkIn") })) && (await run(() => client.staffCheckIn!(r.id, p.userId)))}>
                           {t("board.checkIn")}
                         </button>
                       ) : null}
@@ -523,6 +528,7 @@ export function MatchPanel({ id, canManage, onChange, client = esportsAdmin }: {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
   const [table, setTable] = useState<Record<string, { placement: string; kills: Record<string, string> }>>({});
+  const ask = useConfirm();
   const refresh = async () => {
     await qc.invalidateQueries({ queryKey: ["esd-match", id] });
     await qc.invalidateQueries({ queryKey: ["esd-room", id] });
@@ -566,16 +572,16 @@ export function MatchPanel({ id, canManage, onChange, client = esportsAdmin }: {
             <input value={roomId} onChange={(e) => setRoomId(e.target.value)} placeholder={t("room.id")} aria-label={t("room.id")} className={inputCls} autoComplete="off" />
             <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("room.password")} aria-label={t("room.password")} className={inputCls} autoComplete="off" />
             {!roomData?.current || roomData.current.status === "scheduled" ? (
-              <button type="button" className={`${btn} border-brand`} disabled={!roomId || !password} onClick={() => void run(() => client.setRoom(id, { roomId, password }), t("room.saved")).then(() => (setRoomId(""), setPassword("")))}>
+              <button type="button" className={`${btn} border-brand`} disabled={!roomId || !password} onClick={async () => (await ask({ kind: "save", confirmLabel: t("room.save") })) && (await run(() => client.setRoom(id, { roomId, password }), t("room.saved")), setRoomId(""), setPassword(""))}>
                 {t("room.save")}
               </button>
             ) : (
-              <button type="button" className={`${btn} border-danger text-danger`} disabled={!roomId || !password} onClick={() => void run(() => client.rotate(id, { roomId, password }), t("room.rotated")).then(() => (setRoomId(""), setPassword("")))}>
+              <button type="button" className={`${btn} border-danger text-danger`} disabled={!roomId || !password} onClick={async () => (await ask({ kind: "save", confirmLabel: t("room.rotate"), danger: true })) && (await run(() => client.rotate(id, { roomId, password }), t("room.rotated")), setRoomId(""), setPassword(""))}>
                 {t("room.rotate")}
               </button>
             )}
             {client.revealNow && roomData?.current?.status === "scheduled" ? (
-              <button type="button" className={`${btn} border-line`} onClick={() => void run(() => client.revealNow!(id), t("room.revealed"))}>
+              <button type="button" className={`${btn} border-line`} onClick={async () => (await ask({ kind: "send", confirmLabel: t("room.revealNow") })) && (await run(() => client.revealNow!(id), t("room.revealed")))}>
                 {t("room.revealNow")}
               </button>
             ) : null}
@@ -633,15 +639,15 @@ export function MatchPanel({ id, canManage, onChange, client = esportsAdmin }: {
         </div>
         {editable ? (
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <button type="button" className={`${btn} border-line`} disabled={Boolean(local)} onClick={() => void run(() => client.enter(id, rows()), t("results.saved"))}>
+            <button type="button" className={`${btn} border-line`} disabled={Boolean(local)} onClick={async () => (await ask("save")) && (await run(() => client.enter(id, rows()), t("results.saved")))}>
               {t("results.save")}
             </button>
             <button
               type="button"
               className={`${btn} border-brand`}
               disabled={Boolean(local)}
-              onClick={() => {
-                if (window.confirm(t("results.postConfirm"))) void run(async () => (await client.enter(id, rows()), await client.post(id)), t("results.posted"));
+              onClick={async () => {
+                if (await ask({ kind: "send", title: t("results.postConfirm"), confirmLabel: t("results.post") })) await run(async () => (await client.enter(id, rows()), await client.post(id)), t("results.posted"));
               }}
               data-testid="post-results"
             >
@@ -703,6 +709,7 @@ function Streams({ id, current, onSaved }: { id: string; current: { platform: st
   const t = useTranslations("esportsDesk");
   const [rows, setRows] = useState(current.length ? current : [{ platform: "youtube", url: "", title: "", isLive: false }]);
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
+  const ask = useConfirm();
   return (
     <div className="space-y-2">
       {rows.map((r, i) => (
@@ -730,6 +737,7 @@ function Streams({ id, current, onSaved }: { id: string; current: { platform: st
           type="button"
           className={`${btn} border-brand`}
           onClick={async () => {
+            if (!(await ask("save"))) return;
             setMsg(null);
             try {
               await esportsAdmin.streams(id, rows.filter((r) => r.url).map((r) => ({ ...r, platform: r.platform as "youtube" })));
@@ -809,6 +817,7 @@ function Bans() {
   const [f, setF] = useState({ gameId: "", uid: "", reasonCode: "cheating", note: "" });
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
   const items = (q.data?.items ?? []) as unknown as { id: string; gameId: string; uid: string; reasonCode: string; note: string }[];
+  const ask = useConfirm();
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
       <ul className="divide-y-2 divide-line border-y-2 border-line" data-testid="bans">
@@ -838,6 +847,7 @@ function Bans() {
         className="rounded-card grid gap-3 border border-line bg-surface p-4"
         onSubmit={async (e) => {
           e.preventDefault();
+          if (!(await ask({ kind: "save", title: t("ask.ban"), confirmLabel: t("bans.ban"), danger: true }))) return;
           setMsg(null);
           try {
             await esportsAdmin.ban({ ...f, reasonCode: f.reasonCode as "cheating" });

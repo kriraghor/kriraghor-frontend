@@ -8,7 +8,7 @@ import { formatTaka } from "@/lib/admin/finance";
 import { dhakaIso, halfHours, nextDays, toPoisha, vendor, type Rules, type RuleInput } from "@/lib/vendor/grounds";
 import { Notice } from "@kriraghor/ui/primitives";
 import { Field, inputCls } from "../admin/finance/shared";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, useConfirm } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 const TONE: Record<string, string> = { low: "bg-brand/10", base: "bg-surface-2", high: "bg-accent-soft", peak: "bg-accent/45" };
@@ -41,6 +41,7 @@ export function PricingEditor({ id }: { id: string }) {
   const [applyToAll, setApplyToAll] = useState(false);
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
   const [busy, setBusy] = useState(false);
+  const ask = useConfirm();
   const draft = form ? fromForm(form) : null;
   const dirty = Boolean(form && current && JSON.stringify(form) !== JSON.stringify(toForm(current)));
 
@@ -86,9 +87,9 @@ export function PricingEditor({ id }: { id: string }) {
       <form
         className="rounded-card mt-6 grid gap-6 border border-line bg-surface p-5"
         data-testid="pricing-form"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          if (draft) void act(() => vendor.saveDraft(id, draft), t("draftSaved"), true);
+          if (draft && (await ask("save"))) void act(() => vendor.saveDraft(id, draft), t("draftSaved"), true);
         }}
       >
         <fieldset className="grid gap-3 sm:grid-cols-2">
@@ -143,10 +144,25 @@ export function PricingEditor({ id }: { id: string }) {
           </button>
           {p.data.draft ? (
             <>
-              <button type="button" disabled={busy || dirty} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void act(() => vendor.publish(id, applyToAll), t("published"), true)} data-testid="publish">
+              <button
+                type="button"
+                disabled={busy || dirty}
+                className={`${btn} border-brand bg-brand text-on-brand`}
+                onClick={async () => {
+                  if (await ask({ kind: "save", title: t("ask.publish") })) void act(() => vendor.publish(id, applyToAll), t("published"), true);
+                }}
+                data-testid="publish"
+              >
                 {t("publish")}
               </button>
-              <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void act(() => vendor.discard(id), t("discarded"), true)}>
+              <button
+                type="button"
+                disabled={busy}
+                className={`${btn} border-line`}
+                onClick={async () => {
+                  if (await ask({ kind: "remove", title: t("ask.discard") })) void act(() => vendor.discard(id), t("discarded"), true);
+                }}
+              >
                 {t("discard")}
               </button>
               <label className="flex min-h-11 items-center gap-2 text-sm">

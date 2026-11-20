@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Button, Card, Dialog, Field, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Button, Card, Dialog, Field, Notice, Textarea, useToast } from "@kriraghor/ui/kit";
 import { useRouter } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
 import { gymDesk } from "@/lib/manage";
@@ -13,7 +13,8 @@ import { useGymError, type GymCtx } from "./common";
  * The owner removes this gym (M20-FR-15, 7 Nov 2026), at the foot of /manage/[gymId]/settings. Nothing is
  * deleted: the gym leaves search and the desk, its members, fees and receipts are kept, and a plan slot
  * frees up. The owner types the gym's name to confirm. The backend refuses while members hold paid online
- * packages (GYM_HAS_ACTIVE_PASSES, with the count) or while staff have the gym suspended.
+ * packages (GYM_HAS_ACTIVE_PASSES, with the count) or while staff have the gym suspended: a suspended gym
+ * says so up front and points to support (tester feedback, 19 Nov 2026), and "My gyms" links here.
  */
 export function RemoveGym({ ctx }: { ctx: GymCtx }) {
   const t = useTranslations("gm.remove");
@@ -28,6 +29,7 @@ export function RemoveGym({ ctx }: { ctx: GymCtx }) {
   const [problem, setProblem] = useState<string | null>(null);
   if (!ctx.owner) return null;
   const gymName = ctx.gym.name;
+  const suspended = ctx.gym.listingStatus === "suspended";
   const matches = name.trim().toLocaleLowerCase() === gymName.trim().toLocaleLowerCase();
   const close = (o: boolean) => {
     if (busy) return;
@@ -56,11 +58,12 @@ export function RemoveGym({ ctx }: { ctx: GymCtx }) {
     }
   };
   return (
-    <Card className="flex flex-col gap-3 border-danger/40" data-testid="gm-remove">
+    <Card id="gm-remove" className="flex scroll-mt-24 flex-col gap-3 border-danger/40" data-testid="gm-remove">
       <h2 className="font-display text-lg font-bold text-danger">{t("title")}</h2>
       <p className="max-w-[65ch] text-sm text-muted">{t("body")}</p>
+      {suspended ? <Notice tone="warning">{t("suspended")}</Notice> : null}
       <div>
-        <Button type="button" variant="danger" onClick={() => setOpen(true)} data-testid="gm-remove-open">
+        <Button type="button" variant="danger" onClick={() => setOpen(true)} disabled={suspended} data-testid="gm-remove-open">
           {t("open")}
         </Button>
       </div>

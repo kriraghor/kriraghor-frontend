@@ -13,6 +13,7 @@ import { SiteHeader } from "@kriraghor/ui/site-header";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { APP } from "@/app.config";
+import { webHref } from "@/lib/links";
 import { siteUrl } from "@/lib/seo";
 import "../globals.css";
 
@@ -52,7 +53,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           <Providers audience={APP.audience}>
             {/* The header reads the pathname; routes known only at request time (/events/[slug], /p/[handle]) stream it in. */}
             <Suspense fallback={<HeaderPlaceholder />}>
-              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} />
+              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} partner={webHref("/business")} />
             </Suspense>
             <main id="main" className="flex-1">
               {children}

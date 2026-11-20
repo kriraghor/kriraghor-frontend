@@ -237,7 +237,24 @@ function AddForm({ gymId, maxDays, aheadDays, onDone }: { gymId: string; maxDays
           {problem}
         </p>
       ) : null}
-      <Button type="submit" busy={busy} variant={affected ? "primary" : "secondary"} data-testid={affected ? "special-day-save" : "special-day-check"}>
+      <Button
+        type="submit"
+        busy={busy}
+        variant={affected ? "primary" : "secondary"}
+        confirm={
+          affected && !bad
+            ? {
+                kind: "add",
+                title: t("saveAsk"),
+                body:
+                  affected.classSessions + affected.visits > 0
+                    ? t("willCancel", { classes: localDigits(String(affected.classSessions), locale), visits: localDigits(String(affected.visits), locale) })
+                    : t("cancelsNothing"),
+              }
+            : undefined
+        }
+        data-testid={affected ? "special-day-save" : "special-day-check"}
+      >
         {affected ? t("save") : t("check")}
       </Button>
     </form>

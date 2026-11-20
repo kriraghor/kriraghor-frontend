@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Barbell, PencilSimple, SoccerBall, Storefront, UserMinus, UserPlus, UsersThree } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
-import { Badge, Button, ButtonLink, Checkbox, Chip, DataTable, Dialog, EmptyState, ErrorState, Field, Notice, PageTitle, Select, Skeleton, useToast, type Column } from "@kriraghor/ui/kit";
+import { Badge, Button, ButtonLink, Checkbox, Chip, DataTable, Dialog, EmptyState, ErrorState, Notice, PageTitle, PhoneField, Select, Skeleton, useConfirm, useToast, type Column } from "@kriraghor/ui/kit";
 import {
   addableBusinesses,
   businessKey,
@@ -309,6 +309,7 @@ function AddStaff({ businesses, catalogueOf, max, preset, onClose }: { businesse
   const [permissions, setPermissions] = useState<string[]>(() => (first ? defaultPermissions(catalogueOf(first.businessType)) : []));
   const [phone, setPhone] = useState("");
   const [tried, setTried] = useState(false);
+  const ask = useConfirm();
   const e164 = teamPhone(phone);
   const save = useMutation({
     mutationFn: () => team.add({ businessType: picked!.businessType, businessId: picked!.id, phone: e164!, permissions }),
@@ -318,10 +319,10 @@ function AddStaff({ businesses, catalogueOf, max, preset, onClose }: { businesse
       onClose();
     },
   });
-  const submit = () => {
+  const submit = async () => {
     setTried(true);
     if (!picked || !e164 || !permissions.length) return;
-    save.mutate();
+    if (await ask("add")) save.mutate();
   };
   const changeBusiness = (k: string) => {
     setBusiness(k);
@@ -339,7 +340,7 @@ function AddStaff({ businesses, catalogueOf, max, preset, onClose }: { businesse
           <Button type="button" variant="ghost" onClick={onClose} disabled={save.isPending}>
             {t("cancel")}
           </Button>
-          <Button type="button" onClick={submit} busy={save.isPending} data-testid="team-add-confirm">
+          <Button type="button" onClick={() => void submit()} busy={save.isPending} data-testid="team-add-confirm">
             {t("addConfirm")}
           </Button>
         </>
@@ -349,20 +350,18 @@ function AddStaff({ businesses, catalogueOf, max, preset, onClose }: { businesse
         className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
-          submit();
+          void submit();
         }}
         data-testid="team-add-form"
       >
-        <Field
+        <PhoneField
           id="team-phone"
           label={t("phone")}
           hint={t("phoneHint")}
           error={tried && !e164 ? t("phoneInvalid") : undefined}
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={setPhone}
           onBlur={() => phone && setTried(true)}
-          inputMode="tel"
-          autoComplete="off"
           placeholder="01XXXXXXXXX"
           required
           autoFocus
@@ -409,7 +408,7 @@ function EditStaff({ member, name, catalogue, onClose }: { member: TeamMember; n
           <Button type="button" variant="ghost" onClick={onClose} disabled={save.isPending}>
             {t("cancel")}
           </Button>
-          <Button type="button" onClick={() => save.mutate()} disabled={unchanged || !permissions.length} busy={save.isPending} data-testid="team-edit-confirm">
+          <Button type="button" confirm="save" onClick={() => save.mutate()} disabled={unchanged || !permissions.length} busy={save.isPending} data-testid="team-edit-confirm">
             {t("save")}
           </Button>
         </>

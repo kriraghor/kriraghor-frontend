@@ -10,7 +10,7 @@ import { whenLabel } from "@/lib/bookings";
 import { formatTaka } from "@/lib/payments";
 import { disputes, evidenceTypeOk, type PartyCase } from "@/lib/trust";
 import { Notice } from "@kriraghor/ui/primitives";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, useConfirm } from "@kriraghor/ui/kit";
 
 /**
  * /me/disputes/[code] (M17 FR-05 to FR-08): what the case is about and what is held, both sides'
@@ -28,6 +28,8 @@ export function DisputeDetail({ code }: { code: string }) {
   const [withdrawing, setWithdrawing] = useState(false);
   const [fileProblem, setFileProblem] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const say = useMutation({ mutationFn: () => (q.data?.can.respond ? disputes.respond(code, text.trim()) : disputes.statement(code, text.trim())), onSuccess: (d) => (refresh(d), setText("")) });
   const upload = useMutation({ mutationFn: (f: File) => disputes.upload(code, f), onSuccess: () => qc.invalidateQueries({ queryKey: ["dispute", code] }) });
   const withdraw = useMutation({ mutationFn: () => disputes.withdraw(code), onSuccess: (d) => (refresh(d), setWithdrawing(false)) });
@@ -139,7 +141,7 @@ export function DisputeDetail({ code }: { code: string }) {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              say.mutate();
+              void ask("send").then((ok) => ok && say.mutate());
             }}
             className="space-y-2"
           >
@@ -167,7 +169,7 @@ export function DisputeDetail({ code }: { code: string }) {
                 if (!f) return;
                 if (!evidenceTypeOk(f)) return setFileProblem(t("errors.FILE_TYPE"));
                 setFileProblem(null);
-                upload.mutate(f);
+                void ask({ kind: "send", title: a("sendFile"), body: f.name }).then((ok) => ok && upload.mutate(f));
               }}
             />
             <label htmlFor="evidence-file" className={`rounded-control mt-2 inline-flex min-h-12 cursor-pointer items-center border border-line-strong px-5 font-semibold ${can.filesLeft ? "" : "pointer-events-none opacity-50"}`} data-testid="add-file">

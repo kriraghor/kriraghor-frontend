@@ -92,7 +92,7 @@ export function MyEligibility() {
             <p className="text-sm">{t("genderOnce")}</p>
             {p ? <Notice tone="error">{t.has(`errors.${p.code}`) ? t(`errors.${p.code}`) : (p.title ?? t("failed"))}</Notice> : null}
             <div>
-              <Button type="submit" busy={save.isPending} disabled={!gender}>
+              <Button type="submit" busy={save.isPending} disabled={!gender} confirm={{ kind: "save", body: t("genderOnce") }}>
                 {t("saveGender")}
               </Button>
             </div>

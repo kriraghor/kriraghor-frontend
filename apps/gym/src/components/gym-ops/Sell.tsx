@@ -228,7 +228,7 @@ function Counter({ ctx, onSold }: { ctx: GymCtx; onSold: (s: Sale) => void }) {
             {problem}
           </p>
         ) : null}
-        <Button size="lg" onClick={() => void sell()} busy={busy} disabled={!cart.length} data-testid="sell-confirm">
+        <Button size="lg" onClick={() => void sell()} busy={busy} disabled={!cart.length} confirm={{ kind: "money", title: t("sell.ask", { amount: f.taka(total), method: t(`method.${method}`) }), confirmLabel: t("sell.confirm", { amount: f.taka(total) }) }} data-testid="sell-confirm">
           {t("sell.confirm", { amount: f.taka(total) })}
         </Button>
       </Card>

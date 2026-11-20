@@ -2132,7 +2132,8 @@
       "label": "Find what you need",
       "tabsLabel": "What are you looking for?",
       "tab": {
-        "tournaments": "Tournaments",
+        "tournaments": "Esports",
+        "events": "Tournaments",
         "grounds": "Venues",
         "shop": "Shop",
         "hire": "Hire"
@@ -2148,11 +2149,14 @@
       "need": "I need",
       "anyone": "Anyone",
       "go": {
-        "tournaments": "Find tournaments",
+        "tournaments": "Find esports",
+        "events": "Find a tournament",
         "grounds": "Find a venue",
         "shop": "Search the shop",
         "hire": "Browse talent"
-      }
+      },
+      "eventSearch": "Tournament name",
+      "eventPlaceholder": "Dhaka futsal cup"
     },
     "carousel": {
       "label": "Highlights",
@@ -2757,5 +2761,50 @@
       "hire": "Talent",
       "events": "Sports tournaments"
     }
+  },
+  "ask": {
+    "pauseProfile": "Pause this profile?",
+    "resumeProfile": "Show this profile again?",
+    "acceptRequest": "Accept this request?",
+    "declineRequest": "Decline this request?",
+    "declineRequestBody": "The manager is told at once.",
+    "checkIn": "Check in now?",
+    "startJob": "Start this job now?",
+    "releasePay": "Release the payment?",
+    "releasePayBody": "{amount} goes to the pro. This can't be undone.",
+    "release": "Release",
+    "markComplete": "Mark this job complete?",
+    "withdrawJob": "Withdraw from this job?",
+    "withdrawJobBody": "The manager gets everything back. This can't be undone.",
+    "sendReport": "Send this report?",
+    "withdrawRequest": "Withdraw this request?",
+    "withdrawRequestBody": "The pro is told and the request closes.",
+    "submitProfile": "Send this profile for review?",
+    "retirePlan": "Close this plan to new members?",
+    "retirePlanBody": "Running months finish as agreed.",
+    "endSession": "Sign out this device?",
+    "removePhoto": "Remove your photo?",
+    "applyRole": "Send this application?",
+    "sendDocument": "Send this document?",
+    "sendForReview": "Send this for review?",
+    "sendNid": "Send your NID for checking?",
+    "releaseHold": "Let this slot go?",
+    "releaseHoldBody": "Someone else can book it straight away.",
+    "postReview": "Post this review?",
+    "sendFile": "Send this file?",
+    "orderReceived": "Confirm you received this?",
+    "orderReceivedBody": "The shop is paid. Report a problem first if anything is wrong.",
+    "cancelOrder": "Cancel this part of the order?",
+    "yesCancel": "Yes, cancel",
+    "makeVice": "Make {name} vice-captain?",
+    "makePlayer": "Make {name} a player again?",
+    "removeMember": "Remove {name} from the team?",
+    "removeMemberBody": "They can be invited again later.",
+    "resendInvite": "Send the invite to {phone} again?",
+    "cancelInvite": "Cancel the invite to {phone}?",
+    "invitePlayer": "Invite {phone} to the team?",
+    "uploadLogo": "Use this file as the team logo?",
+    "joinTeam": "Join {team}?",
+    "declineInvite": "Decline the invite from {team}?"
   }
 }

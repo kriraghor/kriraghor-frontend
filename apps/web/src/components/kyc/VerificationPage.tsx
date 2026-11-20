@@ -169,6 +169,7 @@ function NidForm({
   const [number, setNumber] = useState("");
   const [dob, setDob] = useState("");
   const tf = useTranslations("footer");
+  const a = useTranslations("ask");
   const [consent, setConsent] = useState(false);
   const [uploads, setUploads] = useState<Partial<Record<Slot, Upload>>>({});
   const [busy, setBusy] = useState(false);
@@ -315,7 +316,7 @@ function NidForm({
       {stale ? <Notice tone="error">{t("error.CONSENT_VERSION_STALE")}</Notice> : null}
       {problem ? <Notice tone="error">{kycErrorText(problem, t, { minAge: minAgeYears, fallback: t("failed") })}</Notice> : null}
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" busy={busy} disabled={!ready}>
+        <Button type="submit" busy={busy} disabled={!ready} confirm={{ kind: "send", title: a("sendNid") }}>
           {t("submit")}
         </Button>
         <button type="button" onClick={onCancel} className="rounded-control min-h-12 border border-line-strong/60 px-5 font-semibold" disabled={busy}>

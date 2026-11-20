@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { api, problemOf } from "@kriraghor/api-client";
 import { formatTaka } from "@/lib/admin/finance";
 import { Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 import { Chip, Field, inputCls } from "../finance/shared";
 import { useAdminMe } from "../useAdminMe";
 
@@ -64,6 +65,7 @@ export function HireCatalog() {
   const t = useTranslations("hireAdmin");
   const locale = useLocale();
   const qc = useQueryClient();
+  const ask = useConfirm();
   const { ready } = useAdminMe();
   const [catId, setCatId] = useState<string | null>(null);
   const [edit, setEdit] = useState<Row | null>(null);
@@ -130,7 +132,12 @@ export function HireCatalog() {
                     <button type="button" className={`${btn} border-line`} onClick={() => (setEdit(r), setAdding(false))}>
                       {t("edit")}
                     </button>
-                    <button type="button" className={`${btn} ${r.isActive ? "border-danger text-danger" : "border-line"}`} onClick={() => void run(() => toggle("hire-roles", r.id, !r.isActive))}>
+                    <button type="button" className={`${btn} ${r.isActive ? "border-danger text-danger" : "border-line"}`} onClick={async () => {
+                        // Tester feedback (19 Nov 2026): ask before a change.
+                        const ok = await ask(r.isActive ? { kind: "remove", title: t("confirm.deactivate"), body: t("confirm.deactivateBody"), confirmLabel: t("deactivate") } : { kind: "save", title: t("confirm.reactivate"), confirmLabel: t("reactivate") });
+                        if (ok) await run(() => toggle("hire-roles", r.id, !r.isActive));
+                      }}
+                    >
                       {r.isActive ? t("deactivate") : t("reactivate")}
                     </button>
                   </div>
@@ -153,6 +160,7 @@ export function HireCatalog() {
 
 function RoleForm({ row, onSave, onCancel }: { row?: Row; onSave: (body: Record<string, unknown>) => Promise<unknown>; onCancel: () => void }) {
   const t = useTranslations("hireAdmin");
+  const ask = useConfirm();
   const [key, setKey] = useState(row?.key ?? "");
   const [nameEn, setNameEn] = useState(row?.nameEn ?? "");
   const [nameBn, setNameBn] = useState(row?.nameBn ?? "");
@@ -170,6 +178,7 @@ function RoleForm({ row, onSave, onCancel }: { row?: Row; onSave: (body: Record<
       className="rounded-card mt-3 grid gap-3 border border-line p-3 sm:grid-cols-2"
       onSubmit={async (e) => {
         e.preventDefault();
+        if (!(await ask(row ? "save" : "add"))) return;
         setBusy(true);
         await onSave({
           ...(row ? {} : { key }),

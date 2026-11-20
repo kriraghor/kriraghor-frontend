@@ -10,6 +10,7 @@ import { dayLabel, formatTaka, newKey } from "@kriraghor/ui/format";
 import { SignedOutCard } from "@kriraghor/ui/account";
 import { gym, subscriptionTone, TONE, type Subscription } from "@/lib/gym";
 import { Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 
 /**
  * /me/subscriptions (M20 §6): my trainer subscriptions. Each shows the month it is in, when the next
@@ -55,6 +56,7 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
   const t = useTranslations("gym");
   const locale = useLocale();
   const qc = useQueryClient();
+  const ask = useConfirm();
   const [confirm, setConfirm] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [statement, setStatement] = useState("");
@@ -101,7 +103,12 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
               {t("payMonth", { price: money(due?.price ?? s.price) })}
             </a>
           ) : (
-            <button type="button" onClick={() => renew.mutate()} disabled={renew.isPending} className="min-h-11 bg-brand px-4 font-bold text-on-brand hover:bg-brand-hover disabled:opacity-50" data-testid="my-sub-renew">
+            <button
+              type="button"
+              onClick={async () => {
+                renew.mutate();
+              }}
+              disabled={renew.isPending} className="min-h-11 bg-brand px-4 font-bold text-on-brand hover:bg-brand-hover disabled:opacity-50" data-testid="my-sub-renew">
               {t("payMonth", { price: money(s.price) })}
             </button>
           )
@@ -135,8 +142,9 @@ export function SubscriptionCard({ s }: { s: Subscription }) {
       {reporting ? (
         <form
           className="mt-3 flex flex-col gap-2"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
+            if (!(await ask({ kind: "send", title: t("problemAsk"), body: t("problemAskBody") }))) return;
             problem.mutate();
           }}
         >

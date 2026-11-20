@@ -11,7 +11,7 @@ import { orders, type Quote, type ShipTo } from "@/lib/orders";
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
 import { Button, Field, Notice } from "@kriraghor/ui/primitives";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, bdMobile, PhoneField } from "@kriraghor/ui/kit";
 
 /**
  * /shop/checkout (M13 FR-03 to FR-07): the delivery address (any delivery area in Bangladesh), the
@@ -21,10 +21,13 @@ import { BackLink } from "@kriraghor/ui/kit";
  */
 export function CheckoutView() {
   const t = useTranslations("orders");
+  const tp = useTranslations("kit.phone");
   const locale = useLocale();
   const { status } = useAuth();
   const [ship, setShip] = useState<ShipTo>({ name: "", phone: "", areaId: "", line: "", note: "" });
   const [changed, setChanged] = useState<Quote | null>(null);
+  // Set when the order was refused because the phone is not a Bangladesh mobile (no API call is made).
+  const [phoneChecked, setPhoneChecked] = useState(false);
   const areas = useQuery({ queryKey: ["delivery-areas"], queryFn: () => orders.areas(), enabled: status === "signed_in" });
   const quote = useQuery({ queryKey: ["quote", ship.areaId], queryFn: () => orders.quote(ship.areaId), enabled: status === "signed_in" && Boolean(ship.areaId), retry: false });
   const place = useMutation({
@@ -44,6 +47,7 @@ export function CheckoutView() {
   const set = (k: keyof ShipTo) => (e: { target: { value: string } }) => setShip({ ...ship, [k]: e.target.value });
   const submit = (e: FormEvent) => {
     e.preventDefault();
+    if (!bdMobile.valid(ship.phone)) return setPhoneChecked(true);
     if (q) place.mutate(q.total);
   };
   const problem = place.error ? problemOf(place.error) : quote.error ? problemOf(quote.error) : null;
@@ -58,7 +62,7 @@ export function CheckoutView() {
         <fieldset className="flex flex-col gap-4">
           <legend className="text-xl font-extrabold">{t("deliverTo")}</legend>
           <Field id="ship-name" label={t("shipName")} value={ship.name} onChange={set("name")} required autoComplete="name" error={fieldError("name")} />
-          <Field id="ship-phone" label={t("shipPhone")} value={ship.phone} onChange={set("phone")} required type="tel" inputMode="tel" autoComplete="tel" hint={t("phoneHint")} error={fieldError("phone")} />
+          <PhoneField id="ship-phone" label={t("shipPhone")} value={ship.phone} onChange={(phone) => setShip({ ...ship, phone })} required hint={t("phoneHint")} error={phoneChecked && !bdMobile.valid(ship.phone) ? tp("invalid") : fieldError("phone")} />
           <label htmlFor="ship-area" className="flex flex-col gap-1 font-semibold">
             {t("shipArea")}
             <select id="ship-area" value={ship.areaId} onChange={(e) => (setChanged(null), set("areaId")(e))} required className="min-h-12 field px-3 font-normal" data-testid="ship-area">

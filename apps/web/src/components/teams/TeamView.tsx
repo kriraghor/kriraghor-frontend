@@ -9,7 +9,7 @@ import { useAuth } from "@kriraghor/ui/auth";
 import { sortMembers, teams, whatsappUrl, type Team } from "@/lib/teams";
 import { MePanel } from "../MePanel";
 import { Button, Field, Notice } from "@kriraghor/ui/primitives";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, bdMobile, PhoneField, useConfirm } from "@kriraghor/ui/kit";
 
 const LOGO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_LOGO = 2 * 1024 * 1024;
@@ -22,12 +22,17 @@ const MAX_LOGO = 2 * 1024 * 1024;
  */
 export function TeamView({ id }: { id: string }) {
   const t = useTranslations("teams");
+  const a = useTranslations("ask");
+  const tp = useTranslations("kit.phone");
+  const ask = useConfirm();
   const locale = useLocale();
   const { status } = useAuth();
   const qc = useQueryClient();
   const router = useRouter();
   const q = useQuery({ queryKey: ["team", id], queryFn: () => teams.get(id), enabled: status === "signed_in" });
   const [phone, setPhone] = useState("");
+  // Set when an invite was refused because the number is not a Bangladesh mobile (no API call is made).
+  const [phoneChecked, setPhoneChecked] = useState(false);
   const [share, setShare] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [confirm, setConfirm] = useState<null | "archive" | "leave" | { handOver: string; name: string }>(null);
@@ -52,6 +57,7 @@ export function TeamView({ id }: { id: string }) {
       setShare(r.shareUrl);
       setCopied(false);
       setPhone("");
+      setPhoneChecked(false);
       qc.invalidateQueries({ queryKey: ["team", id] });
     },
   });
@@ -144,7 +150,7 @@ export function TeamView({ id }: { id: string }) {
                 </span>
                 {team.can.manage && m.role !== "captain" ? (
                   <span className="flex flex-wrap gap-2">
-                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand" onClick={() => act.mutate(() => teams.setMember(id, m.userId, { role: m.role === "vice_captain" ? "player" : "vice_captain" }))}>
+                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand" onClick={() => void ask({ kind: "save", title: m.role === "vice_captain" ? a("makePlayer", { name: m.displayName }) : a("makeVice", { name: m.displayName }) }).then((ok) => ok && act.mutate(() => teams.setMember(id, m.userId, { role: m.role === "vice_captain" ? "player" : "vice_captain" })))}>
                       {m.role === "vice_captain" ? t("makePlayer") : t("makeVice")}
                     </button>
                     <button
@@ -166,7 +172,7 @@ export function TeamView({ id }: { id: string }) {
                   </span>
                 ) : null}
                 {team.can.invite && m.role !== "captain" && !(m.role === "vice_captain" && !isCaptain) ? (
-                  <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-danger" onClick={() => act.mutate(() => teams.remove(id, m.userId))}>
+                  <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-danger" onClick={() => void ask({ kind: "remove", title: a("removeMember", { name: m.displayName }), body: a("removeMemberBody"), confirmLabel: t("remove") }).then((ok) => ok && act.mutate(() => teams.remove(id, m.userId)))}>
                     {t("remove")}
                   </button>
                 ) : null}
@@ -198,10 +204,10 @@ export function TeamView({ id }: { id: string }) {
                       <span className="block font-mono font-bold">{i.phoneMasked}</span>
                       <span className="block text-sm text-muted">{t("expires", { date: date(i.expiresAt) })}</span>
                     </span>
-                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand" onClick={() => inviteAct.mutate({ inviteId: i.id, kind: "resend" })}>
+                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-brand" onClick={() => void ask({ kind: "send", title: a("resendInvite", { phone: i.phoneMasked }) }).then((ok) => ok && inviteAct.mutate({ inviteId: i.id, kind: "resend" }))}>
                       {t("resend")}
                     </button>
-                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-danger" onClick={() => inviteAct.mutate({ inviteId: i.id, kind: "cancel" })}>
+                    <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-3 text-sm font-bold hover:border-danger" onClick={() => void ask({ kind: "remove", title: a("cancelInvite", { phone: i.phoneMasked }), confirmLabel: t("cancelInvite") }).then((ok) => ok && inviteAct.mutate({ inviteId: i.id, kind: "cancel" }))}>
                       {t("cancelInvite")}
                     </button>
                   </li>
@@ -218,11 +224,12 @@ export function TeamView({ id }: { id: string }) {
               data-testid="invite-form"
               onSubmit={(e) => {
                 e.preventDefault();
-                invite.mutate();
+                if (!bdMobile.valid(phone)) return setPhoneChecked(true);
+                void ask({ kind: "send", title: a("invitePlayer", { phone }) }).then((ok) => ok && invite.mutate());
               }}
             >
               <h2 className="text-lg font-extrabold">{t("invitePlayer")}</h2>
-              <Field id="invite-phone" label={t("phone")} type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="01XXXXXXXXX" hint={t("inviteHint")} error={err(invite.error) ?? undefined} />
+              <PhoneField id="invite-phone" label={t("phone")} value={phone} onChange={setPhone} required placeholder="01XXXXXXXXX" hint={t("inviteHint")} error={phoneChecked && !bdMobile.valid(phone) ? tp("invalid") : (err(invite.error) ?? undefined)} />
               <Button type="submit" busy={invite.isPending}>
                 {t("invite")}
               </Button>
@@ -261,7 +268,7 @@ export function TeamView({ id }: { id: string }) {
                   <Field id="edit-name" label={t("teamName")} value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} required minLength={2} maxLength={40} />
                   <Field id="edit-short" label={t("shortCode")} value={edit.shortCode} onChange={(e) => setEdit({ ...edit, shortCode: e.target.value.toUpperCase() })} maxLength={4} />
                   <div className="flex gap-3">
-                    <Button type="submit" busy={act.isPending}>
+                    <Button type="submit" busy={act.isPending} confirm="save">
                       {t("save")}
                     </Button>
                     <button type="button" className="min-h-12 px-3 font-semibold underline" onClick={() => setEdit(null)}>
@@ -287,7 +294,7 @@ export function TeamView({ id }: { id: string }) {
                     if (!LOGO_TYPES.includes(file.type)) return setLogoError(t("logoType"));
                     if (file.size > MAX_LOGO) return setLogoError(t("logoSize"));
                     setLogoError(null);
-                    act.mutate(() => teams.uploadLogo(id, file));
+                    void ask({ kind: "save", title: a("uploadLogo"), body: file.name }).then((ok) => ok && act.mutate(() => teams.uploadLogo(id, file)));
                   }}
                 />
               </label>

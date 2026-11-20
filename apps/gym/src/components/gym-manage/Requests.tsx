@@ -118,7 +118,7 @@ function List({ ctx }: { ctx: GymCtx }) {
                       </Button>
                     </div>
                   ) : (
-                    <Button type="button" size="sm" variant="secondary" busy={busy === r.id} onClick={() => void cancel(r)} data-testid="request-cancel">
+                    <Button type="button" size="sm" variant="secondary" busy={busy === r.id} onClick={() => void cancel(r)} confirm={{ kind: "remove", title: t("requests.cancelAsk") }} data-testid="request-cancel">
                       {t("requests.cancel")}
                     </Button>
                   )
@@ -199,7 +199,7 @@ function AcceptDialog({ ctx, r, onClose, onDone }: { ctx: GymCtx; r: LinkRequest
           <Button type="button" variant="ghost" onClick={onClose}>
             {t("cancel")}
           </Button>
-          <Button type="button" onClick={submit} busy={busy} data-testid="join-accept-submit">
+          <Button type="button" onClick={submit} busy={busy} confirm={packageId && canCollect && withPay ? { kind: "money", body: t("ms.withPayBody") } : undefined} data-testid="join-accept-submit">
             {tj("accept")}
           </Button>
         </>

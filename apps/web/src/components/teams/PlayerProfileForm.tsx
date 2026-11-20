@@ -91,7 +91,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
             }}
           >
             <Field id="player-handle" label={t("username")} value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase())} minLength={3} maxLength={30} required hint={t("usernameHint")} error={err(name.error) ?? undefined} />
-            <Button type="submit" busy={name.isPending}>
+            <Button type="submit" busy={name.isPending} confirm="save">
               {t("setUsername")}
             </Button>
           </form>
@@ -160,7 +160,7 @@ function Editor({ initial }: { initial: PlayerProfile }) {
         {err(save.error) ? <Notice tone="error">{err(save.error)}</Notice> : null}
         {saved ? <Notice>{t("saved")}</Notice> : null}
         <div>
-          <Button type="submit" busy={save.isPending}>
+          <Button type="submit" busy={save.isPending} confirm="save">
             {t("save")}
           </Button>
         </div>

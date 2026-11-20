@@ -22,7 +22,7 @@ export async function SiteFooter() {
       title: t("business"),
       own: true,
       links: [
-        { href: "/start", label: t("start") },
+        { href: "/partner", label: t("partner") },
         { href: "/manage", label: t("manage") },
       ],
     },

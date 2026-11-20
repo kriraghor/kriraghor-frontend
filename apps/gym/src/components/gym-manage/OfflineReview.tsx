@@ -175,6 +175,8 @@ function ResolveDialog({ ctx, acting, onClose }: { ctx: GymCtx; acting: { item: 
       setBusy(false);
     }
   };
+  // Money moves (19 Nov 2026): putting the cash on another due or recording it went back asks first; "checked" is already a question.
+  const resolveAsk = !item || action === "checked" || (action === "returned" && note.trim().length < 2) || (action === "apply" && !chosen) ? undefined : { kind: "money" as const, title: action === "apply" ? t("applyAsk", { amount: f.taka(item.amountPoisha ?? 0), name: item.member.displayName ?? "" }) : t("returnedAsk", { amount: f.taka(item.amountPoisha ?? 0) }), body: action === "apply" ? t("applyBody") : undefined };
   const title = !item ? "" : action === "apply" ? t("applyTitle", { amount: f.taka(item.amountPoisha ?? 0), name: item.member.displayName ?? "" }) : action === "returned" ? t("returnedTitle") : t("checkedTitle");
   return (
     <Dialog
@@ -187,7 +189,7 @@ function ResolveDialog({ ctx, acting, onClose }: { ctx: GymCtx; acting: { item: 
           <Button type="button" variant="ghost" onClick={close} disabled={busy}>
             {tg("cancel")}
           </Button>
-          <Button type="button" onClick={() => void submit()} busy={busy} disabled={action === "apply" && !dues.isPending && !open.length} data-testid="offline-resolve">
+          <Button type="button" onClick={() => void submit()} busy={busy} disabled={action === "apply" && !dues.isPending && !open.length} confirm={resolveAsk} data-testid="offline-resolve">
             {action === "apply" ? t("apply") : action === "returned" ? t("returned") : t("checked")}
           </Button>
         </>

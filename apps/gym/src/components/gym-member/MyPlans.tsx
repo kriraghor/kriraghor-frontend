@@ -161,7 +161,7 @@ function PlanDay({ item, date, ticks, onTick }: { item: MyPlanItem; date: string
                     >
                       <Textarea id={`note-${ref}`} label={t("myNote")} value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 300))} rows={2} maxLength={300} placeholder={t("notePlaceholder")} />
                       <div className="flex gap-2">
-                        <Button type="submit" size="sm" busy={saving === ref}>
+                        <Button type="submit" size="sm" busy={saving === ref} confirm="save">
                           {t("saveNote")}
                         </Button>
                         <Button type="button" size="sm" variant="ghost" onClick={() => setNoteFor(null)}>

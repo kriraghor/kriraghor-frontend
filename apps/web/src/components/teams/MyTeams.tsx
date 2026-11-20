@@ -10,10 +10,13 @@ import { teams, teamSports } from "@/lib/teams";
 import { MePanel } from "../MePanel";
 import { Button, Field, Notice } from "@kriraghor/ui/primitives";
 import { AddPhone } from "./AddPhone";
+import { useConfirm } from "@kriraghor/ui/kit";
 
 /** /me/teams (M16 §16): invites waiting for me, my teams, and create a team (a verified phone is needed). */
 export function MyTeams() {
   const t = useTranslations("teams");
+  const a = useTranslations("ask");
+  const ask = useConfirm();
   const locale = useLocale();
   const { status } = useAuth();
   const qc = useQueryClient();
@@ -64,10 +67,10 @@ export function MyTeams() {
                     {name(i.team?.sport)} · {t("invitedBy", { name: i.invitedBy ?? "–" })}
                   </span>
                 </span>
-                <Button type="button" busy={answer.isPending} onClick={() => answer.mutate({ id: i.id, yes: true })} data-testid="accept-invite">
+                <Button type="button" busy={answer.isPending} confirm={{ kind: "add", title: a("joinTeam", { team: i.team?.name ?? "–" }), confirmLabel: t("accept") }} onClick={() => answer.mutate({ id: i.id, yes: true })} data-testid="accept-invite">
                   {t("accept")}
                 </Button>
-                <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-bold hover:border-danger" onClick={() => answer.mutate({ id: i.id, yes: false })}>
+                <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-bold hover:border-danger" onClick={() => void ask({ kind: "remove", title: a("declineInvite", { team: i.team?.name ?? "–" }), confirmLabel: t("decline") }).then((ok) => ok && answer.mutate({ id: i.id, yes: false }))}>
                   {t("decline")}
                 </button>
               </li>
@@ -143,7 +146,7 @@ export function MyTeams() {
               <Field id="team-name" label={t("teamName")} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required minLength={2} maxLength={40} hint={t("teamNameHint")} />
               <Field id="team-short" label={t("shortCode")} value={form.shortCode} onChange={(e) => setForm({ ...form, shortCode: e.target.value.toUpperCase() })} maxLength={4} hint={t("shortCodeHint")} />
               {problem ? <Notice tone="error">{err(problem)}</Notice> : null}
-              <Button type="submit" busy={create.isPending}>
+              <Button type="submit" busy={create.isPending} confirm="add">
                 {t("create")}
               </Button>
             </form>

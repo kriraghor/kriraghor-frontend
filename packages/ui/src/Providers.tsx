@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./auth";
 import { TooltipProvider } from "./kit/Overlay";
 import { ToastProvider } from "./kit/Toast";
+import { ConfirmProvider } from "./kit/Confirm";
+import { UploadTray } from "./kit/UploadTray";
 import type { Audience } from "@kriraghor/session/auth";
 
 export function Providers({ audience = "api", children }: { audience?: Audience; children: ReactNode }) {
@@ -18,7 +20,12 @@ export function Providers({ audience = "api", children }: { audience?: Audience;
     <QueryClientProvider client={queryClient}>
       <AuthProvider audience={audience}>
         <TooltipProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <ConfirmProvider>
+              {children}
+              <UploadTray />
+            </ConfirmProvider>
+          </ToastProvider>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

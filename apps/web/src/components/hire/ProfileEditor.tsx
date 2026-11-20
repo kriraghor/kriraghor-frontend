@@ -80,7 +80,7 @@ function NewProfile() {
       <ProfileFields values={values} onChange={setValues} />
       {create.error ? <Notice tone="error">{problemText(problemOf(create.error), t("failed"))}</Notice> : null}
       <div>
-        <Button busy={create.isPending} disabled={!roleKey} data-testid="pro-create">
+        <Button busy={create.isPending} disabled={!roleKey} confirm="add" data-testid="pro-create">
           {t("desk.create")}
         </Button>
       </div>
@@ -158,6 +158,7 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
   const editable = EDITABLE.includes(p.status) && p.editStatus !== "pending_review";
   const err = [save, submit].map((m) => (m.error ? problemOf(m.error) : null)).find(Boolean);
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
+  const a = useTranslations("ask");
 
   return (
     <div className="flex max-w-3xl flex-col gap-6" data-testid="pro-editor">
@@ -183,7 +184,7 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
         </fieldset>
         {editable ? (
           <div>
-            <Button busy={save.isPending} data-testid="pro-save">
+            <Button busy={save.isPending} confirm="save" data-testid="pro-save">
               {t("desk.save")}
             </Button>
           </div>
@@ -193,7 +194,7 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
       {err ? <Notice tone="error">{err.code === "RATE_CARD_REQUIRED" ? t("desk.ratesFirst") : problemText(err, t("failed"))}</Notice> : null}
       {editable ? (
         <div className="border-t-2 border-line pt-4">
-          <Button busy={submit.isPending} disabled={!p.rateCard} onClick={() => submit.mutate()} data-testid="pro-submit">
+          <Button busy={submit.isPending} disabled={!p.rateCard} confirm={{ kind: "send", title: a("submitProfile"), confirmLabel: t("desk.submit") }} onClick={() => submit.mutate()} data-testid="pro-submit">
             {t("desk.submit")}
           </Button>
           <p className="mt-2 text-sm text-muted">{t("desk.submitNote")}</p>
@@ -298,7 +299,7 @@ function RateCardEditor({ p, disabled, onSaved }: { p: OwnerProfile; disabled: b
       {save.isSuccess ? <Notice>{t("desk.ratesSaved")}</Notice> : null}
       {!disabled ? (
         <div>
-          <Button busy={save.isPending} data-testid="pro-save-rates">
+          <Button busy={save.isPending} confirm="save" data-testid="pro-save-rates">
             {t("desk.saveRates")}
           </Button>
         </div>

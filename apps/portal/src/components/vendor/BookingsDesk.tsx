@@ -6,7 +6,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tansta
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { CaretLeft, CaretRight, MagnifyingGlass } from "@phosphor-icons/react";
-import { Badge, Button, DataTable, FilterBar, IconButton, type Column, type Tone } from "@kriraghor/ui/kit";
+import { Badge, Button, DataTable, FilterBar, IconButton, PhoneField, bdMobile, useConfirm, type Column, type ConfirmSpec, type Tone } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { formatTaka } from "@/lib/admin/finance";
@@ -342,6 +342,7 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
   const errorText = useDeskErrorText();
   const locale = useLocale();
   const qc = useQueryClient();
+  const ask = useConfirm();
   const [reason, setReason] = useState<OwnerCancelReason>("weather");
   const [confirming, setConfirming] = useState<"cancel" | "move" | null>(null);
   const [method, setMethod] = useState<"cash" | "bkash_venue">("cash");
@@ -354,6 +355,10 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
       void qc.invalidateQueries({ queryKey: ["vendor-booking-search"] });
     },
   });
+  // Every change asks first (tester feedback, 19 Nov 2026); the cancel box below is its own confirmation.
+  const run = async (spec: ConfirmSpec, fn: () => Promise<unknown>) => {
+    if (await ask(spec)) act.mutate(fn);
+  };
   const money = (n: number) => formatTaka(n, locale);
   // Staff see only the buttons the owner allowed (cancel and move are off by default, Q170).
   const actions = allowedBookingActions(ownerActions(b), perms);
@@ -403,17 +408,17 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2">
         {actions.includes("check_in") ? (
-          <button type="button" className="min-h-11 bg-brand px-4 font-bold text-on-brand" onClick={() => act.mutate(() => desk.checkIn(b.id))} data-testid="check-in">
+          <button type="button" className="min-h-11 bg-brand px-4 font-bold text-on-brand" onClick={() => void run({ kind: "save", title: t("ask.checkIn") }, () => desk.checkIn(b.id))} data-testid="check-in">
             {t("checkIn")}
           </button>
         ) : null}
         {actions.includes("extend") ? (
-          <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-4 font-semibold" onClick={() => act.mutate(() => desk.extend(b.id))}>
+          <button type="button" className="rounded-control min-h-11 border border-line-strong/60 px-4 font-semibold" onClick={() => void run({ kind: "save", title: t("ask.extend") }, () => desk.extend(b.id))}>
             {t("extend")}
           </button>
         ) : null}
         {actions.includes("no_show") ? (
-          <button type="button" className="rounded-control min-h-11 border border-danger px-4 font-semibold text-danger" onClick={() => act.mutate(() => desk.noShow(b.id))} data-testid="no-show">
+          <button type="button" className="rounded-control min-h-11 border border-danger px-4 font-semibold text-danger" onClick={() => void run({ kind: "remove", title: t("ask.noShow"), body: t("ask.noShowBody") }, () => desk.noShow(b.id))} data-testid="no-show">
             {t("noShow")}
           </button>
         ) : null}
@@ -436,7 +441,7 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
               <option value="bkash_venue">{t("bkash")}</option>
             </select>
           </Field>
-          <button type="button" className="min-h-11 bg-brand px-4 font-bold text-on-brand" onClick={() => act.mutate(() => desk.collect(b.id, method, b.money.dueAtVenue))} data-testid="collect">
+          <button type="button" className="min-h-11 bg-brand px-4 font-bold text-on-brand" onClick={() => void run({ kind: "money", title: t("ask.collect", { amount: money(b.money.dueAtVenue) }) }, () => desk.collect(b.id, method, b.money.dueAtVenue))} data-testid="collect">
             {t("collect", { amount: money(b.money.dueAtVenue) })}
           </button>
         </div>
@@ -473,7 +478,7 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
             <ul className="mt-2 space-y-1">
               {targets.data.items.map((x) => (
                 <li key={x.courtId}>
-                  <button type="button" className="rounded-control min-h-11 w-full border border-line-strong/60 px-3 text-left text-sm font-semibold hover:border-brand" onClick={() => act.mutate(() => desk.move(b.id, x.courtId))}>
+                  <button type="button" className="rounded-control min-h-11 w-full border border-line-strong/60 px-3 text-left text-sm font-semibold hover:border-brand" onClick={() => void run({ kind: "save", title: t("ask.move", { court: x.courtName }) }, () => desk.move(b.id, x.courtId))}>
                     {x.groundName} · {x.courtName} {x.sameGround ? "" : `(${t("otherGround")})`}
                   </button>
                 </li>
@@ -490,6 +495,7 @@ function BookingPanel({ b, groundId, day, perms, onClose }: { b: OwnerBooking; g
 
 function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: string; courts: { id: string; name: string }[]; onClose: () => void }) {
   const t = useTranslations("vendorBookings");
+  const tk = useTranslations("kit.phone");
   const qc = useQueryClient();
   const [court, setCourt] = useState(courts[0]?.id ?? "");
   const [time, setTime] = useState(() => {
@@ -500,8 +506,12 @@ function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: str
   const [minutes, setMinutes] = useState(60);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneTried, setPhoneTried] = useState(false);
+  // An optional Bangladesh mobile (tester feedback, 19 Nov 2026): a wrong one stops the form before any call.
+  const phoneBad = phone !== "" && !bdMobile.valid(phone);
+  const ask = useConfirm();
   const save = useMutation({
-    mutationFn: () => desk.walkIn(groundId, { courtIds: [court], start: dhakaIso(day, time), minutes, name: name.trim(), ...(phone.trim() ? { phone: phone.trim() } : {}) }),
+    mutationFn: () => desk.walkIn(groundId, { courtIds: [court], start: dhakaIso(day, time), minutes, name: name.trim(), ...(phone ? { phone } : {}) }),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["vendor-timeline", groundId, day] });
       onClose();
@@ -512,9 +522,10 @@ function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: str
   return (
     <form
       className="rounded-card mt-5 grid gap-3 border border-line-strong p-4 md:grid-cols-6"
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        save.mutate();
+        if (phoneBad) return setPhoneTried(true);
+        if (await ask("add")) save.mutate();
       }}
     >
       <p className="font-bold md:col-span-6">{t("walkInTitle")}</p>
@@ -546,9 +557,7 @@ function WalkIn({ groundId, day, courts, onClose }: { groundId: string; day: str
       <Field label={t("name")}>
         <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} required minLength={2} maxLength={80} />
       </Field>
-      <Field label={t("phoneOptional")}>
-        <input className={inputCls} value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="off" />
-      </Field>
+      <PhoneField id="walk-in-phone" label={t("phoneOptional")} value={phone} onChange={setPhone} error={phoneTried && phoneBad ? tk("invalid") : undefined} />
       <div className="flex items-end gap-2">
         <button type="submit" disabled={save.isPending} className="min-h-11 bg-brand px-4 font-bold text-on-brand disabled:opacity-50">
           {t("save")}

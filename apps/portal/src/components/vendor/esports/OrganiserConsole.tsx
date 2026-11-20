@@ -13,7 +13,7 @@ import { Notice } from "@kriraghor/ui/primitives";
 import { CheckinBoard, CreateForm, Finalise, Matches } from "../../admin/esports/EsportsDesk";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { formatDhaka } from "../../admin/useAdminMe";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, PhoneField, bdMobile, useConfirm } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 const TONE: Record<string, "ok" | "warn" | "bad" | "muted"> = {
@@ -236,6 +236,7 @@ export function OrgTournaments({ orgId }: { orgId: string }) {
 function FundBox({ orgId, id, fund, onChange }: { orgId: string; id: string; fund: Fund; onChange: () => void }) {
   const t = useTranslations("organiser");
   const locale = useLocale();
+  const ask = useConfirm();
   const pay = useMutation({
     mutationFn: () => organiser.fund(orgId, id),
     onSuccess: (r) => window.location.assign(r.payment.payUrl),
@@ -253,7 +254,15 @@ function FundBox({ orgId, id, fund, onChange }: { orgId: string; id: string; fun
       </p>
       <p className="mt-1 text-sm text-muted">{t(`fund.${state}`)}</p>
       {state === "needs" ? (
-        <button type="button" className={`${btn} mt-3 border-brand bg-brand text-on-brand`} disabled={pay.isPending} onClick={() => pay.mutate()} data-testid="fund-now">
+        <button
+          type="button"
+          className={`${btn} mt-3 border-brand bg-brand text-on-brand`}
+          disabled={pay.isPending}
+          onClick={async () => {
+            if (await ask({ kind: "money", title: t("ask.fund", { amount: formatTaka(fund.toDeposit, locale) }), confirmLabel: t("ask.pay") })) pay.mutate();
+          }}
+          data-testid="fund-now"
+        >
           {t("fund.now", { amount: formatTaka(fund.toDeposit, locale) })}
         </button>
       ) : null}
@@ -276,6 +285,7 @@ export function OrgTournament({ orgId, id }: { orgId: string; id: string }) {
     tone: "info" | "error";
   } | null>(null);
   const [code, setCode] = useState<string | null>(null);
+  const ask = useConfirm();
   const refresh = async () => {
     await qc.invalidateQueries({ queryKey: ["org-tournament", orgId, id] });
   };
@@ -322,7 +332,14 @@ export function OrgTournament({ orgId, id }: { orgId: string; id: string }) {
       {draft || x.status === "review" ? <FundBox orgId={orgId} id={id} fund={x.fund} onChange={refresh} /> : null}
       <div className="flex flex-wrap gap-2">
         {draft ? (
-          <button type="button" className={`${btn} border-brand`} onClick={() => void run(() => organiser.submit(orgId, id), t("tour.submitted"))} data-testid="org-submit">
+          <button
+            type="button"
+            className={`${btn} border-brand`}
+            onClick={async () => {
+              if (await ask({ kind: "send", title: t("ask.submit") })) void run(() => organiser.submit(orgId, id), t("tour.submitted"));
+            }}
+            data-testid="org-submit"
+          >
             {t("tour.submit")}
           </button>
         ) : null}
@@ -404,6 +421,7 @@ export function OrgBilling({ orgId }: { orgId: string }) {
     queryKey: ["org-invoices", orgId],
     queryFn: () => organiser.invoices(orgId),
   });
+  const ask = useConfirm();
   const pay = useMutation({
     mutationFn: (id: string) => organiser.payInvoice(orgId, id),
     onSuccess: (r) => window.location.assign(r.payment.payUrl),
@@ -446,7 +464,14 @@ export function OrgBilling({ orgId }: { orgId: string }) {
               <span className="font-bold tabular-nums">{formatTaka(i.total, locale)}</span>
               <Chip tone={TONE[i.status] ?? "muted"}>{t(`invoiceStatus.${i.status}`)}</Chip>
               {["issued", "overdue"].includes(i.status) ? (
-                <button type="button" className={`${btn} border-brand bg-brand text-on-brand`} disabled={pay.isPending} onClick={() => pay.mutate(i.id)}>
+                <button
+                  type="button"
+                  className={`${btn} border-brand bg-brand text-on-brand`}
+                  disabled={pay.isPending}
+                  onClick={async () => {
+                    if (await ask({ kind: "money", title: t("ask.payInvoice", { number: i.number, amount: formatTaka(i.total, locale) }), confirmLabel: t("ask.pay") })) pay.mutate(i.id);
+                  }}
+                >
                   {t("bill.pay")}
                 </button>
               ) : null}
@@ -479,6 +504,7 @@ function BrandingForm({ orgId, data }: { orgId: string; data: Branding }) {
     taglineBn: data.taglineBn ?? "",
   });
   const [sub, setSub] = useState(data.subdomain ?? "");
+  const ask = useConfirm();
   const [msg, setMsg] = useState<{
     text: string;
     tone: "info" | "error";
@@ -500,8 +526,9 @@ function BrandingForm({ orgId, data }: { orgId: string; data: Branding }) {
       <div className="rounded-card grid content-start gap-3 border border-line p-5" data-testid="org-branding">
         <form
           className="grid gap-3"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
+            if (!(await ask("save"))) return;
             void run(
               () =>
                 organiser.saveBranding(orgId, {
@@ -551,15 +578,15 @@ function BrandingForm({ orgId, data }: { orgId: string; data: Branding }) {
             onChange={(e) => {
               const file = e.target.files?.[0];
               e.target.value = "";
-              if (file) void run(() => organiser.uploadLogo(orgId, file), t("brand.logoSaved"));
+              if (file) void ask({ kind: "save", title: t("ask.logo") }).then((ok) => (ok ? run(() => organiser.uploadLogo(orgId, file), t("brand.logoSaved")) : undefined));
             }}
           />
         </label>
         <form
           className="mt-4 flex flex-wrap items-end gap-2"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            void run(() => organiser.claimSubdomain(orgId, sub.trim().toLowerCase()), t("brand.subSaved"));
+            if (await ask({ kind: "save", title: t("ask.claim", { sub: sub.trim().toLowerCase() }) })) void run(() => organiser.claimSubdomain(orgId, sub.trim().toLowerCase()), t("brand.subSaved"));
           }}
         >
           <Field label={t("brand.subdomain")}>
@@ -607,10 +634,13 @@ export function OrgMembers({ orgId }: { orgId: string }) {
   });
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState<"admin" | "staff">("staff");
+  const [phoneTried, setPhoneTried] = useState(false);
+  const ask = useConfirm();
+  const tk = useTranslations("kit.phone");
   const done = () => qc.invalidateQueries({ queryKey: ["org-members", orgId] });
   const add = useMutation({
-    mutationFn: () => organiser.addMember(orgId, phone.trim(), role),
-    onSuccess: () => (setPhone(""), done()),
+    mutationFn: () => organiser.addMember(orgId, phone, role),
+    onSuccess: () => (setPhone(""), setPhoneTried(false), done()),
   });
   const remove = useMutation({
     mutationFn: (id: string) => organiser.removeMember(orgId, id),
@@ -625,7 +655,13 @@ export function OrgMembers({ orgId }: { orgId: string }) {
             <span className="min-w-0 flex-1 font-semibold">{m.name ?? "–"}</span>
             <span className="text-sm text-muted">{t(`role.${m.role}`)}</span>
             {m.role !== "owner" ? (
-              <button type="button" className="text-sm font-semibold text-danger underline" onClick={() => remove.mutate(m.id)}>
+              <button
+                type="button"
+                className="text-sm font-semibold text-danger underline"
+                onClick={async () => {
+                  if (await ask({ kind: "remove", title: t("ask.removeMember", { name: m.name ?? "–" }) })) remove.mutate(m.id);
+                }}
+              >
                 {t("members.remove")}
               </button>
             ) : null}
@@ -634,14 +670,22 @@ export function OrgMembers({ orgId }: { orgId: string }) {
       </ul>
       <form
         className="flex flex-wrap items-end gap-2"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          add.mutate();
+          // A Bangladesh mobile (tester feedback, 19 Nov 2026): a wrong one stops the form before any call.
+          if (!bdMobile.valid(phone)) return setPhoneTried(true);
+          if (await ask("add")) add.mutate();
         }}
       >
-        <Field label={t("members.phone")}>
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="off" className={`${inputCls} w-48`} required />
-        </Field>
+        <PhoneField
+          id="org-member-phone"
+          label={t("members.phone")}
+          value={phone}
+          onChange={setPhone}
+          error={phoneTried && !bdMobile.valid(phone) ? tk("invalid") : undefined}
+          className="w-56"
+          required
+        />
         <Field label={t("members.role")}>
           <select value={role} onChange={(e) => setRole(e.target.value as "admin" | "staff")} className={inputCls}>
             <option value="staff">{t("role.staff")}</option>

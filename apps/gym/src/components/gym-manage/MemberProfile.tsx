@@ -5,7 +5,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { ArrowArcLeft, ArrowCounterClockwise, Barbell, CalendarBlank, Eye, LinkSimple, NotePencil, PencilSimple, Snowflake, UserMinus } from "@phosphor-icons/react";
 import { newKey } from "@kriraghor/ui/format";
-import { Avatar, Badge, Button, Card, Checkbox, Dialog, Field, Notice, ReasonDialog, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Avatar, Badge, Button, Card, Checkbox, Dialog, Field, Notice, PhoneField, ReasonDialog, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
+import { birthRange, memberProblems } from "@/lib/validate";
 import { cn } from "@kriraghor/ui/cn";
 import { gymBody } from "@/lib/gym-progress";
 import { BodyProgressView } from "@/components/gym-member/BodyProgress";
@@ -181,7 +182,7 @@ function Trainer({ ctx, p }: { ctx: GymCtx; p: Profile }) {
               </option>
             ))}
           </Select>
-          <Button type="button" size="sm" busy={act.busy} disabled={value === current} onClick={() => void save()} data-testid="member-trainer-save">
+          <Button type="button" size="sm" busy={act.busy} disabled={value === current} onClick={() => void save()} confirm="save" data-testid="member-trainer-save">
             {t("save")}
           </Button>
         </div>
@@ -296,7 +297,14 @@ function EditDialog({ ctx, p, onClose }: { ctx: GymCtx; p: Profile; onClose: () 
   const [d, setD] = useState({ displayName: m.displayName, phone: "", gender: m.gender ?? "", birthDate: m.birthDate ?? "", email: m.email ?? "", ecName: m.emergencyContact?.name ?? "", ecPhone: m.emergencyContact?.phone ?? "", bloodGroup: m.bloodGroup ?? "", heightCm: m.heightCm == null ? "" : String(m.heightCm), weightKg: m.weightKg == null ? "" : String(m.weightKg), medical: m.medical ?? "" });
   // M27-FR-30: the blood group with members.edit; height, weight and conditions only when the API shows them (owner, plans.manage).
   const showBody = m.heightCm !== undefined;
+  // Checked before sending (19 Nov 2026): the same rules as Add member; a new phone is optional here.
+  const [tried, setTried] = useState(false);
+  const today = dhakaToday();
+  const problems = memberProblems({ ...d, email: m.email !== undefined ? d.email : "", ecName: m.emergencyContact !== undefined ? d.ecName : "", ecPhone: m.emergencyContact !== undefined ? d.ecPhone : "" }, today, null, { phoneRequired: false });
+  const shown = (k: string) => (tried && problems[k] ? t(`check.${problems[k]}`) : undefined);
   const save = async () => {
+    setTried(true);
+    if (Object.keys(problems).length) return act.setProblem(t("check.fix"));
     const body: Parameters<typeof gymManage.updateMember>[2] = { version: m.version };
     if (d.displayName.trim() !== m.displayName) body.displayName = d.displayName.trim();
     if (d.phone.trim()) body.phone = d.phone.trim();
@@ -327,15 +335,15 @@ function EditDialog({ ctx, p, onClose }: { ctx: GymCtx; p: Profile; onClose: () 
           <Button type="button" variant="ghost" onClick={onClose}>
             {t("cancel")}
           </Button>
-          <Button type="button" onClick={save} busy={act.busy}>
+          <Button type="button" onClick={save} busy={act.busy} confirm={Object.keys(problems).length ? undefined : "save"}>
             {t("save")}
           </Button>
         </>
       }
     >
       <div className="grid gap-3">
-        <Field id="e-name" label={t("member.name")} value={d.displayName} onChange={(e) => setD({ ...d, displayName: e.target.value })} maxLength={80} />
-        <Field id="e-phone" type="tel" label={t("profile.newPhone")} optional={t("optional")} hint={t("profile.newPhoneHint")} value={d.phone} onChange={(e) => setD({ ...d, phone: e.target.value })} />
+        <Field id="e-name" label={t("member.name")} value={d.displayName} onChange={(e) => setD({ ...d, displayName: e.target.value })} maxLength={80} error={shown("displayName")} />
+        <PhoneField id="e-phone" label={t("profile.newPhone")} optional={t("optional")} hint={t("profile.newPhoneHint")} value={d.phone} onChange={(v) => setD({ ...d, phone: v })} error={shown("phone")} />
         <Select id="e-gender" label={t("member.gender")} value={d.gender} onChange={(e) => setD({ ...d, gender: e.target.value as typeof d.gender })}>
           <option value="">–</option>
           {(["male", "female", "other"] as const).map((g) => (
@@ -344,12 +352,12 @@ function EditDialog({ ctx, p, onClose }: { ctx: GymCtx; p: Profile; onClose: () 
             </option>
           ))}
         </Select>
-        <DatePicker id="e-birth" label={t("member.birthDate")} value={d.birthDate} onChange={(v) => setD({ ...d, birthDate: v })} />
-        {m.email !== undefined ? <Field id="e-email" type="email" label={t("member.email")} value={d.email} onChange={(e) => setD({ ...d, email: e.target.value })} /> : null}
+        <DatePicker id="e-birth" label={t("member.birthDate")} value={d.birthDate} min={birthRange(today).min} max={birthRange(today).max} error={shown("birthDate")} onChange={(v) => setD({ ...d, birthDate: v })} />
+        {m.email !== undefined ? <Field id="e-email" type="email" label={t("member.email")} value={d.email} maxLength={120} error={shown("email")} onChange={(e) => setD({ ...d, email: e.target.value })} /> : null}
         {m.emergencyContact !== undefined ? (
           <>
-            <Field id="e-ec-name" label={t("member.ecName")} value={d.ecName} onChange={(e) => setD({ ...d, ecName: e.target.value })} />
-            <Field id="e-ec-phone" type="tel" label={t("member.ecPhone")} value={d.ecPhone} onChange={(e) => setD({ ...d, ecPhone: e.target.value })} />
+            <Field id="e-ec-name" label={t("member.ecName")} value={d.ecName} maxLength={80} error={shown("ecName")} onChange={(e) => setD({ ...d, ecName: e.target.value })} />
+            <PhoneField id="e-ec-phone" label={t("member.ecPhone")} value={d.ecPhone} error={shown("ecPhone")} onChange={(v) => setD({ ...d, ecPhone: v })} />
           </>
         ) : null}
         {m.bloodGroup !== undefined ? (
@@ -399,7 +407,7 @@ function InviteDialog({ ctx, memberId, onClose }: { ctx: GymCtx; memberId: strin
           <Button type="button" variant="ghost" onClick={onClose}>
             {t("cancel")}
           </Button>
-          <Button type="button" onClick={send} busy={act.busy} data-testid="invite-send">
+          <Button type="button" onClick={send} busy={act.busy} confirm="send" data-testid="invite-send">
             {t("profile.inviteSend")}
           </Button>
         </>
@@ -587,7 +595,7 @@ function PackageDialog({ ctx, p, kind, ms, onClose }: { ctx: GymCtx; p: Profile;
           <Button type="button" variant="ghost" onClick={onClose}>
             {t("cancel")}
           </Button>
-          <Button type="button" onClick={submit} busy={act.busy} data-testid="ms-submit">
+          <Button type="button" onClick={submit} busy={act.busy} confirm={needsPackage && !packageId ? undefined : { kind: kind !== "change" && canCollect && withPay ? "money" : kind === "assign" ? "add" : "save", title: t(`ms.${kind}Ask`), body: kind !== "change" && canCollect && withPay ? t("ms.withPayBody") : undefined }} data-testid="ms-submit">
             {t(`ms.${kind}`)}
           </Button>
         </>
@@ -660,7 +668,7 @@ function FreezeDialog({ ctx, memberId, ms, onClose }: { ctx: GymCtx; memberId: s
           <Button type="button" variant="ghost" onClick={onClose}>
             {t("cancel")}
           </Button>
-          <Button type="button" onClick={submit} busy={act.busy} data-testid="freeze-submit">
+          <Button type="button" onClick={submit} busy={act.busy} confirm={reason.trim().length < 2 || toOn < fromOn ? undefined : { kind: "save", title: t("ms.freezeAsk"), body: t("ms.freezeBody") }} data-testid="freeze-submit">
             {t("ms.freeze")}
           </Button>
         </>
@@ -827,7 +835,7 @@ function Notes({ gymId, memberId }: { gymId: string; memberId: string }) {
         }}
       >
         <Textarea id="note-body" label={t("profile.addNote")} value={body} maxLength={2000} onChange={(e) => setBody(e.target.value)} rows={2} />
-        <Button type="submit" size="sm" variant="secondary" busy={act.busy} className="self-start" data-testid="note-add">
+        <Button type="submit" size="sm" variant="secondary" busy={act.busy} className="self-start" confirm={body.trim() ? "add" : undefined} data-testid="note-add">
           {t("profile.saveNote")}
         </Button>
         {act.problem ? <p role="alert" className="text-sm text-danger">{act.problem}</p> : null}

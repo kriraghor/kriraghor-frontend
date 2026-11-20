@@ -100,12 +100,12 @@ function Timetable({ memberId }: { memberId: string }) {
                   ) : mine ? (
                     <span className="flex items-center gap-2">
                       <Badge tone={mine.status === "booked" ? "brand" : "warning"}>{mine.status === "booked" ? t("my.booked") : t("my.waiting")}</Badge>
-                      <Button size="sm" variant="ghost" busy={busy === s.id} onClick={() => void act(s.id, () => gymOps2.myCancel(mine.id), t("my.cancelled"))} data-testid={`my-cancel-${s.id}`}>
+                      <Button size="sm" variant="ghost" busy={busy === s.id} confirm={{ kind: "remove", title: t("my.cancelAsk", { name: s.name }), body: t("my.cancelAskBody") }} onClick={() => void act(s.id, () => gymOps2.myCancel(mine.id), t("my.cancelled"))} data-testid={`my-cancel-${s.id}`}>
                         {t("my.cancel")}
                       </Button>
                     </span>
                   ) : (
-                    <Button size="sm" busy={busy === s.id} onClick={() => void act(s.id, () => gymOps2.myBook(s.id, memberId, newKey()), s.spaces ? t("my.bookedToast") : t("my.waitingToast"))} data-testid={`my-book-${s.id}`}>
+                    <Button size="sm" busy={busy === s.id} confirm={{ kind: "add", title: s.spaces ? t("my.bookAsk", { name: s.name }) : t("my.waitlistAsk", { name: s.name }) }} onClick={() => void act(s.id, () => gymOps2.myBook(s.id, memberId, newKey()), s.spaces ? t("my.bookedToast") : t("my.waitingToast"))} data-testid={`my-book-${s.id}`}>
                       {s.spaces ? t("my.book") : t("my.joinWaitlist")}
                     </Button>
                   )}

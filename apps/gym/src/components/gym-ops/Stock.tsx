@@ -3,20 +3,23 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Archive, DotsThreeVertical, Plus, Warning } from "@phosphor-icons/react";
+import { Archive, DotsThreeVertical, ImageSquare, Plus, Warning } from "@phosphor-icons/react";
 import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Menu, Notice, Select, SegmentedControl, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
 import { DatePicker } from "@kriraghor/ui/date";
 import { newKey } from "@kriraghor/ui/format";
 import { cn } from "@kriraghor/ui/cn";
 import { dhakaToday, poishaToTakaText, takaToPoisha } from "@/lib/gym-manage";
 import { daysLeft, gymOps, PRODUCT_CATEGORIES, type Product, type ProductCategory, type ProductInput, type StockInput } from "@/lib/gym-ops";
+import { amountProblem, nameProblem, photoProblem, wholeProblem } from "@/lib/validate";
 import { GymPage, useFmt, useGymError, type GymCtx } from "../gym-manage/common";
+import { PhotoPicker } from "./PhotoPicker";
 
 /**
  * /manage/[gymId]/stock (M27-FR-10 to FR-16; stock.manage, Standard plan): the products the counter sells,
  * with price, cost and margin, stock, the reorder level, and for supplements the batch, expiry and importer
  * or BSTI details. Stock in (a new batch replaces the product's batch, expiry and cost), adjust or write
- * off with a note; every change is kept. Low stock and stock near its date are flagged.
+ * off with a note; every change is kept. Low stock and stock near its date are flagged. Each product may
+ * have a photo, and every change asks first (tester feedback, 19 Nov 2026).
  */
 export function Stock({ gymId }: { gymId: string }) {
   const t = useTranslations("go");
@@ -90,6 +93,14 @@ function Body({ ctx }: { ctx: GymCtx }) {
               const margin = p.costPoisha != null ? p.pricePoisha - p.costPoisha : null;
               return (
                 <li key={p.id} className="flex flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap">
+                  <span className="inline-flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-control bg-surface-2 text-muted">
+                    {p.photoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={p.photoUrl} alt="" loading="lazy" className="size-full object-cover" />
+                    ) : (
+                      <ImageSquare size={22} aria-hidden />
+                    )}
+                  </span>
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold">{p.name}</p>
                     <p className="text-xs text-muted">
@@ -128,7 +139,9 @@ function Body({ ctx }: { ctx: GymCtx }) {
                     }
                     items={[
                       { label: t("stock.edit"), onSelect: () => setEditing(p) },
-                      p.status === "active" ? { label: t("stock.retire"), danger: true, onSelect: () => void setStatus(p, "retired") } : { label: t("stock.restore"), onSelect: () => void setStatus(p, "active") },
+                      p.status === "active"
+                        ? { label: t("stock.retire"), danger: true, confirm: { kind: "remove", title: t("stock.retireAsk", { name: p.name }), body: t("stock.retireBody") }, onSelect: () => void setStatus(p, "retired") }
+                        : { label: t("stock.restore"), confirm: "save", onSelect: () => void setStatus(p, "active") },
                     ]}
                   />
                 </li>
@@ -160,15 +173,29 @@ function ProductDialog({ ctx, product, onClose, onDone }: { ctx: GymCtx; product
   }));
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<{ file: File | null; removed: boolean }>({ file: null, removed: false });
   const supplement = d.category === "supplement" || d.category === "drink" || d.category === "snack";
+  // Every field is checked before saving (19 Nov 2026); messages show once Save was tried.
+  const [tried, setTried] = useState(false);
+  const problems: Record<string, string> = {};
+  const put = (k: string, p: string | null) => {
+    if (p) problems[k] = p;
+  };
+  put("name", nameProblem(d.name, { min: 2, max: 80 }));
+  put("price", amountProblem(d.price));
+  put("cost", amountProblem(d.cost, { required: false, allowZero: true }));
+  put("reorderLevel", wholeProblem(d.reorderLevel, { max: 100_000 }));
+  put("photo", photoProblem(photo.file));
+  const tc = useTranslations("gm.check");
+  const shown = (k: string) => (tried && problems[k] ? tc(problems[k]) : undefined);
   const save = async () => {
+    setTried(true);
+    if (Object.keys(problems).length) return setProblem(tc("fix"));
     const price = takaToPoisha(d.price);
     const cost = d.cost.trim() ? takaToPoisha(d.cost, { allowZero: true }) : null;
     const reorder = Number(d.reorderLevel || "0");
-    if (!d.name.trim()) return setProblem(t("stock.nameNeeded"));
     if (price == null) return setProblem(t("amountBad"));
     if (d.cost.trim() && cost == null) return setProblem(t("amountBad"));
-    if (!Number.isInteger(reorder) || reorder < 0) return setProblem(t("stock.reorderBad"));
     const body: ProductInput = {
       name: d.name.trim(),
       barcode: d.barcode.trim() || null,
@@ -183,8 +210,9 @@ function ProductDialog({ ctx, product, onClose, onDone }: { ctx: GymCtx; product
     setBusy(true);
     setProblem(null);
     try {
-      if (product) await gymOps.editProduct(ctx.gymId, product.id, body);
-      else await gymOps.addProduct(ctx.gymId, body);
+      const saved = product ? await gymOps.editProduct(ctx.gymId, product.id, body) : await gymOps.addProduct(ctx.gymId, body);
+      if (photo.file) await gymOps.productPhoto(ctx.gymId, saved.id, photo.file);
+      else if (photo.removed && product?.photoUrl) await gymOps.removeProductPhoto(ctx.gymId, saved.id);
       toast.show(t("stock.saved"));
       onDone();
       onClose();
@@ -204,14 +232,17 @@ function ProductDialog({ ctx, product, onClose, onDone }: { ctx: GymCtx; product
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy} data-testid="product-save">
+          <Button onClick={() => void save()} busy={busy} confirm={Object.keys(problems).length ? undefined : product ? "save" : { kind: "add", title: t("stock.addAsk", { name: d.name.trim() }) }} data-testid="product-save">
             {t("save")}
           </Button>
         </>
       }
     >
       <div className="grid gap-3 px-6 pb-2 sm:grid-cols-2">
-        <Field id="p-name" label={t("stock.name")} value={d.name} maxLength={80} onChange={(e) => setD({ ...d, name: e.target.value })} className="sm:col-span-2" autoFocus data-testid="product-name" />
+        <Field id="p-name" label={t("stock.name")} value={d.name} maxLength={80} onChange={(e) => setD({ ...d, name: e.target.value })} className="sm:col-span-2" autoFocus error={shown("name")} data-testid="product-name" />
+        <div className="sm:col-span-2">
+          <PhotoPicker label={t("stock.photo")} current={product?.photoUrl ?? null} file={photo.file} removed={photo.removed} onChange={(file, removed) => setPhoto({ file, removed })} error={shown("photo")} />
+        </div>
         <Select id="p-cat" label={t("stock.category")} value={d.category} onChange={(e) => setD({ ...d, category: e.target.value as ProductCategory })}>
           {PRODUCT_CATEGORIES.map((c) => (
             <option key={c} value={c}>
@@ -220,9 +251,9 @@ function ProductDialog({ ctx, product, onClose, onDone }: { ctx: GymCtx; product
           ))}
         </Select>
         <Field id="p-barcode" label={t("stock.barcode")} optional={t("optional")} value={d.barcode} maxLength={40} onChange={(e) => setD({ ...d, barcode: e.target.value })} hint={t("stock.barcodeHint")} />
-        <Field id="p-price" label={t("stock.price")} inputMode="decimal" leading="৳" value={d.price} onChange={(e) => setD({ ...d, price: e.target.value })} data-testid="product-price" />
-        <Field id="p-cost" label={t("stock.cost")} optional={t("optional")} inputMode="decimal" leading="৳" value={d.cost} onChange={(e) => setD({ ...d, cost: e.target.value })} hint={t("stock.costHint")} />
-        <Field id="p-reorder" label={t("stock.reorder")} inputMode="numeric" value={d.reorderLevel} onChange={(e) => setD({ ...d, reorderLevel: e.target.value.replace(/\D/g, "") })} hint={t("stock.reorderHint")} />
+        <Field id="p-price" label={t("stock.price")} inputMode="decimal" leading="৳" value={d.price} onChange={(e) => setD({ ...d, price: e.target.value })} error={shown("price")} data-testid="product-price" />
+        <Field id="p-cost" label={t("stock.cost")} optional={t("optional")} inputMode="decimal" leading="৳" value={d.cost} onChange={(e) => setD({ ...d, cost: e.target.value })} hint={t("stock.costHint")} error={shown("cost")} />
+        <Field id="p-reorder" label={t("stock.reorder")} inputMode="numeric" value={d.reorderLevel} onChange={(e) => setD({ ...d, reorderLevel: e.target.value.replace(/\D/g, "") })} hint={t("stock.reorderHint")} error={shown("reorderLevel")} />
         {supplement ? (
           <>
             <Field id="p-batch" label={t("stock.batchNo")} optional={t("optional")} value={d.batchNo} maxLength={40} onChange={(e) => setD({ ...d, batchNo: e.target.value })} />
@@ -289,7 +320,7 @@ function StockDialog({ ctx, product, onClose, onDone }: { ctx: GymCtx; product: 
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy} data-testid="stock-save">
+          <Button onClick={() => void save()} busy={busy} confirm="save" data-testid="stock-save">
             {t("save")}
           </Button>
         </>

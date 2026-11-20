@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CalendarBlank, CaretLeft, CaretRight, PencilSimple, Plus, Trash, UsersThree } from "@phosphor-icons/react";
-import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, Select, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, Select, SkeletonList, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { newKey } from "@kriraghor/ui/format";
 import { cn } from "@kriraghor/ui/cn";
 import { dhakaToday } from "@/lib/gym-manage";
@@ -244,7 +244,7 @@ function ClassDialog({ ctx, klass, onClose }: { ctx: GymCtx; klass: GymClass | n
               <Button variant="ghost" onClick={onClose} disabled={busy}>
                 {t("cancel")}
               </Button>
-              <Button onClick={() => void save()} busy={busy} data-testid="class-save">
+              <Button onClick={() => void save()} busy={busy} confirm={klass ? "save" : "add"} data-testid="class-save">
                 {t("save")}
               </Button>
             </span>
@@ -340,6 +340,7 @@ function SessionDialog({ ctx, sessionId, onClose }: { ctx: GymCtx; sessionId: st
   const err = useGymError();
   const toast = useToast();
   const refresh = useRefresh(ctx.gymId);
+  const ask = useConfirm();
   const q = useQuery({ queryKey: ["go-session", ctx.gymId, sessionId], queryFn: () => gymOps2.session(ctx.gymId, sessionId) });
   const [member, setMember] = useState<PickedMember | null>(null);
   const [key, setKey] = useState(newKey);
@@ -409,7 +410,12 @@ function SessionDialog({ ctx, sessionId, onClose }: { ctx: GymCtx; sessionId: st
                       {b.status === "waitlisted" ? t("classes.waitPos", { n: f.n(live.filter((x) => x.status === "waitlisted").indexOf(b) + 1) }) : t(`classes.bookingStatus.${b.status}`)}
                     </Badge>
                     {!started && (b.status === "booked" || b.status === "waitlisted") ? (
-                      <IconButton label={t("classes.cancelBooking")} variant="ghost" onClick={() => void run(() => gymOps2.deskCancel(ctx.gymId, b.id), t("classes.bookingCancelled"))} disabled={busy}>
+                      <IconButton label={t("classes.cancelBooking")} variant="ghost" onClick={async () => {
+                          if (!(await ask({ kind: "remove", title: t("classes.cancelBookingAsk", { name: b.member.displayName }), body: t("classes.cancelBookingBody") }))) return;
+                          void run(() => gymOps2.deskCancel(ctx.gymId, b.id), t("classes.bookingCancelled"));
+                        }}
+                        disabled={busy}
+                      >
                         <Trash size={16} aria-hidden />
                       </IconButton>
                     ) : null}
@@ -424,6 +430,7 @@ function SessionDialog({ ctx, sessionId, onClose }: { ctx: GymCtx; sessionId: st
                     variant="secondary"
                     disabled={!member}
                     busy={busy}
+                    confirm={member ? { kind: "add", title: t("classes.bookAsk", { name: member.displayName }) } : undefined}
                     onClick={() =>
                       member &&
                       void run(() => gymOps2.deskBook(ctx.gymId, s.id, member.id, key), t("classes.booked")).then((ok) => {
@@ -440,7 +447,7 @@ function SessionDialog({ ctx, sessionId, onClose }: { ctx: GymCtx; sessionId: st
                 </div>
               ) : null}
               {started && s.status !== "cancelled" ? (
-                <Button onClick={() => void run(() => gymOps2.attendance(ctx.gymId, s.id, [...marking]), t("classes.marked"))} busy={busy} data-testid="session-mark">
+                <Button onClick={() => void run(() => gymOps2.attendance(ctx.gymId, s.id, [...marking]), t("classes.marked"))} busy={busy} confirm="save" data-testid="session-mark">
                   {t("classes.saveAttendance")}
                 </Button>
               ) : null}

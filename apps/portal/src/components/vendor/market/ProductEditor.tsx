@@ -15,18 +15,23 @@ import { DatePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
 import { SpecFields } from "./SpecFields";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, useConfirm, type ConfirmSpec } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 type Msg = { text: string; tone: "info" | "error" } | null;
 
-/** Run an API call, refresh the product, and report the result (problem details or a done message). */
+/**
+ * Run an API call, refresh the product, and report the result (problem details or a done message).
+ * With `confirm`, the owner is asked first (tester feedback, 19 Nov 2026); a no runs nothing.
+ */
 function useRunner(productId: string) {
   const qc = useQueryClient();
   const t = useTranslations("vendorMarket");
+  const ask = useConfirm();
   const [msg, setMsg] = useState<Msg>(null);
   const [busy, setBusy] = useState(false);
-  const run = async (fn: () => Promise<unknown>, done?: string) => {
+  const run = async (fn: () => Promise<unknown>, done?: string, confirm?: ConfirmSpec) => {
+    if (confirm && !(await ask(confirm))) return false;
     setMsg(null);
     setBusy(true);
     try {
@@ -88,22 +93,22 @@ export function ProductEditor({ id }: { id: string }) {
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2" data-testid="product-actions">
         {actions.includes("submit") || actions.includes("submit_edit") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => shopDesk.submitProduct(id), t("sent"))} data-testid="submit-product">
+          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => shopDesk.submitProduct(id), t("sent"), { kind: "send", title: t("ask.submitProduct") })} data-testid="submit-product">
             {actions.includes("submit") ? t("submit") : t("submitEdit")}
           </button>
         ) : null}
         {actions.includes("withdraw") ? (
-          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => shopDesk.withdrawProduct(id), t("withdrawn"))}>
+          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => shopDesk.withdrawProduct(id), t("withdrawn"), { kind: "save", title: t("ask.withdrawProduct") })}>
             {t("withdraw")}
           </button>
         ) : null}
         {actions.includes("pause") ? (
-          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => shopDesk.pauseProduct(id), t("paused"))}>
+          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => shopDesk.pauseProduct(id), t("paused"), { kind: "save", title: t("ask.pauseProduct") })}>
             {t("pause")}
           </button>
         ) : null}
         {actions.includes("resume") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand`} onClick={() => void run(() => shopDesk.resumeProduct(id), t("resumed"))}>
+          <button type="button" disabled={busy} className={`${btn} border-brand`} onClick={() => void run(() => shopDesk.resumeProduct(id), t("resumed"), { kind: "save", title: t("ask.resumeProduct") })}>
             {t("resume")}
           </button>
         ) : null}
@@ -164,7 +169,8 @@ function Basics({ p, type, supplement, locked }: { p: Product; type: ItemType; s
               specs: specsFrom(type.fields, specs),
               ...(supplement ? { importer: f.importer || null, bstiRegNo: f.bsti || null } : {}),
             }),
-          t("saved")
+          t("saved"),
+          "save"
         );
       }}
     >
@@ -214,12 +220,13 @@ function Basics({ p, type, supplement, locked }: { p: Product; type: ItemType; s
 
 function Photos({ p, locked }: { p: Product; locked: boolean }) {
   const t = useTranslations("vendorMarket");
+  const ask = useConfirm();
   const { msg, busy, run } = useRunner(p.id);
   const ids = p.photos.map((x) => x.id);
   const move = (i: number, d: number) => {
     const next = [...ids];
     [next[i], next[i + d]] = [next[i + d], next[i]];
-    return run(() => shopDesk.orderPhotos(p.id, next));
+    return run(() => shopDesk.orderPhotos(p.id, next), undefined, "save");
   };
   return (
     <div className="rounded-card border border-line bg-surface p-5" data-testid="product-photos">
@@ -239,7 +246,7 @@ function Photos({ p, locked }: { p: Product; locked: boolean }) {
                 <button type="button" disabled={locked || busy || i === p.photos.length - 1} onClick={() => void move(i, 1)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveRight")}>
                   <CaretRight size={16} weight="bold" aria-hidden />
                 </button>
-                <button type="button" disabled={locked || busy} onClick={() => void run(() => shopDesk.removePhoto(p.id, ph.id))} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40">
+                <button type="button" disabled={locked || busy} onClick={() => void run(() => shopDesk.removePhoto(p.id, ph.id), undefined, "remove")} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40">
                   {t("remove")}
                 </button>
               </span>
@@ -259,6 +266,7 @@ function Photos({ p, locked }: { p: Product; locked: boolean }) {
           onChange={async (e) => {
             const files = [...(e.target.files ?? [])];
             e.target.value = "";
+            if (!files.length || !(await ask({ kind: "add", title: t("ask.photos", { n: files.length }) }))) return;
             for (const file of files) if (!(await run(() => shopDesk.uploadPhoto(p.id, file)))) break;
           }}
         />
@@ -320,7 +328,7 @@ function Variants({ p, type, supplement, locked }: { p: Product; type: ItemType;
                         onClick={() => {
                           const n = toPoisha(prices[v.id]);
                           if (n === null) return;
-                          void run(() => shopDesk.updateVariant(v.id, { priceOverridePoisha: n === p.basePricePoisha ? null : n }), t("saved")).then(() => setPrices((all) => Object.fromEntries(Object.entries(all).filter(([k]) => k !== v.id))));
+                          void run(() => shopDesk.updateVariant(v.id, { priceOverridePoisha: n === p.basePricePoisha ? null : n }), t("saved"), "save").then((ok) => ok && setPrices((all) => Object.fromEntries(Object.entries(all).filter(([k]) => k !== v.id))));
                         }}
                       >
                         {t("save")}
@@ -331,7 +339,7 @@ function Variants({ p, type, supplement, locked }: { p: Product; type: ItemType;
                 <td className="py-2 pr-3 tabular-nums">{p.isMto ? t("mto") : t("variants.onHand", { onHand: v.onHand, held: v.held })}</td>
                 {supplement ? <td className={`py-2 pr-3 ${v.saleBlocked ? "text-danger" : ""}`}>{v.expiryDate ?? "–"} {v.batchNo ? `· ${v.batchNo}` : ""}</td> : null}
                 <td className="py-2 text-right">
-                  <button type="button" disabled={busy || locked || p.variants.length <= 1} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40" onClick={() => void run(() => shopDesk.retireVariant(v.id), t("variants.retired"))}>
+                  <button type="button" disabled={busy || locked || p.variants.length <= 1} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40" onClick={() => void run(() => shopDesk.retireVariant(v.id), t("variants.retired"), { kind: "remove", title: t("ask.retireVariant") })}>
                     {t("variants.retire")}
                   </button>
                 </td>
@@ -355,7 +363,8 @@ function Variants({ p, type, supplement, locked }: { p: Product; type: ItemType;
                 openingStock: p.isMto ? undefined : Number(f.stock) || 0,
                 ...(supplement ? { expiryDate: f.expiry || null, batchNo: f.batch || null } : {}),
               }),
-            t("variants.added")
+            t("variants.added"),
+            "add"
           ).then((ok) => {
             if (ok) {
               setAttrs({});

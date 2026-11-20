@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { api, problemOf } from "@kriraghor/api-client";
 import { Notice } from "@kriraghor/ui/primitives";
+import { useConfirm, type ConfirmSpec } from "@kriraghor/ui/kit";
 import { Chip, Field, inputCls } from "./finance/shared";
 
 type Table = "sports" | "areas" | "facilities" | "surfaces";
@@ -30,15 +31,20 @@ export function PlacesCatalog() {
   const [msg, setMsg] = useState<{ text: string; tone: "info" | "error" } | null>(null);
   const q = useQuery({ queryKey: ["places", table], queryFn: () => call(api("admin").GET("/admin/catalog/{table}", { params: { path: { table } } })) });
   const rows = (q.data?.items ?? []) as unknown as Row[];
-  const run = async (fn: () => Promise<unknown>, done: string) => {
+  const ask = useConfirm();
+  // Tester feedback (19 Nov 2026): every add, edit and (de)activation asks first.
+  const run = async (fn: () => Promise<unknown>, done: string, confirm: ConfirmSpec) => {
+    if (!(await ask(confirm))) return false;
     setMsg(null);
     try {
       await fn();
       await qc.invalidateQueries({ queryKey: ["places", table] });
       setMsg({ text: done, tone: "info" });
+      return true;
     } catch (err) {
       const p = problemOf(err);
       setMsg({ text: p?.errors?.length ? p.errors.map((e) => e.message).join(" · ") : p?.title ?? t("failed"), tone: "error" });
+      return false;
     }
   };
 
@@ -62,18 +68,18 @@ export function PlacesCatalog() {
         {q.isError ? <Notice tone="error">{problemOf(q.error)?.title ?? t("failed")}</Notice> : null}
         <ul className="mt-4 divide-y-2 divide-line border-y-2 border-line" data-testid="places-rows">
           {rows.map((r) => (
-            <PlaceRow key={r.id} table={table} row={r} onSave={(body, done) => run(() => call(api("admin").PATCH("/admin/catalog/{table}/{id}", { params: { path: { table, id: r.id } }, body: body as never })), done)} onToggle={() =>
-              run(() => call(api("admin").POST(r.isActive ? "/admin/catalog/{table}/{id}/deactivate" : "/admin/catalog/{table}/{id}/reactivate", { params: { path: { table, id: r.id } } })), r.isActive ? t("deactivated") : t("reactivated"))
+            <PlaceRow key={r.id} table={table} row={r} onSave={(body, done) => run(() => call(api("admin").PATCH("/admin/catalog/{table}/{id}", { params: { path: { table, id: r.id } }, body: body as never })), done, "save")} onToggle={() =>
+              run(() => call(api("admin").POST(r.isActive ? "/admin/catalog/{table}/{id}/deactivate" : "/admin/catalog/{table}/{id}/reactivate", { params: { path: { table, id: r.id } } })), r.isActive ? t("deactivated") : t("reactivated"), r.isActive ? { kind: "remove", title: t("confirm.deactivate"), body: t("confirm.deactivateBody"), confirmLabel: t("deactivate") } : { kind: "save", title: t("confirm.reactivate"), confirmLabel: t("reactivate") })
             } />
           ))}
         </ul>
-        {table === "areas" || table === "facilities" ? <AddPlace table={table} onAdd={(body) => run(() => call(api("admin").POST("/admin/catalog/{table}", { params: { path: { table } }, body: body as never })), t("added"))} /> : null}
+        {table === "areas" || table === "facilities" ? <AddPlace table={table} onAdd={(body) => run(() => call(api("admin").POST("/admin/catalog/{table}", { params: { path: { table } }, body: body as never })), t("added"), "add")} /> : null}
       </div>
     </>
   );
 }
 
-function PlaceRow({ table, row, onSave, onToggle }: { table: Table; row: Row; onSave: (body: Record<string, unknown>, done: string) => Promise<void>; onToggle: () => Promise<void> }) {
+function PlaceRow({ table, row, onSave, onToggle }: { table: Table; row: Row; onSave: (body: Record<string, unknown>, done: string) => Promise<boolean>; onToggle: () => Promise<boolean> }) {
   const t = useTranslations("places");
   const [edit, setEdit] = useState(false);
   const [f, setF] = useState({ nameEn: row.nameEn, nameBn: row.nameBn, aliases: (row.aliases ?? []).join(", "), grounds: Boolean((row.serviceFlags ?? 0) & 1) });
@@ -104,7 +110,7 @@ function PlaceRow({ table, row, onSave, onToggle }: { table: Table; row: Row; on
               body.aliases = f.aliases.split(",").map((x) => x.trim()).filter(Boolean);
               body.serviceFlags = ((row.serviceFlags ?? 0) & ~1) | (f.grounds ? 1 : 0);
             }
-            void onSave(body, t("saved")).then(() => setEdit(false));
+            void onSave(body, t("saved")).then((ok) => ok && setEdit(false));
           }}
         >
           <Field label={t("nameEn")}>
@@ -135,7 +141,7 @@ function PlaceRow({ table, row, onSave, onToggle }: { table: Table; row: Row; on
   );
 }
 
-function AddPlace({ table, onAdd }: { table: "areas" | "facilities"; onAdd: (body: Record<string, unknown>) => Promise<void> }) {
+function AddPlace({ table, onAdd }: { table: "areas" | "facilities"; onAdd: (body: Record<string, unknown>) => Promise<boolean> }) {
   const t = useTranslations("places");
   const locations = useQuery({ queryKey: ["catalog-locations"], enabled: table === "areas", queryFn: () => call(api("admin").GET("/catalog/locations")) });
   const districts = (locations.data?.items ?? []).flatMap((d) => d.districts);

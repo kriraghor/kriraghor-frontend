@@ -10,6 +10,7 @@ import { formatTaka } from "@/lib/admin/finance";
 import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
 import { Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 import { formatDhaka, useAdminMe } from "../useAdminMe";
 import { DateTimePicker } from "@kriraghor/ui/date";
 import { Chip, Field, inputCls } from "../finance/shared";
@@ -153,6 +154,7 @@ function Basics({ event, onSaved }: { event?: BigEvent; onSaved: (id: string) =>
   }));
   const set = (k: keyof typeof f, v: string | boolean) => setF((x) => ({ ...x, [k]: v }));
   const act = useAct();
+  const ask = useConfirm();
   const [reason, setReason] = useState("");
   const body = (): EventInput => ({ ...f, taglineEn: f.taglineEn || null, taglineBn: f.taglineBn || null, accentHex: f.accentHex.toLowerCase(), startsAt: dhakaIso(f.startsAt), endsAt: dhakaIso(f.endsAt) });
   return (
@@ -160,6 +162,7 @@ function Basics({ event, onSaved }: { event?: BigEvent; onSaved: (id: string) =>
       className="grid gap-4"
       onSubmit={async (ev) => {
         ev.preventDefault();
+        if (!(await ask(e ? "save" : "add"))) return;
         if (e) {
           if (await act.run(() => bigEvents.update(e.id, body()), t("saved"))) onSaved(e.id);
         } else {
@@ -209,10 +212,10 @@ function Basics({ event, onSaved }: { event?: BigEvent; onSaved: (id: string) =>
           <>
             <label className={`${btn} inline-flex cursor-pointer items-center border-line`}>
               {t("banner")}
-              <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={async (x) => x.target.files?.[0] && (await act.run(() => bigEvents.banner(e.id, x.target.files![0]), t("bannerSaved"))) && onSaved(e.id)} />
+              <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={async (x) => x.target.files?.[0] && (await ask("save")) && (await act.run(() => bigEvents.banner(e.id, x.target.files![0]), t("bannerSaved"))) && onSaved(e.id)} />
             </label>
             {e.status === "draft" ? (
-              <button type="button" className={`${btn} border-brand bg-brand text-on-brand`} onClick={async () => (await act.run(() => bigEvents.publish(e.id), t("published"))) && onSaved(e.id)} data-testid="publish-event">
+              <button type="button" className={`${btn} border-brand bg-brand text-on-brand`} onClick={async () => (await ask({ kind: "save", title: t("ask.publish"), confirmLabel: t("publish") })) && (await act.run(() => bigEvents.publish(e.id), t("published"))) && onSaved(e.id)} data-testid="publish-event">
                 {t("publish")}
               </button>
             ) : null}
@@ -224,7 +227,7 @@ function Basics({ event, onSaved }: { event?: BigEvent; onSaved: (id: string) =>
           <Field label={t("cancelReason")}>
             <input value={reason} onChange={(x) => setReason(x.target.value)} className={`${inputCls} w-80`} minLength={5} maxLength={255} />
           </Field>
-          <button type="button" className={`${btn} border-danger text-danger`} disabled={reason.trim().length < 5} onClick={async () => (await act.run(() => bigEvents.cancel(e.id, reason.trim()), t("cancelledMsg"))) && onSaved(e.id)}>
+          <button type="button" className={`${btn} border-danger text-danger`} disabled={reason.trim().length < 5} onClick={async () => (await ask({ kind: "remove", title: t("ask.cancel"), confirmLabel: t("cancel") })) && (await act.run(() => bigEvents.cancel(e.id, reason.trim()), t("cancelledMsg"))) && onSaved(e.id)}>
             {t("cancel")}
           </button>
           <p className="w-full text-xs text-muted">{t("cancelNote")}</p>
@@ -250,6 +253,7 @@ function Stages({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) {
       : [{ tournamentId: "", role: "final", labelEn: "Grand final", labelBn: "গ্র্যান্ড ফাইনাল", qualifyCount: "", finalTournamentId: "" }]
   );
   const act = useAct();
+  const ask = useConfirm();
   const finals = rows.filter((r) => r.role === "final" && r.tournamentId);
   const setRow = (i: number, patch: Partial<Row>) => setRows(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   const nameOf = (tid: string) => own.find((x) => x.id === tid)?.titleEn ?? tid.slice(0, 8);
@@ -307,6 +311,7 @@ function Stages({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) {
           onClick={async () => {
             const body = stageBody(rows);
             if (!body) return act.run(async () => Promise.reject({ title: t("s.incomplete") }), "");
+            if (!(await ask("save"))) return;
             if (await act.run(() => bigEvents.stages(e.event.id, body), t("saved"))) await onSaved();
           }}
         >
@@ -337,6 +342,7 @@ function Places({ e }: { e: BigEvent }) {
   const [inv, setInv] = useState({ finalTournamentId: finals[0]?.tournament?.id ?? "", kind: "squad" as "squad" | "player", ref: "", reason: "" });
   const [revokeReason, setRevokeReason] = useState("");
   const act = useAct();
+  const ask = useConfirm();
   const reload = () => qc.invalidateQueries({ queryKey: ["bev-places", e.event.id] });
   return (
     <div className="space-y-4">
@@ -363,7 +369,7 @@ function Places({ e }: { e: BigEvent }) {
               <td className="px-2 py-2 text-muted">{(x as { reason?: string | null }).reason ?? ""}</td>
               <td className="px-2 py-2 text-right">
                 {["qualified", "invited", "missed"].includes(x.status) ? (
-                  <button type="button" className="text-sm text-danger underline disabled:opacity-50" disabled={revokeReason.trim().length < 5} onClick={async () => (await act.run(() => bigEvents.revoke(e.event.id, x.id, revokeReason.trim()), t("p.revoked"))) && reload()}>
+                  <button type="button" className="text-sm text-danger underline disabled:opacity-50" disabled={revokeReason.trim().length < 5} onClick={async () => (await ask({ kind: "remove", confirmLabel: t("p.revoke") })) && (await act.run(() => bigEvents.revoke(e.event.id, x.id, revokeReason.trim()), t("p.revoked"))) && reload()}>
                     {t("p.revoke")}
                   </button>
                 ) : null}
@@ -387,6 +393,7 @@ function Places({ e }: { e: BigEvent }) {
           className="grid gap-2 border-t-2 border-line pt-4 sm:grid-cols-2"
           onSubmit={async (ev) => {
             ev.preventDefault();
+            if (!(await ask("send"))) return;
             const body = { finalTournamentId: inv.finalTournamentId, reason: inv.reason.trim(), ...(inv.kind === "squad" ? { squadId: inv.ref.trim() } : { userId: inv.ref.trim() }) };
             if (await act.run(() => bigEvents.invite(e.event.id, body), t("p.invited"))) {
               setInv({ ...inv, ref: "", reason: "" });
@@ -433,6 +440,7 @@ function Streams({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) 
   const own = e.streams.filter((s) => s.source === "event");
   const [rows, setRows] = useState(own.length ? own.map((s) => ({ platform: s.platform as "youtube", url: s.url, title: s.title, isLive: s.isLive })) : [{ platform: "youtube" as const, url: "", title: "", isLive: false }]);
   const act = useAct();
+  const ask = useConfirm();
   return (
     <div className="space-y-2">
       <p className="text-sm text-muted">{t("streamsHelp")}</p>
@@ -457,7 +465,7 @@ function Streams({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) 
         <button type="button" className={`${btn} border-line`} onClick={() => setRows([...rows, { platform: "youtube", url: "", title: "", isLive: false }])}>
           +
         </button>
-        <button type="button" className={`${btn} border-brand`} onClick={async () => (await act.run(() => bigEvents.streams(e.event.id, rows.filter((r) => r.url)), t("saved"))) && (await onSaved())} data-testid="save-streams">
+        <button type="button" className={`${btn} border-brand`} onClick={async () => (await ask("save")) && (await act.run(() => bigEvents.streams(e.event.id, rows.filter((r) => r.url)), t("saved"))) && (await onSaved())} data-testid="save-streams">
           {t("save")}
         </button>
       </div>
@@ -471,6 +479,7 @@ function Sponsors({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> })
   const t = useTranslations("bigEvents");
   const [f, setF] = useState({ name: "", tier: "partner" as "title" | "gold" | "partner", url: "" });
   const act = useAct();
+  const ask = useConfirm();
   return (
     <div className="space-y-4">
       <ul className="divide-y-2 divide-line border-y-2 border-line">
@@ -484,9 +493,9 @@ function Sponsors({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> })
             <Chip tone="muted">{t(`tier.${s.tier}`)}</Chip>
             <label className="ml-auto cursor-pointer text-sm text-brand underline">
               {t("logo")}
-              <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={async (x) => x.target.files?.[0] && (await act.run(() => bigEvents.sponsorLogo(e.event.id, s.id, x.target.files![0]), t("saved"))) && (await onSaved())} />
+              <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={async (x) => x.target.files?.[0] && (await ask("save")) && (await act.run(() => bigEvents.sponsorLogo(e.event.id, s.id, x.target.files![0]), t("saved"))) && (await onSaved())} />
             </label>
-            <button type="button" className="text-sm text-danger underline" onClick={async () => (await act.run(() => bigEvents.removeSponsor(e.event.id, s.id), t("saved"))) && (await onSaved())}>
+            <button type="button" className="text-sm text-danger underline" onClick={async () => (await ask("remove")) && (await act.run(() => bigEvents.removeSponsor(e.event.id, s.id), t("saved"))) && (await onSaved())}>
               {t("remove")}
             </button>
           </li>
@@ -496,6 +505,7 @@ function Sponsors({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> })
         className="grid gap-2 sm:grid-cols-[1fr_140px_1fr_auto]"
         onSubmit={async (ev) => {
           ev.preventDefault();
+          if (!(await ask("add"))) return;
           if (await act.run(() => bigEvents.addSponsor(e.event.id, { name: f.name.trim(), tier: f.tier, url: f.url.trim() || null }), t("saved"))) {
             setF({ name: "", tier: "partner", url: "" });
             await onSaved();
@@ -525,6 +535,7 @@ function Polls({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) {
   const t = useTranslations("bigEvents");
   const [f, setF] = useState({ questionEn: "", questionBn: "", options: [{ labelEn: "", labelBn: "" }, { labelEn: "", labelBn: "" }] });
   const act = useAct();
+  const ask = useConfirm();
   return (
     <div className="space-y-4">
       {e.polls.map((p) => (
@@ -534,11 +545,11 @@ function Polls({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) {
             <Chip tone={p.status === "open" ? "ok" : "muted"}>{t(`poll.${p.status}`)}</Chip>
             <span className="ml-auto text-sm text-muted">{t("poll.votes", { n: p.results.total })}</span>
             {p.status === "draft" ? (
-              <button type="button" className={`${btn} border-brand`} onClick={async () => (await act.run(() => bigEvents.openPoll(e.event.id, p.id), t("saved"))) && (await onSaved())}>
+              <button type="button" className={`${btn} border-brand`} onClick={async () => (await ask({ kind: "save", title: t("ask.pollOpen"), confirmLabel: t("poll.open") })) && (await act.run(() => bigEvents.openPoll(e.event.id, p.id), t("saved"))) && (await onSaved())}>
                 {t("poll.open")}
               </button>
             ) : p.status === "open" ? (
-              <button type="button" className={`${btn} border-line`} onClick={async () => (await act.run(() => bigEvents.closePoll(e.event.id, p.id), t("saved"))) && (await onSaved())}>
+              <button type="button" className={`${btn} border-line`} onClick={async () => (await ask({ kind: "save", title: t("ask.pollClose"), confirmLabel: t("poll.close") })) && (await act.run(() => bigEvents.closePoll(e.event.id, p.id), t("saved"))) && (await onSaved())}>
                 {t("poll.close")}
               </button>
             ) : null}
@@ -557,6 +568,7 @@ function Polls({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) {
         className="grid gap-2 border-t-2 border-line pt-4"
         onSubmit={async (ev) => {
           ev.preventDefault();
+          if (!(await ask("add"))) return;
           if (await act.run(() => bigEvents.createPoll(e.event.id, { questionEn: f.questionEn.trim(), questionBn: f.questionBn.trim(), options: f.options.filter((o) => o.labelEn.trim()) }), t("saved"))) {
             setF({ questionEn: "", questionBn: "", options: [{ labelEn: "", labelBn: "" }, { labelEn: "", labelBn: "" }] });
             await onSaved();
@@ -594,12 +606,14 @@ function Feed({ e, onSaved }: { e: BigEvent; onSaved: () => Promise<void> }) {
   const locale = useLocale();
   const [f, setF] = useState({ textEn: "", textBn: "" });
   const act = useAct();
+  const ask = useConfirm();
   return (
     <div className="space-y-4">
       <form
         className="grid gap-2"
         onSubmit={async (ev) => {
           ev.preventDefault();
+          if (!(await ask("send"))) return;
           if (await act.run(() => bigEvents.announce(e.event.id, { textEn: f.textEn.trim(), textBn: f.textBn.trim() }), t("posted"))) {
             setF({ textEn: "", textBn: "" });
             await onSaved();

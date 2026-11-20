@@ -383,7 +383,7 @@ function WeekEditor({ firstDay, data, now, today, onDirty }: { firstDay: string;
           <Notice tone="error">{problemOf(save.error)?.title ?? t("errors.invalid")}</Notice>
         ) : null}
         <div className="flex flex-wrap gap-3">
-          <Button type="submit" busy={save.isPending} disabled={!plan.dirty} data-testid="cal-save">
+          <Button type="submit" busy={save.isPending} disabled={!plan.dirty} confirm="save" data-testid="cal-save">
             {t("save")}
           </Button>
           <Button

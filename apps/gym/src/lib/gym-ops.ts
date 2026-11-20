@@ -73,6 +73,17 @@ export const gymOps = {
   addProduct: async (gymId: string, body: ProductInput) => unwrap(await api().POST("/manage/gyms/{gymId}/products", { params: G(gymId), body })),
   editProduct: async (gymId: string, productId: string, body: Partial<ProductInput> & { status?: "active" | "retired" }) =>
     unwrap(await api().PATCH("/manage/gyms/{gymId}/products/{productId}", { params: { path: { gymId, productId } }, body: body as never })),
+  // A product photo (19 Nov 2026): the raw image; the upload tray shows its progress.
+  productPhoto: async (gymId: string, productId: string, file: File) =>
+    unwrap(
+      await api().POST("/manage/gyms/{gymId}/products/{productId}/photo", {
+        params: { path: { gymId, productId } },
+        body: file as unknown as string,
+        bodySerializer: (b: unknown) => b as BodyInit,
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+      } as never),
+    ),
+  removeProductPhoto: async (gymId: string, productId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/products/{productId}/photo/remove", { params: { path: { gymId, productId } } })),
   stock: async (gymId: string, productId: string, body: StockInput, key: string) =>
     unwrap(await api().POST("/manage/gyms/{gymId}/products/{productId}/stock", { params: { path: { gymId, productId }, header: ik(key) }, body: body as never })),
   sales: async (gymId: string, query: { date?: string; cursor?: string; limit?: number } = {}) => unwrap(await api().GET("/manage/gyms/{gymId}/sales", { params: { ...G(gymId), query } })),

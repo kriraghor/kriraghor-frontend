@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Moon, Sun } from "@phosphor-icons/react";
-import { THEME_KEY } from "./brand/ThemeScript";
+import { THEME_KEY, themeCookie } from "./brand/ThemeScript";
 import { cn } from "./cn";
 
 export type Theme = "light" | "dark";
@@ -15,10 +15,12 @@ export function currentTheme(): Theme {
 }
 
 function apply(theme: Theme) {
+  // The cookie carries the pick to every Kriraghor site (19 Nov 2026); localStorage stays as this site's copy.
+  document.cookie = themeCookie(theme, location.hostname, location.protocol === "https:");
   try {
     window.localStorage.setItem(THEME_KEY, theme);
   } catch {
-    /* private mode: this page only */
+    /* private mode: the cookie still works */
   }
   document.documentElement.dataset.theme = theme;
 }

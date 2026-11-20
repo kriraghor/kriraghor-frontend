@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CheckCircle, Printer, Vault, Warning } from "@phosphor-icons/react";
-import { Badge, Button, Card, Field, Notice, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, Field, Notice, Skeleton, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { DatePicker } from "@kriraghor/ui/date";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { cn } from "@kriraghor/ui/cn";
@@ -115,6 +115,8 @@ function useRefresh(gymId: string) {
 
 function OpenForm({ ctx }: { ctx: GymCtx }) {
   const t = useTranslations("go");
+  const f = useFmt();
+  const ask = useConfirm();
   const err = useGymError();
   const toast = useToast();
   const refresh = useRefresh(ctx.gymId);
@@ -125,6 +127,7 @@ function OpenForm({ ctx }: { ctx: GymCtx }) {
     e.preventDefault();
     const poisha = takaToPoisha(taka || "0", { allowZero: true });
     if (poisha == null) return setProblem(t("amountBad"));
+    if (!(await ask({ kind: "money", title: t("drawer.openAsk", { amount: f.taka(poisha) }), confirmLabel: t("drawer.open") }))) return;
     setBusy(true);
     setProblem(null);
     try {
@@ -166,6 +169,7 @@ function CloseForm({ ctx, d }: { ctx: GymCtx; d: Drawer }) {
   const toast = useToast();
   const refresh = useRefresh(ctx.gymId);
   const tOff = useTranslations("off.drawer");
+  const ask = useConfirm();
   // M24 §22: the day cannot be closed while this device still has offline items to send.
   const waiting = useWaitingCount(ctx.gymId);
   const [taka, setTaka] = useState("");
@@ -180,6 +184,7 @@ function CloseForm({ ctx, d }: { ctx: GymCtx; d: Drawer }) {
     if (waiting) return setProblem(tOff("waiting", { n: waiting }));
     if (counted == null) return setProblem(t("amountBad"));
     if (diff !== 0 && !note.trim()) return setProblem(t("drawer.noteNeeded"));
+    if (!(await ask({ kind: "money", title: t("drawer.closeAsk", { amount: f.taka(counted) }), body: t("drawer.closeAskBody"), confirmLabel: t("drawer.close") }))) return;
     setBusy(true);
     setProblem(null);
     try {

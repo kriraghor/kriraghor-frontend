@@ -565,6 +565,10 @@
       "auto_healed": "Fixed automatically",
       "resolved": "Resolved",
       "ignored": "Ignored"
+    },
+    "ask": {
+      "refund": "Refund this amount?",
+      "testCharge": "Create this test charge?"
     }
   },
   "payouts": {
@@ -697,7 +701,10 @@
     "runNow": "Build this run now",
     "windowEnd": "Up to",
     "payoutsCount": "Payouts",
-    "needsApprovalCount": "Need approval"
+    "needsApprovalCount": "Need approval",
+    "ask": {
+      "runBatch": "Run this payout batch now?"
+    }
   },
   "kyc": {
     "loadFailed": "Could not load this document.",
@@ -861,7 +868,13 @@
     "reasonNeeded": "Give a reason (3 characters or more).",
     "overrideTitle": "Approve over a failing check",
     "overrideDialogHelp": "Failing: {checks}. Enter your authenticator code to approve anyway.",
-    "history": "Versions"
+    "history": "Versions",
+    "confirm": {
+      "approve": "Approve this item?",
+      "reject": "Reject this item?",
+      "askChanges": "Send this back for changes?",
+      "forceRelease": "Take this review away from the person working on it?"
+    }
   },
   "esportsDesk": {
     "title": "Tournaments",
@@ -1082,6 +1095,9 @@
       "organiser": "Organiser",
       "maxPaidKills": "Kills paid (most)",
       "fund": "Prize fund {fund} paid by the organiser before review. Kriraghor never covers organiser prizes."
+    },
+    "ask": {
+      "ban": "Ban this game UID?"
     }
   },
   "vendorGrounds": {
@@ -1312,6 +1328,16 @@
       "title": "Price per hour, next 7 days",
       "draft": "Show the draft",
       "legend": "In ৳ thousands. Green is below the base price, amber above it."
+    },
+    "ask": {
+      "publish": "Publish these prices?",
+      "discard": "Discard the draft prices?",
+      "submit": "Send this venue for review?",
+      "withdraw": "Withdraw it from review?",
+      "pause": "Pause bookings for this venue?",
+      "resume": "Take bookings again?",
+      "photos": "{n, plural, one {Add this photo?} other {Add these # photos?}}",
+      "retire": "Retire {name}?"
     }
   },
   "groundsAdmin": {
@@ -1433,7 +1459,12 @@
     "zone": "Zone",
     "north": "North",
     "south": "South",
-    "addButton": "Add"
+    "addButton": "Add",
+    "confirm": {
+      "deactivate": "Deactivate this?",
+      "deactivateBody": "It is hidden from the pickers. You can reactivate it later.",
+      "reactivate": "Reactivate this?"
+    }
   },
   "vendorBookings": {
     "gate": "You need an active venue-owner account to see bookings.",
@@ -1533,7 +1564,15 @@
       "status": "Status",
       "money": "Total"
     },
-    "staffVenue": "{name} ({owner})"
+    "staffVenue": "{name} ({owner})",
+    "ask": {
+      "checkIn": "Check this booking in?",
+      "extend": "Extend this booking?",
+      "noShow": "Mark this booking as a no-show?",
+      "noShowBody": "The advance is kept and the booking closes.",
+      "collect": "Record {amount} collected at the venue?",
+      "move": "Move the booking to {court}?"
+    }
   },
   "vendorSchedule": {
     "loadFailed": "Couldn't load the venue.",
@@ -1597,7 +1636,13 @@
       "completed": "Finished"
     },
     "end": "End the series",
-    "noSeries": "No series yet."
+    "noSeries": "No series yet.",
+    "ask": {
+      "close": "Close these courts for this time?",
+      "reopen": "Reopen and remove this closure?",
+      "endNow": "End this closure now?",
+      "endSeries": "End the weekly series for {team}?"
+    }
   },
   "bookingsAdmin": {
     "title": "Bookings",
@@ -1937,6 +1982,9 @@
       "DISPUTE_VERSION": "Someone changed this case. Reload it.",
       "REFUND_INVALID": "Enter a refund between nothing and what is held.",
       "OUTCOME_NOT_ALLOWED": "That decision does not apply to this case."
+    },
+    "ask": {
+      "decide": "Decide this dispute?"
     }
   },
   "reportsDesk": {
@@ -2116,6 +2164,9 @@
       "ground": "Venues",
       "shop": "Shop",
       "gym": "Gyms"
+    },
+    "ask": {
+      "file": "Send {name} as evidence?"
     }
   },
   "riskDesk": {
@@ -2484,6 +2535,19 @@
         "correction": "Correction"
       },
       "after": "→ {onHand} in stock, {held} held"
+    },
+    "ask": {
+      "adjust": "Change the stock by {n}?",
+      "photos": "{n, plural, one {Add this photo?} other {Add these # photos?}}",
+      "submitShop": "Send your shop for review?",
+      "withdrawShop": "Withdraw your shop from review?",
+      "pauseShop": "Pause your shop?",
+      "resumeShop": "Open your shop again?",
+      "submitProduct": "Send this product for review?",
+      "withdrawProduct": "Withdraw this product from review?",
+      "pauseProduct": "Pause this product?",
+      "resumeProduct": "Sell this product again?",
+      "retireVariant": "Retire this option?"
     }
   },
   "itemsCatalog": {
@@ -2535,6 +2599,11 @@
       "sports_gear": "Sports gear",
       "supplements": "Supplement house",
       "gym_gear": "Gym gear"
+    },
+    "confirm": {
+      "deactivate": "Deactivate this?",
+      "deactivateBody": "It is hidden from new products. You can reactivate it later.",
+      "reactivate": "Reactivate this?"
     }
   },
   "marketAdmin": {
@@ -2701,7 +2770,12 @@
     "payoutsLink": "See your payouts",
     "contactHidden": "The buyer's phone and address are hidden. They show only to staff who can ship, once the order is accepted. Area: {area}",
     "staffNoAction": "The owner hasn't given you a button for this step. Ask them if you need it.",
-    "leadStaff": "Accept each order within 24 hours and ship within 48 (or the made-to-order time). If you ship orders, the buyer’s phone and address show once the order is accepted."
+    "leadStaff": "Accept each order within 24 hours and ship within 48 (or the made-to-order time). If you ship orders, the buyer’s phone and address show once the order is accepted.",
+    "ask": {
+      "accept": "Accept this order?",
+      "ship": "Mark this order as shipped?",
+      "delivered": "Mark this order as delivered?"
+    }
   },
   "ordersAdmin": {
     "title": "Orders",
@@ -2891,6 +2965,11 @@
       "jobs": "Jobs",
       "total": "Total",
       "created": "Created"
+    },
+    "confirm": {
+      "deactivate": "Deactivate this role?",
+      "deactivateBody": "It is hidden from new profiles. You can reactivate it later.",
+      "reactivate": "Reactivate this role?"
     }
   },
   "vendorGym": {
@@ -3029,7 +3108,33 @@
     "packages": "Packages",
     "private": "Private",
     "privateFilter": "Private (management only)",
-    "monthPrice": "1 month"
+    "monthPrice": "1 month",
+    "remove": "Remove",
+    "removeTitle": "Remove {name}?",
+    "removeHelp": "The gym leaves Kriraghor for good. Running online subscriptions are refunded what Kriraghor still holds; money already paid to the gym is listed for support to settle with the owner.",
+    "removeCodeTitle": "Remove {name}",
+    "removeCodeHelp": "Enter your authenticator code to remove the gym and refund what is still held.",
+    "removedTitle": "{name} was removed",
+    "removedRefunded": "{count, plural, =0 {No running subscription needed a refund.} one {# running subscription was refunded ({amount}).} other {# running subscriptions were refunded ({amount} in all).}}",
+    "removedPaidToGym": "Already paid to the gym ({amount} in all). Support settles these with the owner:",
+    "removedPaidLine": "{paid} paid to the gym (held before: {held})",
+    "removedNothingPaid": "Nothing had been paid to the gym yet.",
+    "suspendScope": {
+      "gym": "Only this gym",
+      "gymHelp": "Everything at this gym stops: staff are shut out, the owner can only look, members cannot check in, pay or book, and booked visits are cancelled. The owner's other gyms carry on.",
+      "owner": "The owner's account",
+      "ownerHelp": "The owner is locked out and sees how to contact support. Every gym they own is suspended, and their venues, shops and profiles are paused. Restoring the account brings the gyms back.",
+      "suspendOwner": "Suspend the account",
+      "cancel": "Cancel",
+      "reasonHint": "At least 5 characters. Kept in the audit log.",
+      "restoreOwner": "Restore the owner's account",
+      "restoreOwnerTitle": "Restore the account behind {name}?",
+      "restoreOwnerHelp": "The owner can sign in again and every gym suspended with the account goes back to what it was. Gyms Kriraghor suspended on their own stay suspended.",
+      "cause": {
+        "staff": "By Kriraghor",
+        "owner_account": "With the owner's account"
+      }
+    }
   },
   "gymManageDesk": {
     "title": "Gym system",
@@ -3357,6 +3462,15 @@
       "continue": "Continue the application",
       "start": "Apply as an organiser",
       "openSports": "Sports tournaments"
+    },
+    "ask": {
+      "fund": "Pay {amount} to fund the prizes?",
+      "pay": "Go to payment",
+      "submit": "Send this tournament for review?",
+      "payInvoice": "Pay invoice {number} ({amount})?",
+      "logo": "Upload this logo?",
+      "claim": "Claim {sub}.esports.kriraghor.com?",
+      "removeMember": "Remove {name} from your organisation?"
     }
   },
   "organisersDesk": {
@@ -3580,6 +3694,12 @@
         "stream_live": "Stream live",
         "event_cancelled": "Showcase cancelled"
       }
+    },
+    "ask": {
+      "publish": "Publish this showcase?",
+      "cancel": "Cancel this showcase?",
+      "pollOpen": "Open this poll?",
+      "pollClose": "Close this poll?"
     }
   },
   "teamsAdmin": {
@@ -3632,7 +3752,10 @@
       "third": "Third gender"
     },
     "save": "Save correction",
-    "corrected": "Corrected and recorded in the audit log."
+    "corrected": "Corrected and recorded in the audit log.",
+    "confirm": {
+      "archive": "Archive this team?"
+    }
   },
   "sportsConsole": {
     "title": "Sports tournaments",
@@ -3842,6 +3965,23 @@
     "export": {
       "withSquads": "With squad lists",
       "csv": "Export CSV"
+    },
+    "ask": {
+      "submit": "Send this tournament for review?",
+      "close": "Close registration now?",
+      "extend": "Reopen registration until this time?",
+      "unlock": "Unlock the rules for changes?",
+      "cancel": "Cancel this tournament?",
+      "cancelBody": "Teams get back the entry fees Kriraghor still holds. This can't be undone.",
+      "preset": "Use the {name} rules?",
+      "approve": "Approve {team}?",
+      "reject": "Reject {team}?",
+      "waive": "Waive the entry fee for {team}?",
+      "removeTeam": "Remove {team} from the tournament?",
+      "result": "Save the result of match {n}?",
+      "draw": "Confirm the draw?",
+      "generate": "Create the fixtures?",
+      "publish": "{n, plural, one {Publish this fixture?} other {Publish these # fixtures?}}"
     }
   },
   "tournamentsAdmin": {

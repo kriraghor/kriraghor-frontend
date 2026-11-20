@@ -185,7 +185,7 @@ function TeamPane({ id }: { id: string }) {
             <Field id="team-archive-reason" label={t("reason")} value={reason} onChange={(e) => setReason(e.target.value)} minLength={5} maxLength={255} required data-testid="team-archive-reason" />
             {problem ? <Notice tone="error">{problem.title}</Notice> : null}
             <div className="flex flex-wrap gap-2">
-              <Button type="submit" variant="danger" busy={busy} data-testid="team-archive-confirm">
+              <Button type="submit" variant="danger" busy={busy} confirm={{ kind: "remove", title: t("confirm.archive"), confirmLabel: t("archive") }} data-testid="team-archive-confirm">
                 {t("archive")}
               </Button>
               <Button type="button" variant="ghost" onClick={() => setArchiving(false)}>
@@ -299,7 +299,7 @@ function GenderFix() {
             {problem ? <Notice tone="error">{problem.title}</Notice> : null}
             {done ? <Notice tone="success">{t("corrected")}</Notice> : null}
             <div className="flex flex-wrap gap-2">
-              <Button type="submit" disabled={!gender}>
+              <Button type="submit" disabled={!gender} confirm="save">
                 {t("save")}
               </Button>
               <Button type="button" variant="ghost" onClick={() => setUser(null)}>

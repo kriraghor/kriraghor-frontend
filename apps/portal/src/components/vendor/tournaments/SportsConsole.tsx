@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { ArrowLeft, ArrowsClockwise, CalendarX, DotsThree, DownloadSimple, Flag, PauseCircle, UsersThree } from "@phosphor-icons/react";
 import { DatePicker, DateTimePicker } from "@kriraghor/ui/date";
-import { Button, Dialog, Field as KitField, Menu, ReasonDialog, Select, Textarea, type MenuItem } from "@kriraghor/ui/kit";
+import { Button, Dialog, Field as KitField, Menu, ReasonDialog, Select, Textarea, useConfirm, type ConfirmSpec, type MenuItem } from "@kriraghor/ui/kit";
 import { problemOf } from "@kriraghor/api-client";
 import { publicEnv } from "@kriraghor/session/env";
 import { useAuth } from "@kriraghor/ui/auth";
@@ -53,6 +53,12 @@ function useErr() {
 }
 
 /** /vendor/tournaments: my verified sports organisations (one goes straight in). */
+/** Ask first, then run the action (tester feedback, 19 Nov 2026: every change asks). */
+function useAskThen() {
+  const ask = useConfirm();
+  return (spec: ConfirmSpec, go: () => void) => void ask(spec).then((ok) => (ok ? go() : undefined));
+}
+
 export function SportsHome() {
   const t = useTranslations("sportsConsole");
   const { status } = useAuth();
@@ -242,12 +248,13 @@ function NewTournament({ orgId }: { orgId: string }) {
     onSuccess: (x) => router.push(`/vendor/events/${orgId}/e/${x.id}`),
   });
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
+  const askThen = useAskThen();
   return (
     <form
       className="rounded-card mt-6 grid gap-4 border border-line p-4 md:grid-cols-2"
       onSubmit={(e) => {
         e.preventDefault();
-        create.mutate();
+        askThen("add", () => create.mutate());
       }}
       data-testid="tournament-form"
     >
@@ -402,6 +409,8 @@ function OverviewTab({ orgId, x }: { orgId: string; x: Tournament }) {
   const [reason, setReason] = useState("");
   const [closesAt, setClosesAt] = useState(() => toLocalInput(new Date(Date.now() + 2 * 86400000).toISOString()));
   const act = useMutation({ mutationFn: async (fn: () => Promise<unknown>) => fn(), onSuccess: () => (setReason(""), refresh()) });
+  const askThen = useAskThen();
+  const go = (spec: ConfirmSpec, fn: () => Promise<unknown>) => askThen(spec, () => act.mutate(fn));
   const money = (p: number) => formatTaka(p, locale);
   return (
     <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -458,19 +467,19 @@ function OverviewTab({ orgId, x }: { orgId: string; x: Tournament }) {
       <aside className="flex flex-col gap-3">
         {act.error ? <Notice tone="error">{err(act.error)}</Notice> : null}
         {["draft", "changes_requested"].includes(x.status) ? (
-          <button type="button" className={primary} disabled={act.isPending} onClick={() => act.mutate(() => api.submit(orgId, x.id))} data-testid="console-submit">
+          <button type="button" className={primary} disabled={act.isPending} onClick={() => go({ kind: "send", title: t("ask.submit") }, () => api.submit(orgId, x.id))} data-testid="console-submit">
             {t("submit")}
           </button>
         ) : null}
         {x.status === "registration_open" ? (
-          <button type="button" className={btn} disabled={act.isPending} onClick={() => act.mutate(() => api.close(orgId, x.id))} data-testid="console-close">
+          <button type="button" className={btn} disabled={act.isPending} onClick={() => go({ kind: "save", title: t("ask.close") }, () => api.close(orgId, x.id))} data-testid="console-close">
             {t("closeRegistration")}
           </button>
         ) : null}
         {x.status === "registration_closed" && x.matches === 0 ? (
           <div className="rounded-card flex flex-col gap-2 border border-line p-3">
             <DateTimePicker id="extend-at" label={t("extendTo")} value={closesAt} onChange={setClosesAt} />
-            <button type="button" className={btn} onClick={() => act.mutate(() => api.extend(orgId, x.id, fromLocalInput(closesAt) ?? ""))}>
+            <button type="button" className={btn} onClick={() => go({ kind: "save", title: t("ask.extend") }, () => api.extend(orgId, x.id, fromLocalInput(closesAt) ?? ""))}>
               {t("extend")}
             </button>
           </div>
@@ -481,12 +490,12 @@ function OverviewTab({ orgId, x }: { orgId: string; x: Tournament }) {
           </label>
           <input id="console-reason" className={inputCls} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={255} />
           {x.rulesLockedAt && !["completed", "cancelled"].includes(x.status) ? (
-            <button type="button" className={btn} disabled={reason.trim().length < 10} onClick={() => act.mutate(() => api.unlock(orgId, x.id, reason))}>
+            <button type="button" className={btn} disabled={reason.trim().length < 10} onClick={() => go({ kind: "save", title: t("ask.unlock") }, () => api.unlock(orgId, x.id, reason))}>
               {t("unlockRules")}
             </button>
           ) : null}
           {!["completed", "cancelled", "rejected"].includes(x.status) ? (
-            <button type="button" className={`${btn} border-danger text-danger`} disabled={reason.trim().length < 5} onClick={() => act.mutate(() => api.cancel(orgId, x.id, reason))} data-testid="console-cancel">
+            <button type="button" className={`${btn} border-danger text-danger`} disabled={reason.trim().length < 5} onClick={() => go({ kind: "remove", title: t("ask.cancel"), body: t("ask.cancelBody") }, () => api.cancel(orgId, x.id, reason))} data-testid="console-cancel">
               {t("cancelTournament")}
             </button>
           ) : null}
@@ -538,6 +547,7 @@ function RulesTab({ orgId, x }: { orgId: string; x: Tournament }) {
   const [values, setValues] = useState<Record<string, number | string | boolean>>(x.rules.values);
   const editable = ["draft", "changes_requested"].includes(x.status) || Boolean(x.rulesUnlockedUntil && new Date(x.rulesUnlockedUntil) > new Date());
   const save = useMutation({ mutationFn: (body: Record<string, unknown>) => api.update(orgId, x.id, body), onSuccess: refresh });
+  const askThen = useAskThen();
   if (!schema.data) return <div className="rounded-card mt-6 h-40 kg-shimmer bg-surface-2" />;
   const groups = [...new Set(schema.data.fields.map((f) => f.group))];
   return (
@@ -545,7 +555,7 @@ function RulesTab({ orgId, x }: { orgId: string; x: Tournament }) {
       {!editable ? <Notice>{x.rulesLockedAt ? t("rulesLocked") : t("rulesFixed")}</Notice> : null}
       <div className="mt-4 flex flex-wrap gap-2">
         {schema.data.presets.map((p) => (
-          <button key={p.key} type="button" disabled={!editable} className={`${btn} ${x.rules.presetKey === p.key ? "border-brand" : "border-line"}`} onClick={() => save.mutate({ presetKey: p.key })}>
+          <button key={p.key} type="button" disabled={!editable} className={`${btn} ${x.rules.presetKey === p.key ? "border-brand" : "border-line"}`} onClick={() => askThen({ kind: "save", title: t("ask.preset", { name: locale === "bn" ? p.bn : p.en }) }, () => save.mutate({ presetKey: p.key }))}>
             {locale === "bn" ? p.bn : p.en}
           </button>
         ))}
@@ -567,7 +577,7 @@ function RulesTab({ orgId, x }: { orgId: string; x: Tournament }) {
       {save.error ? <Notice tone="error">{err(save.error)}</Notice> : null}
       {editable ? (
         <div className="mt-4 flex gap-3">
-          <button type="button" className={primary} onClick={() => save.mutate({ rules: values })} data-testid="rules-save">
+          <button type="button" className={primary} onClick={() => askThen("save", () => save.mutate({ rules: values }))} data-testid="rules-save">
             {t("saveRules")}
           </button>
           <button type="button" className={btn} onClick={() => setValues(presetValues(schema.data, x.rules.presetKey === "custom" ? null : x.rules.presetKey))}>
@@ -587,6 +597,8 @@ function TeamsTab({ orgId, x }: { orgId: string; x: Tournament }) {
   const q = useQuery({ queryKey: ["sports-registrations", orgId, x.id], queryFn: () => api.registrations(orgId, x.id) });
   const [reason, setReason] = useState("");
   const act = useMutation({ mutationFn: async (fn: () => Promise<unknown>) => fn(), onSuccess: () => (setReason(""), refresh()) });
+  const askThen = useAskThen();
+  const go = (spec: ConfirmSpec, fn: () => Promise<unknown>) => askThen(spec, () => act.mutate(fn));
   return (
     <div className="mt-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -621,22 +633,22 @@ function TeamsTab({ orgId, x }: { orgId: string; x: Tournament }) {
               </span>
               <Chip tone={TONE[r.status] ?? "muted"}>{t(`reg.${r.status}`)}</Chip>
               {r.status === "pending_approval" ? (
-                <button type="button" className={primary} disabled={act.isPending} onClick={() => act.mutate(() => api.approve(orgId, r.id))} data-testid="reg-approve">
+                <button type="button" className={primary} disabled={act.isPending} onClick={() => go({ kind: "save", title: t("ask.approve", { team: r.team?.name ?? "–" }) }, () => api.approve(orgId, r.id))} data-testid="reg-approve">
                   {t("approve")}
                 </button>
               ) : null}
               {["pending_approval", "pending_payment", "reserve", "offered"].includes(r.status) ? (
-                <button type="button" className={`${btn} border-line`} disabled={act.isPending || reason.trim().length < 5} onClick={() => act.mutate(() => api.reject(orgId, r.id, reason))}>
+                <button type="button" className={`${btn} border-line`} disabled={act.isPending || reason.trim().length < 5} onClick={() => go({ kind: "remove", title: t("ask.reject", { team: r.team?.name ?? "–" }) }, () => api.reject(orgId, r.id, reason))}>
                   {t("reject")}
                 </button>
               ) : null}
               {["pending_payment", "offered"].includes(r.status) ? (
-                <button type="button" className={`${btn} border-line`} disabled={act.isPending || reason.trim().length < 5} onClick={() => act.mutate(() => api.waive(orgId, r.id, reason))}>
+                <button type="button" className={`${btn} border-line`} disabled={act.isPending || reason.trim().length < 5} onClick={() => go({ kind: "money", title: t("ask.waive", { team: r.team?.name ?? "–" }), confirmLabel: t("waive") }, () => api.waive(orgId, r.id, reason))}>
                   {t("waive")}
                 </button>
               ) : null}
               {r.status === "approved" ? (
-                <button type="button" className={`${btn} border-danger text-danger`} disabled={act.isPending || reason.trim().length < 5} onClick={() => act.mutate(() => api.remove(orgId, r.id, reason))}>
+                <button type="button" className={`${btn} border-danger text-danger`} disabled={act.isPending || reason.trim().length < 5} onClick={() => go({ kind: "remove", title: t("ask.removeTeam", { team: r.team?.name ?? "–" }) }, () => api.remove(orgId, r.id, reason))}>
                   {t("remove")}
                 </button>
               ) : null}
@@ -714,6 +726,7 @@ function ResultForm({ orgId, m, engine, amend, onDone }: { orgId: string; m: Mat
     },
     onSuccess: onDone,
   });
+  const askThen = useAskThen();
   const box = "rounded-control min-h-11 w-20 border border-line-strong/60 bg-surface px-2";
   const nameA = m.teamA.team?.name ?? "A";
   const nameB = m.teamB.team?.name ?? "B";
@@ -722,7 +735,7 @@ function ResultForm({ orgId, m, engine, amend, onDone }: { orgId: string; m: Mat
       className="mt-2 flex flex-wrap items-end gap-2 border-t border-line pt-2"
       onSubmit={(e) => {
         e.preventDefault();
-        send.mutate();
+        askThen({ kind: "save", title: t("ask.result", { n: m.matchNo }) }, () => send.mutate());
       }}
       data-testid="result-form"
     >
@@ -785,6 +798,8 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
   const [open, setOpen] = useState<string | null>(null);
   const [pending, setPending] = useState<{ kind: MatchAction; m: Match } | null>(null);
   const act = useMutation({ mutationFn: async (fn: () => Promise<unknown>) => fn(), onSuccess: refresh });
+  const askThen = useAskThen();
+  const go = (spec: ConfirmSpec, fn: () => Promise<unknown>) => askThen(spec, () => act.mutate(fn));
   const schedule = { weekdays: days, slots: slots.split(",").map((s) => s.trim()).filter(Boolean) };
   const dry = useMutation({ mutationFn: () => api.generate(orgId, x.id, { dryRun: true, schedule }), onSuccess: setPlan });
   const matches = useMemo(() => q.data?.matches ?? [], [q.data]);
@@ -805,7 +820,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
                 </option>
               ))}
             </select>
-            <button type="button" className={btn} disabled={act.isPending} onClick={() => act.mutate(() => api.drawConfirm(orgId, x.id, seeding))} data-testid="draw-confirm">
+            <button type="button" className={btn} disabled={act.isPending} onClick={() => go({ kind: "save", title: t("ask.draw") }, () => api.drawConfirm(orgId, x.id, seeding))} data-testid="draw-confirm">
               {t("confirmDraw")}
             </button>
             {q.data?.draw?.seed ? <p className="break-all font-mono text-xs text-muted">{t("seed", { seed: q.data.draw.seed })}</p> : null}
@@ -825,7 +840,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
               <button type="button" className={btn} disabled={!q.data?.draw} onClick={() => dry.mutate()} data-testid="fixtures-dry">
                 {t("dryRun")}
               </button>
-              <button type="button" className={primary} disabled={act.isPending || !q.data?.draw} onClick={() => act.mutate(() => api.generate(orgId, x.id, { dryRun: false, schedule }).then(() => setPlan(null)))} data-testid="fixtures-generate">
+              <button type="button" className={primary} disabled={act.isPending || !q.data?.draw} onClick={() => go({ kind: "add", title: t("ask.generate") }, () => api.generate(orgId, x.id, { dryRun: false, schedule }).then(() => setPlan(null)))} data-testid="fixtures-generate">
                 {t("generate")}
               </button>
             </div>
@@ -836,7 +851,7 @@ function FixturesTab({ orgId, x }: { orgId: string; x: Tournament }) {
       {drafts ? (
         <div className="rounded-card flex items-center gap-3 border border-warning p-3">
           <span className="flex-1">{t("draftsWaiting", { n: drafts })}</span>
-          <button type="button" className={primary} disabled={act.isPending} onClick={() => act.mutate(() => api.publish(orgId, x.id))} data-testid="fixtures-publish">
+          <button type="button" className={primary} disabled={act.isPending} onClick={() => go({ kind: "send", title: t("ask.publish", { n: drafts }) }, () => api.publish(orgId, x.id))} data-testid="fixtures-publish">
             {t("publish")}
           </button>
         </div>
@@ -976,7 +991,7 @@ function MoveDialog({ orgId, m, busy, error, onClose, onSave }: ActionDialogProp
           <Button type="button" variant="ghost" onClick={() => onClose(false)} disabled={busy}>
             {t("close")}
           </Button>
-          <Button type="submit" form="match-move-form" busy={busy} data-testid="match-move-save">
+          <Button type="submit" form="match-move-form" busy={busy} confirm="save" data-testid="match-move-save">
             {t("moveSave")}
           </Button>
         </>

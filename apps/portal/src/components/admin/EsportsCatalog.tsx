@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { api, problemOf, type Problem } from "@kriraghor/api-client";
 import type { components } from "@kriraghor/api-client/schema";
 import { Button, Notice } from "@kriraghor/ui/primitives";
+import { useConfirm } from "@kriraghor/ui/kit";
 import { useAdminMe } from "./useAdminMe";
 
 type Table = "esports-games" | "esports-modes" | "esports-maps" | "esports-points-presets";
@@ -46,6 +47,7 @@ export function EsportsCatalog() {
   const [gameId, setGameId] = useState<string>("");
   const [editing, setEditing] = useState<Item | "new" | null>(null);
   const [notice, setNotice] = useState<{ tone: "info" | "error"; text: string } | null>(null);
+  const ask = useConfirm();
 
   const games = useQuery({
     queryKey: ["catalog", "esports-games"],
@@ -70,6 +72,7 @@ export function EsportsCatalog() {
   const refresh = () => qc.invalidateQueries({ queryKey: ["catalog"] });
 
   async function toggle(item: Item) {
+    if (!(await ask(item.isActive ? { kind: "save", danger: true, confirmLabel: t("deactivate") } : { kind: "save", confirmLabel: t("reactivate") }))) return;
     setNotice(null);
     const path = { table, id: item.id };
     const res = item.isActive
@@ -253,6 +256,7 @@ function EditDrawer({
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<Problem | null>(null);
   const firstRef = useRef<HTMLInputElement>(null);
+  const ask = useConfirm();
 
   useEffect(() => {
     firstRef.current?.focus();
@@ -275,6 +279,7 @@ function EditDrawer({
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (!(await ask(item ? "save" : "add"))) return;
     setBusy(true);
     setProblem(null);
     try {

@@ -240,7 +240,7 @@ function RefundForm({ payment, me }: { payment: AdminPayment; me: DeskMe }) {
         <Field id="refund-text" label={t("note")} value={text} onChange={(e) => setText(e.target.value)} maxLength={500} />
         {me.isMaster ? <Checkbox id="refund-goodwill" label={t("goodwill")} checked={goodwill} onChange={(e) => setGoodwill(e.target.checked)} /> : null}
         <div>
-          <Button type="submit" busy={busy} disabled={!body}>
+          <Button type="submit" busy={busy} disabled={!body} confirm={{ kind: "money", title: t("ask.refund"), confirmLabel: t("refund") }}>
             {t("refund")}
           </Button>
         </div>

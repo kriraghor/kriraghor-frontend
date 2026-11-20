@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { X } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import { cn } from "../cn";
+import { useConfirm, type ConfirmSpec } from "./Confirm";
 
 const scrim = "fixed inset-0 z-50 bg-scrim backdrop-blur-[2px] data-[state=open]:animate-[kg-fade-in_200ms_var(--ease-kg)] data-[state=closed]:animate-[kg-fade-out_140ms_ease-in]";
 
@@ -108,7 +109,8 @@ export function Tooltip({ content, side = "top", children, disabled }: { content
 }
 
 /** A menu of actions from a button (Radix: arrow keys, type-ahead, Escape). */
-export function Menu({ trigger, items, align = "end" }: { trigger: ReactNode; items: ({ label: ReactNode; icon?: ReactNode; onSelect: () => void; danger?: boolean } | "separator")[]; align?: "start" | "end" }) {
+export function Menu({ trigger, items, align = "end" }: { trigger: ReactNode; items: ({ label: ReactNode; icon?: ReactNode; onSelect: () => void; danger?: boolean; confirm?: ConfirmSpec } | "separator")[]; align?: "start" | "end" }) {
+  const ask = useConfirm();
   return (
     <RMenu.Root>
       <RMenu.Trigger asChild>{trigger}</RMenu.Trigger>
@@ -120,7 +122,7 @@ export function Menu({ trigger, items, align = "end" }: { trigger: ReactNode; it
             ) : (
               <RMenu.Item
                 key={i}
-                onSelect={it.onSelect}
+                onSelect={it.confirm ? () => void ask(it.confirm!).then((ok) => ok && it.onSelect()) : it.onSelect}
                 className={cn("flex min-h-10 cursor-pointer select-none items-center gap-2.5 rounded-[9px] px-3 text-sm font-medium outline-none data-[highlighted]:bg-surface-2", it.danger && "text-danger")}
               >
                 {it.icon ? <span className="[&>svg]:size-[18px]">{it.icon}</span> : null}

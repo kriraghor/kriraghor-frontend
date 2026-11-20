@@ -81,6 +81,12 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
   const payable = new Map((myDues.data?.items ?? []).map((x) => [x.dueId, x] as const));
   return (
     <div className="mt-2 flex flex-col gap-4">
+      {/* Kriraghor suspended the gym (19 Nov 2026): nothing works there for now. */}
+      {m.gym?.suspended ? (
+        <Notice tone="warning" title={t("me.gymClosed")}>
+          {t("me.gymClosedBody")}
+        </Notice>
+      ) : null}
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h1 className="font-display text-3xl font-extrabold">{m.gym?.name ?? t("me.gym")}</h1>
@@ -263,7 +269,7 @@ function MyBody({ memberId, health }: { memberId: string; health: Health }) {
       </div>
       <Textarea id="my-medical" label={t("health.medical")} optional={t("optional")} hint={t("health.mineMedicalHint")} value={d.medical} maxLength={500} onChange={(e) => setD({ ...d, medical: e.target.value })} />
       {problem ? <p role="alert" className="text-sm text-danger">{problem}</p> : null}
-      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} className="self-start" data-testid="body-save">
+      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} confirm="save" className="self-start" data-testid="body-save">
         {t("save")}
       </Button>
     </Card>
@@ -298,7 +304,7 @@ function HealthNote({ memberId, note, at }: { memberId: string; note: string | n
       <p className="text-sm text-muted">{t("me.healthNoteBody")}</p>
       <Textarea id="health-note" label={t("me.healthNoteLabel")} value={text} maxLength={500} onChange={(e) => setText(e.target.value)} hint={at ? t("me.healthNoteAt", { date: f.date(at) }) : undefined} />
       {problem ? <p role="alert" className="text-sm text-danger">{problem}</p> : null}
-      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} className="self-start" data-testid="health-save">
+      <Button type="button" size="sm" variant="secondary" onClick={save} busy={busy} confirm="save" className="self-start" data-testid="health-save">
         {t("save")}
       </Button>
     </Card>

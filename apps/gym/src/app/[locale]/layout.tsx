@@ -57,7 +57,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           <Providers audience={APP.audience}>
             {/* The header reads the pathname; routes known only at request time (/gyms/[slug]) stream it in. */}
             <Suspense fallback={<HeaderPlaceholder />}>
-              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} />
+              <SiteHeader titleKey={APP.titleKey} homeHref="/" signInHref="/sign-in" meHref="/me" nav={APP.nav} bell={{ centreHref: "/me/notifications", settingsHref: "/me/notifications/settings" }} partner="/partner" />
             </Suspense>
             <main id="main" className="flex-1">
               {children}

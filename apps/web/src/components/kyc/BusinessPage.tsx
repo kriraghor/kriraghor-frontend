@@ -49,6 +49,7 @@ const CAN_SEND = ["missing", "changes_requested", "rejected", "withdrawn"];
  */
 export function BusinessPage() {
   const t = useTranslations("business");
+  const a = useTranslations("ask");
   const locale = useLocale();
   const { status } = useAuth();
   const qc = useQueryClient();
@@ -117,6 +118,7 @@ export function BusinessPage() {
             <Button
               type="button"
               busy={busy}
+              confirm={{ kind: "send", title: a("applyRole") }}
               onClick={async () => {
                 setBusy(true);
                 setProblem(null);
@@ -196,6 +198,7 @@ function DocItem({
   const t = useTranslations("business");
   const tk = useTranslations("kyc");
   const tf = useTranslations("footer");
+  const a = useTranslations("ask");
   const [consent, setConsent] = useState(false);
   const locale = useLocale();
   const isCredential = item.key === "credential";
@@ -349,7 +352,7 @@ function DocItem({
           </label>
           {problem ? <Notice tone="error">{problem}</Notice> : null}
           <div className="flex gap-2">
-            <Button type="submit" busy={busy} disabled={!consentReady(consent, consentText?.version)}>
+            <Button type="submit" busy={busy} disabled={!consentReady(consent, consentText?.version)} confirm={{ kind: "send", title: a("sendDocument") }}>
               {t("submit")}
             </Button>
             <button type="button" className="rounded-control min-h-12 border border-line-strong/60 px-4 font-bold" onClick={() => setOpen(false)}>

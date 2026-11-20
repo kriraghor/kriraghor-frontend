@@ -11,18 +11,23 @@ import { halfHours, nextActions, vendor, type Court, type HoursRow, type OwnerGr
 import { Notice } from "@kriraghor/ui/primitives";
 import { Chip, Field, inputCls } from "../admin/finance/shared";
 import { STATUS_TONE } from "./GroundsDesk";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, useConfirm, type ConfirmSpec } from "@kriraghor/ui/kit";
 
 const btn = "rounded-control min-h-11 border px-4 text-sm font-bold disabled:opacity-50";
 type Msg = { text: string; tone: "info" | "error" } | null;
 
-/** Run an API call, refresh the ground, and report the result (problem title or a done message). */
+/**
+ * Run an API call, refresh the ground, and report the result (problem title or a done message).
+ * With `confirm`, the owner is asked first (tester feedback, 19 Nov 2026); a no runs nothing.
+ */
 function useRunner(groundId: string) {
   const qc = useQueryClient();
   const t = useTranslations("vendorGrounds");
+  const ask = useConfirm();
   const [msg, setMsg] = useState<Msg>(null);
   const [busy, setBusy] = useState(false);
-  const run = async (fn: () => Promise<unknown>, done?: string) => {
+  const run = async (fn: () => Promise<unknown>, done?: string, confirm?: ConfirmSpec) => {
+    if (confirm && !(await ask(confirm))) return false;
     setMsg(null);
     setBusy(true);
     try {
@@ -74,27 +79,27 @@ export function GroundEditor({ id }: { id: string }) {
       ) : null}
       <div className="mt-4 flex flex-wrap gap-2" data-testid="ground-actions">
         {actions.includes("submit") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => vendor.submit(id), t("sent"))} data-testid="submit-ground">
+          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => vendor.submit(id), t("sent"), { kind: "send", title: t("ask.submit") })} data-testid="submit-ground">
             {t("submit")}
           </button>
         ) : null}
         {actions.includes("submit_edit") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => vendor.submit(id), t("sent"))} data-testid="submit-edit">
+          <button type="button" disabled={busy} className={`${btn} border-brand bg-brand text-on-brand`} onClick={() => void run(() => vendor.submit(id), t("sent"), { kind: "send", title: t("ask.submit") })} data-testid="submit-edit">
             {t("submitEdit")}
           </button>
         ) : null}
         {actions.includes("withdraw") ? (
-          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => vendor.withdraw(id), t("withdrawn"))}>
+          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => vendor.withdraw(id), t("withdrawn"), { kind: "save", title: t("ask.withdraw") })}>
             {t("withdraw")}
           </button>
         ) : null}
         {actions.includes("pause") ? (
-          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => vendor.pause(id), t("paused"))}>
+          <button type="button" disabled={busy} className={`${btn} border-line`} onClick={() => void run(() => vendor.pause(id), t("paused"), { kind: "save", title: t("ask.pause") })}>
             {t("pause")}
           </button>
         ) : null}
         {actions.includes("resume") ? (
-          <button type="button" disabled={busy} className={`${btn} border-brand`} onClick={() => void run(() => vendor.resume(id), t("resumed"))}>
+          <button type="button" disabled={busy} className={`${btn} border-brand`} onClick={() => void run(() => vendor.resume(id), t("resumed"), { kind: "save", title: t("ask.resume") })}>
             {t("resume")}
           </button>
         ) : null}
@@ -159,7 +164,8 @@ function Basics({ g, locked }: { g: OwnerGround; locked: boolean }) {
               bookingCutoffMin: f.bookingCutoffMin as 0 | 15 | 30 | 60,
               facilityIds: f.facilityIds,
             }),
-          t("saved")
+          t("saved"),
+          "save"
         );
       }}
       data-testid="ground-basics"
@@ -241,12 +247,13 @@ function Basics({ g, locked }: { g: OwnerGround; locked: boolean }) {
 
 function Photos({ g, locked }: { g: OwnerGround; locked: boolean }) {
   const t = useTranslations("vendorGrounds");
+  const ask = useConfirm();
   const { msg, busy, run } = useRunner(g.id);
   const ids = g.photos.map((p) => p.id);
   const move = (i: number, d: number) => {
     const next = [...ids];
     [next[i], next[i + d]] = [next[i + d], next[i]];
-    return run(() => vendor.orderPhotos(g.id, next));
+    return run(() => vendor.orderPhotos(g.id, next), undefined, "save");
   };
   return (
     <div className="rounded-card border border-line bg-surface p-5" data-testid="ground-photos">
@@ -266,7 +273,7 @@ function Photos({ g, locked }: { g: OwnerGround; locked: boolean }) {
                 <button type="button" disabled={locked || busy || i === g.photos.length - 1} onClick={() => void move(i, 1)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line-strong/60 text-sm disabled:opacity-40" aria-label={t("moveRight")}>
                   <CaretRight size={16} weight="bold" aria-hidden />
                 </button>
-                <button type="button" disabled={locked || busy} onClick={() => void run(() => vendor.removePhoto(g.id, p.id))} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40">
+                <button type="button" disabled={locked || busy} onClick={() => void run(() => vendor.removePhoto(g.id, p.id), undefined, "remove")} className="rounded-control min-h-9 border border-line-strong/60 px-2 text-xs font-semibold text-danger disabled:opacity-40">
                   {t("remove")}
                 </button>
               </span>
@@ -286,6 +293,7 @@ function Photos({ g, locked }: { g: OwnerGround; locked: boolean }) {
           onChange={async (e) => {
             const files = [...(e.target.files ?? [])];
             e.target.value = "";
+            if (!files.length || !(await ask({ kind: "add", title: t("ask.photos", { n: files.length }) }))) return;
             for (const file of files) if (!(await run(() => vendor.uploadPhoto(g.id, file)))) break;
           }}
         />
@@ -345,7 +353,8 @@ function CourtForm({ groundId, sports, surfaces }: { groundId: string; sports: O
         e.preventDefault();
         const ok = await run(
           () => vendor.addCourt(groundId, { name: f.name, sportIds: f.sportIds, surfaceId: f.surfaceId, sizeText: f.sizeText || null, capacityText: f.capacityText || null, combinableGroup: f.combinableGroup || null }),
-          t("courtAdded")
+          t("courtAdded"),
+          "add"
         );
         if (ok) setF({ name: "", sportIds: [], surfaceId: "", sizeText: "", capacityText: "", combinableGroup: "" });
       }}
@@ -403,7 +412,7 @@ function CourtCard({ groundId, court, locked, sports, surfaces }: { groundId: st
         <h3 className="text-lg font-extrabold">{court.name}</h3>
         <Chip tone={court.status === "active" ? "ok" : "warn"}>{t(`courtStatus.${court.status}`)}</Chip>
         {!locked ? (
-          <button type="button" disabled={busy} className="rounded-control ml-auto min-h-9 border border-line-strong/60 px-3 text-xs font-semibold text-danger" onClick={() => void run(() => vendor.retireCourt(court.id), t("courtRetired"))}>
+          <button type="button" disabled={busy} className="rounded-control ml-auto min-h-9 border border-line-strong/60 px-3 text-xs font-semibold text-danger" onClick={() => void run(() => vendor.retireCourt(court.id), t("courtRetired"), { kind: "remove", title: t("ask.retire", { name: court.name }) })}>
             {t("retire")}
           </button>
         ) : null}
@@ -414,7 +423,8 @@ function CourtCard({ groundId, court, locked, sports, surfaces }: { groundId: st
           e.preventDefault();
           void run(
             () => vendor.updateCourt(court.id, { name: f.name, sportIds: f.sportIds, surfaceId: f.surfaceId, sizeText: f.sizeText || null, capacityText: f.capacityText || null, combinableGroup: f.combinableGroup || null }),
-            t("saved")
+            t("saved"),
+            "save"
           );
         }}
       >
@@ -493,7 +503,7 @@ function CourtCard({ groundId, court, locked, sports, surfaces }: { groundId: st
         </table>
       </div>
       <div className="mt-2 flex flex-wrap gap-2">
-        <button type="button" disabled={busy} className={`${btn} border-brand`} onClick={() => void run(() => vendor.setHours(court.id, hours.map((h) => (h.isClosed ? { dow: h.dow, isClosed: true, openTime: null, closeTime: null } : h))), t("hoursSaved"))}>
+        <button type="button" disabled={busy} className={`${btn} border-brand`} onClick={() => void run(() => vendor.setHours(court.id, hours.map((h) => (h.isClosed ? { dow: h.dow, isClosed: true, openTime: null, closeTime: null } : h))), t("hoursSaved"), "save")}>
           {t("saveHours")}
         </button>
         <button type="button" className={`${btn} border-line`} onClick={() => setHours((hs) => hs.map((h) => ({ ...hs[1], dow: h.dow })))}>

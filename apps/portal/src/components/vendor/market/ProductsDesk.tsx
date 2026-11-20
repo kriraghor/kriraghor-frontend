@@ -12,6 +12,7 @@ import { Chip, Field, inputCls } from "../../admin/finance/shared";
 import { STATUS_TONE } from "../GroundsDesk";
 import { Gate } from "./ShopDesk";
 import { SpecFields } from "./SpecFields";
+import { useConfirm } from "@kriraghor/ui/kit";
 
 const TABS = ["all", "live", "pending_review", "changes_requested", "draft", "paused", "rejected"] as const;
 
@@ -106,6 +107,7 @@ function AddProduct({ shopType, onClose }: { shopType: ShopType; onClose: () => 
   const [specs, setSpecs] = useState<Record<string, string>>({});
   const [problem, setProblem] = useState<Problem | null>(null);
   const [busy, setBusy] = useState(false);
+  const ask = useConfirm();
   const picked = options.find((o) => o.type.id === typeId);
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
 
@@ -114,6 +116,7 @@ function AddProduct({ shopType, onClose }: { shopType: ShopType; onClose: () => 
     setProblem(null);
     const base = toPoisha(f.price);
     if (!picked || base === null) return setProblem({ code: "VALIDATION_FAILED", title: t("form.badPrice"), status: 422 });
+    if (!(await ask("add"))) return;
     setBusy(true);
     try {
       const p = await shopDesk.createProduct({ itemTypeId: picked.type.id, title: f.title, brand: f.brand || null, basePricePoisha: base, specs: specsFrom(picked.type.fields, specs) });

@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Paperclip, Star } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
-import { Button, DataTable, DetailLayout, FilterBar, Notice, PageTitle, Skeleton, Textarea, buttonClass, cn, useToast, type Column } from "@kriraghor/ui/kit";
+import { Button, DataTable, DetailLayout, FilterBar, Notice, PageTitle, Skeleton, Textarea, buttonClass, cn, useConfirm, useToast, type Column } from "@kriraghor/ui/kit";
 import { formatTaka } from "@/lib/admin/finance";
 import { businessView } from "@/lib/panel-nav";
 import { vendor } from "@/lib/vendor/grounds";
@@ -112,6 +112,7 @@ function OwnerCase({ code }: { code: string }) {
   const q = useQuery({ queryKey: ["owner-dispute", code], queryFn: () => ownerTrust.get(code) });
   const [text, setText] = useState("");
   const [fileErr, setFileErr] = useState<string | null>(null);
+  const ask = useConfirm();
   const refresh = () => (qc.invalidateQueries({ queryKey: ["owner-dispute", code] }), qc.invalidateQueries({ queryKey: ["owner-disputes"] }));
   const say = useMutation({ mutationFn: () => (q.data?.can.respond ? ownerTrust.respond(code, text.trim()) : ownerTrust.statement(code, text.trim())), onSuccess: () => (setText(""), refresh()) });
   const upload = useMutation({ mutationFn: (f: File) => ownerTrust.upload(code, f), onSuccess: refresh });
@@ -162,7 +163,7 @@ function OwnerCase({ code }: { code: string }) {
         >
           <Textarea id="owner-side" label={can.respond ? t("yourSide") : t("addMore")} value={text} onChange={(e) => setText(e.target.value)} rows={4} maxLength={2000} />
           <div className="flex flex-wrap items-center gap-2">
-            <Button type="submit" disabled={text.trim().length < 2} busy={say.isPending} data-testid="owner-respond">
+            <Button type="submit" disabled={text.trim().length < 2} busy={say.isPending} confirm="send" data-testid="owner-respond">
               {can.respond ? t("sendSide") : t("send")}
             </Button>
             <label className={cn(buttonClass({ variant: "secondary" }), "cursor-pointer", !can.filesLeft && "pointer-events-none opacity-50")}>
@@ -178,7 +179,7 @@ function OwnerCase({ code }: { code: string }) {
                   if (!f) return;
                   if (!EVIDENCE_TYPES.includes(f.type)) return setFileErr(t("fileType"));
                   setFileErr(null);
-                  upload.mutate(f);
+                  void ask({ kind: "send", title: t("ask.file", { name: f.name }) }).then((ok) => (ok ? upload.mutate(f) : undefined));
                 }}
               />
             </label>
@@ -385,7 +386,7 @@ function ReviewPane({ review: r, name }: { review: ReviewRow; name: string }) {
         <Textarea id={`reply-${r.id}`} label={r.reply ? t("editReply") : t("writeReply")} hint={t("replyHint")} value={text} onChange={(e) => setText(e.target.value)} rows={4} minLength={2} maxLength={1000} />
         {reply.isError ? <Notice tone="error">{t(`replyErrors.${replyErrorKey(problem?.code)}`)}</Notice> : null}
         <div>
-          <Button type="submit" disabled={!replyOk(text)} busy={reply.isPending} data-testid="send-reply">
+          <Button type="submit" disabled={!replyOk(text)} busy={reply.isPending} confirm={r.reply ? "save" : "send"} data-testid="send-reply">
             {r.reply ? t("saveReply") : t("reply")}
           </Button>
         </div>

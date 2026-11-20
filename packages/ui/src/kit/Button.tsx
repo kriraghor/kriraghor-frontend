@@ -1,10 +1,11 @@
 "use client";
 
-import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ComponentProps, type ReactNode } from "react";
+import { forwardRef, type AnchorHTMLAttributes, type MouseEvent, type ButtonHTMLAttributes, type ComponentProps, type ReactNode } from "react";
 import { CircleNotch } from "@phosphor-icons/react";
 import { isExternal } from "@kriraghor/session/links";
 import { Link } from "../i18n/navigation";
 import { cn } from "../cn";
+import { useConfirm, type ConfirmSpec } from "./Confirm";
 
 export type ButtonVariant = "primary" | "accent" | "secondary" | "ghost" | "danger" | "prize" | "link";
 export type ButtonSize = "sm" | "md" | "lg";
@@ -32,11 +33,25 @@ export function buttonClass({ variant = "primary", size = "md", block = false }:
 
 type Common = { variant?: ButtonVariant; size?: ButtonSize; block?: boolean; icon?: ReactNode; iconEnd?: ReactNode };
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & Common & { busy?: boolean };
+/**
+ * `confirm` asks first (tester feedback, 19 Nov 2026): the click opens the confirm dialog, and only a
+ * yes runs onClick or submits the form (Enter in a field clicks the submit button, so it asks too).
+ */
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & Common & { busy?: boolean; confirm?: ConfirmSpec };
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button({ variant, size, block, icon, iconEnd, busy, className, children, type = "submit", disabled, ...rest }, ref) {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button({ variant, size, block, icon, iconEnd, busy, className, children, type = "submit", disabled, confirm, onClick, ...rest }, ref) {
+  const ask = useConfirm();
+  const click = confirm
+    ? async (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        const btn = e.currentTarget;
+        if (!(await ask(confirm))) return;
+        onClick?.(e);
+        if (type === "submit" && btn.form) btn.form.requestSubmit(btn);
+      }
+    : onClick;
   return (
-    <button ref={ref} type={type} disabled={busy || disabled} aria-busy={busy || undefined} className={cn(buttonClass({ variant, size, block }), className)} {...rest}>
+    <button ref={ref} type={type} disabled={busy || disabled} aria-busy={busy || undefined} className={cn(buttonClass({ variant, size, block }), className)} onClick={click} {...rest}>
       {busy ? <CircleNotch size={18} className="animate-spin" aria-hidden /> : icon}
       {children}
       {iconEnd}

@@ -140,7 +140,10 @@ function MemberCard({ ctx, member }: { ctx: GymCtx; member: PickedMember }) {
           <ul className="grid gap-2 sm:grid-cols-2">
             {p.rewards.map((r) => (
               <li key={r.id}>
-                <Button block variant="secondary" disabled={p.balance < r.points || busy !== null} busy={busy === r.id} onClick={() => void redeem(r)} data-testid={`rw-redeem-${r.id}`}>
+                <Button block variant="secondary" disabled={p.balance < r.points || busy !== null} busy={busy === r.id}
+                  confirm={{ kind: "save", title: t("rewards.redeemAsk", { title: r.title, n: f.n(r.points) }), body: t("rewards.redeemBody", { name: member.displayName }), confirmLabel: t("rewards.redeemYes") }}
+                  onClick={() => void redeem(r)}
+                  data-testid={`rw-redeem-${r.id}`}>
                   <span className="flex w-full items-center justify-between gap-2">
                     <span className="truncate">{r.title}</span>
                     <span className="text-xs tabular-nums">{t("rewards.pts", { n: f.n(r.points) })}</span>
@@ -183,7 +186,7 @@ function MemberCard({ ctx, member }: { ctx: GymCtx; member: PickedMember }) {
         ) : ctx.can("members.edit") ? (
           <div className="flex flex-col gap-2">
             <MemberPick gymId={ctx.gymId} id="rw-referrer" label={t("rewards.whoReferred")} optional={t("optional")} value={referrer} onChange={setReferrer} />
-            <Button size="sm" variant="secondary" className="self-start" disabled={!referrer} busy={busy === "ref"} onClick={() => void saveReferral()}>
+            <Button size="sm" variant="secondary" className="self-start" disabled={!referrer} busy={busy === "ref"} confirm="save" onClick={() => void saveReferral()}>
               {t("rewards.saveReferral")}
             </Button>
           </div>
@@ -233,7 +236,7 @@ function AdjustDialog({ ctx, memberId, onClose, onDone }: { ctx: GymCtx; memberI
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy}>
+          <Button onClick={() => void save()} busy={busy} confirm="save">
             {t("save")}
           </Button>
         </>
@@ -300,7 +303,7 @@ function RewardsDialog({ ctx, rewards, onClose }: { ctx: GymCtx; rewards: Reward
           <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("cancel")}
           </Button>
-          <Button onClick={() => void save()} busy={busy} data-testid="rw-save">
+          <Button onClick={() => void save()} busy={busy} confirm="save" data-testid="rw-save">
             {t("save")}
           </Button>
         </>

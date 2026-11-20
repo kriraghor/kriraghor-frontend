@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ArrowLeft, PencilSimple } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { problemOf } from "@kriraghor/api-client";
-import { Badge, Button, Card, DataTable, Field, Notice, PageTitle, Select, Skeleton, Textarea, cn, type Column } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, DataTable, Field, Notice, PageTitle, Select, Skeleton, Textarea, cn, useConfirm, type Column } from "@kriraghor/ui/kit";
 import { stepUp } from "@/lib/admin/stepUp";
 import { MASTER_ACTIONS, SEVERITY_ORDER, riskAdmin, stepUpScope, type RiskActionName, type Severity } from "@/lib/admin/risk";
 import { useCursorList } from "@/lib/use-cursor-list";
@@ -197,6 +197,7 @@ export function RiskAccountView({ userId }: { userId: string }) {
   const body = () => ({ action, flagId, reason: reason.trim(), params: action === "suspend" ? { days: Number(days) } : action === "request_documents" ? { docType } : {} });
   const take = useMutation({ mutationFn: () => riskAdmin.act(userId, body()), onSuccess: () => (setReason(""), refresh()) });
   const undo = useMutation({ mutationFn: (id: string) => riskAdmin.undo(id, undoReason.trim()), onSuccess: () => (setUndoReason(""), refresh()) });
+  const ask = useConfirm();
   const problem = problemOf(take.error) ?? problemOf(undo.error);
 
   if (ready && !allowed) return <Notice tone="error">{t("noAccess")}</Notice>;
@@ -271,10 +272,10 @@ export function RiskAccountView({ userId }: { userId: string }) {
                         variant="secondary"
                         size="sm"
                         disabled={undoReason.trim().length < 10 || ((x.action === "freeze_payouts" || x.action === "ban") && !isMaster)}
-                        onClick={() => {
+                        onClick={async () => {
                           const s = stepUpScope(x.action);
                           if (s) setCodeFor({ kind: "undo", id: x.id, scope: s });
-                          else undo.mutate(x.id);
+                          else if (await ask({ kind: "save", confirmLabel: t("undo") })) undo.mutate(x.id);
                         }}
                         data-testid="undo-action"
                       >
@@ -317,7 +318,10 @@ export function RiskAccountView({ userId }: { userId: string }) {
                 variant={action === "ban" || action === "freeze_payouts" ? "danger" : "primary"}
                 disabled={!ready2}
                 busy={take.isPending}
-                onClick={() => (scope ? setCodeFor({ kind: "act" }) : take.mutate())}
+                onClick={async () => {
+                  if (scope) setCodeFor({ kind: "act" });
+                  else if (await ask({ kind: "save", confirmLabel: t(`do.${action}`), danger: action === "suspend" })) take.mutate();
+                }}
                 data-testid="take-action"
               >
                 {t(`do.${action}`)}

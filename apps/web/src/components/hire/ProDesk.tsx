@@ -10,7 +10,7 @@ import { DECLINE_REASONS, hire, minutesLeft, profileTone, requestTone, TONE, typ
 import { formatTaka } from "@/lib/payments";
 import { MePanel } from "../MePanel";
 import { Button, Notice } from "@kriraghor/ui/primitives";
-import { ChecklistCard, Dialog } from "@kriraghor/ui/kit";
+import { ChecklistCard, Dialog, useConfirm } from "@kriraghor/ui/kit";
 import { useMe } from "@kriraghor/ui/account";
 import { incomplete, proStepHref } from "@/lib/completeness";
 import { AvatarControl } from "../account/AvatarControl";
@@ -72,6 +72,8 @@ export function ProProfiles() {
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const money = (n: number) => formatTaka(n, locale);
   const { me } = useMe();
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const [photo, setPhoto] = useState(false);
   // Credentials and the police clearance are sent under the business role the person holds.
   const as = (me.data?.roles ?? []).some((r) => r.role === "pro" && OPEN_ROLE.includes(r.status)) ? "pro" : "player";
@@ -125,7 +127,7 @@ export function ProProfiles() {
                 </Link>
               ) : null}
               {p.status === "live" || p.status === "paused" ? (
-                <button type="button" disabled={pause.isPending} onClick={() => pause.mutate({ id: p.id, on: p.status === "live" })} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold disabled:opacity-50">
+                <button type="button" disabled={pause.isPending} onClick={() => void ask({ kind: "save", title: p.status === "live" ? a("pauseProfile") : a("resumeProfile") }).then((ok) => ok && pause.mutate({ id: p.id, on: p.status === "live" }))} className="rounded-control min-h-11 border border-line-strong/60 px-4 font-bold disabled:opacity-50">
                   {p.status === "live" ? t("desk.pause") : t("desk.resume")}
                 </button>
               ) : null}
@@ -163,6 +165,8 @@ function ProRequest({ x }: { x: RequestResult }) {
   const t = useTranslations("hire");
   const locale = useLocale();
   const qc = useQueryClient();
+  const ask = useConfirm();
+  const a = useTranslations("ask");
   const [declining, setDeclining] = useState(false);
   const [reason, setReason] = useState<(typeof DECLINE_REASONS)[number]>("not_available");
   const done = () => Promise.all([qc.invalidateQueries({ queryKey: ["pro-requests"] }), qc.invalidateQueries({ queryKey: ["pro-jobs"] })]);
@@ -212,7 +216,7 @@ function ProRequest({ x }: { x: RequestResult }) {
       <div className="flex flex-wrap gap-3 border-t-2 border-line px-4 py-3">
         {r.status === "pending" ? (
           <>
-            <Button busy={accept.isPending} disabled={failed.length > 0} onClick={() => accept.mutate()} data-testid="pro-accept">
+            <Button busy={accept.isPending} disabled={failed.length > 0} confirm={{ kind: "save", title: a("acceptRequest"), confirmLabel: t("accept") }} onClick={() => accept.mutate()} data-testid="pro-accept">
               {t("accept")}
             </Button>
             {!declining ? (
@@ -231,7 +235,7 @@ function ProRequest({ x }: { x: RequestResult }) {
           className="flex flex-wrap items-end gap-3 border-t-2 border-line px-4 py-3"
           onSubmit={(e) => {
             e.preventDefault();
-            decline.mutate();
+            void ask({ kind: "remove", title: a("declineRequest"), body: a("declineRequestBody"), confirmLabel: t("decline") }).then((ok) => ok && decline.mutate());
           }}
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-muted">

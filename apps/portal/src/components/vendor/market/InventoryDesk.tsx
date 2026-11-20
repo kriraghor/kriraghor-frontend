@@ -111,13 +111,13 @@ export function InventoryDesk() {
           <span className="inline-flex flex-wrap justify-end gap-1">
             {r.stock.code === "mto" || !canAdjust ? null : (
               <>
-                <Button type="button" variant="secondary" size="sm" disabled={busy || r.available <= 0} aria-label={t("inventory.minus")} onClick={() => void adjust(r, { delta: -1, reasonCode: "count_correction" })} data-testid="minus-one">
+                <Button type="button" variant="secondary" size="sm" disabled={busy || r.available <= 0} aria-label={t("inventory.minus")} confirm={{ kind: "save", title: t("ask.adjust", { n: "−1" }) }} onClick={() => void adjust(r, { delta: -1, reasonCode: "count_correction" })} data-testid="minus-one">
                   −1
                 </Button>
-                <Button type="button" variant="secondary" size="sm" disabled={busy} aria-label={t("inventory.plus")} onClick={() => void adjust(r, { delta: 1, reasonCode: "received" })} data-testid="plus-one">
+                <Button type="button" variant="secondary" size="sm" disabled={busy} aria-label={t("inventory.plus")} confirm={{ kind: "save", title: t("ask.adjust", { n: "+1" }) }} onClick={() => void adjust(r, { delta: 1, reasonCode: "received" })} data-testid="plus-one">
                   +1
                 </Button>
-                <Button type="button" variant="secondary" size="sm" disabled={busy} onClick={() => void adjust(r, { delta: 10, reasonCode: "received" })} data-testid="plus-ten">
+                <Button type="button" variant="secondary" size="sm" disabled={busy} confirm={{ kind: "save", title: t("ask.adjust", { n: "+10" }) }} onClick={() => void adjust(r, { delta: 10, reasonCode: "received" })} data-testid="plus-ten">
                   +10
                 </Button>
                 <Button type="button" variant="ghost" size="sm" aria-expanded={open?.id === r.id && open.kind === "set"} onClick={() => toggle(r.id, "set")} data-testid="set-count">
@@ -222,7 +222,7 @@ function SetCount({ r, busy, error, onSave }: { r: InventoryRow; busy: boolean; 
         ))}
       </Select>
       <Field id={`set-note-${r.id}`} label={t("inventory.note")} value={text} onChange={(e) => setText(e.target.value)} maxLength={200} required={reason === "other"} className="min-w-48 flex-1" />
-      <Button type="submit" busy={busy} data-testid="save-count">
+      <Button type="submit" busy={busy} confirm="save" data-testid="save-count">
         {t("save")}
       </Button>
       {error ? (

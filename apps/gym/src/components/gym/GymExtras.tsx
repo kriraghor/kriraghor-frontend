@@ -5,7 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CheckCircle } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
-import { Button, Field, Notice, Textarea } from "@kriraghor/ui/kit";
+import { Button, Field, Notice, PhoneField, Textarea } from "@kriraghor/ui/kit";
+import { nameProblem, phoneProblem } from "@/lib/validate";
 import { byDay, dhakaTime, gymOps2 } from "@/lib/gym-ops";
 import { useFmt } from "@/components/gym-manage/common";
 
@@ -62,7 +63,8 @@ function Enquiry({ slug, gymName }: { slug: string; gymName: string }) {
   const [problem, setProblem] = useState<string | null>(null);
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!d.name.trim() || d.phone.replace(/\D/g, "").length < 10) return setProblem(t("page.fill"));
+    // 19 Nov 2026: a real name and an 11-digit 01 mobile before anything is sent.
+    if (nameProblem(d.name) || phoneProblem(d.phone)) return setProblem(d.phone && phoneProblem(d.phone) ? t("page.phoneBad") : t("page.fill"));
     setBusy(true);
     setProblem(null);
     try {
@@ -87,7 +89,7 @@ function Enquiry({ slug, gymName }: { slug: string; gymName: string }) {
       ) : (
         <form onSubmit={send} className="mt-3 grid max-w-xl gap-3 sm:grid-cols-2" data-testid="enquiry-form">
           <Field id="eq-name" label={t("page.name")} value={d.name} maxLength={80} onChange={(e) => setD({ ...d, name: e.target.value })} autoComplete="name" />
-          <Field id="eq-phone" label={t("page.phone")} type="tel" inputMode="tel" value={d.phone} maxLength={20} onChange={(e) => setD({ ...d, phone: e.target.value })} autoComplete="tel" placeholder="01XXXXXXXXX" />
+          <PhoneField id="eq-phone" label={t("page.phone")} value={d.phone} onChange={(v) => setD({ ...d, phone: v })} placeholder="01XXXXXXXXX" required />
           <Textarea id="eq-msg" label={t("page.message")} optional={t("optional")} value={d.message} maxLength={500} onChange={(e) => setD({ ...d, message: e.target.value })} className="sm:col-span-2" />
           <Field id="eq-best" label={t("page.bestTime")} optional={t("optional")} value={d.bestTime} maxLength={40} onChange={(e) => setD({ ...d, bestTime: e.target.value })} placeholder={t("page.bestTimeHint")} />
           {/* A field people never see: robots fill it (M27-FR-66). */}
