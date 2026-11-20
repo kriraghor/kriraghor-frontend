@@ -76,3 +76,21 @@ describe("motion durations match", () => {
     expect(css).toContain(`--duration-${name}: ${ms}ms`);
   });
 });
+
+describe("chart colours (dashboards, kriraghor-docs design/charts.md)", () => {
+  const chartStart = css.indexOf("Chart colours (dashboards");
+  const chart = css.slice(chartStart);
+  const slots = ["1", "2", "3", "4", "5", "6"].flatMap((n) => [`--viz-${n}`, `--viz-on-${n}`]);
+  // Each theme block sets every slot with a hex value: light, the two dark scopes and the gym's dark.
+  const blocks = [":root {", ':root:not([data-theme="light"]) {', ':root[data-theme="dark"] {', '[data-theme="gym"] {'];
+  it.each(blocks)("%s defines all six slots and their label ink", (head) => {
+    const at = chart.indexOf(head);
+    expect(at).toBeGreaterThan(-1);
+    const body = chart.slice(at, chart.indexOf("}", at));
+    for (const s of slots) expect([s, body.includes(`${s}: #`) && /#[0-9a-f]{6};/.test(body.slice(body.indexOf(`${s}: #`)))]).toEqual([s, true]);
+  });
+  it("derives the shared chart tokens wherever a theme changes", () => {
+    for (const s of ["--viz-solo", "--viz-compare", "--viz-grid", "--viz-axis", "--viz-hover", "--viz-track", "--viz-good", "--viz-good-soft"]) expect(chart).toContain(`${s}:`);
+    expect(chart).toMatch(/:root,\s*\[data-ui\],\s*\[data-theme\] \{/);
+  });
+});

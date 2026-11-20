@@ -1,17 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowDownRight, ArrowUpRight, CaretLeft, CaretRight, Printer } from "@phosphor-icons/react";
-import { Button, Card, IconButton, Notice, Skeleton } from "@kriraghor/ui/kit";
+import { Printer } from "@phosphor-icons/react";
+import { BarChart, DeltaBadge, KpiTile, RangePicker, RankBars, compactTaka, lastOfMonth, pctChange, periodFromParams, periodParams, type Better } from "@kriraghor/ui/charts";
+import { Button, Card, Notice, Skeleton } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
+import { useUrlFilters } from "@kriraghor/ui/url-filters";
 import { dhakaToday } from "@/lib/gym-manage";
-import { delta, gymOps, monthRange, previousMonth, type Pnl as PnlData } from "@/lib/gym-ops";
+import { gymOps, type Pnl as PnlData } from "@/lib/gym-ops";
 import { GymPage, Row, useFmt, useGymError, type GymCtx } from "../gym-manage/common";
 
 /**
- * /manage/[gymId]/pnl (M27-FR-27): one month's profit and loss against the month before. Income (fees at
+ * /manage/[gymId]/pnl (M27-FR-27): a period's profit and loss (a month by default, in the URL) against the
+ * one before, with income against costs month by month (M27-FR-27a). Income (fees at
  * the counter and online, less the payment provider's charge; counter sales; locker fees), less the cost
  * of the goods sold and the expenses by category. Owner and reports.view; Standard plan. Prints on A4.
  */
@@ -24,38 +26,35 @@ export function Pnl({ gymId }: { gymId: string }) {
   );
 }
 
+const SPEC = { month: { default: "" }, from: { default: "" }, to: { default: "" } };
+
 function Body({ ctx }: { ctx: GymCtx }) {
   const t = useTranslations("go");
-  const f = useFmt();
   const err = useGymError();
   const today = dhakaToday();
-  const [range, setRange] = useState(monthRange(today));
-  const q = useQuery({ queryKey: ["go-pnl", ctx.gymId, range.from], queryFn: () => gymOps.pnl(ctx.gymId, range.from, range.to) });
-  const thisMonth = range.from === monthRange(today).from;
-  const next = () => {
-    const [y, m] = range.from.split("-").map(Number);
-    setRange(monthRange(m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, "0")}-01`));
-  };
+  const { values, set } = useUrlFilters(SPEC);
+  const period = periodFromParams(values, today);
+  const range = "month" in period ? { from: `${period.month}-01`, to: lastOfMonth(period.month) < today ? lastOfMonth(period.month) : today } : period;
+  const q = useQuery({ queryKey: ["go-pnl", ctx.gymId, range.from, range.to], queryFn: () => gymOps.pnl(ctx.gymId, range.from, range.to), placeholderData: (prev) => prev });
+  const thisMonth = "month" in period && period.month === today.slice(0, 7);
   return (
     <div className="flex flex-col gap-4">
-      <div className="no-print flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <IconButton label={t("prevMonth")} variant="secondary" onClick={() => setRange(previousMonth(range.from))}>
-            <CaretLeft size={18} aria-hidden />
-          </IconButton>
-          <p className="min-w-36 text-center font-display text-lg font-bold" aria-live="polite">
-            {f.month(range.from.slice(0, 7))}
-          </p>
-          <IconButton label={t("nextMonth")} variant="secondary" onClick={next} disabled={thisMonth}>
-            <CaretRight size={18} aria-hidden />
-          </IconButton>
-        </div>
+      <div className="no-print flex flex-wrap items-end justify-between gap-3">
+        <RangePicker value={period} today={today} onChange={(p) => set(periodParams(p, today))} />
         <Button variant="secondary" onClick={() => window.print()} disabled={!q.data}>
           <Printer size={18} aria-hidden />
           {t("print")}
         </Button>
       </div>
-      {q.isPending ? <Skeleton className="h-96 rounded-card" /> : q.isError ? <Notice tone="error">{err(q.error)}</Notice> : <Statement ctx={ctx} p={q.data} thisMonth={thisMonth} />}
+      {q.isPending ? (
+        <Skeleton className="h-96 rounded-card" />
+      ) : q.isError ? (
+        <Notice tone="error">{err(q.error)}</Notice>
+      ) : (
+        <div className={q.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
+          <Statement ctx={ctx} p={q.data} thisMonth={thisMonth} />
+        </div>
+      )}
     </div>
   );
 }
@@ -65,14 +64,35 @@ function Statement({ ctx, p, thisMonth }: { ctx: GymCtx; p: PnlData; thisMonth: 
   const f = useFmt();
   const c = p.current;
   const prev = p.previous;
+  const vs = t("pnl.vsPeriod", { period: `${f.short(prev.from)}–${f.short(prev.to)}` });
+  const big = (now: number, before: number, better: Better) => <DeltaBadge value={pctChange(now, before)} kind="pct" label={vs} better={better} />;
+  const trend = p.trend ?? [];
+  const byCategory = [...c.expenses.byCategory].sort((a, b) => b.amount - a.amount);
   return (
     <div className="print-area flex flex-col gap-4">
       <div className="grid gap-3 sm:grid-cols-3">
-        <Big label={t("pnl.income")} now={c.income.total} before={prev.income.total} />
-        <Big label={t("pnl.costs")} now={c.goodsCost + c.expenses.total} before={prev.goodsCost + prev.expenses.total} costs />
-        <Big label={t("pnl.net")} now={c.net} before={prev.net} strong />
+        <KpiTile label={t("pnl.income")} value={f.taka(c.income.total)} delta={big(c.income.total, prev.income.total, "up")} testId="pnl-income" />
+        <KpiTile label={t("pnl.costs")} value={f.taka(c.goodsCost + c.expenses.total)} delta={big(c.goodsCost + c.expenses.total, prev.goodsCost + prev.expenses.total, "down")} testId="pnl-costs" />
+        <KpiTile label={t("pnl.net")} value={<span className={cn(c.net < 0 ? "text-danger" : "text-brand-text")}>{f.taka(c.net)}</span>} delta={big(c.net, prev.net, "up")} tone={c.net < 0 ? "danger" : undefined} testId="pnl-net-tile" />
       </div>
       {thisMonth ? <p className="text-xs text-muted">{t("pnl.soFar")}</p> : null}
+      <div className="no-print grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <BarChart
+          title={t("pnl.trend")}
+          subtitle={t("pnl.trendLead")}
+          labels={trend.map((m) => f.month(m.month))}
+          short={trend.map((m) => f.month(m.month).split(" ")[0].slice(0, 3))}
+          series={[
+            { key: "income", label: t("pnl.income"), values: trend.map((m) => m.income) },
+            { key: "costs", label: t("pnl.costs"), values: trend.map((m) => m.costs) },
+          ]}
+          format={(v) => f.taka(v)}
+          axis={(v, top) => compactTaka(v, f.locale, top)}
+          emptyText={t("pnl.trendEmpty")}
+          testId="pnl-trend"
+        />
+        <RankBars title={t("pnl.expensesByCategory")} items={byCategory.map((e) => ({ key: e.categoryId, label: e.name, value: e.amount }))} format={(v) => f.taka(v)} emptyText={t("pnl.noExpenses")} testId="pnl-categories" />
+      </div>
       <Card className="flex flex-col" data-testid="pnl-statement">
         <div className="mb-2 flex items-baseline justify-between gap-3">
           <p className="font-display text-lg font-bold">{ctx.gym.name}</p>
@@ -133,28 +153,3 @@ function Line({ label, now, before, total }: { label: string; now: number; befor
     </Row>
   );
 }
-
-function Big({ label, now, before, costs, strong }: { label: string; now: number; before: number; costs?: boolean; strong?: boolean }) {
-  const t = useTranslations("go");
-  const f = useFmt();
-  const d = delta(now, before);
-  // For costs, going up is the bad direction.
-  const good = d == null ? null : costs ? d <= 0 : d >= 0;
-  return (
-    <Card className="flex flex-col gap-1">
-      <span className="text-xs font-semibold uppercase tracking-wide text-muted">{label}</span>
-      <span className={cn("font-display text-2xl font-extrabold tabular-nums md:text-3xl", strong && now < 0 && "text-danger", strong && now >= 0 && "text-brand-text")}>{f.taka(now)}</span>
-      <span className="flex items-center gap-1 text-xs text-muted">
-        {d == null ? (
-          t("pnl.noBefore")
-        ) : (
-          <>
-            {d >= 0 ? <ArrowUpRight size={14} className={good ? "text-brand-text" : "text-danger"} aria-hidden /> : <ArrowDownRight size={14} className={good ? "text-brand-text" : "text-danger"} aria-hidden />}
-            {t("pnl.vsBefore", { pct: f.n(Math.abs(d)), up: d >= 0 ? "up" : "down" })}
-          </>
-        )}
-      </span>
-    </Card>
-  );
-}
-

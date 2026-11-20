@@ -123,20 +123,6 @@ export function monthParam(v: string | null | undefined, today: string): string 
   return v;
 }
 
-/** 24 hourly bars (Dhaka) from the sparse busiest-hours list, labels every 6 hours. */
-export function hourBars(rows: readonly { hour: number; visits: number }[]): { label: string; value: number; tick: string }[] {
-  const by = new Map(rows.map((r) => [r.hour, r.visits]));
-  return Array.from({ length: 24 }, (_, h) => ({ label: `${String(h).padStart(2, "0")}:00`, value: by.get(h) ?? 0, tick: h % 6 === 0 ? String(h).padStart(2, "0") : "" }));
-}
-
-/** Daily visits as bars; the day of the month under every 5th bar so 31 bars fit a phone. */
-export function dayBars(rows: readonly { date: string; visits: number }[]): { label: string; value: number; tick: string }[] {
-  return rows.map((r, i) => {
-    const day = Number(r.date.slice(8, 10));
-    return { label: r.date, value: r.visits, tick: i === 0 || day % 5 === 0 ? String(day) : "" };
-  });
-}
-
 /** Churn (a ratio or null) as a whole percent with one decimal ("4.2"), or null. */
 export const churnPct = (churn: number | null | undefined) => (churn == null ? null : Math.round(churn * 1000) / 10);
 
@@ -165,7 +151,23 @@ export const INVOICE_TONE: Record<InvoiceStatus, "info" | "danger" | "brand" | "
 export const lineText = (l: Pick<InvoiceLine, "descriptionEn" | "descriptionBn">, locale: string) => (locale === "bn" ? l.descriptionBn || l.descriptionEn : l.descriptionEn || l.descriptionBn);
 
 /** The reports page's export query for a month. */
-export const exportQuery = (dataset: ExportDataset, month: string): Record<string, string> => ({ dataset, month });
+export const exportQuery = (dataset: ExportDataset, period: Period): Record<string, string> => ({ dataset, ...period });
+
+/** The payment methods in a fixed order, so each keeps its colour in the "by method" chart. */
+export const METHOD_ORDER: string[] = ["cash", "owner_bkash", "owner_nagad", "card_counter", "bank", "online", "other"];
+
+/** Visits per day for every day from `from` to `to` (both included), zero where nobody came. */
+export function fillVisitDays(rows: readonly { date: string; visits: number }[], from: string, to: string): { date: string; visits: number }[] {
+  const by = new Map(rows.map((r) => [r.date.slice(0, 10), r.visits]));
+  const out: { date: string; visits: number }[] = [];
+  for (let d = from, i = 0; d <= to && i < 400; i += 1) {
+    out.push({ date: d, visits: by.get(d) ?? 0 });
+    const n = new Date(`${d}T12:00:00Z`);
+    n.setUTCDate(n.getUTCDate() + 1);
+    d = n.toISOString().slice(0, 10);
+  }
+  return out;
+}
 
 /** The reminder kinds switched off after flipping one (the settings PATCH remindersOff), kept in the page's kind order. */
 export function remindersOffAfter(kinds: readonly { kind: ReminderKind; on: boolean }[], kind: ReminderKind, on: boolean): ReminderKind[] {

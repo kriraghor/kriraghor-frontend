@@ -439,3 +439,28 @@ html[data-splash="on"] .kg-slide-in > .kg-slide-line {
     animation: none !important;
   }
 }
+
+/* ---------------------------------------------------------------- charts (dashboards) */
+/* Bars grow from their baseline and lines fade in, once, when a chart first draws; under reduced
+   motion the global rule in tokens.css ends them at once. */
+.viz-grow-y {
+  transform-box: view-box;
+  animation: viz-grow-y 420ms var(--ease-kg, ease-out) both;
+}
+.viz-grow-x {
+  transform-origin: left center;
+  animation: viz-grow-x 420ms var(--ease-kg, ease-out) both;
+}
+.viz-fade {
+  animation: kg-fade-in 320ms ease-out both;
+}
+@keyframes viz-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes viz-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}

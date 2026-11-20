@@ -992,7 +992,21 @@
       "overdue": "Overdue",
       "collectedToday": "Collected today",
       "restrictedTitle": "Your account is restricted",
-      "restrictedBody": "Check-ins, counter payments and receipts still work. Other changes wait until the plan is settled on the billing page."
+      "restrictedBody": "Check-ins, counter payments and receipts still work. Other changes wait until the plan is settled on the billing page.",
+      "inGymNow": "{n} in the gym now",
+      "vsLastWeek": "vs last {day}",
+      "trendCheckIns": "Check-ins",
+      "trendCollected": "Fees collected",
+      "trendDays": "Last {n} days, today on the right",
+      "checkIns": "Check-ins",
+      "collected": "Collected",
+      "dueTodayHint": "{amount} to collect",
+      "overdueHelp": "Fees whose due date has passed and are not fully paid. Lower is better.",
+      "checkInsHelp": "Members checked in today and counted for attendance (one per member per day).",
+      "collectedHelp": "Fees taken today at the counter and online, before any reversal later in the day.",
+      "notSeenHelp": "Active members with no check-in in this many days: worth a call.",
+      "more": "More today",
+      "noVisitsYet": "No check-ins in these days yet. They show here as the desk checks members in."
     },
     "desk": {
       "lead": "Search by name, phone, member code or pass code, or scan a member's or a pass's QR. One check-in counts per member per day.",
@@ -1053,10 +1067,10 @@
       "visitLimitReached": "Visits used up"
     },
     "checkinMethod": {
-      "desk": "Desk",
-      "member_qr": "QR",
-      "entrance_qr": "Door QR",
-      "pass": "Subscription"
+      "desk": "At the desk",
+      "member_qr": "Member QR",
+      "entrance_qr": "Entrance QR",
+      "pass": "Online subscription"
     },
     "memberStatus": {
       "new": "New",
@@ -1888,7 +1902,7 @@
     },
     "reports": {
       "title": "Reports",
-      "lead": "Members, money and attendance for a month.",
+      "lead": "Members, money and attendance for a period, against the period before.",
       "month": "Month",
       "prevMonth": "Previous month",
       "nextMonth": "Next month",
@@ -1954,7 +1968,16 @@
       "absentDaysN": "{n} days",
       "absentCustom": "Other…",
       "absentDaysLabel": "Days (1–365)",
-      "absentShow": "Show"
+      "absentShow": "Show",
+      "vsPrevious": "vs {period}",
+      "churnHelp": "Members who left in the period, out of those active at its start.",
+      "outstandingHelp": "Everything members still owe today, overdue or not.",
+      "collectedDaily": "Collected per day",
+      "visitLength": "Average visit",
+      "minutesN": "{n} min",
+      "visitLengthHelp": "From check-in to check-out, for the visits that were checked out.",
+      "checkinMethods": "How members checked in",
+      "conversionMonthOnly": "Where members come from is shown by month: pick a month to see it."
     },
     "invoice": {
       "title": "Invoices",
@@ -2633,7 +2656,12 @@
       "totalExpenses": "Total expenses",
       "noBefore": "Nothing to compare with",
       "vsBefore": "{pct}% {up, select, up {more} other {less}} than the month before",
-      "note": "Online fees are counted after the payment provider’s charge. The cost of goods counts only products with a cost entered. These are your own books; nothing here moves money."
+      "note": "Online fees are counted after the payment provider’s charge. The cost of goods counts only products with a cost entered. These are your own books; nothing here moves money.",
+      "vsPeriod": "vs {period}",
+      "trend": "Income and costs, month by month",
+      "trendLead": "This month so far on the right",
+      "trendEmpty": "No income or costs in these months yet.",
+      "expensesByCategory": "Expenses by category"
     },
     "sell": {
       "title": "Sell",
