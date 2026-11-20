@@ -1372,7 +1372,20 @@
       "photoFirst": "প্রোফাইল রিভিউতে পাঠানোর আগে আপনার ছবি যোগ করুন।",
       "video": "পরিচিতি ভিডিওর লিংক",
       "videoHint": "ইউটিউব, ভিমিও, ফেসবুক, গুগল ড্রাইভ, ওয়ানড্রাইভ (এর এমবেড লিংক) বা ড্রপবক্সের লিংক, অথবা .mp4, .webm বা .m3u8 ফাইলের লিংক। আমরা কখনো আপলোড করি না: যেখানে রেখেছেন সেখান থেকেই চলে। লিংক থাকলে যে কেউ যেন দেখতে পারে, তা নিশ্চিত করুন।",
-      "videoPreview": "আপনার ভিডিও যেভাবে চলবে"
+      "videoPreview": "আপনার ভিডিও যেভাবে চলবে",
+      "videoError": {
+        "not_https": "https:// দিয়ে শুরু হওয়া লিংক দিন।",
+        "too_long": "লিংকটি অনেক বড়। ছোট শেয়ার লিংক দিন।",
+        "local_host": "সবাই খুলতে পারে এমন পাবলিক লিংক দিন।",
+        "unsupported": "YouTube, Vimeo, Facebook, Google Drive, OneDrive বা Dropbox লিংক, অথবা .mp4, .webm বা .m3u8 ফাইলের লিংক দিন।",
+        "youtube_id": "একটি YouTube ভিডিওর লিংক দিন।",
+        "vimeo_id": "একটি Vimeo ভিডিওর লিংক দিন।",
+        "facebook_video": "ভিডিওর পুরো facebook.com লিংক দিন। fb.watch লিংক দেখানো যায় না।",
+        "drive_file": "Google Drive-এর একটি ফাইলের শেয়ার লিংক দিন।",
+        "onedrive_embed": "OneDrive-এ Embed বেছে নিয়ে কোডের লিংকটি দিন (onedrive.live.com/embed?…)।",
+        "dropbox_file": "Dropbox-এ একটি ভিডিও ফাইলের (.mp4, .webm বা .m4v) শেয়ার লিংক দিন।",
+        "provider_off": "এই ধরনের ভিডিও লিংক এখন নেওয়া হচ্ছে না।"
+      }
     },
     "profileStatus": {
       "draft": "খসড়া",

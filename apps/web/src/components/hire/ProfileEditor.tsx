@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@kriraghor/ui/i18n/navigation";
@@ -93,7 +93,7 @@ function NewProfile() {
   );
 }
 
-function ProfileFields({ values, onChange }: { values: Omit<ProfileBody, "roleKey">; onChange: (v: Omit<ProfileBody, "roleKey">) => void }) {
+function ProfileFields({ values, onChange, videoError }: { values: Omit<ProfileBody, "roleKey">; onChange: (v: Omit<ProfileBody, "roleKey">) => void; videoError?: string }) {
   const t = useTranslations("hire");
   const locale = useLocale();
   const areas = useQuery({ queryKey: ["hire-areas"], queryFn: () => hire.areas(), staleTime: 300_000 });
@@ -139,7 +139,25 @@ function ProfileFields({ values, onChange }: { values: Omit<ProfileBody, "roleKe
         <span>
           {t("desk.video")} <span className="font-normal">({t("optional")})</span>
         </span>
-        <input id="pro-video" type="url" inputMode="url" value={values.introVideoUrl ?? ""} onChange={(e) => set({ introVideoUrl: e.target.value })} maxLength={500} placeholder="https://youtu.be/…" autoComplete="off" className={`${input} scroll-mt-28`} data-testid="pro-video" />
+        <input
+          id="pro-video"
+          type="url"
+          inputMode="url"
+          value={values.introVideoUrl ?? ""}
+          onChange={(e) => set({ introVideoUrl: e.target.value })}
+          maxLength={500}
+          placeholder="https://youtu.be/…"
+          autoComplete="off"
+          aria-invalid={videoError ? true : undefined}
+          aria-describedby={videoError ? "pro-video-error" : undefined}
+          className={`${input} scroll-mt-28 ${videoError ? "border-danger" : ""}`}
+          data-testid="pro-video"
+        />
+        {videoError ? (
+          <span id="pro-video-error" role="alert" className="text-sm font-semibold text-danger" data-testid="pro-video-error">
+            {videoError}
+          </span>
+        ) : null}
         <span className="text-xs font-normal leading-relaxed">{t("desk.videoHint")}</span>
       </label>
       <label className="flex min-h-11 items-center gap-3 font-semibold">
@@ -172,6 +190,12 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
   const submit = useMutation({ mutationFn: () => hire.submit(p.id), onSuccess: (r) => (set(r), qc.invalidateQueries({ queryKey: ["pro-profiles"] })) });
   const editable = EDITABLE.includes(p.status) && p.editStatus !== "pending_review";
   const err = [save, submit].map((m) => (m.error ? problemOf(m.error) : null)).find(Boolean);
+  // A refused video link (M11-FR-16): its reason under the field, in the page's language, not at the foot.
+  const videoProblem = problemOf(save.error)?.errors?.find((e) => e.field === "introVideoUrl") as { field: string; message: string; code?: string } | undefined;
+  const videoError = videoProblem ? (videoProblem.code && t.has(`desk.videoError.${videoProblem.code}`) ? t(`desk.videoError.${videoProblem.code}`) : videoProblem.message) : undefined;
+  useEffect(() => {
+    if (videoProblem) document.getElementById("pro-video")?.focus();
+  }, [videoProblem]);
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const a = useTranslations("ask");
 
@@ -196,7 +220,14 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
         }}
       >
         <fieldset disabled={!editable} className="flex flex-col gap-4">
-          <ProfileFields values={values} onChange={setValues} />
+          <ProfileFields
+            values={values}
+            onChange={(v) => {
+              if (videoProblem && v.introVideoUrl !== values.introVideoUrl) save.reset();
+              setValues(v);
+            }}
+            videoError={videoError}
+          />
         </fieldset>
         {editable ? (
           <div>
@@ -213,7 +244,7 @@ function ExistingProfile({ p }: { p: OwnerProfile }) {
         </div>
       ) : null}
       <RateCardEditor p={p} disabled={!editable} onSaved={set} />
-      {err ? <Notice tone="error">{err.code === "RATE_CARD_REQUIRED" ? t("desk.ratesFirst") : err.code === "PHOTO_REQUIRED" ? t("desk.photoFirst") : problemText(err, t("failed"))}</Notice> : null}
+      {err && !videoProblem ? <Notice tone="error">{err.code === "RATE_CARD_REQUIRED" ? t("desk.ratesFirst") : err.code === "PHOTO_REQUIRED" ? t("desk.photoFirst") : problemText(err, t("failed"))}</Notice> : null}
       {editable ? (
         <div className="border-t-2 border-line pt-4">
           {me.data && !hasPhoto ? (

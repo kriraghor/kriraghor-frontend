@@ -1372,7 +1372,20 @@
       "photoFirst": "Add your photo before sending the profile for review.",
       "video": "Intro video link",
       "videoHint": "A YouTube, Vimeo, Facebook, Google Drive, OneDrive (its embed link) or Dropbox link, or a link to an .mp4, .webm or .m3u8 file. We never upload it: it plays from where you keep it. Make sure anyone with the link can watch it.",
-      "videoPreview": "How your video plays"
+      "videoPreview": "How your video plays",
+      "videoError": {
+        "not_https": "Use an https:// link.",
+        "too_long": "This link is too long. Use a shorter share link.",
+        "local_host": "Use a public link anyone can open.",
+        "unsupported": "Use a YouTube, Vimeo, Facebook, Google Drive, OneDrive or Dropbox link, or a link to an .mp4, .webm or .m3u8 file.",
+        "youtube_id": "Use the link of one YouTube video.",
+        "vimeo_id": "Use the link of one Vimeo video.",
+        "facebook_video": "Use the full facebook.com link of the video. fb.watch links can't be shown.",
+        "drive_file": "Use the share link of one Google Drive file.",
+        "onedrive_embed": "In OneDrive choose Embed and paste the link from the code (onedrive.live.com/embed?…).",
+        "dropbox_file": "Use the share link of one video file (.mp4, .webm or .m4v) in Dropbox.",
+        "provider_off": "This kind of video link isn't accepted at the moment."
+      }
     },
     "profileStatus": {
       "draft": "Draft",

@@ -25,17 +25,18 @@ export function HireCard({ card }: { card: Card }) {
         <span className="flex items-start gap-3">
           <Avatar name={card.name} src={card.avatarUrl} size={48} />
           <span className="min-w-0 flex-1">
-            <span className="block text-xs font-bold uppercase tracking-wide text-muted">{name(card.role)}</span>
-            <span className="mt-0.5 block text-lg font-extrabold leading-snug">{card.name}</span>
+            <span className="block break-words text-xs font-bold uppercase tracking-wide text-muted">{name(card.role)}</span>
+            <span className="mt-0.5 block break-words text-lg font-extrabold leading-snug">{card.name}</span>
           </span>
+        </span>
+        <span className="mt-2 text-sm">{card.headline}</span>
+        <span className="mt-2 flex flex-wrap items-center gap-1 text-xs font-semibold">
+          {/* In the tag row, not beside the name: a long role (PHYSIOTHERAPIST) has no room to wrap there. */}
           {card.availableToday ? (
-            <span className="shrink-0" data-testid="hire-available-today">
+            <span data-testid="hire-available-today">
               <Badge tone="brand">{t("availableToday")}</Badge>
             </span>
           ) : null}
-        </span>
-        <span className="mt-2 text-sm">{card.headline}</span>
-        <span className="mt-2 flex flex-wrap gap-1 text-xs font-semibold">
           <span className="bg-surface-2 px-2 py-0.5">{t(`level.${card.experienceLevel}`)}</span>
           {card.years ? <span className="bg-surface-2 px-2 py-0.5">{t("years", { n: card.years })}</span> : null}
           {card.area ? <span className="bg-surface-2 px-2 py-0.5">{name(card.area)}</span> : null}
