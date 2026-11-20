@@ -2,37 +2,17 @@
 
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { CaretLeft, CaretRight, DownloadSimple } from "@phosphor-icons/react";
+import { DownloadSimple } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { BarChart, DeltaBadge, HeatStrip, KpiTile, LineChart, RankBars, SplitBar, compact, compactTaka, pctChange, ptsChange, type Better } from "@kriraghor/ui/charts";
 import { csvErrorKey, downloadCsv } from "@kriraghor/ui/csv";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { MonthPicker as MonthField } from "@kriraghor/ui/date";
-import { Button, Card, IconButton, Notice } from "@kriraghor/ui/kit";
-import { shiftMonth } from "@/lib/gym-manage";
+import { Button, Card, Notice } from "@kriraghor/ui/kit";
 import { churnPct, exportQuery, fillVisitDays, reasonsByCount, METHOD_ORDER, type ExportDataset, type Period, type Report } from "@/lib/gym-money";
 import { useFmt } from "./common";
 
 export type Figures = Pick<Report, "members" | "money" | "attendance">;
 export type Previous = Report["previous"];
-
-/** The month in the URL: back, forward (never past this month) and a month field. */
-export function MonthPicker({ month, max, onChange }: { month: string; max: string; onChange: (m: string) => void }) {
-  const t = useTranslations("gm");
-  const f = useFmt();
-  return (
-    <div className="flex items-center gap-1" data-testid="month-picker">
-      <IconButton label={t("reports.prevMonth")} variant="secondary" onClick={() => onChange(shiftMonth(month, -1))} data-testid="month-prev">
-        <CaretLeft size={18} aria-hidden />
-      </IconButton>
-      <MonthField id="report-month" label={t("reports.month")} labelHidden value={month} max={max} clearable={false} onChange={(v) => v && onChange(v)} triggerClassName="min-h-11 w-auto min-w-44 text-sm font-semibold" testId="report-month" />
-      <IconButton label={t("reports.nextMonth")} variant="secondary" onClick={() => onChange(shiftMonth(month, 1))} disabled={month >= max} data-testid="month-next">
-        <CaretRight size={18} aria-hidden />
-      </IconButton>
-      <span className="hidden text-sm text-muted sm:inline">{f.month(month)}</span>
-    </div>
-  );
-}
 
 /**
  * One period's figures (M24-FR-71): members, money and attendance as KPI tiles, month over month,
