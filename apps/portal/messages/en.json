@@ -2970,7 +2970,12 @@
       "deactivate": "Deactivate this role?",
       "deactivateBody": "It is hidden from new profiles. You can reactivate it later.",
       "reactivate": "Reactivate this role?"
-    }
+    },
+    "photoOpen": "Open the photo",
+    "photoMissing": "No photo",
+    "video": "Intro video",
+    "videoNotShown": "(this kind of link is switched off, so it is not shown)",
+    "videoCheck": "Watch it before approving: no contact details, nothing offensive, it is this person."
   },
   "vendorGym": {
     "add": "Add a gym",

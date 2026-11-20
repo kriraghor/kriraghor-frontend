@@ -25,13 +25,15 @@ export type Job = components["schemas"]["HireJob"];
 export type CancelPlan = components["schemas"]["HireCancelPlan"];
 export type Messages = components["schemas"]["HireMessages"];
 export type OwnerProfile = components["schemas"]["HireOwnerProfile"];
+/** M11-FR-16: an intro video given as a link. */
+export type IntroVideo = NonNullable<components["schemas"]["HireIntroVideo"]>;
 export type Unit = "hourly" | "match";
 export type Format = "T10" | "T20" | "OD" | "TAPE";
 export type Level = "amateur" | "semi_pro" | "pro" | "national";
 export type Sort = "rating" | "rate" | "jobs" | "experience";
 export type Filters = { category?: string; role?: string; exp?: Level[]; unit?: Unit; areaId?: string; q?: string; sort?: Sort; cursor?: string };
 export type Engagement = { start: string; format?: Format; hours?: number; venueText: string; venueAreaId: string; u16?: boolean };
-export type ProfileBody = { roleKey: string; headline: string; specialisation?: string; sportKeys: string[]; experienceLevel: Level; years: number; baseAreaId: string; bio?: string; worksWithU16: boolean };
+export type ProfileBody = { roleKey: string; headline: string; specialisation?: string; sportKeys: string[]; experienceLevel: Level; years: number; baseAreaId: string; bio?: string; introVideoUrl?: string | null; worksWithU16: boolean };
 export type RateCardBody = { items: { unit: Unit; format?: Format; rate: number }[]; nightPct: number; shortNoticePct: number; shortNoticeHours?: number; travel: { north: number; south: number; outside: number }; maxJobsPerDay: number };
 
 export const LEVELS: Level[] = ["amateur", "semi_pro", "pro", "national"];

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { formatTaka } from "@/lib/admin/finance";
 import { hireAdmin } from "@/lib/admin/hire";
 import { Notice } from "@kriraghor/ui/primitives";
+import { Avatar } from "@kriraghor/ui/kit";
 
 type Diff = Record<string, { from: unknown; to: unknown }>;
 
@@ -14,6 +15,7 @@ type Diff = Record<string, { from: unknown; to: unknown }>;
  * - the person, role, experience and base area;
  * - the verified credential (M02, per hire role);
  * - the headline and bio (no contact details);
+ * - the photo (the account photo, required to send; M11-FR-17) and the intro video link (M11-FR-16);
  * - the rate card against the role's limits.
  * Checks, rubric and the decision are the desk's (M05).
  */
@@ -43,7 +45,17 @@ export function HireProfilePanel({ payload }: { payload: Record<string, unknown>
       </div>
       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
         <dt className="text-muted">{t("person")}</dt>
-        <dd className="font-semibold">{p.owner.displayName ?? "–"}</dd>
+        <dd className="flex items-center gap-2 font-semibold" data-testid="hire-panel-person">
+          <Avatar name={p.owner.displayName ?? "?"} src={p.owner.avatarUrl ?? null} size={40} />
+          {p.owner.displayName ?? "–"}
+          {p.owner.avatarUrl ? (
+            <a href={p.owner.avatarUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-normal text-brand-text underline">
+              {t("photoOpen")}
+            </a>
+          ) : (
+            <span className="text-xs font-normal text-danger">{t("photoMissing")}</span>
+          )}
+        </dd>
         <dt className="text-muted">{t("role")}</dt>
         <dd>{p.role ? name(p.role) : "–"}</dd>
         <dt className="text-muted">{t("experience")}</dt>
@@ -58,6 +70,20 @@ export function HireProfilePanel({ payload }: { payload: Record<string, unknown>
         <dd>{p.headline}</dd>
         <dt className="text-muted">{t("bio")}</dt>
         <dd className="whitespace-pre-line">{p.bio ?? "–"}</dd>
+        <dt className="text-muted">{t("video")}</dt>
+        <dd data-testid="hire-panel-video">
+          {p.introVideoUrl ? (
+            <>
+              <a href={p.introVideoUrl} target="_blank" rel="noopener noreferrer nofollow" className="break-all text-brand-text underline">
+                {p.introVideoUrl}
+              </a>
+              {p.introVideo ? null : <span className="ml-2 text-danger">{t("videoNotShown")}</span>}
+              <span className="block text-xs text-muted">{t("videoCheck")}</span>
+            </>
+          ) : (
+            "–"
+          )}
+        </dd>
         <dt className="text-muted">{t("u16")}</dt>
         <dd>{p.worksWithU16 ? t("yes") : t("no")}</dd>
       </dl>
