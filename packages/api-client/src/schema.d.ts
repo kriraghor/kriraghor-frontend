@@ -74961,6 +74961,22 @@ export interface components {
                 new: number;
                 left: number;
             };
+            /** @description One row per day for the last gym_manage.dashboard_trend_days days ending today, oldest first; days without visits or payments are 0 */
+            trend: {
+                /** Format: date */
+                date: string;
+                checkIns: number;
+                /** @description Owner and reports.view only */
+                collectedPoisha?: number;
+            }[];
+            /** @description The same weekday last week, for the today tiles */
+            compare: {
+                /** Format: date */
+                date: string;
+                checkIns: number;
+                /** @description Owner and reports.view only */
+                collectedPoisha?: number;
+            };
         };
         GymManagePackages: {
             items: {
@@ -76645,6 +76661,7 @@ export interface components {
                 to: string;
                 month: string | null;
             };
+            previous: components["schemas"]["GymReportPrevious"];
             members: {
                 activeAtStart: number;
                 activeAtEnd: number;
@@ -76679,6 +76696,12 @@ export interface components {
                     month: string;
                     collectedPoisha: number;
                 }[];
+                /** @description M24-FR-155: collected per day from the start of the period to its end or today, zeros filled */
+                daily: {
+                    /** Format: date */
+                    date: string;
+                    collectedPoisha: number;
+                }[];
                 overdueList?: {
                     /** Format: uuid */
                     memberId: string;
@@ -76703,8 +76726,41 @@ export interface components {
                     visits: number;
                 }[];
                 averagePerActive: number | null;
+                /** @description M24-FR-155: the average length of the visits that were checked out (null without any) */
+                averageVisitMinutes: number | null;
+                /** @description M24-FR-155: counted check-ins by method (desk, member_qr, entrance_qr, pass) */
+                byMethod: {
+                    [key: string]: number;
+                };
                 notSeen: number;
                 notSeenDays: number;
+            };
+        };
+        /** @description The figures of the period before, for the change on each tile */
+        GymReportPrevious: {
+            period: {
+                /** Format: date */
+                from: string;
+                /** Format: date */
+                to: string;
+                month: string | null;
+            };
+            members: {
+                activeAtEnd: number;
+                new: number;
+                renewals: number;
+                left: number;
+                churn: number | null;
+            };
+            money: {
+                collectedPoisha: number;
+                onlinePoisha: number;
+                counterPoisha: number;
+            };
+            attendance: {
+                visits: number;
+                averagePerActive: number | null;
+                averageVisitMinutes: number | null;
             };
         };
         GymAbsentList: {
@@ -76771,6 +76827,7 @@ export interface components {
                 to: string;
                 month: string | null;
             };
+            previous: components["schemas"]["GymReportPrevious"];
             gyms: {
                 /** Format: uuid */
                 id: string;
@@ -76812,6 +76869,12 @@ export interface components {
                         month: string;
                         collectedPoisha: number;
                     }[];
+                    /** @description M24-FR-155: collected per day from the start of the period to its end or today, zeros filled */
+                    daily: {
+                        /** Format: date */
+                        date: string;
+                        collectedPoisha: number;
+                    }[];
                     overdueList?: {
                         /** Format: uuid */
                         memberId: string;
@@ -76836,6 +76899,12 @@ export interface components {
                         visits: number;
                     }[];
                     averagePerActive: number | null;
+                    /** @description M24-FR-155: the average length of the visits that were checked out (null without any) */
+                    averageVisitMinutes: number | null;
+                    /** @description M24-FR-155: counted check-ins by method (desk, member_qr, entrance_qr, pass) */
+                    byMethod: {
+                        [key: string]: number;
+                    };
                     notSeen: number;
                     notSeenDays: number;
                 };
@@ -76883,6 +76952,12 @@ export interface components {
                         month: string;
                         collectedPoisha: number;
                     }[];
+                    /** @description M24-FR-155: collected per day from the start of the period to its end or today, zeros filled */
+                    daily: {
+                        /** Format: date */
+                        date: string;
+                        collectedPoisha: number;
+                    }[];
                     overdueList?: {
                         /** Format: uuid */
                         memberId: string;
@@ -76907,6 +76982,12 @@ export interface components {
                         visits: number;
                     }[];
                     averagePerActive: number | null;
+                    /** @description M24-FR-155: the average length of the visits that were checked out (null without any) */
+                    averageVisitMinutes: number | null;
+                    /** @description M24-FR-155: counted check-ins by method (desk, member_qr, entrance_qr, pass) */
+                    byMethod: {
+                        [key: string]: number;
+                    };
                     notSeen: number;
                     notSeenDays: number;
                 };
@@ -77868,6 +77949,18 @@ export interface components {
                 /** Format: date */
                 to: string;
             };
+            /** @description M27-FR-27a: gym_ops.pnl_trend_months calendar months ending with the month of `to`, oldest first (the current month up to today) */
+            trend: {
+                month: string;
+                /** Format: date */
+                from: string;
+                /** Format: date */
+                to: string;
+                income: number;
+                /** @description Goods cost plus expenses */
+                costs: number;
+                net: number;
+            }[];
         };
         GymProducts: {
             items: components["schemas"]["GymProduct"][];

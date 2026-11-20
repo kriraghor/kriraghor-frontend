@@ -71,6 +71,20 @@
   --glass-edge: rgb(21 22 15 / 0.09);
   --glass-highlight: rgb(255 255 255 / 0.7);
   --glass-shadow: 0 12px 40px -18px rgb(21 22 15 / 0.22);
+  /* Chart slots on white (checked with the dataviz validator, kriraghor-docs design, charts): the
+     olive brand first, then the shared light slots. */
+  --viz-1: #4f6a00;
+  --viz-2: #2a78d6;
+  --viz-3: #eb6834;
+  --viz-4: #6250d6;
+  --viz-5: #e87ba4;
+  --viz-6: #eda100;
+  --viz-on-1: #ffffff;
+  --viz-on-2: #0b0b0b;
+  --viz-on-3: #0b0b0b;
+  --viz-on-4: #ffffff;
+  --viz-on-5: #0b0b0b;
+  --viz-on-6: #0b0b0b;
   color-scheme: light;
 }
 :root[data-theme="light"] [data-theme="gym"] .bg-brand,

@@ -2,11 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import { CashRegister, QrCode, UploadSimple, UserPlus } from "@phosphor-icons/react";
+import { BarChart, DeltaBadge, KpiTile, LineChart, compact, compactTaka, pctChange } from "@kriraghor/ui/charts";
+import { Link } from "@kriraghor/ui/i18n/navigation";
 import { ActionGrid, ActionTile, ButtonLink, ChecklistCard, Notice, SectionHeading, Skeleton, type ChecklistStep } from "@kriraghor/ui/kit";
 import { featureLocked, gymManage } from "@/lib/gym-manage";
 import { canOpen } from "@/lib/manage-nav";
-import { GymPage, Tile, Upsell, useDeskPackages, useFmt, useGymError, type GymCtx } from "./common";
+import { GymPage, Upsell, useDeskPackages, useFmt, useGymError, type GymCtx } from "./common";
 import { EndingSoon, MemberMix } from "../gym-ops/EndingSoon";
 
 /**
@@ -41,6 +44,8 @@ function Body({ ctx }: { ctx: GymCtx }) {
   const tl = o.tiles;
   const base = `/manage/${gymId}`;
   const can = (page: Parameters<typeof canOpen>[0]) => canOpen(page, ctx.perms);
+  const days = o.trend.map((d) => `${f.weekday(d.date)} ${f.short(d.date)}`);
+  const lastWeek = t("dash.vsLastWeek", { day: f.weekday(o.compare.date) });
   // First days (owner): each step done by what the gym already has; hidden once all three are.
   const steps: ChecklistStep[] = [
     { key: "setup", label: t("first.setup"), hint: t("first.setupHint"), done: o.setupDone, href: `/start?gym=${gymId}&step=code` },
@@ -79,18 +84,93 @@ function Body({ ctx }: { ctx: GymCtx }) {
           </ActionGrid>
         </div>
       ) : null}
-      <SectionHeading title={t("first.todayTitle")} />
-      <div className="-mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4" data-testid="dash-tiles">
-        <Tile label={t("dash.checkInsToday")} value={f.n(tl.checkInsToday)} href={can("desk") ? `${base}/desk` : undefined} tone="brand" testId="tile-checkins" />
-        <Tile label={t("dash.activeMembers")} value={f.n(tl.activeMembers)} hint={t("dash.ofMembers", { n: f.n(tl.members) })} href={can("members") ? `${base}/members?view=active` : undefined} />
-        <Tile label={t("dash.newThisMonth")} value={f.n(tl.newThisMonth)} href={can("members") ? `${base}/members` : undefined} />
-        <Tile label={t("dash.expiringThisWeek")} value={f.n(tl.expiringThisWeek)} href={can("members") ? `${base}/members?view=expiring` : undefined} tone={tl.expiringThisWeek ? "warn" : "neutral"} />
-        <Tile label={t("dash.notSeen", { days: tl.notSeenDays })} value={f.n(tl.notSeen)} href={can("members") ? `${base}/members?view=notSeen` : undefined} />
-        <Tile label={t("dash.requestsWaiting")} value={f.n(tl.requestsWaiting)} href={can("requests") ? `${base}/requests` : undefined} />
-        {tl.guestsToday !== undefined ? <Tile label={tv("dash.guestsToday")} value={f.n(tl.guestsToday)} href={can("desk") ? `${base}/desk` : undefined} tone={tl.guestsToday ? "brand" : "neutral"} testId="tile-guests" /> : null}
-        <Tile label={t("dash.dueToday")} value={f.n(tl.dueTodayCount)} hint={tl.dueTodayPoisha !== undefined ? f.taka(tl.dueTodayPoisha) : undefined} href={can("fees") ? `${base}/fees?view=today` : undefined} />
-        <Tile label={t("dash.overdue")} value={f.n(tl.overdueCount)} href={can("fees") ? `${base}/fees?view=overdue` : undefined} tone={tl.overdueCount ? "warn" : "neutral"} />
-        {tl.collectedTodayPoisha !== undefined ? <Tile label={t("dash.collectedToday")} value={f.taka(tl.collectedTodayPoisha)} href={can("closing") ? `${base}/fees/closing` : undefined} tone="brand" testId="tile-collected" /> : null}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <SectionHeading title={t("first.todayTitle")} />
+        <span className="flex flex-wrap items-center gap-2 text-sm text-muted">
+          {f.weekday(o.date)} {f.date(o.date)}
+          {tl.inGymNow > 0 ? (
+            <span className="inline-flex items-center gap-1.5 rounded-pill bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text" data-testid="dash-in-gym">
+              <span aria-hidden className="size-2 animate-pulse rounded-pill bg-brand" />
+              {t("dash.inGymNow", { n: f.n(tl.inGymNow) })}
+            </span>
+          ) : null}
+        </span>
+      </div>
+      <div className="-mt-3 grid grid-cols-2 gap-3 md:grid-cols-3" data-testid="dash-tiles">
+        <Linked href={can("desk") ? `${base}/desk` : undefined}>
+          <KpiTile
+            label={t("dash.checkInsToday")}
+            value={f.n(tl.checkInsToday)}
+            delta={<DeltaBadge value={pctChange(tl.checkInsToday, o.compare.checkIns)} kind="pct" label={lastWeek} />}
+            spark={o.trend.map((d) => d.checkIns)}
+            sparkLabels={days}
+            sparkFormat={f.n}
+            help={t("dash.checkInsHelp")}
+            interactive={can("desk")}
+            testId="tile-checkins"
+          />
+        </Linked>
+        {tl.collectedTodayPoisha !== undefined ? (
+          <Linked href={can("closing") ? `${base}/fees/closing` : undefined}>
+            <KpiTile
+              label={t("dash.collectedToday")}
+              value={f.taka(tl.collectedTodayPoisha)}
+              delta={<DeltaBadge value={pctChange(tl.collectedTodayPoisha, o.compare.collectedPoisha)} kind="pct" label={lastWeek} />}
+              spark={o.trend.map((d) => d.collectedPoisha ?? 0)}
+              sparkLabels={days}
+              sparkFormat={(n) => f.taka(n)}
+              help={t("dash.collectedHelp")}
+              interactive={can("closing")}
+              testId="tile-collected"
+            />
+          </Linked>
+        ) : null}
+        <Linked href={can("members") ? `${base}/members?view=active` : undefined}>
+          <KpiTile label={t("dash.activeMembers")} value={f.n(tl.activeMembers)} note={t("dash.ofMembers", { n: f.n(tl.members) })} interactive={can("members")} testId="tile-active" />
+        </Linked>
+        <Linked href={can("fees") ? `${base}/fees?view=overdue` : undefined}>
+          <KpiTile label={t("dash.overdue")} value={f.n(tl.overdueCount)} tone={tl.overdueCount ? "danger" : undefined} help={t("dash.overdueHelp")} interactive={can("fees")} testId="tile-overdue" />
+        </Linked>
+        <Linked href={can("members") ? `${base}/members?view=expiring` : undefined}>
+          <KpiTile label={t("dash.expiringThisWeek")} value={f.n(tl.expiringThisWeek)} tone={tl.expiringThisWeek ? "warning" : undefined} interactive={can("members")} testId="tile-expiring" />
+        </Linked>
+        <Linked href={can("members") ? `${base}/members?view=notSeen` : undefined}>
+          <KpiTile label={t("dash.notSeen", { days: tl.notSeenDays })} value={f.n(tl.notSeen)} help={t("dash.notSeenHelp")} interactive={can("members")} testId="tile-not-seen" />
+        </Linked>
+      </div>
+      <nav aria-label={t("dash.more")} className="-mt-2 flex flex-wrap gap-2" data-testid="dash-more">
+        <MoreLink href={can("fees") ? `${base}/fees?view=today` : undefined} label={t("dash.dueToday")} value={tl.dueTodayPoisha !== undefined && tl.dueTodayCount ? `${f.n(tl.dueTodayCount)} · ${f.taka(tl.dueTodayPoisha)}` : f.n(tl.dueTodayCount)} testId="tile-due-today" />
+        <MoreLink href={can("members") ? `${base}/members` : undefined} label={t("dash.newThisMonth")} value={f.n(tl.newThisMonth)} testId="tile-new" />
+        <MoreLink href={can("requests") ? `${base}/requests` : undefined} label={t("dash.requestsWaiting")} value={f.n(tl.requestsWaiting)} testId="tile-requests" />
+        {tl.guestsToday !== undefined ? <MoreLink href={can("desk") ? `${base}/desk` : undefined} label={tv("dash.guestsToday")} value={f.n(tl.guestsToday)} testId="tile-guests" /> : null}
+      </nav>
+      <div className={tl.collectedTodayPoisha !== undefined ? "grid gap-4 lg:grid-cols-2" : "grid gap-4"} data-testid="dash-trend">
+        <BarChart
+          title={t("dash.trendCheckIns")}
+          subtitle={t("dash.trendDays", { n: f.n(o.trend.length) })}
+          labels={days}
+          short={o.trend.map((d) => f.short(d.date))}
+          series={[{ key: "checkIns", label: t("dash.checkIns"), values: o.trend.map((d) => d.checkIns) }]}
+          highlight={o.trend.length - 1}
+          format={f.n}
+          axis={(n, top) => compact(n, f.locale, top)}
+          integer
+          emptyText={t("dash.noVisitsYet")}
+          testId="chart-checkins"
+        />
+        {tl.collectedTodayPoisha !== undefined ? (
+          <LineChart
+            title={t("dash.trendCollected")}
+            subtitle={t("dash.trendDays", { n: f.n(o.trend.length) })}
+            labels={days}
+            short={o.trend.map((d) => f.short(d.date))}
+            series={[{ key: "collected", label: t("dash.collected"), values: o.trend.map((d) => d.collectedPoisha ?? 0) }]}
+            format={(n) => f.taka(n)}
+            axis={(n, top) => compactTaka(n, f.locale, top)}
+            partialLast
+            testId="chart-collected"
+          />
+        ) : null}
       </div>
       {ctx.can("members.view") ? (
         <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
@@ -100,5 +180,35 @@ function Body({ ctx }: { ctx: GymCtx }) {
       ) : null}
       {featureLocked(o.features, "attendance") ? <Upsell feature="attendance" owner={ctx.owner} /> : null}
     </div>
+  );
+}
+
+/** A tile that opens the list behind it, when the person may open that page. */
+function Linked({ href, children }: { href?: string; children: ReactNode }) {
+  if (!href) return <>{children}</>;
+  return (
+    <Link href={href} className="flex rounded-card no-underline outline-offset-2 [&>*]:flex-1">
+      {children}
+    </Link>
+  );
+}
+
+/** A smaller count of the day as a pill link (due today, new, requests, guests). */
+function MoreLink({ href, label, value, testId }: { href?: string; label: string; value: string; testId?: string }) {
+  const body = (
+    <>
+      <span className="text-muted">{label}</span>
+      <span className="font-bold tabular-nums">{value}</span>
+    </>
+  );
+  const cls = "inline-flex min-h-11 items-center gap-2 rounded-pill border border-line bg-surface px-4 text-sm no-underline";
+  return href ? (
+    <Link href={href} className={`${cls} transition-colors hover:border-line-strong hover:bg-surface-2`} data-testid={testId}>
+      {body}
+    </Link>
+  ) : (
+    <span className={cls} data-testid={testId}>
+      {body}
+    </span>
   );
 }

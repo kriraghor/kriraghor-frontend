@@ -9,13 +9,14 @@ import { DeskAccessNotice, deskAccessKey } from "@kriraghor/ui/desk";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { Card, Notice, Skeleton } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
+import { RangePicker, lastOfMonth, periodFromParams, periodParams } from "@kriraghor/ui/charts";
 import { dhakaToday } from "@/lib/gym-manage";
 import { unwrap } from "@/lib/manage";
-import { gymMoney, monthParam, type AllReports as AllReportsData } from "@/lib/gym-money";
+import { gymMoney, type AllReports as AllReportsData } from "@/lib/gym-money";
 import { Upsell, useFmt, useGymError } from "./common";
-import { MonthPicker, ReportFigures } from "./report-parts";
+import { ReportFigures } from "./report-parts";
 
-const SPEC = { month: { default: "" } };
+const SPEC = { month: { default: "" }, from: { default: "" }, to: { default: "" } };
 
 /**
  * /manage/reports (owner; feature reports; M24-FR-74): every gym of the owner together for a month,
@@ -26,9 +27,9 @@ export function AllReports() {
   const err = useGymError();
   const { values, set } = useUrlFilters(SPEC);
   const today = dhakaToday();
-  const max = today.slice(0, 7);
-  const month = monthParam(values.month, today);
-  const q = useQuery({ queryKey: ["gm-all-reports", month], queryFn: () => gymMoney.allReports({ month }), retry: false });
+  const period = periodFromParams(values, today);
+  const span = "month" in period ? { from: `${period.month}-01`, to: lastOfMonth(period.month) } : period;
+  const q = useQuery({ queryKey: ["gm-all-reports", period], queryFn: () => gymMoney.allReports(period), retry: false, placeholderData: (prev) => prev });
   const code = problemOf(q.error)?.code;
   return (
     <section className="mx-auto w-full max-w-[1280px] px-4 py-5 sm:px-6 md:py-8" data-testid="gm-all-reports">
@@ -38,7 +39,7 @@ export function AllReports() {
       <h1 className="mt-1 font-display text-2xl font-extrabold md:text-3xl">{t("reports.allTitle")}</h1>
       <p className="mt-1 max-w-2xl text-sm text-muted">{t("reports.allLead")}</p>
       <div className="mt-4 flex flex-col gap-4">
-        <MonthPicker month={month} max={max} onChange={(m) => set({ month: m === max ? null : m })} />
+        <RangePicker value={period} today={today} onChange={(p) => set(periodParams(p, today))} />
         {q.isPending ? (
           <Skeleton className="h-96 rounded-card" />
         ) : code === "GYM_TIER_REQUIRED" ? (
@@ -46,14 +47,14 @@ export function AllReports() {
         ) : q.isError ? (
           deskAccessKey(code) ? <DeskAccessNotice error={q.error} /> : <Notice tone="error">{err(q.error)}</Notice>
         ) : (
-          <Body r={q.data} />
+          <Body r={q.data} span={span} today={today} />
         )}
       </div>
     </section>
   );
 }
 
-function Body({ r }: { r: AllReportsData }) {
+function Body({ r, span, today }: { r: AllReportsData; span: { from: string; to: string }; today: string }) {
   const t = useTranslations("gm");
   const f = useFmt();
   return (
@@ -61,7 +62,7 @@ function Body({ r }: { r: AllReportsData }) {
       <p className="text-sm text-muted" data-testid="all-gyms">
         {t("reports.gymsIncluded", { n: r.gyms.length })}: {r.gyms.map((g) => g.name).join(", ")}
       </p>
-      <ReportFigures r={r.totals} testId="all-totals" />
+      <ReportFigures r={r.totals} previous={r.previous} period={span} today={today} testId="all-totals" />
       {r.multiGym && r.perGym ? (
         <Card padded={false} className="p-4" data-testid="per-gym">
           <h2 className="font-display text-lg font-bold">{t("reports.compare")}</h2>

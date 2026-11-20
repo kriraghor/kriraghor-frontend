@@ -2,10 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   billingBanner,
   churnPct,
-  dayBars,
   exportQuery,
   feeKind,
-  hourBars,
+  fillVisitDays,
   invoicePayable,
   lineText,
   linkChannels,
@@ -107,15 +106,15 @@ describe("reports (M24-FR-71)", () => {
     expect(monthParam(null, "2026-10-26")).toBe("2026-10");
     expect(monthParam("2019-12", "2026-10-26")).toBe("2026-10");
   });
-  it("24 hour bars with a tick every 6 hours; day bars tick every 5th day", () => {
-    const h = hourBars([{ hour: 7, visits: 12 }, { hour: 18, visits: 30 }]);
-    expect(h).toHaveLength(24);
-    expect(h[7]).toEqual({ label: "07:00", value: 12, tick: "" });
-    expect(h[18]).toEqual({ label: "18:00", value: 30, tick: "18" });
-    expect(h[0].tick).toBe("00");
-    const d = dayBars([{ date: "2026-10-01", visits: 3 }, { date: "2026-10-02", visits: 4 }, { date: "2026-10-05", visits: 1 }]);
-    expect(d.map((x) => x.tick)).toEqual(["1", "", "5"]);
-    expect(d[1]).toEqual({ label: "2026-10-02", value: 4, tick: "" });
+  it("visits for every day of the period, zero where nobody came (dashboards)", () => {
+    const d = fillVisitDays([{ date: "2026-10-30", visits: 3 }, { date: "2026-11-01", visits: 4 }], "2026-10-30", "2026-11-02");
+    expect(d).toEqual([
+      { date: "2026-10-30", visits: 3 },
+      { date: "2026-10-31", visits: 0 },
+      { date: "2026-11-01", visits: 4 },
+      { date: "2026-11-02", visits: 0 },
+    ]);
+    expect(fillVisitDays([], "2026-11-03", "2026-11-02")).toEqual([]);
   });
   it("churn as a percent; reasons largest first without zeros", () => {
     expect(churnPct(0.0423)).toBe(4.2);
@@ -127,8 +126,9 @@ describe("reports (M24-FR-71)", () => {
       ["price", 2],
     ]);
   });
-  it("export query for a month", () => {
-    expect(exportQuery("payments", "2026-09")).toEqual({ dataset: "payments", month: "2026-09" });
+  it("export query for a month or a range", () => {
+    expect(exportQuery("payments", { month: "2026-09" })).toEqual({ dataset: "payments", month: "2026-09" });
+    expect(exportQuery("members", { from: "2026-11-14", to: "2026-11-20" })).toEqual({ dataset: "members", from: "2026-11-14", to: "2026-11-20" });
   });
 });
 

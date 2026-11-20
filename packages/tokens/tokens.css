@@ -514,3 +514,84 @@
     color: #1a0605;
   }
 }
+
+/*
+ * Chart colours (dashboards, 20 Nov 2026; kriraghor-docs design, charts). One series takes the area's
+ * own action colour (--viz-solo); several take the categorical slots in this fixed order, checked with
+ * the dataviz validator against each surface (lightness band, chroma, colour-blind and normal-vision
+ * separation, contrast; results in the design guide). --viz-on-N is the label ink inside slot N.
+ * The derived ones are set again wherever a theme changes the base values (an area's data-ui or
+ * data-theme), because a custom property inherits the value computed where it was declared.
+ */
+:root,
+[data-ui],
+[data-theme] {
+  --viz-solo: var(--kg-brand);
+  --viz-compare: var(--kg-muted);
+  --viz-grid: color-mix(in oklab, var(--kg-line) 70%, var(--kg-surface));
+  --viz-axis: color-mix(in oklab, var(--kg-line-strong) 60%, var(--kg-surface));
+  --viz-hover: color-mix(in oklab, var(--kg-ink) 5%, transparent);
+  --viz-track: var(--kg-surface-2);
+  --viz-good: var(--kg-brand-text);
+  --viz-good-soft: var(--kg-brand-soft);
+}
+:root {
+  --viz-1: #00804a;
+  --viz-2: #2a78d6;
+  --viz-3: #eb6834;
+  --viz-4: #6250d6;
+  --viz-5: #e87ba4;
+  --viz-6: #eda100;
+  --viz-on-1: #ffffff;
+  --viz-on-2: #0b0b0b;
+  --viz-on-3: #0b0b0b;
+  --viz-on-4: #ffffff;
+  --viz-on-5: #0b0b0b;
+  --viz-on-6: #0b0b0b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --viz-1: #12a862;
+    --viz-2: #3987e5;
+    --viz-3: #d95926;
+    --viz-4: #9085e9;
+    --viz-5: #d55181;
+    --viz-6: #c98500;
+    --viz-on-1: #0b0b0b;
+    --viz-on-2: #0b0b0b;
+    --viz-on-3: #0b0b0b;
+    --viz-on-4: #0b0b0b;
+    --viz-on-5: #0b0b0b;
+    --viz-on-6: #0b0b0b;
+  }
+}
+:root[data-theme="dark"] {
+  --viz-1: #12a862;
+  --viz-2: #3987e5;
+  --viz-3: #d95926;
+  --viz-4: #9085e9;
+  --viz-5: #d55181;
+  --viz-6: #c98500;
+  --viz-on-1: #0b0b0b;
+  --viz-on-2: #0b0b0b;
+  --viz-on-3: #0b0b0b;
+  --viz-on-4: #0b0b0b;
+  --viz-on-5: #0b0b0b;
+  --viz-on-6: #0b0b0b;
+}
+/* The gym's dark surface: the lime is too light for a categorical slot (lightness band), so slot 1 is
+   a deeper lime; one series still draws in the lime itself (--viz-solo). */
+[data-theme="gym"] {
+  --viz-1: #7f9f19;
+  --viz-2: #3987e5;
+  --viz-3: #d95926;
+  --viz-4: #9085e9;
+  --viz-5: #d55181;
+  --viz-6: #c98500;
+  --viz-on-1: #0b0b0b;
+  --viz-on-2: #0b0b0b;
+  --viz-on-3: #0b0b0b;
+  --viz-on-4: #0b0b0b;
+  --viz-on-5: #0b0b0b;
+  --viz-on-6: #0b0b0b;
+}
