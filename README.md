@@ -14,6 +14,7 @@ cd apps/web && npm run dev   # or apps/esports (:3001), apps/portal (:3002), app
 ```
 Shared packages (TypeScript source; the apps compile them with `transpilePackages`):
 
+
 | Package | What it holds |
 |---|---|
 | `packages/config` | eslint (with the workspace boundary rules), the TypeScript base, Vitest and Playwright presets |
