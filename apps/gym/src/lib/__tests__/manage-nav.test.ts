@@ -78,7 +78,7 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
     expect(pages(["expenses.manage"])).toEqual(["dashboard", "expenses"]);
     expect(pages(["fees.collect", "reports.view"])).toEqual(["dashboard", "fees", "closing", "reports", "expenses", "cash", "pnl", "staff", "equipment"]);
     expect(gymItems("y1", ["attendance.mark", "members.view", "members.edit", "fees.collect", "fees.adjust", "reports.view", "passes.view"]).some((i) => ["reminders", "packages", "import", "settings", "edit", "reviews"].includes(i.key))).toBe(false);
-    for (const page of ["reminders", "packages", "import", "settings", "edit", "reviews", "whatsapp"] as const) {
+    for (const page of ["reminders", "packages", "import", "settings", "edit", "reviews"] as const) {
       expect(canOpen(page, ["attendance.mark", "members.edit", "fees.adjust"])).toBe(false);
       expect(canOpen(page, null)).toBe(true);
     }
@@ -138,7 +138,7 @@ describe("desk mode (M24 §21)", () => {
     expect(groups.map((g) => g.key)).toEqual(["overview", "own:g1"]);
     expect(groups[0].items.map((i) => i.key)).toEqual(["gyms"]);
     const keys = groups[1].items.map((i) => i.key);
-    for (const ownerOnly of ["reminders", "packages", "import", "settings", "edit", "reviews", "payroll", "whatsapp", "deskmode"]) expect(keys).not.toContain(ownerOnly);
+    for (const ownerOnly of ["reminders", "packages", "import", "settings", "edit", "reviews", "payroll", "deskmode"]) expect(keys).not.toContain(ownerOnly);
     expect(keys).toEqual(expect.arrayContaining(["dashboard", "desk", "members", "fees", "closing"]));
     // Staff at the desk keep exactly their own pages.
     const staffDesk = manageGroups({ gyms: [work("y1", ["desk.admit", "fees.collect"])], deskGymId: "y1" });
@@ -203,11 +203,12 @@ describe("offline items (M24 §22)", () => {
 });
 
 describe("WhatsApp (M24-FR-157)", () => {
-  it("is the owner's, in Engage after Enquiries, and not at a desk", () => {
+  it("is for the owner and staff with whatsapp.send, in Engage after Enquiries", () => {
     expect(gymItems("g1", null).find((i) => i.key === "whatsapp")).toEqual({ key: "whatsapp", href: "/manage/g1/whatsapp" });
-    expect(canOpen("whatsapp", ["notices.send", "leads.manage", "members.edit"])).toBe(false);
+    expect(canOpen("whatsapp", ["notices.send", "leads.manage", "members.view", "members.edit"])).toBe(false);
     expect(pages(["notices.send", "leads.manage"])).not.toContain("whatsapp");
-    expect(gymItems("g1", null, { desk: true }).map((i) => i.key)).not.toContain("whatsapp");
+    expect(pages(["members.view", "whatsapp.send"])).toEqual(["dashboard", "members", "requests", "whatsapp"]);
+    expect(staffItems("y1", ["whatsapp.send"])).toEqual([{ key: "whatsapp", href: "/manage/y1/whatsapp" }]);
     const engage = gymSections(gymItems("g1", null)).find((x) => x.key === "engage");
     expect(engage?.items.map((i) => i.key)).toEqual(["classes", "rewards", "notices", "leads", "whatsapp"]);
   });

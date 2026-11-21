@@ -48848,7 +48848,38 @@ export interface paths {
                                 source: "own" | "owner" | "none";
                                 /** @description The number the gym page shows, or null */
                                 shown: string | null;
+                                /** Format: uuid */
+                                senderId: string | null;
+                                autoKinds: ("receipt" | "renewal_due" | "ends_today" | "overdue" | "pay_link")[];
                             }[];
+                            senders: components["schemas"]["GymWhatsappSender"][];
+                            units: {
+                                available: boolean;
+                                enabled: boolean;
+                                /** @enum {string|null} */
+                                status: "active" | "paused" | "ended" | null;
+                                balance: number;
+                                included: number;
+                                bundle: {
+                                    size: number;
+                                    pricePoisha: number;
+                                    validDays: number;
+                                };
+                                units: {
+                                    utility: number;
+                                    marketing: number;
+                                };
+                                lowBalance: number;
+                                bundles: {
+                                    units: number;
+                                    expiresOn: string;
+                                }[];
+                            };
+                            /** @description Meta embedded sign-up values for the panel (null while off or not set up) */
+                            signUp: {
+                                appId: string;
+                                configId: string;
+                            } | null;
                         };
                     };
                 };
@@ -48943,7 +48974,38 @@ export interface paths {
                                 source: "own" | "owner" | "none";
                                 /** @description The number the gym page shows, or null */
                                 shown: string | null;
+                                /** Format: uuid */
+                                senderId: string | null;
+                                autoKinds: ("receipt" | "renewal_due" | "ends_today" | "overdue" | "pay_link")[];
                             }[];
+                            senders: components["schemas"]["GymWhatsappSender"][];
+                            units: {
+                                available: boolean;
+                                enabled: boolean;
+                                /** @enum {string|null} */
+                                status: "active" | "paused" | "ended" | null;
+                                balance: number;
+                                included: number;
+                                bundle: {
+                                    size: number;
+                                    pricePoisha: number;
+                                    validDays: number;
+                                };
+                                units: {
+                                    utility: number;
+                                    marketing: number;
+                                };
+                                lowBalance: number;
+                                bundles: {
+                                    units: number;
+                                    expiresOn: string;
+                                }[];
+                            };
+                            /** @description Meta embedded sign-up values for the panel (null while off or not set up) */
+                            signUp: {
+                                appId: string;
+                                configId: string;
+                            } | null;
                         };
                     };
                 };
@@ -49028,8 +49090,13 @@ export interface paths {
                             source: "own" | "owner" | "none";
                             /** @description The number the gym page shows, or null */
                             shown: string | null;
+                            /** Format: uuid */
+                            senderId: string | null;
+                            autoKinds: ("receipt" | "renewal_due" | "ends_today" | "overdue" | "pay_link")[];
                             ownerNumber: string | null;
                             apiEnabled: boolean;
+                            sender: components["schemas"]["GymWhatsappSender"] & (Record<string, never> | null);
+                            autoKindsAvailable: ("receipt" | "renewal_due" | "ends_today" | "overdue" | "pay_link")[];
                         };
                     };
                 };
@@ -49100,6 +49167,13 @@ export interface paths {
                     "application/json": {
                         number?: string | null;
                         showOnPage?: boolean;
+                        /**
+                         * Format: uuid
+                         * @description Step 2: the connected number this branch sends from (null: none)
+                         */
+                        senderId?: string | null;
+                        /** @description Step 2: the automatic messages this branch sends on WhatsApp */
+                        autoKinds?: ("receipt" | "renewal_due" | "ends_today" | "overdue" | "pay_link")[];
                     };
                 };
             };
@@ -49121,8 +49195,13 @@ export interface paths {
                             source: "own" | "owner" | "none";
                             /** @description The number the gym page shows, or null */
                             shown: string | null;
+                            /** Format: uuid */
+                            senderId: string | null;
+                            autoKinds: ("receipt" | "renewal_due" | "ends_today" | "overdue" | "pay_link")[];
                             ownerNumber: string | null;
                             apiEnabled: boolean;
+                            sender: components["schemas"]["GymWhatsappSender"] & (Record<string, never> | null);
+                            autoKindsAvailable: ("receipt" | "renewal_due" | "ends_today" | "overdue" | "pay_link")[];
                         };
                     };
                 };
@@ -49519,6 +49598,1187 @@ export interface paths {
             };
         };
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/whatsapp/senders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Connect the gym’s WhatsApp Business number with what Meta’s embedded sign-up returned (owner; gym_whatsapp.api_enabled and the whatsapp plan feature): the token is kept encrypted, Kriraghor’s app subscribes, Kriraghor’s credit line is shared and Kriraghor’s templates are created (M24-FR-161 to FR-163) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required: repeats return the first result */
+                    "idempotency-key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        code: string;
+                        wabaId: string;
+                        phoneNumberId: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymWhatsappSender"][];
+                    };
+                };
+                /** @description Error. Codes: IDEMPOTENCY_KEY_REQUIRED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_API_OFF, GYM_WHATSAPP_UNAVAILABLE, GYM_WHATSAPP_NUMBER_TAKEN */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_META_FAILED */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/whatsapp/senders/{senderId}/disconnect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Stop sending from a connected WhatsApp number; its branches send nothing until another is chosen (owner) (M24-FR-161) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    senderId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymWhatsappSender"][];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_SENDER_STATE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/whatsapp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The owner’s WhatsApp units: balance, bundles, units per message (owner) (M24-FR-166) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymWhatsappUnits"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/whatsapp-addon": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Switch WhatsApp messages on (grants the month’s allowance; plan feature whatsapp, gym_whatsapp.api_enabled) or off (owner) (M24-FR-166) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        enabled: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymWhatsappUnits"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_UNAVAILABLE */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/whatsapp-bundles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Buy WhatsApp unit bundles: a one-line invoice paid at once; the units arrive at capture (owner, WhatsApp on) (M24-FR-167) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required: repeats return the first result */
+                    "idempotency-key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        bundles: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymSmsBundleBought"];
+                    };
+                };
+                /** @description Error. Codes: IDEMPOTENCY_KEY_REQUIRED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_UNAVAILABLE, GYM_WHATSAPP_OFF */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/billing/whatsapp-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The owner’s WhatsApp unit entries, newest first (owner) */
+        get: {
+            parameters: {
+                query?: {
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymWhatsappEntries"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/whatsapp/estimate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Who a notice or greeting reaches on WhatsApp and the units it holds (owner or whatsapp.send; plan feature whatsapp) (M24-FR-166) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        kind: "notice" | "greeting";
+                        segment: components["schemas"]["GymWhatsappSegment"];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            members: number;
+                            reachable: number;
+                            no_consent: number;
+                            /** @description Members whose language has no approved template yet */
+                            template: number;
+                            no_sender: number;
+                            unitsNeeded: number;
+                            balance: number;
+                            bulkLeft: number;
+                            senderConnected: boolean;
+                            addonActive: boolean;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, GYM_TIER_REQUIRED, GYM_ACCOUNT_RESTRICTED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_API_OFF, GYM_WHATSAPP_NO_SENDER, GYM_WHATSAPP_BLOCKED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SUSPENDED */
+                423: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/whatsapp/sends": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The branch’s WhatsApp sends with sent, delivered, read and failed counts (owner or whatsapp.send) (M24-FR-170) */
+        get: {
+            parameters: {
+                query?: {
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: {
+                                /** Format: uuid */
+                                id: string;
+                                /** @enum {string} */
+                                kind: "notice" | "greeting" | "single";
+                                params: {
+                                    [key: string]: string;
+                                };
+                                segment: components["schemas"]["GymWhatsappSegment"] & (Record<string, never> | null);
+                                /** Format: uuid */
+                                memberId: string | null;
+                                targetCount: number;
+                                queuedCount: number;
+                                unitsHeld: number;
+                                /** Format: date-time */
+                                sentAt: string | null;
+                                status: {
+                                    queued: number;
+                                    sent: number;
+                                    delivered: number;
+                                    read: number;
+                                    failed: number;
+                                };
+                            }[];
+                            bulkLeft: number;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SUSPENDED */
+                423: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Send a notice or greeting to a segment, or an update to one member, on WhatsApp: only members who agreed, units held, marketing after quiet hours, at most gym_whatsapp.bulk_daily_cap bulk sends a day (owner or whatsapp.send) (M24-FR-166 to FR-168) */
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required: repeats return the first result */
+                    "idempotency-key": string;
+                };
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        kind: "notice";
+                        segment: components["schemas"]["GymWhatsappSegment"];
+                        title: string;
+                        message: string;
+                    } | {
+                        /** @enum {string} */
+                        kind: "greeting";
+                        segment: components["schemas"]["GymWhatsappSegment"];
+                        message: string;
+                    } | {
+                        /** @enum {string} */
+                        kind: "single";
+                        /** Format: uuid */
+                        memberId: string;
+                        message: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** @enum {string} */
+                            kind: "notice" | "greeting" | "single";
+                            params: {
+                                [key: string]: string;
+                            };
+                            segment: components["schemas"]["GymWhatsappSegment"] & (Record<string, never> | null);
+                            /** Format: uuid */
+                            memberId: string | null;
+                            targetCount: number;
+                            queuedCount: number;
+                            unitsHeld: number;
+                            /** Format: date-time */
+                            sentAt: string | null;
+                            status: {
+                                queued: number;
+                                sent: number;
+                                delivered: number;
+                                read: number;
+                                failed: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Error. Codes: IDEMPOTENCY_KEY_REQUIRED */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, GYM_TIER_REQUIRED, GYM_ACCOUNT_RESTRICTED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_API_OFF, GYM_WHATSAPP_NO_SENDER, GYM_WHATSAPP_BLOCKED */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SUSPENDED */
+                423: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_CAP */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/whatsapp/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One member’s WhatsApp messages from the gym with their text and status (owner or whatsapp.send) (M24-FR-170) */
+        get: {
+            parameters: {
+                query: {
+                    memberId: string;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: {
+                                /** Format: uuid */
+                                id: string;
+                                /** @enum {string} */
+                                kind: "receipt" | "renewal_due" | "ends_today" | "overdue" | "pay_link" | "notice" | "greeting" | "single";
+                                /** @enum {string} */
+                                category: "utility" | "marketing";
+                                text: string;
+                                /** @enum {string} */
+                                status: "queued" | "sending" | "sent" | "delivered" | "read" | "failed" | "expired";
+                                errorCode: string | null;
+                                /** Format: date-time */
+                                createdAt: string | null;
+                                /** Format: date-time */
+                                sentAt: string | null;
+                                /** Format: date-time */
+                                deliveredAt: string | null;
+                                /** Format: date-time */
+                                readAt: string | null;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SUSPENDED */
+                423: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/manage/gyms/{gymId}/fee-payments/{feePaymentId}/whatsapp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send or resend a payment’s receipt on WhatsApp (owner or whatsapp.send; the member agreed to receipts) (M24-FR-165) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    gymId: string;
+                    feePaymentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            queued: true;
+                            /** Format: uuid */
+                            messageId: string;
+                        };
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED, GYM_TIER_REQUIRED, GYM_ACCOUNT_RESTRICTED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_WHATSAPP_API_OFF, GYM_WHATSAPP_NO_SENDER, GYM_WHATSAPP_BLOCKED, GYM_WHATSAPP_RECEIPT */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: GYM_SUSPENDED */
+                423: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/webhooks/whatsapp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Meta’s webhook check: answers hub.challenge when hub.verify_token matches (M24-FR-169) */
+        get: {
+            parameters: {
+                query?: {
+                    "hub.mode"?: string;
+                    "hub.verify_token"?: string;
+                    "hub.challenge"?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description The challenge (text/plain) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Wrong token */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /** Meta’s WhatsApp events (X-Hub-Signature-256 over the raw body): message statuses settle units, STOP replies opt members out, template, quality and account changes (M24-FR-169, FR-170) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            ok: true;
+                            handled: number;
+                        };
+                    };
+                };
+                /** @description Error. Codes: WEBHOOK_INVALID */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: WEBHOOK_SIGNATURE_INVALID */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -77278,7 +78538,7 @@ export interface components {
             /** Format: uuid */
             ownerId: string;
             /** @enum {string} */
-            kind: "monthly" | "sms_bundle";
+            kind: "monthly" | "sms_bundle" | "whatsapp_bundle";
             /** Format: date */
             periodStart: string | null;
             /** Format: date */
@@ -77312,7 +78572,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 /** @enum {string} */
-                kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "vat" | "adjustment";
+                kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "whatsapp_bundle" | "vat" | "adjustment";
                 descriptionEn: string;
                 descriptionBn: string;
                 quantity: number;
@@ -78377,7 +79637,7 @@ export interface components {
                 /** Format: uuid */
                 ownerId: string;
                 /** @enum {string} */
-                kind: "monthly" | "sms_bundle";
+                kind: "monthly" | "sms_bundle" | "whatsapp_bundle";
                 /** Format: date */
                 periodStart: string | null;
                 /** Format: date */
@@ -78411,7 +79671,7 @@ export interface components {
                     /** Format: uuid */
                     id: string;
                     /** @enum {string} */
-                    kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "vat" | "adjustment";
+                    kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "whatsapp_bundle" | "vat" | "adjustment";
                     descriptionEn: string;
                     descriptionBn: string;
                     quantity: number;
@@ -78919,6 +80179,72 @@ export interface components {
                 id: string;
                 memberCode: string;
             };
+        };
+        GymWhatsappSender: {
+            /** Format: uuid */
+            id: string;
+            displayNumber: string;
+            verifiedName: string | null;
+            /** @enum {string} */
+            status: "connected" | "restricted" | "disconnected";
+            quality: string | null;
+            messagingLimit: string | null;
+            creditAttached: boolean;
+            /** Format: date-time */
+            connectedAt: string | null;
+            templates: {
+                approved: number;
+                pending: number;
+                rejected: number;
+            };
+        };
+        GymWhatsappUnits: {
+            /** @description gym_whatsapp.api_enabled is on and the plan has the whatsapp feature */
+            available: boolean;
+            /** @description gym_whatsapp.api_enabled */
+            enabled: boolean;
+            /** @enum {string|null} */
+            status: "active" | "paused" | "ended" | null;
+            balance: number;
+            included: number;
+            bundle: {
+                size: number;
+                pricePoisha: number;
+                validDays: number;
+            };
+            /** @description Units one message holds by category */
+            units: {
+                utility: number;
+                marketing: number;
+            };
+            lowBalance: number;
+            bundles: {
+                units: number;
+                expiresOn: string;
+            }[];
+        };
+        GymWhatsappEntries: {
+            balance: number;
+            items: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                kind: "grant" | "purchase" | "reserve" | "settle" | "expire" | "adjust";
+                units: number;
+                expiresOn: string | null;
+                /** Format: uuid */
+                gymId: string | null;
+                /** Format: uuid */
+                invoiceId: string | null;
+                createdAt: string;
+            }[];
+        };
+        GymWhatsappSegment: {
+            /** @enum {string} */
+            kind: "active" | "expiring" | "expired" | "not_seen" | "package";
+            days?: number;
+            /** Format: uuid */
+            packageId?: string;
         };
         GymExpenseCategories: {
             items: components["schemas"]["GymExpenseCategory"][];

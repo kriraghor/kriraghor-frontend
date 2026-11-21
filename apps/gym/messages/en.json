@@ -917,6 +917,10 @@
       "progress": {
         "title": "Body progress needs the Standard plan",
         "body": "Members and trainers record weight and measurements and see the change over time."
+      },
+      "whatsapp": {
+        "title": "WhatsApp messages need a higher plan",
+        "body": "Sending notices, greetings and receipts on WhatsApp is part of the higher plans."
       }
     },
     "err": {
@@ -3900,7 +3904,7 @@
     "api": {
       "title": "Messages from the panel",
       "soon": "Sending receipts, reminders and notices on WhatsApp is coming soon.",
-      "on": "Sending on WhatsApp is switched on. It is set up on the Reminders and Notices pages."
+      "on": "Sending on WhatsApp is on. Write a message on the Send tab."
     },
     "consent": {
       "service": "Receipts and reminders",
@@ -3938,6 +3942,212 @@
       "numberHint": "Leave empty to use the phone the gym has for you.",
       "note": "You can turn these off any time, or reply STOP on WhatsApp.",
       "updated": "We updated what these mean. Please check and save again."
+    },
+    "tabs": {
+      "label": "WhatsApp sections",
+      "send": "Send",
+      "history": "History",
+      "setup": "Setup"
+    },
+    "staffNote": "The owner sets up the numbers. You can send messages here.",
+    "preview": {
+      "notice": "{gym}: {title}\n\n{message}\n\n{stop}",
+      "greeting": "{gym}: {message}\n\n{stop}",
+      "stop": "Reply STOP to stop these messages."
+    },
+    "senders": {
+      "title": "WhatsApp Business number",
+      "lead": "The number members get messages from.",
+      "coexist": "Keep using WhatsApp Business on your phone; replies come there.",
+      "soon": "Connecting a WhatsApp Business number is coming soon.",
+      "none": "No number connected yet.",
+      "connect": "Connect a number",
+      "connectAsk": "Connect a WhatsApp Business number?",
+      "connectBody": "A Facebook window opens. Sign in, pick your business and the number, then finish.",
+      "connecting": "Finish in the Facebook window…",
+      "connected": "Number connected",
+      "cancelled": "The connection was not finished.",
+      "sdkFailed": "Couldn't open Facebook. Check your connection and try again.",
+      "status": {
+        "connected": "Connected",
+        "restricted": "Restricted",
+        "disconnected": "Disconnected"
+      },
+      "quality": "Quality: {q}",
+      "limit": "Daily limit: {limit}",
+      "templates": "Messages approved {approved} · waiting {pending} · rejected {rejected}",
+      "noCredit": "Add a payment method for this number in Meta Business.",
+      "disconnect": "Disconnect",
+      "disconnectAsk": "Disconnect {number}?",
+      "disconnectBody": "Gyms using it stop sending on WhatsApp until you choose another number.",
+      "disconnected": "Number disconnected"
+    },
+    "branch": {
+      "title": "Sending from this gym",
+      "soon": "Choose the number and the automatic messages once sending opens.",
+      "sender": "Send from",
+      "noSender": "Not chosen",
+      "needSender": "Connect a number above first.",
+      "auto": "Automatic messages",
+      "autoHint": "Sent only to members who agreed to receipts and reminders.",
+      "kind": {
+        "receipt": "Payment receipt",
+        "renewal_due": "Renewal due",
+        "ends_today": "Subscription ends today",
+        "overdue": "Payment overdue",
+        "pay_link": "Payment link"
+      },
+      "notOnPlan": "Not on your plan",
+      "saveAsk": "Save how this gym sends on WhatsApp?"
+    },
+    "send": {
+      "title": "Write a message",
+      "kind": "Message type",
+      "kinds": {
+        "notice": "Notice",
+        "greeting": "Greeting"
+      },
+      "kindHint": {
+        "notice": "Gym news with a title, such as a closed day or a new class.",
+        "greeting": "A short greeting for Eid, Puja or the new year."
+      },
+      "titleLabel": "Title",
+      "message": "Message",
+      "count": "{n} of {max}",
+      "preview": "What members see",
+      "estimating": "Counting members…",
+      "reach": "Reaches {reachable} of {members} members.",
+      "notReached": {
+        "no_consent": "{n} did not agree to get news and offers",
+        "template": "{n} use a language with no approved message yet",
+        "no_sender": "{n} have no WhatsApp number"
+      },
+      "units": "Needs {needed} units · {balance} left",
+      "left": "Group sends left today: {n}",
+      "send": "Send to {n}",
+      "sendAsk": "Send this on WhatsApp to {n} members?",
+      "sendBody": "It can't be taken back. Units are held now and used as messages go out.",
+      "sent": "Sending to {n} members",
+      "write": "Write the title and the message.",
+      "writeMessage": "Write the message.",
+      "pickGroup": "Choose who it goes to.",
+      "block": {
+        "off": "Sending on WhatsApp is coming soon.",
+        "no_sender": "Connect a WhatsApp Business number and choose it for this gym in Setup.",
+        "addon": "Switch on WhatsApp messages in Plan and billing.",
+        "nobody": "Nobody in this group can get it on WhatsApp.",
+        "cap": "No more group sends today. Try again tomorrow.",
+        "balance": "Not enough units. Buy more in Plan and billing."
+      }
+    },
+    "history": {
+      "title": "Sent on WhatsApp",
+      "none": "Nothing sent on WhatsApp yet.",
+      "to": "{queued} of {target} sent",
+      "counts": "{delivered} delivered · {read} read · {failed} failed",
+      "kind": {
+        "notice": "Notice",
+        "greeting": "Greeting",
+        "single": "One member"
+      }
+    },
+    "err": {
+      "blocked": {
+        "off": "Sending on WhatsApp is coming soon.",
+        "tier": "Sending on WhatsApp needs a higher plan.",
+        "restricted": "Meta has restricted this number. Check it in Setup.",
+        "addon": "Switch on WhatsApp messages in Plan and billing.",
+        "balance": "Not enough units. Buy more in Plan and billing.",
+        "no_consent": "This member did not agree to get these messages.",
+        "nobody": "Nobody in this group can get it on WhatsApp.",
+        "template": "WhatsApp has not approved this message yet.",
+        "no_sender": "This gym has no WhatsApp number to send from. Choose one in Setup.",
+        "other": "This can't be sent on WhatsApp right now."
+      },
+      "cap": "Too many WhatsApp sends today. Try again tomorrow.",
+      "unavailable": "WhatsApp messages are not available on your plan right now.",
+      "addonOff": "Switch on WhatsApp messages first.",
+      "numberTaken": "This number is already connected to another Kriraghor account.",
+      "metaFailed": "Meta did not answer. Try again in a few minutes.",
+      "receipt": "This receipt can't be sent on WhatsApp."
+    },
+    "memberSend": {
+      "send": "Send WhatsApp",
+      "title": "WhatsApp to {name}",
+      "label": "Message",
+      "hint": "Sent only if they agreed to receipts and reminders.",
+      "ask": "Send this to {name} on WhatsApp?",
+      "sent": "Message queued",
+      "messages": "Messages",
+      "hideMessages": "Hide messages",
+      "none": "No WhatsApp messages yet.",
+      "status": {
+        "queued": "Waiting",
+        "sending": "Sending",
+        "sent": "Sent",
+        "delivered": "Delivered",
+        "read": "Read",
+        "failed": "Failed",
+        "expired": "Expired"
+      },
+      "kind": {
+        "receipt": "Payment receipt",
+        "renewal_due": "Renewal due",
+        "ends_today": "Subscription ends today",
+        "overdue": "Payment overdue",
+        "pay_link": "Payment link",
+        "notice": "Notice",
+        "greeting": "Greeting",
+        "single": "Message"
+      }
+    },
+    "receipt": {
+      "send": "Send on WhatsApp",
+      "ask": "Send this receipt on WhatsApp?",
+      "body": "The member gets the receipt link on WhatsApp.",
+      "sent": "Receipt queued on WhatsApp"
+    },
+    "units": {
+      "title": "WhatsApp messages",
+      "soon": "Coming soon: receipts, reminders and notices on WhatsApp.",
+      "needsPlan": "WhatsApp messages are on the Standard plan and up.",
+      "lead": "Units pay for WhatsApp messages from your gyms.",
+      "perMessage": "{utility} units for a receipt or reminder · {marketing} for a notice or greeting",
+      "included": "{n} units included each month",
+      "switchOn": "Switch on",
+      "switchOff": "Switch off",
+      "onAsk": "Switch on WhatsApp messages?",
+      "onBody": "Your gyms can send on WhatsApp while you have units.",
+      "offAsk": "Switch off WhatsApp messages?",
+      "offBody": "Your gyms stop sending on WhatsApp. Units you bought stay.",
+      "switchedOn": "WhatsApp messages switched on",
+      "switchedOff": "WhatsApp messages switched off",
+      "status": {
+        "active": "On",
+        "paused": "Paused",
+        "ended": "Off"
+      },
+      "balance": "Units left",
+      "low": "Running low",
+      "bundleUntil": "Bought, use by {date}",
+      "buyTitle": "Buy units: {size} for {price}",
+      "fewer": "One bundle fewer",
+      "more": "One bundle more",
+      "buy": "Buy {n} units · {price}",
+      "buyAsk": "Buy {n} units for {price}?",
+      "buyNote": "Paid now by bKash, Nagad or card. Units arrive with the payment and last {days} days.",
+      "buyYes": "Go to payment",
+      "showHistory": "History",
+      "hideHistory": "Hide history",
+      "noEntries": "Nothing yet.",
+      "kind": {
+        "grant": "Monthly units",
+        "purchase": "Bundle bought",
+        "reserve": "Held for messages",
+        "settle": "Messages sent, rest returned",
+        "expire": "Expired",
+        "adjust": "Changed by Kriraghor"
+      }
     }
   }
 }

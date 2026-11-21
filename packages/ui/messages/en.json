@@ -880,6 +880,9 @@
       },
       "assets": {
         "manage": "Keep the equipment register: services and repairs"
+      },
+      "whatsapp": {
+        "send": "Send WhatsApp messages to members"
       }
     },
     "none": "Nothing yet",

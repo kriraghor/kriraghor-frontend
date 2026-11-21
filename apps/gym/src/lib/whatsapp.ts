@@ -40,3 +40,77 @@ export const numberOrNull = (typed: string) => (typed.trim() ? typed.trim() : nu
 
 /** Whether a 422 problem is about the `number` field. */
 export const isNumberProblem = (p: { code?: string; errors?: { field: string }[] } | null | undefined) => p?.code === "VALIDATION_FAILED" && Boolean(p.errors?.some((e) => e.field === "number"));
+
+// ---------------------------------------------------------------- step 2: sending (M24-FR-166 to FR-170)
+
+/** The words of the approved templates, from messages (gw.preview): `stop` is the STOP line every bulk message ends with. */
+export type PreviewSay = (key: "notice" | "greeting" | "stop", values?: Record<string, string>) => string;
+
+/**
+ * The message bubble a member sees: notice = "{gym}: {title}\n\n{message}\n\n{STOP line}", greeting =
+ * "{gym}: {message}\n\n{STOP line}". Empty parts show as "…" so the shape is visible while typing.
+ */
+export function previewText(say: PreviewSay, x: { kind: "notice" | "greeting"; gym: string; title?: string; message: string }) {
+  const dots = (s: string | undefined) => (s && s.trim() ? s.trim() : "…");
+  const stop = say("stop");
+  return x.kind === "notice" ? say("notice", { gym: x.gym, title: dots(x.title), message: dots(x.message), stop }) : say("greeting", { gym: x.gym, message: dots(x.message), stop });
+}
+
+/** Why a bulk send cannot go yet, first reason first; null when it can. */
+export type SendBlock = "off" | "no_sender" | "addon" | "nobody" | "cap" | "balance";
+export function sendBlock(x: { apiEnabled: boolean; est: { reachable: number; unitsNeeded: number; balance: number; bulkLeft: number; senderConnected: boolean; addonActive: boolean } | null }): SendBlock | null {
+  if (!x.apiEnabled) return "off";
+  const e = x.est;
+  if (!e) return null;
+  if (!e.senderConnected) return "no_sender";
+  if (!e.addonActive) return "addon";
+  if (e.reachable <= 0) return "nobody";
+  if (e.bulkLeft <= 0) return "cap";
+  if (e.unitsNeeded > e.balance) return "balance";
+  return null;
+}
+
+/** Members a send does not reach, by why (only the reasons with someone in them). */
+export function notReached(e: { no_consent: number; template: number; no_sender: number }): { key: "no_consent" | "template" | "no_sender"; n: number }[] {
+  return (["no_consent", "template", "no_sender"] as const).map((key) => ({ key, n: e[key] })).filter((x) => x.n > 0);
+}
+
+const BLOCK_REASONS = ["off", "tier", "restricted", "addon", "balance", "no_consent", "nobody", "template", "no_sender"];
+
+/** The friendly-text key (under gw.err) for a WhatsApp problem, or null for problems the app's own helper explains. */
+export function waProblemKey(p: { code?: string; meta?: Record<string, unknown> } | null | undefined): string | null {
+  switch (p?.code) {
+    case "GYM_WHATSAPP_BLOCKED": {
+      const reason = typeof p.meta?.reason === "string" ? p.meta.reason : "";
+      return BLOCK_REASONS.includes(reason) ? `blocked.${reason}` : "blocked.other";
+    }
+    case "GYM_WHATSAPP_NO_SENDER":
+      return "blocked.no_sender";
+    case "GYM_WHATSAPP_API_OFF":
+      return "blocked.off";
+    case "GYM_WHATSAPP_CAP":
+      return "cap";
+    case "GYM_WHATSAPP_UNAVAILABLE":
+      return "unavailable";
+    case "GYM_WHATSAPP_OFF":
+      return "addonOff";
+    case "GYM_WHATSAPP_NUMBER_TAKEN":
+      return "numberTaken";
+    case "GYM_WHATSAPP_META_FAILED":
+      return "metaFailed";
+    case "GYM_WHATSAPP_RECEIPT":
+      return "receipt";
+    default:
+      return null;
+  }
+}
+
+/** A send's delivery counts: delivered includes read (read comes after delivered); waiting = queued or sent. */
+export const sendCounts = (s: { delivered: number; read: number; failed: number; queued: number; sent: number }) => ({ delivered: s.delivered + s.read, read: s.read, failed: s.failed, waiting: s.queued + s.sent });
+
+/** What the billing card shows: coming soon (the platform switch), the plan lacks it, off, or on. */
+export function unitsCardState(u: { enabled: boolean; available: boolean; status: "active" | "paused" | "ended" | null }): "soon" | "plan" | "off" | "on" {
+  if (!u.enabled) return "soon";
+  if (!u.available) return "plan";
+  return u.status === "active" ? "on" : "off";
+}

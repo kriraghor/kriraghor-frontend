@@ -219,6 +219,17 @@ export type Reward = S["GymReward"];
 export type MemberPoints = S["GymMemberPoints"];
 export type MyPoints = S["MyGymPoints"];
 export type NoticeSegment = S["GymNoticeSegment"];
+export type SegmentKind = NoticeSegment["kind"];
+/** The segment picker's fields as typed (days as text). */
+export type SegmentDraft = { kind: SegmentKind; days: string; packageId: string; classId: string };
+export const emptySegment = (): SegmentDraft => ({ kind: "active", days: "7", packageId: "", classId: "" });
+/** The segment to send, or null until it is complete (a package or class picked, 1 or more days). */
+export function segmentFrom(d: SegmentDraft): NoticeSegment | null {
+  if (d.kind === "package") return d.packageId ? { kind: d.kind, packageId: d.packageId } : null;
+  if (d.kind === "class") return d.classId ? { kind: d.kind, classId: d.classId } : null;
+  if (d.kind === "expiring" || d.kind === "expired" || d.kind === "not_seen") return /^\d{1,3}$/.test(d.days) && Number(d.days) >= 1 ? { kind: d.kind, days: Number(d.days) } : null;
+  return { kind: d.kind };
+}
 export type Notice = S["GymNotice"];
 export type NoticeEstimate = S["GymNoticeEstimate"];
 export type Lead = S["GymLead"];

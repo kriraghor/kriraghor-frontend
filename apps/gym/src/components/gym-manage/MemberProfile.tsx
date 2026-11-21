@@ -36,6 +36,7 @@ import { emptyPayment, PayDialog, PaymentFields, paymentBody, ReceiptLink, Waive
 import { OnlineCharge, PaymentLinkDialog, RefundDialog } from "./online";
 import { DatePicker } from "@kriraghor/ui/date";
 import { MemberWhatsappCard } from "./Whatsapp";
+import { WaReceiptButton, useWaSending } from "./wa-parts";
 
 /**
  * /manage/[gymId]/members/[memberId] (M24 §4.1): the member's profile. The person and the link to
@@ -702,6 +703,8 @@ function Dues({ ctx, p }: { ctx: GymCtx; p: Profile }) {
   const dues = p.dues.filter((d): d is Due => Boolean(d));
   const title = (d: Due) => p.memberships.find((m) => m?.id === d.membershipId)?.title ?? t("profile.due");
   const can = { collect: p.can.collect, adjust: p.can.adjust };
+  // M24-FR-165: a receipt again on WhatsApp, while sending is on and for whatsapp.send.
+  const waOn = useWaSending(ctx);
   return (
     <Section title={t("profile.dues")} testId="profile-dues">
       {!dues.length ? <p className="text-sm text-muted">{t("profile.noDues")}</p> : null}
@@ -750,6 +753,7 @@ function Dues({ ctx, p }: { ctx: GymCtx; p: Profile }) {
                     {pm.amountPoisha < 0 && pm.reason ? <span className="text-xs text-muted">{pm.reason}</span> : null}
                     <span className="ml-auto flex items-center gap-2">
                       <ReceiptLink url={pm.receiptUrl} />
+                      {waOn && pm.receiptUrl && pm.amountPoisha > 0 && !pm.reversedById ? <WaReceiptButton gymId={ctx.gymId} feePaymentId={pm.id} /> : null}
                       {ctx.owner && pm.method === "online" && pm.amountPoisha > 0 && !pm.reversedById ? (
                         <Button type="button" size="sm" variant="ghost" icon={<ArrowArcLeft size={14} aria-hidden />} onClick={() => setRefunding(pm)} data-testid="payment-refund">
                           {t("online.refund")}

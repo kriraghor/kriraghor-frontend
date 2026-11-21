@@ -18,7 +18,7 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  *    loss (reports.view), Sell (pos.sell), Stock (stock.manage), Lockers (lockers.manage).
  *  - M27 round 2: Classes (classes.manage or attendance.mark), Rewards (rewards.redeem), Notices (notices.send),
  *    Enquiries (leads.manage).
- *  - WhatsApp (chat numbers and the gym page button, M24-FR-157): the owner only.
+ *  - WhatsApp (M24-FR-157, FR-166): whatsapp.send (Send and History); Setup (chat numbers, senders) is the owner's.
  *  - M27 round 3: Staff attendance (shifts.manage or reports.view), Payroll (the owner only), Equipment
  *    (assets.manage or reports.view), and My work for staff with clock.in (my clock and payslips; never the owner).
  * Owners also get Billing (their plan), Payouts (online fees and passes) and All-gyms reports. A gym both owned and worked at shows once, as owned. This only
@@ -103,8 +103,8 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   rewards: ["rewards.redeem"],
   notices: ["notices.send"],
   leads: ["leads.manage"],
-  // WhatsApp for gyms, step 1 (M24-FR-157, 21 Nov 2026): chat numbers and the page button, the owner only.
-  whatsapp: null,
+  // WhatsApp for gyms (M24-FR-157, FR-166, 21 Nov 2026): sending for whatsapp.send; numbers and setup stay the owner's.
+  whatsapp: ["whatsapp.send"],
   // M27 round 3: staff attendance, payroll (the owner only), equipment, and each staff member's own clock and payslips
   staff: ["shifts.manage", "reports.view"],
   payroll: null,

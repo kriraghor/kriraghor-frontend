@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Megaphone } from "@phosphor-icons/react";
-import { Badge, Button, Card, EmptyState, Field, Notice, Select, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, EmptyState, Field, Notice, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
 import { newKey } from "@kriraghor/ui/format";
-import { gymOps2, type NoticeSegment } from "@/lib/gym-ops";
-import { GymPage, useFmt, useGymError, usePackages, type GymCtx } from "../gym-manage/common";
+import { emptySegment, gymOps2, segmentFrom, type NoticeSegment, type SegmentDraft } from "@/lib/gym-ops";
+import { GymPage, useFmt, useGymError, type GymCtx } from "../gym-manage/common";
+import { SegmentPicker } from "./SegmentPicker";
 
 /**
  * /manage/[gymId]/notices (M27-FR-62 to FR-65; notices.send; Standard plan): write a short notice to a group of
@@ -25,7 +26,6 @@ export function Notices({ gymId }: { gymId: string }) {
 }
 
 const KINDS = ["active", "expiring", "expired", "not_seen", "package", "class"] as const;
-type Kind = (typeof KINDS)[number];
 
 function Body({ ctx }: { ctx: GymCtx }) {
   const t = useTranslations("go");
@@ -33,20 +33,14 @@ function Body({ ctx }: { ctx: GymCtx }) {
   const err = useGymError();
   const qc = useQueryClient();
   const toast = useToast();
-  const [kind, setKind] = useState<Kind>("active");
-  const [days, setDays] = useState("7");
-  const [packageId, setPackageId] = useState("");
-  const [classId, setClassId] = useState("");
+  const [seg, setSeg] = useState<SegmentDraft>(emptySegment);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [key, setKey] = useState(newKey);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
-  const packages = usePackages(ctx.gymId, kind === "package");
-  const classes = useQuery({ queryKey: ["go-classes", ctx.gymId], queryFn: () => gymOps2.classes(ctx.gymId), enabled: kind === "class" && Boolean(ctx.gym.features.classes) });
   const history = useQuery({ queryKey: ["go-notices", ctx.gymId], queryFn: () => gymOps2.notices(ctx.gymId) });
-  const segment: NoticeSegment | null =
-    kind === "package" ? (packageId ? { kind, packageId } : null) : kind === "class" ? (classId ? { kind, classId } : null) : ["expiring", "expired", "not_seen"].includes(kind) ? (/^\d{1,3}$/.test(days) && Number(days) >= 1 ? { kind, days: Number(days) } : null) : { kind };
+  const segment: NoticeSegment | null = segmentFrom(seg);
   const [est, setEst] = useState<Awaited<ReturnType<typeof gymOps2.estimate>> | null>(null);
   const segKey = JSON.stringify(segment);
   useEffect(() => {
@@ -89,36 +83,7 @@ function Body({ ctx }: { ctx: GymCtx }) {
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
       <Card className="flex flex-col gap-3" data-testid="notice-form">
         <h2 className="font-display text-lg font-bold">{t("notices.write")}</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Select id="n-kind" label={t("notices.to")} value={kind} onChange={(e) => setKind(e.target.value as Kind)} data-testid="notice-kind">
-            {KINDS.map((k) => (
-              <option key={k} value={k} disabled={k === "class" && !ctx.gym.features.classes}>
-                {t(`notices.seg.${k}`)}
-              </option>
-            ))}
-          </Select>
-          {["expiring", "expired", "not_seen"].includes(kind) ? (
-            <Field id="n-days" label={t("notices.days")} inputMode="numeric" value={days} onChange={(e) => setDays(e.target.value.replace(/\D/g, "").slice(0, 3))} />
-          ) : kind === "package" ? (
-            <Select id="n-pkg" label={t("notices.package")} value={packageId} onChange={(e) => setPackageId(e.target.value)}>
-              <option value="">–</option>
-              {packages.all.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title}
-                </option>
-              ))}
-            </Select>
-          ) : kind === "class" ? (
-            <Select id="n-class" label={t("notices.class")} value={classId} onChange={(e) => setClassId(e.target.value)}>
-              <option value="">–</option>
-              {(classes.data?.items ?? []).map((k) => (
-                <option key={k.id} value={k.id}>
-                  {k.name}
-                </option>
-              ))}
-            </Select>
-          ) : null}
-        </div>
+        <SegmentPicker ctx={ctx} kinds={KINDS} value={seg} onChange={setSeg} idPrefix="n" testId="notice-kind" />
         {est && segment ? (
           <Notice tone={reachable ? "info" : "warning"}>
             <span data-testid="notice-reach">

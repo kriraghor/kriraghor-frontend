@@ -9,7 +9,7 @@ import { Button, Card, Notice, PhoneField, Skeleton, bdMobile, useConfirm, useTo
 import { gymWhatsapp, type MyWhatsapp } from "@/lib/gym-whatsapp";
 import { isNumberProblem, needsRecheck, numberOrNull } from "@/lib/whatsapp";
 import { useGymError } from "@/components/gym-manage/common";
-import { SwitchRow, localNumber } from "@/components/gym-manage/Whatsapp";
+import { SwitchRow, localNumber } from "@/components/gym-manage/wa-parts";
 
 /**
  * "WhatsApp from this gym" on /me/memberships/[memberId] (M24-FR-159): my number for this gym (the phone
