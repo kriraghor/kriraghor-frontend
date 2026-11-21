@@ -4020,9 +4020,9 @@
       "notReached": {
         "no_consent": "{n} did not agree to get news and offers",
         "template": "{n} use a language with no approved message yet",
-        "no_sender": "{n} have no WhatsApp number"
+        "no_sender": "{n} can't be reached until this gym has a WhatsApp number to send from"
       },
-      "units": "Needs {needed} units · {balance} left",
+      "units": "Needs {neededCount, plural, one {{needed} unit} other {{needed} units}} · {balance} left",
       "left": "Group sends left today: {n}",
       "send": "Send to {n}",
       "sendAsk": "Send this on WhatsApp to {n} members?",
@@ -4112,8 +4112,8 @@
       "soon": "Coming soon: receipts, reminders and notices on WhatsApp.",
       "needsPlan": "WhatsApp messages are on the Standard plan and up.",
       "lead": "Units pay for WhatsApp messages from your gyms.",
-      "perMessage": "{utility} units for a receipt or reminder · {marketing} for a notice or greeting",
-      "included": "{n} units included each month",
+      "perMessage": "{utilityCount, plural, one {{utility} unit} other {{utility} units}} for a receipt or reminder · {marketing} for a notice or greeting",
+      "included": "{count, plural, one {{n} unit} other {{n} units}} included each month",
       "switchOn": "Switch on",
       "switchOff": "Switch off",
       "onAsk": "Switch on WhatsApp messages?",

@@ -92,13 +92,13 @@ function UnitsCard({ u }: { u: Units }) {
       setBusy(null);
     }
   };
-  const perMessage = t("units.perMessage", { utility: f.n(u.units.utility), marketing: f.n(u.units.marketing) });
+  const perMessage = t("units.perMessage", { utility: f.n(u.units.utility), utilityCount: u.units.utility, marketing: f.n(u.units.marketing) });
   if (state === "off")
     return (
       <Card padded={false} className="flex flex-col gap-3 p-4" data-testid="billing-whatsapp" data-state="off">
         <Head lead={t("units.lead")} />
         <p className="text-sm text-muted">{perMessage}</p>
-        {u.included ? <p className="text-sm">{t("units.included", { n: f.n(u.included) })}</p> : null}
+        {u.included ? <p className="text-sm">{t("units.included", { n: f.n(u.included), count: u.included })}</p> : null}
         {problem ? <Notice tone="error">{problem}</Notice> : null}
         <Button type="button" className="self-start" busy={busy === "switch"} onClick={() => void setOn(true)} data-testid="wa-units-on">
           {t("units.switchOn")}
@@ -123,7 +123,7 @@ function UnitsCard({ u }: { u: Units }) {
       </div>
       <ul className="flex flex-col gap-1 text-sm">
         {u.included ? (
-          <li className="text-muted">{t("units.included", { n: f.n(u.included) })}</li>
+          <li className="text-muted">{t("units.included", { n: f.n(u.included), count: u.included })}</li>
         ) : null}
         {u.bundles.map((b, i) => (
           <li key={`${b.expiresOn}-${i}`} className="flex justify-between gap-2">

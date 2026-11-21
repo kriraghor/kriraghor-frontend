@@ -168,7 +168,7 @@ function EstimateBox({ est, counting, problem }: { est: Estimate | null; countin
         </ul>
       ) : null}
       <p className="mt-1 text-muted">
-        {t("send.units", { needed: f.n(est.unitsNeeded), balance: f.n(est.balance) })} · {t("send.left", { n: f.n(est.bulkLeft) })}
+        {t("send.units", { needed: f.n(est.unitsNeeded), neededCount: est.unitsNeeded, balance: f.n(est.balance) })} · {t("send.left", { n: f.n(est.bulkLeft) })}
       </p>
     </div>
   );
