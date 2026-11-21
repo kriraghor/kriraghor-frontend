@@ -108,7 +108,7 @@ export function GymTiles({ d, compact = false }: { d: GymDashboard; compact?: bo
         help={d.definitions.passes_sold}
         value={f.n(passesSold.value ?? 0)}
         delta={<TileDelta value={passesSold.delta} period={d.period} />}
-        note={compact ? undefined : t("notes.passKinds", { day: n(passesSold.note, "day"), month: n(passesSold.note, "month"), quarter: n(passesSold.note, "quarter") })}
+        note={compact ? undefined : t("notes.passKinds", { day: f.n(n(passesSold.note, "day")), month: f.n(n(passesSold.note, "month")), quarter: f.n(n(passesSold.note, "quarter")) })}
         spark={passesSold.spark}
         sparkLabels={sparkLabels}
         sparkFormat={f.n}
@@ -144,9 +144,9 @@ export function OrganiserTiles({ d, compact = false }: { d: OrganiserDashboard; 
         label={t("tiles.teams")}
         help={d.definitions.teams}
         value={t("ofTotal", { n: teams.value ?? 0, total: n(teams.note, "maxTeams") })}
-        note={t("notes.teams", { waiting: n(teams.note, "waiting"), unpaid: n(teams.note, "unpaid"), reserve: n(teams.note, "reserve") })}
+        note={t("notes.teams", { waiting: f.n(n(teams.note, "waiting")), unpaid: f.n(n(teams.note, "unpaid")), reserve: f.n(n(teams.note, "reserve")) })}
       />
-      <KpiTile testId="tile-matches" label={t("tiles.matchesPlayed")} help={d.definitions.matches_played} value={t("ofTotal", { n: matchesPlayed.value ?? 0, total: n(matchesPlayed.note, "total") })} note={t("notes.matches")} />
+      <KpiTile testId="tile-matches" label={t("tiles.matchesPlayed")} help={d.definitions.matches_played} value={t("ofTotal", { n: f.n(matchesPlayed.value ?? 0), total: f.n(n(matchesPlayed.note, "total")) })} note={t("notes.matches")} />
     </div>
   );
 }

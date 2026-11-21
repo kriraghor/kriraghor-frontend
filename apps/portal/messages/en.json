@@ -1697,7 +1697,7 @@
   "dashboard": {
     "overview": "Overview",
     "analytics": "Analytics",
-    "analyticsLead": "Your venues week by week: what you earned, how full the courts were, and when teams play.",
+    "analyticsLead": "Your venues over time: what you earned, how full the courts were, and when teams play.",
     "platform": "Platform",
     "period": "Period",
     "periods": {
@@ -1874,8 +1874,8 @@
       "orgNotFound": "We couldn't find this organisation among yours."
     },
     "leads": {
-      "shop": "Your shop week by week: what sold, how many orders, and who comes back.",
-      "gym": "Your gyms week by week: subscriptions sold, front-desk admissions, and the busy hours.",
+      "shop": "Your shop over time: what sold, how many orders, and who comes back.",
+      "gym": "Your gyms over time: subscriptions sold, front-desk admissions, and the busy hours.",
       "organiser": "{name}: teams, entry fees and matches across your tournaments.",
       "none": "Numbers for your venues, shop, gym and sports tournaments show here once you run one."
     },

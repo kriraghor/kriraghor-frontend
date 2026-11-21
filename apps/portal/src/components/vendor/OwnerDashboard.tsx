@@ -50,7 +50,7 @@ export function OwnerTiles({ d }: { d: Data }) {
         help={d.definitions.bookings}
         value={f.n(bookings.value ?? 0)}
         delta={<TileDelta value={bookings.delta} period={d.period} />}
-        note={t("notes.sources", { app: n?.app ?? 0, walkIn: n?.walkIn ?? 0, series: n?.series ?? 0 })}
+        note={t("notes.sources", { app: f.n(n?.app ?? 0), walkIn: f.n(n?.walkIn ?? 0), series: f.n(n?.series ?? 0) })}
         spark={bookings.spark}
         sparkLabels={sparkLabels}
         sparkFormat={f.n}
