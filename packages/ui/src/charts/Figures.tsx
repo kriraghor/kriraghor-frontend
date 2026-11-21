@@ -7,15 +7,18 @@ import { useTranslations } from "next-intl";
 import { cn } from "../cn";
 import { ChartCard, type ChartState, type ChartTable } from "./ChartCard";
 import { deltaTone, type Better } from "./delta";
-import { share, tickEvery } from "./scale";
+import { digits, share, tickEvery } from "./scale";
 
 /**
  * The figures of a dashboard (kriraghor-docs design, charts): the KPI tile with its change and
  * sparkline, a tall split bar for part of a whole, a heat strip for hours and a funnel for steps.
  */
 
-/** A change against a named period: an arrow and the number, coloured by good or bad (not by sign). */
-export function DeltaBadge({ value, kind, label, better = "up" }: { value: number | null; kind: "pct" | "pts"; label: string; better?: Better }) {
+/**
+ * A change against a named period: an arrow and the number, coloured by good or bad (not by sign).
+ * `locale` "bn" prints Bangla digits and "পয়েন্ট" for points (dashboards round 2).
+ */
+export function DeltaBadge({ value, kind, label, better = "up", locale = "en" }: { value: number | null; kind: "pct" | "pts"; label: string; better?: Better; locale?: string }) {
   // Nothing to compare (no previous data): no badge rather than a bare label.
   if (value === null || value === undefined) return null;
   const tone = deltaTone(value, better);
@@ -24,8 +27,8 @@ export function DeltaBadge({ value, kind, label, better = "up" }: { value: numbe
     <span className="inline-flex flex-wrap items-center gap-x-1 text-xs">
       <span className={cn("inline-flex items-center gap-0.5 rounded-pill px-1.5 py-0.5 font-bold tabular-nums", tone === "good" ? "bg-[var(--viz-good-soft)] text-[var(--viz-good)]" : tone === "bad" ? "bg-danger-soft text-danger" : "bg-surface-2 text-muted")}>
         <Icon size={12} weight="bold" aria-hidden />
-        {Math.abs(value)}
-        {kind === "pct" ? "%" : " pts"}
+        {digits(String(Math.abs(value)), locale)}
+        {kind === "pct" ? "%" : locale === "bn" ? " পয়েন্ট" : " pts"}
       </span>
       <span className="text-muted">{label}</span>
     </span>

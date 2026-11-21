@@ -22183,7 +22183,7 @@ export interface paths {
             parameters: {
                 query?: {
                     role?: "member" | "ground_owner" | "shop_owner" | "gym_owner" | "organiser";
-                    period?: "7w" | "qtr" | "yr";
+                    period?: "30d" | "7w" | "qtr" | "yr";
                     groundId?: string;
                     /** @description The sports organisation (role organiser only; you must be a member) */
                     orgId?: string;
@@ -22328,7 +22328,7 @@ export interface paths {
             parameters: {
                 query: {
                     dataset: "owner_bookings" | "owner_revenue" | "member_payments" | "shop_orders" | "shop_sales_by_product" | "gym_passes" | "gym_admissions";
-                    period?: "7w" | "qtr" | "yr";
+                    period?: "30d" | "7w" | "qtr" | "yr";
                 };
                 header?: never;
                 path?: never;
@@ -22469,7 +22469,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    period?: "7w" | "qtr" | "yr";
+                    period?: "30d" | "7w" | "qtr" | "yr";
                     locale?: "en" | "bn";
                 };
                 header?: never;
@@ -22536,7 +22536,7 @@ export interface paths {
             parameters: {
                 query: {
                     dataset: "platform_daily";
-                    period?: "7w" | "qtr" | "yr";
+                    period?: "30d" | "7w" | "qtr" | "yr";
                 };
                 header?: never;
                 path?: never;
@@ -74004,7 +74004,7 @@ export interface components {
                 }[];
             };
             /** @enum {string} */
-            period: "7w" | "qtr" | "yr";
+            period: "30d" | "7w" | "qtr" | "yr";
             buckets: {
                 key: string;
                 from: string;
@@ -74058,7 +74058,7 @@ export interface components {
                 }[];
             };
             /** @enum {string} */
-            period: "7w" | "qtr" | "yr";
+            period: "30d" | "7w" | "qtr" | "yr";
             buckets: {
                 key: string;
                 from: string;
@@ -74111,7 +74111,7 @@ export interface components {
             /** @description Tiles that need product-view counts (conversion, shopper funnel) */
             comingLater: string[];
             /** @enum {string} */
-            period: "7w" | "qtr" | "yr";
+            period: "30d" | "7w" | "qtr" | "yr";
             buckets: {
                 key: string;
                 from: string;
@@ -74160,7 +74160,7 @@ export interface components {
                 }[];
             };
             /** @enum {string} */
-            period: "7w" | "qtr" | "yr";
+            period: "30d" | "7w" | "qtr" | "yr";
             buckets: {
                 key: string;
                 from: string;
@@ -74203,7 +74203,7 @@ export interface components {
                 }[];
             };
             /** @enum {string} */
-            period: "7w" | "qtr" | "yr";
+            period: "30d" | "7w" | "qtr" | "yr";
             buckets: {
                 key: string;
                 from: string;
@@ -74271,7 +74271,7 @@ export interface components {
                 }[];
             };
             /** @enum {string} */
-            period: "7w" | "qtr" | "yr";
+            period: "30d" | "7w" | "qtr" | "yr";
             buckets: {
                 key: string;
                 from: string;

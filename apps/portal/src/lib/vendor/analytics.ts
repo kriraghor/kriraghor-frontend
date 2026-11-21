@@ -1,4 +1,4 @@
-import { hourLabel } from "../dashboard";
+import { DEFAULT_PERIOD, PERIODS, hourLabel } from "../dashboard";
 import { gymHref } from "../links";
 import type { BusinessRole } from "../panel-nav";
 
@@ -86,4 +86,76 @@ export function dayBars(days: readonly { day: string; value: number }[], locale 
   if (days.length <= 10) return { bars: days.map((b) => ({ label: long.format(at(b.day)), value: b.value })), values: true };
   const num = new Intl.DateTimeFormat(lang, { day: "numeric", timeZone: "UTC" });
   return { bars: days.map((b, i) => ({ label: long.format(at(b.day)), value: b.value, tick: i % 5 === 0 ? num.format(at(b.day)) : "" })), values: false };
+}
+
+// ---------------- round 2 (20 Nov 2026): period, venue and measures in the URL, pure helpers
+
+/** /vendor/analytics's URL filters: business (and org), the period (30 days by default) and a venue (`groundId`, "" = all venues). */
+export const ANALYTICS_FILTERS = {
+  business: { default: "", allowed: BUSINESS_PARAMS },
+  org: { default: "" },
+  period: { default: DEFAULT_PERIOD, allowed: PERIODS as readonly string[] },
+  groundId: { default: "" },
+} as const;
+
+/** The vendor home's URL filter: the period of the summary strip and of every business card. */
+export const HOME_FILTERS = { period: { default: DEFAULT_PERIOD, allowed: PERIODS as readonly string[] } } as const;
+
+/** The venue to filter by: the URL's `groundId` when it is one of the owner's venues, else "" (all venues). */
+export function pickGround(groundId: string, grounds: readonly { id: string }[] | undefined): string {
+  if (!groundId || !grounds) return "";
+  return grounds.some((g) => g.id === groundId) ? groundId : "";
+}
+
+export type Measure = "units" | "value";
+export const MEASURES: readonly Measure[] = ["units", "value"];
+
+/**
+ * Sales by category and best sellers by units or by value (the toggle): biggest first (ties by
+ * name), each with the other measure as its quieter second figure.
+ */
+export function rankBy<R extends { units: number; value: number }>(
+  rows: readonly R[],
+  measure: Measure,
+  label: (r: R) => string,
+  key: (r: R) => string,
+  other: (r: R) => string,
+): { key: string; label: string; value: number; secondary: string }[] {
+  return rows
+    .map((r) => ({ key: key(r), label: label(r), value: measure === "units" ? r.units : r.value, secondary: other(r) }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label));
+}
+
+/**
+ * Busiest hours: the API sends the top six hours by time booked, so they are ranked (most booked
+ * first, ties by the earlier hour) rather than drawn as a 24-hour strip whose other hours would
+ * read as empty when they are only not in the top six.
+ */
+export function busiestHours<R extends { hour: number }>(rows: readonly R[], value: (r: R) => number): { hour: number; value: number }[] {
+  return rows.map((r) => ({ hour: r.hour, value: value(r) })).sort((a, b) => b.value - a.value || a.hour - b.hour);
+}
+
+export type FeePart = "held" | "released" | "refunded" | "fee";
+export const FEE_PARTS: readonly FeePart[] = ["held", "released", "refunded", "fee"];
+
+/**
+ * Where one tournament's entry fees are (all time): still held by Kriraghor, released to the
+ * organiser, refunded to teams, and the Kriraghor fee taken on release (what is left of `collected`;
+ * M06 holds: available = held − released − refunded − fee). The parts add up to `collected`; an
+ * inconsistent answer never draws a negative fee.
+ */
+export function feeSplit(e: { collected: number; held: number; released: number; refunded: number }): { total: number; parts: { key: FeePart; value: number }[] } {
+  const fee = Math.max(0, e.collected - e.held - e.released - e.refunded);
+  const parts = [
+    { key: "held" as const, value: Math.max(0, e.held) },
+    { key: "released" as const, value: Math.max(0, e.released) },
+    { key: "refunded" as const, value: Math.max(0, e.refunded) },
+    { key: "fee" as const, value: fee },
+  ];
+  return { total: Math.max(e.collected, parts.reduce((s, p) => s + p.value, 0)), parts };
+}
+
+/** The shop's "coming later" items the page has words for; unknown keys are left out (never shown raw). */
+export function comingLaterItems(keys: readonly string[], known: (key: string) => boolean): string[] {
+  return keys.filter(known);
 }

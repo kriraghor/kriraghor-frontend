@@ -3,12 +3,11 @@
 import type { ReactNode } from "react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowRight, Barbell, Check, Package, QrCode, ShoppingBag, SoccerBall, Storefront, Ticket, Trophy, Wallet, Warehouse } from "@phosphor-icons/react";
-import { api } from "@kriraghor/api-client";
+import { ArrowRight, Barbell, ChartLineUp, Check, Package, QrCode, ShoppingBag, SoccerBall, Storefront, Ticket, Trophy, Wallet, Warehouse } from "@phosphor-icons/react";
 import { useAuth } from "@kriraghor/ui/auth";
 import { publicEnv } from "@kriraghor/session/env";
 import { Badge, buttonClass, ButtonLink, Card, cn, EmptyState, PageTitle, SectionHeading, Skeleton } from "@kriraghor/ui/kit";
-import { checklist, dashboards, mergeActions, type ActionRole } from "@/lib/dashboard";
+import { checklist, dashboards, mergeActions, type ActionRole, type Period } from "@/lib/dashboard";
 import { BUSINESS_ROLES, businessView, type BusinessRole } from "@/lib/panel-nav";
 import { gymDesk } from "@/lib/vendor/gym";
 import { gymHref } from "@/lib/links";
@@ -16,9 +15,12 @@ import { vendor } from "@/lib/vendor/grounds";
 import { shopDesk } from "@/lib/vendor/market";
 import { sportsConsole } from "@/lib/vendor/tournaments";
 import { MePanel } from "../MePanel";
-import { isSportsOrg } from "@/lib/vendor/analytics";
-import { BusinessOverview } from "./BusinessDashboards";
-import { ActionList, OwnerOverview } from "./OwnerDashboard";
+import { HOME_FILTERS, analyticsHref, isSportsOrg, type DashRole } from "@/lib/vendor/analytics";
+import { useUrlFilters } from "@/lib/use-url-filters";
+import { BusinessTiles, DashboardError, useBusinessDashboard } from "./BusinessDashboards";
+import { ActionList, OwnerReliability, VenueSnapshot } from "./OwnerDashboard";
+import { PeriodSwitch } from "./chart-parts";
+import { SummaryStrip, usePayoutSummary } from "./SummaryStrip";
 import { StaffHome } from "./Workplaces";
 
 /**
@@ -32,6 +34,10 @@ import { StaffHome } from "./Workplaces";
  * their tiles too (M19 §6.3), and organisers' to-do items join the list. Since Round B3 the places
  * the person works at as staff follow ("You work at", with their to-do); someone who only works for
  * others gets that alone, without the owner's onboarding.
+ *
+ * Dashboards round 2 (20 Nov 2026): one period for the whole page (30 days by default, in the URL as
+ * ?period=), a summary strip across the businesses (money per kind of business, payouts, to do), and
+ * per business a compact card of two or three tiles with the way into its analytics.
  */
 const ICON: Record<BusinessRole, typeof SoccerBall> = { ground_owner: SoccerBall, shop_owner: Storefront, gym_owner: Barbell, organiser: Trophy };
 /** The `as` kriraghor.com's business page takes (the venue owner is its default). */
@@ -46,13 +52,17 @@ export function VendorHome() {
   const { status } = useAuth();
   const signedIn = status === "signed_in";
   const me = useQuery({ queryKey: ["vendor-me"], enabled: signedIn, queryFn: () => vendor.me() });
+  const f = useUrlFilters(HOME_FILTERS);
+  const period = f.values.period as Period;
   const { active, view, shown } = businessView(me.data);
   const actionRoles = shown.map((r) => ACTIONS_FOR[r]).filter((r): r is ActionRole => Boolean(r));
   const combined = shown.length > 1;
-  // One list for several businesses; the same keys as the sections' own lists.
+  // One list for several businesses, and the strip's to-do count; the same keys as the sections' own lists.
   const actions = useQueries({
-    queries: actionRoles.map((role) => ({ queryKey: ["owner-actions", role], enabled: signedIn && combined, queryFn: () => dashboards.ownerActions(role) })),
+    queries: actionRoles.map((role) => ({ queryKey: ["owner-actions", role], enabled: signedIn, queryFn: () => dashboards.ownerActions(role) })),
   });
+  const orgs = useQuery({ queryKey: ["my-orgs"], queryFn: () => sportsConsole.mine(), enabled: signedIn && shown.includes("organiser") });
+  const sportsOrgIds = (orgs.data?.items ?? []).filter(isSportsOrg).map((o) => o.id);
 
   if (status !== "signed_in") return <MePanel signInHref="/vendor/sign-in" />;
   if (me.isPending) return <Skeleton className="mx-auto mt-10 h-48 max-w-3xl rounded-card" />;
@@ -62,23 +72,25 @@ export function VendorHome() {
 
   const merged = mergeActions(actionRoles.map((role, i) => ({ role, items: actions[i]?.data?.items ?? [] })));
   const actionsLoading = actions.some((q) => q.isPending);
+  const urgent = merged.filter((a) => a.severity === "high").length;
   const notHeld = BUSINESS_ROLES.filter((r) => !active.includes(r));
 
   return (
     <section className="mx-auto max-w-[1200px] px-5 pb-16 pt-8" data-testid="vendor-home">
-      <PageTitle title={view === "all" ? t("title") : t(`sections.${view}`)} description={t("lead")} />
+      <PageTitle title={view === "all" ? t("title") : t(`sections.${view}`)} description={t("lead")} actions={<PeriodSwitch period={period} onChange={(p) => f.set({ period: p })} />} />
+      <SummaryStrip period={period} roles={shown} orgIds={sportsOrgIds} actions={actionsLoading ? null : { lines: merged.length, urgent }} actionsHref={combined ? "#combined-actions" : "#needs-action"} />
       {combined && actionRoles.length ? (
-        <div className="mt-6" data-testid="combined-actions">
+        <div className="mt-8 scroll-mt-24" id="combined-actions" data-testid="combined-actions">
           <SectionHeading title={t("actionsTitle")} />
           <div className="mt-3">{actionsLoading && !merged.length ? <Skeleton className="h-20 rounded-card" /> : <ActionList items={merged} />}</div>
         </div>
       ) : null}
       {shown.map((role) => (
         <BusinessSection key={role} role={role} heading={shown.length > 1 || view === "all"}>
-          {role === "ground_owner" ? <VenueHome me={me.data} showActions={!combined} /> : null}
-          {role === "shop_owner" ? <ShopHome showActions={!combined} /> : null}
-          {role === "gym_owner" ? <GymHome showActions={!combined} /> : null}
-          {role === "organiser" ? <OrganiserHome showActions={!combined} /> : null}
+          {role === "ground_owner" ? <VenueHome me={me.data} showActions={!combined} period={period} /> : null}
+          {role === "shop_owner" ? <ShopHome showActions={!combined} period={period} /> : null}
+          {role === "gym_owner" ? <GymHome showActions={!combined} period={period} /> : null}
+          {role === "organiser" ? <OrganiserHome showActions={!combined} period={period} /> : null}
         </BusinessSection>
       ))}
       {working ? <StaffHome own /> : null}
@@ -117,17 +129,7 @@ type Step = { key: string; done: boolean; href: string };
 
 /** M07: where the earnings go. `null` while unknown (loading or failed): the step is left out then. */
 function usePayoutStep(): Step | null {
-  const { status } = useAuth();
-  const q = useQuery({
-    queryKey: ["my-payout-summary"],
-    enabled: status === "signed_in",
-    retry: false,
-    queryFn: async () => {
-      const { data, error } = await api().GET("/me/payouts/summary");
-      if (error || !data) throw error ?? new Error("payout summary unavailable");
-      return data;
-    },
-  });
+  const q = usePayoutSummary();
   if (!q.data) return null;
   return { key: "payout", done: Boolean(q.data.account), href: "/vendor/payout-account" };
 }
@@ -140,7 +142,10 @@ function SetupChecklist({ steps, testId }: { steps: Step[]; testId: string }) {
     <Card data-testid={testId}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="font-display text-lg font-bold">{t("setup.title")}</h3>
-        <span className="text-sm text-muted">{t("setup.progress", { done: list.doneCount, total: steps.length })}</span>
+        <span className="text-sm font-semibold tabular-nums text-muted">{t("setup.progress", { done: list.doneCount, total: steps.length })}</span>
+      </div>
+      <div role="progressbar" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={list.doneCount} aria-label={t("setup.title")} className="mt-3 h-2 w-full overflow-hidden rounded-pill bg-surface-2">
+        <span className="block h-full rounded-pill bg-brand transition-[width] duration-300" style={{ width: `${steps.length ? (list.doneCount / steps.length) * 100 : 0}%` }} />
       </div>
       <ol className="mt-4 flex flex-col gap-2">
         {steps.map((s, i) => {
@@ -173,7 +178,7 @@ function OwnActions({ role }: { role: ActionRole }) {
   const { status } = useAuth();
   const q = useQuery({ queryKey: ["owner-actions", role], enabled: status === "signed_in", queryFn: () => dashboards.ownerActions(role) });
   return (
-    <div data-testid={`actions-${role}`}>
+    <div data-testid={`actions-${role}`} id="needs-action" className="scroll-mt-24">
       <SectionHeading as="h3" title={t("actions.title")} />
       <div className="mt-2">{q.data ? <ActionList items={q.data.items} /> : q.isError ? <p className="text-sm text-muted">{t("loadFailed")}</p> : <Skeleton className="h-16 rounded-card" />}</div>
     </div>
@@ -194,7 +199,7 @@ function ActiveCard({ testId, title, body, children }: { testId: string; title: 
 
 // ---------------- venue owner (M09, M19)
 
-function VenueHome({ me, showActions }: { me: Me | undefined; showActions: boolean }) {
+function VenueHome({ me, showActions, period }: { me: Me | undefined; showActions: boolean; period: Period }) {
   const tg = useTranslations("vendorGrounds");
   const { status } = useAuth();
   const web = publicEnv().WEB_URL;
@@ -214,14 +219,16 @@ function VenueHome({ me, showActions }: { me: Me | undefined; showActions: boole
         </ButtonLink>
       </ActiveCard>
       {mine.isSuccess ? <SetupChecklist steps={steps} testId="venue-setup" /> : null}
-      <OwnerOverview showActions={showActions} />
+      {showActions ? <OwnActions role="ground_owner" /> : null}
+      <BusinessCard role="ground_owner" period={period} />
+      <OwnerReliability />
     </>
   );
 }
 
 // ---------------- shop owner (M12, M13)
 
-function ShopHome({ showActions }: { showActions: boolean }) {
+function ShopHome({ showActions, period }: { showActions: boolean; period: Period }) {
   const tm = useTranslations("vendorMarket");
   const tn = useTranslations("nav");
   const shop = useQuery({ queryKey: ["vendor-shop"], queryFn: () => shopDesk.profile(), retry: false });
@@ -251,14 +258,14 @@ function ShopHome({ showActions }: { showActions: boolean }) {
       </ActiveCard>
       {!shop.isPending && (!shop.data || !products.isPending) ? <SetupChecklist steps={steps} testId="shop-setup" /> : null}
       {showActions ? <OwnActions role="shop_owner" /> : null}
-      <BusinessOverview role="shop_owner" />
+      <BusinessCard role="shop_owner" period={period} />
     </>
   );
 }
 
 // ---------------- gym owner (M20): the gyms are managed on gym.kriraghor.com/manage (through /go/gym)
 
-function GymHome({ showActions }: { showActions: boolean }) {
+function GymHome({ showActions, period }: { showActions: boolean; period: Period }) {
   const t = useTranslations("vendorHome");
   const tg = useTranslations("vendorGym");
   const gyms = useQuery({ queryKey: ["vendor-gyms"], queryFn: () => gymDesk.mine(), retry: false });
@@ -278,7 +285,7 @@ function GymHome({ showActions }: { showActions: boolean }) {
       </ActiveCard>
       {gyms.isSuccess ? <SetupChecklist steps={steps} testId="gym-setup" /> : null}
       {showActions ? <OwnActions role="gym_owner" /> : null}
-      <BusinessOverview role="gym_owner" />
+      <BusinessCard role="gym_owner" period={period} />
       <div data-testid="gym-quick">
         <SectionHeading as="h3" title={t("gymQuick")} />
         {gyms.isPending ? (
@@ -312,7 +319,7 @@ function GymHome({ showActions }: { showActions: boolean }) {
 
 // ---------------- sports-event organiser (M14)
 
-function OrganiserHome({ showActions }: { showActions: boolean }) {
+function OrganiserHome({ showActions, period }: { showActions: boolean; period: Period }) {
   const t = useTranslations("vendorHome");
   const ts = useTranslations("sportsConsole");
   const { status } = useAuth();
@@ -334,7 +341,7 @@ function OrganiserHome({ showActions }: { showActions: boolean }) {
       {orgs.isSuccess ? <SetupChecklist steps={steps} testId="organiser-setup" /> : null}
       {showActions ? <OwnActions role="organiser" /> : null}
       {sports.filter(isSportsOrg).map((o) => (
-        <BusinessOverview key={o.id} role="organiser" orgId={o.id} title={t("organiser.numbers", { name: o.name })} />
+        <BusinessCard key={o.id} role="organiser" orgId={o.id} title={t("organiser.numbers", { name: o.name })} period={period} />
       ))}
       <div data-testid="organiser-orgs">
         <SectionHeading as="h3" title={t("organiser.orgs")} />
@@ -367,6 +374,49 @@ function OrganiserHome({ showActions }: { showActions: boolean }) {
         )}
       </div>
     </>
+  );
+}
+
+// ---------------- a business's compact card (round 2)
+
+/**
+ * Two or three key tiles of one business for the page's period, and the way into its analytics
+ * (the gym's reports on gym.kriraghor.com). Organisers get one card per sports organisation, named.
+ * The same query as the summary strip, so the home asks once per business.
+ */
+function BusinessCard({ role, orgId, title, period }: { role: DashRole; orgId?: string; title?: string; period: Period }) {
+  const t = useTranslations("dashboard");
+  const d = useBusinessDashboard({ role, orgId }, period);
+  const data = d.data;
+  return (
+    <div className="space-y-3" data-testid={`overview-${role}${orgId ? `-${orgId}` : ""}`}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="min-w-0 font-display text-xl font-bold">{title ?? t("overview")}</h3>
+        <ButtonLink
+          href={analyticsHref(role, orgId)}
+          size="sm"
+          variant="secondary"
+          icon={<ChartLineUp size={18} aria-hidden />}
+          iconEnd={<ArrowRight size={16} aria-hidden />}
+          data-testid={role === "ground_owner" ? "open-analytics" : `open-analytics-${role}`}
+        >
+          {t("openAnalytics")}
+        </ButtonLink>
+      </div>
+      {d.isError && !data ? (
+        <DashboardError error={d.error} onRetry={() => void d.refetch()} />
+      ) : !data ? (
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} className="h-32 rounded-card" />
+          ))}
+        </div>
+      ) : (
+        <div className={d.isFetching && d.isPlaceholderData ? "opacity-60 transition-opacity" : "transition-opacity"}>
+          {data.role === "ground_owner" ? <VenueSnapshot d={data} /> : <BusinessTiles d={data} compact />}
+        </div>
+      )}
+    </div>
   );
 }
 

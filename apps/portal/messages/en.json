@@ -1703,12 +1703,14 @@
     "periods": {
       "7w": "7 weeks",
       "qtr": "Quarter",
-      "yr": "Year"
+      "yr": "Year",
+      "30d": "30 days"
     },
     "vs": {
       "7w": "vs last week so far",
       "qtr": "vs last week so far",
-      "yr": "vs last month so far"
+      "yr": "vs last month so far",
+      "30d": "vs the 30 days before"
     },
     "tiles": {
       "revenue": "Revenue",
@@ -1785,23 +1787,30 @@
     "charts": {
       "revenue": "Revenue",
       "revenueVsLastYear": "Revenue, with last year dashed",
-      "bookingsByDay": "Bookings by day (this period)",
+      "bookingsByDay": "Bookings by day",
       "busiestHours": "Busiest hours",
-      "revenueByGround": "Revenue by venue (this period)",
+      "revenueByGround": "Revenue by venue",
       "volume": "Volume (GTV)",
       "byVertical": "Volume by vertical (this period)",
       "topAreas": "Top areas (bookings this period)",
       "sales": "Sales",
-      "ordersByDay": "Orders by day (this period)",
-      "salesByCategory": "Sales by category (this period)",
+      "ordersByDay": "Orders by day",
+      "salesByCategory": "Sales by category",
       "noCategory": "No category",
       "bestSellers": "Best sellers (last 30 days, items sold)",
       "passSales": "Subscription sales",
-      "admissionsByDay": "Admissions by day (this period)",
+      "admissionsByDay": "Admissions by day",
       "busiestHoursDhaka": "Busiest hours (admissions, Dhaka time)",
-      "salesByPackage": "Sales by package (this period)",
+      "salesByPackage": "Sales by package",
       "registrations": "Team registrations",
-      "feesByEvent": "Entry fees by tournament"
+      "feesByEvent": "Entry fees by tournament",
+      "bestSellersTitle": "Best sellers",
+      "last30": "Last 30 days",
+      "busiestHoursTop": "The six hours with the most time booked",
+      "feesByEventSub": "All time, each tournament's entry fees and where they are now",
+      "byDay": "Day by day",
+      "byWeek": "Week by week",
+      "byMonth": "Month by month"
     },
     "hours": "{n} h",
     "empty": "Nothing yet.",
@@ -1879,7 +1888,54 @@
     },
     "noBusiness": "No business yet",
     "noBusinessBody": "Start a venue, shop, gym or sports organisation from your business home.",
-    "toHome": "Go to your business home"
+    "toHome": "Go to your business home",
+    "scope": {
+      "30d": "The last 30 days",
+      "7w": "This week so far",
+      "qtr": "This week so far",
+      "yr": "This month so far"
+    },
+    "measure": {
+      "label": "Show sales as",
+      "units": "Items sold",
+      "value": "Taka"
+    },
+    "fees": {
+      "tournament": "Tournament",
+      "collected": "Collected",
+      "held": "Held by Kriraghor",
+      "released": "Released to you",
+      "refunded": "Refunded to teams",
+      "fee": "Kriraghor fee"
+    },
+    "ground": {
+      "label": "Venue",
+      "all": "All venues",
+      "csvNote": "Downloads cover all your venues."
+    },
+    "retry": "Try again",
+    "summary": {
+      "title": "Across your businesses",
+      "moneyHelp": "Each business shows its own money: venue revenue, shop sales, gym subscriptions and entry fees are counted differently, so they are not added together.",
+      "venue": "Venue revenue",
+      "shop": "Shop sales",
+      "gym": "Gym subscriptions",
+      "organiser": "Entry fees",
+      "venueCount": "{n, plural, one {# booking} other {# bookings}}",
+      "shopCount": "{n, plural, one {# order} other {# orders}}",
+      "gymCount": "{n, plural, one {# subscription sold} other {# subscriptions sold}}",
+      "organiserCount": "{n, plural, one {# team registration} other {# team registrations}}",
+      "payout": "Next payout",
+      "payoutHelp": "What Kriraghor pays you next, after fees. It does not change with the period.",
+      "payoutOn": "Around {date}",
+      "paidThisMonth": "Paid this month: {amount}",
+      "onHold": "{amount} on hold",
+      "todo": "To do",
+      "todoHelp": "The things in Needs your action below, across your businesses.",
+      "urgent": "{n} urgent",
+      "allClear": "All clear",
+      "todoLink": "See the list"
+    }
   },
   "disputesDesk": {
     "title": "Disputes",

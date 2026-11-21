@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as shared from "@kriraghor/ui/csv";
-import { bucketLabel, checklist, compactTaka, csvErrorKey, csvFilename, deskHref, hourLabel, mergeActions, pct, saveCsv } from "../dashboard";
+import { DEFAULT_PERIOD, PERIODS, asOfLabel, bucketLabel, bucketLabels, checklist, compactTaka, csvErrorKey, csvFilename, dayLabel, deskHref, dhakaToday, hourLabel, hourRange, mergeActions, pct, saveCsv } from "../dashboard";
 
 describe("dashboard helpers (M19)", () => {
   it("taka in lakh and crore from ৳1 lakh up (FR-07)", () => {
@@ -92,5 +92,43 @@ describe("checklist", () => {
   it("is complete when every step is done", () => {
     expect(checklist([{ done: true }, { done: true }])).toMatchObject({ current: -1, complete: true, doneCount: 2 });
     expect(checklist([])).toMatchObject({ current: -1, complete: true, doneCount: 0 });
+  });
+});
+
+describe("dashboards round 2: the 30-day period and day buckets", () => {
+  it("30 days leads the periods and is the default", () => {
+    expect(PERIODS).toEqual(["30d", "7w", "qtr", "yr"]);
+    expect(DEFAULT_PERIOD).toBe("30d");
+  });
+
+  it("a day bucket reads 21 Nov (Bangla digits in bn), with its weekday in full", () => {
+    expect(bucketLabel("2026-11-21")).toBe("21 Nov");
+    expect(dayLabel("2026-11-21")).toBe("Sat 21 Nov");
+    const bnShort = bucketLabel("2026-11-21", "bn");
+    expect(bnShort).toContain("২১");
+    expect(bnShort).not.toMatch(/[0-9]/);
+    expect(dayLabel("2026-11-21", "bn")).toContain("শনি");
+  });
+
+  it("30d labels are days with weekdays; weeks and months keep the short label", () => {
+    expect(bucketLabels(["2026-11-20", "2026-11-21"], "30d")).toEqual({ labels: ["Fri 20 Nov", "Sat 21 Nov"], short: ["20 Nov", "21 Nov"] });
+    expect(bucketLabels(["2026-10-12"], "7w")).toEqual({ labels: ["12 Oct"], short: ["12 Oct"] });
+    expect(bucketLabels(["2026-10"], "yr")).toEqual({ labels: ["Oct 26"], short: ["Oct 26"] });
+    expect(bucketLabels([], "30d")).toEqual({ labels: [], short: [] });
+  });
+
+  it("Dhaka's today and the Updated time (Dhaka clock, Bangla digits in bn)", () => {
+    // 20:30 UTC is already the next day in Dhaka (UTC+6).
+    expect(dhakaToday(new Date("2026-11-20T20:30:00Z"))).toBe("2026-11-21");
+    expect(dhakaToday(new Date("2026-11-21T05:00:00Z"))).toBe("2026-11-21");
+    expect(asOfLabel("2026-11-21T04:42:00Z")).toBe("10:42");
+    expect(asOfLabel("2026-11-21T04:42:00Z", "bn")).toBe("১০:৪২");
+    expect(asOfLabel(null)).toBeNull();
+    expect(asOfLabel("not a date")).toBeNull();
+  });
+
+  it("an hour as a range", () => {
+    expect(hourRange(18)).toBe("6 pm – 7 pm");
+    expect(hourRange(23)).toBe("11 pm – 12 am");
   });
 });

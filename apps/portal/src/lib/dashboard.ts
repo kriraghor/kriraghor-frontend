@@ -7,7 +7,14 @@ import { formatTaka, unwrap } from "./admin/finance";
  * M19 dashboards on the portal: the ground owner's Overview and Analytics (vendor host, customer
  * session) and the platform overview (admin host, staff session: master or view_analytics).
  */
-export type Period = "7w" | "qtr" | "yr";
+export type Period = "30d" | "7w" | "qtr" | "yr";
+/**
+ * The vendor dashboards' periods (round 2, 20 Nov 2026): 30 days (30 Dhaka days, the default),
+ * 7 weeks, a quarter (13 weeks) and a year (12 months). With 30d every tile is the whole 30 days
+ * against the 30 before; with the others a tile is this week (this month for a year).
+ */
+export const PERIODS: Period[] = ["30d", "7w", "qtr", "yr"];
+export const DEFAULT_PERIOD: Period = "30d";
 /** Every answer of GET /me/dashboard, told apart by `role` (read from the path, not the schema names). */
 type DashboardAnswer = paths["/me/dashboard"]["get"]["responses"][200]["content"]["application/json"];
 export type OwnerDashboard = Extract<DashboardAnswer, { role: "ground_owner" }>;
@@ -23,11 +30,12 @@ export type ActionRole = "ground_owner" | "shop_owner" | "gym_owner" | "organise
 export const ACTION_ROLES: readonly string[] = ["ground_owner", "shop_owner", "gym_owner", "organiser"];
 type Locale = "en" | "bn";
 const loc = (locale: string): Locale => (locale === "bn" ? "bn" : "en");
-const dash = async (query: { role: "ground_owner" | "shop_owner" | "gym_owner" | "organiser"; period: Period; locale: Locale; orgId?: string }) => unwrap(await api().GET("/me/dashboard", { params: { query } }));
+const dash = async (query: { role: "ground_owner" | "shop_owner" | "gym_owner" | "organiser"; period: Period; locale: Locale; orgId?: string; groundId?: string }) => unwrap(await api().GET("/me/dashboard", { params: { query } }));
 
 export const dashboards = {
   /** The tiles' definitions come back in the page's language (M19 §6, EN and BN). */
-  owner: async (period: Period, locale = "en") => (await dash({ role: "ground_owner", period, locale: loc(locale) })) as OwnerDashboard,
+  /** `groundId` (one of the owner's venues) filters every venue number (round 2). */
+  owner: async (period: Period, locale = "en", groundId?: string) => (await dash({ role: "ground_owner", period, locale: loc(locale), ...(groundId ? { groundId } : {}) })) as OwnerDashboard,
   /** Round B2 (M19 §6.3): the shop owner's, the gym owner's and one sports organisation's dashboard. */
   shop: async (period: Period, locale = "en") => (await dash({ role: "shop_owner", period, locale: loc(locale) })) as ShopDashboard,
   gym: async (period: Period, locale = "en") => (await dash({ role: "gym_owner", period, locale: loc(locale) })) as GymDashboard,
@@ -109,7 +117,7 @@ export function pct(rate: number | null | undefined, locale = "en"): string {
   return locale === "bn" ? bn(s) : s;
 }
 
-/** A bucket key as a short label: weeks "12 Oct", months "Oct 26". */
+/** A bucket key as a short label: days (30d) and weeks "21 Nov" (a week by its Monday), months "Oct 26". Bangla digits in bn. */
 export function bucketLabel(key: string, locale = "en"): string {
   const month = key.length === 7;
   const d = new Date(`${month ? `${key}-01` : key}T12:00:00Z`);
@@ -119,4 +127,38 @@ export function bucketLabel(key: string, locale = "en"): string {
 /** An hour of the day as "6 pm". */
 export function hourLabel(h: number, locale = "en"): string {
   return new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { hour: "numeric", hour12: true, timeZone: "UTC" }).format(new Date(Date.UTC(2026, 0, 1, h)));
+}
+
+const lang = (locale: string) => (locale === "bn" ? "bn-BD" : "en-GB");
+
+/** A day ("2026-11-21") with its weekday, for tooltips and tables: "Sat 21 Nov". */
+export function dayLabel(day: string, locale = "en"): string {
+  return new Intl.DateTimeFormat(lang(locale), { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`));
+}
+
+/**
+ * The labels of a period's buckets: `labels` in full (tooltip and table: "Sat 21 Nov" for a day of
+ * 30d, "12 Oct" for a week, "Oct 26" for a month) and `short` for the x axis ("21 Nov").
+ */
+export function bucketLabels(keys: readonly string[], period: Period, locale = "en"): { labels: string[]; short: string[] } {
+  const short = keys.map((k) => bucketLabel(k, locale));
+  return { labels: period === "30d" ? keys.map((k) => dayLabel(k, locale)) : short, short };
+}
+
+/** Today in Dhaka as "2026-11-21" (the day the current, unfinished bucket ends on). */
+export function dhakaToday(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Dhaka" }).format(now);
+}
+
+/** A dashboard's `asOf` as Dhaka's clock time ("10:42"; Bangla digits in bn), or null. */
+export function asOfLabel(iso: string | null | undefined, locale = "en"): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Intl.DateTimeFormat(lang(locale), { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Dhaka" }).format(d);
+}
+
+/** An hour of the day as a range: "6 pm – 7 pm". */
+export function hourRange(h: number, locale = "en"): string {
+  return `${hourLabel(h, locale)} – ${hourLabel((h + 1) % 24, locale)}`;
 }
