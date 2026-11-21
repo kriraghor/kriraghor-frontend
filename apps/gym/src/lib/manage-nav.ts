@@ -18,6 +18,7 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  *    loss (reports.view), Sell (pos.sell), Stock (stock.manage), Lockers (lockers.manage).
  *  - M27 round 2: Classes (classes.manage or attendance.mark), Rewards (rewards.redeem), Notices (notices.send),
  *    Enquiries (leads.manage).
+ *  - WhatsApp (M24-FR-157, FR-166): whatsapp.send (Send and History); Setup (chat numbers, senders) is the owner's.
  *  - M27 round 3: Staff attendance (shifts.manage or reports.view), Payroll (the owner only), Equipment
  *    (assets.manage or reports.view), and My work for staff with clock.in (my clock and payslips; never the owner).
  * Owners also get Billing (their plan), Payouts (online fees and passes) and All-gyms reports. A gym both owned and worked at shows once, as owned. This only
@@ -54,6 +55,7 @@ export type ManageKey =
   | "rewards"
   | "notices"
   | "leads"
+  | "whatsapp"
   | "staff"
   | "payroll"
   | "equipment"
@@ -101,6 +103,8 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   rewards: ["rewards.redeem"],
   notices: ["notices.send"],
   leads: ["leads.manage"],
+  // WhatsApp for gyms (M24-FR-157, FR-166, 21 Nov 2026): sending for whatsapp.send; numbers and setup stay the owner's.
+  whatsapp: ["whatsapp.send"],
   // M27 round 3: staff attendance, payroll (the owner only), equipment, and each staff member's own clock and payslips
   staff: ["shifts.manage", "reports.view"],
   payroll: null,
@@ -113,7 +117,7 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
 };
 /** Pages for staff only: the owner does not clock in or get payslips. */
 const STAFF_ONLY = new Set<GymPageKey>(["mywork"]);
-const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "offline", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads", "staff", "payroll", "equipment", "mywork", "deskmode"];
+const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "offline", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads", "whatsapp", "staff", "payroll", "equipment", "mywork", "deskmode"];
 const PATH: Record<GymPageKey, string> = {
   dashboard: "",
   desk: "/desk",
@@ -141,6 +145,7 @@ const PATH: Record<GymPageKey, string> = {
   rewards: "/rewards",
   notices: "/notices",
   leads: "/leads",
+  whatsapp: "/whatsapp",
   staff: "/staff",
   payroll: "/payroll",
   equipment: "/equipment",
@@ -210,7 +215,7 @@ export type GymSectionKey = "today" | "people" | "engage" | "counter" | "money" 
 const SECTIONS: { key: GymSectionKey; pages: GymPageKey[] }[] = [
   { key: "today", pages: ["dashboard", "mywork", "desk", "entrance", "requests"] },
   { key: "people", pages: ["members", "plans", "reviews"] },
-  { key: "engage", pages: ["classes", "rewards", "notices", "leads"] },
+  { key: "engage", pages: ["classes", "rewards", "notices", "leads", "whatsapp"] },
   { key: "counter", pages: ["sell", "stock", "lockers"] },
   { key: "money", pages: ["fees", "closing", "offline", "cash", "expenses", "pnl", "passes", "reports"] },
   { key: "team", pages: ["staff", "payroll", "equipment"] },

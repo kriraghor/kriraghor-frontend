@@ -18,11 +18,12 @@ import { MyPointsCard } from "./MyClasses";
 import { RenewCard } from "./RenewCard";
 import { BodyProgressView } from "./BodyProgress";
 import { gymBody } from "@/lib/gym-progress";
+import { MyWhatsappCard } from "./MyWhatsapp";
 
 /**
  * /me/memberships/[memberId] (M24 §4.1, FR-18): one gym I belong to. Package and period, days left,
  * freezes, dues and payments, receipts, the check-in calendar, my health note (shown to the gym's
- * trainers) and **Unlink from this gym**. Unlinked or left: a read-only history.
+ * trainers), WhatsApp from this gym (M24-FR-159) and **Unlink from this gym**. Unlinked or left: a read-only history.
  */
 export function MyMembership({ memberId }: { memberId: string }) {
   const t = useTranslations("gm");
@@ -192,6 +193,7 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
         {!readOnly ? <MyPointsCard memberId={memberId} /> : null}
         {!readOnly && m.health ? <MyBody memberId={memberId} health={m.health} /> : null}
         {!readOnly ? <HealthNote memberId={memberId} note={m.healthNote ?? null} at={m.healthNoteAt ?? null} /> : null}
+        {!readOnly ? <MyWhatsappCard memberId={memberId} suspended={Boolean(m.gym?.suspended)} /> : null}
         {m.linked ? <Unlink memberId={memberId} gym={m.gym?.name ?? ""} /> : null}
       </div>
     </div>

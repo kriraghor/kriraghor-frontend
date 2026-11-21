@@ -20,7 +20,7 @@ export function Tabs({ value, onValueChange, defaultValue, label, items, variant
 }) {
   return (
     <RTabs.Root value={value} defaultValue={defaultValue ?? items[0]?.value} onValueChange={onValueChange} className={className}>
-      <RTabs.List aria-label={label} className={cn(variant === "pill" ? "inline-flex w-full gap-1 rounded-control bg-surface-2 p-1" : "flex gap-1 overflow-x-auto border-b border-line", listClassName)}>
+      <RTabs.List aria-label={label} className={cn(variant === "pill" ? "inline-flex w-full gap-1 rounded-control bg-surface-2 p-1" : "flex gap-1 overflow-x-auto overflow-y-hidden border-b border-line", listClassName)}>
         {items.map((it) => (
           <RTabs.Trigger
             key={it.value}

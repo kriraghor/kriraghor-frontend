@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Archive, CalendarBlank, ClockUser, IdentificationBadge, Money, Wrench, ChatCircleText, CloudSlash, Gift, Megaphone, ArrowSquareOut, BellRinging, LockKey, Barbell, CashRegister, ChartBar, ChartLineUp, ChartPieSlice, ClipboardText, CreditCard, DoorOpen, Gear, Lockers, Package, PencilSimple, PresentationChart, QrCode, Receipt, ShoppingCart, Star, Ticket, Tray, UploadSimple, UsersThree, Vault, Wallet } from "@phosphor-icons/react";
+import { Archive, CalendarBlank, ClockUser, IdentificationBadge, Money, Wrench, ChatCircleText, CloudSlash, Gift, Megaphone, ArrowSquareOut, BellRinging, LockKey, Barbell, CashRegister, ChartBar, ChartLineUp, ChartPieSlice, ClipboardText, CreditCard, DoorOpen, Gear, Lockers, Package, PencilSimple, PresentationChart, QrCode, Receipt, ShoppingCart, Star, Ticket, Tray, UploadSimple, UsersThree, Vault, Wallet, WhatsappLogo } from "@phosphor-icons/react";
 import { publicEnv } from "@kriraghor/session/env";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
@@ -49,6 +49,7 @@ const ICON: Record<ManageItem["key"], typeof Barbell> = {
   classes: CalendarBlank,
   rewards: Gift,
   notices: Megaphone,
+  whatsapp: WhatsappLogo,
   leads: ChatCircleText,
   staff: IdentificationBadge,
   payroll: Money,

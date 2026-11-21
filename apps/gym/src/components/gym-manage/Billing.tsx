@@ -14,6 +14,7 @@ import { billingBanner, feeKind, gymMoney, type BillingFull, type Invoice } from
 import { Row, useFmt, useGymError } from "./common";
 import { InvoiceStatus, PayInvoiceButton } from "./billing-parts";
 import { SmsAddonCard } from "./SmsAddon";
+import { WhatsappUnitsCard } from "./WhatsappUnits";
 
 /**
  * /manage/billing (owner; M24 §6.6, FR-81 to FR-90): the plan chosen, active members today and this
@@ -70,6 +71,7 @@ export function Billing() {
                 <Fees b={b} />
                 <Founding b={b} />
                 <SmsAddonCard addon={b.smsAddon} />
+                <WhatsappUnitsCard />
               </div>
             </div>
             {problem ? <Notice tone="error">{problem}</Notice> : null}

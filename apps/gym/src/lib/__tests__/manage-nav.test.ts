@@ -44,6 +44,7 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
       "/manage/g1/rewards",
       "/manage/g1/notices",
       "/manage/g1/leads",
+      "/manage/g1/whatsapp",
       "/manage/g1/staff",
       "/manage/g1/payroll",
       "/manage/g1/equipment",
@@ -198,5 +199,17 @@ describe("offline items (M24 §22)", () => {
     expect(gymItems("g1", null, { desk: true }).find((i) => i.key === "offline")).toEqual({ key: "offline", href: "/manage/g1/offline-items" });
     const money = gymSections(gymItems("g1", null)).find((x) => x.key === "money");
     expect(money?.items.map((i) => i.key).slice(0, 3)).toEqual(["fees", "closing", "offline"]);
+  });
+});
+
+describe("WhatsApp (M24-FR-157)", () => {
+  it("is for the owner and staff with whatsapp.send, in Engage after Enquiries", () => {
+    expect(gymItems("g1", null).find((i) => i.key === "whatsapp")).toEqual({ key: "whatsapp", href: "/manage/g1/whatsapp" });
+    expect(canOpen("whatsapp", ["notices.send", "leads.manage", "members.view", "members.edit"])).toBe(false);
+    expect(pages(["notices.send", "leads.manage"])).not.toContain("whatsapp");
+    expect(pages(["members.view", "whatsapp.send"])).toEqual(["dashboard", "members", "requests", "whatsapp"]);
+    expect(staffItems("y1", ["whatsapp.send"])).toEqual([{ key: "whatsapp", href: "/manage/y1/whatsapp" }]);
+    const engage = gymSections(gymItems("g1", null)).find((x) => x.key === "engage");
+    expect(engage?.items.map((i) => i.key)).toEqual(["classes", "rewards", "notices", "leads", "whatsapp"]);
   });
 });

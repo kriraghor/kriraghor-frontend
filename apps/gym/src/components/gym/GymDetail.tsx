@@ -5,7 +5,7 @@ import { GymExtras } from "./GymExtras";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel, localDigits } from "@kriraghor/ui/date";
-import { MapPin } from "@phosphor-icons/react";
+import { MapPin, WhatsappLogo } from "@phosphor-icons/react";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { ShareButton } from "@kriraghor/ui/share";
 import { publicEnv } from "@kriraghor/session/env";
@@ -15,17 +15,20 @@ import { RatingLine, SubjectReviews } from "@kriraghor/ui/trust";
 import { PassBuy } from "./PassBuy";
 import { JoinCta } from "./Join";
 import { VisitCta } from "./Visit";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, buttonClass } from "@kriraghor/ui/kit";
+import { chatHref, gymMessage, gymPageUrl, packageMessage, type WaSay } from "@/lib/whatsapp";
 
 /**
  * /gyms/[slug] (M20 §4; on gym.kriraghor.com since 25 Oct 2026): gallery, address, facilities, the week's hours (Saturday first, women-only
  * windows marked), a map pin and the live packages. The aside buys a subscription (PassBuy), asks to join
  * while the gym takes join requests (JoinCta, M24-FR-16) and books a free trial visit while the gym takes
- * them (VisitCta, M24-FR-110, 9 Nov 2026).
+ * them (VisitCta, M24-FR-110, 9 Nov 2026). With a chat number (M24-FR-158, 21 Nov 2026), a WhatsApp button
+ * beside Share and "Ask on WhatsApp" on each subscription and class, the message prefilled.
  */
 export function GymDetail({ slug }: { slug: string }) {
   const t = useTranslations("gym");
   const tp = useTranslations("gp.join");
+  const tw = useTranslations("gym.wa");
   const locale = useLocale();
   const q = useQuery({ queryKey: ["gym", slug], queryFn: () => gym.page(slug), retry: false });
   const [photo, setPhoto] = useState(0);
@@ -45,6 +48,9 @@ export function GymDetail({ slug }: { slug: string }) {
   const name = (x: { nameEn: string; nameBn: string }) => (locale === "bn" ? x.nameBn : x.nameEn);
   const days = (t.raw("days") as string[]) ?? [];
   const today = new Date(`${g.today}T00:00:00Z`).getUTCDay();
+  const pageUrl = gymPageUrl(publicEnv().GYM_URL, slug);
+  const say: WaSay = (key, values) => tw(`msg.${key}`, values);
+  const waPage = chatHref(g.whatsapp, gymMessage(say, { gym: g.name, url: pageUrl }));
 
   return (
     <div data-theme="gym" className="min-h-[70dvh]">
@@ -71,7 +77,15 @@ export function GymDetail({ slug }: { slug: string }) {
                 <MapPin size={16} aria-hidden /> {tp("map")}
               </a>
             ) : null}
-            <ShareButton url={`${publicEnv().GYM_URL}/gyms/${encodeURIComponent(slug)}`} title={g.area ? `${g.name}, ${name(g.area)}` : g.name} className="mt-3" testId="gym-share" />
+            <div className="mt-3 flex flex-wrap gap-2">
+              <ShareButton url={pageUrl} title={g.area ? `${g.name}, ${name(g.area)}` : g.name} testId="gym-share" />
+              {waPage ? (
+                <a href={waPage} target="_blank" rel="noopener noreferrer" aria-label={tw("buttonLabel", { gym: g.name })} className={buttonClass({ variant: "secondary" })} data-testid="gym-whatsapp">
+                  <WhatsappLogo size={18} weight="fill" className="text-[#1f7a4d]" aria-hidden />
+                  {tw("button")}
+                </a>
+              ) : null}
+            </div>
 
             {g.photos.length ? (
               <div className="mt-5">
@@ -150,19 +164,28 @@ export function GymDetail({ slug }: { slug: string }) {
 
             <h2 className="mt-8 text-2xl font-extrabold">{t("packages")}</h2>
             <ul className="mt-3 grid gap-3 sm:grid-cols-3" data-testid="gym-packages">
-              {g.packages.map((p) => (
-                <li key={p.id} className="surface-card p-4">
-                  <span className="block text-xs font-bold uppercase tracking-wide text-muted">{t(`kind.${p.kind}`)}</span>
-                  <span className="mt-1 block font-bold">{p.title}</span>
-                  <span className="mt-2 block text-2xl font-extrabold tabular-nums">{formatTaka(p.price, locale)}</span>
-                  <span className="text-sm text-muted">{t("forDays", { n: p.days })}</span>
-                </li>
-              ))}
+              {g.packages.map((p) => {
+                const ask = chatHref(g.whatsapp, packageMessage(say, locale, { gym: g.name, title: p.title, pricePoisha: p.price, days: p.days, url: pageUrl }));
+                return (
+                  <li key={p.id} className="surface-card flex flex-col p-4">
+                    <span className="block text-xs font-bold uppercase tracking-wide text-muted">{t(`kind.${p.kind}`)}</span>
+                    <span className="mt-1 block font-bold">{p.title}</span>
+                    <span className="mt-2 block text-2xl font-extrabold tabular-nums">{formatTaka(p.price, locale)}</span>
+                    <span className="text-sm text-muted">{t("forDays", { n: p.days })}</span>
+                    {ask ? (
+                      <a href={ask} target="_blank" rel="noopener noreferrer" aria-label={tw("askPackage", { gym: g.name, package: p.title })} className="mt-auto inline-flex min-h-11 items-center gap-1.5 pt-2 text-sm font-semibold text-brand-text underline-offset-4 hover:underline" data-testid="package-whatsapp">
+                        <WhatsappLogo size={18} aria-hidden />
+                        {tw("ask")}
+                      </a>
+                    ) : null}
+                  </li>
+                );
+              })}
             </ul>
             <p className="mt-4 max-w-3xl text-sm text-muted">{t("refundRule")}</p>
 
             {/* M27 round 2: the class timetable and "Ask the gym". */}
-            <GymExtras slug={slug} gymName={g.name} />
+            <GymExtras slug={slug} gymName={g.name} whatsapp={g.whatsapp} />
 
             {/* M20-FR-10, M17-FR-35: one review per member who visited, with the gym's replies. */}
             <SubjectReviews subjectType="gym" subjectId={g.id} testId="gym-reviews" />

@@ -35,11 +35,13 @@ import { GymPage, MemberStatus, Row, useFmt, useGymError, useDeskPackages, type 
 import { emptyPayment, PayDialog, PaymentFields, paymentBody, ReceiptLink, WaiveDialog } from "./money";
 import { OnlineCharge, PaymentLinkDialog, RefundDialog } from "./online";
 import { DatePicker } from "@kriraghor/ui/date";
+import { MemberWhatsappCard } from "./Whatsapp";
+import { WaReceiptButton, useWaSending } from "./wa-parts";
 
 /**
  * /manage/[gymId]/members/[memberId] (M24 §4.1): the member's profile. The person and the link to
  * their Kriraghor account (invite, unlink), memberships (assign, renew, freeze, unfreeze, change,
- * cancel), the trainer (feature trainers, FR-21), the plans (feature plans, FR-64 to FR-66), dues with their payments (collect, waive, reverse, receipt), the check-in calendar, notes,
+ * cancel), WhatsApp choices (M24-FR-159), the trainer (feature trainers, FR-21), the plans (feature plans, FR-64 to FR-66), dues with their payments (collect, waive, reverse, receipt), the check-in calendar, notes,
  * and mark left, re-join or remove. Each action follows the profile's `can` and the permissions; the
  * API decides (M24-FR-12 to FR-36).
  */
@@ -93,6 +95,8 @@ function Body({ ctx, memberId }: { ctx: GymCtx; memberId: string }) {
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <div className="flex flex-col gap-4">
         <Person ctx={ctx} p={p} />
+        {/* M24-FR-159: the member's WhatsApp choices; changed only by staff who edit members, with the member's word. */}
+        <MemberWhatsappCard ctx={ctx} memberId={memberId} name={p.member.displayName} canEdit={p.can.edit && ctx.can("members.edit") && p.member.status !== "removed"} />
         <Memberships ctx={ctx} p={p} />
         <Trainer ctx={ctx} p={p} />
         <MemberPlans ctx={ctx} p={p} />
@@ -699,6 +703,8 @@ function Dues({ ctx, p }: { ctx: GymCtx; p: Profile }) {
   const dues = p.dues.filter((d): d is Due => Boolean(d));
   const title = (d: Due) => p.memberships.find((m) => m?.id === d.membershipId)?.title ?? t("profile.due");
   const can = { collect: p.can.collect, adjust: p.can.adjust };
+  // M24-FR-165: a receipt again on WhatsApp, while sending is on and for whatsapp.send.
+  const waOn = useWaSending(ctx);
   return (
     <Section title={t("profile.dues")} testId="profile-dues">
       {!dues.length ? <p className="text-sm text-muted">{t("profile.noDues")}</p> : null}
@@ -747,6 +753,7 @@ function Dues({ ctx, p }: { ctx: GymCtx; p: Profile }) {
                     {pm.amountPoisha < 0 && pm.reason ? <span className="text-xs text-muted">{pm.reason}</span> : null}
                     <span className="ml-auto flex items-center gap-2">
                       <ReceiptLink url={pm.receiptUrl} />
+                      {waOn && pm.receiptUrl && pm.amountPoisha > 0 && !pm.reversedById ? <WaReceiptButton gymId={ctx.gymId} feePaymentId={pm.id} /> : null}
                       {ctx.owner && pm.method === "online" && pm.amountPoisha > 0 && !pm.reversedById ? (
                         <Button type="button" size="sm" variant="ghost" icon={<ArrowArcLeft size={14} aria-hidden />} onClick={() => setRefunding(pm)} data-testid="payment-refund">
                           {t("online.refund")}
