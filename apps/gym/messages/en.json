@@ -282,7 +282,8 @@
       "equipment": "Equipment",
       "mywork": "My work",
       "deskmode": "Desk mode",
-      "offline": "Offline items"
+      "offline": "Offline items",
+      "whatsapp": "WhatsApp"
     },
     "section": {
       "today": "Today",
@@ -491,7 +492,19 @@
     "payMonthAsk": "Pay {price} for the next month with {name}?",
     "payMonthAskBody": "You go to the payment page to finish paying.",
     "problemAsk": "Send this problem report?",
-    "problemAskBody": "Kriraghor looks into it before the trainer is paid."
+    "problemAskBody": "Kriraghor looks into it before the trainer is paid.",
+    "wa": {
+      "button": "WhatsApp",
+      "buttonLabel": "Chat with {gym} on WhatsApp",
+      "ask": "Ask on WhatsApp",
+      "askPackage": "Ask {gym} about {package} on WhatsApp",
+      "askClass": "Ask {gym} about {name} on WhatsApp",
+      "msg": {
+        "page": "Hi {gym}, I found you on Kriraghor: {url}",
+        "package": "Hi {gym}, I'd like to know about the {package} subscription ({price}, {days, plural, one {{daysText} day} other {{daysText} days}}). {url}",
+        "class": "Hi {gym}, I'd like to join the {name} class on {day} at {time}."
+      }
+    }
   },
   "vendorGym": {
     "gate": "Gyms are for approved gym owners. Apply as a gym owner first.",
@@ -3850,5 +3863,81 @@
     },
     "findGym": "Find a gym",
     "findTrainer": "Find a trainer"
+  },
+  "gw": {
+    "title": "WhatsApp",
+    "lead": "A WhatsApp button on your gym page opens a chat with you, with the subscription or class already in the message.",
+    "save": "Save",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "saved": "Saved",
+    "numberBad": "Enter a Bangladesh mobile number, for example 01712345678.",
+    "owner": {
+      "title": "Chat number for all your gyms",
+      "body": "Every gym uses this number unless it has its own.",
+      "label": "WhatsApp number",
+      "none": "Not set yet.",
+      "current": "Now: {number}",
+      "saveAsk": "Save this chat number?",
+      "saveBody": "Every gym without its own number will show {number} on its page.",
+      "removeAsk": "Remove the chat number?",
+      "removeBody": "Gyms without their own number will show no WhatsApp button.",
+      "removed": "Chat number removed"
+    },
+    "gym": {
+      "title": "This gym",
+      "label": "This gym's own WhatsApp number",
+      "hint": "Leave empty to use the number for all your gyms.",
+      "show": "Show the WhatsApp button on the gym page",
+      "showHint": "People tap it to chat with you.",
+      "shownOwn": "The gym page shows {number}, this gym's own number.",
+      "shownOwner": "The gym page shows {number}, the number for all your gyms.",
+      "shownNone": "The gym page shows no WhatsApp button.",
+      "noNumber": "Add a number above or for all your gyms to show the button.",
+      "openPage": "Open the gym page",
+      "saveAsk": "Save this gym's WhatsApp settings?"
+    },
+    "api": {
+      "title": "Messages from the panel",
+      "soon": "Sending receipts, reminders and notices on WhatsApp is coming soon.",
+      "on": "Sending on WhatsApp is switched on. It is set up on the Reminders and Notices pages."
+    },
+    "consent": {
+      "service": "Receipts and reminders",
+      "serviceHint": "Payment receipts, and reminders when a subscription or due is coming up.",
+      "news": "News and offers",
+      "newsHint": "New classes, offers and news from the gym.",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "member": {
+      "title": "WhatsApp",
+      "number": "Number",
+      "notGiven": "Not given",
+      "samePhone": "Same as phone •••• {last4}",
+      "never": "The member has not answered yet, so nothing is sent.",
+      "source": {
+        "member": "Set by the member",
+        "desk": "Set at the desk",
+        "stop_reply": "The member replied STOP"
+      },
+      "at": "{source} · {date}",
+      "edit": "Edit",
+      "editTitle": "WhatsApp for {name}",
+      "numberLabel": "WhatsApp number",
+      "now": "Now •••• {last4}.",
+      "numberHint": "Leave empty to use the phone •••• {last4}.",
+      "numberHintNoPhone": "Leave empty to use the member's phone.",
+      "agreed": "The member agreed to these choices",
+      "agreedNeeded": "Tick that the member agreed before saving."
+    },
+    "me": {
+      "title": "WhatsApp from this gym",
+      "lead": "Choose what {gym} may send you on WhatsApp.",
+      "number": "Your WhatsApp number",
+      "numberHint": "Leave empty to use the phone the gym has for you.",
+      "note": "You can turn these off any time, or reply STOP on WhatsApp.",
+      "updated": "We updated what these mean. Please check and save again."
+    }
   }
 }

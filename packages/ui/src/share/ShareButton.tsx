@@ -8,7 +8,7 @@ import { Menu } from "../kit/Overlay";
 import { useToast } from "../kit/Toast";
 import { copyText, isMobileUserAgent, shareLinks, withRef, type ShareTarget } from "./links";
 
-export { copyText, isMobileUserAgent, shareLinks, whatsappUrl, withRef, type ShareLink, type ShareTarget } from "./links";
+export { copyText, isMobileUserAgent, shareLinks, waNumber, whatsappChatUrl, whatsappUrl, withRef, type ShareLink, type ShareTarget } from "./links";
 
 type Props = {
   /** The page's absolute URL (`?ref=share` is added here). */

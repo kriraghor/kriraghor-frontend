@@ -30,6 +30,26 @@ export function whatsappUrl(text: string): string {
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
+/**
+ * A Bangladesh mobile in WhatsApp's form (8801XXXXXXXXX: country code, no plus), from any form people
+ * type or the API returns: 01…, 8801…, +8801… (E.164), with spaces or dashes. Null when it is not a
+ * Bangladesh mobile (013 to 019).
+ */
+export function waNumber(phone: string | null | undefined): string | null {
+  const digits = (phone ?? "").replace(/\D/g, "");
+  const intl = digits.startsWith("880") ? digits : digits.startsWith("0") ? `88${digits}` : null;
+  return intl && /^8801[3-9]\d{8}$/.test(intl) ? intl : null;
+}
+
+/**
+ * A WhatsApp chat with one number, the message prefilled (M27-FR-32, M24-FR-158): the gym's chat button,
+ * the desk's "message this member". Null when the number cannot be read, so no broken button shows.
+ */
+export function whatsappChatUrl(phone: string | null | undefined, text: string): string | null {
+  const n = waNumber(phone);
+  return n ? `https://wa.me/${n}?text=${encodeURIComponent(text)}` : null;
+}
+
 /** Phones and tablets, from the user agent (Messenger's app link only opens there). */
 export function isMobileUserAgent(ua: string | null | undefined): boolean {
   return /Android|iPhone|iPad|iPod|Mobile|Opera Mini|IEMobile/i.test(ua ?? "");

@@ -1,5 +1,6 @@
 import { api } from "@kriraghor/api-client";
 import type { components } from "@kriraghor/api-client/schema";
+import { whatsappChatUrl } from "@kriraghor/ui/share/links";
 import { unwrap } from "./manage";
 
 /**
@@ -201,13 +202,8 @@ export function plusDays(day: string, n: number): string {
 /** A typed barcode: what a USB scanner types before Enter, trimmed; digits and letters only. */
 export const cleanBarcode = (text: string) => text.trim().replace(/[^0-9A-Za-z-]/g, "");
 
-/** A WhatsApp chat link for a Bangladesh phone (+8801…, 01…), the message prefilled (M27-FR-32). Null when the number cannot be read. */
-export function whatsappUrl(phone: string, text: string): string | null {
-  const digits = phone.replace(/\D/g, "");
-  const intl = digits.startsWith("880") ? digits : digits.startsWith("0") ? `88${digits}` : null;
-  if (!intl || !/^8801[3-9]\d{8}$/.test(intl)) return null;
-  return `https://wa.me/${intl}?text=${encodeURIComponent(text)}`;
-}
+/** A WhatsApp chat link for a Bangladesh phone (+8801…, 8801…, 01…), the message prefilled (M27-FR-32). Null when the number cannot be read. Shared with the kit since 21 Nov 2026. */
+export const whatsappUrl = whatsappChatUrl;
 
 /** A tel: link for a phone (spaces and dashes dropped). */
 export const telUrl = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;

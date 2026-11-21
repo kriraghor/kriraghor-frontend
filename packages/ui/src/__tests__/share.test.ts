@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { copyText, isMobileUserAgent, shareLinks, whatsappUrl, withRef } from "../share/links";
+import { copyText, isMobileUserAgent, shareLinks, waNumber, whatsappChatUrl, whatsappUrl, withRef } from "../share/links";
 
 describe("withRef", () => {
   it("adds ref=share to a plain URL", () => {
@@ -29,6 +29,28 @@ describe("whatsappUrl", () => {
     expect(whatsappUrl("Join Gulshan Gladiators: https://kriraghor.com/teams/join/abc?x=1&y")).toBe(
       "https://wa.me/?text=Join%20Gulshan%20Gladiators%3A%20https%3A%2F%2Fkriraghor.com%2Fteams%2Fjoin%2Fabc%3Fx%3D1%26y",
     );
+  });
+});
+
+describe("whatsappChatUrl (M27-FR-32, M24-FR-158)", () => {
+  it("reads a Bangladesh mobile in every form: local, 880 and E.164", () => {
+    expect(whatsappChatUrl("01712345678", "x")).toBe("https://wa.me/8801712345678?text=x");
+    expect(whatsappChatUrl("8801712345678", "x")).toBe("https://wa.me/8801712345678?text=x");
+    expect(whatsappChatUrl("+8801712345678", "x")).toBe("https://wa.me/8801712345678?text=x");
+    expect(whatsappChatUrl("+880 1712-345678", "x")).toBe("https://wa.me/8801712345678?text=x");
+    expect(waNumber("019 1234 5678")).toBe("8801912345678");
+  });
+
+  it("gives null for a number that is not a Bangladesh mobile", () => {
+    for (const bad of ["12345", "01212345678", "+4407911123456", "017123456789", "", null, undefined]) expect(whatsappChatUrl(bad, "x")).toBeNull();
+    expect(waNumber("0171234567")).toBeNull();
+  });
+
+  it("encodes the message, Bangla and links included", () => {
+    expect(whatsappChatUrl("+8801712345678", "Hi Iron House, ৳1,500 & more: https://gym.kriraghor.com/gyms/iron?a=1&b")).toBe(
+      "https://wa.me/8801712345678?text=Hi%20Iron%20House%2C%20%E0%A7%B31%2C500%20%26%20more%3A%20https%3A%2F%2Fgym.kriraghor.com%2Fgyms%2Firon%3Fa%3D1%26b",
+    );
+    expect(whatsappChatUrl("01712345678", "আসসালামু আলাইকুম")).toBe(`https://wa.me/8801712345678?text=${encodeURIComponent("আসসালামু আলাইকুম")}`);
   });
 });
 

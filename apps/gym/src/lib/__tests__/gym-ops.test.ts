@@ -75,6 +75,7 @@ describe("chat buttons (M27-FR-32)", () => {
     const { whatsappUrl, telUrl } = await import("../gym-ops");
     expect(whatsappUrl("+8801712345678", "Hi Rafiq")).toBe("https://wa.me/8801712345678?text=Hi%20Rafiq");
     expect(whatsappUrl("01712345678", "x")).toBe("https://wa.me/8801712345678?text=x");
+    expect(whatsappUrl("8801712345678", "x")).toBe("https://wa.me/8801712345678?text=x");
     expect(whatsappUrl("12345", "x")).toBeNull();
     expect(telUrl("+880 1712-345678")).toBe("tel:+8801712345678");
   });
