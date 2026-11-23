@@ -1,6 +1,6 @@
 {
   "signIn": {
-    "subtitle": "Sign in to buy a subscription, check in and follow your plan, or run your gym."
+    "subtitle": "Sign in to buy a pass, check in and follow your plan, or run your gym."
   },
   "app": {
     "web": "Kriraghor",
@@ -16,7 +16,7 @@
     "signOut": "Sign out",
     "gyms": "Gyms",
     "trainers": "Trainers",
-    "myPasses": "My subscriptions",
+    "myPasses": "My passes",
     "language": "বাংলা",
     "skip": "Skip to content",
     "homeLabel": "Kriraghor Gym home",
@@ -91,11 +91,11 @@
   "footer": {
     "homeLabel": "Kriraghor Gym home",
     "brand": "Kriraghor Gym",
-    "tagline": "Subscriptions at verified gyms, monthly plans with trainers, and the tools to run your own gym.",
+    "tagline": "Passes at verified gyms, monthly plans with trainers, and the tools to run your own gym.",
     "train": "Train",
     "gyms": "Gyms",
     "trainers": "Trainers",
-    "myPasses": "My subscriptions",
+    "myPasses": "My passes",
     "myPlans": "My trainer plans",
     "business": "Run a gym",
     "start": "Start free",
@@ -139,7 +139,7 @@
       },
       "staff": {
         "title": "Staff",
-        "body": "Give your front desk staff only the desks they need: admissions, subscriptions sold, nothing else."
+        "body": "Give your front desk staff only the desks they need: admissions, passes sold, nothing else."
       },
       "plans": {
         "title": "Workout plans",
@@ -149,7 +149,7 @@
     "pricing": {
       "title": "Pricing",
       "earlyAccess": "Free during early access",
-      "earlyAccessBody": "Set up your gym and use every tool at no cost while we build the system with the first gyms. Kriraghor's fee on subscriptions sold online still applies.",
+      "earlyAccessBody": "Set up your gym and use every tool at no cost while we build the system with the first gyms. Kriraghor's fee on passes sold online still applies.",
       "cta": "Start free",
       "perMonth": "{price} / month",
       "free": "Free",
@@ -166,7 +166,7 @@
       "foundingCta": "Become a founding partner"
     },
     "membersTitle": "Looking for a gym?",
-    "membersLead": "Browse verified gyms by area, see women-only hours, and buy a monthly or longer subscription online.",
+    "membersLead": "Browse verified gyms by area, see women-only hours, and buy a monthly or longer pass online.",
     "openPanel": "Open my gym panel"
   },
   "start": {
@@ -176,7 +176,7 @@
     "comingSoon": "Coming soon",
     "public": {
       "title": "A gym members can find",
-      "body": "A public gym page with photos, hours and subscriptions members buy online.",
+      "body": "A public gym page with photos, hours and passes members buy online.",
       "signInFirst": "Sign in first (on the left), then apply here.",
       "ready": "Your gym owner role is active. Create your gym on the left (it starts private), then send it for review from its page."
     },
@@ -248,7 +248,7 @@
       "gyms": "My gyms",
       "edit": "Gym page",
       "desk": "Front desk",
-      "passes": "Subscriptions sold",
+      "passes": "Passes sold",
       "team": "Team",
       "reviews": "Reviews",
       "payouts": "Payouts",
@@ -304,9 +304,9 @@
   "gym": {
     "kicker": "Gym",
     "title": "Train with <em>verified</em> coaches",
-    "lead": "Subscriptions at checked gyms, monthly plans with fitness trainers, and gear for your training. Pay online; the gym or trainer is paid once you have trained.",
+    "lead": "Passes at checked gyms, monthly plans with fitness trainers, and gear for your training. Pay online; the gym or trainer is paid once you have trained.",
     "bookTrainer": "Book a trainer",
-    "myPasses": "My subscriptions",
+    "myPasses": "My passes",
     "sections": "Gym sections",
     "tab": {
       "trainers": "Trainers",
@@ -349,7 +349,7 @@
     "facilities": "Facilities",
     "hours": "Opening hours",
     "closed": "Closed",
-    "packages": "Subscriptions",
+    "packages": "Passes",
     "kind": {
       "day": "Day pass",
       "month": "1 month",
@@ -359,12 +359,12 @@
       "custom": "Custom days"
     },
     "forDays": "Unlimited visits for {n} days, one a day",
-    "refundRule": "A subscription can be cancelled for a full refund until you first use it.",
-    "notSelling": "This gym is not selling subscriptions right now.",
-    "buyTitle": "Buy a subscription",
-    "signInToBuy": "Sign in to buy a subscription. You need a verified phone number.",
+    "refundRule": "A pass can be cancelled for a full refund until you first use it.",
+    "notSelling": "This gym is not selling passes right now.",
+    "buyTitle": "Buy a pass",
+    "signInToBuy": "Sign in to buy a pass. You need a verified phone number.",
     "signIn": "Sign in",
-    "pickPackage": "Subscription",
+    "pickPackage": "Pass",
     "pickStart": "Starts on",
     "today": "Today",
     "noOpenDays": "The gym is not open in the coming days.",
@@ -380,9 +380,9 @@
       "expired": "Ended"
     },
     "noPasses": {
-      "active": "You have no active subscriptions.",
-      "used": "No used subscriptions yet.",
-      "expired": "No ended subscriptions."
+      "active": "You have no active passes.",
+      "used": "No used passes yet.",
+      "expired": "No ended passes."
     },
     "passStatus": {
       "pending_payment": "Waiting for payment",
@@ -393,21 +393,21 @@
       "refunded": "Refunded",
       "void": "Not paid"
     },
-    "passNotFound": "This subscription was not found.",
-    "qrOf": "QR code of subscription {code}",
+    "passNotFound": "This pass was not found.",
+    "qrOf": "QR code of pass {code}",
     "showAtDesk": "Show at the front desk",
     "close": "Close",
     "backupCode": "Backup code (if the desk cannot scan)",
     "deskHint": "The desk scans the QR or types the code. Turn your screen brightness up.",
-    "awaitingPayment": "This subscription is waiting for payment.",
+    "awaitingPayment": "This pass is waiting for payment.",
     "validDates": "Valid",
     "paid": "Paid",
     "lastUsed": "Last used",
     "refunded": "Refunded",
-    "cancelPass": "Cancel this subscription",
-    "cancelConfirm": "Cancel the subscription and get {price} back?",
+    "cancelPass": "Cancel this pass",
+    "cancelConfirm": "Cancel the pass and get {price} back?",
     "cancelYes": "Yes, cancel",
-    "keepPass": "Keep the subscription",
+    "keepPass": "Keep the pass",
     "plansTitle": "Monthly plans",
     "perMonth": "{price} a month",
     "sessions": "{n, plural, one {# session} other {# sessions}} a month",
@@ -451,9 +451,9 @@
     "err": {
       "DATE_OUT_OF_RANGE": "Choose one of the dates offered.",
       "GYM_CLOSED_ON_DATE": "The gym is closed on that day. Choose another day.",
-      "GYM_NOT_AVAILABLE": "This gym is not selling subscriptions right now.",
-      "PACKAGE_UNKNOWN": "This subscription is no longer sold. Reload the page.",
-      "PASS_NOT_REFUNDABLE": "This subscription can no longer be cancelled.",
+      "GYM_NOT_AVAILABLE": "This gym is not selling passes right now.",
+      "PACKAGE_UNKNOWN": "This pass is no longer sold. Reload the page.",
+      "PASS_NOT_REFUNDABLE": "This pass can no longer be cancelled.",
       "PLAN_NOT_AVAILABLE": "This plan is not open for new members.",
       "OWN_PLAN": "You cannot subscribe to your own plan.",
       "ALREADY_SUBSCRIBED": "You already have this plan. See My trainer subscriptions.",
@@ -501,7 +501,7 @@
       "askClass": "Ask {gym} about {name} on WhatsApp",
       "msg": {
         "page": "Hi {gym}, I found you on Kriraghor: {url}",
-        "package": "Hi {gym}, I'd like to know about the {package} subscription ({price}, {days, plural, one {{daysText} day} other {{daysText} days}}). {url}",
+        "package": "Hi {gym}, I'd like to know about the {package} pass ({price}, {days, plural, one {{daysText} day} other {{daysText} days}}). {url}",
         "class": "Hi {gym}, I'd like to join the {name} class on {day} at {time}."
       }
     }
@@ -552,7 +552,7 @@
     "submitEdit": "Send the changes for review",
     "sent": "Sent. Staff usually answer within a day.",
     "pause": "Pause sales",
-    "paused": "Sales paused. Subscriptions already sold still work.",
+    "paused": "Sales paused. Passes already sold still work.",
     "resume": "Resume sales",
     "resumed": "Selling again.",
     "viewPublic": "See the public page",
@@ -598,7 +598,7 @@
       "year": "12 months",
       "custom": "Custom days"
     },
-    "packages": "Subscriptions",
+    "packages": "Passes",
     "packagesHelp": "One package sold online is needed to list your gym. You can sell the others at the desk too.",
     "packageTitle": "Name",
     "packagePrice": "Price (৳)",
@@ -647,12 +647,12 @@
       "todayButton": "Today"
     },
     "sold": {
-      "open": "Subscriptions sold",
-      "title": "Subscriptions sold",
-      "lead": "What each subscription paid, the Kriraghor fee and what you receive. It is paid out at the member's first visit.",
+      "open": "Passes sold",
+      "title": "Passes sold",
+      "lead": "What each pass paid, the Kriraghor fee and what you receive. It is paid out at the member's first visit.",
       "all": "All",
-      "empty": "No subscriptions sold yet.",
-      "pass": "Subscription",
+      "empty": "No passes sold yet.",
+      "pass": "Pass",
       "member": "Member",
       "valid": "Valid",
       "price": "Price",
@@ -662,7 +662,7 @@
       "paidOut": "Paid out {amount}",
       "refunded": "Refunded {amount}",
       "held": "Held until use",
-      "leadStaff": "Subscriptions sold at this gym, with the member and dates. Money stays with the owner."
+      "leadStaff": "Passes sold at this gym, with the member and dates. Money stays with the owner."
     },
     "passStatus": {
       "pending_payment": "Waiting for payment",
@@ -677,12 +677,12 @@
       "active": "You are an approved gym owner.",
       "open": "Open my gyms",
       "applied": "Gym owner application: {status}",
-      "sell": "Run a gym? Sell subscriptions on Kriraghor.",
+      "sell": "Run a gym? Sell passes on Kriraghor.",
       "continue": "Continue the application",
       "start": "Apply as a gym owner"
     },
     "staffTitle": "Gyms you work at",
-    "staffLead": "Open the front desk to admit members, or see the subscriptions sold, as the owner allows.",
+    "staffLead": "Open the front desk to admit members, or see the passes sold, as the owner allows.",
     "addPhotosHint": "JPEG, PNG or WebP",
     "coordsHint": "Optional. They help people find you with Near me.",
     "sellOnline": "Sell {title} online too",
@@ -794,7 +794,7 @@
       "import": "Import",
       "settings": "Settings",
       "edit": "Gym page",
-      "passes": "Subscriptions sold"
+      "passes": "Passes sold"
     },
     "role": {
       "owner": "Owner",
@@ -840,7 +840,7 @@
       "askOwner": "Ask the gym owner to change the plan.",
       "attendance": {
         "title": "Check-ins need a higher plan",
-        "body": "Checking members in at the desk and with their QR is part of the paid plans. You can still find members and admit subscriptions bought online."
+        "body": "Checking members in at the desk and with their QR is part of the paid plans. You can still find members and admit passes bought online."
       },
       "reminders": {
         "title": "Reminders need a higher plan",
@@ -1087,7 +1087,7 @@
       "desk": "At the desk",
       "member_qr": "Member QR",
       "entrance_qr": "Entrance QR",
-      "pass": "Online subscription"
+      "pass": "Online pass"
     },
     "memberStatus": {
       "new": "New",
@@ -1101,7 +1101,7 @@
       "desk": "Added at the desk",
       "platform": "Joined on Kriraghor",
       "import": "Imported",
-      "pass": "From a subscription"
+      "pass": "From a pass"
     },
     "gender": {
       "male": "Male",
@@ -1450,7 +1450,7 @@
     },
     "channel": {
       "desk": "At the desk",
-      "online": "Online (subscriptions)",
+      "online": "Online (passes)",
       "both": "Desk and online"
     },
     "fees": {
@@ -1652,8 +1652,8 @@
       "specialUntil": "Special rate until {date}",
       "referral": "Referral fee",
       "referralHint": "Once per member who found you on Kriraghor",
-      "passCommission": "Subscription commission",
-      "passCommissionHint": "On subscriptions sold online",
+      "passCommission": "Pass commission",
+      "passCommissionHint": "On passes sold online",
       "onlineFeesNoMargin": "Members' online fees carry no Kriraghor fee: only the payment provider's charge, at cost.",
       "foundingTitle": "Founding partner",
       "foundingNo": "Founding partner #{no}",
@@ -1710,7 +1710,7 @@
       "review": "Review",
       "pending": "{n, plural, one {A gym wants to link your account.} other {# gyms want to link your account.}}",
       "noGyms": "You're not a member of a gym on Kriraghor yet",
-      "noGymsBody": "When your gym invites you, the request appears here. You can also buy a subscription at a gym near you.",
+      "noGymsBody": "When your gym invites you, the request appears here. You can also buy a pass at a gym near you.",
       "findGym": "Find a gym",
       "past": "Past gyms",
       "gym": "Gym",
@@ -1767,7 +1767,9 @@
       "acceptAskBody": "The gym will see the details listed on this request.",
       "declineAsk": "Decline the request from {gym}?",
       "gymClosed": "This gym is closed on Kriraghor for now",
-      "gymClosedBody": "Kriraghor has suspended this gym, so check-ins, payments, renewals, classes and visits are stopped. Your records stay. Ask the gym, or contact Kriraghor support."
+      "gymClosedBody": "Kriraghor has suspended this gym, so check-ins, payments, renewals, classes and visits are stopped. Your records stay. Ask the gym, or contact Kriraghor support.",
+      "yourTrainer": "Your trainer",
+      "yourTrainerHint": "Ask your trainer at the desk or about your plan."
     },
     "online": {
       "badge": "Online",
@@ -1973,13 +1975,13 @@
       "gymsIncluded": "{n, plural, one {# gym} other {# gyms}}",
       "compare": "Gyms side by side",
       "gym": "Gym",
-      "passSales": "Subscription sales",
-      "passSalesLead": "Subscriptions sold online on Kriraghor, last 7 weeks.",
-      "passSalesNone": "No subscription sales to show.",
-      "passSalesValue": "Subscription sales",
-      "passesSold": "Subscriptions sold",
+      "passSales": "Pass sales",
+      "passSalesLead": "Passes sold online on Kriraghor, last 7 weeks.",
+      "passSalesNone": "No pass sales to show.",
+      "passSalesValue": "Pass sales",
+      "passesSold": "Passes sold",
       "admissions": "Admissions",
-      "unusedShare": "Unused subscriptions",
+      "unusedShare": "Unused passes",
       "absentFor": "Not seen for",
       "absentGymDays": "The gym's setting",
       "absentDaysN": "{n} days",
@@ -2027,10 +2029,11 @@
       "total": "Total",
       "footer": "Kriraghor · kriraghor.com",
       "payAsk": "Pay this invoice of {amount}?",
-      "payAskBody": "You go to the payment page to finish paying."
+      "payAskBody": "You go to the payment page to finish paying.",
+      "suspensionPause": "Paused while suspended"
     },
     "payouts": {
-      "lead": "Online fees and subscription sales reach you with the weekly payout. Each line shows Kriraghor's fee, the payment provider's charge and what you get."
+      "lead": "Online fees and pass sales reach you with the weekly payout. Each line shows Kriraghor's fee, the payment provider's charge and what you get."
     },
     "remove": {
       "title": "Remove this gym",
@@ -2210,7 +2213,7 @@
   },
   "gp": {
     "hub": {
-      "lead": "Find a gym near you, compare monthly prices and buy a subscription or ask to join.",
+      "lead": "Find a gym near you, compare monthly prices and buy a pass or ask to join.",
       "locating": "Finding you…",
       "nearMe": "Gyms near me",
       "nearMeAgain": "Update my location",
@@ -2498,7 +2501,7 @@
       "lead": "What members say about your gym. Your reply is public, under their review.",
       "waitingOnly": "Only reviews waiting for a reply",
       "empty": "No reviews yet",
-      "emptyBody": "Members can review your gym after they visit with a subscription bought on Kriraghor.",
+      "emptyBody": "Members can review your gym after they visit with a pass bought on Kriraghor.",
       "allReplied": "You have replied to every review.",
       "loadMore": "Show more",
       "stars": "{n} out of 5 stars",
@@ -3845,7 +3848,7 @@
   "gymHome": {
     "kicker": "Gyms in Bangladesh",
     "title": "Find your gym, <em>train your way</em>",
-    "lead": "Monthly subscriptions at verified gyms, trainers with monthly plans, and check-in with your phone.",
+    "lead": "Monthly passes at verified gyms, trainers with monthly plans, and check-in with your phone.",
     "perksTitle": "What you get",
     "perks": {
       "near": {
@@ -3870,7 +3873,7 @@
   },
   "gw": {
     "title": "WhatsApp",
-    "lead": "A WhatsApp button on your gym page opens a chat with you, with the subscription or class already in the message.",
+    "lead": "A WhatsApp button on your gym page opens a chat with you, with the pass or class already in the message.",
     "save": "Save",
     "remove": "Remove",
     "cancel": "Cancel",
@@ -3908,7 +3911,7 @@
     },
     "consent": {
       "service": "Receipts and reminders",
-      "serviceHint": "Payment receipts, and reminders when a subscription or due is coming up.",
+      "serviceHint": "Payment receipts, and reminders when a pass or due is coming up.",
       "news": "News and offers",
       "newsHint": "New classes, offers and news from the gym.",
       "yes": "Yes",
@@ -3993,7 +3996,7 @@
       "kind": {
         "receipt": "Payment receipt",
         "renewal_due": "Renewal due",
-        "ends_today": "Subscription ends today",
+        "ends_today": "Pass ends today",
         "overdue": "Payment overdue",
         "pay_link": "Payment link"
       },
@@ -4093,7 +4096,7 @@
       "kind": {
         "receipt": "Payment receipt",
         "renewal_due": "Renewal due",
-        "ends_today": "Subscription ends today",
+        "ends_today": "Pass ends today",
         "overdue": "Payment overdue",
         "pay_link": "Payment link",
         "notice": "Notice",

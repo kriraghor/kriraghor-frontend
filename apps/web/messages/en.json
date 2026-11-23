@@ -74,7 +74,7 @@
     "openShop": "Open a shop",
     "orders": "My orders",
     "hire": "My hires",
-    "passes": "Gym subscriptions",
+    "passes": "Gym passes",
     "subscriptions": "Trainer subscriptions",
     "proDesk": "Pro desk",
     "teams": "My teams",
@@ -548,7 +548,7 @@
       "gym_owner": {
         "tab": "Gym owner",
         "title": "List your gym",
-        "intro": "Sell subscriptions on Kriraghor. We check your trade licence and your right to the premises once; then you manage your gym and its front desk on the business desk.",
+        "intro": "Sell passes on Kriraghor. We check your trade licence and your right to the premises once; then you manage your gym and its front desk on the business desk.",
         "applyTitle": "As a gym owner you can:",
         "apply": "Start my gym owner application",
         "active": "You are an approved gym owner"
@@ -868,7 +868,7 @@
         "booking": "Booking {ref}",
         "hire_job": "Job {ref}",
         "sub_order": "Order {ref}",
-        "gym_pass": "Subscription {ref}"
+        "gym_pass": "Gym pass {ref}"
       },
       "done": "done {when}",
       "closes": "Rate it by {when}"
@@ -1585,9 +1585,9 @@
     "err": {
       "DATE_OUT_OF_RANGE": "Choose one of the dates offered.",
       "GYM_CLOSED_ON_DATE": "The gym is closed on that day. Choose another day.",
-      "GYM_NOT_AVAILABLE": "This gym is not selling subscriptions right now.",
-      "PACKAGE_UNKNOWN": "This subscription is no longer sold. Reload the page.",
-      "PASS_NOT_REFUNDABLE": "This subscription can no longer be cancelled.",
+      "GYM_NOT_AVAILABLE": "This gym is not selling passes right now.",
+      "PACKAGE_UNKNOWN": "This pass is no longer sold. Reload the page.",
+      "PASS_NOT_REFUNDABLE": "This pass can no longer be cancelled.",
       "PLAN_NOT_AVAILABLE": "This plan is not open for new members.",
       "OWN_PLAN": "You cannot subscribe to your own plan.",
       "ALREADY_SUBSCRIBED": "You already have this plan. See My trainer subscriptions.",
@@ -1988,7 +1988,7 @@
   },
   "footer": {
     "homeLabel": "Kriraghor home",
-    "tagline": "Esports, gym subscriptions, venue booking, gear and talent for players in Bangladesh.",
+    "tagline": "Esports, gym passes, venue booking, gear and talent for players in Bangladesh.",
     "departments": "Departments",
     "esports": "Esports tournaments",
     "leaderboards": "Leaderboards",
@@ -2060,7 +2060,7 @@
       },
       "gym": {
         "title": "Gym",
-        "sub": "Subscriptions with QR entry"
+        "sub": "Passes with QR entry"
       },
       "venues": {
         "title": "Venues",
@@ -2094,7 +2094,7 @@
       },
       "gym": {
         "title": "Gym",
-        "sub": "Gym subscriptions, monthly memberships and personal trainers.",
+        "sub": "Gym passes, monthly memberships and personal trainers.",
         "all": "All gyms",
         "none": "No gyms are listed yet."
       },
@@ -2234,7 +2234,7 @@
           "tab": "Gym",
           "kicker": "Gym and fitness",
           "title": "Train with certified coaches near you",
-          "sub": "Subscriptions, monthly memberships and personal trainers in one place.",
+          "sub": "Passes, monthly memberships and personal trainers in one place.",
           "cta": "Enter the gym"
         }
       }
@@ -2575,8 +2575,8 @@
         "body": "Compare gyms near you by area, price and facilities."
       },
       "s2": {
-        "title": "Buy a subscription or ask to join",
-        "body": "Buy a subscription online, or send a join request and the gym confirms your package."
+        "title": "Buy a pass or ask to join",
+        "body": "Buy a pass online, or send a join request and the gym confirms your package."
       },
       "s3": {
         "title": "Show your QR",
@@ -2697,7 +2697,7 @@
       },
       "gym": {
         "title": "Gym",
-        "body": "Find a gym, buy a subscription, and follow your membership and plans."
+        "body": "Find a gym, buy a pass, and follow your membership and plans."
       },
       "venues": {
         "title": "Venues",
@@ -2743,7 +2743,7 @@
       "title": "Gym management",
       "body": "Run members, fees and attendance on your phone.",
       "a": "Members and renewal dates",
-      "b": "QR check-ins and subscriptions",
+      "b": "QR check-ins and passes",
       "c": "Reminders and reports"
     },
     "venue": {

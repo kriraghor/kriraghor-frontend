@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CalendarBlank, CaretLeft, CaretRight, PencilSimple, Plus, Trash, UsersThree } from "@phosphor-icons/react";
-import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, Select, SkeletonList, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
+import { Avatar, Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, Select, SkeletonList, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { newKey } from "@kriraghor/ui/format";
 import { cn } from "@kriraghor/ui/cn";
 import { dhakaToday } from "@/lib/gym-manage";
 import { byDay, dhakaTime, gymOps2, plusDays, WEEK_DOWS, type ClassSession, type GymClass, type Slot } from "@/lib/gym-ops";
 import { GymPage, useFmt, useGymError, type GymCtx } from "../gym-manage/common";
 import { MemberPick, type PickedMember } from "./parts";
+import { TrainerFace } from "../TrainerFace";
 
 /**
  * /manage/[gymId]/classes (M27-FR-45 to FR-54; classes.manage, or attendance.mark for the desk side;
@@ -84,6 +85,7 @@ function Body({ ctx }: { ctx: GymCtx }) {
                           <span className={cn("block truncate font-semibold", s.status === "cancelled" && "line-through opacity-60")}>{s.name}</span>
                           <span className="block truncate text-xs text-muted">{[s.trainer?.displayName, s.room].filter(Boolean).join(" · ")}</span>
                         </span>
+                        {s.trainer?.displayName ? <Avatar name={s.trainer.displayName} src={s.trainer.avatarUrl} size={28} alt={s.trainer.displayName} /> : null}
                         <SessionCount s={s} />
                       </button>
                     </li>
@@ -108,10 +110,15 @@ function Body({ ctx }: { ctx: GymCtx }) {
                 <li key={k.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold">{k.name}</p>
-                    <p className="text-xs text-muted">
-                      {t("classes.facts", { capacity: f.n(k.capacity), minutes: f.n(k.minutes) })}
-                      {k.trainer?.displayName ? ` · ${k.trainer.displayName}` : ""}
-                      {k.room ? ` · ${k.room}` : ""}
+                    <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-muted">
+                      <span>{t("classes.facts", { capacity: f.n(k.capacity), minutes: f.n(k.minutes) })}</span>
+                      {k.trainer?.displayName ? (
+                        <>
+                          <span aria-hidden>·</span>
+                          <TrainerFace name={k.trainer.displayName} src={k.trainer.avatarUrl} size={24} />
+                        </>
+                      ) : null}
+                      {k.room ? <span>· {k.room}</span> : null}
                     </p>
                     <p className="mt-1 flex flex-wrap gap-1">
                       {k.slots.map((x) => (
@@ -381,7 +388,7 @@ function SessionDialog({ ctx, sessionId, onClose }: { ctx: GymCtx; sessionId: st
             <>
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <SessionCount s={s} />
-                {s.trainer?.displayName ? <span className="text-muted">{s.trainer.displayName}</span> : null}
+                {s.trainer?.displayName ? <TrainerFace name={s.trainer.displayName} src={s.trainer.avatarUrl} size={32} className="text-muted" /> : null}
                 {s.room ? <span className="text-muted">· {s.room}</span> : null}
               </div>
               {s.status === "cancelled" ? <Notice tone="warning">{t("classes.cancelledBecause", { reason: s.cancelReason ?? "" })}</Notice> : null}

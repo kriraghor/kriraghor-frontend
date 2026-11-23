@@ -95,7 +95,8 @@ function Body({ i }: { i: Invoice }) {
               {lines.map((l) => (
                 <tr key={l.id} className="border-b border-[#ecede6]">
                   <td className="py-1.5 pr-3">
-                    {lineText(l, f.locale)}
+                    {/* The server describes every line; suspension_pause (23 Nov 2026) is a credit like the founding discount. */}
+                    {lineText(l, f.locale) || (l.kind === "suspension_pause" ? t("invoice.suspensionPause") : l.kind)}
                     {l.quantity !== 1 ? <span className="block text-xs text-[#55574f] tabular-nums sm:hidden">{f.n(l.quantity)} x {f.taka(l.unitPoisha)}</span> : null}
                   </td>
                   <td className="hidden py-1.5 pr-3 text-right tabular-nums sm:table-cell">{f.n(l.quantity)}</td>

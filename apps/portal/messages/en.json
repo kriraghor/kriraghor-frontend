@@ -63,7 +63,7 @@
     "vendorPayouts": "Payouts",
     "team": "Team",
     "frontDesk": "Front desk",
-    "gymPasses": "Subscriptions sold"
+    "gymPasses": "Passes sold"
   },
   "signIn": {
     "title": "Sign in to Kriraghor",
@@ -1729,10 +1729,10 @@
       "orders": "Orders",
       "averageOrder": "Average order",
       "repeatBuyers": "Repeat buyers",
-      "passSales": "Subscription sales",
-      "passesSold": "Subscriptions sold",
+      "passSales": "Pass sales",
+      "passesSold": "Passes sold",
       "admissions": "Admissions",
-      "unusedShare": "Unused subscriptions",
+      "unusedShare": "Unused passes",
       "teams": "Teams",
       "entryFees": "Entry fees",
       "matchesPlayed": "Matches played"
@@ -1798,7 +1798,7 @@
       "salesByCategory": "Sales by category",
       "noCategory": "No category",
       "bestSellers": "Best sellers (last 30 days, items sold)",
-      "passSales": "Subscription sales",
+      "passSales": "Pass sales",
       "admissionsByDay": "Admissions by day",
       "busiestHoursDhaka": "Busiest hours (admissions, Dhaka time)",
       "salesByPackage": "Sales by package",
@@ -1821,7 +1821,7 @@
       "failed": "Couldn't export. You may have reached this hour's limit.",
       "shopOrders": "Download orders (CSV)",
       "shopProducts": "Download sales by product (CSV)",
-      "gymPasses": "Download subscriptions (CSV)",
+      "gymPasses": "Download passes (CSV)",
       "gymAdmissions": "Download admissions (CSV)",
       "preparing": "Preparing the file…",
       "limit": "You've reached this hour's export limit. Try again later.",
@@ -1865,7 +1865,7 @@
       "body": "These need product-view counts, which Kriraghor does not collect yet."
     },
     "shopNote": "Sales are before the Kriraghor commission and leave out delivery. Settlement shows what you receive.",
-    "gymNote": "Subscription sales are before the Kriraghor fee. Your payouts show what you receive.",
+    "gymNote": "Pass sales are before the Kriraghor fee. Your payouts show what you receive.",
     "organiserNote": "Entry fees stay with Kriraghor until each tournament's fees are released to you.",
     "organiserCsv": "Each tournament's registrations, with squad lists, download from its Teams tab.",
     "openEvents": "Open your tournaments",
@@ -1875,7 +1875,7 @@
     },
     "leads": {
       "shop": "Your shop over time: what sold, how many orders, and who comes back.",
-      "gym": "Your gyms over time: subscriptions sold, front-desk admissions, and the busy hours.",
+      "gym": "Your gyms over time: passes sold, front-desk admissions, and the busy hours.",
       "organiser": "{name}: teams, entry fees and matches across your tournaments.",
       "none": "Numbers for your venues, shop, gym and sports tournaments show here once you run one."
     },
@@ -1916,14 +1916,14 @@
     "retry": "Try again",
     "summary": {
       "title": "Across your businesses",
-      "moneyHelp": "Each business shows its own money: venue revenue, shop sales, gym subscriptions and entry fees are counted differently, so they are not added together.",
+      "moneyHelp": "Each business shows its own money: venue revenue, shop sales, gym passes and entry fees are counted differently, so they are not added together.",
       "venue": "Venue revenue",
       "shop": "Shop sales",
-      "gym": "Gym subscriptions",
+      "gym": "Gym passes",
       "organiser": "Entry fees",
       "venueCount": "{n, plural, one {# booking} other {# bookings}}",
       "shopCount": "{n, plural, one {# order} other {# orders}}",
-      "gymCount": "{n, plural, one {# subscription sold} other {# subscriptions sold}}",
+      "gymCount": "{n, plural, one {# pass sold} other {# passes sold}}",
       "organiserCount": "{n, plural, one {# team registration} other {# team registrations}}",
       "payout": "Next payout",
       "payoutHelp": "What Kriraghor pays you next, after fees. It does not change with the period.",
@@ -3051,23 +3051,23 @@
       "open": "Front desk"
     },
     "sold": {
-      "open": "Subscriptions sold"
+      "open": "Passes sold"
     },
     "home": {
       "active": "You are an approved gym owner.",
       "open": "Open my gyms",
       "applied": "Gym owner application: {status}",
-      "sell": "Run a gym? Sell subscriptions on Kriraghor.",
+      "sell": "Run a gym? Sell passes on Kriraghor.",
       "continue": "Continue the application",
       "start": "Apply as a gym owner"
     }
   },
   "gymAdmin": {
     "title": "Gyms",
-    "intro": "Find a gym, a gym subscription or a trainer subscription. Reviews happen on the Moderation desk; here staff suspend a gym (manage_users) and masters restore it or cancel a subscription for the platform.",
+    "intro": "Find a gym, a gym pass or a trainer subscription. Reviews happen on the Moderation desk; here staff suspend a gym (manage_users) and masters restore it or cancel a pass for the platform.",
     "tab": {
       "gyms": "Gyms",
-      "passes": "Subscriptions",
+      "passes": "Passes",
       "subscriptions": "Trainer subscriptions"
     },
     "name": "Name",
@@ -3089,7 +3089,7 @@
     "none": "Nothing found.",
     "suspend": "Suspend",
     "restore": "Restore",
-    "suspendTitle": "Suspend {name}? It stops selling; subscriptions already sold stay valid.",
+    "suspendTitle": "Suspend {name}? It stops selling; passes already sold stay valid.",
     "restoreTitle": "Restore {name}?",
     "reason": "Reason (kept in the audit log)",
     "reasonNeeded": "Give a reason of at least 5 characters.",
@@ -3105,7 +3105,7 @@
       "void": "Not paid"
     },
     "gym": "Gym",
-    "pass": "Subscription",
+    "pass": "Pass",
     "kind": {
       "day": "Day pass",
       "month": "1 month",
@@ -3120,7 +3120,7 @@
     "firstUse": "First use",
     "escrow": "Escrow hold",
     "cancelPass": "Cancel for the platform (refund {amount})",
-    "cancelTitle": "Cancel subscription {code}",
+    "cancelTitle": "Cancel pass {code}",
     "cancelHelp": "Refunds {amount} still held to the member. Enter your authenticator code.",
     "subCode": "Subscription code",
     "subStatus": {
@@ -3172,11 +3172,11 @@
     "monthPrice": "1 month",
     "remove": "Remove",
     "removeTitle": "Remove {name}?",
-    "removeHelp": "The gym leaves Kriraghor for good. Running online subscriptions are refunded what Kriraghor still holds; money already paid to the gym is listed for support to settle with the owner.",
+    "removeHelp": "The gym leaves Kriraghor for good. Running online passes are refunded what Kriraghor still holds; money already paid to the gym is listed for support to settle with the owner.",
     "removeCodeTitle": "Remove {name}",
     "removeCodeHelp": "Enter your authenticator code to remove the gym and refund what is still held.",
     "removedTitle": "{name} was removed",
-    "removedRefunded": "{count, plural, =0 {No running subscription needed a refund.} one {# running subscription was refunded ({amount}).} other {# running subscriptions were refunded ({amount} in all).}}",
+    "removedRefunded": "{count, plural, =0 {No running pass needed a refund.} one {# running pass was refunded ({amount}).} other {# running passes were refunded ({amount} in all).}}",
     "removedPaidToGym": "Already paid to the gym ({amount} in all). Support settles these with the owner:",
     "removedPaidLine": "{paid} paid to the gym (held before: {held})",
     "removedNothingPaid": "Nothing had been paid to the gym yet.",
@@ -4156,7 +4156,7 @@
     "actionsTitle": "Needs your action",
     "addMore": "Add another business",
     "addMoreLead": "Apply on kriraghor.com with the same account. It shows up here once staff approve it.",
-    "gymQuick": "Front desk and subscriptions",
+    "gymQuick": "Front desk and passes",
     "sections": {
       "ground_owner": "Your venues",
       "shop_owner": "Your shop",
@@ -4233,7 +4233,7 @@
       },
       "gym_owner": {
         "title": "A gym",
-        "body": "Subscriptions and memberships, admitted with a QR code at the front desk."
+        "body": "Passes and memberships, admitted with a QR code at the front desk."
       },
       "organiser": {
         "title": "Sports tournaments",
