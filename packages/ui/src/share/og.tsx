@@ -76,9 +76,10 @@ export function ShareCard({ brand, eyebrow, title, subtitle, stats = [], footer,
       <div style={{ display: "flex", flex: 1, flexDirection: "column", padding: "48px 72px 0" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           {logoSrc ? (
-            <div style={{ display: "flex", width: 84, height: 84, borderRadius: 42, background: "#FFFFFF", alignItems: "center", justifyContent: "center", marginRight: 22 }}>
+            // The white and orange logo straight on the dark field (the 23 Nov 2026 artwork is made for black).
+            <div style={{ display: "flex", width: 104, height: 104, alignItems: "center", justifyContent: "center", marginRight: 18 }}>
               {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
-              <img src={logoSrc} width={72} height={72} />
+              <img src={logoSrc} width={104} height={104} />
             </div>
           ) : null}
           <div style={{ display: "flex", fontSize: 34, letterSpacing: 1 }}>{brand}</div>

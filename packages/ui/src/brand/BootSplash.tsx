@@ -25,7 +25,7 @@ export function BootSplash({ word }: { word: string }) {
       {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document -- App Router root layout (a Pages Router rule) */}
       <Script id="kg-splash" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: splashScript }} />
       <div className="kg-splash" aria-hidden data-testid="boot-splash">
-        <LogoMark size={112} motion="join" />
+        <LogoMark size={160} motion="join" />
         <p className="kg-splash-word">{word}</p>
       </div>
     </>

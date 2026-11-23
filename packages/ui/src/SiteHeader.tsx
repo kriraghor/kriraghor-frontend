@@ -155,7 +155,7 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
             {t("nav.skip")}
           </a>
           <Link href={homeHref} className="flex min-w-0 shrink-0 items-center gap-2.5 justify-self-start no-underline" aria-label={t("nav.homeLabel")}>
-            <LogoMark size={36} motion="live" className="shrink-0" />
+            <LogoMark size={52} motion="live" className="shrink-0" />
             {/* With a search on a phone the mark alone, so the box gets the room; the name stays for screen readers. */}
             <span className={cn("truncate whitespace-nowrap font-display text-lg font-bold tracking-tight sm:text-xl", search && "sr-only sm:not-sr-only")}>{t(`app.${titleKey}`)}</span>
           </Link>

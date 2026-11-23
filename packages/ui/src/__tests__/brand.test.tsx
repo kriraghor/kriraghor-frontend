@@ -6,14 +6,15 @@ import { SOCIAL_PROFILES, SocialLinks } from "../brand/SocialLinks";
 describe("LogoMark", () => {
   it("stacks the three pieces, with both inks so the black parts can follow the theme", () => {
     const html = renderToStaticMarkup(<LogoMark size={36} />);
-    for (const piece of ["logo-bottle.png", "logo-bottle-dark.png", "logo-lower.png", "logo-lower-dark.png", "logo-upper.png"]) expect(html).toContain(`/brand/${piece}`);
+    for (const piece of ["logo-stem.png", "logo-stem-dark.png", "logo-lower.png", "logo-lower-dark.png", "logo-upper.png"]) expect(html).toContain(`/brand/${piece}`);
+    expect(html).not.toContain("logo-bottle");
     expect(html).toContain('aria-hidden="true"');
   });
 
-  it("names its motion and the always-dark band in its classes; only the splash has the ripple", () => {
+  it("names its motion and the always-dark band in its classes; the new K has no ring to ripple", () => {
     expect(renderToStaticMarkup(<LogoMark motion="live" onBand />)).toMatch(/kg-live.*kg-on-band/);
-    expect(renderToStaticMarkup(<LogoMark motion="join" />)).toContain("kg-ring");
-    expect(renderToStaticMarkup(<LogoMark motion="live" />)).not.toContain("kg-ring");
+    expect(renderToStaticMarkup(<LogoMark motion="join" />)).toMatch(/kg-join/);
+    expect(renderToStaticMarkup(<LogoMark motion="join" />)).not.toContain("kg-ring");
   });
 
   it("is an image with a name only when it is given one", () => {

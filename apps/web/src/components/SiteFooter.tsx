@@ -59,7 +59,7 @@ export async function SiteFooter() {
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div className="col-span-2 sm:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 no-underline" aria-label={t("homeLabel")}>
-              <LogoMark size={38} motion="live" onBand />
+              <LogoMark size={54} motion="live" onBand />
               <span className="font-bangla text-xl font-bold" lang="bn">
                 ক্রীড়াঘর
               </span>

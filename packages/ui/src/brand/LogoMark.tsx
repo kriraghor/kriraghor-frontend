@@ -4,12 +4,14 @@ import { cn } from "../cn";
 export type LogoMotion = "none" | "join" | "loop" | "live";
 
 /**
- * The Kriraghor logo as its three pieces (bottle with its ring, upper arm, lower arm), stacked so they
- * line up exactly (apps' public/brand, made by scripts/split-logo.mjs).
+ * The Kriraghor logo (the "K" of 23 Nov 2026) as its three pieces (the stem, the orange strokes, the lower
+ * arm), stacked so they line up exactly (apps' public/brand, made by scripts/split-logo.mjs).
  *
- * Motion: `join` unfolds it once with a ripple from the ring (splash); `loop` opens and closes the arms
- * (route loading); `live` unfolds it quickly on load and opens the arms when its link is hovered (header
- * and footer). Styles: @kriraghor/ui/styles/motion.css, all of it off for reduced motion.
+ * Motion: `join` builds it once and pulses (splash); `loop` opens and closes the strokes (route loading);
+ * `live` builds it quickly on load and opens the strokes when its link is hovered (header and footer).
+ * Styles: @kriraghor/ui/styles/motion.css, all of it off for reduced motion.
+ *
+ * `size` is the mark's width; the box is 0.56 of that tall (the mark's shape).
  *
  * The black parts turn white with the dark theme. `onBand` keeps them white in either theme, for the
  * always-dark footer band.
@@ -24,12 +26,11 @@ export function LogoMark({ size = 112, motion = "none", label, className, onBand
       aria-label={label}
       aria-hidden={label ? undefined : true}
     >
-      {img("kg-b kg-ink", "/brand/logo-bottle.png")}
-      {img("kg-b kg-ink-dark", "/brand/logo-bottle-dark.png")}
+      {img("kg-b kg-ink", "/brand/logo-stem.png")}
+      {img("kg-b kg-ink-dark", "/brand/logo-stem-dark.png")}
       {img("kg-d kg-ink", "/brand/logo-lower.png")}
       {img("kg-d kg-ink-dark", "/brand/logo-lower-dark.png")}
       {img("kg-u", "/brand/logo-upper.png")}
-      {motion === "join" ? <span className="kg-ring" /> : null}
     </span>
   );
 }
