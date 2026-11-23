@@ -45,7 +45,7 @@ export async function SiteFooter() {
       <div className="mx-auto grid max-w-[1320px] gap-8 px-5 py-12 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <Link href="/" className="inline-flex items-center gap-2 no-underline" aria-label={t("homeLabel")}>
-            <LogoMark size={36} motion="live" />
+            <LogoMark size={52} motion="live" />
             <span className="font-display text-lg font-extrabold">{t("brand")}</span>
           </Link>
           <p className="mt-3 max-w-[34ch] text-sm text-muted">{t("tagline")}</p>

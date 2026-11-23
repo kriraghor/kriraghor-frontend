@@ -1,6 +1,7 @@
-// Builds every logo file from the two master images in scripts/brand (Version A, product owner, 5 Nov 2026):
-// the same-size transparent pieces the animations use (bottle with its ring, upper arm, lower arm), the whole
-// logo, the white-tile icons (browser tab, phone home screen, share images) and favicon.ico.
+// Builds every logo file from the two master images in scripts/brand (the "K" of 23 Nov 2026, made from the
+// product owner's artwork by brand-from-art.mjs): the same-size transparent pieces the animations use (the
+// stem, the orange strokes, the lower arm), the whole logo, the icons on black (browser tab, phone home
+// screen, share images: the artwork's own black) and favicon.ico.
 //
 // The pieces only divide the master's pixels, so stacked they are the master again.
 //
@@ -15,22 +16,22 @@ const BRAND = join(root, "scripts", "brand");
 const APPS = ["web", "esports", "gym", "portal"].map((a) => join(root, "apps", a, "public"));
 const PIECE = 256; // shown at up to 128 px, so 2× is enough
 
-// The ring in the master's 1024 square: its centre and outer radius, and the bottle's right edge.
-const RING = { x: 276, y: 676, r: 178 };
-const BOTTLE_RIGHT = 384;
+// In the master's 1024 square, the lower arm is the white (or ink) below and right of this corner; the rest of
+// the white is the stem. The two never touch: the orange strokes run between them.
+const LOWER = { x: 394, y: 471 };
 
 async function pieces(file) {
   const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const { width: W, height: H } = info;
-  const out = { bottle: Buffer.alloc(data.length), upper: Buffer.alloc(data.length), lower: Buffer.alloc(data.length) };
+  const out = { stem: Buffer.alloc(data.length), upper: Buffer.alloc(data.length), lower: Buffer.alloc(data.length) };
   for (let i = 0; i < W * H; i++) {
     const [r, g, b, a] = [data[i * 4], data[i * 4 + 1], data[i * 4 + 2], data[i * 4 + 3]];
     if (!a) continue;
     const x = i % W;
     const y = (i - x) / W;
-    const orange = r > 200 && b < 60 && g < 170;
-    const inRing = (x - RING.x) ** 2 + (y - RING.y) ** 2 <= RING.r ** 2;
-    const name = orange ? "upper" : inRing || x <= BOTTLE_RIGHT ? "bottle" : "lower";
+    // Orange by its hue (red well above green), so its soft edges stay with it; white and black ink never are.
+    const orange = r > 1.6 * g + 8 && r > b + 40;
+    const name = orange ? "upper" : x > LOWER.x && y > LOWER.y ? "lower" : "stem";
     out[name].set([r, g, b, a], i * 4);
   }
   const png = {};
@@ -40,12 +41,12 @@ async function pieces(file) {
   return png;
 }
 
-/** The logo on a white rounded tile: browser tabs and home screens can be any colour, and the logo has black in it. */
+/** The logo on a black rounded tile, as in the artwork: browser tabs and home screens can be any colour. */
 async function tile(size, { radius = 0.18, fill = 0.84 } = {}) {
   const r = Math.round(size * radius);
-  const bg = Buffer.from(`<svg width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${r}" fill="#fff"/></svg>`);
+  const bg = Buffer.from(`<svg width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${r}" fill="#000"/></svg>`);
   const inner = Math.round(size * fill);
-  const logo = await sharp(join(BRAND, "logo-light.png")).resize(inner, inner, { kernel: "lanczos3" }).toBuffer();
+  const logo = await sharp(join(BRAND, "logo-dark.png")).resize(inner, inner, { kernel: "lanczos3" }).toBuffer();
   const at = Math.round((size - inner) / 2);
   return sharp(bg).composite([{ input: logo, left: at, top: at }]).png({ compressionLevel: 9 }).toBuffer();
 }
@@ -73,14 +74,15 @@ const light = await pieces(join(BRAND, "logo-light.png"));
 const dark = await pieces(join(BRAND, "logo-dark.png"));
 const whole = (name, size) => sharp(join(BRAND, `logo-${name}.png`)).resize(size, size, { kernel: "lanczos3" }).png({ compressionLevel: 9 }).toBuffer();
 const files = {
-  "brand/logo-bottle.png": light.bottle,
-  "brand/logo-bottle-dark.png": dark.bottle,
+  "brand/logo-stem.png": light.stem,
+  "brand/logo-stem-dark.png": dark.stem,
   "brand/logo-lower.png": light.lower,
   "brand/logo-lower-dark.png": dark.lower,
   "brand/logo-upper.png": light.upper,
   "brand/logo-mark.png": await whole("light", PIECE),
   "brand/logo-mark-dark.png": await whole("dark", PIECE),
-  "logo.png": await whole("light", 512),
+  // The share cards' logo (packages/ui share/og.tsx), on their dark field.
+  "logo.png": await whole("dark", 512),
   "icon-512.png": await tile(512),
   "apple-icon.png": await tile(180, { radius: 0 }),
 };

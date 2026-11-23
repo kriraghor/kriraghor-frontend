@@ -9,17 +9,22 @@
 }
 
 /* ---------------------------------------------------------------- the logo, in three pieces */
+/* The "K" (23 Nov 2026) is wide: the box is the mark's own shape (0.56 as tall as wide), and the square
+   pieces sit centred in it, their empty top and bottom overflowing (transparent, never hit). */
 .kg-mark {
   position: relative;
   width: var(--kg-mark, 112px);
-  aspect-ratio: 1;
+  height: calc(var(--kg-mark, 112px) * 0.56);
   flex: none;
 }
 .kg-mark > img {
   position: absolute;
-  inset: 0;
+  left: 0;
+  top: calc(var(--kg-mark, 112px) * -0.22);
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -46,14 +51,14 @@
     display: block;
   }
 }
-/* The arms turn around the point where they meet the ring. */
+/* The strokes and the lower arm turn around the point where the K's parts meet. */
 .kg-mark > .kg-u,
 .kg-mark > .kg-d {
-  transform-origin: 42% 63%;
+  transform-origin: 41% 51%;
 }
 
-/* Join: the bottle drops in, the arms unfold from it one after the other, then the mark pulses once and a
-   ripple leaves the ring. Transforms only (no layout). */
+/* Join: the stem drops in, the orange strokes and the lower arm unfold from it one after the other, then the
+   mark pulses once. Transforms only (no layout). */
 .kg-join > .kg-b {
   animation: kg-in-b 680ms var(--kg-spring) both;
 }
@@ -65,17 +70,6 @@
 }
 .kg-join {
   animation: kg-lock 460ms ease-out 1000ms both;
-}
-.kg-join > .kg-ring {
-  position: absolute;
-  left: 10%;
-  top: 49%;
-  width: 34%;
-  height: 34%;
-  border-radius: 9999px;
-  border: 2px solid #f86a00;
-  opacity: 0;
-  animation: kg-ring 900ms ease-out 1000ms forwards;
 }
 @keyframes kg-in-b {
   from {
@@ -107,16 +101,6 @@
 @keyframes kg-lock {
   40% {
     transform: scale(1.07);
-  }
-}
-@keyframes kg-ring {
-  from {
-    opacity: 0.55;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 0;
-    transform: scale(1.55);
   }
 }
 
@@ -161,8 +145,8 @@
   }
 }
 
-/* Live (header and footer): the arms unfold once on load, and open a little when the link is hovered or
-   focused. The animation fills backwards only, so it never holds a transform over the hover. */
+/* Live (header and footer): the strokes and the lower arm unfold once on load, and open a little when the
+   link is hovered or focused. The animation fills backwards only, so it never holds a transform over the hover. */
 .kg-live > .kg-u,
 .kg-live > .kg-d {
   transition: transform 260ms var(--kg-spring);
@@ -188,9 +172,6 @@ a:focus-visible > .kg-live > .kg-d {
     animation: none !important;
     transition: none !important;
     transform: none !important;
-  }
-  .kg-mark > .kg-ring {
-    display: none;
   }
 }
 
