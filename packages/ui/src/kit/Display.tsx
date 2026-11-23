@@ -57,18 +57,26 @@ export function Chip({ active, className, children, count, ...rest }: HTMLAttrib
   );
 }
 
-/** Initials on brand green, or the picture. */
-export function Avatar({ name, src, size = 40, className }: { name: string; src?: string | null; size?: number; className?: string }) {
+/**
+ * Initials on brand green, or the picture. Decorative by default; with `alt` (a person's name) the
+ * picture, or the initials, is announced as that person's photo.
+ */
+export function Avatar({ name, src, size = 40, alt, className }: { name: string; src?: string | null; size?: number; alt?: string; className?: string }) {
   const initials = name
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase())
     .join("");
+  const label = alt?.trim() || undefined;
   return (
-    <span className={cn("inline-flex shrink-0 items-center justify-center overflow-hidden rounded-pill bg-brand-soft font-display font-bold text-brand-text", className)} style={{ width: size, height: size, fontSize: size * 0.38 }} aria-hidden>
+    <span
+      className={cn("inline-flex shrink-0 items-center justify-center overflow-hidden rounded-pill bg-brand-soft font-display font-bold text-brand-text", className)}
+      style={{ width: size, height: size, fontSize: size * 0.38 }}
+      {...(label ? (src ? {} : { role: "img", "aria-label": label }) : { "aria-hidden": true })}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element -- user pictures come from many hosts */}
-      {src ? <img src={src} alt="" className="size-full object-cover" /> : initials || "?"}
+      {src ? <img src={src} alt={label ?? ""} width={size} height={size} className="size-full object-cover" /> : label ? <span aria-hidden>{initials || "?"}</span> : initials || "?"}
     </span>
   );
 }

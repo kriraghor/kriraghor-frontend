@@ -34,6 +34,7 @@ import {
 } from "@/lib/plans";
 import { GymPage, MemberStatus, useFmt, useGymError, type GymCtx } from "./common";
 import { ExercisePick } from "../gym-ops/ExerciseLibrary";
+import { TrainerFace } from "../TrainerFace";
 
 const KINDS: PlanKind[] = ["workout", "diet"];
 const KIND_ICON = { workout: Barbell, diet: ForkKnife } as const;
@@ -327,7 +328,7 @@ function EditForm({ ctx, plan }: { ctx: GymCtx; plan: PlanDetail }) {
             <li key={v.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2 text-sm">
               <Badge tone={v.version === plan.currentVersion ? "brand" : "neutral"}>{t("versionN", { n: v.version })}</Badge>
               <span className="tabular-nums text-muted">{f.date(v.createdAt)}</span>
-              <span className="text-muted">{v.createdBy.displayName ?? ""}</span>
+              {v.createdBy.displayName ? <TrainerFace name={v.createdBy.displayName} src={v.createdBy.avatarUrl} size={24} className="text-muted" testId="plan-version-author" /> : null}
               <span className="ml-auto text-muted">{t("items", { n: itemCount(v.content) })}</span>
               {v.version !== plan.currentVersion && !retired ? (
                 <Button type="button" size="sm" variant="ghost" onClick={() => setContent(v.content)}>

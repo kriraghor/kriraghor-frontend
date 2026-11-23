@@ -168,4 +168,12 @@ describe("billing (M24-FR-84 to FR-90)", () => {
     expect(lineText({ descriptionEn: "Basic plan", descriptionBn: "বেসিক প্ল্যান" }, "en")).toBe("Basic plan");
     expect(lineText({ descriptionEn: "Basic plan", descriptionBn: "" }, "bn")).toBe("Basic plan");
   });
+  it("a paused-while-suspended credit reads like the other credit lines, with its own fallback label (23 Nov 2026)", async () => {
+    const line = { descriptionEn: "Paused while suspended: 4 days", descriptionBn: "স্থগিত থাকায় বিরতি: ৪ দিন" };
+    expect(lineText(line, "en")).toBe("Paused while suspended: 4 days");
+    expect(lineText(line, "bn")).toBe("স্থগিত থাকায় বিরতি: ৪ দিন");
+    const en = (await import("../../../messages/en.json")).default;
+    const bn = (await import("../../../messages/bn.json")).default;
+    expect([en.gm.invoice.suspensionPause, bn.gm.invoice.suspensionPause]).toEqual(["Paused while suspended", "স্থগিত থাকায় বিরতি"]);
+  });
 });

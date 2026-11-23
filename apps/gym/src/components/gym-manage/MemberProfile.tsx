@@ -31,6 +31,7 @@ import {
 import { MonthCalendar } from "./MonthCalendar";
 import { MemberPlans } from "./MemberPlans";
 import { useTrainers } from "./Members";
+import { TrainerFace } from "../TrainerFace";
 import { GymPage, MemberStatus, Row, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 import { emptyPayment, PayDialog, PaymentFields, paymentBody, ReceiptLink, WaiveDialog } from "./money";
 import { OnlineCharge, PaymentLinkDialog, RefundDialog } from "./online";
@@ -171,9 +172,12 @@ function Trainer({ ctx, p }: { ctx: GymCtx; p: Profile }) {
   };
   return (
     <Section title={t("profile.trainer")} testId="profile-trainer" actions={<Barbell size={20} aria-hidden className="text-muted" />}>
-      {!canEdit ? (
-        <p>{m.trainer?.displayName ?? t("members.trainerNoName")}</p>
-      ) : !trainers.length && !m.trainer ? (
+      {m.trainer ? (
+        <div className={canEdit ? "mb-3" : undefined}>
+          <TrainerFace name={m.trainer.displayName ?? t("members.trainerNoName")} src={m.trainer.avatarUrl} size={40} className="font-semibold" />
+        </div>
+      ) : null}
+      {!canEdit ? null : !trainers.length && !m.trainer ? (
         <p className="text-sm text-muted">{t("profile.noTrainers")}</p>
       ) : (
         <div className="flex flex-wrap items-end gap-2">

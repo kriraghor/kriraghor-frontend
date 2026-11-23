@@ -7,9 +7,9 @@ import { ArrowLeft, ClipboardText, QrCode, Snowflake } from "@phosphor-icons/rea
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard } from "@kriraghor/ui/account";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
-import { Badge, Button, ButtonLink, Card, Dialog, Field, Notice, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Avatar, Badge, Button, ButtonLink, Card, Dialog, Field, Notice, Select, Skeleton, Textarea, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
-import { dhakaToday, gymMe, monthOf, type Due, type Membership } from "@/lib/gym-manage";
+import { dhakaToday, gymMe, monthOf, type Due, type Membership, type MyMembership as MyMembershipData } from "@/lib/gym-manage";
 import { MemberStatus, Row, useFmt, useGymError } from "@/components/gym-manage/common";
 import { MonthCalendar } from "@/components/gym-manage/MonthCalendar";
 import { ReceiptLink } from "@/components/gym-manage/money";
@@ -71,6 +71,22 @@ function MyBodyProgress({ memberId }: { memberId: string }) {
   );
 }
 
+/** The trainer the gym assigned to me (M24-FR-174, 23 Nov 2026): their photo, or initials, and name. */
+function YourTrainer({ trainer }: { trainer: NonNullable<MyMembershipData["trainer"]> }) {
+  const t = useTranslations("gm");
+  const name = trainer.displayName ?? t("members.trainerNoName");
+  return (
+    <Card className="flex items-center gap-3" data-testid="me-trainer">
+      <Avatar name={name} src={trainer.avatarUrl} size={40} alt={name} />
+      <div className="min-w-0">
+        <p className="text-sm text-muted">{t("me.yourTrainer")}</p>
+        <p className="truncate font-semibold">{name}</p>
+        <p className="text-sm text-muted">{t("me.yourTrainerHint")}</p>
+      </div>
+    </Card>
+  );
+}
+
 function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.membership>>; memberId: string; f: ReturnType<typeof useFmt> }) {
   const t = useTranslations("gm");
   const m = data.member;
@@ -118,6 +134,7 @@ function Body({ data, memberId, f }: { data: Awaited<ReturnType<typeof gymMe.mem
           </div>
         </Card>
       ) : null}
+      {data.trainer ? <YourTrainer trainer={data.trainer} /> : null}
       {!readOnly ? <RenewCard memberId={memberId} payable={payable} /> : null}
       {!readOnly ? <MyBodyProgress memberId={memberId} /> : null}
       <div className="grid gap-4 lg:grid-cols-2">

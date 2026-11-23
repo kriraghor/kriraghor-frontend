@@ -9,6 +9,7 @@ import { Button, Field, Notice, PhoneField, Textarea } from "@kriraghor/ui/kit";
 import { nameProblem, phoneProblem } from "@/lib/validate";
 import { byDay, dhakaTime, gymOps2 } from "@/lib/gym-ops";
 import { useFmt } from "@/components/gym-manage/common";
+import { TrainerFace } from "@/components/TrainerFace";
 import { chatHref, classMessage, type WaSay } from "@/lib/whatsapp";
 
 /**
@@ -46,10 +47,17 @@ function Timetable({ items, gymName, whatsapp }: { items: Awaited<ReturnType<typ
                 const ask = chatHref(whatsapp, classMessage(say, locale, { gym: gymName, name: s.name, date: d.date, startsAt: s.startsAt }));
                 return (
                   <li key={s.id} className="flex flex-col">
-                    <span className="flex items-baseline justify-between gap-2">
-                      <span>
-                        <span className="font-bold tabular-nums">{dhakaTime(s.startsAt)}</span> {s.name}
-                        {s.trainer?.displayName ? <span className="text-muted"> · {s.trainer.displayName}</span> : null}
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
+                        <span>
+                          <span className="font-bold tabular-nums">{dhakaTime(s.startsAt)}</span> {s.name}
+                        </span>
+                        {s.trainer?.displayName ? (
+                          <>
+                            <span aria-hidden className="text-muted">·</span>
+                            <TrainerFace name={s.trainer.displayName} src={s.trainer.avatarUrl} size={24} className="text-muted" />
+                          </>
+                        ) : null}
                       </span>
                       <span className="shrink-0 text-xs text-muted">{s.spaces ? t("page.spaces", { n: f.n(s.spaces) }) : t("page.full")}</span>
                     </span>

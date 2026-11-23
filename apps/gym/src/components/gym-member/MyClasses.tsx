@@ -14,6 +14,7 @@ import { cn } from "@kriraghor/ui/cn";
 import { gymMe } from "@/lib/gym-manage";
 import { byDay, dhakaTime, gymOps2 } from "@/lib/gym-ops";
 import { useFmt, useGymError } from "@/components/gym-manage/common";
+import { TrainerFace } from "@/components/TrainerFace";
 
 /**
  * /me/classes (M27-FR-48 to FR-50): the class timetable of my gym for two weeks; book a place (or the waitlist
@@ -85,14 +86,15 @@ function Timetable({ memberId }: { memberId: string }) {
             {d.items.map((s) => {
               const mine = s.myBooking;
               const cancelled = s.status === "cancelled";
+              const rest = [s.room, !cancelled ? (s.spaces ? t("my.spaces", { n: f.n(s.spaces) }) : t("my.full")) : null].filter(Boolean).join(" · ");
               return (
                 <li key={s.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                   <span className="w-12 font-bold tabular-nums">{dhakaTime(s.startsAt)}</span>
                   <span className="min-w-0 flex-1">
                     <span className={cn("block font-semibold", cancelled && "line-through opacity-60")}>{s.name}</span>
-                    <span className="block text-xs text-muted">
-                      {[s.trainer?.displayName, s.room].filter(Boolean).join(" · ")}
-                      {!cancelled ? ` · ${s.spaces ? t("my.spaces", { n: f.n(s.spaces) }) : t("my.full")}` : ""}
+                    <span className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-muted">
+                      {s.trainer?.displayName ? <TrainerFace name={s.trainer.displayName} src={s.trainer.avatarUrl} size={24} /> : null}
+                      {rest ? <span>{s.trainer?.displayName ? `· ${rest}` : rest}</span> : null}
                     </span>
                   </span>
                   {cancelled ? (

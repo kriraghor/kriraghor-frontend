@@ -5,6 +5,7 @@ import { cn } from "../cn";
 import { OtpInput } from "../kit/Form";
 import { SegmentedControl } from "../kit/Tabs";
 import { buttonClass } from "../kit/Button";
+import { Avatar } from "../kit/Display";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -105,5 +106,30 @@ describe("SegmentedControl", () => {
     key(radios[0], "ArrowLeft");
     expect(radios[2].getAttribute("aria-checked")).toBe("true");
     expect(document.activeElement).toBe(radios[2]);
+  });
+});
+
+describe("Avatar (trainer photos, 23 Nov 2026)", () => {
+  it("is decorative without alt", () => {
+    act(() => root.render(<Avatar name="Rafi Ahmed" src="https://cdn.example/r.jpg" size={32} />));
+    const span = host.firstElementChild!;
+    expect(span.getAttribute("aria-hidden")).toBe("true");
+    expect(host.querySelector("img")!.getAttribute("alt")).toBe("");
+  });
+
+  it("names the photo with alt, at a fixed size", () => {
+    act(() => root.render(<Avatar name="Rafi Ahmed" src="https://cdn.example/r.jpg" size={32} alt="Rafi Ahmed" />));
+    const img = host.querySelector("img")!;
+    expect(img.getAttribute("alt")).toBe("Rafi Ahmed");
+    expect([img.getAttribute("width"), img.getAttribute("height")]).toEqual(["32", "32"]);
+    expect(host.firstElementChild!.hasAttribute("aria-hidden")).toBe(false);
+  });
+
+  it("announces initials as the person when there is no photo", () => {
+    act(() => root.render(<Avatar name="Rafi Ahmed" alt="Rafi Ahmed" size={24} />));
+    const span = host.firstElementChild!;
+    expect(span.getAttribute("role")).toBe("img");
+    expect(span.getAttribute("aria-label")).toBe("Rafi Ahmed");
+    expect(span.textContent).toBe("RA");
   });
 });

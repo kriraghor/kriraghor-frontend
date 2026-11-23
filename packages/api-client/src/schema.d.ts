@@ -77690,11 +77690,12 @@ export interface components {
             };
             /** Format: date */
             lastCheckInOn: string | null;
-            /** @description The assigned trainer (M24-FR-21) */
+            /** @description The assigned trainer with their account photo (M24-FR-21, FR-174) */
             trainer: {
                 /** Format: uuid */
                 businessMemberId: string;
                 displayName: string | null;
+                avatarUrl: string | null;
             } | null;
             /** @description Only for the owner and staff with fees.collect */
             outstandingPoisha?: number;
@@ -77903,11 +77904,12 @@ export interface components {
                 /** Format: date-time */
                 createdAt: string;
                 notesCount: number;
-                /** @description The assigned trainer (M24-FR-21) */
+                /** @description The assigned trainer with their account photo (M24-FR-21, FR-174) */
                 trainer: {
                     /** Format: uuid */
                     businessMemberId: string;
                     displayName: string | null;
+                    avatarUrl: string | null;
                 } | null;
             };
             link: {
@@ -78572,7 +78574,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 /** @enum {string} */
-                kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "whatsapp_bundle" | "vat" | "adjustment";
+                kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "whatsapp_bundle" | "suspension_pause" | "vat" | "adjustment";
                 descriptionEn: string;
                 descriptionBn: string;
                 quantity: number;
@@ -78750,6 +78752,11 @@ export interface components {
                 } | null;
                 memberCode?: string;
             }[];
+            /** @description M24-FR-174: the trainer the gym assigned to me, with their photo */
+            trainer: {
+                displayName: string | null;
+                avatarUrl: string | null;
+            } | null;
         };
         GymBmi: {
             value: number;
@@ -79671,7 +79678,7 @@ export interface components {
                     /** Format: uuid */
                     id: string;
                     /** @enum {string} */
-                    kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "whatsapp_bundle" | "vat" | "adjustment";
+                    kind: "tier" | "proration" | "founding_free" | "founding_discount" | "referral" | "sms_addon" | "sms_bundle" | "whatsapp_bundle" | "suspension_pause" | "vat" | "adjustment";
                     descriptionEn: string;
                     descriptionBn: string;
                     quantity: number;
@@ -79711,6 +79718,8 @@ export interface components {
                 /** Format: uuid */
                 businessMemberId: string;
                 displayName: string | null;
+                /** @description Their account photo (23 Nov 2026), or null */
+                avatarUrl: string | null;
                 /** @description Which of the two trainer permissions they hold */
                 permissions: ("members.trainer" | "plans.manage")[];
                 assignedMembers: number;
@@ -79927,6 +79936,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 displayName: string | null;
+                avatarUrl: string | null;
             };
         };
         /** @description M24 §6.10: up to 7 named days of exercises, or the meals of a diet chart; at most gym_manage.plan_max_items per day or meal and gym_manage.diet_max_meals meals */
@@ -80519,6 +80529,7 @@ export interface components {
                 /** Format: uuid */
                 userId: string;
                 displayName: string | null;
+                avatarUrl: string | null;
                 owner: boolean;
             }[];
         };
@@ -80534,6 +80545,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 displayName: string | null;
+                avatarUrl: string | null;
             } | null;
             capacity: number;
             minutes: number;
@@ -80565,6 +80577,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 displayName: string | null;
+                avatarUrl: string | null;
             } | null;
             /** Format: date */
             localDate: string;
@@ -80591,6 +80604,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 displayName: string | null;
+                avatarUrl: string | null;
             } | null;
             /** Format: date */
             localDate: string;
@@ -80838,6 +80852,7 @@ export interface components {
                     /** Format: uuid */
                     id: string;
                     displayName: string | null;
+                    avatarUrl: string | null;
                 } | null;
                 /** Format: date */
                 localDate: string;
@@ -80921,6 +80936,7 @@ export interface components {
                     /** Format: uuid */
                     id: string;
                     displayName: string | null;
+                    avatarUrl: string | null;
                 } | null;
                 /** Format: date */
                 localDate: string;

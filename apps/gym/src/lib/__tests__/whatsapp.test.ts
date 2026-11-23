@@ -22,11 +22,11 @@ describe("WhatsApp chat messages on the gym page (M24-FR-158)", () => {
     expect(gymMessage(sayIn("bn"), { gym: "Iron House", url })).toBe("হ্যালো Iron House, ক্রীড়াঘরে আপনাদের খুঁজে পেলাম: https://gym.kriraghor.com/gyms/iron-house");
   });
 
-  it("a subscription carries its title, price and days, Bangla digits in bn", () => {
+  it("a pass carries its title, price and days, Bangla digits in bn", () => {
     const x = { gym: "Iron House", title: "Monthly", pricePoisha: 150000, days: 30, url };
-    expect(packageMessage(sayIn("en"), "en", x)).toBe("Hi Iron House, I'd like to know about the Monthly subscription (৳1,500, 30 days). https://gym.kriraghor.com/gyms/iron-house");
+    expect(packageMessage(sayIn("en"), "en", x)).toBe("Hi Iron House, I'd like to know about the Monthly pass (৳1,500, 30 days). https://gym.kriraghor.com/gyms/iron-house");
     expect(packageMessage(sayIn("en"), "en", { ...x, days: 1 })).toContain("(৳1,500, 1 day)");
-    expect(packageMessage(sayIn("bn"), "bn", x)).toBe("হ্যালো Iron House, Monthly সাবস্ক্রিপশন (৳১,৫০০, ৩০ দিন) সম্পর্কে জানতে চাই। https://gym.kriraghor.com/gyms/iron-house");
+    expect(packageMessage(sayIn("bn"), "bn", x)).toBe("হ্যালো Iron House, Monthly পাস (৳১,৫০০, ৩০ দিন) সম্পর্কে জানতে চাই। https://gym.kriraghor.com/gyms/iron-house");
   });
 
   it("a class carries its name, day and Dhaka time", () => {
