@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { closeMenu, openMenu } from "./menu";
 
 test("health endpoint answers", async ({ request }) => {
   const res = await request.get("/api/health");
@@ -28,7 +29,9 @@ test("home renders and links to sign-in", async ({ page }) => {
 
 test("switches to Bangla without changing the URL", async ({ page }) => {
   await page.goto("/sign-in");
+  await openMenu(page);
   await page.getByRole("button", { name: "বাংলা" }).click();
+  await closeMenu(page);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("আবার স্বাগতম");
   await expect(page).toHaveURL(/\/sign-in$/);
 });
