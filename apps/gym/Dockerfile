@@ -7,9 +7,10 @@
 #
 # Build stages use the full Node image; the runtime is distroless Node 24 (Debian 13): no shell,
 # no npm and no package manager, so the CI Trivy gate (fixable HIGH/CRITICAL) has nothing to flag.
-# Pinned by digest; bump it when Trivy or Dependabot reports a newer base.
+# Pinned by digest (Debian 13.8, zlib1g 1.3.1-1+deb13u1 for CVE-2026-85091); bump it when Trivy
+# or Dependabot reports a newer base.
 ARG NODE_IMAGE=node:24.16.0-bookworm-slim
-ARG RUNTIME_IMAGE=gcr.io/distroless/nodejs24-debian13:nonroot@sha256:9eeb7f5887d0e239e78264b06f7f11d2e14be534050481803a9e4728fcdd278e
+ARG RUNTIME_IMAGE=gcr.io/distroless/nodejs24-debian13:nonroot@sha256:39b0407357c9fadf1a9708d22088f02de21f0e1e8a688474eea2d8701e7d5693
 
 FROM ${NODE_IMAGE} AS deps
 WORKDIR /repo
