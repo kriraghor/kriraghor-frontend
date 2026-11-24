@@ -7,6 +7,7 @@ import { setRequestLocale } from "next-intl/server";
 import { ThemeScript } from "@kriraghor/ui/brand/theme-script";
 import { routing } from "@kriraghor/ui/i18n/routing";
 import { APP } from "@/app.config";
+import { BRAND_ICONS } from "@kriraghor/ui/brand/icons";
 import "../globals.css";
 
 
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
   title: { default: APP.title, template: `%s · ${APP.title}` },
   description: APP.description,
   robots: { index: false, follow: false },
+  icons: BRAND_ICONS,
 };
 
 export function generateStaticParams() {

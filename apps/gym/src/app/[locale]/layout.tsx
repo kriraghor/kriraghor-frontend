@@ -13,6 +13,7 @@ import { Providers } from "@kriraghor/ui/providers";
 import { SiteHeader } from "@kriraghor/ui/site-header";
 import { SiteFooter } from "@/components/SiteFooter";
 import { APP } from "@/app.config";
+import { BRAND_ICONS } from "@kriraghor/ui/brand/icons";
 import { siteUrl } from "@/lib/seo";
 import "../globals.css";
 
@@ -27,6 +28,7 @@ export const metadata: Metadata = {
   applicationName: APP.title,
   openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/icon-512.png", width: 512, height: 512, alt: APP.title }] },
   twitter: { card: "summary" },
+  icons: BRAND_ICONS,
 };
 
 export function generateStaticParams() {
