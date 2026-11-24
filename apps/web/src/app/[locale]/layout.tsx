@@ -1,3 +1,4 @@
+
 import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
@@ -26,6 +27,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: { default: `${APP.title}: esports, venues, gear and talent`, template: `%s · ${APP.title}` },
   description: APP.description,
+  other: {
+    "msvalidate.01": "B63F2CF805E591F5C1DD3FF0AE95D02F",
+  },
   applicationName: APP.title,
   openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/icon-512.png", width: 512, height: 512, alt: APP.title }] },
   twitter: { card: "summary" },
