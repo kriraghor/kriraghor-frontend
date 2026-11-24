@@ -20,7 +20,16 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   setRequestLocale(locale);
   return (
     <Reveal>
-      <JsonLd data={{ "@context": "https://schema.org", "@type": "Organization", name: "Kriraghor", url: siteUrl(), logo: `${siteUrl()}/icon-512.png`, sameAs: SOCIAL_PROFILES.map((p) => p.href) }} />
+      {/* Google shows the WebSite name above the result ("Kriraghor", not the domain); the Organization gives the logo. */}
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            { "@type": "WebSite", "@id": `${siteUrl()}/#website`, name: "Kriraghor", alternateName: ["ক্রীড়াঘর", "Kriraghor.com"], url: `${siteUrl()}/`, publisher: { "@id": `${siteUrl()}/#organization` } },
+            { "@type": "Organization", "@id": `${siteUrl()}/#organization`, name: "Kriraghor", alternateName: "ক্রীড়াঘর", url: `${siteUrl()}/`, logo: `${siteUrl()}/icon-512.png`, sameAs: SOCIAL_PROFILES.map((p) => p.href) },
+          ],
+        }}
+      />
       <EsportsHero />
       <div className="mx-auto max-w-[1320px] px-5">
         <Finder />

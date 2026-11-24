@@ -13,6 +13,7 @@ import { SiteHeader } from "@kriraghor/ui/site-header";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { APP } from "@/app.config";
+import { BRAND_ICONS } from "@kriraghor/ui/brand/icons";
 import { webHref } from "@/lib/links";
 import { siteUrl } from "@/lib/seo";
 import "../globals.css";
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
   applicationName: APP.title,
   openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/icon-512.png", width: 512, height: 512, alt: APP.title }] },
   twitter: { card: "summary" },
+  icons: BRAND_ICONS,
 };
 
 // Esports is dark first (UI v2): the browser bar matches until the visitor picks light.
