@@ -42,7 +42,8 @@ export const dashboards = {
   organiser: async (orgId: string, period: Period, locale = "en") => (await dash({ role: "organiser", orgId, period, locale: loc(locale) })) as OrganiserDashboard,
   /** M19-FR-11 for one business: venue (default), shop, gym or the sports organisations. */
   ownerActions: async (role: ActionRole = "ground_owner") => unwrap(await api().GET("/me/dashboard/actions", { params: { query: { role } } })),
-  platform: async (period: Period) => unwrap(await api("admin").GET("/admin/analytics/overview", { params: { query: { period } } })),
+  /** The platform overview (admin home, round 3): its definitions in the page's language. */
+  platform: async (period: Period, locale = "en") => unwrap(await api("admin").GET("/admin/analytics/overview", { params: { query: { period, locale: loc(locale) } } })),
   staffActions: async () => unwrap(await api("admin").GET("/admin/analytics/actions")),
 };
 

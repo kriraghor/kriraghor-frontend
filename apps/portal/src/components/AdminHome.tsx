@@ -2,17 +2,19 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle, ShieldStar } from "@phosphor-icons/react";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { api } from "@kriraghor/api-client";
 import { useAuth } from "@kriraghor/ui/auth";
 import { Badge, Card, PageTitle, SectionHeading, Skeleton } from "@kriraghor/ui/kit";
 import { LiveStatus } from "@kriraghor/ui/live-status";
-import { dashboards } from "@/lib/dashboard";
+import { dashboards, type Period } from "@/lib/dashboard";
+import { ADMIN_HOME_FILTERS } from "@/lib/admin/queues";
+import { useUrlFilters } from "@/lib/use-url-filters";
 import { adminSections } from "@/lib/panel-nav";
-import { PlatformOverview } from "./admin/PlatformOverview";
-import { ActionList } from "./vendor/OwnerDashboard";
+import { PlatformCharts, PlatformTiles } from "./admin/PlatformOverview";
+import { StaffQueues } from "./admin/StaffQueues";
 
 const noChange = () => () => {};
 
@@ -23,15 +25,20 @@ export function dhakaPart(now: Date): "morning" | "afternoon" | "evening" {
 }
 
 /**
- * Admin desk home, a start-here page (UI v2, 11 Nov 2026). Only an admin session (staff, TOTP passed)
- * gets here; anyone else is sent to the staff sign-in. In order: what needs this person now (M19
- * "Needs your action"), the desks they can open grouped as in the menu, what their permissions let them
- * do in plain words, and, for masters and view_analytics staff, the platform numbers (M19 §6.4).
+ * Admin desk home, a start-here page (UI v2, 11 Nov 2026; dashboards round 3, 25 Nov 2026, M19-FR-30).
+ * Only an admin session (staff, TOTP passed) gets here; anyone else is sent to the staff sign-in. In
+ * order: the greeting; for masters and view_analytics staff the platform tiles with the period (kept in
+ * the URL, 30 days by default); "Needs your action" as one counted card per queue this person works
+ * (M19-FR-29); the platform charts; the desks they can open, grouped as in the menu; and what their
+ * permissions let them do in plain words. Staff without analytics see the queues and desks only.
  */
 export function AdminHome() {
   const t = useTranslations();
   const router = useRouter();
+  const locale = useLocale();
   const { status } = useAuth();
+  const filters = useUrlFilters(ADMIN_HOME_FILTERS);
+  const period = filters.values.period as Period;
   // The greeting needs the clock, which the server render does not have (it shows the desk's name).
   const part = useSyncExternalStore(noChange, () => dhakaPart(new Date()), () => null);
 
@@ -66,6 +73,8 @@ export function AdminHome() {
     .map((s) => ({ ...s, items: s.items.filter((it) => it.href !== "/admin") }))
     .filter((s) => s.items.length);
   const perms = [...u.permissions].filter((p) => t.has(`staffDesk.perm.${p}.label`));
+  // Masters and view_analytics staff see the platform numbers (Q104).
+  const analytics = u.isMaster || u.permissions.includes("view_analytics" as never);
 
   return (
     <section className="mx-auto flex max-w-[1200px] flex-col gap-10 px-5 py-10" data-testid="admin-home">
@@ -88,26 +97,20 @@ export function AdminHome() {
         }
       />
 
+      {analytics ? <PlatformTiles period={period} onPeriod={(p) => filters.set({ period: p })} locale={locale} /> : null}
+
       <div className="flex flex-col gap-3" data-testid="admin-actions">
         <SectionHeading title={t("dashboard.actions.title")} />
         {actions.data ? (
-          actions.data.items.length ? (
-            <ActionList items={actions.data.items} />
-          ) : (
-            <Card className="flex items-center gap-3" data-testid="admin-all-clear">
-              <CheckCircle size={28} weight="fill" aria-hidden className="shrink-0 text-brand" />
-              <div>
-                <p className="font-semibold">{t("admin.clearTitle")}</p>
-                <p className="text-sm text-muted">{t("admin.clearBody")}</p>
-              </div>
-            </Card>
-          )
+          <StaffQueues items={actions.data.items} />
         ) : actions.isError ? (
           <p className="text-sm text-muted">{t("dashboard.loadFailed")}</p>
         ) : (
-          <Skeleton className="h-28 rounded-card" />
+          <Skeleton className="h-32 rounded-card" />
         )}
       </div>
+
+      {analytics ? <PlatformCharts period={period} locale={locale} /> : null}
 
       <div className="flex flex-col gap-3" data-testid="admin-desks">
         <SectionHeading title={t("admin.desksTitle")} />
@@ -154,7 +157,6 @@ export function AdminHome() {
       </div>
 
       <LiveStatus />
-      <PlatformOverview canSee={u.isMaster || u.permissions.includes("view_analytics" as never)} />
     </section>
   );
 }

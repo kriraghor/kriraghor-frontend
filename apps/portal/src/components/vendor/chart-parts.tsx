@@ -68,8 +68,12 @@ export function AsOf({ iso, className }: { iso: string | null | undefined; class
   );
 }
 
+/** Where a dashboard's CSV comes from: the vendor's own (customer session) or the platform's (admin session). */
+export type CsvSource = { audience: "api"; path: "/me/dashboard/export" } | { audience: "admin"; path: "/admin/analytics/export" };
+const VENDOR_CSV: CsvSource = { audience: "api", path: "/me/dashboard/export" };
+
 /** The CSV exports of a dashboard (FR-22): one download at a time, and the reason when one fails. */
-export function useCsv(period: Period) {
+export function useCsv(period: Period, source: CsvSource = VENDOR_CSV) {
   const t = useTranslations("dashboard");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -78,7 +82,7 @@ export function useCsv(period: Period) {
     setBusy(dataset);
     setError(null);
     try {
-      await downloadCsv("api", "/me/dashboard/export", { dataset, period });
+      await downloadCsv(source.audience, source.path, { dataset, period });
     } catch (e) {
       setError(t(csvErrorKey(problemOf(e)?.code)));
     } finally {
