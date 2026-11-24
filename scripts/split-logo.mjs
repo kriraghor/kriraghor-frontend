@@ -84,6 +84,9 @@ const files = {
   // The share cards' logo (packages/ui share/og.tsx), on their dark field.
   "logo.png": await whole("dark", 512),
   "icon-512.png": await tile(512),
+  "icon-192.png": await tile(192),
+  // Android crops this to its own shape: full black, the mark inside the middle 80% (the safe zone).
+  "icon-maskable-512.png": await tile(512, { radius: 0, fill: 0.62 }),
   "apple-icon.png": await tile(180, { radius: 0 }),
 };
 const favicon = ico(await Promise.all([16, 32, 48].map(async (size) => ({ size, png: await tile(size, { fill: 0.94 }) }))));

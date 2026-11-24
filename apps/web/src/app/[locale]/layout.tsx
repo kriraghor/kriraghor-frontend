@@ -17,6 +17,7 @@ import { MobileTabBar } from "@/components/MobileTabBar";
 import { CartLink } from "@/components/orders/CartLink";
 import { HeaderSearch } from "@/components/search/HeaderSearch";
 import { APP } from "@/app.config";
+import { BRAND_ICONS } from "@kriraghor/ui/brand/icons";
 import { siteUrl } from "@/lib/seo";
 import "../globals.css";
 
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
   applicationName: APP.title,
   openGraph: { type: "website", siteName: APP.title, locale: "en_BD", alternateLocale: ["bn_BD"], images: [{ url: "/icon-512.png", width: 512, height: 512, alt: APP.title }] },
   twitter: { card: "summary" },
-  icons: { icon: "/favicon.ico", apple: "/apple-icon.png" },
+  icons: BRAND_ICONS,
 };
 
 export const viewport: Viewport = {
