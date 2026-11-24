@@ -8,6 +8,9 @@ import { HomeInfo } from "@/components/home/HomeInfo";
 import { HomeRails } from "@/components/home/HomeRails";
 import { Reveal } from "@/components/home/Reveal";
 
+// The home page's one address (no locale prefix), which Google's site name also reads.
+export const metadata = { alternates: { canonical: "/" } };
+
 /**
  * kriraghor.com home: the photo hero and the Finder (product owner, 2 Nov 2026), then Esports,
  * Gym, Venues, Shop, Hire and Sports events with live listings, then About and Help. The network map that
@@ -20,12 +23,13 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   setRequestLocale(locale);
   return (
     <Reveal>
-      {/* Google shows the WebSite name above the result ("Kriraghor", not the domain); the Organization gives the logo. */}
+      {/* Google shows the WebSite name above the result ("Kriraghor", not the domain); the Organization gives the logo.
+          No domain-like alternate name ("Kriraghor.com"): Google may pick any listed name. */}
       <JsonLd
         data={{
           "@context": "https://schema.org",
           "@graph": [
-            { "@type": "WebSite", "@id": `${siteUrl()}/#website`, name: "Kriraghor", alternateName: ["ক্রীড়াঘর", "Kriraghor.com"], url: `${siteUrl()}/`, publisher: { "@id": `${siteUrl()}/#organization` } },
+            { "@type": "WebSite", "@id": `${siteUrl()}/#website`, name: "Kriraghor", alternateName: "ক্রীড়াঘর", url: `${siteUrl()}/`, publisher: { "@id": `${siteUrl()}/#organization` } },
             { "@type": "Organization", "@id": `${siteUrl()}/#organization`, name: "Kriraghor", alternateName: "ক্রীড়াঘর", url: `${siteUrl()}/`, logo: `${siteUrl()}/icon-512.png`, sameAs: SOCIAL_PROFILES.map((p) => p.href) },
           ],
         }}
