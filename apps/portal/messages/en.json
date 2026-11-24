@@ -124,7 +124,21 @@
     "desksLead": "Every desk your permissions open, grouped as in the menu. Ctrl+K jumps to any of them.",
     "canTitle": "What you can do",
     "canMaster": "You are a master admin: every desk is open to you. Fee and staff changes still need a second master to approve them.",
-    "canNone": "No permissions yet. A master admin gives them on the Staff desk."
+    "canNone": "No permissions yet. A master admin gives them on the Staff desk.",
+    "queues": {
+      "open": "Open the desk",
+      "disputes_escalated": "Disputes escalated to masters",
+      "reports_escalated": "Reports escalated to masters",
+      "payouts_failed": "Payouts that failed",
+      "disputes_to_review": "Disputes to decide",
+      "reports_open": "Reported items to review",
+      "review_queue": "Waiting for review",
+      "risk_flags": "Open risk flags",
+      "payouts_to_approve": "Payouts for your second approval",
+      "settings_to_approve": "Fee and rule changes to approve",
+      "results_to_enter": "Matches waiting for results",
+      "tournaments_to_review": "Tournaments to review"
+    }
   },
   "vendor": {
     "home": "Business desk",
@@ -1779,7 +1793,17 @@
       "gym_dues_due_today": "{n, plural, one {# member fee is} other {# member fees are}} due today",
       "gym_requests_waiting": "{n, plural, one {# join or link request is} other {# join or link requests are}} waiting",
       "gym_invoices_to_pay": "{n, plural, one {# gym plan invoice} other {# gym plan invoices}} to pay",
-      "gym_panel_restricted": "Your gym panel is restricted until the plan invoice is paid"
+      "gym_panel_restricted": "Your gym panel is restricted until the plan invoice is paid",
+      "risk_flags": "{n, plural, one {# open risk flag} other {# open risk flags}}",
+      "disputes_to_review": "{n, plural, one {# dispute} other {# disputes}} to decide",
+      "disputes_escalated": "{n, plural, one {# dispute} other {# disputes}} escalated to masters",
+      "reports_open": "{n, plural, one {# reported item} other {# reported items}} to review",
+      "reports_escalated": "{n, plural, one {# report} other {# reports}} escalated to masters",
+      "payouts_to_approve": "{n, plural, one {# payout} other {# payouts}} for your second approval",
+      "payouts_failed": "{n, plural, one {# payout} other {# payouts}} failed",
+      "results_to_enter": "{n, plural, one {# match} other {# matches}} waiting for results",
+      "tournaments_to_review": "{n, plural, one {# tournament} other {# tournaments}} to review",
+      "settings_to_approve": "{n, plural, one {# fee or rule change} other {# fee or rule changes}} to approve"
     },
     "loadFailed": "Couldn't load the numbers. Try again.",
     "openAnalytics": "Open analytics",
@@ -1846,7 +1870,8 @@
       "thisPeriod": "This year",
       "lastYear": "Last year",
       "registered": "Registered",
-      "approved": "Approved"
+      "approved": "Approved",
+      "online": "Online"
     },
     "units": "{n} sold",
     "admissionsN": "{n, plural, one {# admission} other {# admissions}}",
