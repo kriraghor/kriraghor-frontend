@@ -84,6 +84,7 @@ export function PayoutBatchesTab({ me }: { me: DeskMe }) {
         onRetry={list.retry}
         empty={{ title: tf("empty") }}
         hasMore={list.hasMore}
+        total={list.total}
         onMore={list.more}
         busy={list.busy}
       />

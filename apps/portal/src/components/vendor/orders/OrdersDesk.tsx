@@ -111,6 +111,7 @@ export function OrdersDesk() {
             onRetry={list.retry}
             empty={{ title: t(`empty.${tab}`) }}
             hasMore={list.hasMore}
+            total={list.total}
             onMore={list.more}
             busy={list.busy}
             onRowClick={(s) => set({ id: s.id })}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Barbell, ClockCounterClockwise, PencilSimple, Plus, Wrench } from "@phosphor-icons/react";
-import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Notice, SegmentedControl, Select, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, Checkbox, DataTable, Dialog, Field, Notice, SegmentedControl, Select, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
 import { newKey } from "@kriraghor/ui/format";
 import { cn } from "@kriraghor/ui/cn";
 import { dhakaToday } from "@/lib/gym-manage";
@@ -87,43 +87,50 @@ function Body({ ctx }: { ctx: GymCtx }) {
           { value: "retired", label: t("eq.status.retired") },
         ]}
       />
-      {q.isPending ? (
-        <SkeletonList rows={4} />
-      ) : q.isError ? (
+      {q.isError ? (
         <Notice tone="error">{err(q.error)}</Notice>
-      ) : !q.data.items.length ? (
-        <EmptyState icon={<Barbell size={28} aria-hidden />} title={filter === "retired" ? t("eq.noneRetired") : t("eq.none")} body={filter === "retired" ? undefined : t("eq.noneHint")} />
       ) : (
-        <ul className="grid gap-2 md:grid-cols-2" data-testid="asset-list">
-          {q.data.items.map((a) => (
-            <li key={a.id}>
-              <Card className="flex flex-col gap-2">
-                <div className="flex items-start justify-between gap-2">
-                  <button type="button" onClick={() => setOpen(a)} className="min-w-0 text-left">
-                    <span className="block font-semibold hover:underline">{a.name}</span>
-                    <span className="block text-xs text-muted">{[t(`eq.cat.${a.category}`), a.brand, a.serial, a.location].filter(Boolean).join(" · ")}</span>
-                  </button>
-                  <Badge tone={TONE[a.status]}>{t(`eq.status.${a.status}`)}</Badge>
-                </div>
-                <div className="flex items-center justify-between gap-2 text-sm">
-                  <span className={cn(a.serviceDue ? "font-semibold text-warning" : "text-muted")}>
-                    {a.nextServiceOn ? (a.serviceDue ? t("eq.dueSince", { date: f.date(a.nextServiceOn) }) : t("eq.nextService", { date: f.date(a.nextServiceOn) })) : t("eq.noInterval")}
-                  </span>
-                  <span className="flex gap-1">
-                    <IconButton label={t("eq.history")} variant="ghost" onClick={() => setOpen(a)}>
-                      <ClockCounterClockwise size={18} aria-hidden />
-                    </IconButton>
-                    {ctx.can("assets.manage") && a.status !== "retired" ? (
-                      <IconButton label={t("eq.edit")} variant="ghost" onClick={() => setEditing(a)}>
-                        <PencilSimple size={18} aria-hidden />
-                      </IconButton>
-                    ) : null}
-                  </span>
-                </div>
-              </Card>
-            </li>
-          ))}
-        </ul>
+        <DataTable
+          label={t("eq.title")}
+          testId="asset-list"
+          rows={q.data?.items}
+          rowId={(a) => a.id}
+          loading={q.isPending}
+          onRowClick={setOpen}
+          rowProps={(a) => ({ tone: a.status === "out_of_order" ? "danger" : a.serviceDue || a.status === "needs_service" ? "warning" : undefined, data: { status: a.status } })}
+          rowActions={(a) => [
+            { label: t("eq.history"), icon: <ClockCounterClockwise size={18} aria-hidden />, onSelect: () => setOpen(a) },
+            ...(ctx.can("assets.manage") && a.status !== "retired" ? [{ label: t("eq.edit"), icon: <PencilSimple size={18} aria-hidden />, onSelect: () => setEditing(a) }] : []),
+          ]}
+          empty={{ title: filter === "retired" ? t("eq.noneRetired") : t("eq.none"), body: filter === "retired" ? undefined : t("eq.noneHint"), icon: <Barbell size={28} aria-hidden /> }}
+          columns={[
+            {
+              id: "name",
+              header: t("eq.nameCol"),
+              primary: true,
+              sort: (a) => a.name,
+              cell: (a) => (
+                <span className="min-w-0">
+                  <span className="block font-semibold">{a.name}</span>
+                  <span className="block text-xs text-muted">{[a.brand, a.serial].filter(Boolean).join(" · ")}</span>
+                </span>
+              ),
+            },
+            { id: "category", header: t("eq.categoryCol"), sort: (a) => t(`eq.cat.${a.category}`), cell: (a) => t(`eq.cat.${a.category}`) },
+            { id: "location", header: t("eq.locationCol"), hideBelow: "lg", sort: (a) => a.location ?? "", cell: (a) => <span className="text-muted">{a.location ?? "–"}</span> },
+            { id: "status", header: t("eq.statusCol"), sort: (a) => a.status, cell: (a) => <Badge tone={TONE[a.status]}>{t(`eq.status.${a.status}`)}</Badge> },
+            {
+              id: "service",
+              header: t("eq.serviceCol"),
+              sort: (a) => a.nextServiceOn ?? "",
+              cell: (a) => (
+                <span className={cn(a.serviceDue ? "font-semibold text-warning" : "text-muted")}>
+                  {a.nextServiceOn ? (a.serviceDue ? t("eq.dueSince", { date: f.date(a.nextServiceOn) }) : t("eq.nextService", { date: f.date(a.nextServiceOn) })) : t("eq.noInterval")}
+                </span>
+              ),
+            },
+          ]}
+        />
       )}
       {open ? <HistoryDialog ctx={ctx} asset={open} onClose={() => setOpen(null)} /> : null}
       {editing ? <AssetDialog ctx={ctx} asset={editing} onClose={() => setEditing(null)} /> : null}

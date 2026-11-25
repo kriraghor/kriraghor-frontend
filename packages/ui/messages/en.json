@@ -23,7 +23,10 @@
       "loaded": "{n} loaded, more to load",
       "showingAll": "{n, plural, one {# row} other {All # rows}}",
       "sortHint": "Load every row to sort by this column",
-      "refreshFailed": "Could not refresh. These rows may be out of date."
+      "refreshFailed": "Could not refresh. These rows may be out of date.",
+      "compact": "Compact rows",
+      "total": "Total",
+      "totalsWhenComplete": "Totals show once every row is loaded"
     },
     "filters": {
       "any": "Any",

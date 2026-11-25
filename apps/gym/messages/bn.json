@@ -1145,7 +1145,11 @@
       "trainer": "ট্রেইনার",
       "anyTrainer": "যেকোনো ট্রেইনার",
       "trainerNoName": "ট্রেইনার",
-      "withTrainer": "ট্রেইনার: {name}"
+      "withTrainer": "ট্রেইনার: {name}",
+      "member": "সদস্য",
+      "statusCol": "অবস্থা",
+      "outstanding": "বাকি",
+      "lastSeenCol": "শেষ এসেছেন"
     },
     "member": {
       "name": "নাম",
@@ -1466,7 +1470,13 @@
         "waived": "মওকুফ"
       },
       "empty": "এখানে আদায়ের কিছু নেই।",
-      "ofAmount": "{amount}-এর মধ্যে"
+      "ofAmount": "{amount}-এর মধ্যে",
+      "member": "সদস্য",
+      "package": "প্যাকেজ",
+      "dueOn": "দেয় তারিখ",
+      "status": "অবস্থা",
+      "outstanding": "বাকি",
+      "actions": "কাজ"
     },
     "closing": {
       "title": "ক্যাশ ক্লোজিং",
@@ -1488,7 +1498,12 @@
       "payments": "{n, number}টি পেমেন্ট",
       "items": "পেমেন্ট ({n, number})",
       "nothing": "এই দিনে কিছু আদায় হয়নি।",
-      "drawer": "ক্যাশ ড্রয়ার: গোনা নগদ ও পার্থক্য"
+      "drawer": "ক্যাশ ড্রয়ার: গোনা নগদ ও পার্থক্য",
+      "timeCol": "সময়",
+      "amountCol": "পরিমাণ",
+      "methodCol": "যেভাবে দেওয়া",
+      "receiptCol": "রসিদ",
+      "byCol": "যিনি নিয়েছেন"
     },
     "import": {
       "title": "সদস্য ইমপোর্ট",
@@ -1996,7 +2011,8 @@
       "minutesN": "{n} মিনিট",
       "visitLengthHelp": "চেক-ইন থেকে চেক-আউট পর্যন্ত, যেসব ভিজিটে চেক-আউট হয়েছে।",
       "checkinMethods": "সদস্যরা কীভাবে চেক-ইন করেছেন",
-      "conversionMonthOnly": "সদস্যরা কোথা থেকে আসছেন তা মাস ধরে দেখানো হয়: দেখতে একটি মাস বেছে নিন।"
+      "conversionMonthOnly": "সদস্যরা কোথা থেকে আসছেন তা মাস ধরে দেখানো হয়: দেখতে একটি মাস বেছে নিন।",
+      "memberCode": "কোড"
     },
     "invoice": {
       "title": "ইনভয়েস",
@@ -2030,7 +2046,11 @@
       "footer": "Kriraghor · kriraghor.com",
       "payAsk": "{amount}-এর এই ইনভয়েস পরিশোধ করবেন?",
       "payAskBody": "পরিশোধ শেষ করতে পেমেন্ট পেজে যাবেন।",
-      "suspensionPause": "স্থগিত থাকায় বিরতি"
+      "suspensionPause": "স্থগিত থাকায় বিরতি",
+      "number": "নম্বর",
+      "dueCol": "দেয় বা পরিশোধ",
+      "statusCol": "অবস্থা",
+      "payCol": "পরিশোধ"
     },
     "payouts": {
       "lead": "অনলাইন ফি ও পাস বিক্রির টাকা সাপ্তাহিক পেআউটে আসে। প্রতিটি লাইনে Kriraghor-এর ফি, পেমেন্ট প্রোভাইডারের চার্জ আর আপনার প্রাপ্য দেখায়।"
@@ -2617,7 +2637,10 @@
       "voidBody": "{category}-এর {amount} বাতিল হিসেবে রেকর্ডে থাকবে, মোট হিসাব থেকে বাদ যাবে।",
       "voidBecause": "বাতিল: {reason}",
       "voided": "খরচ বাতিল হয়েছে",
-      "addAsk": "{category}-এ {amount} খরচ লিখবেন?"
+      "addAsk": "{category}-এ {amount} খরচ লিখবেন?",
+      "method": "যেভাবে দেওয়া",
+      "note": "নোট",
+      "amount": "পরিমাণ"
     },
     "drawer": {
       "title": "ক্যাশ ড্রয়ার",
@@ -2720,7 +2743,13 @@
       "reverseTitle": "এই বিক্রি ফেরত নেবেন?",
       "reverseBody": "টাকা ফেরত যাবে, স্টকে পণ্য ফিরবে। বিক্রিটি ফেরত হিসেবে রেকর্ডে থাকবে।",
       "reversedToast": "বিক্রি ফেরত হয়েছে",
-      "ask": "এই বিক্রিতে {method}-এ {amount} নেবেন?"
+      "ask": "এই বিক্রিতে {method}-এ {amount} নেবেন?",
+      "todayLabel": "আজকের বিক্রি",
+      "timeCol": "সময়",
+      "itemsCol": "পণ্য",
+      "receiptCol": "রসিদ",
+      "methodCol": "যেভাবে দেওয়া",
+      "totalCol": "মোট"
     },
     "receipt": {
       "title": "রসিদ {no}",
@@ -2796,7 +2825,10 @@
       "photo": "ছবি",
       "addAsk": "“{name}” দোকানে যোগ করবেন?",
       "retireAsk": "“{name}” বিক্রি বন্ধ করবেন?",
-      "retireBody": "এটি কাউন্টার থেকে সরে যাবে। পরে বন্ধ তালিকা থেকে আবার বিক্রি করতে পারবেন।"
+      "retireBody": "এটি কাউন্টার থেকে সরে যাবে। পরে বন্ধ তালিকা থেকে আবার বিক্রি করতে পারবেন।",
+      "product": "পণ্য",
+      "marginCol": "লাভ",
+      "qtyCol": "মজুদ"
     },
     "lockers": {
       "title": "লকার",
@@ -3286,7 +3318,8 @@
       "left": "চলে গেছেন",
       "reportHint": "অনেক ঘণ্টা পর নিজে বন্ধ হওয়া ক্লক-ইনে কোনো সময় গোনা হয় না। আজকের শিফট দিন শেষ হলে গোনা হয়।",
       "clockInAsk": "{name}-এর হাজিরা এখন শুরু করবেন?",
-      "clockOutAsk": "{name}-এর হাজিরা এখন শেষ করবেন?"
+      "clockOutAsk": "{name}-এর হাজিরা এখন শেষ করবেন?",
+      "reportLabel": "কর্মীদের সময়, {month}"
     },
     "my": {
       "title": "আমার কাজ",
@@ -3380,7 +3413,11 @@
       "recalcAsk": "সর্বশেষ সংখ্যা দিয়ে খসড়া আবার হিসাব করবেন?",
       "approveAsk": "{month}-এর {total} বেতন অনুমোদন করবেন?",
       "approveAskBody": "অঙ্কগুলো স্থির হয়ে যাবে, তারপর প্রত্যেককে পরিশোধ করা যাবে। এরপর বোনাস ও কর্তন আর বদলানো যাবে না।",
-      "payAsk": "{name}-কে {method}-এ {amount} পরিশোধিত চিহ্ন দেবেন?"
+      "payAsk": "{name}-কে {method}-এ {amount} পরিশোধিত চিহ্ন দেবেন?",
+      "staff": "কর্মী",
+      "statusLabel": "অবস্থা",
+      "linesLabel": "{month}-এর বেতন",
+      "actions": "কাজ"
     },
     "payslip": {
       "title": "বেতন স্লিপ",
@@ -3465,7 +3502,12 @@
       "inExpenses": "খরচে যোগ হয়েছে",
       "retireAsk": "“{name}” অবসরে পাঠাবেন?",
       "logSpendAsk": "এটি সংরক্ষণ করে {amount} খরচ হিসেবে লিখবেন?",
-      "logSpendBody": "খরচটি {method}-এ পরিশোধ হিসেবে লেখা হবে।"
+      "logSpendBody": "খরচটি {method}-এ পরিশোধ হিসেবে লেখা হবে।",
+      "nameCol": "যন্ত্র",
+      "categoryCol": "ধরন",
+      "locationCol": "কোথায়",
+      "statusCol": "অবস্থা",
+      "serviceCol": "সার্ভিস"
     }
   },
   "gv": {
@@ -4052,7 +4094,15 @@
         "notice": "নোটিশ",
         "greeting": "শুভেচ্ছা",
         "single": "একজন সদস্য"
-      }
+      },
+      "sentCol": "পাঠানো",
+      "kindCol": "ধরন",
+      "messageCol": "বার্তা",
+      "queuedCol": "যাদের কাছে",
+      "ofTarget": "{target}-এর মধ্যে {queued}",
+      "deliveredCol": "পৌঁছেছে",
+      "readCol": "পড়েছে",
+      "failedCol": "ব্যর্থ"
     },
     "err": {
       "blocked": {

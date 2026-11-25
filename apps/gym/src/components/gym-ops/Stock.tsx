@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { Archive, DotsThreeVertical, ImageSquare, Plus, Warning } from "@phosphor-icons/react";
-import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Menu, Notice, Select, SegmentedControl, SkeletonList, Textarea, useToast } from "@kriraghor/ui/kit";
+import { Archive, ImageSquare, Plus, Warning } from "@phosphor-icons/react";
+import { Badge, Button, Checkbox, DataTable, Dialog, Field, Notice, Select, SegmentedControl, Textarea, useToast } from "@kriraghor/ui/kit";
 import { DatePicker } from "@kriraghor/ui/date";
 import { newKey } from "@kriraghor/ui/format";
 import { cn } from "@kriraghor/ui/cn";
@@ -48,6 +48,8 @@ function Body({ ctx }: { ctx: GymCtx }) {
     queryFn: () => gymOps.products(ctx.gymId, view === "retired" ? { status: "retired" } : view === "low" ? { status: "active", low: true } : { status: "active" }),
   });
   const refresh = () => void qc.invalidateQueries({ queryKey: ["go-products", ctx.gymId] });
+  const soon = (p: Product) => (p.expiresOn && !p.expired ? daysLeft(p.expiresOn, today) <= 30 : false);
+  const margin = (p: Product) => (p.costPoisha != null ? p.pricePoisha - p.costPoisha : null);
   const items = (q.data?.items ?? []).filter((p) => !text.trim() || p.name.toLowerCase().includes(text.trim().toLowerCase()) || (p.barcode ?? "").includes(text.trim()));
   const setStatus = async (p: Product, status: "active" | "retired") => {
     try {
@@ -79,76 +81,78 @@ function Body({ ctx }: { ctx: GymCtx }) {
           </Button>
         </div>
       </div>
-      {q.isPending ? (
-        <SkeletonList rows={5} />
-      ) : q.isError ? (
+      {q.isError ? (
         <Notice tone="error">{err(q.error)}</Notice>
-      ) : items.length === 0 ? (
-        <EmptyState icon={<Archive size={28} aria-hidden />} title={view === "low" ? t("stock.noneLow") : t("stock.empty")} body={view === "active" && !text ? t("stock.emptyHint") : undefined} />
       ) : (
-        <Card padded={false}>
-          <ul className="divide-y divide-line" data-testid="stock-list">
-            {items.map((p) => {
-              const soon = p.expiresOn && !p.expired ? daysLeft(p.expiresOn, today) <= 30 : false;
-              const margin = p.costPoisha != null ? p.pricePoisha - p.costPoisha : null;
-              return (
-                <li key={p.id} className="flex flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap">
-                  <span className="inline-flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-control bg-surface-2 text-muted">
+        <DataTable
+          label={t("stock.title")}
+          testId="stock-list"
+          rows={q.isPending ? undefined : items}
+          rowId={(p) => p.id}
+          loading={q.isPending}
+          empty={{ title: view === "low" ? t("stock.noneLow") : t("stock.empty"), body: view === "active" && !text ? t("stock.emptyHint") : undefined, icon: <Archive size={28} aria-hidden /> }}
+          rowProps={(p) => ({ tone: p.expired ? "danger" : p.low || soon(p) ? "warning" : p.status === "retired" ? "muted" : undefined, data: { status: p.status } })}
+          rowActions={(p) => [
+            { label: t("stock.edit"), onSelect: () => setEditing(p) },
+            p.status === "active"
+              ? { label: t("stock.retire"), danger: true, confirm: { kind: "remove", title: t("stock.retireAsk", { name: p.name }), body: t("stock.retireBody") }, onSelect: () => void setStatus(p, "retired") }
+              : { label: t("stock.restore"), confirm: "save", onSelect: () => void setStatus(p, "active") },
+          ]}
+          columns={[
+            {
+              id: "product",
+              header: t("stock.product"),
+              primary: true,
+              sort: (p) => p.name,
+              cell: (p) => (
+                <span className="flex items-center gap-3">
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-control bg-surface-2 text-muted">
                     {p.photoUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={p.photoUrl} alt="" loading="lazy" className="size-full object-cover" />
                     ) : (
-                      <ImageSquare size={22} aria-hidden />
+                      <ImageSquare size={20} aria-hidden />
                     )}
                   </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold">{p.name}</p>
-                    <p className="text-xs text-muted">
-                      {t(`category.${p.category}`)}
-                      {p.barcode ? ` · ${p.barcode}` : ""}
-                      {p.batchNo ? ` · ${t("stock.batch", { no: p.batchNo })}` : ""}
-                      {p.expiresOn ? ` · ${t("stock.expires", { date: f.date(p.expiresOn) })}` : ""}
-                    </p>
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {p.expired ? <Badge tone="danger">{t("stock.expiredTag")}</Badge> : soon ? <Badge tone="warning">{t("stock.expiringTag")}</Badge> : null}
+                  <span className="min-w-0">
+                    <span className="block font-semibold">{p.name}</span>
+                    <span className="mt-0.5 flex flex-wrap gap-1">
+                      {p.expired ? <Badge tone="danger">{t("stock.expiredTag")}</Badge> : soon(p) ? <Badge tone="warning">{t("stock.expiringTag")}</Badge> : null}
                       {p.low ? (
                         <Badge tone="warning">
                           <Warning size={12} weight="fill" aria-hidden /> {t("stock.lowTag")}
                         </Badge>
                       ) : null}
-                    </div>
-                  </div>
-                  <div className="text-right text-sm">
-                    <p className="font-semibold tabular-nums">{f.taka(p.pricePoisha)}</p>
-                    {margin != null ? <p className="text-xs text-muted tabular-nums">{t("stock.margin", { amount: f.taka(margin) })}</p> : null}
-                  </div>
-                  <div className={cn("w-20 text-right", p.low && "text-warning")}>
-                    <p className="font-display text-xl font-bold tabular-nums">{f.n(p.stockQty)}</p>
-                    <p className="text-xs text-muted">{t("stock.inStock")}</p>
-                  </div>
-                  {p.status === "active" ? (
-                    <Button variant="secondary" size="sm" onClick={() => setStocking(p)} data-testid={`stock-in-${p.id}`}>
-                      {t("stock.stockIn")}
-                    </Button>
-                  ) : null}
-                  <Menu
-                    trigger={
-                      <IconButton label={t("more")} variant="ghost">
-                        <DotsThreeVertical size={20} weight="bold" aria-hidden />
-                      </IconButton>
-                    }
-                    items={[
-                      { label: t("stock.edit"), onSelect: () => setEditing(p) },
-                      p.status === "active"
-                        ? { label: t("stock.retire"), danger: true, confirm: { kind: "remove", title: t("stock.retireAsk", { name: p.name }), body: t("stock.retireBody") }, onSelect: () => void setStatus(p, "retired") }
-                        : { label: t("stock.restore"), confirm: "save", onSelect: () => void setStatus(p, "active") },
-                    ]}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        </Card>
+                    </span>
+                  </span>
+                </span>
+              ),
+            },
+            { id: "category", header: t("stock.category"), hideBelow: "lg", sort: (p) => t(`category.${p.category}`), cell: (p) => <span className="text-muted">{t(`category.${p.category}`)}{p.barcode ? ` · ${p.barcode}` : ""}</span> },
+            { id: "price", header: t("stock.price"), align: "end", sort: (p) => p.pricePoisha, cell: (p) => <span className="font-semibold">{f.taka(p.pricePoisha)}</span> },
+            { id: "margin", header: t("stock.marginCol"), align: "end", sort: (p) => margin(p), cell: (p) => (margin(p) != null ? f.taka(margin(p)) : "–") },
+            { id: "qty", header: t("stock.qtyCol"), align: "end", sort: (p) => p.stockQty, cell: (p) => <span className={cn("font-semibold", p.low && "text-warning")}>{f.n(p.stockQty)}</span> },
+            {
+              id: "expiry",
+              header: t("stock.expiry"),
+              hideBelow: "xl",
+              sort: (p) => p.expiresOn ?? "",
+              cell: (p) => <span className="text-muted">{[p.batchNo ? t("stock.batch", { no: p.batchNo }) : null, p.expiresOn ? f.date(p.expiresOn) : null].filter(Boolean).join(" · ") || "–"}</span>,
+            },
+            {
+              id: "in",
+              header: <span className="sr-only">{t("stock.stockIn")}</span>,
+              label: t("stock.stockIn"),
+              align: "end",
+              cell: (p) =>
+                p.status === "active" ? (
+                  <Button variant="secondary" size="sm" onClick={() => setStocking(p)} data-testid={`stock-in-${p.id}`}>
+                    {t("stock.stockIn")}
+                  </Button>
+                ) : null,
+            },
+          ]}
+        />
       )}
       {editing ? <ProductDialog ctx={ctx} product={editing === "new" ? null : editing} onClose={() => setEditing(null)} onDone={refresh} /> : null}
       {stocking ? <StockDialog ctx={ctx} product={stocking} onClose={() => setStocking(null)} onDone={refresh} /> : null}

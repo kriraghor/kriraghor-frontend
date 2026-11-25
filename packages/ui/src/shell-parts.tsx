@@ -1,7 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import type { Icon } from "@phosphor-icons/react";
+import { usePref, writePref } from "./prefs";
 import { isExternal } from "@kriraghor/session/links";
 import { Link } from "./i18n/navigation";
 import { cn } from "./cn";
@@ -21,29 +21,13 @@ export type ShellItem = {
 
 // The rail's open or collapsed state, remembered per browser and shared by every desk layout.
 const KEY = "kg.sidebar";
-const listeners = new Set<() => void>();
-const readCollapsed = () => {
-  try {
-    return window.localStorage.getItem(KEY) === "collapsed";
-  } catch {
-    return false;
-  }
-};
-const subscribe = (fn: () => void) => {
-  listeners.add(fn);
-  return () => listeners.delete(fn);
-};
+const RAIL = ["open", "collapsed"] as const;
 
 /** True when the person collapsed the sidebar to its icon rail (false on the server). */
-export const useCollapsed = () => useSyncExternalStore(subscribe, readCollapsed, () => false);
+export const useCollapsed = () => usePref(KEY, "open", RAIL)[0] === "collapsed";
 
 export function setCollapsed(next: boolean) {
-  try {
-    window.localStorage.setItem(KEY, next ? "collapsed" : "open");
-  } catch {
-    /* private mode: the choice lasts for this page only */
-  }
-  listeners.forEach((fn) => fn());
+  writePref(KEY, next ? "collapsed" : "open");
 }
 
 /** The header is h-1 (brand strip) + h-16: sidebars and sticky bars sit below it. */

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { BellRinging, ChatText } from "@phosphor-icons/react";
-import { Badge, Card, EmptyState, Notice, Skeleton, useConfirm, useToast } from "@kriraghor/ui/kit";
+import { Badge, Card, DataTable, Notice, Skeleton, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { Link } from "@kriraghor/ui/i18n/navigation";
 import { gymManage } from "@/lib/gym-manage";
@@ -130,39 +130,30 @@ function Log({ r }: { r: RemindersPage }) {
   const f = useFmt();
   const kindLabel = (k: string) => (t.has(`reminders.kind.${k}`) ? t(`reminders.kind.${k}`) : k);
   return (
-    <Card padded={false} className="p-4" data-testid="reminder-log">
-      <h2 className="font-display text-lg font-bold">{t("reminders.log", { days: r.log.days })}</h2>
-      {!r.log.items.length ? (
-        <EmptyState icon={<BellRinging size={28} aria-hidden />} title={t("reminders.logEmpty")} />
-      ) : (
-        <div className="mt-2 overflow-x-auto">
-          <table className="w-full min-w-[480px] text-left text-sm">
-            <thead className="text-xs uppercase tracking-wide text-muted">
-              <tr>
-                <th scope="col" className="py-1.5 pr-3 font-semibold">{t("reminders.col.date")}</th>
-                <th scope="col" className="py-1.5 pr-3 font-semibold">{t("reminders.col.kind")}</th>
-                <th scope="col" className="py-1.5 pr-3 font-semibold">{t("reminders.col.member")}</th>
-                <th scope="col" className="py-1.5 pr-3 font-semibold">{t("reminders.col.channels")}</th>
-                <th scope="col" className="py-1.5 font-semibold">{t("reminders.col.status")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {r.log.items.map((i) => (
-                <tr key={i.id} className="border-t border-line" data-testid="reminder-log-row">
-                  <td className="py-1.5 pr-3 tabular-nums">{f.short(i.date)}</td>
-                  <td className="py-1.5 pr-3">{kindLabel(i.kind)}</td>
-                  <td className="py-1.5 pr-3 tabular-nums">{i.memberCode ?? "–"}</td>
-                  <td className="py-1.5 pr-3">{i.channels.length ? i.channels.map((c) => (t.has(`reminders.channel.${c}`) ? t(`reminders.channel.${c}`) : c)).join(", ") : "–"}</td>
-                  <td className="py-1.5">
-                    {i.status === "published" ? <Badge tone="brand">{t("reminders.sent")}</Badge> : <Badge>{t.has(`reminders.skip.${i.skipReason}`) ? t(`reminders.skip.${i.skipReason}`) : t("reminders.skipped")}</Badge>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </Card>
+    <section data-testid="reminder-log">
+      <h2 className="mb-2 font-display text-lg font-bold">{t("reminders.log", { days: r.log.days })}</h2>
+      <DataTable
+        label={t("reminders.log", { days: r.log.days })}
+        rows={r.log.items}
+        rowId={(i) => i.id}
+        rowTestId="reminder-log-row"
+        maxHeight="60vh"
+        rowProps={(i) => ({ data: { status: i.status } })}
+        empty={{ title: t("reminders.logEmpty"), icon: <BellRinging size={28} aria-hidden /> }}
+        columns={[
+          { id: "date", header: t("reminders.col.date"), primary: true, sort: (i) => i.date, cell: (i) => <span className="tabular-nums">{f.short(i.date)}</span> },
+          { id: "kind", header: t("reminders.col.kind"), sort: (i) => kindLabel(i.kind), cell: (i) => kindLabel(i.kind) },
+          { id: "member", header: t("reminders.col.member"), sort: (i) => i.memberCode ?? "", cell: (i) => <span className="tabular-nums">{i.memberCode ?? "–"}</span> },
+          { id: "channels", header: t("reminders.col.channels"), hideBelow: "lg", cell: (i) => (i.channels.length ? i.channels.map((c) => (t.has(`reminders.channel.${c}`) ? t(`reminders.channel.${c}`) : c)).join(", ") : "–") },
+          {
+            id: "status",
+            header: t("reminders.col.status"),
+            sort: (i) => i.status,
+            cell: (i) => (i.status === "published" ? <Badge tone="brand">{t("reminders.sent")}</Badge> : <Badge>{t.has(`reminders.skip.${i.skipReason}`) ? t(`reminders.skip.${i.skipReason}`) : t("reminders.skipped")}</Badge>),
+          },
+        ]}
+      />
+    </section>
   );
 }
 

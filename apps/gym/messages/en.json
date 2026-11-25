@@ -1145,7 +1145,11 @@
       "trainer": "Trainer",
       "anyTrainer": "Any trainer",
       "trainerNoName": "Trainer",
-      "withTrainer": "Trainer: {name}"
+      "withTrainer": "Trainer: {name}",
+      "member": "Member",
+      "statusCol": "Status",
+      "outstanding": "Outstanding",
+      "lastSeenCol": "Last seen"
     },
     "member": {
       "name": "Name",
@@ -1466,7 +1470,13 @@
         "waived": "Waived"
       },
       "empty": "Nothing to collect here.",
-      "ofAmount": "of {amount}"
+      "ofAmount": "of {amount}",
+      "member": "Member",
+      "package": "Package",
+      "dueOn": "Due on",
+      "status": "Status",
+      "outstanding": "Outstanding",
+      "actions": "Actions"
     },
     "closing": {
       "title": "Cash closing",
@@ -1488,7 +1498,12 @@
       "payments": "{n, plural, one {# payment} other {# payments}}",
       "items": "Payments ({n})",
       "nothing": "Nothing collected on this day.",
-      "drawer": "Cash drawer: counted cash and the difference"
+      "drawer": "Cash drawer: counted cash and the difference",
+      "timeCol": "Time",
+      "amountCol": "Amount",
+      "methodCol": "Paid by",
+      "receiptCol": "Receipt",
+      "byCol": "Received by"
     },
     "import": {
       "title": "Import members",
@@ -1996,7 +2011,8 @@
       "minutesN": "{n} min",
       "visitLengthHelp": "From check-in to check-out, for the visits that were checked out.",
       "checkinMethods": "How members checked in",
-      "conversionMonthOnly": "Where members come from is shown by month: pick a month to see it."
+      "conversionMonthOnly": "Where members come from is shown by month: pick a month to see it.",
+      "memberCode": "Code"
     },
     "invoice": {
       "title": "Invoices",
@@ -2030,7 +2046,11 @@
       "footer": "Kriraghor · kriraghor.com",
       "payAsk": "Pay this invoice of {amount}?",
       "payAskBody": "You go to the payment page to finish paying.",
-      "suspensionPause": "Paused while suspended"
+      "suspensionPause": "Paused while suspended",
+      "number": "Number",
+      "dueCol": "Due or paid",
+      "statusCol": "Status",
+      "payCol": "Pay"
     },
     "payouts": {
       "lead": "Online fees and pass sales reach you with the weekly payout. Each line shows Kriraghor's fee, the payment provider's charge and what you get."
@@ -2617,7 +2637,10 @@
       "voidBody": "{amount} for {category} stays on record as void and leaves the totals.",
       "voidBecause": "void: {reason}",
       "voided": "Expense voided",
-      "addAsk": "Record {amount} spent on {category}?"
+      "addAsk": "Record {amount} spent on {category}?",
+      "method": "Paid by",
+      "note": "Note",
+      "amount": "Amount"
     },
     "drawer": {
       "title": "Cash drawer",
@@ -2720,7 +2743,13 @@
       "reverseTitle": "Reverse this sale?",
       "reverseBody": "The money goes back and the stock returns. The sale stays on record as reversed.",
       "reversedToast": "Sale reversed",
-      "ask": "Take {amount} by {method} for this sale?"
+      "ask": "Take {amount} by {method} for this sale?",
+      "todayLabel": "Sales today",
+      "timeCol": "Time",
+      "itemsCol": "Items",
+      "receiptCol": "Receipt",
+      "methodCol": "Paid by",
+      "totalCol": "Total"
     },
     "receipt": {
       "title": "Receipt {no}",
@@ -2796,7 +2825,10 @@
       "photo": "Photo",
       "addAsk": "Add “{name}” to the shop?",
       "retireAsk": "Stop selling “{name}”?",
-      "retireBody": "It leaves the counter. You can sell it again later from Retired."
+      "retireBody": "It leaves the counter. You can sell it again later from Retired.",
+      "product": "Product",
+      "marginCol": "Margin",
+      "qtyCol": "In stock"
     },
     "lockers": {
       "title": "Lockers",
@@ -3286,7 +3318,8 @@
       "left": "left",
       "reportHint": "A clock-in that closed by itself after many hours counts no time. Today's shifts count once the day is over.",
       "clockInAsk": "Clock {name} in now?",
-      "clockOutAsk": "Clock {name} out now?"
+      "clockOutAsk": "Clock {name} out now?",
+      "reportLabel": "Staff hours, {month}"
     },
     "my": {
       "title": "My work",
@@ -3380,7 +3413,11 @@
       "recalcAsk": "Recalculate the draft with the latest numbers?",
       "approveAsk": "Approve the {month} payroll of {total}?",
       "approveAskBody": "The amounts are frozen and each person can then be paid. Bonuses and deductions can't be changed after this.",
-      "payAsk": "Mark {amount} paid to {name} by {method}?"
+      "payAsk": "Mark {amount} paid to {name} by {method}?",
+      "staff": "Staff",
+      "statusLabel": "Status",
+      "linesLabel": "Pay for {month}",
+      "actions": "Actions"
     },
     "payslip": {
       "title": "Payslip",
@@ -3465,7 +3502,12 @@
       "inExpenses": "in the expenses",
       "retireAsk": "Retire “{name}”?",
       "logSpendAsk": "Save this and record {amount} as an expense?",
-      "logSpendBody": "The expense is paid by {method}."
+      "logSpendBody": "The expense is paid by {method}.",
+      "nameCol": "Machine",
+      "categoryCol": "Type",
+      "locationCol": "Where",
+      "statusCol": "Status",
+      "serviceCol": "Service"
     }
   },
   "gv": {
@@ -4052,7 +4094,15 @@
         "notice": "Notice",
         "greeting": "Greeting",
         "single": "One member"
-      }
+      },
+      "sentCol": "Sent",
+      "kindCol": "Kind",
+      "messageCol": "Message",
+      "queuedCol": "Sent to",
+      "ofTarget": "{queued} of {target}",
+      "deliveredCol": "Delivered",
+      "readCol": "Read",
+      "failedCol": "Failed"
     },
     "err": {
       "blocked": {

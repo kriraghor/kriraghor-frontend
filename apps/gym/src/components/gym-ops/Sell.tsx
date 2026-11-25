@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Barcode, Minus, Plus, ShoppingCart, Trash } from "@phosphor-icons/react";
-import { Badge, Button, Card, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, Select, SegmentedControl, SkeletonList, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, DataTable, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, Select, SegmentedControl, SkeletonList, useToast } from "@kriraghor/ui/kit";
 import { newKey } from "@kriraghor/ui/format";
 import { cn } from "@kriraghor/ui/cn";
 import { dhakaToday, takaToPoisha } from "@/lib/gym-manage";
@@ -242,36 +242,46 @@ function TodaySales({ ctx, onOpen }: { ctx: GymCtx; onOpen: (s: Sale) => void })
   const err = useGymError();
   const today = dhakaToday();
   const q = useQuery({ queryKey: ["go-sales", ctx.gymId, today], queryFn: () => gymOps.sales(ctx.gymId, { date: today, limit: 100 }) });
-  if (q.isPending) return <SkeletonList rows={4} />;
   if (q.isError) return <Notice tone="error">{err(q.error)}</Notice>;
-  const items = q.data.items;
-  const sum = items.filter((s) => s.status === "recorded").reduce((n, s) => n + s.totalPoisha, 0);
-  if (!items.length) return <EmptyState icon={<ShoppingCart size={28} aria-hidden />} title={t("sell.noSalesToday")} />;
   return (
-    <Card padded={false}>
-      <div className="flex items-baseline justify-between border-b border-line px-4 py-3">
-        <span className="text-sm text-muted">{t("sell.todayCount", { n: f.n(items.length) })}</span>
-        <span className="font-display text-xl font-bold tabular-nums">{f.taka(sum)}</span>
-      </div>
-      <ul className="divide-y divide-line" data-testid="sell-today">
-        {items.map((s) => (
-          <li key={s.id}>
-            <button type="button" onClick={() => onOpen(s)} className={cn("flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-surface-2", s.status === "reversed" && "opacity-60")}>
-              <span className="w-14 shrink-0 text-sm text-muted tabular-nums">{f.time(s.createdAt)}</span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate font-semibold">{s.lines.map((l) => `${l.description} × ${f.n(l.qty)}`).join(", ")}</span>
-                <span className="block text-xs text-muted">
-                  {s.receiptNo} · {t(`method.${s.method}`)}
-                  {s.kind === "locker" ? ` · ${t("sell.lockerFee")}` : ""}
-                </span>
-              </span>
-              {s.status === "reversed" ? <Badge tone="neutral">{t("sell.reversed")}</Badge> : null}
-              <span className={cn("font-semibold tabular-nums", s.status === "reversed" && "line-through")}>{f.taka(s.totalPoisha)}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </Card>
+    <DataTable
+      label={t("sell.todayLabel")}
+      testId="sell-today"
+      rows={q.data?.items}
+      rowId={(s) => s.id}
+      loading={q.isPending}
+      onRowClick={onOpen}
+      rowProps={(s) => ({ tone: s.status === "reversed" ? "muted" : undefined, data: { status: s.status } })}
+      empty={{ title: t("sell.noSalesToday"), icon: <ShoppingCart size={28} aria-hidden /> }}
+      columns={[
+        { id: "time", header: t("sell.timeCol"), sort: (s) => s.createdAt, width: "6rem", cell: (s) => <span className="tabular-nums text-muted">{f.time(s.createdAt)}</span> },
+        {
+          id: "items",
+          header: t("sell.itemsCol"),
+          primary: true,
+          cell: (s) => (
+            <span className="font-semibold">
+              {s.lines.map((l) => `${l.description} × ${f.n(l.qty)}`).join(", ")}
+              {s.status === "reversed" ? (
+                <Badge tone="neutral" className="ml-2">
+                  {t("sell.reversed")}
+                </Badge>
+              ) : null}
+            </span>
+          ),
+        },
+        { id: "receipt", header: t("sell.receiptCol"), hideBelow: "lg", sort: (s) => s.receiptNo, cell: (s) => <span className="tabular-nums text-muted">{s.receiptNo}</span> },
+        { id: "method", header: t("sell.methodCol"), sort: (s) => s.method, cell: (s) => `${t(`method.${s.method}`)}${s.kind === "locker" ? ` · ${t("sell.lockerFee")}` : ""}` },
+        {
+          id: "total",
+          header: t("sell.totalCol"),
+          align: "end",
+          sort: (s) => s.totalPoisha,
+          cell: (s) => <span className={cn("font-semibold", s.status === "reversed" && "line-through")}>{f.taka(s.totalPoisha)}</span>,
+          total: (rows) => f.taka(rows.filter((s) => s.status === "recorded").reduce((n, s) => n + s.totalPoisha, 0)),
+        },
+      ]}
+    />
   );
 }
 

@@ -110,6 +110,7 @@ function Requests() {
           onRetry={list.retry}
           empty={{ title: t("none") }}
           hasMore={list.hasMore}
+          total={list.total}
           onMore={list.more}
           busy={list.busy}
           onRowClick={(r) => set({ id: r.code })}

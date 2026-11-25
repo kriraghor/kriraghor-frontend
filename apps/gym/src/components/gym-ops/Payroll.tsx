@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowsClockwise, CheckCircle, Money, PencilSimple, Receipt } from "@phosphor-icons/react";
-import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, SegmentedControl, Select, SkeletonList, useConfirm, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, Checkbox, DataTable, Dialog, EmptyState, Field, IconButton, Notice, ReasonDialog, SegmentedControl, Select, SkeletonList, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { newKey } from "@kriraghor/ui/format";
 import { dhakaToday } from "@/lib/gym-manage";
 import { bpsToPct, gymStaff, hoursText, PAY_METHODS, pctToBps, shiftMonth, thisMonth, type PayMethod, type PayrollLine, type PayrollRun, type PayTerms } from "@/lib/gym-staff";
+import type { Column } from "@kriraghor/ui/kit";
 import { GymPage, useFmt, useGymError, type GymCtx } from "../gym-manage/common";
 import { PayslipDialog } from "./Payslip";
 
@@ -207,22 +208,19 @@ function Months({ ctx }: { ctx: GymCtx }) {
       ) : !q.data.items.length ? (
         <EmptyState icon={<Money size={28} aria-hidden />} title={t("payroll.none")} />
       ) : (
-        <ul className="flex flex-col gap-2" data-testid="payroll-runs">
-          {q.data.items.map((r) => (
-            <li key={r.id}>
-              <button type="button" onClick={() => setOpen(r.id)} className="surface-card flex w-full items-center justify-between gap-3 p-4 text-left hover:border-line-strong">
-                <span>
-                  <span className="block font-semibold">{f.month(r.period)}</span>
-                  <span className="block text-xs text-muted">{t("payroll.staffCount", { n: f.n(r.staffCount) })}</span>
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="tabular-nums font-semibold">{f.taka(r.totalNetPoisha)}</span>
-                  <Badge tone={RUN_TONE[r.status]}>{t(`payroll.status.${r.status}`)}</Badge>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <DataTable
+          label={t("payroll.allMonths")}
+          testId="payroll-runs"
+          rows={q.data.items}
+          rowId={(r) => r.id}
+          onRowClick={(r) => setOpen(r.id)}
+          columns={[
+            { id: "month", header: t("payroll.month"), primary: true, sort: (r) => r.period, cell: (r) => <span className="font-semibold">{f.month(r.period)}</span> },
+            { id: "staff", header: t("payroll.staff"), align: "end", sort: (r) => r.staffCount, cell: (r) => f.n(r.staffCount) },
+            { id: "net", header: t("payroll.net"), align: "end", sort: (r) => r.totalNetPoisha, cell: (r) => <span className="font-semibold">{f.taka(r.totalNetPoisha)}</span> },
+            { id: "status", header: t("payroll.statusLabel"), cell: (r) => <Badge tone={RUN_TONE[r.status]}>{t(`payroll.status.${r.status}`)}</Badge> },
+          ]}
+        />
       )}
     </div>
   );
@@ -261,6 +259,79 @@ function RunView({ ctx, runId, onBack }: { ctx: GymCtx; runId: string; onBack: (
   if (q.isPending) return <SkeletonList rows={4} />;
   if (q.isError) return <Notice tone="error">{err(q.error)}</Notice>;
   const r = q.data;
+  const sum = (by: (l: PayrollLine) => number) => (rows: PayrollLine[]) => f.taka(rows.reduce((s, l) => s + by(l), 0));
+  const lineColumns: Column<PayrollLine>[] = [
+    {
+      id: "person",
+      header: t("staff.person"),
+      primary: true,
+      sort: (l) => l.staff.name ?? "",
+      cell: (l) => (
+        <>
+          <span className="font-semibold">{l.staff.name ?? "–"}</span>
+          {l.note ? <span className="block text-xs text-muted">{l.note}</span> : null}
+        </>
+      ),
+    },
+    { id: "base", header: t("payroll.base"), align: "end", sort: (l) => l.basePoisha, cell: (l) => f.taka(l.basePoisha), total: sum((l) => l.basePoisha) },
+    {
+      id: "commission",
+      header: t("payroll.commission"),
+      align: "end",
+      sort: (l) => l.ptCommissionPoisha + l.salesCommissionPoisha,
+      total: sum((l) => l.ptCommissionPoisha + l.salesCommissionPoisha),
+      cell: (l) => (
+        <>
+          {f.taka(l.ptCommissionPoisha + l.salesCommissionPoisha)}
+          {l.ptBasePoisha || l.salesBasePoisha ? <span className="block text-xs text-muted">{t("payroll.fromFeesSales", { fees: f.taka(l.ptBasePoisha), sales: f.taka(l.salesBasePoisha) })}</span> : null}
+        </>
+      ),
+    },
+    {
+      id: "adjust",
+      header: t("payroll.bonusMinus"),
+      align: "end",
+      hideBelow: "lg",
+      cell: (l) => (!l.bonusPoisha && !l.deductionPoisha ? "–" : `${l.bonusPoisha ? `+${f.taka(l.bonusPoisha)}` : ""} ${l.deductionPoisha ? `−${f.taka(l.deductionPoisha)}` : ""}`.trim()),
+    },
+    { id: "net", header: t("payroll.net"), align: "end", sort: (l) => l.netPoisha, cell: (l) => <span className="font-semibold">{f.taka(l.netPoisha)}</span>, total: sum((l) => l.netPoisha) },
+    {
+      id: "hours",
+      header: t("staff.hours"),
+      sort: (l) => l.workedMinutes,
+      cell: (l) => (
+        <span className="text-xs text-muted">
+          {time(l.workedMinutes)}
+          {l.lateCount || l.missedCount ? ` · ${t("payroll.lateMissed", { late: f.n(l.lateCount), missed: f.n(l.missedCount) })}` : ""}
+        </span>
+      ),
+    },
+    {
+      id: "act",
+      header: <span className="sr-only">{t("payroll.actions")}</span>,
+      label: t("payroll.actions"),
+      align: "end",
+      cell: (l) => (
+        <span className="flex justify-end gap-1">
+          {r.status === "draft" ? (
+            <IconButton label={t("payroll.editLine")} variant="ghost" onClick={() => setEditing(l)}>
+              <PencilSimple size={18} aria-hidden />
+            </IconButton>
+          ) : null}
+          {r.status === "approved" && l.status === "unpaid" && l.netPoisha > 0 ? (
+            <Button size="sm" onClick={() => setPaying(l)} data-testid={`pay-${l.id}`}>
+              {t("payroll.pay")}
+            </Button>
+          ) : l.status === "paid" ? (
+            <Badge tone="brand">{t("payroll.paidOn", { date: f.short(l.paidOn) })}</Badge>
+          ) : null}
+          <IconButton label={t("payslip.title")} variant="ghost" onClick={() => setSlip(l.id)}>
+            <Receipt size={18} aria-hidden />
+          </IconButton>
+        </span>
+      ),
+    },
+  ];
   return (
     <div className="flex flex-col gap-4" data-testid="payroll-run">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -296,64 +367,15 @@ function RunView({ ctx, runId, onBack }: { ctx: GymCtx; runId: string; onBack: (
       </div>
       {r.status === "draft" ? <Notice tone="info">{t("payroll.draftNotice")}</Notice> : null}
       {problem ? <Notice tone="error">{problem}</Notice> : null}
-      <div className="overflow-x-auto rounded-card border border-line">
-        <table className="w-full min-w-[760px] text-sm" data-testid="payroll-lines">
-          <thead className="bg-surface-2 text-left text-xs text-muted">
-            <tr>
-              <th className="px-3 py-2 font-semibold">{t("staff.person")}</th>
-              <th className="px-3 py-2 text-right font-semibold">{t("payroll.base")}</th>
-              <th className="px-3 py-2 text-right font-semibold">{t("payroll.commission")}</th>
-              <th className="px-3 py-2 text-right font-semibold">{t("payroll.bonusMinus")}</th>
-              <th className="px-3 py-2 text-right font-semibold">{t("payroll.net")}</th>
-              <th className="px-3 py-2 font-semibold">{t("staff.hours")}</th>
-              <th className="px-3 py-2" />
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line">
-            {r.lines.map((l) => (
-              <tr key={l.id}>
-                <td className="px-3 py-2">
-                  <span className="font-semibold">{l.staff.name ?? "–"}</span>
-                  {l.note ? <span className="block text-xs text-muted">{l.note}</span> : null}
-                </td>
-                <td className="px-3 py-2 text-right tabular-nums">{f.taka(l.basePoisha)}</td>
-                <td className="px-3 py-2 text-right tabular-nums">
-                  {f.taka(l.ptCommissionPoisha + l.salesCommissionPoisha)}
-                  {l.ptBasePoisha || l.salesBasePoisha ? <span className="block text-xs text-muted">{t("payroll.fromFeesSales", { fees: f.taka(l.ptBasePoisha), sales: f.taka(l.salesBasePoisha) })}</span> : null}
-                </td>
-                <td className="px-3 py-2 text-right tabular-nums">
-                  {l.bonusPoisha ? `+${f.taka(l.bonusPoisha)}` : ""} {l.deductionPoisha ? `−${f.taka(l.deductionPoisha)}` : ""}
-                  {!l.bonusPoisha && !l.deductionPoisha ? "–" : ""}
-                </td>
-                <td className="px-3 py-2 text-right font-semibold tabular-nums">{f.taka(l.netPoisha)}</td>
-                <td className="px-3 py-2 text-xs text-muted">
-                  {time(l.workedMinutes)}
-                  {l.lateCount || l.missedCount ? ` · ${t("payroll.lateMissed", { late: f.n(l.lateCount), missed: f.n(l.missedCount) })}` : ""}
-                </td>
-                <td className="px-3 py-2">
-                  <span className="flex justify-end gap-1">
-                    {r.status === "draft" ? (
-                      <IconButton label={t("payroll.editLine")} variant="ghost" onClick={() => setEditing(l)}>
-                        <PencilSimple size={18} aria-hidden />
-                      </IconButton>
-                    ) : null}
-                    {r.status === "approved" && l.status === "unpaid" && l.netPoisha > 0 ? (
-                      <Button size="sm" onClick={() => setPaying(l)} data-testid={`pay-${l.id}`}>
-                        {t("payroll.pay")}
-                      </Button>
-                    ) : l.status === "paid" ? (
-                      <Badge tone="brand">{t("payroll.paidOn", { date: f.short(l.paidOn) })}</Badge>
-                    ) : null}
-                    <IconButton label={t("payslip.title")} variant="ghost" onClick={() => setSlip(l.id)}>
-                      <Receipt size={18} aria-hidden />
-                    </IconButton>
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        label={t("payroll.linesLabel", { month: f.month(r.period) })}
+        testId="payroll-lines"
+        rows={r.lines}
+        rowId={(l) => l.id}
+        maxHeight="70vh"
+        rowProps={(l) => ({ data: { status: l.status } })}
+        columns={lineColumns}
+      />
       {editing ? <LineDialog ctx={ctx} runId={runId} line={editing} onDone={refresh} onClose={() => setEditing(null)} /> : null}
       {paying ? <PayDialog ctx={ctx} runId={runId} line={paying} onDone={refresh} onClose={() => setPaying(null)} /> : null}
       {slip ? <PayslipDialog gymId={ctx.gymId} runId={runId} lineId={slip} onClose={() => setSlip(null)} /> : null}

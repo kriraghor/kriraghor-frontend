@@ -7,7 +7,7 @@ import { problemOf } from "@kriraghor/api-client";
 import { BarChart, DeltaBadge, HeatStrip, KpiTile, LineChart, RankBars, SplitBar, compact, compactTaka, pctChange, ptsChange, type Better } from "@kriraghor/ui/charts";
 import { csvErrorKey, downloadCsv } from "@kriraghor/ui/csv";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Button, Card, Notice } from "@kriraghor/ui/kit";
+import { Button, Card, DataTable, Notice } from "@kriraghor/ui/kit";
 import { churnPct, exportQuery, fillVisitDays, reasonsByCount, METHOD_ORDER, type ExportDataset, type Period, type Report } from "@/lib/gym-money";
 import { useFmt } from "./common";
 
@@ -115,29 +115,43 @@ export function ReportFigures({ r, previous, period, today, gymId, testId }: { r
         <RankBars title={t("reports.leftByReason")} items={reasons.map(([k, n]) => ({ key: k, label: t.has(`leftReason.${k}`) ? t(`leftReason.${k}`) : k, value: n }))} format={f.n} emptyText={t("reports.noneLeft")} testId="left-reasons" />
       </div>
       {overdue.length ? (
-        <Card padded={false} className="p-4 sm:p-5" data-testid="overdue-list">
-          <h3 className="font-bold">
+        <section data-testid="overdue-list">
+          <h3 className="mb-2 font-bold">
             {t("reports.overdueList")} <span className="text-sm font-normal text-muted tabular-nums">({f.n(overdue.length)})</span>
           </h3>
-          <ul className="mt-2 max-h-96 divide-y divide-line overflow-y-auto text-sm">
-            {overdue.map((o) => (
-              <li key={o.dueId} className="flex flex-wrap items-center justify-between gap-2 py-2 transition-colors hover:bg-surface-2/60">
-                <span className="min-w-0">
-                  {gymId ? (
+          <DataTable
+            label={t("reports.overdueList")}
+            rows={overdue}
+            rowId={(o) => o.dueId}
+            maxHeight="24rem"
+            columns={[
+              {
+                id: "member",
+                header: t("fees.member"),
+                primary: true,
+                sort: (o) => o.displayName,
+                cell: (o) =>
+                  gymId ? (
                     <Link href={`/manage/${gymId}/members/${o.memberId}`} className="font-semibold hover:underline">
                       {o.displayName}
                     </Link>
                   ) : (
                     <span className="font-semibold">{o.displayName}</span>
-                  )}{" "}
-                  <span className="text-xs text-muted tabular-nums">{o.memberCode}</span>
-                  <span className="block text-xs text-muted">{t("profile.dueOn", { date: f.short(o.dueOn) })}</span>
-                </span>
-                <span className="font-semibold tabular-nums text-danger">{f.taka(o.outstandingPoisha)}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
+                  ),
+              },
+              { id: "code", header: t("reports.memberCode"), sort: (o) => o.memberCode, cell: (o) => <span className="tabular-nums text-muted">{o.memberCode}</span> },
+              { id: "due", header: t("fees.dueOn"), sort: (o) => o.dueOn, cell: (o) => <span className="tabular-nums">{f.short(o.dueOn)}</span> },
+              {
+                id: "outstanding",
+                header: t("fees.outstanding"),
+                align: "end",
+                sort: (o) => o.outstandingPoisha,
+                cell: (o) => <span className="font-semibold text-danger">{f.taka(o.outstandingPoisha)}</span>,
+                total: (rows) => f.taka(rows.reduce((s, o) => s + o.outstandingPoisha, 0)),
+              },
+            ]}
+          />
+        </section>
       ) : null}
     </div>
   );

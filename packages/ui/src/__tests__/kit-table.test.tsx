@@ -146,6 +146,84 @@ describe("DataTable", () => {
   });
 });
 
+describe("DataTable round 4 (density, tones, totals, loading rows)", () => {
+  beforeEach(() => window.localStorage.clear());
+  const TOTAL_COLS: Column<Row>[] = [COLS[0], { ...COLS[1], total: (rows) => String(rows.reduce((s, r) => s + (r.amount ?? 0), 0)) }, COLS[2]];
+
+  it("switches density, remembers it per browser and shares it with every table", () => {
+    render(
+      <>
+        <DataTable label="A" columns={COLS} rows={ROWS} rowId={(r) => r.id} testId="t-a" />
+        <DataTable label="B" columns={COLS} rows={ROWS} rowId={(r) => r.id} testId="t-b" />
+      </>,
+    );
+    expect(q('[data-testid="t-a"]').dataset.density).toBe("comfortable");
+    const sw = q('[data-testid="t-a"] [data-testid="table-density"]');
+    expect(sw.getAttribute("aria-pressed")).toBe("false");
+    click(sw);
+    expect(window.localStorage.getItem("kg.table.density")).toBe("compact");
+    expect(q('[data-testid="t-b"]').dataset.density).toBe("compact");
+    expect(q('[data-testid="t-a"] [data-testid="table-density"]').getAttribute("aria-pressed")).toBe("true");
+    click(q('[data-testid="t-b"] [data-testid="table-density"]'));
+    expect(q('[data-testid="t-a"]').dataset.density).toBe("comfortable");
+  });
+
+  it("loads as rows in the table's shape, and as cards on phones", () => {
+    render(<DataTable label="Venues" columns={COLS} rows={undefined} rowId={(r) => r.id} loading rowActions={() => []} />);
+    const rows = qa('[data-testid="skeleton-row"]');
+    expect(rows).toHaveLength(6);
+    expect(rows[0].querySelectorAll("td")).toHaveLength(4); // three columns and the actions column
+    expect(q('[role="status"]').getAttribute("aria-label")).toBe("Loading rows");
+    expect(q("table")!.getAttribute("aria-hidden")).toBe("true");
+    wide = false;
+    render(<DataTable label="Venues" columns={COLS} rows={undefined} rowId={(r) => r.id} loading />);
+    expect(q("table")).toBeNull();
+    expect(qa('li[data-testid="skeleton-row"]')).toHaveLength(4);
+  });
+
+  it("tints rows by tone and puts their data-* attributes on rows and cards", () => {
+    const rowProps = (r: Row) => (r.amount === null ? { tone: "danger" as const, data: { status: "overdue" } } : {});
+    render(<DataTable label="Venues" columns={COLS} rows={ROWS} rowId={(r) => r.id} rowTestId="r" rowProps={rowProps} />);
+    const b = qa('[data-testid="r"]')[1];
+    expect(b.dataset.tone).toBe("danger");
+    expect(b.dataset.status).toBe("overdue");
+    expect(b.className).toContain("bg-danger-soft");
+    expect(qa('[data-testid="r"]')[0].dataset.tone).toBeUndefined();
+    wide = false;
+    render(<DataTable label="Venues" columns={COLS} rows={ROWS} rowId={(r) => r.id} rowTestId="r" rowProps={rowProps} />);
+    expect(qa('li[data-testid="r"]')[1].dataset.status).toBe("overdue");
+  });
+
+  it("shows a totals row only for a complete list, with a summary card on phones", () => {
+    render(<DataTable label="Venues" columns={TOTAL_COLS} rows={ROWS} rowId={(r) => r.id} rowActions={() => []} />);
+    const cells = qa('tfoot[data-testid="table-totals"] td').map((td) => td.textContent);
+    expect(cells).toEqual(["Total", "700", "", ""]);
+    render(<DataTable label="Venues" columns={TOTAL_COLS} rows={ROWS} rowId={(r) => r.id} hasMore onMore={() => {}} />);
+    expect(q('[data-testid="table-totals"]').textContent).toBe("Totals show once every row is loaded");
+    expect((q('[data-testid="table-totals"] td') as HTMLTableCellElement).colSpan).toBe(3);
+    render(<DataTable label="Venues" columns={COLS} rows={ROWS} rowId={(r) => r.id} />);
+    expect(q('[data-testid="table-totals"]')).toBeNull();
+    wide = false;
+    render(<DataTable label="Venues" columns={TOTAL_COLS} rows={ROWS} rowId={(r) => r.id} />);
+    expect(q('li[data-testid="table-totals"]').textContent).toBe("TotalAmount700");
+    render(<DataTable label="Venues" columns={TOTAL_COLS} rows={ROWS} rowId={(r) => r.id} hasMore onMore={() => {}} />);
+    expect(q('li[data-testid="table-totals"]').textContent).toContain("Totals show once every row is loaded");
+  });
+
+  it("caps its height with the header and totals in view, and takes the screen's own Load more", () => {
+    render(<DataTable label="Venues" columns={TOTAL_COLS} rows={ROWS} rowId={(r) => r.id} maxHeight="60vh" hasMore more={<button data-testid="members-more">More</button>} />);
+    const box = q("table").parentElement!;
+    expect(box.style.maxHeight).toBe("60vh");
+    expect(box.className).toContain("overflow-auto");
+    expect(q("tfoot").className).toContain("sticky");
+    expect(q('[data-testid="members-more"]')).not.toBeNull();
+    expect(q('[data-testid="load-more"]')).toBeNull();
+    render(<DataTable label="Venues" columns={TOTAL_COLS} rows={ROWS} rowId={(r) => r.id} />);
+    expect(q("table").parentElement!.className).toContain("overflow-x-auto");
+    expect(q("tfoot").className).not.toContain("sticky");
+  });
+});
+
 describe("FilterBar", () => {
   it("tells the caller about a search 300 ms after the last key, or at once on Enter", () => {
     vi.useFakeTimers();
