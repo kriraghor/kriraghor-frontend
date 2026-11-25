@@ -108,6 +108,7 @@ export function PayoutAccountsTab({ me }: { me: DeskMe }) {
         onRetry={list.retry}
         empty={{ title: tf("empty") }}
         hasMore={list.hasMore}
+        total={list.total}
         onMore={list.more}
         busy={list.busy}
         rowActions={(a) =>

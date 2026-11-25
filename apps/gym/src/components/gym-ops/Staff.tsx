@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CaretLeft, CaretRight, Clock, IdentificationBadge, PencilSimple, Plus, SignIn, SignOut, Trash } from "@phosphor-icons/react";
-import { Badge, Button, Card, Dialog, EmptyState, IconButton, Notice, SegmentedControl, Select, SkeletonList, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, DataTable, Dialog, EmptyState, IconButton, Notice, SegmentedControl, Select, SkeletonList, useToast } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { dhakaToday } from "@/lib/gym-manage";
 import { WEEK_DOWS } from "@/lib/gym-ops";
@@ -278,33 +278,31 @@ function Month({ ctx }: { ctx: GymCtx }) {
       ) : !q.data.items.length ? (
         <EmptyState icon={<Clock size={28} aria-hidden />} title={t("staff.noTimes")} />
       ) : (
-        <div className="overflow-x-auto rounded-card border border-line">
-          <table className="w-full min-w-[520px] text-sm" data-testid="staff-report">
-            <thead className="bg-surface-2 text-left text-xs text-muted">
-              <tr>
-                <th className="px-3 py-2 font-semibold">{t("staff.person")}</th>
-                <th className="px-3 py-2 text-right font-semibold">{t("staff.hours")}</th>
-                <th className="px-3 py-2 text-right font-semibold">{t("staff.days")}</th>
-                <th className="px-3 py-2 text-right font-semibold">{t("staff.lateCol")}</th>
-                <th className="px-3 py-2 text-right font-semibold">{t("staff.missedCol")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line">
-              {q.data.items.map((x) => (
-                <tr key={x.staff.id}>
-                  <td className="px-3 py-2">
-                    {x.staff.name ?? "–"}
-                    {x.staff.status === "left" ? <span className="text-xs text-muted"> · {t("staff.left")}</span> : null}
-                  </td>
-                  <td className="px-3 py-2 text-right tabular-nums">{time(x.workedMinutes)}</td>
-                  <td className="px-3 py-2 text-right tabular-nums">{f.n(x.days)}</td>
-                  <td className={cn("px-3 py-2 text-right tabular-nums", x.late && "font-semibold text-warning")}>{f.n(x.late)}</td>
-                  <td className={cn("px-3 py-2 text-right tabular-nums", x.missed && "font-semibold text-danger")}>{f.n(x.missed)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          label={t("staff.reportLabel", { month: f.month(period) })}
+          testId="staff-report"
+          rows={q.data.items}
+          rowId={(x) => x.staff.id}
+          rowProps={(x) => ({ tone: x.staff.status === "left" ? "muted" : undefined })}
+          columns={[
+            {
+              id: "person",
+              header: t("staff.person"),
+              primary: true,
+              sort: (x) => x.staff.name ?? "",
+              cell: (x) => (
+                <>
+                  {x.staff.name ?? "–"}
+                  {x.staff.status === "left" ? <span className="text-xs text-muted"> · {t("staff.left")}</span> : null}
+                </>
+              ),
+            },
+            { id: "hours", header: t("staff.hours"), align: "end", sort: (x) => x.workedMinutes, cell: (x) => time(x.workedMinutes), total: (rows) => time(rows.reduce((s, x) => s + x.workedMinutes, 0)) },
+            { id: "days", header: t("staff.days"), align: "end", sort: (x) => x.days, cell: (x) => f.n(x.days), total: (rows) => f.n(rows.reduce((s, x) => s + x.days, 0)) },
+            { id: "late", header: t("staff.lateCol"), align: "end", sort: (x) => x.late, cell: (x) => <span className={cn(x.late && "font-semibold text-warning")}>{f.n(x.late)}</span>, total: (rows) => f.n(rows.reduce((s, x) => s + x.late, 0)) },
+            { id: "missed", header: t("staff.missedCol"), align: "end", sort: (x) => x.missed, cell: (x) => <span className={cn(x.missed && "font-semibold text-danger")}>{f.n(x.missed)}</span>, total: (rows) => f.n(rows.reduce((s, x) => s + x.missed, 0)) },
+          ]}
+        />
       )}
       <p className="text-xs text-muted">{t("staff.reportHint")}</p>
     </div>

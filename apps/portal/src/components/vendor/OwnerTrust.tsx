@@ -95,6 +95,7 @@ function Disputes({ initial }: { initial?: string }) {
           onRetry={list.retry}
           empty={{ title: t("noDisputes") }}
           hasMore={list.hasMore}
+          total={list.total}
           onMore={list.more}
           busy={list.busy}
           onRowClick={(d) => set({ id: d.code })}
@@ -332,6 +333,7 @@ function Reviews() {
             onRetry={list.retry}
             empty={{ title: t("noReviews"), body: t("noReviewsBody") }}
             hasMore={list.hasMore}
+            total={list.total}
             onMore={list.more}
             busy={list.busy}
             onRowClick={(r) => set({ id: r.id })}

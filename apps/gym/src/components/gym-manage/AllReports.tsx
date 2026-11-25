@@ -7,7 +7,7 @@ import { api, problemOf } from "@kriraghor/api-client";
 import { KpiTile } from "@kriraghor/ui/charts";
 import { DeskAccessNotice, deskAccessKey } from "@kriraghor/ui/desk";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Card, Notice, Skeleton } from "@kriraghor/ui/kit";
+import { DataTable, Notice, Skeleton, type Column } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
 import { RangePicker, lastOfMonth, periodFromParams, periodParams } from "@kriraghor/ui/charts";
 import { dhakaToday } from "@/lib/gym-manage";
@@ -56,7 +56,6 @@ export function AllReports() {
 
 function Body({ r, span, today }: { r: AllReportsData; span: { from: string; to: string }; today: string }) {
   const t = useTranslations("gm");
-  const f = useFmt();
   return (
     <>
       <p className="text-sm text-muted" data-testid="all-gyms">
@@ -64,47 +63,53 @@ function Body({ r, span, today }: { r: AllReportsData; span: { from: string; to:
       </p>
       <ReportFigures r={r.totals} previous={r.previous} period={span} today={today} testId="all-totals" />
       {r.multiGym && r.perGym ? (
-        <Card padded={false} className="p-4" data-testid="per-gym">
-          <h2 className="font-display text-lg font-bold">{t("reports.compare")}</h2>
-          <div className="mt-2 overflow-x-auto">
-            <table className="w-full min-w-[560px] text-left text-sm">
-              <thead className="text-xs uppercase tracking-wide text-muted">
-                <tr>
-                  <th scope="col" className="py-1.5 pr-3 font-semibold">{t("reports.gym")}</th>
-                  <th scope="col" className="py-1.5 pr-3 text-right font-semibold">{t("reports.activeAtEnd")}</th>
-                  <th scope="col" className="py-1.5 pr-3 text-right font-semibold">{t("reports.new")}</th>
-                  <th scope="col" className="py-1.5 pr-3 text-right font-semibold">{t("reports.left")}</th>
-                  <th scope="col" className="py-1.5 pr-3 text-right font-semibold">{t("reports.collected")}</th>
-                  <th scope="col" className="py-1.5 pr-3 text-right font-semibold">{t("reports.outstanding")}</th>
-                  <th scope="col" className="py-1.5 text-right font-semibold">{t("reports.visits")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {r.perGym.map((g) => (
-                  <tr key={g.gym.id} className="border-t border-line">
-                    <td className="py-1.5 pr-3">
-                      <Link href={`/manage/${g.gym.id}/reports${r.period.month ? `?month=${r.period.month}` : ""}`} className="font-semibold hover:underline">
-                        {g.gym.name}
-                      </Link>
-                    </td>
-                    <td className="py-1.5 pr-3 text-right tabular-nums">{f.n(g.members.activeAtEnd)}</td>
-                    <td className="py-1.5 pr-3 text-right tabular-nums">{f.n(g.members.new)}</td>
-                    <td className="py-1.5 pr-3 text-right tabular-nums">{f.n(g.members.left.total)}</td>
-                    <td className="py-1.5 pr-3 text-right tabular-nums">{f.taka(g.money.collectedPoisha)}</td>
-                    <td className="py-1.5 pr-3 text-right tabular-nums">{f.taka(g.money.outstandingPoisha)}</td>
-                    <td className="py-1.5 text-right tabular-nums">{f.n(g.attendance.visits)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+        <section data-testid="per-gym">
+          <h2 className="mb-2 font-display text-lg font-bold">{t("reports.compare")}</h2>
+          <PerGym r={r} />
+        </section>
       ) : r.gyms.length > 1 ? (
         <Upsell feature="multi_gym" owner />
       ) : null}
       {r.passSales.available ? <PassSales /> : null}
     </>
   );
+}
+
+type GymRow = NonNullable<AllReportsData["perGym"]>[number];
+
+/** The gyms side by side (dashboards round 4): sortable figures and a totals row. */
+function PerGym({ r }: { r: AllReportsData }) {
+  const t = useTranslations("gm");
+  const f = useFmt();
+  const sum = (by: (g: GymRow) => number) => (rows: GymRow[]) => rows.reduce((s, g) => s + by(g), 0);
+  const num = (id: string, header: string, by: (g: GymRow) => number, money = false): Column<GymRow> => ({
+    id,
+    header,
+    align: "end",
+    sort: by,
+    cell: (g) => (money ? f.taka(by(g)) : f.n(by(g))),
+    total: (rows) => (money ? f.taka(sum(by)(rows)) : f.n(sum(by)(rows))),
+  });
+  const columns: Column<GymRow>[] = [
+    {
+      id: "gym",
+      header: t("reports.gym"),
+      primary: true,
+      sort: (g) => g.gym.name,
+      cell: (g) => (
+        <Link href={`/manage/${g.gym.id}/reports${r.period.month ? `?month=${r.period.month}` : ""}`} className="font-semibold hover:underline">
+          {g.gym.name}
+        </Link>
+      ),
+    },
+    num("active", t("reports.activeAtEnd"), (g) => g.members.activeAtEnd),
+    num("new", t("reports.new"), (g) => g.members.new),
+    num("left", t("reports.left"), (g) => g.members.left.total),
+    num("collected", t("reports.collected"), (g) => g.money.collectedPoisha, true),
+    num("outstanding", t("reports.outstanding"), (g) => g.money.outstandingPoisha, true),
+    num("visits", t("reports.visits"), (g) => g.attendance.visits),
+  ];
+  return <DataTable label={t("reports.compare")} columns={columns} rows={r.perGym ?? []} rowId={(g) => g.gym.id} rowTestId="per-gym-row" maxHeight="70vh" />;
 }
 
 /** M19's gym dashboard (GET /me/dashboard?role=gym_owner, last 7 weeks): pass sales next to the members' fees. */

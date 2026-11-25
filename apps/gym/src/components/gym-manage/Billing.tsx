@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, CaretRight, Check, Medal } from "@phosphor-icons/react";
-import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Badge, Button, Card, EmptyState, Notice, Skeleton, useToast } from "@kriraghor/ui/kit";
+import { ArrowLeft, Check, Medal } from "@phosphor-icons/react";
+import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
+import { Badge, Button, Card, DataTable, Notice, Skeleton, useToast } from "@kriraghor/ui/kit";
 import { DeskAccessNotice, deskAccessKey } from "@kriraghor/ui/desk";
 import { problemOf } from "@kriraghor/api-client";
 import { cn } from "@kriraghor/ui/cn";
@@ -184,36 +184,48 @@ function Invoices() {
   const f = useFmt();
   const err = useGymError();
   const q = useQuery({ queryKey: ["gm-invoices"], queryFn: () => gymMoney.invoices(), retry: false });
+  const router = useRouter();
   return (
-    <Card padded={false} className="p-4" data-testid="billing-invoices">
-      <h2 className="font-display text-lg font-bold">{t("invoice.title")}</h2>
-      {q.isPending ? (
-        <Skeleton className="mt-2 h-24" />
-      ) : q.isError ? (
+    <section data-testid="billing-invoices">
+      <h2 className="mb-2 font-display text-lg font-bold">{t("invoice.title")}</h2>
+      {q.isError ? (
         <Notice tone="error">{err(q.error)}</Notice>
-      ) : !q.data.items.length ? (
-        <EmptyState title={t("invoice.none")} body={t("invoice.noneBody")} />
       ) : (
-        <ul className="mt-2 divide-y divide-line">
-          {q.data.items.map((i: Invoice) => (
-            <li key={i.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 py-2.5" data-testid="invoice-row">
-              <Link href={`/manage/billing/invoices/${i.id}`} className="min-w-0 flex-1 basis-full no-underline sm:basis-0">
-                <span className="block font-semibold hover:underline">
+        <DataTable
+          label={t("invoice.title")}
+          rows={q.data?.items}
+          rowId={(i: Invoice) => i.id}
+          loading={q.isPending}
+          rowTestId="invoice-row"
+          onRowClick={(i) => router.push(`/manage/billing/invoices/${i.id}`)}
+          rowProps={(i) => ({ tone: i.status === "overdue" ? "danger" : undefined, data: { status: i.status } })}
+          empty={{ title: t("invoice.none"), body: t("invoice.noneBody") }}
+          columns={[
+            {
+              id: "period",
+              header: t("invoice.period"),
+              primary: true,
+              sort: (i) => i.period ?? i.number,
+              cell: (i) => (
+                <Link href={`/manage/billing/invoices/${i.id}`} className="font-semibold text-ink no-underline hover:underline">
                   {i.period ? f.month(i.period) : i.number}
-                  <CaretRight size={14} className="ml-1 inline" aria-hidden />
-                </span>
-                <span className="block text-xs text-muted tabular-nums">
-                  {i.number} · {i.status === "paid" && i.paidAt ? t("invoice.paidOn", { date: f.date(i.paidAt) }) : t("invoice.dueOn", { date: f.date(i.dueOn) })}
-                </span>
-              </Link>
-              <span className="font-display text-lg font-bold tabular-nums">{f.taka(i.totalPoisha)}</span>
-              <InvoiceStatus status={i.status} />
-              <PayInvoiceButton invoice={i} />
-            </li>
-          ))}
-        </ul>
+                </Link>
+              ),
+            },
+            { id: "number", header: t("invoice.number"), hideBelow: "lg", sort: (i) => i.number, cell: (i) => <span className="tabular-nums text-muted">{i.number}</span> },
+            {
+              id: "date",
+              header: t("invoice.dueCol"),
+              sort: (i) => (i.status === "paid" && i.paidAt ? i.paidAt : i.dueOn),
+              cell: (i) => <span className="text-muted">{i.status === "paid" && i.paidAt ? t("invoice.paidOn", { date: f.date(i.paidAt) }) : t("invoice.dueOn", { date: f.date(i.dueOn) })}</span>,
+            },
+            { id: "total", header: t("invoice.total"), align: "end", sort: (i) => i.totalPoisha, cell: (i) => <span className="font-semibold">{f.taka(i.totalPoisha)}</span> },
+            { id: "status", header: t("invoice.statusCol"), sort: (i) => i.status, cell: (i) => <InvoiceStatus status={i.status} /> },
+            { id: "pay", header: <span className="sr-only">{t("invoice.payCol")}</span>, label: t("invoice.payCol"), align: "end", cell: (i) => <PayInvoiceButton invoice={i} /> },
+          ]}
+        />
       )}
-    </Card>
+    </section>
   );
 }
 

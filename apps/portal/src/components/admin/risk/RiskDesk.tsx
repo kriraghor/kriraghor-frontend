@@ -121,9 +121,11 @@ function Desk() {
               onRetry={fl.retry}
               empty={{ title: t("empty") }}
               hasMore={fl.hasMore}
+              total={fl.total}
               onMore={fl.more}
               busy={fl.busy}
               rowTestId="risk-flag"
+              rowProps={(f) => ({ tone: f.severity === "critical" || f.severity === "high" ? "danger" : undefined, data: { severity: f.severity } })}
             />
             <Card>
               <h2 className="font-display text-lg font-bold">{t("rules")}</h2>

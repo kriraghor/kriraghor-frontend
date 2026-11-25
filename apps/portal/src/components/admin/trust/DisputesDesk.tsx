@@ -103,11 +103,13 @@ export function DisputesDesk() {
               onRetry={list.retry}
               empty={{ title: t("empty") }}
               hasMore={list.hasMore}
+              total={list.total}
               onMore={list.more}
               busy={list.busy}
               onRowClick={(d) => set({ code: d.code })}
               selectedId={open}
               rowTestId="dispute-row"
+              rowProps={(d) => ({ tone: d.status === "escalated" ? "warning" : undefined, data: { status: d.status } })}
             />
           </div>
         </DetailLayout>

@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { ChatCircleText, PaperPlaneTilt } from "@phosphor-icons/react";
 import { newKey } from "@kriraghor/ui/format";
-import { Badge, Button, Card, EmptyState, Field, Notice, SegmentedControl, SkeletonList, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, DataTable, Field, Notice, SegmentedControl, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { emptySegment, segmentFrom, type SegmentDraft } from "@/lib/gym-ops";
 import { featureLocked } from "@/lib/gym-manage";
 import { gymWhatsapp, type BulkKind, type Estimate, type GymWhatsapp, type WaSegment } from "@/lib/gym-whatsapp";
@@ -181,37 +181,42 @@ export function WaHistoryTab({ ctx, w }: { ctx: GymCtx; w: GymWhatsapp }) {
   return <History ctx={ctx} />;
 }
 
+type SendRow = Awaited<ReturnType<typeof gymWhatsapp.sends>>["items"][number];
+
 function History({ ctx }: { ctx: GymCtx }) {
   const t = useTranslations("gw");
   const f = useFmt();
   const waErr = useWaError();
   const q = useQuery({ queryKey: ["gm-wa-sends", ctx.gymId], queryFn: () => gymWhatsapp.sends(ctx.gymId), retry: false });
-  if (q.isPending) return <SkeletonList rows={3} />;
-  if (q.isError || !q.data) return <Notice tone="error">{waErr(q.error)}</Notice>;
-  if (!q.data.items.length) return <EmptyState icon={<ChatCircleText size={28} aria-hidden />} title={t("history.none")} />;
+  if (q.isError) return <Notice tone="error">{waErr(q.error)}</Notice>;
+  const n = (by: (c: ReturnType<typeof sendCounts>) => number) => (s: SendRow) => by(sendCounts(s.status));
   return (
     <div className="flex flex-col gap-2">
       <h2 className="font-display text-lg font-bold">{t("history.title")}</h2>
-      <ul className="flex flex-col gap-2" data-testid="wa-history">
-        {q.data.items.map((s) => {
-          const c = sendCounts(s.status);
-          const text = s.params.title ?? s.params.message ?? "";
-          return (
-            <li key={s.id}>
-              <Card className="flex flex-col gap-1" data-testid="wa-send-row" data-kind={s.kind}>
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <Badge tone="neutral">{t(`history.kind.${s.kind}`)}</Badge>
-                  <span className="text-xs text-muted">{s.sentAt ? `${f.date(s.sentAt)} ${f.time(s.sentAt)}` : "–"}</span>
-                </div>
-                {text ? <p className="line-clamp-2 text-sm font-semibold">{text}</p> : null}
-                <p className="text-xs text-muted">
-                  {t("history.to", { queued: f.n(s.queuedCount), target: f.n(s.targetCount) })} · {t("history.counts", { delivered: f.n(c.delivered), read: f.n(c.read), failed: f.n(c.failed) })}
-                </p>
-              </Card>
-            </li>
-          );
-        })}
-      </ul>
+      <DataTable
+        label={t("history.title")}
+        testId="wa-history"
+        rows={q.data?.items}
+        rowId={(s) => s.id}
+        loading={q.isPending}
+        rowTestId="wa-send-row"
+        rowProps={(s) => ({ data: { kind: s.kind } })}
+        empty={{ title: t("history.none"), icon: <ChatCircleText size={28} aria-hidden /> }}
+        columns={[
+          { id: "sent", header: t("history.sentCol"), sort: (s) => s.sentAt ?? "", cell: (s) => <span className="whitespace-nowrap text-muted">{s.sentAt ? `${f.date(s.sentAt)} ${f.time(s.sentAt)}` : "–"}</span> },
+          { id: "kind", header: t("history.kindCol"), sort: (s) => s.kind, cell: (s) => <Badge tone="neutral">{t(`history.kind.${s.kind}`)}</Badge> },
+          {
+            id: "message",
+            header: t("history.messageCol"),
+            primary: true,
+            cell: (s) => <span className="line-clamp-2 max-w-md font-semibold">{s.params.title ?? s.params.message ?? "–"}</span>,
+          },
+          { id: "queued", header: t("history.queuedCol"), align: "end", sort: (s) => s.queuedCount, cell: (s) => t("history.ofTarget", { queued: f.n(s.queuedCount), target: f.n(s.targetCount) }) },
+          { id: "delivered", header: t("history.deliveredCol"), align: "end", sort: n((c) => c.delivered), cell: (s) => f.n(n((c) => c.delivered)(s)), total: (rows) => f.n(rows.reduce((a, s) => a + n((c) => c.delivered)(s), 0)) },
+          { id: "read", header: t("history.readCol"), align: "end", sort: n((c) => c.read), cell: (s) => f.n(n((c) => c.read)(s)), total: (rows) => f.n(rows.reduce((a, s) => a + n((c) => c.read)(s), 0)) },
+          { id: "failed", header: t("history.failedCol"), align: "end", sort: n((c) => c.failed), cell: (s) => f.n(n((c) => c.failed)(s)), total: (rows) => f.n(rows.reduce((a, s) => a + n((c) => c.failed)(s), 0)) },
+        ]}
+      />
     </div>
   );
 }

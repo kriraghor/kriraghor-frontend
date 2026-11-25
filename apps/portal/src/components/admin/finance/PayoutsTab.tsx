@@ -113,10 +113,12 @@ export function PayoutsTab({ me }: { me: DeskMe }) {
           onRetry={list.retry}
           empty={{ title: tf("empty") }}
           hasMore={list.hasMore}
+          total={list.total}
           onMore={list.more}
           busy={list.busy}
           selectedId={selected}
           onRowClick={(r) => set({ id: r.id })}
+          rowProps={(r) => ({ tone: r.status === "failed" ? "danger" : undefined, data: { status: r.status } })}
         />
       </DetailLayout>
     </div>

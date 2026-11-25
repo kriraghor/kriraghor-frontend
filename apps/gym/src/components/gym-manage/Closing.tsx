@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { CaretLeft, CaretRight, Printer } from "@phosphor-icons/react";
-import { Badge, Button, Card, IconButton, Notice, Skeleton } from "@kriraghor/ui/kit";
+import { Badge, Button, Card, DataTable, IconButton, Notice, Skeleton } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { DatePicker } from "@kriraghor/ui/date";
 import { addDays, dhakaToday, featureLocked, gymManage } from "@/lib/gym-manage";
@@ -119,23 +119,43 @@ function Body({ ctx }: { ctx: GymCtx }) {
               </ul>
             </Card>
           ) : null}
-          <Card padded={false} className="p-3">
-            <h3 className="font-semibold">{t("closing.items", { n: c.items.length })}</h3>
-            <ul className="divide-y divide-line">
-              {c.items.map((p) => (
-                <li key={p.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-sm">
-                  <span className="tabular-nums text-muted">{f.time(p.createdAt)}</span>
-                  <span className={cn("font-semibold tabular-nums", p.amountPoisha < 0 && "text-danger")}>{f.taka(p.amountPoisha)}</span>
-                  <span className="text-muted">{t.has(`method.${p.method}`) ? t(`method.${p.method}`) : p.method}</span>
-                  {p.receiptNo ? <span className="text-xs text-muted">{p.receiptNo}</span> : null}
-                  {p.receivedBy?.displayName ? <span className="text-xs text-muted">{p.receivedBy.displayName}</span> : null}
-                  <span className="no-print ml-auto">
-                    <ReceiptLink url={p.receiptUrl} />
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <section>
+            <h3 className="mb-2 font-semibold">{t("closing.items", { n: c.items.length })}</h3>
+            <DataTable
+              label={t("closing.items", { n: c.items.length })}
+              testId="closing-items"
+              rows={c.items}
+              rowId={(p) => p.id}
+              empty={{ title: t("closing.nothing") }}
+              rowProps={(p) => ({ tone: p.amountPoisha < 0 ? "muted" : undefined })}
+              columns={[
+                { id: "time", header: t("closing.timeCol"), sort: (p) => p.createdAt, width: "6rem", cell: (p) => <span className="tabular-nums text-muted">{f.time(p.createdAt)}</span> },
+                {
+                  id: "amount",
+                  header: t("closing.amountCol"),
+                  align: "end",
+                  primary: true,
+                  sort: (p) => p.amountPoisha,
+                  cell: (p) => <span className={cn("font-semibold", p.amountPoisha < 0 && "text-danger")}>{f.taka(p.amountPoisha)}</span>,
+                  total: (rows) => f.taka(rows.reduce((n, p) => n + p.amountPoisha, 0)),
+                },
+                { id: "method", header: t("closing.methodCol"), sort: (p) => p.method, cell: (p) => (t.has(`method.${p.method}`) ? t(`method.${p.method}`) : p.method) },
+                { id: "receipt", header: t("closing.receiptCol"), sort: (p) => p.receiptNo ?? "", cell: (p) => <span className="tabular-nums text-muted">{p.receiptNo ?? "–"}</span> },
+                { id: "by", header: t("closing.byCol"), hideBelow: "lg", sort: (p) => p.receivedBy?.displayName ?? "", cell: (p) => <span className="text-muted">{p.receivedBy?.displayName ?? "–"}</span> },
+                {
+                  id: "open",
+                  header: <span className="sr-only">{t("closing.receiptCol")}</span>,
+                  label: t("closing.receiptCol"),
+                  align: "end",
+                  cell: (p) => (
+                    <span className="no-print">
+                      <ReceiptLink url={p.receiptUrl} />
+                    </span>
+                  ),
+                },
+              ]}
+            />
+          </section>
         </div>
       )}
     </div>

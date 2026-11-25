@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { CaretLeft, CaretRight, DotsThreeVertical, Plus, Tag, Wallet } from "@phosphor-icons/react";
-import { Badge, Button, Card, Checkbox, Dialog, EmptyState, Field, IconButton, Menu, Notice, ReasonDialog, Select, SkeletonList, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
+import { CaretLeft, CaretRight, Plus, Tag, Wallet } from "@phosphor-icons/react";
+import { Badge, Button, Card, Checkbox, DataTable, Dialog, Field, IconButton, Notice, ReasonDialog, Select, Textarea, useConfirm, useToast } from "@kriraghor/ui/kit";
 import { DatePicker } from "@kriraghor/ui/date";
 import { newKey } from "@kriraghor/ui/format";
 import { cn } from "@kriraghor/ui/cn";
@@ -137,55 +137,54 @@ function Body({ ctx }: { ctx: GymCtx }) {
         ) : null}
       </Card>
 
-      {q.isPending ? (
-        <SkeletonList rows={5} />
-      ) : q.isError ? (
+      {q.isError && !rows.length ? (
         <Notice tone="error">{err(q.error)}</Notice>
-      ) : rows.length === 0 ? (
-        <EmptyState icon={<Wallet size={28} aria-hidden />} title={t("expenses.empty")} body={canWrite ? t("expenses.emptyHint") : undefined} />
       ) : (
-        <Card padded={false}>
-          <ul className="divide-y divide-line" data-testid="exp-list">
-            {rows.map((r) => (
-              <li key={r.id} className={cn("flex items-center gap-3 px-4 py-3", r.status === "void" && "opacity-60")}>
-                <div className="w-16 shrink-0 text-sm text-muted tabular-nums">{f.short(r.spentOn)}</div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold">
-                    {r.category.name}
-                    {r.payee ? <span className="font-normal text-muted"> · {r.payee}</span> : null}
-                  </p>
-                  <p className="truncate text-xs text-muted">
-                    {t(`method.${r.method}`)}
-                    {r.fromDrawer ? ` · ${t("expenses.fromDrawerShort")}` : ""}
-                    {r.note ? ` · ${r.note}` : ""}
-                    {r.status === "void" && r.voidReason ? ` · ${t("expenses.voidBecause", { reason: r.voidReason })}` : ""}
-                  </p>
-                </div>
-                {r.status === "void" ? <Badge tone="neutral">{t("expenses.void")}</Badge> : null}
-                <p className={cn("font-semibold tabular-nums", r.status === "void" && "line-through")}>{f.taka(r.amountPoisha)}</p>
-                {canWrite && r.status === "recorded" ? (
-                  <Menu
-                    trigger={
-                      <IconButton label={t("more")} variant="ghost">
-                        <DotsThreeVertical size={20} weight="bold" aria-hidden />
-                      </IconButton>
-                    }
-                    items={[{ label: t("expenses.voidAction"), danger: true, onSelect: () => setVoiding(r) }]}
-                  />
-                ) : (
-                  <span className="w-10" aria-hidden />
-                )}
-              </li>
-            ))}
-          </ul>
-          {q.hasNextPage ? (
-            <div className="border-t border-line p-3 text-center">
-              <Button variant="ghost" onClick={() => void q.fetchNextPage()} busy={q.isFetchingNextPage}>
-                {t("loadMore")}
-              </Button>
-            </div>
-          ) : null}
-        </Card>
+        <DataTable
+          label={t("expenses.title")}
+          testId="exp-list"
+          rows={q.isPending ? undefined : rows}
+          rowId={(r) => r.id}
+          loading={q.isPending}
+          hasMore={q.hasNextPage}
+          onMore={() => void q.fetchNextPage()}
+          busy={q.isFetchingNextPage}
+          empty={{ title: t("expenses.empty"), body: canWrite ? t("expenses.emptyHint") : undefined, icon: <Wallet size={28} aria-hidden /> }}
+          rowProps={(r) => ({ tone: r.status === "void" ? "muted" : undefined, data: { status: r.status } })}
+          rowActions={(r) => (canWrite && r.status === "recorded" ? [{ label: t("expenses.voidAction"), danger: true, onSelect: () => setVoiding(r) }] : [])}
+          columns={[
+            { id: "date", header: t("expenses.date"), sort: (r) => r.spentOn, width: "7rem", cell: (r) => <span className="tabular-nums text-muted">{f.short(r.spentOn)}</span> },
+            {
+              id: "what",
+              header: t("expenses.category"),
+              primary: true,
+              sort: (r) => r.category.name,
+              cell: (r) => (
+                <span className="font-semibold">
+                  {r.category.name}
+                  {r.payee ? <span className="font-normal text-muted"> · {r.payee}</span> : null}
+                  {r.status === "void" ? (
+                    <Badge tone="neutral" className="ml-2">
+                      {t("expenses.void")}
+                    </Badge>
+                  ) : null}
+                </span>
+              ),
+            },
+            { id: "method", header: t("expenses.method"), hideBelow: "lg", cell: (r) => `${t(`method.${r.method}`)}${r.fromDrawer ? ` · ${t("expenses.fromDrawerShort")}` : ""}` },
+            {
+              id: "note",
+              header: t("expenses.note"),
+              hideBelow: "xl",
+              cell: (r) => (
+                <span className="text-muted">
+                  {[r.note, r.status === "void" && r.voidReason ? t("expenses.voidBecause", { reason: r.voidReason }) : null].filter(Boolean).join(" · ") || "–"}
+                </span>
+              ),
+            },
+            { id: "amount", header: t("expenses.amount"), align: "end", sort: (r) => r.amountPoisha, cell: (r) => <span className={cn("font-semibold", r.status === "void" && "line-through")}>{f.taka(r.amountPoisha)}</span> },
+          ]}
+        />
       )}
 
       {adding ? <AddExpense ctx={ctx} categories={(cats.data?.items ?? []).filter((c) => c.status === "active")} onClose={() => setAdding(false)} onDone={refresh} /> : null}

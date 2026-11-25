@@ -94,6 +94,7 @@ export function RefundsTab({ me }: { me: DeskMe }) {
         onRetry={list.retry}
         empty={{ title: t("empty") }}
         hasMore={list.hasMore}
+        total={list.total}
         onMore={list.more}
         busy={list.busy}
         rowActions={(r) =>

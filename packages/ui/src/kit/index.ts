@@ -9,7 +9,7 @@ export { Tabs, SegmentedControl } from "./Tabs";
 export { Dialog, DialogClose, Sheet, Tooltip, TooltipProvider, Menu } from "./Overlay";
 export { ToastProvider, useToast } from "./Toast";
 export { cn } from "../cn";
-export { DataTable, sortRows, type Column, type DataTableProps, type MenuItem } from "./DataTable";
+export { DataTable, sortRows, useDensity, DENSITY_KEY, type Column, type DataTableProps, type MenuItem, type RowProps, type Density } from "./DataTable";
 export { FilterBar, SEARCH_DEBOUNCE_MS, type FilterBarProps, type FilterSelect } from "./FilterBar";
 export { DetailLayout } from "./DetailPane";
 export { ReasonDialog } from "./ReasonDialog";
