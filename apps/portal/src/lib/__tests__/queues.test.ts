@@ -37,4 +37,8 @@ describe("ADMIN_HOME_FILTERS", () => {
     expect(DEFAULT_PERIOD).toBe("30d");
     expect(ADMIN_HOME_FILTERS.period.allowed).toEqual(["30d", "7w", "qtr", "yr"]);
   });
+
+  it("keeps the review figures' scope in ?reviews=: me by default, or team (M19-FR-33)", () => {
+    expect(ADMIN_HOME_FILTERS.reviews).toEqual({ default: "me", allowed: ["me", "team"] });
+  });
 });

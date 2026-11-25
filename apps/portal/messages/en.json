@@ -138,6 +138,48 @@
       "settings_to_approve": "Fee and rule changes to approve",
       "results_to_enter": "Matches waiting for results",
       "tournaments_to_review": "Tournaments to review"
+    },
+    "reviews": {
+      "title": "Your reviews",
+      "window": "Last {n} days",
+      "scopeLabel": "Whose decisions",
+      "scope": {
+        "me": "Me",
+        "team": "Team"
+      },
+      "tiles": {
+        "waiting": "Waiting for review",
+        "reviewedToday": "Reviewed today",
+        "median": "Median decision time",
+        "approval": "Approval rate"
+      },
+      "vsLastWeekday": "vs last {day}",
+      "lastWeekday": "{n} last {day}",
+      "vsBefore": "vs the {n} days before",
+      "unit": {
+        "d": "{n} d",
+        "h": "{n} h",
+        "m": "{n} min"
+      },
+      "charts": {
+        "perDay": "Decisions per day",
+        "whyNo": "Why we said no",
+        "none": "No decisions in these days",
+        "noReasons": "No changes asked or rejections in these days"
+      },
+      "outcome": {
+        "approved": "Approved",
+        "changes_requested": "Changes asked",
+        "rejected": "Rejected"
+      },
+      "recent": {
+        "title": "Your latest decisions",
+        "none": "You have not decided anything yet",
+        "kind": "What",
+        "outcome": "Decision",
+        "reason": "Reason",
+        "when": "When"
+      }
     }
   },
   "vendor": {

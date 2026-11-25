@@ -41,5 +41,5 @@ export function queueCards(items: readonly ActionItem[]): QueueCard[] {
 /** A time limit as a number to sort by; none sorts after every real one. */
 const dueTime = (iso: string | null) => (iso ? new Date(iso).getTime() : Number.POSITIVE_INFINITY);
 
-/** ?period= on the admin home: 30 days by default, as on the vendor dashboards. */
-export const ADMIN_HOME_FILTERS = { period: { default: DEFAULT_PERIOD, allowed: PERIODS as readonly string[] } } as const;
+/** ?period= on the admin home (30 days by default, as on the vendor dashboards) and ?reviews= (your review figures: me or team, M19-FR-33). */
+export const ADMIN_HOME_FILTERS = { period: { default: DEFAULT_PERIOD, allowed: PERIODS as readonly string[] }, reviews: { default: "me", allowed: ["me", "team"] as readonly string[] } } as const;

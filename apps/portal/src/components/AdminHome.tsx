@@ -14,6 +14,8 @@ import { ADMIN_HOME_FILTERS } from "@/lib/admin/queues";
 import { useUrlFilters } from "@/lib/use-url-filters";
 import { adminSections } from "@/lib/panel-nav";
 import { PlatformCharts, PlatformTiles } from "./admin/PlatformOverview";
+import { ReviewFigures } from "./admin/ReviewFigures";
+import { canSeeReviews, type ReviewScope } from "@/lib/admin/reviews";
 import { StaffQueues } from "./admin/StaffQueues";
 
 const noChange = () => () => {};
@@ -29,7 +31,8 @@ export function dhakaPart(now: Date): "morning" | "afternoon" | "evening" {
  * Only an admin session (staff, TOTP passed) gets here; anyone else is sent to the staff sign-in. In
  * order: the greeting; for masters and view_analytics staff the platform tiles with the period (kept in
  * the URL, 30 days by default); "Needs your action" as one counted card per queue this person works
- * (M19-FR-29); the platform charts; the desks they can open, grouped as in the menu; and what their
+ * (M19-FR-29); for reviewers and masters their review figures (M19-FR-33, me or team in ?reviews=);
+ * the platform charts; the desks they can open, grouped as in the menu; and what their
  * permissions let them do in plain words. Staff without analytics see the queues and desks only.
  */
 export function AdminHome() {
@@ -109,6 +112,8 @@ export function AdminHome() {
           <Skeleton className="h-32 rounded-card" />
         )}
       </div>
+
+      {canSeeReviews(u) ? <ReviewFigures scope={filters.values.reviews as ReviewScope} onScope={(r) => filters.set({ reviews: r })} /> : null}
 
       {analytics ? <PlatformCharts period={period} locale={locale} /> : null}
 

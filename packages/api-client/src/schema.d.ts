@@ -22662,6 +22662,73 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/analytics/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Review figures for masters and reviewers (M19-FR-33): the queue, reviewed today, median decision time, approval rate, decisions per day, why we said no, your recent decisions */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description me: your own decisions; team: everyone's decisions in the kinds you may review (no one is named) */
+                    scope?: "me" | "team";
+                    locale?: "en" | "bn";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ReviewFigures"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_STAFF, TWO_FACTOR_REQUIRED, ACCOUNT_SUSPENDED, ACCOUNT_BANNED, PERMISSION_REQUIRED, MASTER_REQUIRED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/disputes": {
         parameters: {
             query?: never;
@@ -74216,6 +74283,7 @@ export interface components {
         };
         PendingActions: {
             items: {
+                /** @description What the item is about. Staff (GET /admin/analytics/actions, FR-29): review_queue, risk_flags, disputes_to_review, disputes_escalated, reports_open, reports_escalated, payouts_to_approve, payouts_failed, results_to_enter, tournaments_to_review, settings_to_approve */
                 key: string;
                 count: number;
                 /** @enum {string} */
@@ -74278,6 +74346,71 @@ export interface components {
                 to: string;
             }[];
             asOf: string | null;
+            definitions: {
+                [key: string]: string;
+            };
+        };
+        ReviewFigures: {
+            /** @enum {string} */
+            scope: "me" | "team";
+            /** @description The Dhaka days counted (analytics.review_window_days), today the last */
+            window: {
+                days: number;
+                from: string;
+                to: string;
+            };
+            tiles: {
+                /** @description Live queue in the kinds you may review (not scoped) */
+                waiting: {
+                    value: number;
+                    delta: null;
+                    note: {
+                        overdue: number;
+                    };
+                };
+                /** @description Since Dhaka midnight; delta in percent against the same weekday last week up to the same time */
+                reviewedToday: {
+                    value: number;
+                    delta: number | null;
+                    note: {
+                        lastWeek: number;
+                    };
+                };
+                /** @description Median minutes from submission to decision in the window; delta in percent against the window before (lower is better) */
+                medianMinutes: {
+                    value: number | null;
+                    delta: number | null;
+                };
+                /** @description Approved of all decisions in the window (a fraction); delta in points against the window before */
+                approvalRate: {
+                    value: number | null;
+                    delta: number | null;
+                };
+            };
+            perDay: {
+                day: string;
+                approved: number;
+                changesRequested: number;
+                rejected: number;
+            }[];
+            /** @description Reasons given for changes asked and rejections in the window, most first */
+            whyNo: {
+                code: string;
+                label: string;
+                count: number;
+            }[];
+            /** @description scope me only: your latest decisions (analytics.recent_decisions) */
+            recent: {
+                /** Format: uuid */
+                submissionId: string;
+                kind: string;
+                /** @enum {string} */
+                decision: "approved" | "changes_requested" | "rejected";
+                reasonCode: string | null;
+                reason: string | null;
+                decidedAt: string;
+            }[];
+            asOf: string;
             definitions: {
                 [key: string]: string;
             };
