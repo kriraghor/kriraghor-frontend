@@ -3,81 +3,21 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { CheckCircle, WhatsappLogo } from "@phosphor-icons/react";
+import { CheckCircle } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
 import { Button, Field, Notice, PhoneField, Select, Textarea } from "@kriraghor/ui/kit";
 import { nameProblem, phoneProblem } from "@/lib/validate";
-import { byDay, dhakaTime, gymOps2 } from "@/lib/gym-ops";
-import { useFmt } from "@/components/gym-manage/common";
-import { TrainerFace } from "@/components/TrainerFace";
-import { chatHref, classMessage, type WaSay } from "@/lib/whatsapp";
+import { gymOps2 } from "@/lib/gym-ops";
 import { bestTimeText, CALL_TIMES, nextTo, toMin } from "@/lib/call-time";
 
 /**
- * The gym page's round 2 sections (M27-FR-66, FR-67): this week's classes with free places, and "Ask the gym"
- * (an enquiry the gym calls back about). Both come from one public read; a gym without classes shows no
- * timetable and a gym whose plan has no enquiries shows no form. With a chat number, each class has "Ask on
- * WhatsApp" (M24-FR-158).
+ * "Ask the gym" on the gym page (M27-FR-66): an enquiry the gym calls back about, shown when the gym's plan
+ * takes enquiries. The class timetable that sat here was removed with classes (tester feedback, 28 Nov 2026).
  */
-export function GymExtras({ slug, gymName, whatsapp = null }: { slug: string; gymName: string; whatsapp?: string | null }) {
-  const q = useQuery({ queryKey: ["gym-timetable", slug], queryFn: () => gymOps2.timetable(slug), staleTime: 60_000, retry: false });
-  if (!q.data) return null;
-  return (
-    <>
-      {q.data.items.length ? <Timetable items={q.data.items} gymName={gymName} whatsapp={whatsapp} /> : null}
-      {q.data.enquiries ? <Enquiry slug={slug} gymName={gymName} /> : null}
-    </>
-  );
-}
-
-function Timetable({ items, gymName, whatsapp }: { items: Awaited<ReturnType<typeof gymOps2.timetable>>["items"]; gymName: string; whatsapp: string | null }) {
-  const t = useTranslations("go");
-  const tw = useTranslations("gym.wa");
-  const locale = useLocale();
-  const f = useFmt();
-  const say: WaSay = (key, values) => tw(`msg.${key}`, values);
-  return (
-    <>
-      <h2 className="mt-8 text-2xl font-extrabold">{t("page.classes")}</h2>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2" data-testid="gym-timetable">
-        {byDay(items).map((d) => (
-          <div key={d.date} className="surface-card p-4">
-            <p className="text-sm font-bold">{f.date(d.date)}</p>
-            <ul className="mt-2 flex flex-col gap-1.5 text-sm">
-              {d.items.map((s) => {
-                const ask = chatHref(whatsapp, classMessage(say, locale, { gym: gymName, name: s.name, date: d.date, startsAt: s.startsAt }));
-                return (
-                  <li key={s.id} className="flex flex-col">
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
-                        <span>
-                          <span className="font-bold tabular-nums">{dhakaTime(s.startsAt)}</span> {s.name}
-                        </span>
-                        {s.trainer?.displayName ? (
-                          <>
-                            <span aria-hidden className="text-muted">·</span>
-                            <TrainerFace name={s.trainer.displayName} src={s.trainer.avatarUrl} size={24} className="text-muted" />
-                          </>
-                        ) : null}
-                      </span>
-                      <span className="shrink-0 text-xs text-muted">{s.spaces ? t("page.spaces", { n: f.n(s.spaces) }) : t("page.full")}</span>
-                    </span>
-                    {ask ? (
-                      <a href={ask} target="_blank" rel="noopener noreferrer" aria-label={tw("askClass", { gym: gymName, name: s.name })} className="inline-flex min-h-11 items-center gap-1.5 self-start text-xs font-semibold text-brand-text underline-offset-4 hover:underline" data-testid="class-whatsapp">
-                        <WhatsappLogo size={16} aria-hidden />
-                        {tw("ask")}
-                      </a>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <p className="mt-2 text-sm text-muted">{t("page.bookHint")}</p>
-    </>
-  );
+export function GymExtras({ slug, gymName }: { slug: string; gymName: string; whatsapp?: string | null }) {
+  const q = useQuery({ queryKey: ["gym-ask", slug], queryFn: () => gymOps2.ask(slug), staleTime: 60_000, retry: false });
+  if (!q.data?.enquiries) return null;
+  return <Enquiry slug={slug} gymName={gymName} />;
 }
 
 function Enquiry({ slug, gymName }: { slug: string; gymName: string }) {

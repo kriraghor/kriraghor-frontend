@@ -97,6 +97,10 @@ export function PassBuy({ page }: { page: GymPage }) {
         <span className="text-2xl font-extrabold tabular-nums">{formatTaka(pkg.price, locale)}</span>
       </div>
       <p className="text-sm text-muted">{t("periodRefund")}</p>
+      {/* M24-FR-176 (28 Nov 2026): buying a pass makes you a member of the gym. */}
+      <p className="text-sm text-muted" data-testid="pass-becomes-member">
+        {t("becomesMember")}
+      </p>
       {problem ? (
         <Notice tone="error">
           {t.has(`err.${problem.code}`) ? t(`err.${problem.code}`) : problem.title}{" "}

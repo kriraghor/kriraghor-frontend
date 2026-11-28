@@ -205,7 +205,9 @@ export function allowedOrderActions(status: string, permissions: readonly string
 export const GYM_PRESETS = {
   receptionist: ["members.view", "members.edit", "attendance.mark", "fees.collect", "desk.admit", "desk.admissions", "clock.in"],
   cashier: ["members.view", "fees.collect", "cash.drawer", "pos.sell", "clock.in"],
-  trainer: ["members.trainer", "plans.manage", "attendance.mark", "clock.in"],
+  // Tester feedback, 28 Nov 2026: a trainer only plans (every member's workout plans and diet charts); the
+  // gym panel then shows them Members and Plans only. The owner can still tick more.
+  trainer: ["members.trainer", "plans.manage"],
   manager: null,
   accountant: ["reports.view", "expenses.manage", "cash.drawer", "clock.in"],
   storekeeper: ["stock.manage", "pos.sell", "clock.in"],

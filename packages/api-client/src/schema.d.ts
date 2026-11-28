@@ -34965,9 +34965,11 @@ export interface paths {
                         packageId: string;
                         /**
                          * Format: date
-                         * @description The first day
+                         * @description The first day (not with renew)
                          */
-                        validFrom: string;
+                        validFrom?: string;
+                        /** @description M20-FR-24: renew at this gym; the pass starts the day after the last one ends (or today), even beyond gym.pass_advance_days */
+                        renew?: boolean;
                     };
                 };
             };
@@ -36054,7 +36056,7 @@ export interface paths {
             };
         };
         put?: never;
-        /** Add a holiday (closed) or special hours for a range of dates (M20-FR-16). Applies at once, without review; affected class sessions and trial visits are cancelled and the people told */
+        /** Add a holiday (closed) or special hours for a range of dates (M20-FR-16). Applies at once, without review; affected trial visits are cancelled and the guests told */
         post: {
             parameters: {
                 query?: never;
@@ -36169,7 +36171,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Check a holiday or special hours and count what it would cancel: class sessions and booked trial visits (M20-FR-17). Writes nothing */
+        /** Check a holiday or special hours and count what it would cancel: booked trial visits (M20-FR-17). Writes nothing */
         post: {
             parameters: {
                 query?: never;
@@ -36284,7 +36286,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Remove a coming or running holiday (M20-FR-21); never deleted. Its class sessions come back empty */
+        /** Remove a coming or running holiday (M20-FR-21); never deleted */
         post: {
             parameters: {
                 query?: never;
@@ -47773,6 +47775,84 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/manage/gyms/{gymId}/plan-members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Every member who has not left, for planning (plans.manage): code, name, photo, status and the active workout plan and diet chart; no phone, money or visits (M24-FR-180) */
+        get: {
+            parameters: {
+                query?: {
+                    q?: string;
+                    cursor?: string;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    gymId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymPlanMembers"];
+                    };
+                };
+                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: PERMISSION_REQUIRED, PHONE_REQUIRED, ROLE_SUSPENDED, ACCOUNT_SUSPENDED */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+                /** @description Error. Codes: VALIDATION_FAILED */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/manage/gyms/{gymId}/plans": {
         parameters: {
             query?: never;
@@ -53165,922 +53245,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/manage/gyms/{gymId}/class-trainers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Who can lead a class: the owner and staff with a desk or trainer permission (classes.manage) */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    gymId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassTrainers"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/classes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Classes with their weekly time slots (classes.manage or attendance.mark; feature classes) (M27-FR-45) */
-        get: {
-            parameters: {
-                query?: {
-                    status?: "active" | "retired";
-                };
-                header?: never;
-                path: {
-                    gymId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClasses"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /** Add a class with its weekly slots; sessions are made gym_ops.class_weeks_ahead weeks ahead (classes.manage) (M27-FR-45..47) */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    gymId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        name: string;
-                        description?: string | null;
-                        /**
-                         * Format: uuid
-                         * @description The owner or staff of the gym
-                         */
-                        trainerUserId?: string | null;
-                        capacity: number;
-                        minutes: number;
-                        room?: string | null;
-                        slots: {
-                            /** @description 0 = Sunday … 6 = Saturday */
-                            dow: number;
-                            startTime: string;
-                        }[];
-                    };
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClass"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED, GYM_CLASS_LIMIT, GYM_CLASS_TRAINER */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/classes/{classId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Change a class (capacity and trainer apply to sessions not started) or retire it; retiring cancels the future sessions and tells everyone booked (classes.manage) */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    gymId: string;
-                    classId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        name?: string;
-                        description?: string | null;
-                        /** Format: uuid */
-                        trainerUserId?: string | null;
-                        capacity?: number;
-                        minutes?: number;
-                        room?: string | null;
-                        /**
-                         * @description Retiring cancels the future sessions; everyone booked is told
-                         * @enum {string}
-                         */
-                        status?: "retired";
-                    };
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClass"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND, GYM_CLASS_UNKNOWN */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED, GYM_CLASS_TRAINER */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/classes/{classId}/slots": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** The weekly time slots: a slot taken away cancels its future sessions (everyone booked is told); a new one gets its sessions (classes.manage) (M27-FR-46) */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    gymId: string;
-                    classId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        slots: {
-                            /** @description 0 = Sunday … 6 = Saturday */
-                            dow: number;
-                            startTime: string;
-                        }[];
-                    };
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClass"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND, GYM_CLASS_UNKNOWN */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/class-sessions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Class sessions between two dates (default this week) with places booked and waiting (classes.manage or attendance.mark) */
-        get: {
-            parameters: {
-                query?: {
-                    from?: string;
-                    to?: string;
-                    classId?: string;
-                };
-                header?: never;
-                path: {
-                    gymId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassSessions"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/class-sessions/{sessionId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One session and its bookings, the waitlist in order (classes.manage or attendance.mark) */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    gymId: string;
-                    sessionId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassSessionDetail"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/class-sessions/{sessionId}/cancel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Cancel a session with a reason; everyone booked or waiting is told (classes.manage) (M27-FR-52) */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    gymId: string;
-                    sessionId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        reason: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassSessionDetail"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_CLASS_SESSION_STATE */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/class-sessions/{sessionId}/bookings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Book a member a place, or a waitlist place when full (classes.manage or attendance.mark) (M27-FR-48, FR-49) */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
-                    "idempotency-key": string;
-                };
-                path: {
-                    gymId: string;
-                    sessionId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        /** Format: uuid */
-                        memberId: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description Booked or waitlisted */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassBooking"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_CLASS_FULL, GYM_CLASS_BOOKED, GYM_CLASS_STARTED, GYM_CLASS_SESSION_STATE, GYM_MEMBERSHIP_NEEDED */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_MEMBER_UNKNOWN */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/class-sessions/{sessionId}/attendance": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** After the start: the booked members listed came, the others are no-shows; the session is done (classes.manage or attendance.mark) (M27-FR-54) */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    gymId: string;
-                    sessionId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        attended: string[];
-                    };
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassSessionDetail"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_CLASS_SESSION_STATE */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/manage/gyms/{gymId}/class-bookings/{bookingId}/cancel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Cancel a booking until the class starts; the first on the waitlist gets the place (classes.manage or attendance.mark) (M27-FR-50) */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    gymId: string;
-                    bookingId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassBooking"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_TIER_REQUIRED, PERMISSION_REQUIRED, GYM_ACCOUNT_RESTRICTED */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_CLASS_BOOKING_STATE, GYM_CLASS_CANCEL_CLOSED */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: VALIDATION_FAILED */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/manage/gyms/{gymId}/rewards": {
         parameters: {
             query?: never;
@@ -55242,259 +54406,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/me/gym-classes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** My gym’s class sessions for two weeks, with my booking on each (M27-FR-48) */
-        get: {
-            parameters: {
-                query: {
-                    memberId: string;
-                    from?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MyGymTimetable"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/me/gym-classes/{sessionId}/book": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Book my place in a class, or the waitlist when it is full; a running membership is needed (M27-FR-48, FR-49) */
-        post: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description 8–80 letters, digits, - or _. Retries with the same key and body replay the first response */
-                    "idempotency-key": string;
-                };
-                path: {
-                    sessionId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": {
-                        /** Format: uuid */
-                        memberId: string;
-                    };
-                };
-            };
-            responses: {
-                /** @description Booked or waitlisted */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassBooking"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_CLASS_FULL, GYM_CLASS_BOOKED, GYM_CLASS_STARTED, GYM_CLASS_SESSION_STATE, GYM_MEMBERSHIP_NEEDED */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/me/gym-bookings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** My class bookings from yesterday on, soonest first */
-        get: {
-            parameters: {
-                query: {
-                    memberId: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["MyGymBookings"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/me/gym-bookings/{bookingId}/cancel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Cancel my booking up to gym_ops.class_cancel_cutoff_minutes before the class (M27-FR-50) */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    bookingId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GymClassBooking"];
-                    };
-                };
-                /** @description Error. Codes: AUTH_REQUIRED, TOKEN_EXPIRED, TOKEN_AUDIENCE_INVALID, SESSION_REVOKED, AUTHZ_STALE */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: NOT_FOUND */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-                /** @description Error. Codes: GYM_CLASS_BOOKING_STATE, GYM_CLASS_CANCEL_CLOSED */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["Problem"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/me/gym-points": {
         parameters: {
             query?: never;
@@ -55551,6 +54462,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/gym/gyms/{slug}/ask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Does the gym page show the “Ask the gym” enquiry form: the plan has the enquiries feature (no sign-in; cached 60 s) (M27-FR-66) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    slug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GymPublicAsk"];
+                    };
+                };
+                /** @description Error. Codes: NOT_FOUND */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["Problem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/gym/gyms/{slug}/timetable": {
         parameters: {
             query?: never;
@@ -55558,7 +54516,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** This week’s classes of a gym with free places (no sign-in; no member data) (M27-FR-67) */
+        /**
+         * Deprecated (28 Nov 2026, kept one release): gym classes were retired, so items is always empty; read the enquiries flag from GET /gym/gyms/{slug}/ask
+         * @deprecated
+         */
         get: {
             parameters: {
                 query?: never;
@@ -76733,6 +75694,8 @@ export interface components {
             /** @enum {string} */
             kind: "day" | "month" | "quarter" | "half_year" | "year" | "custom";
             title: string;
+            /** Format: uuid */
+            packageId: string;
             gym: {
                 /** Format: uuid */
                 id: string;
@@ -76763,6 +75726,8 @@ export interface components {
             backupCode: string | null;
             can: {
                 cancel: boolean;
+                /** @description M20-FR-24: the holder may renew (POST /gym/passes { packageId, renew: true }) */
+                renew: boolean;
             };
         };
         GymPassList: {
@@ -76960,7 +75925,6 @@ export interface components {
             /** @enum {boolean} */
             ok: true;
             affected: {
-                classSessions: number;
                 visits: number;
             };
         };
@@ -77062,6 +76026,8 @@ export interface components {
             /** @enum {string} */
             kind: "day" | "month" | "quarter" | "half_year" | "year" | "custom";
             title: string;
+            /** Format: uuid */
+            packageId: string;
             gym: {
                 /** Format: uuid */
                 id: string;
@@ -77095,6 +76061,8 @@ export interface components {
             backupCode: string | null;
             can: {
                 cancel: boolean;
+                /** @description M20-FR-24: the holder may renew (POST /gym/passes { packageId, renew: true }) */
+                renew: boolean;
             };
             /** Format: uuid */
             holderId: string;
@@ -77171,7 +76139,6 @@ export interface components {
                     lockers?: boolean;
                     pos?: boolean;
                     pnl?: boolean;
-                    classes?: boolean;
                     points?: boolean;
                     notices?: boolean;
                     leads?: boolean;
@@ -77202,7 +76169,6 @@ export interface components {
                     lockers?: boolean;
                     pos?: boolean;
                     pnl?: boolean;
-                    classes?: boolean;
                     points?: boolean;
                     notices?: boolean;
                     leads?: boolean;
@@ -77364,7 +76330,6 @@ export interface components {
                 lockers?: boolean;
                 pos?: boolean;
                 pnl?: boolean;
-                classes?: boolean;
                 points?: boolean;
                 notices?: boolean;
                 leads?: boolean;
@@ -77562,6 +76527,11 @@ export interface components {
                 joinedOn?: string;
                 /** @description API path under /api/v1 (fetch with the bearer token); the photo is private */
                 photoPath?: string | null;
+                /**
+                 * Format: date
+                 * @description The last day of their latest paid online pass at this gym (M24-FR-176); active while it runs
+                 */
+                passValidTo?: string | null;
             };
             /** Format: uuid */
             dueId: string | null;
@@ -77703,6 +76673,11 @@ export interface components {
                 joinedOn: string;
                 /** @description API path under /api/v1 (fetch with the bearer token); the photo is private */
                 photoPath: string | null;
+                /**
+                 * Format: date
+                 * @description The last day of their latest paid online pass at this gym (M24-FR-176); active while it runs
+                 */
+                passValidTo: string | null;
                 /** @description A linked member’s public account photo when the gym has none */
                 avatarUrl: string | null;
             };
@@ -77779,6 +76754,11 @@ export interface components {
             joinedOn: string;
             /** @description API path under /api/v1 (fetch with the bearer token); the photo is private */
             photoPath: string | null;
+            /**
+             * Format: date
+             * @description The last day of their latest paid online pass at this gym (M24-FR-176); active while it runs
+             */
+            passValidTo: string | null;
         };
         GymMemberList: {
             items: components["schemas"]["GymMemberListItem"][];
@@ -77801,6 +76781,11 @@ export interface components {
             joinedOn: string;
             /** @description API path under /api/v1 (fetch with the bearer token); the photo is private */
             photoPath: string | null;
+            /**
+             * Format: date
+             * @description The last day of their latest paid online pass at this gym (M24-FR-176); active while it runs
+             */
+            passValidTo: string | null;
             current: {
                 /** Format: uuid */
                 membershipId: string;
@@ -77994,6 +76979,11 @@ export interface components {
                 joinedOn: string;
                 /** @description API path under /api/v1 (fetch with the bearer token); the photo is private */
                 photoPath: string | null;
+                /**
+                 * Format: date
+                 * @description The last day of their latest paid online pass at this gym (M24-FR-176); active while it runs
+                 */
+                passValidTo: string | null;
                 /** Format: date */
                 birthDate: string | null;
                 /** @description Owner and members.edit only */
@@ -78577,7 +77567,6 @@ export interface components {
                 lockers?: boolean;
                 pos?: boolean;
                 pnl?: boolean;
-                classes?: boolean;
                 points?: boolean;
                 notices?: boolean;
                 leads?: boolean;
@@ -78594,7 +77583,7 @@ export interface components {
                 key: "free" | "basic" | "standard" | "pro";
                 maxMembers: number | null;
                 pricePoisha: number;
-                features: ("attendance" | "reminders" | "online_fees" | "reports" | "trainers" | "plans" | "multi_gym" | "expenses" | "lockers" | "pos" | "pnl" | "classes" | "points" | "notices" | "leads" | "staff_attendance" | "equipment" | "payroll" | "visits" | "progress" | "desk_mode" | "whatsapp")[];
+                features: ("attendance" | "reminders" | "online_fees" | "reports" | "trainers" | "plans" | "multi_gym" | "expenses" | "lockers" | "pos" | "pnl" | "points" | "notices" | "leads" | "staff_attendance" | "equipment" | "payroll" | "visits" | "progress" | "desk_mode" | "whatsapp")[];
                 minGyms?: number;
             }[];
             gyms: {
@@ -78724,7 +77713,7 @@ export interface components {
                 key: "free" | "basic" | "standard" | "pro";
                 maxMembers: number | null;
                 pricePoisha: number;
-                features: ("attendance" | "reminders" | "online_fees" | "reports" | "trainers" | "plans" | "multi_gym" | "expenses" | "lockers" | "pos" | "pnl" | "classes" | "points" | "notices" | "leads" | "staff_attendance" | "equipment" | "payroll" | "visits" | "progress" | "desk_mode" | "whatsapp")[];
+                features: ("attendance" | "reminders" | "online_fees" | "reports" | "trainers" | "plans" | "multi_gym" | "expenses" | "lockers" | "pos" | "pnl" | "points" | "notices" | "leads" | "staff_attendance" | "equipment" | "payroll" | "visits" | "progress" | "desk_mode" | "whatsapp")[];
                 minGyms?: number;
             }[];
             featureMinTiers: {
@@ -79977,6 +78966,31 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
+        GymPlanMembers: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                memberCode: string;
+                displayName: string;
+                photoPath: string | null;
+                /** @enum {string} */
+                status: "new" | "active" | "frozen" | "expired" | "left" | "removed";
+                plans: {
+                    /** Format: uuid */
+                    assignmentId: string;
+                    /** Format: uuid */
+                    planId: string;
+                    /** @enum {string} */
+                    kind: "workout" | "diet";
+                    title: string;
+                    /** Format: date */
+                    startsOn: string;
+                    /** Format: date */
+                    endsOn: string | null;
+                }[];
+            }[];
+            nextCursor: string | null;
+        };
         GymPlanList: {
             items: components["schemas"]["GymPlan"][];
         };
@@ -80657,133 +79671,6 @@ export interface components {
             method: "desk" | "entrance_qr" | "auto";
             member: components["schemas"]["GymMemberSummary"];
         };
-        GymClassTrainers: {
-            items: {
-                /** Format: uuid */
-                userId: string;
-                displayName: string | null;
-                avatarUrl: string | null;
-                owner: boolean;
-            }[];
-        };
-        GymClasses: {
-            items: components["schemas"]["GymClass"][];
-        };
-        GymClass: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            description: string | null;
-            trainer: {
-                /** Format: uuid */
-                id: string;
-                displayName: string | null;
-                avatarUrl: string | null;
-            } | null;
-            capacity: number;
-            minutes: number;
-            room: string | null;
-            /** @enum {string} */
-            status: "active" | "retired";
-            slots: {
-                /** Format: uuid */
-                id: string;
-                dow: number;
-                startTime: string;
-            }[];
-        };
-        GymClassSessions: {
-            /** Format: date */
-            from: string;
-            /** Format: date */
-            to: string;
-            items: components["schemas"]["GymClassSession"][];
-        };
-        GymClassSession: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            classId: string;
-            name: string;
-            room: string | null;
-            trainer: {
-                /** Format: uuid */
-                id: string;
-                displayName: string | null;
-                avatarUrl: string | null;
-            } | null;
-            /** Format: date */
-            localDate: string;
-            /** Format: date-time */
-            startsAt: string;
-            /** Format: date-time */
-            endsAt: string;
-            capacity: number;
-            booked: number;
-            waitlisted: number;
-            spaces: number;
-            /** @enum {string} */
-            status: "scheduled" | "cancelled" | "done";
-            cancelReason: string | null;
-        };
-        GymClassSessionDetail: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            classId: string;
-            name: string;
-            room: string | null;
-            trainer: {
-                /** Format: uuid */
-                id: string;
-                displayName: string | null;
-                avatarUrl: string | null;
-            } | null;
-            /** Format: date */
-            localDate: string;
-            /** Format: date-time */
-            startsAt: string;
-            /** Format: date-time */
-            endsAt: string;
-            capacity: number;
-            booked: number;
-            waitlisted: number;
-            spaces: number;
-            /** @enum {string} */
-            status: "scheduled" | "cancelled" | "done";
-            cancelReason: string | null;
-            bookings: {
-                /** Format: uuid */
-                id: string;
-                member: {
-                    /** Format: uuid */
-                    id: string;
-                    memberCode: string;
-                    displayName: string;
-                };
-                /** @enum {string} */
-                status: "booked" | "waitlisted" | "cancelled" | "attended" | "no_show";
-                /** @enum {string} */
-                source: "member" | "desk";
-                /** Format: date-time */
-                createdAt: string;
-            }[];
-        };
-        GymClassBooking: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            sessionId: string;
-            /** Format: uuid */
-            memberId: string;
-            /** @enum {string} */
-            status: "booked" | "waitlisted" | "cancelled" | "attended" | "no_show";
-            /** @enum {string} */
-            source: "member" | "desk";
-            /** Format: date-time */
-            startsAt: string | null;
-            promoted: boolean;
-        };
         GymRewards: {
             items: components["schemas"]["GymReward"][];
         };
@@ -80855,7 +79742,7 @@ export interface components {
             id: string;
             title: string;
             body: string;
-            segment: components["schemas"]["GymNoticeSegment"];
+            segment: components["schemas"]["GymNoticeSegmentView"];
             channels: ("in_app" | "push" | "email")[];
             targetCount: number;
             sentBy: {
@@ -80866,14 +79753,17 @@ export interface components {
             /** Format: date-time */
             sentAt: string;
         };
-        GymNoticeSegment: {
+        GymNoticeSegmentView: {
             /** @enum {string} */
             kind: "active" | "expiring" | "expired" | "not_seen" | "package" | "class";
             /** @description expiring, expired, not_seen: 1 to gym_ops.notice_days_max */
             days?: number;
             /** Format: uuid */
             packageId?: string;
-            /** Format: uuid */
+            /**
+             * Format: uuid
+             * @description Notices sent to a class before 28 Nov 2026 only
+             */
             classId?: string;
         };
         GymNoticeEstimate: {
@@ -80885,6 +79775,14 @@ export interface components {
             };
             sentToday: number;
             dailyCap: number;
+        };
+        GymNoticeSegment: {
+            /** @enum {string} */
+            kind: "active" | "expiring" | "expired" | "not_seen" | "package";
+            /** @description expiring, expired, not_seen: 1 to gym_ops.notice_days_max */
+            days?: number;
+            /** Format: uuid */
+            packageId?: string;
         };
         GymConversionReport: {
             period: {
@@ -80969,62 +79867,6 @@ export interface components {
             leadId: string;
             phone: string;
         };
-        MyGymTimetable: {
-            /** Format: uuid */
-            memberId: string;
-            /** Format: uuid */
-            gymId: string;
-            items: {
-                /** Format: uuid */
-                id: string;
-                /** Format: uuid */
-                classId: string;
-                name: string;
-                room: string | null;
-                trainer: {
-                    /** Format: uuid */
-                    id: string;
-                    displayName: string | null;
-                    avatarUrl: string | null;
-                } | null;
-                /** Format: date */
-                localDate: string;
-                /** Format: date-time */
-                startsAt: string;
-                /** Format: date-time */
-                endsAt: string;
-                capacity: number;
-                booked: number;
-                waitlisted: number;
-                spaces: number;
-                /** @enum {string} */
-                status: "scheduled" | "cancelled" | "done";
-                cancelReason: string | null;
-                myBooking: {
-                    /** Format: uuid */
-                    id: string;
-                    status: string;
-                } | null;
-            }[];
-        };
-        MyGymBookings: {
-            items: {
-                /** Format: uuid */
-                id: string;
-                /** Format: uuid */
-                sessionId: string;
-                /** Format: uuid */
-                memberId: string;
-                /** @enum {string} */
-                status: "booked" | "waitlisted" | "cancelled" | "attended" | "no_show";
-                /** @enum {string} */
-                source: "member" | "desk";
-                /** Format: date-time */
-                startsAt: string | null;
-                promoted: boolean;
-                session?: components["schemas"]["GymClassSession"];
-            }[];
-        };
         MyGymPoints: {
             /** Format: uuid */
             memberId: string;
@@ -81055,31 +79897,17 @@ export interface components {
                 referral: number;
             } | null;
         };
+        GymPublicAsk: {
+            /** @description The gym takes enquiries from its page (plan feature leads) */
+            enquiries: boolean;
+        };
         GymPublicTimetable: {
             /** Format: uuid */
             gymId: string;
             /** @description The gym takes enquiries from its page (plan feature leads) */
             enquiries: boolean;
-            items: {
-                /** Format: uuid */
-                id: string;
-                name: string;
-                room: string | null;
-                trainer: {
-                    /** Format: uuid */
-                    id: string;
-                    displayName: string | null;
-                    avatarUrl: string | null;
-                } | null;
-                /** Format: date */
-                localDate: string;
-                /** Format: date-time */
-                startsAt: string;
-                /** Format: date-time */
-                endsAt: string;
-                capacity: number;
-                spaces: number;
-            }[];
+            /** @description Always empty: gym classes were retired on 28 Nov 2026 */
+            items: unknown[];
         };
         GymEnquiryAccepted: {
             /** @enum {boolean} */

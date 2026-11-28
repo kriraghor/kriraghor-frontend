@@ -117,7 +117,6 @@ describe("sends, segments and the units card", () => {
     expect(segmentFrom({ ...emptySegment(), kind: "expired", days: "" })).toBeNull();
     expect(segmentFrom({ ...emptySegment(), kind: "package" })).toBeNull();
     expect(segmentFrom({ ...emptySegment(), kind: "package", packageId: "p1" })).toEqual({ kind: "package", packageId: "p1" });
-    expect(segmentFrom({ ...emptySegment(), kind: "class", classId: "c1" })).toEqual({ kind: "class", classId: "c1" });
   });
 
   it("the billing card: coming soon, the plan, off, on", () => {

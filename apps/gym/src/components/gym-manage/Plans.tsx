@@ -9,7 +9,7 @@ import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { Badge, Button, ButtonLink, Card, Checkbox, DataTable, Dialog, Field, FilterBar, IconButton, Notice, SegmentedControl, SkeletonList, Textarea, useToast, type Column } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { DatePicker, TimePicker } from "@kriraghor/ui/date";
-import { addDays, dhakaToday, gymManage, type DietContent, type MemberSummary, type Plan, type PlanContent, type PlanDetail, type PlanKind, type WorkoutContent } from "@/lib/gym-manage";
+import { addDays, dhakaToday, gymManage, type DietContent, type Plan, type PlanMember, type PlanContent, type PlanDetail, type PlanKind, type WorkoutContent } from "@/lib/gym-manage";
 import {
   blankContent,
   blankDay,
@@ -35,6 +35,7 @@ import {
 import { GymPage, MemberStatus, useFmt, useGymError, type GymCtx } from "./common";
 import { ExercisePick } from "../gym-ops/ExerciseLibrary";
 import { TrainerFace } from "../TrainerFace";
+import { QuickFill } from "./QuickFill";
 
 const KINDS: PlanKind[] = ["workout", "diet"];
 const KIND_ICON = { workout: Barbell, diet: ForkKnife } as const;
@@ -171,7 +172,8 @@ function NewForm({ ctx, kind }: { ctx: GymCtx; kind: PlanKind }) {
       const p = await gymManage.createPlan(ctx.gymId, { kind, title: title.trim(), isTemplate, content: cleanContent(content) });
       await qc.invalidateQueries({ queryKey: ["gm-plans", ctx.gymId] });
       toast.show(t("created"));
-      router.replace(`/manage/${ctx.gymId}/plans/${p.id}`);
+      // Saved: straight on to assigning it (tester feedback, 28 Nov 2026).
+      router.replace(`/manage/${ctx.gymId}/plans/${p.id}?assign=1`);
     } catch (e) {
       setProblem(err(e));
     } finally {
@@ -184,6 +186,7 @@ function NewForm({ ctx, kind }: { ctx: GymCtx; kind: PlanKind }) {
         <Field id="plan-title" label={t("planTitle")} value={title} maxLength={120} onChange={(e) => setTitle(e.target.value)} placeholder={t(kind === "diet" ? "titleDietPh" : "titleWorkoutPh")} data-testid="plan-title" />
         <Checkbox id="plan-template" label={t("isTemplate")} checked={isTemplate} onChange={(e) => setIsTemplate(e.target.checked)} />
       </Card>
+      <QuickFill kind={kind} value={content} onFill={setContent} />
       <PlanEditor value={content} onChange={setContent} problems={shown} />
       <SaveBar problem={problem}>
         <Button type="button" onClick={save} busy={busy} confirm={title.trim().length >= 2 && !planProblems(content).length ? "add" : undefined} data-testid="plan-save">
@@ -228,7 +231,8 @@ function EditForm({ ctx, plan }: { ctx: GymCtx; plan: PlanDetail }) {
   const [problem, setProblem] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);
   const [applyToAssigned, setApply] = useState(true);
-  const [assigning, setAssigning] = useState(false);
+  const params = useSearchParams();
+  const [assigning, setAssigning] = useState(() => params.get("assign") === "1" && plan.status === "active");
   const [retiring, setRetiring] = useState(false);
   const contentChanged = JSON.stringify(cleanContent(content)) !== JSON.stringify(cleanContent(plan.content));
   const changed = contentChanged || title.trim() !== plan.title || isTemplate !== plan.isTemplate;
@@ -303,7 +307,14 @@ function EditForm({ ctx, plan }: { ctx: GymCtx; plan: PlanDetail }) {
         </div>
       </Card>
 
-      {retired ? <Notice tone="info">{t("retiredBody")}</Notice> : <PlanEditor value={content} onChange={setContent} problems={shown} />}
+      {retired ? (
+        <Notice tone="info">{t("retiredBody")}</Notice>
+      ) : (
+        <>
+          <QuickFill kind={plan.kind} value={content} onFill={setContent} />
+          <PlanEditor value={content} onChange={setContent} problems={shown} />
+        </>
+      )}
       {retired ? <PlanPreview content={plan.content} /> : null}
 
       {!retired ? (
@@ -814,7 +825,8 @@ function Adherence({ ctx, plan, onChange }: { ctx: GymCtx; plan: PlanDetail; onC
 }
 
 /**
- * Assign a plan (M24-FR-64): pick up to 100 members by name, phone or member code, a start date (from
+ * Assign a plan (M24-FR-64): pick up to 100 members by name or member code (every member who has not left,
+ * GET plan-members, so a trainer account finds them all, M24-FR-180), a start date (from
  * gym_manage.backdate_days ago to 60 days ahead, checked by the API) and an optional end. A member who
  * already has a plan of this kind at the gym moves to this one (the earlier one is replaced).
  */
@@ -822,18 +834,18 @@ function AssignDialog({ ctx, plan, onClose, onDone }: { ctx: GymCtx; plan: PlanD
   const t = useTranslations("gp.plans");
   const err = useGymError();
   const [q, setQ] = useState("");
-  const [picked, setPicked] = useState<Map<string, MemberSummary>>(new Map());
+  const [picked, setPicked] = useState<Map<string, PlanMember>>(new Map());
   const [startsOn, setStartsOn] = useState(dhakaToday());
   const [endsOn, setEndsOn] = useState("");
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const already = useMemo(() => new Set(plan.assignments.map((a) => a.memberId)), [plan.assignments]);
   const search = useQuery({
-    queryKey: ["gm-members", ctx.gymId, "assign", q.trim()],
-    queryFn: () => gymManage.members(ctx.gymId, { status: "active", ...(q.trim().length >= 2 ? { q: q.trim() } : {}), limit: 20 }),
+    queryKey: ["gm-plan-members", ctx.gymId, "assign", q.trim()],
+    queryFn: () => gymManage.planMembers(ctx.gymId, { ...(q.trim().length >= 2 ? { q: q.trim() } : {}), limit: 20 }),
     staleTime: 15_000,
   });
-  const toggle = (m: MemberSummary) => {
+  const toggle = (m: PlanMember) => {
     const next = new Map(picked);
     if (next.has(m.id)) next.delete(m.id);
     else if (next.size < 100) next.set(m.id, m);

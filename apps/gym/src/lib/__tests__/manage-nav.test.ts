@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canManage, canOpen, currentGym, gymFromPath, gymItems, gymSections, manageGroups, staffItems, switchGymHref, workplaceGyms, type ManageGymRef } from "../manage-nav";
+import { canManage, canOpen, currentGym, gymFromPath, gymItems, gymSections, isTrainerOnly, manageGroups, staffItems, switchGymHref, workplaceGyms, type ManageGymRef } from "../manage-nav";
 
 const hrefs = (groups: { items: { href: string }[] }[]) => groups.flatMap((g) => g.items.map((i) => i.href));
 const own = (id: string, name: string): ManageGymRef => ({ id, name, role: "owner", permissions: null });
@@ -40,7 +40,6 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
       "/manage/g1/sell",
       "/manage/g1/stock",
       "/manage/g1/lockers",
-      "/manage/g1/classes",
       "/manage/g1/rewards",
       "/manage/g1/notices",
       "/manage/g1/leads",
@@ -55,15 +54,23 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
   });
 
   it("staff see the dashboard and only the pages their permissions open, never the owner's pages", () => {
-    expect(pages(["attendance.mark"])).toEqual(["dashboard", "desk", "entrance", "classes"]);
-    // M27 round 2: classes for whoever runs or marks them; rewards, notices and enquiries each by their own permission.
-    expect(pages(["classes.manage"])).toEqual(["dashboard", "classes"]);
+    expect(pages(["attendance.mark"])).toEqual(["dashboard", "desk", "entrance"]);
+    // M27 round 2: rewards, notices and enquiries each by their own permission (classes were removed, 28 Nov 2026).
     expect(pages(["rewards.redeem", "notices.send", "leads.manage"])).toEqual(["dashboard", "rewards", "notices", "leads"]);
     // M27 round 3: attendance for shifts.manage or reports.view, equipment for assets.manage, My work for clock.in; payroll never for staff.
     expect(pages(["shifts.manage", "assets.manage", "clock.in"])).toEqual(["dashboard", "staff", "equipment", "mywork"]);
     expect(canOpen("payroll", ["shifts.manage", "reports.view", "clock.in"])).toBe(false);
     expect(canOpen("mywork", null)).toBe(false);
-    expect(pages(["plans.manage"])).toEqual(["dashboard", "plans"]);
+    // A trainer account (28 Nov 2026, M24-FR-180): Members for planning and Plans only, My work with clock.in.
+    expect(pages(["plans.manage"])).toEqual(["planMembers", "plans"]);
+    expect(pages(["members.trainer", "plans.manage", "clock.in"])).toEqual(["planMembers", "plans", "mywork"]);
+    expect(gymItems("y1", ["members.trainer", "plans.manage"]).find((i) => i.key === "planMembers")?.href).toBe("/manage/y1/plans/members");
+    expect(isTrainerOnly(["members.trainer", "plans.manage"])).toBe(true);
+    expect(isTrainerOnly(["members.trainer", "plans.manage", "attendance.mark"])).toBe(false);
+    expect(isTrainerOnly(["members.trainer"])).toBe(false);
+    expect(isTrainerOnly(null)).toBe(false);
+    expect(pages(["plans.manage", "members.view"])).toEqual(["dashboard", "members", "requests", "plans"]);
+    expect(canOpen("planMembers", null)).toBe(false);
     expect(pages(["desk.admit"])).toEqual(["dashboard", "desk"]);
     expect(pages(["desk.admissions"])).toEqual(["dashboard", "desk"]);
     expect(pages(["members.view"])).toEqual(["dashboard", "members", "requests"]);
@@ -92,7 +99,7 @@ describe("/manage sidebar per owner and staff permission (M24 §3.3, §4.1)", ()
   it("staff groups: Billing, Payouts and All-gyms reports are owner-only, a gym with no desk besides the dashboard is left out", () => {
     const groups = manageGroups({ gyms: [work("y1", ["attendance.mark", "fees.collect"], "Moushumi's gym"), work("y2", ["passes.view"]), work("y3", [])] });
     expect(groups[0].items.map((i) => i.key)).toEqual(["gyms"]);
-    expect(hrefs(groups)).toEqual(["/manage", "/manage/y1", "/manage/y1/desk", "/manage/y1/entrance", "/manage/y1/fees", "/manage/y1/fees/closing", "/manage/y1/classes", "/manage/y1/desk-mode", "/manage/y2", "/manage/y2/passes", "/manage/y2/desk-mode"]);
+    expect(hrefs(groups)).toEqual(["/manage", "/manage/y1", "/manage/y1/desk", "/manage/y1/entrance", "/manage/y1/fees", "/manage/y1/fees/closing", "/manage/y1/desk-mode", "/manage/y2", "/manage/y2/passes", "/manage/y2/desk-mode"]);
     expect(groups.slice(1).map((g) => [g.gymId, g.name, g.staff])).toEqual([
       ["y1", "Moushumi's gym", true],
       ["y2", null, true],
@@ -210,6 +217,6 @@ describe("WhatsApp (M24-FR-157)", () => {
     expect(pages(["members.view", "whatsapp.send"])).toEqual(["dashboard", "members", "requests", "whatsapp"]);
     expect(staffItems("y1", ["whatsapp.send"])).toEqual([{ key: "whatsapp", href: "/manage/y1/whatsapp" }]);
     const engage = gymSections(gymItems("g1", null)).find((x) => x.key === "engage");
-    expect(engage?.items.map((i) => i.key)).toEqual(["classes", "rewards", "notices", "leads", "whatsapp"]);
+    expect(engage?.items.map((i) => i.key)).toEqual(["rewards", "notices", "leads", "whatsapp"]);
   });
 });

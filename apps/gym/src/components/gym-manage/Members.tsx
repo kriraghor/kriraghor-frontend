@@ -6,7 +6,7 @@ import { UploadSimple, UserPlus, UsersThree } from "@phosphor-icons/react";
 import { Link, useRouter } from "@kriraghor/ui/i18n/navigation";
 import { Avatar, Badge, Button, ButtonLink, DataTable, FilterBar, Notice, type Column } from "@kriraghor/ui/kit";
 import { useUrlFilters } from "@kriraghor/ui/url-filters";
-import { featureLocked, gymManage, MEMBER_VIEWS, membersListReady, membersQuery, type MemberRow } from "@/lib/gym-manage";
+import { dhakaToday, featureLocked, gymManage, MEMBER_VIEWS, membersListReady, membersQuery, type MemberRow } from "@/lib/gym-manage";
 import { GymPage, MemberStatus, useFmt, useGymError, useDeskPackages, type GymCtx } from "./common";
 
 const SPEC = { view: { default: "", allowed: MEMBER_VIEWS }, q: { default: "" }, packageId: { default: "" }, trainerId: { default: "" } };
@@ -158,6 +158,8 @@ function useMemberColumns(gymId: string): Column<MemberRow>[] {
           {m.flags.overdue ? <Badge tone="danger">{t("flag.overdue")}</Badge> : m.flags.due ? <Badge tone="warning">{t("flag.due")}</Badge> : null}
           {m.current?.status === "frozen" ? <Badge tone="info">{t("flag.frozen")}</Badge> : null}
           {!m.linked ? <Badge>{t("flag.unlinked")}</Badge> : null}
+          {/* M24-FR-176: a member who bought an online pass, while it runs. */}
+          {m.passValidTo && m.passValidTo >= dhakaToday() ? <Badge tone="brand">{t("flag.onlinePass", { date: f.date(m.passValidTo) })}</Badge> : m.source === "pass" ? <Badge>{t("flag.passBuyer")}</Badge> : null}
           {m.trainer ? (
             <Badge tone="info" className="pl-1" icon={<Avatar name={m.trainer.displayName ?? t("members.trainerNoName")} src={m.trainer.avatarUrl} size={20} alt={m.trainer.displayName ?? t("members.trainerNoName")} className="-my-0.5" />}>
               {t("members.withTrainer", { name: m.trainer.displayName ?? t("members.trainerNoName") })}

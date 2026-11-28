@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createTranslator } from "next-intl";
 import en from "../../../messages/en.json";
 import bn from "../../../messages/bn.json";
-import { chatHref, classMessage, gymMessage, gymPageUrl, isNumberProblem, needsRecheck, numberOrNull, packageMessage, type WaSay } from "../whatsapp";
+import { chatHref, gymMessage, gymPageUrl, isNumberProblem, needsRecheck, numberOrNull, packageMessage, type WaSay } from "../whatsapp";
 
 // The real words from messages (gym.wa.msg), so a changed sentence shows up here.
 const sayIn = (locale: "en" | "bn"): WaSay => {
@@ -27,16 +27,6 @@ describe("WhatsApp chat messages on the gym page (M24-FR-158)", () => {
     expect(packageMessage(sayIn("en"), "en", x)).toBe("Hi Iron House, I'd like to know about the Monthly pass (৳1,500, 30 days). https://gym.kriraghor.com/gyms/iron-house");
     expect(packageMessage(sayIn("en"), "en", { ...x, days: 1 })).toContain("(৳1,500, 1 day)");
     expect(packageMessage(sayIn("bn"), "bn", x)).toBe("হ্যালো Iron House, Monthly পাস (৳১,৫০০, ৩০ দিন) সম্পর্কে জানতে চাই। https://gym.kriraghor.com/gyms/iron-house");
-  });
-
-  it("a class carries its name, day and Dhaka time", () => {
-    // 22 Nov 2026 is a Sunday; 12:30 UTC is 18:30 in Dhaka.
-    const x = { gym: "Iron House", name: "Zumba", date: "2026-11-22", startsAt: "2026-11-22T12:30:00.000Z" };
-    expect(classMessage(sayIn("en"), "en", x)).toBe("Hi Iron House, I'd like to join the Zumba class on Sunday 22 Nov at 18:30.");
-    const b = classMessage(sayIn("bn"), "bn", x);
-    expect(b).toContain("১৮:৩০");
-    expect(b).toContain("রবিবার");
-    expect(b).toContain("Zumba ক্লাসে যোগ দিতে চাই।");
   });
 
   it("no number, no link; a number gives the wa.me chat with the message", () => {
