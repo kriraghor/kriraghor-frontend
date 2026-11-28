@@ -32929,18 +32929,15 @@ export interface paths {
                     "application/json": {
                         headline?: string;
                         specialisation?: string;
-                        /** @default [] */
                         sportKeys?: string[];
                         /** @enum {string} */
                         experienceLevel?: "amateur" | "semi_pro" | "pro" | "national";
-                        /** @default 0 */
                         years?: number;
                         /** Format: uuid */
                         baseAreaId?: string;
                         bio?: string;
                         /** @description YouTube, Vimeo, Facebook, Google Drive, OneDrive (embed link), Dropbox, or an https .mp4/.webm/.m4v/.m3u8 link; never uploaded */
                         introVideoUrl?: string | null;
-                        /** @default false */
                         worksWithU16?: boolean;
                     };
                 };
