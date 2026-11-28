@@ -230,6 +230,9 @@ describe("gym role presets (M27 §3)", () => {
     expect(isGymCatalogue([{ key: "bookings.view", default: true, needs: null }])).toBe(false);
     expect(presetPermissions(gym, "cashier").sort()).toEqual(["cash.drawer", "clock.in", "fees.collect", "members.view", "pos.sell"]); // M27-FR-73: every role clocks in
     expect(presetPermissions(gym, "manager")).toHaveLength(gym.length);
+    // Tester feedback, 28 Nov 2026: a trainer only plans; the gym panel shows them Members and Plans.
+    expect(presetPermissions(gym, "trainer").sort()).toEqual(["members.trainer", "plans.manage"]);
+    expect(matchingPreset(gym, ["plans.manage", "members.trainer"])).toBe("trainer");
     expect(presetPermissions(gym.filter((p) => p.key !== "pos.sell" && p.key !== "clock.in"), "storekeeper")).toEqual(["stock.manage"]);
     expect(matchingPreset(gym, presetPermissions(gym, "accountant"))).toBe("accountant");
     expect(matchingPreset(gym, ["members.view"])).toBeNull();

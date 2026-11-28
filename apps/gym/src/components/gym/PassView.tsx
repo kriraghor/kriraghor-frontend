@@ -12,7 +12,8 @@ import { SignedOutCard } from "@kriraghor/ui/account";
 import { gym, passTone, TONE } from "@/lib/gym";
 import { RatePassButton } from "@kriraghor/ui/trust";
 import { Notice } from "@kriraghor/ui/primitives";
-import { BackLink } from "@kriraghor/ui/kit";
+import { BackLink, Button } from "@kriraghor/ui/kit";
+import { newKey } from "@kriraghor/ui/format";
 
 /** The QR, drawn on the device from the signed token (never fetched as an image, so it stays private). */
 function PassQr({ token, label }: { token: string; label: string }) {
@@ -49,6 +50,15 @@ export function PassView({ code }: { code: string }) {
       setConfirm(false);
     },
   });
+  // M20-FR-24: renew buys the same package again from the day after the last one ends; then to payment.
+  const [renewKey] = useState(newKey);
+  const renew = useMutation({
+    mutationFn: () => gym.renewPass(q.data!.pass.packageId, renewKey),
+    onSuccess: (r) => {
+      qc.invalidateQueries({ queryKey: ["my-passes"] });
+      if (r.payment) window.location.assign(r.payment.payUrl);
+    },
+  });
   const when = (iso: string | null) => (iso ? new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Dhaka" }).format(new Date(iso)) : "");
 
   if (status === "signed_out") return <SignedOutCard />;
@@ -63,7 +73,7 @@ export function PassView({ code }: { code: string }) {
       </section>
     );
   const { pass: p, payment } = q.data;
-  const problem = cancel.error ? problemOf(cancel.error) : null;
+  const problem = cancel.error ? problemOf(cancel.error) : renew.error ? problemOf(renew.error) : null;
   const dates = p.validFrom === p.validTo ? dayLabel(p.validFrom, locale) : `${dayLabel(p.validFrom, locale)} – ${dayLabel(p.validTo, locale)}`;
 
   if (full && p.token)
@@ -146,6 +156,15 @@ export function PassView({ code }: { code: string }) {
             </div>
           ) : null}
         </dl>
+
+        {p.can.renew ? (
+          <div className="mt-6 flex flex-col gap-2" data-testid="pass-renew-box">
+            <Button type="button" onClick={() => renew.mutate()} busy={renew.isPending} confirm={{ kind: "money", title: t("renewAsk", { title: p.title }), body: t("renewBody", { price: formatTaka(p.money.price, locale) }) }} className="self-start" data-testid="pass-renew">
+              {t("renew")}
+            </Button>
+            <p className="text-sm text-muted">{p.status === "active" ? t("renewAfter", { date: dayLabel(p.validTo, locale) }) : t("renewToday")}</p>
+          </div>
+        ) : null}
 
         {/* M20-FR-10: rate the gym after a visit, or update my one review of it from this newer pass. */}
         <RatePassButton pass={p} className="mt-6" />

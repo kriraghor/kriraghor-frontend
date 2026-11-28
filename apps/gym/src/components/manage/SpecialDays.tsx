@@ -9,7 +9,7 @@ import { DatePicker, TimePicker, addDaysYmd, dhakaToday, formatDateLabel, localD
 import { problemOf } from "@kriraghor/api-client";
 import { gymDesk, isOneDay, specialDayBody, specialDayProblem, type SpecialDay, type SpecialDayInput } from "@/lib/manage";
 
-type Affected = { classSessions: number; visits: number };
+type Affected = { visits: number };
 
 /**
  * Holidays and special hours (M20-FR-16 to FR-21), under the weekly hours on the gym page editor. The owner
@@ -222,10 +222,10 @@ function AddForm({ gymId, maxDays, aheadDays, onDone }: { gymId: string; maxDays
       ) : null}
 
       {affected ? (
-        <Notice tone={affected.classSessions + affected.visits > 0 ? "warning" : "info"} title={t("checkTitle")}>
+        <Notice tone={affected.visits > 0 ? "warning" : "info"} title={t("checkTitle")}>
           <span data-testid="special-day-affected">
-            {affected.classSessions + affected.visits > 0
-              ? t("willCancel", { classes: localDigits(String(affected.classSessions), locale), visits: localDigits(String(affected.visits), locale) })
+            {affected.visits > 0
+              ? t("willCancel", { visits: localDigits(String(affected.visits), locale) })
               : t("cancelsNothing")}
           </span>
         </Notice>
@@ -247,8 +247,8 @@ function AddForm({ gymId, maxDays, aheadDays, onDone }: { gymId: string; maxDays
                 kind: "add",
                 title: t("saveAsk"),
                 body:
-                  affected.classSessions + affected.visits > 0
-                    ? t("willCancel", { classes: localDigits(String(affected.classSessions), locale), visits: localDigits(String(affected.visits), locale) })
+                  affected.visits > 0
+                    ? t("willCancel", { visits: localDigits(String(affected.visits), locale) })
                     : t("cancelsNothing"),
               }
             : undefined

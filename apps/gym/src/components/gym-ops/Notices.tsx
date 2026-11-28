@@ -12,7 +12,7 @@ import { SegmentPicker } from "./SegmentPicker";
 
 /**
  * /manage/[gymId]/notices (M27-FR-62 to FR-65; notices.send; Standard plan): write a short notice to a group of
- * members (all active, ending soon, expired, not seen, on a package, in a class), see how many it reaches and
+ * members (all active, ending soon, expired, not seen, on a package), see how many it reaches and
  * how (the app, email, not reachable), send it. In-app and push to linked members, email to the others with
  * an email; never SMS. A few notices a day at most.
  */
@@ -25,7 +25,7 @@ export function Notices({ gymId }: { gymId: string }) {
   );
 }
 
-const KINDS = ["active", "expiring", "expired", "not_seen", "package", "class"] as const;
+const KINDS = ["active", "expiring", "expired", "not_seen", "package"] as const;
 
 function Body({ ctx }: { ctx: GymCtx }) {
   const t = useTranslations("go");
