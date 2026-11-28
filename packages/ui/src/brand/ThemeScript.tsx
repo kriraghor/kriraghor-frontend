@@ -1,4 +1,6 @@
 import Script from "next/script";
+import { THEME_COOKIE, THEME_KEY } from "./theme-keys";
+import { ThemeKeeper } from "./ThemeKeeper";
 
 /**
  * Applies the visitor's theme before the first paint (no flash of the wrong theme): "light" or "dark" goes
@@ -12,8 +14,7 @@ import Script from "next/script";
  * this site's localStorage is copied to the cookie once. Hosts without a shared parent (localhost, an IP,
  * a Vercel preview) keep a cookie of their own.
  */
-export const THEME_KEY = "kg.theme";
-export const THEME_COOKIE = "kg_theme";
+export { THEME_COOKIE, THEME_KEY };
 /** First labels of the Kriraghor sites; what follows them is the shared parent domain. */
 export const SITE_LABELS = ["www", "gym", "esports", "admin", "vendor"];
 
@@ -41,6 +42,12 @@ export const themeScript = (fallback?: "light" | "dark") =>
 
 export function ThemeScript({ fallback }: { fallback?: "light" | "dark" } = {}) {
   // beforeInteractive: in the document head, before the body paints and before React loads.
-  // eslint-disable-next-line @next/next/no-before-interactive-script-outside-document -- App Router root layout (a Pages Router rule)
-  return <Script id="kg-theme" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: themeScript(fallback) }} />;
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document -- App Router root layout (a Pages Router rule) */}
+      <Script id="kg-theme" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: themeScript(fallback) }} />
+      {/* A language switch renders <html> again without the attribute; this puts it back (28 Nov 2026). */}
+      <ThemeKeeper fallback={fallback} />
+    </>
+  );
 }

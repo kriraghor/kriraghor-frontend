@@ -7,7 +7,7 @@ import { ArrowLeft, Barbell, Check, ClipboardText, ForkKnife, NotePencil, PlayCi
 import { useAuth } from "@kriraghor/ui/auth";
 import { SignedOutCard } from "@kriraghor/ui/account";
 import { Link } from "@kriraghor/ui/i18n/navigation";
-import { Badge, Button, ButtonLink, Card, EmptyState, Notice, SegmentedControl, Skeleton, Textarea } from "@kriraghor/ui/kit";
+import { Badge, Button, ButtonLink, Card, EmptyState, Notice, SegmentedControl, Skeleton, Textarea, useConfirm } from "@kriraghor/ui/kit";
 import { cn } from "@kriraghor/ui/cn";
 import { addDays, gymMe, type MyPlanItem, type MyPlans as MyPlansData, type PlanContent } from "@/lib/gym-manage";
 import { groupsOn, latestTicks, progressOn, textOf, tickKey, todayFirst, type Bilingual } from "@/lib/plans";
@@ -96,6 +96,7 @@ function PlanDay({ item, date, ticks, onTick }: { item: MyPlanItem; date: string
   const [noteFor, setNoteFor] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState<string | null>(null);
+  const ask = useConfirm();
   if (!groups) return <p className="text-sm text-muted">{t("notToday")}</p>;
   const refs = groups.flatMap((g) => g.refs);
   const p = progressOn(refs, ticks, date);
@@ -139,7 +140,11 @@ function PlanDay({ item, date, ticks, onTick }: { item: MyPlanItem; date: string
                         type="button"
                         aria-pressed={done}
                         disabled={saving === ref}
-                        onClick={() => void save(ref, !done, tick?.note ?? null)}
+                        onClick={async () => {
+                          // Tester feedback, 28 Nov 2026: taking a tick back asks first; ticking stays one tap.
+                          if (done && !(await ask({ title: t("undoTitle"), body: t("undoBody"), confirmLabel: t("undoYes") }))) return;
+                          void save(ref, !done, tick?.note ?? null);
+                        }}
                         className={cn(
                           "ml-auto inline-flex min-h-11 min-w-24 shrink-0 items-center justify-center gap-1.5 rounded-control border px-3 font-bold",
                           done ? "border-brand bg-brand text-on-brand" : "border-line hover:border-brand",

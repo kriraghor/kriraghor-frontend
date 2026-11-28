@@ -29,3 +29,17 @@ test("the language switch keeps the URL, query string included", async ({ page }
   await expect(page.locator("html")).toHaveAttribute("lang", "bn");
   await expect(page).toHaveURL(/\/about\?from=test$/);
 });
+
+// Tester feedback, 28 Nov 2026: switching language turned the site dark (the theme mark on <html> was lost),
+// and typed text was gone in the other language.
+test("the language switch keeps the theme and typed text", async ({ page, context }) => {
+  await context.addCookies([{ name: "kg_theme", value: "light", url: "http://localhost:3000" }]);
+  await page.goto("/sign-in");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.locator("main #identifier").fill("01300000090");
+  await openMenu(page);
+  await page.getByTestId("language-switch").click();
+  await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("main:visible #identifier")).toHaveValue("01300000090");
+});

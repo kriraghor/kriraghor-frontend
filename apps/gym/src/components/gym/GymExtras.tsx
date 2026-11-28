@@ -5,12 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle, WhatsappLogo } from "@phosphor-icons/react";
 import { problemOf } from "@kriraghor/api-client";
-import { Button, Field, Notice, PhoneField, Textarea } from "@kriraghor/ui/kit";
+import { Button, Field, Notice, PhoneField, Select, Textarea } from "@kriraghor/ui/kit";
 import { nameProblem, phoneProblem } from "@/lib/validate";
 import { byDay, dhakaTime, gymOps2 } from "@/lib/gym-ops";
 import { useFmt } from "@/components/gym-manage/common";
 import { TrainerFace } from "@/components/TrainerFace";
 import { chatHref, classMessage, type WaSay } from "@/lib/whatsapp";
+import { bestTimeText, CALL_TIMES, nextTo, toMin } from "@/lib/call-time";
 
 /**
  * The gym page's round 2 sections (M27-FR-66, FR-67): this week's classes with free places, and "Ask the gym"
@@ -81,7 +82,7 @@ function Timetable({ items, gymName, whatsapp }: { items: Awaited<ReturnType<typ
 
 function Enquiry({ slug, gymName }: { slug: string; gymName: string }) {
   const t = useTranslations("go");
-  const [d, setD] = useState({ name: "", phone: "", message: "", bestTime: "", website: "" });
+  const [d, setD] = useState({ name: "", phone: "", message: "", bestFrom: "", bestTo: "", website: "" });
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -92,7 +93,7 @@ function Enquiry({ slug, gymName }: { slug: string; gymName: string }) {
     setBusy(true);
     setProblem(null);
     try {
-      await gymOps2.enquire(slug, { name: d.name.trim(), phone: d.phone.trim(), message: d.message.trim() || null, bestTime: d.bestTime.trim() || null, ...(d.website ? { website: d.website } : {}) });
+      await gymOps2.enquire(slug, { name: d.name.trim(), phone: d.phone.trim(), message: d.message.trim() || null, bestTime: bestTimeText(d.bestFrom, d.bestTo), ...(d.website ? { website: d.website } : {}) });
       setDone(true);
     } catch (e2) {
       const code = problemOf(e2)?.code;
@@ -115,9 +116,9 @@ function Enquiry({ slug, gymName }: { slug: string; gymName: string }) {
           <Field id="eq-name" label={t("page.name")} value={d.name} maxLength={80} onChange={(e) => setD({ ...d, name: e.target.value })} autoComplete="name" />
           <PhoneField id="eq-phone" label={t("page.phone")} value={d.phone} onChange={(v) => setD({ ...d, phone: v })} placeholder="01XXXXXXXXX" required />
           <Textarea id="eq-msg" label={t("page.message")} optional={t("optional")} value={d.message} maxLength={500} onChange={(e) => setD({ ...d, message: e.target.value })} className="sm:col-span-2" />
-          <Field id="eq-best" label={t("page.bestTime")} optional={t("optional")} value={d.bestTime} maxLength={40} onChange={(e) => setD({ ...d, bestTime: e.target.value })} placeholder={t("page.bestTimeHint")} />
-          {/* A field people never see: robots fill it (M27-FR-66). */}
-          <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+          <BestTime from={d.bestFrom} to={d.bestTo} onChange={(bestFrom, bestTo) => setD({ ...d, bestFrom, bestTo })} />
+          {/* A field people never see: robots fill it (M27-FR-66). Never carried over a language switch. */}
+          <div aria-hidden data-no-carry className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
             <label htmlFor="eq-website">Website</label>
             <input id="eq-website" tabIndex={-1} autoComplete="off" value={d.website} onChange={(e) => setD({ ...d, website: e.target.value })} />
           </div>
@@ -133,5 +134,39 @@ function Enquiry({ slug, gymName }: { slug: string; gymName: string }) {
         </form>
       )}
     </>
+  );
+}
+
+/**
+ * "Best time to call" (tester feedback, 28 Nov 2026): two time pickers, From and To, every half hour, with
+ * "Any time" first. Sent as "18:00–20:00".
+ */
+function BestTime({ from, to, onChange }: { from: string; to: string; onChange: (from: string, to: string) => void }) {
+  const t = useTranslations("go");
+  const locale = useLocale();
+  const label = (hhmm: string) =>
+    new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-GB", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "UTC" }).format(new Date(Date.UTC(2026, 0, 1, toMin(hhmm) / 60, toMin(hhmm) % 60)));
+  return (
+    <fieldset className="grid grid-cols-2 gap-3 sm:col-span-2" data-testid="enquiry-best-time">
+      <legend className="mb-1.5 text-sm font-semibold">
+        {t("page.bestTime")} <span className="font-normal text-muted">({t("optional")})</span>
+      </legend>
+      <Select id="eq-best-from" label={t("page.bestFrom")} value={from} onChange={(e) => onChange(e.target.value, nextTo(e.target.value, to))}>
+        <option value="">{t("page.anyTime")}</option>
+        {CALL_TIMES.slice(0, -1).map((x) => (
+          <option key={x} value={x}>
+            {label(x)}
+          </option>
+        ))}
+      </Select>
+      <Select id="eq-best-to" label={t("page.bestTo")} value={to} disabled={!from} onChange={(e) => onChange(from, e.target.value)}>
+        {!from ? <option value="">{t("page.anyTime")}</option> : null}
+        {CALL_TIMES.filter((x) => from && toMin(x) > toMin(from)).map((x) => (
+          <option key={x} value={x}>
+            {label(x)}
+          </option>
+        ))}
+      </Select>
+    </fieldset>
   );
 }
