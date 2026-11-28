@@ -6,7 +6,8 @@ import en from "../../../../messages/en.json";
 import { IntroVideo } from "../IntroVideo";
 import type { IntroVideo as Video } from "@/lib/hire";
 
-// M11-FR-16: nothing loads from the video's host until Play; then the right player for the link.
+// M11-FR-16: nothing loads from the video's host until Play; then the right player for the link. Our frame
+// names no platform (tester feedback, 28 Nov 2026); the original link shows only when it cannot play.
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 let host: HTMLDivElement;
@@ -40,11 +41,12 @@ describe("IntroVideo", () => {
   it("shows only a play button until pressed, then a sandboxed iframe that autoplays", () => {
     mount(yt);
     expect(host.querySelector("iframe")).toBeNull();
-    expect(host.textContent).toContain("Plays from YouTube");
-    expect(host.querySelector("a")!.getAttribute("href")).toBe(yt.url);
+    expect(host.textContent).toContain("Watch the intro");
+    expect(host.textContent).not.toContain("YouTube");
+    expect(host.querySelector("a")).toBeNull();
     play();
     const frame = host.querySelector("iframe")!;
-    expect(frame.getAttribute("src")).toBe(`${yt.playUrl}?autoplay=1`);
+    expect(frame.getAttribute("src")).toBe(`${yt.playUrl}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`);
     expect(frame.getAttribute("sandbox")).toBe("allow-scripts allow-same-origin allow-presentation allow-popups");
     expect(frame.getAttribute("title")).toBe("Intro video: Nusrat Jahan");
   });
@@ -66,7 +68,15 @@ describe("IntroVideo", () => {
       video.dispatchEvent(new Event("error"));
     });
     expect(host.querySelector('[role="alert"]')!.textContent).toContain("cannot play here");
-    expect(host.querySelector("a")!.textContent).toContain("Open on Dropbox");
+    expect(host.querySelector("a")!.textContent).toContain("Open the video");
+    expect(host.querySelector("a")!.getAttribute("href")).toBe(file.url);
+  });
+
+  it("Vimeo hides its title, byline and portrait", () => {
+    const vimeo: Video = { url: "https://vimeo.com/76979871", provider: "vimeo", kind: "iframe", playUrl: "https://player.vimeo.com/video/76979871" };
+    mount(vimeo);
+    play();
+    expect(host.querySelector("iframe")!.getAttribute("src")).toBe(`${vimeo.playUrl}?autoplay=1&title=0&byline=0&portrait=0&dnt=1`);
   });
 
   it("HLS plays natively where the browser can (Safari)", () => {

@@ -1524,8 +1524,8 @@
       "badge": "Video",
       "title": "Intro video: {name}",
       "play": "Play the intro video: {title}",
-      "from": "Plays from {provider}",
-      "open": "Open on {provider}",
+      "watch": "Watch the intro",
+      "openVideo": "Open the video",
       "cannotPlay": "This video cannot play here. Open it where it lives instead.",
       "provider": {
         "youtube": "YouTube",

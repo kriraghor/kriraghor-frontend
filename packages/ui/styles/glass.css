@@ -7,6 +7,10 @@
 :root {
   --glass-bg: rgb(255 255 255 / 0.66);
   --glass-strong-bg: rgb(255 255 255 / 0.86);
+  /* The header bar (28 Nov 2026): iOS-like, see-through with a strong blur. */
+  --glass-bar-bg: rgb(255 255 255 / 0.62);
+  --glass-bar-blur: blur(24px) saturate(180%);
+  --glass-bar-shadow: 0 8px 28px -14px rgb(10 26 18 / 0.28);
   --glass-edge: rgb(17 26 21 / 0.08);
   --glass-highlight: rgb(255 255 255 / 0.7);
   --glass-shadow: 0 12px 40px -18px rgb(10 26 18 / 0.24);
@@ -21,6 +25,8 @@
   :root:not([data-theme="light"]) {
     --glass-bg: rgb(20 28 24 / 0.6);
     --glass-strong-bg: rgb(20 28 24 / 0.84);
+    --glass-bar-bg: rgb(20 28 24 / 0.58);
+    --glass-bar-shadow: 0 10px 30px -14px rgb(0 0 0 / 0.7);
     --glass-edge: rgb(255 255 255 / 0.08);
     --glass-highlight: rgb(255 255 255 / 0.05);
     --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
@@ -32,6 +38,8 @@
 :root[data-theme="dark"] {
   --glass-bg: rgb(20 28 24 / 0.6);
   --glass-strong-bg: rgb(20 28 24 / 0.84);
+  --glass-bar-bg: rgb(20 28 24 / 0.58);
+  --glass-bar-shadow: 0 10px 30px -14px rgb(0 0 0 / 0.7);
   --glass-edge: rgb(255 255 255 / 0.08);
   --glass-highlight: rgb(255 255 255 / 0.05);
   --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
@@ -49,6 +57,7 @@
   --ambient-amber: rgb(255 122 47 / 0.06);
   --glass-bg: rgb(16 23 19 / 0.62);
   --glass-strong-bg: rgb(12 18 14 / 0.86);
+  --glass-bar-bg: rgb(12 18 14 / 0.6);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) [data-ui="v2"] {
@@ -56,31 +65,37 @@
     --ambient-amber: rgb(255 122 47 / 0.06);
     --glass-bg: rgb(16 23 19 / 0.62);
     --glass-strong-bg: rgb(12 18 14 / 0.86);
+    --glass-bar-bg: rgb(12 18 14 / 0.6);
   }
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   :root {
     --glass-bg: var(--kg-surface);
     --glass-strong-bg: var(--kg-surface);
+    --glass-bar-bg: var(--kg-surface);
     --glass-band-bg: var(--kg-band);
   }
   /* !important: beats the v2 dark glass above, which is more specific. */
   [data-ui="v2"] {
     --glass-bg: var(--kg-surface) !important;
     --glass-strong-bg: var(--kg-surface) !important;
+    --glass-bar-bg: var(--kg-surface) !important;
   }
 }
 @media (prefers-reduced-transparency: reduce) {
   :root {
     --glass-bg: var(--kg-surface);
     --glass-strong-bg: var(--kg-surface);
+    --glass-bar-bg: var(--kg-surface);
     --glass-band-bg: var(--kg-band);
     --glass-blur: none;
+    --glass-bar-blur: none;
   }
   /* !important: beats the v2 dark glass above, which is more specific. */
   [data-ui="v2"] {
     --glass-bg: var(--kg-surface) !important;
     --glass-strong-bg: var(--kg-surface) !important;
+    --glass-bar-bg: var(--kg-surface) !important;
   }
 }
 
@@ -97,6 +112,19 @@
   backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-edge);
   box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+}
+/* The site header: a see-through bar with a strong blur and a hairline edge, a soft shadow once the page
+   has scrolled (SiteHeader sets data-scrolled). */
+@utility glass-bar {
+  background: var(--glass-bar-bg);
+  -webkit-backdrop-filter: var(--glass-bar-blur);
+  backdrop-filter: var(--glass-bar-blur);
+  border-bottom: 1px solid var(--glass-edge);
+  box-shadow: inset 0 -1px 0 var(--glass-highlight);
+  transition: box-shadow 220ms, background-color 220ms;
+  &[data-scrolled] {
+    box-shadow: var(--glass-bar-shadow), inset 0 -1px 0 var(--glass-highlight);
+  }
 }
 /* On photos and the dark band: dark frosted glass with light text. */
 @utility glass-band {

@@ -21,6 +21,8 @@
 [data-theme="gym"] {
   --glass-bg: rgb(26 27 24 / 0.6);
   --glass-strong-bg: rgb(26 27 24 / 0.86);
+  --glass-bar-bg: rgb(22 23 20 / 0.58);
+  --glass-bar-shadow: 0 10px 30px -14px rgb(0 0 0 / 0.7);
   --glass-edge: rgb(255 255 255 / 0.08);
   --glass-highlight: rgb(255 255 255 / 0.05);
   --glass-shadow: 0 14px 44px -18px rgb(0 0 0 / 0.65);
@@ -68,6 +70,8 @@
   --kg-focus: #4f6a00;
   --glass-bg: rgb(255 255 255 / 0.7);
   --glass-strong-bg: rgb(255 255 255 / 0.88);
+  --glass-bar-bg: rgb(255 255 255 / 0.64);
+  --glass-bar-shadow: 0 8px 28px -14px rgb(21 22 15 / 0.26);
   --glass-edge: rgb(21 22 15 / 0.09);
   --glass-highlight: rgb(255 255 255 / 0.7);
   --glass-shadow: 0 12px 40px -18px rgb(21 22 15 / 0.22);

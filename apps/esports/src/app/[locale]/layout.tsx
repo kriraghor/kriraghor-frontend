@@ -74,7 +74,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
 /** Same height as the header, so nothing moves when it streams in. */
 function HeaderPlaceholder() {
   return (
-    <div className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150" aria-hidden>
+    <div className="sticky top-0 z-40 glass-bar" aria-hidden>
       <div className="h-1 bg-brand" />
       <div className="h-16" />
     </div>

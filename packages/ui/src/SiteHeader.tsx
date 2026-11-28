@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@kriraghor/api-client";
 import { useLocale, useTranslations } from "next-intl";
@@ -16,6 +16,27 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "./kit/Display";
 import { cn } from "./cn";
 import { LogoMark } from "./brand/LogoMark";
+
+/** The stylesheet's breakpoints (packages/tokens/tokens.css: md 900px, lg 1180px), for media queries in code. */
+export const BREAKPOINT = { md: 900, lg: 1180 } as const;
+const LOGO_PX = 52;
+const LOGO_GAP_PX = 10;
+const CENTRE_GAP_PX = 24;
+
+/** The row's horizontal padding. */
+const padX = (el: HTMLElement) => {
+  const cs = getComputedStyle(el);
+  return parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+};
+
+/**
+ * The centred links fit when they and two equal side columns (each as wide as the wider of the logo and
+ * the actions) fit in the row, with the grid's gaps.
+ */
+export function navFitsIn(w: { row: number; logo: number; actions: number; links: number }): boolean {
+  if (w.row <= 0) return true;
+  return w.links + 2 * Math.max(w.logo, w.actions) + 2 * CENTRE_GAP_PX <= w.row;
+}
 
 export type HeaderConfig = {
   titleKey: "web" | "esports" | "admin" | "vendor" | "gym";
@@ -84,6 +105,11 @@ const drawerRow = "flex min-h-12 w-full items-center gap-3 rounded-control px-3 
  *   page so the sticky part stays one row; without one (gym, esports, the portal) they sit centred in the top row.
  * - The menu (a drawer at every size) holds the language and the theme; on phones also the links, Partner
  *   with us and the account.
+ * - Tester feedback, 28 Nov 2026: the desktop layout starts where the stylesheet's md (900px) or lg (1180px)
+ *   does (the code said 768/1024, so between them the links were in neither place). Without a search, the
+ *   centred links stay in the top row only while they fit beside the logo and the actions (measured, so a
+ *   longer Bangla label or a signed-in bell counts); otherwise they move into the menu. The bar is iOS-like
+ *   glass, see-through with a strong blur, and takes a soft shadow once the page scrolls.
  */
 export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, search, roomy, actions, full, partner }: HeaderConfig) {
   const t = useTranslations();
@@ -104,8 +130,8 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
 
   // Where the desktop layout starts: `lg` for sites with many links (roomy), else `md`. Static class names for Tailwind.
   const wide = roomy
-    ? { show: "hidden lg:inline-flex", block: "hidden lg:flex", hide: "lg:hidden", query: "(min-width: 1024px)" }
-    : { show: "hidden md:inline-flex", block: "hidden md:flex", hide: "md:hidden", query: "(min-width: 768px)" };
+    ? { show: "hidden lg:inline-flex", block: "hidden lg:flex", hide: "lg:hidden", query: `(min-width: ${BREAKPOINT.lg}px)` }
+    : { show: "hidden md:inline-flex", block: "hidden md:flex", hide: "md:hidden", query: `(min-width: ${BREAKPOINT.md}px)` };
 
   // The drawer's phone-only part (links, Partner with us, the account) closes it when the screen grows past it.
   const [isWide, setIsWide] = useState(false);
@@ -116,6 +142,38 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, [wide.query]);
+
+  // Without a search: do the centred links fit between the logo and the actions? Measured on hidden copies
+  // of the title and the links (the real ones may be squeezed or hidden), again whenever a size changes.
+  const rowRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
+  const [navFits, setNavFits] = useState(true);
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    const actions = actionsRef.current;
+    const measure = measureRef.current;
+    if (search || !row || !actions || !measure || typeof ResizeObserver === "undefined") return;
+    const title = measure.children[0] as HTMLElement;
+    const links = measure.children[1] as HTMLElement;
+    const check = () =>
+      setNavFits(navFitsIn({ row: row.clientWidth - padX(row), logo: LOGO_PX + LOGO_GAP_PX + title.offsetWidth, actions: actions.offsetWidth, links: links.offsetWidth }));
+    const ro = new ResizeObserver(check);
+    [row, actions, title, links].forEach((el) => ro.observe(el));
+    check();
+    return () => ro.disconnect();
+  }, [search]);
+  const linksInTop = !search && navFits;
+  const linksInMenu = !isWide || (!search && !navFits);
+
+  // A soft shadow under the glass once the page has scrolled.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 4);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
 
   const links = (place: "top" | "row") =>
     nav.map((item) => {
@@ -138,19 +196,33 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
 
   return (
     <>
-      <header data-site-header className="sticky top-0 z-40 border-b border-[var(--glass-edge)] bg-[var(--glass-strong-bg)] backdrop-blur-xl backdrop-saturate-150">
+      <header data-site-header data-scrolled={scrolled ? "" : undefined} className="glass-bar sticky top-0 z-40">
         <div className="flex h-1" aria-hidden>
           <span className="w-[72%] bg-brand" />
           <span className="flex-1 bg-accent" />
         </div>
         <div
+          ref={rowRef}
           className={cn(
-            "mx-auto flex h-16 items-center gap-2 px-3 sm:gap-3 sm:px-5",
+            "relative mx-auto flex h-16 items-center gap-2 px-3 sm:gap-3 sm:px-5",
             full ? "max-w-none" : "max-w-wide",
             // Without a search the links are centred between the logo and the actions (equal side columns).
-            !search && (roomy ? "lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-6" : "md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6"),
+            linksInTop && (roomy ? "lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-6" : "md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6"),
           )}
         >
+          {/* Hidden copies for measuring: the site name and the links at their natural width. */}
+          {!search ? (
+            <div ref={measureRef} aria-hidden className="pointer-events-none invisible absolute left-0 top-0 flex h-0 overflow-hidden whitespace-nowrap">
+              <span className="font-display text-lg font-bold tracking-tight sm:text-xl">{t(`app.${titleKey}`)}</span>
+              <span className="flex gap-1">
+                {nav.map((item) => (
+                  <span key={item.href} className="shrink-0 px-3 py-2 text-[15px] font-medium">
+                    {t(`nav.${item.key}`)}
+                  </span>
+                ))}
+              </span>
+            </div>
+          ) : null}
           <a href="#main" className="sr-only focus:not-sr-only">
             {t("nav.skip")}
           </a>
@@ -166,15 +238,17 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
             </div>
           ) : (
             <>
-              <nav aria-label={t("nav.main")} className={cn("items-center gap-1 justify-self-center", wide.block)} data-testid="site-nav">
-                {links("top")}
-              </nav>
-              {/* Phones: push the actions to the right. */}
-              <span className={cn("flex-1", wide.hide)} aria-hidden />
+              {linksInTop ? (
+                <nav aria-label={t("nav.main")} className={cn("items-center gap-1 justify-self-center", wide.block)} data-testid="site-nav">
+                  {links("top")}
+                </nav>
+              ) : null}
+              {/* Phones, or links in the menu: push the actions to the right. */}
+              <span className={cn("flex-1", linksInTop && wide.hide)} aria-hidden />
             </>
           )}
 
-          <div className="flex shrink-0 items-center gap-1 justify-self-end sm:gap-1.5">
+          <div ref={actionsRef} className="flex shrink-0 items-center gap-1 justify-self-end sm:gap-1.5">
             {partner ? (
               <NavLink
                 href={partner}
@@ -226,9 +300,8 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
               }
             >
               <div id="site-menu" className="flex flex-col gap-1 px-3 pb-4">
-                {!isWide ? (
-                  <>
-                    <nav aria-label={t("nav.main")} className="flex flex-col gap-1">
+                {linksInMenu ? (
+                  <nav aria-label={t("nav.main")} className="flex flex-col gap-1" data-testid="menu-nav">
                       {nav.map((item, i) => (
                         <NavLink
                           key={item.href}
@@ -241,7 +314,10 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
                           {t(`nav.${item.key}`)}
                         </NavLink>
                       ))}
-                    </nav>
+                  </nav>
+                ) : null}
+                {!isWide ? (
+                  <>
                     {partner ? (
                       <NavLink href={partner} current={isCurrent(partner)} onClick={closeMenu} className={drawerRow}>
                         <Handshake size={22} aria-hidden />
@@ -261,9 +337,9 @@ export function SiteHeader({ titleKey, homeHref, signInHref, meHref, nav, bell, 
                         </button>
                       </>
                     ) : null}
-                    <hr className="my-2 border-line" />
                   </>
                 ) : null}
+                {linksInMenu || !isWide ? <hr className="my-2 border-line" /> : null}
                 {/* Settings: the language and the theme, at every size. */}
                 <button type="button" onClick={() => switchLocale(locale === "en" ? "bn" : "en")} lang={locale === "en" ? "bn" : "en"} className={drawerRow} data-testid="language-switch">
                   <Translate size={22} aria-hidden />

@@ -118,31 +118,8 @@ export function GymDetail({ slug }: { slug: string }) {
             ) : null}
 
             <h2 className="mt-8 text-2xl font-extrabold">{t("hours")}</h2>
-            <table className="mt-3 w-full max-w-xl text-sm" data-testid="gym-hours">
-              <tbody>
-                {weekOf(g.hours).map((d) => (
-                  <tr key={d.dow} className={`border-b border-line ${d.dow === today ? "font-bold" : ""}`}>
-                    <th scope="row" className="py-2 pr-4 text-left font-semibold">
-                      {days[d.dow]}
-                    </th>
-                    <td className="py-2">
-                      {d.windows.length ? (
-                        <span className="flex flex-wrap gap-x-4 gap-y-1">
-                          {d.windows.map((w) => (
-                            <span key={w.openTime} className="tabular-nums">
-                              {w.openTime}–{w.closeTime}
-                              {w.womenOnly ? <span className="ml-1 text-xs font-bold uppercase text-brand">{t("womenOnly")}</span> : null}
-                            </span>
-                          ))}
-                        </span>
-                      ) : (
-                        <span className="text-muted">{t("closed")}</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {/* Tester feedback, 28 Nov 2026: one column for everyone's hours, one headed "Women only". */}
+            <HoursTable hours={g.hours} today={today} days={days} />
             {g.specialDays.length ? (
               <div className="mt-4 max-w-xl" data-testid="gym-special-days">
                 <h3 className="text-sm font-bold uppercase tracking-wide text-muted">{t("specialDays")}</h3>
@@ -198,6 +175,72 @@ export function GymDetail({ slug }: { slug: string }) {
           </aside>
         </div>
       </section>
+    </div>
+  );
+}
+
+/** The week's hours as a table: Day, Open hours and, when the gym has any, a Women only column. */
+function HoursTable({ hours, today, days }: { hours: Parameters<typeof weekOf>[0]; today: number; days: string[] }) {
+  const t = useTranslations("gym");
+  const locale = useLocale();
+  const week = weekOf(hours);
+  const hasWomen = week.some((d) => d.windows.some((w) => w.womenOnly));
+  const span = (ws: { openTime: string; closeTime: string }[]) =>
+    ws.length ? (
+      <span className="flex flex-col gap-0.5">
+        {ws.map((w) => (
+          <span key={w.openTime} className="whitespace-nowrap tabular-nums">
+            {localDigits(`${w.openTime}–${w.closeTime}`, locale)}
+          </span>
+        ))}
+      </span>
+    ) : (
+      <span className="text-muted" aria-label={t("hoursNone")}>
+        –
+      </span>
+    );
+  return (
+    <div className="mt-3 max-w-xl overflow-hidden rounded-card border border-line">
+      <table className="w-full text-sm" data-testid="gym-hours">
+        <thead className="bg-surface-2 text-left text-xs font-bold uppercase tracking-wide text-muted">
+          <tr>
+            <th scope="col" className="px-4 py-2.5">
+              {t("hoursDay")}
+            </th>
+            <th scope="col" className="px-4 py-2.5">
+              {t("hoursOpen")}
+            </th>
+            {hasWomen ? (
+              <th scope="col" className="px-4 py-2.5 text-brand-text" data-testid="gym-hours-women">
+                {t("hoursWomen")}
+              </th>
+            ) : null}
+          </tr>
+        </thead>
+        <tbody>
+          {week.map((d) => {
+            const isToday = d.dow === today;
+            return (
+              <tr key={d.dow} className={`border-t border-line ${isToday ? "bg-brand-soft/60 font-bold" : ""}`} aria-current={isToday ? "date" : undefined}>
+                <th scope="row" className="px-4 py-2.5 text-left font-semibold">
+                  {days[d.dow]}
+                  {isToday ? <span className="ml-2 rounded-pill bg-brand px-2 py-0.5 text-[11px] font-bold text-on-brand">{t("today")}</span> : null}
+                </th>
+                {d.windows.length ? (
+                  <>
+                    <td className="px-4 py-2.5">{span(d.windows.filter((w) => !w.womenOnly))}</td>
+                    {hasWomen ? <td className="px-4 py-2.5">{span(d.windows.filter((w) => w.womenOnly))}</td> : null}
+                  </>
+                ) : (
+                  <td colSpan={hasWomen ? 2 : 1} className="px-4 py-2.5 text-muted">
+                    {t("closed")}
+                  </td>
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
