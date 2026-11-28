@@ -14,7 +14,7 @@ import { MemberStatus, Row, useFmt, useGymError } from "@/components/gym-manage/
 import { MonthCalendar } from "@/components/gym-manage/MonthCalendar";
 import { ReceiptLink } from "@/components/gym-manage/money";
 import { PayDueButton, useMyDues } from "./MyDues";
-import { MyPointsCard } from "./MyClasses";
+import { MyPointsCard } from "./MyPoints";
 import { RenewCard } from "./RenewCard";
 import { BodyProgressView } from "./BodyProgress";
 import { gymBody } from "@/lib/gym-progress";

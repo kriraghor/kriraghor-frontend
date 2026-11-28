@@ -9,6 +9,8 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  *  - Entrance QR (the tablet at the door, M24-FR-51): attendance.mark;
  *  - Members and Requests: members.view (Members also members.trainer);
  *  - Plans (workout plans and diet charts, M24-FR-62): plans.manage;
+ *  - Trainers (28 Nov 2026, M24-FR-180): staff whose permissions are only plans.manage and members.trainer (and
+ *    clock.in) get just Members (every member, for planning: /plans/members), Plans and My work;
  *  - Reviews (M17 reviews of the gym with replies): the owner only;
  *  - Fees and Closing: fees.collect; Offline items (M24 §22, flagged and parked ones to check): fees.adjust;
  *  - Passes sold: passes.view;
@@ -16,8 +18,8 @@ import type { WorkplaceRef } from "@kriraghor/ui/desk/access";
  *  - Packages, Import, Settings and the listing editor: the owner only.
  *  - M27 round 1: Expenses (expenses.manage or reports.view), Cash drawer (cash.drawer or reports.view), Profit and
  *    loss (reports.view), Sell (pos.sell), Stock (stock.manage), Lockers (lockers.manage).
- *  - M27 round 2: Classes (classes.manage or attendance.mark), Rewards (rewards.redeem), Notices (notices.send),
- *    Enquiries (leads.manage).
+ *  - M27 round 2: Rewards (rewards.redeem), Notices (notices.send), Enquiries (leads.manage). Classes were
+ *    removed on 28 Nov 2026 (tester batch 5).
  *  - WhatsApp (M24-FR-157, FR-166): whatsapp.send (Send and History); Setup (chat numbers, senders) is the owner's.
  *  - M27 round 3: Staff attendance (shifts.manage or reports.view), Payroll (the owner only), Equipment
  *    (assets.manage or reports.view), and My work for staff with clock.in (my clock and payslips; never the owner).
@@ -35,6 +37,7 @@ export type ManageKey =
   | "members"
   | "requests"
   | "plans"
+  | "planMembers"
   | "fees"
   | "closing"
   | "reports"
@@ -51,7 +54,6 @@ export type ManageKey =
   | "sell"
   | "stock"
   | "lockers"
-  | "classes"
   | "rewards"
   | "notices"
   | "leads"
@@ -81,6 +83,7 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   members: ["members.view", "members.trainer"],
   requests: ["members.view"],
   plans: ["plans.manage"],
+  planMembers: ["plans.manage"],
   fees: ["fees.collect"],
   closing: ["fees.collect"],
   reports: ["reports.view"],
@@ -99,7 +102,6 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
   stock: ["stock.manage"],
   lockers: ["lockers.manage"],
   // M27 round 2
-  classes: ["classes.manage", "attendance.mark"],
   rewards: ["rewards.redeem"],
   notices: ["notices.send"],
   leads: ["leads.manage"],
@@ -117,7 +119,7 @@ export const PAGE_NEEDS: Record<GymPageKey, readonly string[] | null> = {
 };
 /** Pages for staff only: the owner does not clock in or get payslips. */
 const STAFF_ONLY = new Set<GymPageKey>(["mywork"]);
-const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "requests", "plans", "fees", "closing", "offline", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "classes", "rewards", "notices", "leads", "whatsapp", "staff", "payroll", "equipment", "mywork", "deskmode"];
+const ORDER: GymPageKey[] = ["dashboard", "desk", "entrance", "members", "planMembers", "requests", "plans", "fees", "closing", "offline", "reports", "reminders", "packages", "import", "settings", "edit", "passes", "reviews", "expenses", "cash", "pnl", "sell", "stock", "lockers", "rewards", "notices", "leads", "whatsapp", "staff", "payroll", "equipment", "mywork", "deskmode"];
 const PATH: Record<GymPageKey, string> = {
   dashboard: "",
   desk: "/desk",
@@ -125,6 +127,7 @@ const PATH: Record<GymPageKey, string> = {
   members: "/members",
   requests: "/requests",
   plans: "/plans",
+  planMembers: "/plans/members",
   fees: "/fees",
   closing: "/fees/closing",
   reports: "/reports",
@@ -141,7 +144,6 @@ const PATH: Record<GymPageKey, string> = {
   sell: "/sell",
   stock: "/stock",
   lockers: "/lockers",
-  classes: "/classes",
   rewards: "/rewards",
   notices: "/notices",
   leads: "/leads",
@@ -154,8 +156,22 @@ const PATH: Record<GymPageKey, string> = {
   offline: "/offline-items",
 };
 
+/** The permissions of a trainer account (with clock.in, which every role may have). */
+const TRAINER_PERMISSIONS = new Set(["plans.manage", "members.trainer", "clock.in"]);
+
+/**
+ * A trainer account (tester feedback, 28 Nov 2026): plans.manage and nothing beyond members.trainer and
+ * clock.in. They get only Members (for planning), Plans and My work.
+ */
+export const isTrainerOnly = (permissions: readonly string[] | null): boolean =>
+  permissions !== null && permissions.includes("plans.manage") && permissions.every((p) => TRAINER_PERMISSIONS.has(p));
+const TRAINER_PAGES = new Set<GymPageKey>(["planMembers", "plans", "mywork"]);
+
 /** May someone with these permissions (null = the owner) open this page? */
 export function canOpen(page: GymPageKey, permissions: readonly string[] | null): boolean {
+  if (isTrainerOnly(permissions)) return TRAINER_PAGES.has(page) && (page !== "mywork" || permissions!.includes("clock.in"));
+  // The planning list is the trainer's Members page; everyone else has Members itself.
+  if (page === "planMembers") return false;
   if (permissions === null) return !STAFF_ONLY.has(page);
   const needs = PAGE_NEEDS[page];
   if (needs === null) return false;
@@ -214,8 +230,8 @@ export type GymSectionKey = "today" | "people" | "engage" | "counter" | "money" 
 /** A gym's pages in the sidebar, by what the owner is doing. */
 const SECTIONS: { key: GymSectionKey; pages: GymPageKey[] }[] = [
   { key: "today", pages: ["dashboard", "mywork", "desk", "entrance", "requests"] },
-  { key: "people", pages: ["members", "plans", "reviews"] },
-  { key: "engage", pages: ["classes", "rewards", "notices", "leads", "whatsapp"] },
+  { key: "people", pages: ["members", "planMembers", "plans", "reviews"] },
+  { key: "engage", pages: ["rewards", "notices", "leads", "whatsapp"] },
   { key: "counter", pages: ["sell", "stock", "lockers"] },
   { key: "money", pages: ["fees", "closing", "offline", "cash", "expenses", "pnl", "passes", "reports"] },
   { key: "team", pages: ["staff", "payroll", "equipment"] },

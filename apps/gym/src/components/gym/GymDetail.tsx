@@ -161,7 +161,7 @@ export function GymDetail({ slug }: { slug: string }) {
             </ul>
             <p className="mt-4 max-w-3xl text-sm text-muted">{t("refundRule")}</p>
 
-            {/* M27 round 2: the class timetable and "Ask the gym". */}
+            {/* M27-FR-66: "Ask the gym". */}
             <GymExtras slug={slug} gymName={g.name} whatsapp={g.whatsapp} />
 
             {/* M20-FR-10, M17-FR-35: one review per member who visited, with the gym's replies. */}

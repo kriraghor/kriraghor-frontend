@@ -55,6 +55,7 @@ export type PlanKind = S["GymPlan"]["kind"];
 export type Plan = S["GymPlan"];
 export type PlanDetail = S["GymPlanDetail"];
 export type PlanContent = S["GymPlanContent"];
+export type PlanMember = S["GymPlanMembers"]["items"][number];
 export type WorkoutContent = S["GymWorkoutContent"];
 export type DietContent = S["GymDietContent"];
 export type PlanAssignment = S["GymPlanAssignment"];
@@ -99,7 +100,7 @@ export type DuesQuery = { status?: Due["status"]; overdue?: "true" | "false"; du
 export const PAY_METHODS: PayMethod[] = ["cash", "owner_bkash", "owner_nagad", "card_counter", "other"];
 export const LEFT_REASONS: LeftReason[] = ["price", "moved", "injury", "other_gym", "schedule", "unknown", "other"];
 export const TIERS: Tier[] = ["free", "basic", "standard", "pro"];
-export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "leads", "reports", "pos", "pnl", "classes", "points", "notices", "staff_attendance", "equipment", "trainers", "plans", "progress", "payroll", "multi_gym"];
+export const FEATURES: Feature[] = ["attendance", "reminders", "online_fees", "expenses", "lockers", "leads", "reports", "pos", "pnl", "points", "notices", "staff_attendance", "equipment", "trainers", "plans", "progress", "payroll", "multi_gym"];
 export const KINDS: PackageKind[] = ["month", "quarter", "half_year", "year", "custom"];
 
 const ik = (key: string) => ({ "idempotency-key": key });
@@ -162,6 +163,8 @@ export const gymManage = {
   assignPlan: async (gymId: string, planId: string, body: { memberIds: string[]; startsOn: string; endsOn?: string | null }) =>
     unwrap(await api().POST("/manage/gyms/{gymId}/plans/{planId}/assign", { params: { path: { gymId, planId } }, body })),
   endAssignment: async (gymId: string, assignmentId: string) => unwrap(await api().POST("/manage/gyms/{gymId}/plan-assignments/{assignmentId}/end", { params: { path: { gymId, assignmentId } } })),
+  // M24-FR-180: every member who has not left, for planning (plans.manage): names, photos, plans only.
+  planMembers: async (gymId: string, query: { q?: string; cursor?: string; limit?: number } = {}) => unwrap(await api().GET("/manage/gyms/{gymId}/plan-members", { params: { ...G(gymId), query } })),
   memberPlans: async (gymId: string, memberId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/members/{memberId}/plans", { params: GM(gymId, memberId) })),
   // The entrance tablet (attendance.mark; M24-FR-51)
   entranceToken: async (gymId: string) => unwrap(await api().GET("/manage/gyms/{gymId}/entrance-token", { params: G(gymId) })),

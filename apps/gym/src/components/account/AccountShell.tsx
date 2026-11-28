@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { ArrowSquareOut, Bell, CalendarBlank, ClipboardText, Footprints, House, QrCode, Receipt, Repeat, Ticket, Tray, Wallet } from "@phosphor-icons/react";
+import { ArrowSquareOut, Bell, ClipboardText, Footprints, House, QrCode, Receipt, Repeat, Ticket, Tray, Wallet } from "@phosphor-icons/react";
 import { AppShell, type ShellGroup } from "@kriraghor/ui/app-shell";
 import { useAuth } from "@kriraghor/ui/auth";
 import { ShellUser, useMe } from "@kriraghor/ui/account";
@@ -37,7 +37,6 @@ export function AccountShell({ children }: { children: ReactNode }) {
         { href: "/me", label: tg("me.nav.home"), icon: House, testId: "me-home-link" },
         { href: "/me/requests", label: tg("me.nav.requests"), icon: Tray, badge: pending, testId: "me-requests-link" },
         { href: "/me/visits", label: tv("nav"), icon: Footprints, testId: "me-visits-link" },
-        { href: "/me/classes", label: tg("me.nav.classes"), icon: CalendarBlank, testId: "me-classes-link" },
         { href: "/me/plans", label: tg("me.nav.plans"), icon: ClipboardText, testId: "me-plans-link" },
         { href: "/me/dues", label: tg("me.nav.dues"), icon: Wallet, badge: dues.data?.items.length || undefined, testId: "me-dues" },
         { href: "/me/receipts", label: tg("me.nav.receipts"), icon: Receipt, testId: "me-receipts" },

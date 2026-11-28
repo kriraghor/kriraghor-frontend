@@ -34,6 +34,8 @@ export const gym = {
   areas: async () => ok(await api().GET("/catalog/areas", { params: { query: { service: "delivery" } } })),
   facilities: async () => ok(await api().GET("/catalog/facilities")),
   buy: async (packageId: string, validFrom: string, k: string) => ok(await api().POST("/gym/passes", { params: { header: key(k) }, body: { packageId, validFrom } })),
+  // M20-FR-24: the same package again, starting the day after my last pass at that gym ends (or today).
+  renewPass: async (packageId: string, k: string) => ok(await api().POST("/gym/passes", { params: { header: key(k) }, body: { packageId, renew: true } })),
   myPasses: async (status?: "active" | "used" | "expired") => ok(await api().GET("/me/passes", { params: { query: status ? { status } : {} } })),
   pass: async (code: string) => ok(await api().GET("/me/passes/{code}", { params: { path: { code } } })),
   cancelPass: async (id: string) => ok(await api().POST("/me/passes/{id}/cancel", { params: { path: { id } } })),
